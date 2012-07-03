@@ -36,8 +36,7 @@ PHP_FUNCTION(cfapi_auth)
                               &username, &username_len,
                               &password, &password_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && password_len);
@@ -62,8 +61,7 @@ PHP_FUNCTION(cfapi_role_list)
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
                               &username, &username_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len);
@@ -93,8 +91,7 @@ PHP_FUNCTION(cfapi_role_get)
                               &username, &username_len,
                               &role, &role_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && role);
@@ -136,8 +133,7 @@ PHP_FUNCTION(cfapi_role_put)
                               &include_bundle_rx, &include_bundle_rx_len,
                               &exclude_bundle_rx, &exclude_bundle_rx_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && name_len);
@@ -180,8 +176,7 @@ PHP_FUNCTION(cfapi_role_delete)
                               &username, &username_len,
                               &name, &name_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && name_len);
@@ -204,8 +199,7 @@ PHP_FUNCTION(cfapi_user_list)
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
                               &username, &username_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len);
@@ -235,8 +229,7 @@ PHP_FUNCTION(cfapi_user_get)
                               &username, &username_len,
                               &username_arg, &username_arg_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
@@ -268,8 +261,7 @@ PHP_FUNCTION(cfapi_user_put)
                               &username_arg, &username_arg_len,
                               &password, &password_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len && password_len);
@@ -310,8 +302,7 @@ PHP_FUNCTION(cfapi_user_delete)
                               &username, &username_len,
                               &username_arg, &username_arg_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
@@ -334,8 +325,7 @@ PHP_FUNCTION(cfapi_settings_get)
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
                               &username, &username_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len);
@@ -351,42 +341,42 @@ PHP_FUNCTION(cfapi_settings_get)
     char buffer[1024] = { 0 };
     if (CFDB_GetSetting(conn, SETTING_RBAC, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendBool(settings, settingLabels[SETTING_RBAC], StringSafeEqual(buffer, "true"));
+        JsonObjectAppendBool(settings, HubSettingToString(SETTING_RBAC), StringSafeEqual(buffer, "true"));
     }
 
     if (CFDB_GetSetting(conn, SETTING_AUTH_MODE, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_AUTH_MODE], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_AUTH_MODE), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_ENCRYPTION], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_ENCRYPTION), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_LOGIN_ATTRIBUTE], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_BASE_DN, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_BASE_DN], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_BASE_DN), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_USERS_DIRECTORY], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_USERS_DIRECTORY), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_HOST, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_HOST], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_HOST), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_AD_DOMAIN, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, settingLabels[SETTING_AD_DOMAIN], buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_AD_DOMAIN), buffer);
     }
 
     if (!EnterpriseDBRelease(conn))
@@ -400,6 +390,83 @@ PHP_FUNCTION(cfapi_settings_get)
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
 
+
+PHP_FUNCTION(cfapi_settings_post)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *post_data = NULL; int post_data_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &post_data, &post_data_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len && post_data_len);
+
+    JsonElement *new_settings = JsonParse(&post_data);
+    if (!new_settings)
+    {
+        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Unable to parse JSON payload");
+    }
+    if ((JsonGetElementType(new_settings) != JSON_ELEMENT_TYPE_CONTAINER) ||
+            (JsonGetContrainerType(new_settings) != JSON_CONTAINER_TYPE_OBJECT))
+    {
+        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Update payload must be a JSON object");
+    }
+
+    // first validate that all settings are valid
+    {
+        JsonIterator iter = JsonIteratorInit(new_settings);
+        const char *setting = NULL;
+        while ((setting = JsonIteratorNextKey(&iter)))
+        {
+            if (HubSettingFromString(setting) == SETTING_UNKNOWN)
+            {
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Invalid setting: %s", setting);
+            }
+
+            const JsonElement *value = JsonIteratorCurrentValue(&iter);
+
+            if (JsonGetElementType(value) != JSON_ELEMENT_TYPE_PRIMITIVE ||
+                    JsonGetPrimitiveType(value) != JSON_PRIMITIVE_TYPE_STRING)
+            {
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Setting value for %s must be a string", setting);
+            }
+
+        }
+    }
+
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    // update settings
+    {
+        JsonIterator iter = JsonIteratorInit(new_settings);
+        const char *setting = NULL;
+        while ((setting = JsonIteratorNextKey(&iter)))
+        {
+            const char *value = JsonPrimitiveGetAsString(JsonIteratorCurrentValue(&iter));
+            if (!CFDB_UpdateSetting(conn, HubSettingFromString(setting), value))
+            {
+                THROW_GENERIC(ERRID_DB_OPERATION, "Unable to write setting: %s", setting);
+            }
+        }
+    }
+
+    if (!EnterpriseDBRelease(conn))
+    {
+        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+    }
+
+    RETURN_BOOL(true);
+}
+
+
 //******************************************************************************
 
 PHP_FUNCTION(cfapi_query_post)
@@ -411,8 +478,7 @@ PHP_FUNCTION(cfapi_query_post)
                               &username, &username_len,
                               &query, &query_len) == FAILURE)
     {
-        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && query_len);
@@ -420,8 +486,7 @@ PHP_FUNCTION(cfapi_query_post)
     JsonElement *query_parsed = JsonParse(&query);
     if (!query_parsed)
     {
-        zend_throw_exception(cfapi_exception_bad_request, LABEL_ERROR_INVALID_JSON, 0 TSRMLS_CC);
-        RETURN_NULL();
+        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Could not parse JSON argument");
     }
 
     JsonElement *data = ReportingEngineQuery(query_parsed);

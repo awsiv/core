@@ -22,6 +22,7 @@
 #include "web_rbac.h"
 
 #include "db_query.h"
+#include "db_save.h"
 #include "files_names.h"
 #include "rlist.h"
 #include "item_lib.h"
@@ -48,7 +49,8 @@
 
 # define SALT_SIZE 10
 
-const char *settingLabels[] = {
+static const char *settingLabels[SETTING_MAX] = {
+    [SETTING_UNKNOWN] = "unknown",
     [SETTING_RBAC] = "rbac",
     [SETTING_AUTH_MODE] = "authMode",
     [SETTING_LDAP_ENCRYPTION] = "ldapEncryption",
@@ -1225,36 +1227,67 @@ static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName)
 
 //*****************************************************************************
 
+const char *HubSettingToString(HubSetting setting)
+{
+    return settingLabels[setting];
+}
+
+HubSetting HubSettingFromString(const char *setting)
+{
+    for (size_t i = 0; i < SETTING_MAX; i++)
+    {
+        if (StringSafeEqual(settingLabels[i], setting))
+        {
+            return (HubSetting)i;
+        }
+    }
+
+    return SETTING_UNKNOWN;
+}
+
 bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size)
 {
     switch (setting)
     {
     case SETTING_RBAC:
-        return CFDB_HandleGetValue(settingLabels[SETTING_RBAC], value_out, size, "true", conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_RBAC), value_out, size, "true", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_AUTH_MODE:
-        return CFDB_HandleGetValue(settingLabels[SETTING_AUTH_MODE], value_out, size, "internal", conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_AUTH_MODE), value_out, size, "internal", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_ENCRYPTION:
-        return CFDB_HandleGetValue(settingLabels[SETTING_LDAP_ENCRYPTION], value_out, size, "plain", conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_ENCRYPTION), value_out, size, "plain", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_LOGIN_ATTRIBUTE:
-        return CFDB_HandleGetValue(settingLabels[SETTING_LDAP_LOGIN_ATTRIBUTE], value_out, size, "uid", conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), value_out, size, "uid", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_BASE_DN:
-        return CFDB_HandleGetValue(settingLabels[SETTING_LDAP_BASE_DN], value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_BASE_DN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_USERS_DIRECTORY:
-        return CFDB_HandleGetValue(settingLabels[SETTING_LDAP_USERS_DIRECTORY], value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_USERS_DIRECTORY), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_HOST:
-        return CFDB_HandleGetValue(settingLabels[SETTING_LDAP_HOST], value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_HOST), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_AD_DOMAIN:
-        return CFDB_HandleGetValue(settingLabels[SETTING_AD_DOMAIN], value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_AD_DOMAIN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
 
     default:
         assert(false && "Attempted to get unknown setting");
         return false;
     }
+}
+
+bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value)
+{
+    assert(setting > 0 && setting < SETTING_MAX);
+    if (setting <= 0 || setting >= SETTING_MAX)
+    {
+        return false;
+    }
+
+    const char *setting_key = HubSettingToString(setting);
+
+    return CFDB_PutValue(conn, setting_key, value, MONGO_SETTINGS_COLLECTION);
 }

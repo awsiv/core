@@ -11,21 +11,25 @@
 #include "json.h"
 #include "db_common.h"
 
-#define LABEL_ERROR_ARGS "Incorrect argument count or types"
-#define LABEL_ERROR_ARGS_EMPTY "Missing argument contents"
-#define LABEL_ERROR_INVALID_JSON "Invalid JSON payload"
-#define LABEL_ERROR_DATABASE_OPEN "Error acquiring a database connection"
-
-#define ARGUMENT_CHECK_CONTENTS(cond) \
- if(!(cond))                          \
-    {                                 \
-    zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS_EMPTY, 0 TSRMLS_CC); \
-    RETURN_NULL();                    \
+#define THROW_GENERIC(code, msg, ...) \
+    { \
+        char *buffer = NULL; \
+        xasprintf(&buffer, msg, ##__VA_ARGS__); \
+        zend_throw_exception(cfapi_exception, buffer, code TSRMLS_CC); \
+        free(buffer); \
+        RETURN_NULL(); \
     }
 
-#define THROW_GENERIC(code, msg) \
+#define THROW_ARGS_MISSING() \
     { \
-    zend_throw_exception(cfapi_exception, msg, code TSRMLS_CC); \
+        zend_throw_exception(cfapi_exception, "Wrong number or arguments", ERRID_ARGUMENT_MISSING TSRMLS_CC); \
+        RETURN_NULL(); \
+    }
+
+#define ARGUMENT_CHECK_CONTENTS(cond) \
+ if(!(cond)) \
+    { \
+    zend_throw_exception(cfapi_exception, "One or more required arguments are empty", ERRID_ARGUMENT_WRONG TSRMLS_CC); \
     RETURN_NULL(); \
     }
 

@@ -15,4 +15,21 @@ class Settings extends Resource
 
         return $response;
     }
+
+    function post($request)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+        if (cfapi_settings_post($user, $request->data))
+        {
+            $response->code = Response::NOCONTENT;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
 }
