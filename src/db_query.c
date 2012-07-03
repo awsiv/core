@@ -6142,6 +6142,8 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
             snprintf(work, sizeof(work), "\"status\":%d", totalStatus);
             Join(buffer, work, bufsize);
         }
+
+        bson_destroy(&result);
     }
     else
     {
@@ -6151,7 +6153,6 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
     EndJoin(buffer, "}", bufsize);
 
     bson_destroy(&cmd);
-    bson_destroy(&result);
     return ret;
 }
 
