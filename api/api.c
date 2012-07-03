@@ -325,6 +325,80 @@ PHP_FUNCTION(cfapi_user_delete)
     RETURN_BOOL(true);
 }
 
+//******************************************************************************
+
+PHP_FUNCTION(cfapi_settings_get)
+{
+    const char *username = NULL; int username_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &username, &username_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len);
+
+    JsonElement *settings = JsonObjectCreate(50);
+
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to open database");
+    }
+
+    char buffer[1024] = { 0 };
+    if (CFDB_GetSetting(conn, SETTING_RBAC, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendBool(settings, settingLabels[SETTING_RBAC], StringSafeEqual(buffer, "true"));
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_AUTH_MODE, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_AUTH_MODE], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_ENCRYPTION], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_LOGIN_ATTRIBUTE], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_BASE_DN, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_BASE_DN], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_USERS_DIRECTORY], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_HOST, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_LDAP_HOST], buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_AD_DOMAIN, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, settingLabels[SETTING_AD_DOMAIN], buffer);
+    }
+
+    if (!EnterpriseDBRelease(conn))
+    {
+        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+    }
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, settings);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+}
 
 //******************************************************************************
 

@@ -6,6 +6,7 @@
 
 #include "utils.h"
 #include "cf.nova.h"
+#include "db_common.h"
 
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
 {
@@ -20,4 +21,22 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
     JsonObjectAppendArray(output, "data", data_array);
 
     return output;
+}
+
+EnterpriseDB *EnterpriseDBAcquire(void)
+{
+    EnterpriseDB *conn = xmalloc(sizeof(EnterpriseDB));
+    if (!CFDB_Open(conn))
+    {
+        return NULL;
+    }
+    return conn;
+}
+
+bool EnterpriseDBRelease(EnterpriseDB *conn)
+{
+    assert(conn);
+    bool released = CFDB_Close(conn);
+    free(conn);
+    return released;
 }

@@ -24,7 +24,7 @@ int DBPort()
     }
 }
 
-int CFDB_Open(EnterpriseDB *conn)
+bool CFDB_Open(EnterpriseDB *conn)
 {
     int result = 0;
 
@@ -53,7 +53,7 @@ int CFDB_Open(EnterpriseDB *conn)
 }
 
 
-int CFDB_Close(EnterpriseDB *conn)
+bool CFDB_Close(EnterpriseDB *conn)
 {
     mongo_destroy(conn);
     /*
