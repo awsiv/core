@@ -14,8 +14,8 @@
             excludes: []
         },
         busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;'),
-        showMoreIcon: $('<span class="showmore"  style="display:none">').html('<button>show more..</button>'),
-        errorDiv: $('<div>').addClass('error'),
+        showMoreIcon: $('<span class="showmore button"  style="display:none">').html('<button class="button">show more...</button>'),
+        errorDiv: $('<div style="display:none">').addClass('error'),
 
         _startIndex:0,
         _defaultNumberOfGraphs:10,
@@ -52,6 +52,7 @@
             $self.element.append($self.vitalPanel);
             $self._fetchConfig();
             $self.element.find('.loading-div').prepend($self.busyIcon);
+            $self.element.find('.loading-div').prepend($self.errorDiv);
             $self._setTimer(this.options.interval);
         },
 
@@ -93,7 +94,7 @@
             $self._context.excludes = excludes;
         },
 
-        setHostContext:function(hostkey,draw) {
+        setHostContext: function(hostkey,draw) {
             var $self = this,
             includes = [common.canonify('PK_' + hostkey)],
             excludes = [];
@@ -116,6 +117,8 @@
 
         clearCanvas: function () {
             var $self = this;
+            $self.busyIcon.hide();
+            $self.errorDiv.hide();
             $self.element.find('.graph-container-body').empty();
             $self.element.find('.graph-container-footer-menu').empty();
             $self.resetCounter();
@@ -184,14 +187,13 @@
         showEmptyData: function() {
             // cannot fetch any data
             var self = this;
-            self.busyIcon.hide();
             var $infoDiv = $('<p class=info>Cannot fetch any data right now.</p>');
             self.element.find('.graph-container-body').append($infoDiv);
         },
 
         refreshForNodeView:function() {
             var self = this;
-            self.busyIcon.show();
+            //self.busyIcon.show();
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurl,
                 'type':'Get',
@@ -206,7 +208,7 @@
                     }
                     self._cachedData = data;
                     self.drawGraphCanvas(self._cachedData);
-                    self.busyIcon.hide();
+                //self.busyIcon.hide();
                 }
             };
             self.sendRequest(params);
@@ -459,6 +461,9 @@
             var self = this;
             var senddata = $.extend(params.data, self._getContext());
             $.ajax({
+                beforeSend: function() {
+                    self.busyIcon.show();
+                },
                 type: params.type ? params.type : 'post' ,
                 url: params.url,
                 data: senddata,
@@ -469,38 +474,43 @@
                     }
                     return data;
                 },
+                complete:function() {
+                    self.busyIcon.hide();
+                },
                 error: function(jqXHR, textStatus, errorThrown) {
                     if ($.isFunction(params.error)) {
                         return $.call(params.error());
                     }
-                    self._displayFailure(jqXHR,textStatus, errorThrown);
+                },
+                statusCode: {
+                    "401": function() {
+                        self.showError('Unauthorized access.');
+                        return;
+                    },
+                    "403": function() {
+                        self.showError('Unauthorized access.');
+                        return;
+                    },
+                    "404": function() {
+                        self.showError('Cannot fetch data as supplied url is not found.');
+                        return;
+                    },
+                    "500": function() {
+                        self.showError('Invalid server response.');
+                        return;
+                    },
+                    "0": function() {
+                        self.showError('Cannot contact the server.');
+                        return;
+                    }
+
+
                 }
             });
         },
-
-        _displayFailure: function(jqXHR,textStatus, errorThrown) {
-            var serverMsg,
-            self = this;
-            self.busyIcon.hide();
-            if (jqXHR.status == 0) {
-                serverMsg = 'You are offline!!\n Please Check Your Network.';
-            }else if (jqXHR.status == 404) {
-                serverMsg = 'Requested URL not found.';
-            }else if (jqXHR.status == 500) {
-                serverMsg = 'Internel Server Error. ' + jqXHR.responseText;
-            }else if (errorThrown == 'parsererror') {
-                serverMsg = 'Error.\nParsing JSON Request failed.';
-            }else if (errorThrown == 'timeout') {
-                serverMsg = 'Request Time out.';
-            }else {
-                serverMsg = 'Unknow Error.\n' + jqXHR.responseText;
-            }
-            self.element.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>" + ' ' + serverMsg + '</p></div>');
-
+        showError: function(text) {
+            this.errorDiv.html(text).show();
         },
-
-
-
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
         }
