@@ -81,13 +81,13 @@ static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
 
 /*****************************************************************************/
 
-static char *SHA1Hash(const char *string, int len)
+static char *SHAHash(const char *string, int len)
 {
     unsigned char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
     HashString(string, len, digest, cf_sha256);
 
-    char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(unsigned char));
+    char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(char));
 
     HashPrintSafe(cf_sha256, digest, buffer);
     return buffer;
@@ -110,7 +110,7 @@ static char *GenerateSalt()
 static char *HashPassword(const char *clear_password, size_t clear_password_len, const char *db_salt)
 {
     char *salt_password = StringConcatenate(db_salt, SALT_SIZE, clear_password, clear_password_len);
-    char *salt_password_hashed = SHA1Hash(salt_password, SALT_SIZE + clear_password_len);
+    char *salt_password_hashed = SHAHash(salt_password, SALT_SIZE + clear_password_len);
 
     free(salt_password);
 
@@ -301,21 +301,22 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
         BsonStringGet(&record, dbkey_user_salt, &db_salt);
         assert(db_salt);
 
-        bson_destroy(&record);
-
         if (db_password)
         {
             if (VerifyPasswordInternal(password, password_len, db_password, db_salt))
             {
+                bson_destroy(&record);
                 return ERRID_SUCCESS;
             }
             else
             {
+                bson_destroy(&record);
                 return ERRID_RBAC_ACCESS_DENIED;
             }
         }
     }
 
+    bson_destroy(&record);
     return ERRID_RBAC_ACCESS_DENIED;
 }
 
