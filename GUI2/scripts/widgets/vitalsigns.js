@@ -1,13 +1,13 @@
 (function($) {
     $.widget('ui.vitalSigns', {
         options: {
-            contextWidgetElement:'hclist',
-            baseUrl:'',
+            contextWidgetElement: 'hclist',
+            baseUrl: '',
             interval: 0, // Interval in minutes to refresh the widget
             vitalsurl: '/vitals/node_vitals',
             vitalsurlForHost: '/vitals/host_vitals',
             vitalsurlForConfiguration: '/vitals/config_vitals',
-            vitalsMainLink : '/visual/vital/'
+            vitalsMainLink: '/visual/vital/'
         },
         _context: {
             includes: [],
@@ -17,34 +17,34 @@
         showMoreIcon: $('<span class="showmore button"  style="display:none">').html('<button class="button">show more...</button>'),
         errorDiv: $('<div style="display:none">').addClass('error'),
 
-        _startIndex:0,
-        _defaultNumberOfGraphs:10,
+        _startIndex: 0,
+        _defaultNumberOfGraphs: 10,
 
-        _cachedData:[],
+        _cachedData: [],
         _hostView: false,
 
-        vitalPanel: $('<div class="graph-container-header-top-menu"></div>'+
-            '<div class="loading-div"></div><div class="graph-container-body"></div>'+
+        vitalPanel: $('<div class="graph-container-header-top-menu"></div>' +
+            '<div class="loading-div"></div><div class="graph-container-body"></div>' +
             '<div class="graph-container-footer-menu"></div>'),
 
         vitalsSelect: $('<select id="vitalsSelect">'),
         vitalsSortBySelect: $('<select id="vitalsSortBySelect">'),
-        selectVitalsValues : {
-            "loadavg":"load average",
-            'diskfree':"Disk free",
-            'cpu':"CPU (all)"
+        selectVitalsValues: {
+            'loadavg': 'load average',
+            'diskfree': 'Disk free',
+            'cpu': 'CPU (all)'
         },
-        vitalsValuesSortBy : {
-            "last-measured":"Last Measured",
-            'average':"Average",
-            'slope':'Slope'
+        vitalsValuesSortBy: {
+            'last-measured': 'Last Measured',
+            'average': 'Average',
+            'slope': 'Slope'
         },
 
-        selectedVital : 'loadavg',
-        selectedVitalSortBy : 'last-measured',
+        selectedVital: 'loadavg',
+        selectedVitalSortBy: 'last-measured',
 
-        _timer : null,
-        _vitalConfig : null,
+        _timer: null,
+        _vitalConfig: null,
 
 
         _create: function() {
@@ -58,7 +58,7 @@
 
         setContext: function(includes,excludes,draw) {
             var $self = this;
-            $self._modifyContext(includes,excludes);
+            $self._modifyContext(includes, excludes);
             $self._hostView = false;
             if (draw) {
                 $self.refresh();
@@ -78,7 +78,7 @@
             }
         },
 
-        _setOption: function(key, value){
+        _setOption: function(key, value) {
             if (this.options[key] === value) {
                 return this; // Do nothing, the value didn't change
             }
@@ -99,7 +99,7 @@
             includes = [common.canonify('PK_' + hostkey)],
             excludes = [];
             $self._hostView = true;
-            $self._modifyContext(includes,excludes);
+            $self._modifyContext(includes, excludes);
             if (draw) {
                 $self.refresh();
             }
@@ -115,7 +115,7 @@
             }
         },
 
-        clearCanvas: function () {
+        clearCanvas: function() {
             var $self = this;
             $self.busyIcon.hide();
             $self.errorDiv.hide();
@@ -124,18 +124,18 @@
             $self.resetCounter();
         },
 
-        resetCounter: function () {
+        resetCounter: function() {
             var $self = this;
             $self._startIndex = 0;
-            $self._cachedData=[];
+            $self._cachedData = [];
         },
 
         _buildVitalsSelection: function(data) {
             var $self = this;
             $.each(data.vitals, function(key, value) {
                 $self.vitalsSelect
-                .append($("<option></option>")
-                    .attr("value",key)
+                .append($('<option></option>')
+                    .attr('value', key)
                     .text(value.text));
             });
             $self.vitalsSelect.change(function() {
@@ -143,7 +143,7 @@
                 $self.clearCanvas();
                 $self.refreshForNodeView();
             });
-            $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSelect);
+            $self.element.find('.graph-container-header-top-menu').append($self.vitalsSelect);
             // build the vitals value drop down
             $self._buildVitalsSortSelection(data['vitals-sort-by']);
         },
@@ -152,11 +152,11 @@
             //build the vitals sort by drop down
 
             var $self = this;
-            var sortByValues = !$.isEmptyObject( sortBy ) ? sortBy : $self.vitalsValuesSortBy;
+            var sortByValues = !$.isEmptyObject(sortBy) ? sortBy : $self.vitalsValuesSortBy;
             $.each(sortByValues, function(key, value) {
                 $self.vitalsSortBySelect
-                .append($("<option></option>")
-                    .attr("value",key)
+                .append($('<option></option>')
+                    .attr('value', key)
                     .text(value));
             });
             $self.vitalsSortBySelect.change(function() {
@@ -165,20 +165,20 @@
                 $self.refreshForNodeView();
                 $self.refreshForNodeView();
             });
-            $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
+            $self.element.find('.graph-container-header-top-menu').append($self.vitalsSortBySelect);
         },
 
         _fetchConfig: function() {
             var $self = this;
             var params = {
-                'url':  $self.options.baseUrl + $self.options.vitalsurlForConfiguration,
-                'type':'get',
-                'success': function (data) {
+                'url': $self.options.baseUrl + $self.options.vitalsurlForConfiguration,
+                'type': 'get',
+                'success': function(data) {
                     $self._vitalConfig = data;
                     $self._buildVitalsSelection(data);
                 },
-                'error':function() {
-                    $self._buildVitalsSelection( $self.selectVitalsValues);
+                'error': function() {
+                    $self._buildVitalsSelection($self.selectVitalsValues);
                 }
             };
             $self.sendRequest(params);
@@ -191,17 +191,17 @@
             self.element.find('.graph-container-body').append($infoDiv);
         },
 
-        refreshForNodeView:function() {
+        refreshForNodeView: function() {
             var self = this;
             //self.busyIcon.show();
             var params = {
-                'url':  self.options.baseUrl + self.options.vitalsurl,
-                'type':'Get',
+                'url': self.options.baseUrl + self.options.vitalsurl,
+                'type': 'Get',
                 'data': {
-                    'obs':self.selectedVital,
-                    'sort':self.selectedVitalSortBy
+                    'obs': self.selectedVital,
+                    'sort': self.selectedVitalSortBy
                 },
-                'success': function (data) {
+                'success': function(data) {
                     if (data === null || data.length === 0) {
                         self.showEmptyData();
                         return;
@@ -214,17 +214,17 @@
             self.sendRequest(params);
         },
 
-        refreshForHostView:function() {
+        refreshForHostView: function() {
             var self = this;
             self.element.find('.graph-container-header-top-menu').hide();
             self.busyIcon.show();
             var params = {
-                'url':  self.options.baseUrl + self.options.vitalsurlForHost,
-                'type':'Get',
+                'url': self.options.baseUrl + self.options.vitalsurlForHost,
+                'type': 'Get',
                 'data': {
 
                 },
-                'success': function (data) {
+                'success': function(data) {
                     if (data === null || data.length === 0) {
                         self.showEmptyData();
                         return;
@@ -244,7 +244,7 @@
             var lastDataSeries = [];
             var averageSeries = [];
             var maxArrayValue = 0; // for scaling the y axis max value
-            for (i=0;i<length;i++) {
+            for (i = 0; i < length; i++) {
                 if (data[i][1] > maxArrayValue) {
                     maxArrayValue = data[i][1];
                 }
@@ -254,16 +254,16 @@
 
             var ymin = null;
             var ymax = null;
-            if (('obs' in meta) && this._vitalConfig.vitals[meta.obs] !== undefined ) {
+            if (('obs' in meta) && this._vitalConfig.vitals[meta.obs] !== undefined) {
                 var configYmax = this._vitalConfig.vitals[meta.obs].max ? this._vitalConfig.vitals[meta.obs].max : null;
                 var configYmin = this._vitalConfig.vitals[meta.obs].min ? this._vitalConfig.vitals[meta.obs].min : null;
-                ymax = configYmax > maxArrayValue ? this._vitalConfig.vitals[meta.obs].max : null ;
+                ymax = configYmax > maxArrayValue ? this._vitalConfig.vitals[meta.obs].max : null;
                 ymin = configYmin;
             }
 
 
             var options = {
-                grid:   {
+                grid: {
                     hoverable: true,
                     clickable: true,
                     axisMargin: 15,
@@ -274,17 +274,17 @@
                     max: ymax
                 },
                 xaxis: {
-                    max:48,
-                    tickSize:12,
-                    tickFormatter: function (val, axis) {
+                    max: 48,
+                    tickSize: 12,
+                    tickFormatter: function(val, axis) {
 
-                        var subtract = (4-(val/12))*60*60;
+                        var subtract = (4 - (val / 12)) * 60 * 60;
 
-                        var actualDate = parseInt(meta.lastUpdated,10);
+                        var actualDate = parseInt(meta.lastUpdated, 10);
                         if (!actualDate) return val;
-                        var displayDate = actualDate -subtract;
+                        var displayDate = actualDate - subtract;
                         var d = new Date();
-                        d.setTime( displayDate * 1000 );
+                        d.setTime(displayDate * 1000);
                         return d.getHours() + ' : ' + d.getMinutes();
 
 
@@ -295,46 +295,46 @@
             var plot = $.plot($plotdiv,
                 [
                 {
-                    label:"",
-                    data:lastDataSeries,
+                    label: '',
+                    data: lastDataSeries,
                     lines: {
-                        show:true
+                        show: true
                     },
-                    color:"rgb(255, 153, 0)"
+                    color: 'rgb(255, 153, 0)'
                 },
 
                 {
-                    label:"",
-                    data:averageSeries,
+                    label: '',
+                    data: averageSeries,
                     lines: {
                         show: true,
                         lineWidth: 1
                     },
-                    color:"rgb(0, 204, 0)"
+                    color: 'rgb(0, 204, 0)'
                 }
                 ]
-                ,options);
+                , options);
 
             var previousPoint = null;
-            $plotdiv.bind("plothover", function (event, pos, item) {
+            $plotdiv.bind('plothover', function(event, pos, item) {
                 if (item) {
                     if (previousPoint != item.datapoint) {
                         previousPoint = item.datapoint;
 
-                        $("#vital-sign-tooltip").remove();
+                        $('#vital-sign-tooltip').remove();
                         var x = item.datapoint[0].toFixed(2),
                         y = item.datapoint[1].toFixed(2);
                         showTooltip(item.pageX, item.pageY, y);
                     }
                 }
                 else {
-                    $("#vital-sign-tooltip").remove();
+                    $('#vital-sign-tooltip').remove();
                     previousPoint = null;
                 }
             });
 
             function showTooltip(x, y, contents) {
-                $('<div id="vital-sign-tooltip">' + contents + '</div>').css( {
+                $('<div id="vital-sign-tooltip">' + contents + '</div>').css({
                     position: 'absolute',
                     display: 'none',
                     top: y + 5,
@@ -344,7 +344,7 @@
                     color: '#000',
                     'background-color': '#fee',
                     opacity: 0.80
-                }).appendTo("body").fadeIn(100);
+                }).appendTo('body').fadeIn(100);
             }
 
 
@@ -352,36 +352,36 @@
 
         },
 
-        drawGraphCanvas: function (data) {
+        drawGraphCanvas: function(data) {
             var self = this;
             self.element.find('.graph-container-header-top-menu').show();
             var offset = self._startIndex * self._defaultNumberOfGraphs;
-            var slicedData = data.slice(offset, offset+self._defaultNumberOfGraphs);
+            var slicedData = data.slice(offset, offset + self._defaultNumberOfGraphs);
             $.each(slicedData, function(key, value) {
                 var perfdata = (value.perfdata);
                 var meta = value.meta;
-                meta['obs']= self.selectedVital;
+                meta['obs'] = self.selectedVital;
 
                 // create div
-                var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey+'/'+ self.selectedVital;
-                var $hostVitalLink = $('<a target="_blank">').html(meta.hostname).attr('href',$url)
+                var $url = self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey + '/' + self.selectedVital;
+                var $hostVitalLink = $('<a target="_blank">').html(meta.hostname).attr('href', $url);
                 var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                 var intRegex = /^\d+$/;
-                var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
-                var $lastUpdated = $('<div>').html('Last updated: '+ lastUpdateDate );
-                var lastMeasuredValue = (perfdata.length > 0 ) ? perfdata[perfdata.length-1][1] : 'not available';
-                var $lastMeasuredValueDiv = $('<div>').html('Last measured value: '+ lastMeasuredValue);
+                var lastUpdateDate = intRegex.test(meta.lastUpdated) ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
+                var $lastUpdated = $('<div>').html('Last updated: ' + lastUpdateDate);
+                var lastMeasuredValue = (perfdata.length > 0) ? perfdata[perfdata.length - 1][1] : 'not available';
+                var $lastMeasuredValueDiv = $('<div>').html('Last measured value: ' + lastMeasuredValue);
                 var $graphHeader = $('<div class="graphHeader">').append($hostLabel)
                 .append($lastUpdated).append($lastMeasuredValueDiv);
-                var $graphDiv = $('<div>').addClass('graph-container').attr('id',meta.hostkey+'-container').append($graphHeader)
+                var $graphDiv = $('<div>').addClass('graph-container').attr('id', meta.hostkey + '-container').append($graphHeader);
 
-                var $plotdiv = $('<div>').attr('id',meta.hostkey).width('250').height('150').html('loading...');
+                var $plotdiv = $('<div>').attr('id', meta.hostkey).width('250').height('150').html('loading...');
                 $graphDiv.append($plotdiv);
                 self.element.find('.graph-container-body').append($graphDiv);
-                self.plotGraph($plotdiv,meta,perfdata);
+                self.plotGraph($plotdiv, meta, perfdata);
             });
 
-            if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs +  self. _defaultNumberOfGraphs ) <  data.length ) {
+            if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs + self. _defaultNumberOfGraphs) < data.length) {
                 // show load more button
                 self.showLoadMoreButton();
             } else {
@@ -390,40 +390,40 @@
 
         },
 
-        drawGraphCanvasForHost: function (data) {
+        drawGraphCanvasForHost: function(data) {
 
             var self = this;
             if (data.length !== 0) {
-                var meta ={
-                    'hostname':data.hostname,
-                    'lastUpdated':data.ls,
-                    'hostkey':data.hostkey
+                var meta = {
+                    'hostname': data.hostname,
+                    'lastUpdated': data.ls,
+                    'hostkey': data.hostkey
                 };
                 $.each(data.obs, function(key, value) {
                     var perfdata = (value.perfdata);
                     if (perfdata) {
                         // create div
-                        var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey+'/'+value.id;
-                        var $hostVitalLink = $('<a target="_blank">').html(value.id+'<br />'+value.desc).attr('href',$url)
+                        var $url = self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey + '/' + value.id;
+                        var $hostVitalLink = $('<a target="_blank">').html(value.id + '<br />' + value.desc).attr('href', $url);
                         var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                         var intRegex = /^\d+$/;
-                        var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
-                        var $lastUpdated = $('<div class"graph-last-updated">').html('Last updated: '+ lastUpdateDate );
-                        var $unit = $('<div class"graph-unit">').html('Unit: '+ value.units );
+                        var lastUpdateDate = intRegex.test(meta.lastUpdated) ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
+                        var $lastUpdated = $('<div class"graph-last-updated">').html('Last updated: ' + lastUpdateDate);
+                        var $unit = $('<div class"graph-unit">').html('Unit: ' + value.units);
                         var $graphHeader = $('<div class="graphHeader">').append($hostLabel)
                         .append($lastUpdated).append($unit);
-                        var $graphDiv = $('<div>').attr('id',value.id+'-container').addClass('graph-container').append($graphHeader)
+                        var $graphDiv = $('<div>').attr('id', value.id + '-container').addClass('graph-container').append($graphHeader);
 
-                        var $plotdiv = $('<div>').attr('id',value.id).width('250').height('150');
+                        var $plotdiv = $('<div>').attr('id', value.id).width('250').height('150');
                         $graphDiv.append($plotdiv);
                         self.element.find('.graph-container-body').append($graphDiv);
-                        self.plotGraph($plotdiv,meta,perfdata);
+                        self.plotGraph($plotdiv, meta, perfdata);
                     }
                 });
 
 
 
-                if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs +  self. _defaultNumberOfGraphs ) <  data.length ) {
+                if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs + self. _defaultNumberOfGraphs) < data.length) {
                     // show load more button
                     self.showLoadMoreButton();
                 } else {
@@ -432,24 +432,24 @@
             }
         },
 
-        showLoadMoreButton:function() {
+        showLoadMoreButton: function() {
             var $self = this;
-            $self.element.find( $self.showMoreIcon).remove();
+            $self.element.find($self.showMoreIcon).remove();
             $self.showMoreIcon.show();
             $self.showMoreIcon.click(function() {
                 $self._startIndex++;
                 $self.drawGraphCanvas($self._cachedData);
             });
-            $self.element.find('.graph-container-footer-menu').append( $self.showMoreIcon);
+            $self.element.find('.graph-container-footer-menu').append($self.showMoreIcon);
         },
 
-        hideLoadMoreButton:function() {
+        hideLoadMoreButton: function() {
             var $self = this;
             $self.showMoreIcon.hide();
             $self.element.find($self.showMoreIcon).remove();
         },
 
-        _getContext:function() {
+        _getContext: function() {
             var self = this;
             var context = [];
             context['includes'] = encodeURIComponent(self._context.includes);
@@ -474,7 +474,7 @@
                     }
                     return data;
                 },
-                complete:function() {
+                complete: function() {
                     self.busyIcon.hide();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -483,23 +483,23 @@
                     }
                 },
                 statusCode: {
-                    "401": function() {
+                    '401': function() {
                         self.showError('Unauthorized access.');
                         return;
                     },
-                    "403": function() {
+                    '403': function() {
                         self.showError('Unauthorized access.');
                         return;
                     },
-                    "404": function() {
+                    '404': function() {
                         self.showError('Cannot fetch data as supplied url is not found.');
                         return;
                     },
-                    "500": function() {
+                    '500': function() {
                         self.showError('Invalid server response.');
                         return;
                     },
-                    "0": function() {
+                    '0': function() {
                         self.showError('Cannot contact the server.');
                         return;
                     }
