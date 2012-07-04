@@ -481,10 +481,16 @@
                     if ($.isFunction(params.error)) {
                         return $.call(params.error());
                     }
+                    var excludeCodes = [401, 403, 404, 500, 0];
+
+                    if ($.inArray(jqXHR.status, excludeCodes) === -1) {
+                        self.showError('Cannot fetch data due to unknown error.');
+                    }
+
                 },
                 statusCode: {
                     '401': function() {
-                        self.showError('Unauthorized access.');
+                        self.showError('Access denied.');
                         return;
                     },
                     '403': function() {
@@ -503,8 +509,6 @@
                         self.showError('Cannot contact the server.');
                         return;
                     }
-
-
                 }
             });
         },
