@@ -80,6 +80,7 @@
 }
 
 .engineeringContainer #tab-1, 
-.engineeringContainer #tab-2 {
+.engineeringContainer #tab-2 ,
+.engineeringContainer #tab-3{
     min-height: 442px;
 }
