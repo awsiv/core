@@ -11,18 +11,24 @@
             excludes: []
         },
         timers:{},
-        $busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;'),
+        $busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;&nbsp;&nbsp;Loading'),
         $errorDiv: $('<div>').addClass('error'),
-        tempEventDivs:[], //can be changed according to requirement
-        onEditTracker:{},
+        eventDetails:{},
+        eventOnSave:'',
 
         _create: function () {
             var $element = this.element;
             this.messagePane=$('<div>').attr('id','infoMessage');
             $element.append(this.messagePane);
-            this.createPane = $('<div>').attr('id','createPane').addClass('grid_5');
-            this.listPane=$('<div>').attr('id','ListPane').addClass('grid_3').addClass('listPane');
-            $element.append(this.createPane);
+            $element.append('<div class="grid_3"><a class="green_btn"><span id="createNewLink" class="green_btn">Create a tracker</span></a></div>');
+            // this.createPane = $('<div>').attr('id','createPane').addClass('grid_5');
+            this.createPane=this.loadTrackerCreateUI();
+           
+            this.listPane=$('<div>').attr('id','ListPane').addClass('grid_2').addClass('listPane');
+            this.loadingPane=$('<div>').addClass('grid_3');
+            this.$busyIcon.appendTo( this.loadingPane);
+            $element.append(this.loadingPane);
+            //$element.append(this.createPane);
             $element.append(this.listPane);
             $element.append('<div class="clear"></div>')
             this.loadTrackerCreateUI();
@@ -32,8 +38,32 @@
         
         contextModified:function(){
             var self=this;
-            self.resetTrackers();
-            self.resetEventViewerUI();
+            $.each(self.timers,function(index,val){
+                self.eventDetails[index].inclist = encodeURIComponent(self._context.includes);
+                self.eventDetails[index].exlist = encodeURIComponent(self._context.excludes);
+                //only empty the containers
+                self.resetEventViewerUI(index,true);
+                //delete the from to request the data from the start time of tracker.
+                if(self.eventDetails[index].hasOwnProperty('from')){
+                    delete self.eventDetails[index]['from'];
+                }
+                
+                var details={
+                'id':index,
+                'data':self.eventDetails[index],
+                'success':function(){
+                    self.hideLoading(self.loadingPane);
+                },
+                'error':function(jqXHR,textStatus, errorThrown){
+                    self.hideLoading(self.loadingPane);
+                    //self.resetTimers(index);
+                    self._displayFailure(jqXHR,textStatus, errorThrown);
+                  }
+               };
+                
+                self.fetchEvents(details);
+                self.loopTracker(details);
+            });
         },
         
         setContext: function(includes, excludes) {
@@ -54,89 +84,97 @@
             var tracker=$(event.target).parent(),
             self=this,
             details={
-               'id':tracker.attr('id'),
-               'data':{
-                   resource:tracker.attr('resource'),
-                   startTime:self.getTimeStamp(tracker.attr('starttime')),
-                   report:tracker.attr('type'),
-                   inclist:encodeURIComponent(self._context.includes),
-                   exlist:encodeURIComponent(self._context.excludes)
-                   },
-               'success':function(){
-                   self.hideLoading($(event.target));
+                'id':tracker.attr('id'),
+                'data':{
+                    resource:tracker.attr('resource'),
+                    startTimeString:tracker.attr('starttime'),
+                    startTime:self.getTimeStamp(tracker.attr('starttime')),
+                    report:tracker.attr('type'),
+                    inclist:encodeURIComponent(self._context.includes),
+                    exlist:encodeURIComponent(self._context.excludes),
+                    operation:'edit'
+                },
+                'success':function(){
+                    self.hideLoading(self.loadingPane);
                 },
                 'error':function(jqXHR,textStatus, errorThrown){
-                  $(event.target).text('start');
-                  self.hideLoading($(event.target));
-                  self.resetTimers(tracker.attr('id'));
-                  self._displayFailure(jqXHR,textStatus, errorThrown);
+                    $(event.target).text('start');
+                    self.hideLoading(self.loadingPane);
+                    if(!details.data.hasOwnProperty('from')){
+                        self.resetTimers(tracker.attr('id')); 
+                    }
+                    self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             };
                      
-           // self.resetTrackers(tracker.siblings('li'));
+       
             if(tracker.data('status') ==='stopped' || tracker.data('status')==undefined)
             {
                 $(event.target).text('stop');
-                self.displayLoading($(event.target));
+                self.displayLoading(self.loadingPane);
                 tracker.data('status','started');
+                self.fillformWithData(details.data); 
+                //details.data.action='update';
                 self.fetchEvents(details);
                 self.loopTracker(details);
+                self.refreshTrackerCreateUI();
             }
             else if(tracker.data('status') ==='started')
             {
                 $(event.target).text('start');
                 tracker.data('status','stopped');
                 self.resetTimers(details.id);
-                self.resetEventViewerUI('eventPane_'+tracker.attr('id'));
+                self.resetEventViewerUI(tracker.attr('id'));
             }
         },
         
         startButtonClicked:function(event){
-            var self=this,
+           var self=this,
             btn=$(event.target),
-            form=btn.parent().parent().parent(),
-            id=self.createPane.find('input[name=trackerName]').val(),
-            eventId = id==''? Math.round((new Date()).getTime() / 1000) : id,
+            form=btn.parent().parent().parent().parent(),
+            id=form.find('input[name=trackerName]').val(),
+            $operation=form.find('input[name=oldName]'),
+            $lastName=form.find('input[name=lastName]'),
+            //eventId = id ==''? 'UnsavedTracker-'+Math.round((new Date()).getTime() / 1000) : id,
+            unsavedTrackers=self.countUnSaved()+1,
+            eventId = id ==''? 'UnsavedTracker-'+unsavedTrackers : id,
             details={
                 'id' : eventId,
-               'data':{
-                   resource:form.find('input[name=resource]').val(),
-                   startTime:self.getTimeStamp(form.find('input[name=time]').val()),
-                   report:form.find('select  option:selected').val(),
-                   inclist:encodeURIComponent(self._context.includes),
-                   exlist:encodeURIComponent(self._context.excludes)
-                 },
-                 'success':function(){
-                    self.hideLoading(btn.parent());
-                    self.showSaveTrackerStep(eventId);
-                    self.tempEventDivs[0]=eventId;
-                    //self.tempEventDivs.push(eventId);
-                    //self.updateMessage('<p class="info">Started Tracking</p>')
-                 },
-               'error':function(jqXHR,textStatus, errorThrown){
-                  btn.text('Start'); 
-                  self.hideLoading(btn.parent());
-                  self.resetTimers(eventId);
-                  self._displayFailure(jqXHR,textStatus, errorThrown);
+                'data':{
+                    resource:form.find('input[name=resource]').val(),
+                    startTimeString:form.find('input[name=time]').val(),
+                    startTime:self.getTimeStamp(form.find('input[name=time]').val()),
+                    report:form.find('select  option:selected').val(),
+                    inclist:encodeURIComponent(self._context.includes),
+                    exlist:encodeURIComponent(self._context.excludes)
+                },
+                'success':function(){
+                    self.hideLoading(self.loadingPane);
+                //self.updateMessage('<p class="info">Started Tracking</p>')
+                },
+                'error':function(jqXHR,textStatus, errorThrown){
+                    btn.text('Start'); 
+                    self.hideLoading(self.loadingPane);
+                     if(!details.data.hasOwnProperty('from')){
+                        self.resetTimers(eventId);
+                      }
+                    self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             };
-            //self.resetTrackers();
-            if(btn.text().toLowerCase() == 'start')
-            {
-                btn.text('Stop');
-                self.displayLoading(btn.parent());
-                self.fetchEvents(details);
-                self.loopTracker(details);
+            
+             if($lastName.length > 0 && $lastName.val() !=eventId){
+                    self.handleIdEdit($lastName.val(),eventId);
+             }
+             
+            if($operation.length > 0){
+                details.data['operation']='edit';
+                details.data['oldName']=$operation.val();     
             }
-            else if(btn.text().toLowerCase() == 'stop')
-            {
-                btn.text('Start');
-                self.resetTimers(self.tempEventDivs[0]);
-                $.each(self.tempEventDivs,function(index,value){
-                    self.resetEventViewerUI('eventPane_'+value);
-                });
-                self.tempEventDivs=[];
-            }
+            
+            self.displayLoading(self.loadingPane);
+            self.fetchEvents(details);
+            self.loopTracker(details);
+            self.createPane.dialog('close');
         },
         
         formSubmitted:function(event){
@@ -147,14 +185,11 @@
             self.sendRequest(params);
         },
         
-        resetButtonClicked:function(event){
+        createNewLinkClicked:function(event){
             var self=this;
-             self.refreshTrackerCreateUI();
-             self.resetTimers(self.tempEventDivs[0]);
-             $.each(self.tempEventDivs,function(index,value){
-                    self.resetEventViewerUI('eventPane_'+value);
-                });
-             self.resetTrackerInEdit('keep');
+            self.refreshTrackerCreateUI();
+            self.showStartTrackerStep();
+            self.createPane.dialog('open');
         },
         
         startHandlerClicked:function(event){
@@ -166,46 +201,92 @@
         
         deleteLinkClicked:function(event){
             var self=this,
-                $tracker=$(event.target).parent(),
-                params={
+            $tracker=$(event.target).parent(),
+            params={
                 'type':'GET',
                 'url':self.options.baseUrl+'/eventTracker/delete/'+$tracker.attr('id'),
                 'success':function(data){
-                            if($tracker.data('status') =='started'){
-                               self.resetTimers($tracker.attr('id'));
-                               self.resetEventViewerUI('eventPane_'+$tracker.attr('id'));
-                            }
-                           $tracker.remove();
-                       }
-                 };
-              self.sendRequest(params); 
-         },
+                    if($tracker.data('status') =='started'){
+                        self.resetTimers($tracker.attr('id'));
+                        self.resetEventViewerUI($tracker.attr('id'));
+                    }
+                    $tracker.remove();
+                }
+            };
+            self.sendRequest(params); 
+        },
          
-         editLinkClicked:function(event){
-             var self=this,
-                 $tracker=$(event.target).parent(),
-                 data={
-                      'name':$tracker.attr('id'),
-                      'resource':$tracker.attr('resource'),
-                      'startTime':$tracker.attr('starttime'),
-                      'type':$tracker.attr('type')
-                      };
-                self.fillformWithData(data); 
-                self.onEditTracker=$tracker;
-         },
+        editLinkClicked:function(event){
+            var self=this,
+            $tracker=$(event.target).parent(),
+            data={
+                'name':$tracker.attr('id'),
+                'resource':$tracker.attr('resource'),
+                'startTimeString':$tracker.attr('starttime'),
+                'report':$tracker.attr('type'),
+                'operation':'edit'
+            };
+            self.refreshTrackerCreateUI();
+            self.fillformWithData(data); 
+            self.showStartTrackerStep();
+            self.createPane.dialog('open');
+               
+        },
          
-         fillformWithData:function(data){
-             var self=this,
-                 form=self.createPane.find('form');
+        closeLinkClicked:function(event){
+            var self=this;
+            var eventID=$(event.target).parent().attr('eventid');
+            self.resetTimers(eventID);
+            self.resetEventViewerUI(eventID);  
+            self.resetTrackers(eventID);
+        },
+         
+        saveLinkClicked:function(event){
+            var self=this;
+            var eventID=$(event.target).parent().attr('eventid');
+            var data=self.eventDetails[eventID];
+            data.name=eventID;
+            self.eventOnSave=eventID;
+            //self.refreshTrackerCreateUI();
+            console.log(data);
+            self.fillformWithData(data);
+            self.showSaveTrackerStep(eventID);
+            self.createPane.dialog('open');
+        },
+         
+        fillformWithData:function(data){
+            var self=this,
+            form=self.createPane.find('form');
+            var $lastName=form.find('input[name=lastName]');
+    
             form.find('input[name=resource]').val(data.resource);
-            form.find('input[name=time]').val(data.startTime);
+            form.find('input[name=time]').val(data.startTimeString);
             form.find('input[name=trackerName]').val(data.name);
-            form.find('select').val(data.type);
-            form.find('input[type=submit]').val('Update');
-            form.attr('action',self.options.baseUrl+'/eventTracker/update');
-            $('<input type="hidden">').attr('name','oldName').val(data.name).appendTo(form);
-            return form;
-         },
+            form.find('select').val(data.report);
+            if(data.hasOwnProperty('operation') && data.operation =='edit'){
+                var $oldName=form.find('input[name=oldName]');
+                
+                var value=data.hasOwnProperty('oldName')?data.oldName:data.name;
+                   
+                if($oldName.length>0)
+                {
+                    $oldName.val(value);
+                }
+                else{
+                    $('<input type="hidden">').attr('name','oldName').val(value).appendTo(form); 
+                }
+                form.find('input[type=submit]').val('Update');
+                form.attr('action',self.options.baseUrl+'/eventTracker/update');   
+            }
+            
+             if($lastName.length>0)
+                {
+                   $lastName.val(data.name);
+                }
+                else{
+                    $('<input type="hidden">').attr('name','lastName').val(data.name).appendTo(form); 
+                }
+        },
          
         fetchEvents:function(details){
             var self=this,
@@ -213,64 +294,90 @@
                 'data':details.data,
                 'url':self.options.baseUrl+'/'+self.options.trackerUrl,
                 'success':function(data){
-                        if($.isFunction(details.success)){
-                            $.call(details.success());
-                          }
-                     self.refreshEventViewerUI(details.id,data);
-                     self.updateMessage('');
-                 }
+                    if($.isFunction(details.success)){
+                        $.call(details.success());
+                    }
+                    self.refreshEventViewerUI(details.id,data);
+                    self.updateMessage('');
+                }
             };
-             if($.isFunction(details.error)){
-                 params['error']= details.error;
-             }
-            self.sendRequest(params);             
+            if($.isFunction(details.error)){
+                params['error']= details.error;
+            }
+            self.sendRequest(params);
         },
         
         fetchEventsFromNow:function(details){
             var self=this,
             d = new Date(),
             interval=self.options.interval;
-            details.data.startTime=parseInt((d.getTime() - interval)/1000);
+            details.data.from=parseInt((d.getTime() - interval)/1000);
             self.fetchEvents(details);
         },
         
         loopTracker:function(details){
             var self=this;
             var timer=setInterval(function(){
-                $('#eventPane_'+details.id).find('div.status').html(self.$busyIcon.show());
+                $('#eventPane_'+details.id.hashCode()).find('div.eventLoader').show();
                 self.fetchEventsFromNow(details)
             },self.options.interval);
-            self.timers[details.id]=timer;
+            self.setEventTimers(details.id,timer);
+            self.trackEventDetails(details.id,details.data);
+        },
+        
+        setEventTimers:function(eventID,timer){
+            var self=this;
+            if( self.timers.hasOwnProperty(eventID)){
+                clearInterval(self.timers[eventID]);
+            }
+            self.timers[eventID]=timer;
         },
         
         resetTimers:function(key){
             var self=this;
             if(key==undefined){
-              $.each(self.timers,function(index,value){
-                clearInterval(value);
-                delete self.timers[index];
-              });  
+                $.each(self.timers,function(index,value){
+                    clearInterval(value);
+                    delete self.timers[index];
+                    delete self.eventDetails[index];
+                });  
             }
             else{
-               console.log(self.timers);
-               console.log(self.timers[key]);
-               clearInterval(self.timers[key]);
-               delete self.timers[key];
-               console.log(self.timers);
+                
+                clearInterval(self.timers[key]);
+                delete self.timers[key];
+                delete self.eventDetails[key];
+               
             } 
         },
         
-        resetTrackers:function(trackers){
+        trackEventDetails:function(id,details){
             var self=this;
-            self.resetTimers();
-            if(trackers==undefined){
+            self.eventDetails[id]=details;  
+        },
+        
+        countUnSaved:function(){
+            var self=this,
+                count=0;
+            $.each(self.eventDetails,function(key,value){
+                if(!value.hasOwnProperty('operation')){
+                    count++;
+                }
+            });
+            return count;
+        },
+        
+        resetTrackers:function(id){
+            var self=this;
+            if(id==undefined){
                 self.listPane.find('li').each(function(){
                     $(this).data('status','stopped').find('span.trackerStart').text('start');
                 });
             }else{
-                trackers.each(function(){
-                    $(this).data('status','stopped').find('span.trackerStart').text('start');
-                    $('#testBtn').find('span').text('Start'); //might need a clean up for input fields as well
+                self.listPane.find('li').each(function(){
+                    if($(this).attr('id')==id){
+                        $(this).data('status','stopped').find('span.trackerStart').text('start');
+                    }
                 });
             }
         },
@@ -278,12 +385,34 @@
         loadTrackerCreateUI: function() {
             var self = this;
             var viewUrl = self.options.baseUrl+'/eventTracker/createView';
-            self.createPane.load(viewUrl);
+             
+            var existing = $('#createPane');
+            if (existing.size() > 0) {
+                return existing.first();
+            }
+            else {
+                //single shared element for modal dialogs
+                var requestDialog = $('<div id="createPane" style="display:none" title="Define tracker"></div>').load(viewUrl).appendTo('body').
+                dialog({
+                    autoOpen: false,
+                    draggable: true,
+                    modal: true,
+                    resizable: false,
+                    width: 415,
+                    beforeClose: function(event, ui) {
+                        //self.destroy();
+                    }
+                });
+                self.originalTitle = requestDialog.dialog('option', 'title');
+                return requestDialog;
+            }
         },
+        
+        
         
         refreshTrackerCreateUI:function(){
             var self = this,
-                form=self.createPane.find('form');
+            form=self.createPane.find('form');
             form.find('input[type=submit]').val('Save');
             form.attr('action',self.options.baseUrl+'/eventTracker/create');
             form.find('input[type=hidden]').remove();
@@ -294,131 +423,166 @@
             self.showStartTrackerStep(); 
         },
         
-        refreshTrackersListUI:function($tracker){
+        refreshTrackersListUI:function($tracker,id){
             var self = this,
             params={
                 'url':self.options.baseUrl+'/eventTracker/listTrackers',
                 'success':function(data){
-                   if(data.length>0){
-                   self.listPane.append('<p>Saved Trackers</p>')
-                   var $list=$('<ul>');
-                       $.each(data,function(index,value){
-                           $list.prepend(self.createTracker(value));
-                       });
-                      self.listPane.append($list);
-                   }
+                    if(data.length>0){
+                        self.listPane.append('<span class="header"><em>Saved Trackers</em></span>')
+                        var $list=$('<ul>');
+                        $.each(data,function(index,value){
+                            $list.prepend(self.createTracker(value));
+                        });
+                        self.listPane.find('span.header').append($list);
+                    }
                 }
-           };
+            };
             
-           if($tracker == undefined){
-             self.sendRequest(params);  
-           }else{
-              $list=self.listPane.find('ul')
-              if($list.length==0){
-                self.listPane.append('<p>Saved Trackers</p><ul></ul>');
-              }
-              self.listPane.find('ul').append($tracker);
-           }    
-       },
-       
-       handleStartedTimerToSavedTracker:function($tracker){
-           var self=this,
-               tempEventId=self.tempEventDivs[0],
-               eventDiv=self.element.find('#eventPane_'+tempEventId),
-               newID=$tracker.attr('id'),
-               details={
-               'id':$tracker.attr('id'),
-               'data':{
-                   resource:$tracker.attr('resource'),
-                   report:$tracker.attr('type'),
-                   inclist:encodeURIComponent(self._context.includes),
-                   exlist:encodeURIComponent(self._context.excludes)
-                   },
-                'error':function(jqXHR,textStatus, errorThrown){
-                  $tracker.find('span.trackerStart').text('start');
-                  self.resetTimers($tracker.attr('id'));
-                  self._displayFailure(jqXHR,textStatus, errorThrown);
+            if($tracker == undefined && id==undefined){
+                self.sendRequest(params);  
+            }
+            else if(id==undefined){
+                $list=self.listPane.find('ul')
+                if($list.length==0){
+                    self.listPane.append('<span class="header"><em>Saved Trackers</em><ul></ul></span>');
                 }
-               };
+                self.listPane.find('ul').append($tracker);    
+            }
+            else{
+                self.listPane.find('li').each(function(){
+                    if($(this).attr('id')==id){
+                        $(this).remove();
+                    }
+                });
+                self.listPane.find('ul').append($tracker);
+            }    
+        },
+       
+        handleStartedTimerToSavedTracker:function($tracker){
+            var self=this,
+            tempEventId=self.eventOnSave,
+            eventDiv=self.element.find('#eventPane_'+tempEventId.hashCode()),
+            newID=$tracker.attr('id'),
+            details={
+                'id':$tracker.attr('id'),
+                'data':{
+                    startTime:self.getTimeStamp($tracker.attr('startTime')),
+                    startTimeString:$tracker.attr('startTime'),
+                    resource:$tracker.attr('resource'),
+                    report:$tracker.attr('type'),
+                    inclist:encodeURIComponent(self._context.includes),
+                    exlist:encodeURIComponent(self._context.excludes),
+                    'operation':'edit'
+                },
+                'error':function(jqXHR,textStatus, errorThrown){
+                    $tracker.find('span.trackerStart').text('start');
+                    self.resetTimers($tracker.attr('id'));
+                    self._displayFailure(jqXHR,textStatus, errorThrown);
+                }
+            };
          
-          eventDiv.find('legend').text(newID);
-          eventDiv.attr('id','eventPane_'+newID);
-          self.resetTimers(tempEventId);
-          self.loopTracker(details);
-          $tracker.find('span.trackerStart').text('stop');
-          $tracker.data('status','started');
+            eventDiv.find('legend').text(newID);
+            eventDiv.attr('id','eventPane_'+newID.hashCode());
+            eventDiv.find('div.controls').attr('eventId',newID);
+            self.resetTimers(tempEventId);
+            self.loopTracker(details);
+            $tracker.find('span.trackerStart').text('stop');
+            $tracker.data('status','started');
           
-       },
+        },
+        
+        handleIdEdit:function(oldID,newID){
+           var self=this;
+           var eventDiv=self.element.find('#eventPane_'+oldID.hashCode());
+           eventDiv.find('legend').text(newID);
+           eventDiv.attr('id','eventPane_'+newID.hashCode());
+           eventDiv.find('div.controls').attr('eventId',newID);
+           self.resetTimers(oldID);  
+        },
         
         createTracker:function(value){
-             var $tracker=$('<li>').attr(value);
-             $('<span>').text(value.id).appendTo($tracker);
-             $('<span>').text('start').addClass('trackerStart').appendTo($tracker);
-             $('<span>').addClass('loadinggif').css('display','none').html('&nbsp;').appendTo($tracker);
-             $('<span>').text('delete').addClass('trackerDelete').appendTo($tracker);
-             $('<span>').text('edit').addClass('trackerEdit').appendTo($tracker);
-             return $tracker;
+            var $tracker=$('<li>').attr(value);
+            $('<span>').text(value.id).appendTo($tracker);
+            $('<span>').text('start').addClass('trackerStart').appendTo($tracker);
+            $('<span>').text('delete').addClass('trackerDelete').appendTo($tracker);
+            $('<span>').text('edit').addClass('trackerEdit').appendTo($tracker);
+            return $tracker;
         },
         
         showSaveTrackerStep:function(id){
             var self=this;
-             self.createPane.find("#step1").hide();
-             if(id !=undefined){
-               self.createPane.find('input[name=trackerName]').val(id);   
-             }
-             self.createPane.find("#step2").show();
+            if(id !=undefined){
+                self.createPane.find('input[name=trackerName]').val(id);   
+            }
+       
+            self.createPane.find('input[name=trackerName]').parent().show();
+            self.createPane.find('#submitForm').show();
         },
         
         showStartTrackerStep:function(){
-             var self=this;
-             self.createPane.find("#step1").show();
-             self.createPane.find('#step2').hide();
+            var self=this;
+            self.createPane.find('input[name=trackerName]').parent().hide();
+            self.createPane.find('#submitForm').hide();
         },
         
-       refreshEventViewerUI:function(id,data){
-           var self=this;
-           var eventViewer = self.element.find('#eventPane_'+id);
-           if(eventViewer.length == 0 && self.timers.hasOwnProperty(id)){
-             var eventPane=$('<div>').attr('id','eventPane_'+id).addClass('eventPane'); 
-             var container=$('<fieldset><legend>'+id+'</legend></fieldset>').appendTo(eventPane)
-             var eventStatus=$('<div>').addClass('status');
-             var eventList=$('<div>').addClass('events');
-             container.append(eventStatus);
-             container.append(eventList);
-             self.element.append(eventPane);  
-             eventViewer=self.element.find('#eventPane_'+id);
-             if( self.element.find('div.eventPane').length > 1){
-                 eventViewer.addClass('largeMargin')
-             }
-          }
-           
-           var dt = new Date();
-           var hostAndEventCount = 'No. of hosts seen: ' + data['meta']['hosts'] + ', No. of events: ' + data['meta']['events']+ ', Updated at: ' + dt.format("H:i:s d/m/y") ;
-           eventViewer.find('div.status').html('<div class="eventType">Type: '+data['meta']['type']+'</div><div class="hostandEvents">'+hostAndEventCount+'</div><div class="clear"></div>');
+        refreshEventViewerUI:function(id,data){
+            var self=this;
+            var eventViewer = self.element.find('#eventPane_'+id.hashCode());
+            if(eventViewer.length == 0 && self.timers.hasOwnProperty(id)){
+                var eventPane=$('<div>').attr('id','eventPane_'+id.hashCode()).addClass('eventPane');
+                var controls=$('<div>').attr('eventId',id).addClass('controls').html('<span class="saveTracker editTracker btns" title="edit"></span><span class="closeTracker btns" title="close"></span>');
+                controls.appendTo(eventPane);
+                var container=$('<fieldset><legend>'+id+'</legend></fieldset>').appendTo(eventPane);
+                var eventStatus=$('<div>').addClass('status');
+                var eventList=$('<div>').addClass('events');
+                var eventLoader=$('<div>').addClass('eventLoader').html('Loading...');
+                container.append(eventStatus);
+                container.append(eventList);
+                self.element.append(eventPane);  
+                eventViewer=self.element.find('#eventPane_'+id.hashCode());
+                if( self.element.find('div.eventPane').length > 1){
+                    eventViewer.addClass('largeMargin')
+                }
+                eventViewer.find('div.status').after(eventLoader);
+            }
+            eventViewer.find('div.eventLoader').hide();
             
-           $.each(data['data'],function(timestamp,collections){
-               $.each(collections,function(index,eventLog){
-                   var eventId='event_'+eventLog[4];
-                   var event=$('<div>').attr('id',eventId).addClass('event');
-                   var dte = new Date(eventLog[3] * 1000);
-                   event.append('<b>Date:</b> ' + dte.format("H:i:s d/m/y") + ' <b>Host:</b> ' + eventLog[0] + ' <b><br />Handle:</b> ' + eventLog[1]
-			     + '<br /><b>Message:</b> ' + eventLog[2] );
+            var dt = new Date();
+            var hostAndEventCount = 'No. of hosts seen: ' + data['meta']['hosts'] + ', No. of events: ' + data['meta']['events']+ ', Updated at: ' + dt.format("H:i:s d/m/y") ;
+            eventViewer.find('div.status').html('<div class="eventType">Type: '+data['meta']['type']+'</div><div class="hostandEvents">'+hostAndEventCount+'</div><div class="clear"></div>');
+            
+            $.each(data['data'],function(timestamp,collections){
+                $.each(collections,function(index,eventLog){
+                    var eventId='event_'+eventLog[4];
+                    var event=$('<div>').attr('id',eventId).addClass('event');
+                    var dte = new Date(eventLog[3] * 1000);
+                    event.append('<b>Date:</b> ' + dte.format("H:i:s d/m/y") + ' <b>Host:</b> ' + eventLog[0] + ' <b><br />Handle:</b> ' + eventLog[1]
+                        + '<br /><b>Message:</b> ' + eventLog[2] );
                          
-                   if(eventViewer.find('#'+eventId).length == 0){
-                       eventViewer.find('div.events').prepend(event);
-                   }
-               })
-           });
+                    if(eventViewer.find('#'+eventId).length == 0){
+                        eventViewer.find('div.events').prepend(event);
+                    }
+                })
+            });
           
         },
         
-        resetEventViewerUI:function(id){
+        resetEventViewerUI:function(id,contextChanged){
+            var self=this;
             if(id==undefined){
-               $('div.eventPane').each(function(index){
-               $(this).remove();
+                $('div.eventPane').each(function(index){
+                    $(this).remove();
                 });
             }else{
-              $('#'+id).remove();  
+                if(contextChanged!=undefined && contextChanged===true){
+                    var $eventPane=$('#eventPane_'+id.hashCode());
+                   $eventPane.find('div.eventLoader').show();
+                   $eventPane.find('div.status').html('');
+                   $eventPane.find('div.events').html('');
+                }else{
+                    $('#eventPane_'+id.hashCode()).remove();    
+                }
             }
         },
         
@@ -430,19 +594,12 @@
             self.createPane.delegate('#startViewhandle','click',$.proxy(this.startHandlerClicked,this));
             self.listPane.delegate('span.trackerDelete','click',$.proxy(this.deleteLinkClicked,this));
             self.listPane.delegate('span.trackerEdit','click',$.proxy(this.editLinkClicked,this));
-            self.createPane.delegate('input[type=reset]','click',$.proxy(this.resetButtonClicked,this));
+            this.element.delegate('#createNewLink','click',$.proxy(this.createNewLinkClicked,this));
+            this.element.delegate('span.saveTracker','click',$.proxy(this.saveLinkClicked,this));
+            this.element.delegate('span.closeTracker','click',$.proxy(this.closeLinkClicked,this));
         },
         
-        resetTrackerInEdit:function(op){
-            var self=this;
-             if(self.onEditTracker.jquery && op =='remove'){
-                    self.onEditTracker.remove();
-                    self.onEditTracker={};
-                }else{
-                   self.onEditTracker={} 
-                }
-        },
-        
+      
         getFormParams:function(form){
             var self =this,
             params = {
@@ -450,14 +607,22 @@
                 'url':form.attr('action'),
                 'success': function (data) {
                     //self.updateMessage(data);
+                    var $oldTracker=form.find('input[name=oldName]');
                     var $tracker=self.createTracker(data);
-                    self.refreshTrackersListUI($tracker);
+                    
+                    if($oldTracker.length>0){
+                        self.refreshTrackersListUI($tracker,$oldTracker.val()); 
+                    }else{
+                        self.refreshTrackersListUI($tracker); 
+                    }
+                    
                     self.handleStartedTimerToSavedTracker($tracker);
-                    self.refreshTrackerCreateUI();
-                    self.resetTrackerInEdit('remove');  
+                    self.createPane.dialog('close');
+                    
                 },
                 'error':function(request, status, error){
                     self.updateMessage(request.responseText);
+                    self.createPane.dialog('close');
                 }
             };
             return params;
@@ -511,20 +676,18 @@
         
         displayLoading:function(element){
             var self=this;
-            element.hide();
-            element.siblings('.loadinggif').show();
+            element.find('.loadinggif').show();
         },
         
         hideLoading:function(element){
-           element.show(); 
-           element.siblings('.loadinggif').hide();
+            element.find('.loadinggif').hide();
         },
         
         _displayFailure: function(jqXHR,textStatus, errorThrown) {
             var serverMsg,
             self = this;
             if (jqXHR.status == 0) {
-                serverMsg = 'You are offline!!\n Please Check Your Network.';
+                serverMsg = 'You are offline!!\n Please Check Your Network';
             }else if (jqXHR.status == 404) {
                 serverMsg = 'Requested URL not found.';
             }else if (jqXHR.status == 500) {
@@ -540,6 +703,23 @@
             }
             self.updateMessage("<div class='ui-state-error' style='padding:1em'><p style='margin-bottom:0px'><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>" + ' ' + serverMsg + '</p></div>');
         },
+        
+        setProperty:function(property,value){
+            var self=this;
+            $.each(self,function(key,val){
+                if(!$.isFunction(key) && property === key){
+                    property=val;
+                }
+            });
+        },
+        
+        getProperty:function(property){
+            var self=this;
+            if(!$.isFunction(property)){
+                return self[property]; 
+            } 
+            return undefined;
+        },
       
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
@@ -549,6 +729,19 @@
     $.extend($.ui.eventTrackerUI, {
         instances: []
     });
+    
+    String.prototype.hashCode = function(){
+        var hash = 0;
+        if (this.length == 0) return hash;
+        for (var i = 0; i < this.length; i++) {
+            var charc = this.charCodeAt(i);
+            hash = ((hash<<5)-hash)+charc;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+    }
+
+
 })(jQuery);
         
 
