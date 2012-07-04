@@ -30,8 +30,7 @@
 #include <assert.h>
 
 # define MONGO_ROLES_COLLECTION MONGO_BASE ".roles"
-# define MONGO_USERS_INTERNAL_COLLECTION MONGO_BASE ".users"
-# define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
+# define MONGO_USERS_COLLECTION MONGO_BASE ".users"
 # define MONGO_SETTINGS_COLLECTION MONGO_BASE ".settings"
 
 # define dbkey_user_name "username"
@@ -58,7 +57,8 @@ static const char *settingLabels[SETTING_MAX] = {
     [SETTING_LDAP_BASE_DN] = "ldapBaseDN",
     [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
     [SETTING_LDAP_HOST] = "ldapHost",
-    [SETTING_AD_DOMAIN] = "activeDirectoryDomain"
+    [SETTING_AD_DOMAIN] = "activeDirectoryDomain",
+    [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon"
 };
 
 typedef enum
@@ -76,7 +76,6 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
-static const char *GetUsersCollection(EnterpriseDB *conn);
 static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn);
 static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
@@ -284,7 +283,7 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
                            dbkey_user_salt);
 
     bson record;
-    bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record) == MONGO_OK;
+    bson_bool_t found = mongo_find_one(conn, MONGO_USERS_COLLECTION, &query, &field, &record) == MONGO_OK;
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -623,7 +622,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
     bson_append_int(&doc, cfr_time, time(NULL));
     bson_finish(&doc);
 
-    mongo_insert(&conn, MONGO_USERS_INTERNAL_COLLECTION, &doc, NULL);
+    mongo_insert(&conn, MONGO_USERS_COLLECTION, &doc, NULL);
 
     bson_destroy(&doc);
 
@@ -666,7 +665,7 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
     bson_append_string(&query, dbkey_user_name, username);
     bson_finish(&query);
 
-    mongo_remove(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, NULL);
+    mongo_remove(&conn, MONGO_USERS_COLLECTION, &query, NULL);
 
     bson_destroy(&query);
 
@@ -698,7 +697,7 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
     bson field;
     BsonSelectReportFields(&field, 1, dbkey_user_name);
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -918,8 +917,6 @@ static bool UserExists(const char *username)
 
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
 {
-    const char *usersCollection = GetUsersCollection(conn);
-
     bson query;
 
     bson_empty(&query);
@@ -935,24 +932,8 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
     }
     bson_finish(&pull_op);
 
-    mongo_update(conn, usersCollection, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    mongo_update(conn, MONGO_USERS_COLLECTION, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&pull_op);
-}
-
-/*****************************************************************************/
-
-static const char *GetUsersCollection(EnterpriseDB *conn)
-{
-    switch (GetAuthenticationMode(conn))
-    {
-    case AUTHENTICATION_MODE_LDAP:
-    case AUTHENTICATION_MODE_AD:
-        return MONGO_USERS_LDAP_COLLECTION;
-
-    default:
-    case AUTHENTICATION_MODE_INTERNAL:
-        return MONGO_USERS_INTERNAL_COLLECTION;
-    }
 }
 
 /*****************************************************************************/
@@ -1009,9 +990,7 @@ static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName)
     bson_append_int(&field, dbkey_user_roles, 1);
     bson_finish(&field);
 
-    const char *usersCollection = GetUsersCollection(conn);
-
-    mongo_cursor *cursor = mongo_find(conn, usersCollection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);

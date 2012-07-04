@@ -85,24 +85,26 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
 
     threshold_str[0] = '\0';
 
-    if (!CFDB_GetValue(CFMP_BLUEHOST_THRESHOLD, threshold_str, CF_SMALLBUF, MONGO_MP_SETTINGS_COLLECTION))
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
     {
+        return false;
+    }
+
+    if (!CFDB_GetSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str, CF_SMALLBUF))
+    {
+        CFDB_Close(&conn);
         return false;
     }
 
     if (strlen(threshold_str) == 0)     // no key in db then insert hardcoded default
     {
         snprintf(threshold_str, CF_SMALLBUF, "%lu", retval);
-        EnterpriseDB conn;
-        if (CFDB_Open(&conn))
-        {
-            if (!CFDB_PutValue(&conn, CFMP_BLUEHOST_THRESHOLD, threshold_str, MONGO_MP_SETTINGS_COLLECTION))
-            {
-                CFDB_Close(&conn);
-                return false;
-            }
 
+        if (!CFDB_UpdateSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str))
+        {
             CFDB_Close(&conn);
+            return false;
         }
     }
     else
@@ -111,6 +113,8 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
     }
 
     *threshold = retval;
+
+    CFDB_Close(&conn);
     return true;
 }
 
