@@ -32,7 +32,7 @@ bundle common cfengine_hub_vars
 
   SuSE::
 
-   "docroot" string => "/var/www/htocs",
+   "docroot" string => "/var/www/htdocs",
             comment => "Root directory of Nova Web interface",
              handle => "hub_vars_docroot_suse";
 
