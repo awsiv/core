@@ -108,12 +108,24 @@ class Tracker_model extends CI_Model
      * @returns the result hash containing no of rows modified and the status of operation
      */
     function update_tracker($filter,$data){
-        $result=$this->mongo_db->where($filter)->update($this->collectionName,$data);
-        if($result['updatedExisting']){
-            $params=array_merge($filter,$data);
-            $obj = new CF_tracker($params);
-            return $obj;
+        $result=$this->get_all_tracker($filter);
+        $result1=$this->get_all_tracker(array('userName'=>$data['userName'],'trackerName'=>$data['trackerName']));
+        if(count($result) == 1)
+        {
+           if(count($result1)<1 ||(count($result1)==1 && $result[0]->getId()==$result1[0]->getId())){
+           $result=$this->mongo_db->where($filter)->update($this->collectionName,$data);
+           if($result['updatedExisting']){
+               $params=array_merge($filter,$data);
+               $obj = new CF_tracker($params);
+               return $obj;
+              }
+               $this->setError('Error while performing update');
+               return false;
+           }
+           $this->setError('Another tracker with same name');
+           return false;
         }
+        $this->setError('object Not found');
         return false;
     }
     
