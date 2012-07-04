@@ -74,8 +74,6 @@ void EnterpriseModuleTrick()
         //   Nova2PHP_promises(NULL, NULL, NULL, 0);
         //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
-        CFDB_PutValue("one_two", "three", MONGO_SCRATCH);
-        CFDB_GetValue("newvar", buffer, 120, MONGO_SCRATCH);
         // Nova2PHP_choose_hosts("123",2,buffer,1000);
         Nova2PHP_get_host_colour(NULL, buffer, 3);
         Nova2PHP_meter(NULL, NULL, 0);

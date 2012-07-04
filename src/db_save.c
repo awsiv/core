@@ -14,17 +14,9 @@
 /* Cache / scratch space                                                     */
 /*****************************************************************************/
 
-// WTF: manages its own connection
-int CFDB_PutValue(char *lval, char *rval, char *db_name)
+int CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name)
 {
-    mongo dbconn;
-
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
-    {
-        return false;
-    }
-
-    if (!CFDB_Open(&dbconn))
     {
         return false;
     }
@@ -39,10 +31,9 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
     bson_finish(&set_op);
 
     bson empty;
-    mongo_update(&dbconn, db_name, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+    mongo_update(conn, db_name, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_destroy(&set_op);    
-    CFDB_Close(&dbconn);
+    bson_destroy(&set_op);
 
     return true;
 }

@@ -248,11 +248,17 @@ int EnterpriseExpiry(void)
 
         snprintf(editionStr, sizeof(editionStr), "%c", edition);
 
-        CFDB_PutValue("license_owner", company, MONGO_SCRATCH);
-        CFDB_PutValue("licenses_granted", snumber, MONGO_SCRATCH);
-        CFDB_PutValue("license_expires", EXPIRY, MONGO_SCRATCH);
-        CFDB_PutValue("license_installtime", installed_time, MONGO_SCRATCH);
-        CFDB_PutValue("license_edition", editionStr, MONGO_SCRATCH);
+        EnterpriseDB conn;
+        if (CFDB_Open(&conn))
+        {
+            CFDB_PutValue(&conn, "license_owner", company, MONGO_SCRATCH);
+            CFDB_PutValue(&conn, "licenses_granted", snumber, MONGO_SCRATCH);
+            CFDB_PutValue(&conn, "license_expires", EXPIRY, MONGO_SCRATCH);
+            CFDB_PutValue(&conn, "license_installtime", installed_time, MONGO_SCRATCH);
+            CFDB_PutValue(&conn, "license_edition", editionStr, MONGO_SCRATCH);
+
+            CFDB_Close(&conn);
+        }
     }
 #endif
 
@@ -416,7 +422,12 @@ void CheckLicenses(void)
 #ifdef HAVE_LIBMONGOC
         if (THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
         {
-            CFDB_PutValue("licenses_promised", retval.item, MONGO_SCRATCH);
+            EnterpriseDB conn;
+            if (CFDB_Open(&conn))
+            {
+                CFDB_PutValue(&conn, "licenses_promised", retval.item, MONGO_SCRATCH);
+                CFDB_Close(&conn);
+            }
         }
 #endif
     }
@@ -632,7 +643,12 @@ static void Nova_LogLicenseStatus(void)
 #ifdef HAVE_LIBMONGOC
     if (CFDB_QueryIsMaster())
     {
-        CFDB_PutValue("license_report", buffer, MONGO_SCRATCH);
+        EnterpriseDB conn;
+        if (CFDB_Open(&conn))
+        {
+            CFDB_PutValue(&conn, "license_report", buffer, MONGO_SCRATCH);
+            CFDB_Close(&conn);
+        }
     }
 #endif
     YieldCurrentLock(thislock);

@@ -92,9 +92,16 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
     if (strlen(threshold_str) == 0)     // no key in db then insert hardcoded default
     {
         snprintf(threshold_str, CF_SMALLBUF, "%lu", retval);
-        if (!CFDB_PutValue(CFMP_BLUEHOST_THRESHOLD, threshold_str, MONGO_MP_SETTINGS_COLLECTION))
+        EnterpriseDB conn;
+        if (CFDB_Open(&conn))
         {
-            return false;
+            if (!CFDB_PutValue(&conn, CFMP_BLUEHOST_THRESHOLD, threshold_str, MONGO_MP_SETTINGS_COLLECTION))
+            {
+                CFDB_Close(&conn);
+                return false;
+            }
+
+            CFDB_Close(&conn);
         }
     }
     else
