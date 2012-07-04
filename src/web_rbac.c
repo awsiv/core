@@ -22,6 +22,7 @@
 #include "web_rbac.h"
 
 #include "db_query.h"
+#include "db_save.h"
 #include "files_names.h"
 #include "rlist.h"
 #include "item_lib.h"
@@ -29,18 +30,8 @@
 #include <assert.h>
 
 # define MONGO_ROLES_COLLECTION MONGO_BASE ".roles"
-# define MONGO_USERS_INTERNAL_COLLECTION MONGO_BASE ".users"
-# define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
-# define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
-
-# define dbkey_mpsettings_rbac "rbac"
-# define dbkey_mpsettings_auth_mode "mode"
-# define dbkey_mpsettings_encryption "encryption"
-# define dbkey_mpsettings_login_attribute "login_attribute"
-# define dbkey_mpsettings_base_dn "base_dn"
-# define dbkey_mpsettings_users_directory "users_directory"
-# define dbkey_mpsettings_host "host"
-# define dbkey_mpsettings_ad_domain "ad_domain"
+# define MONGO_USERS_COLLECTION MONGO_BASE ".users"
+# define MONGO_SETTINGS_COLLECTION MONGO_BASE ".settings"
 
 # define dbkey_user_name "username"
 # define dbkey_user_password "password"
@@ -57,6 +48,19 @@
 
 # define SALT_SIZE 10
 
+static const char *settingLabels[SETTING_MAX] = {
+    [SETTING_UNKNOWN] = "unknown",
+    [SETTING_RBAC] = "rbac",
+    [SETTING_AUTH_MODE] = "authMode",
+    [SETTING_LDAP_ENCRYPTION] = "ldapEncryption",
+    [SETTING_LDAP_LOGIN_ATTRIBUTE] = "ldapLoginAttribute",
+    [SETTING_LDAP_BASE_DN] = "ldapBaseDN",
+    [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
+    [SETTING_LDAP_HOST] = "ldapHost",
+    [SETTING_AD_DOMAIN] = "activeDirectoryDomain",
+    [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon"
+};
+
 typedef enum
 {
     AUTHENTICATION_MODE_INTERNAL,
@@ -72,7 +76,6 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
-static const char *GetUsersCollection(EnterpriseDB *conn);
 static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn);
 static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
@@ -140,19 +143,16 @@ static cfapi_errid LDAPAuthenticatePlain(EnterpriseDB *conn,
                                          size_t password_len)
 {
     char login_attribute[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_login_attribute, login_attribute, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        strcpy(login_attribute, "uid");
-    }
+    CFDB_HandleGetValue(settingLabels[SETTING_LDAP_LOGIN_ATTRIBUTE], login_attribute, sizeof(login_attribute), "uid", conn, MONGO_SETTINGS_COLLECTION);
 
     char base_dn[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_base_dn, base_dn, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(settingLabels[SETTING_LDAP_BASE_DN], base_dn, sizeof(login_attribute), NULL, conn, MONGO_SETTINGS_COLLECTION))
     {
         return ERRID_RBAC_ACCESS_DENIED;
     }
 
     char user_directories[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_users_directory, user_directories, sizeof(user_directories), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(settingLabels[SETTING_LDAP_USERS_DIRECTORY], user_directories, sizeof(user_directories), NULL, conn, MONGO_SETTINGS_COLLECTION))
     {
         return ERRID_DATA_UNAVAILABLE;
     }
@@ -192,7 +192,7 @@ static cfapi_errid LDAPAuthenticateAD(EnterpriseDB *conn,
                                       size_t password_len)
 {
     char ad_domain[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_ad_domain, ad_domain, sizeof(ad_domain), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(settingLabels[SETTING_AD_DOMAIN], ad_domain, sizeof(ad_domain), NULL, conn, MONGO_SETTINGS_COLLECTION))
     {
         return ERRID_RBAC_ACCESS_DENIED;
     }
@@ -226,13 +226,10 @@ static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, co
                                     bool active_directory)
 {
     char encryption[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        strcpy(encryption, "plain");
-    }
+    CFDB_HandleGetValue(settingLabels[SETTING_LDAP_ENCRYPTION], encryption, sizeof(encryption), "plain", conn, MONGO_SETTINGS_COLLECTION);
 
     char ldap_server[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(settingLabels[SETTING_LDAP_HOST], ldap_server, sizeof(ldap_server), NULL, conn, MONGO_SETTINGS_COLLECTION))
     {
         return ERRID_HOST_NOT_FOUND;
     }
@@ -286,7 +283,7 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
                            dbkey_user_salt);
 
     bson record;
-    bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record) == MONGO_OK;
+    bson_bool_t found = mongo_find_one(conn, MONGO_USERS_COLLECTION, &query, &field, &record) == MONGO_OK;
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -625,7 +622,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
     bson_append_int(&doc, cfr_time, time(NULL));
     bson_finish(&doc);
 
-    mongo_insert(&conn, MONGO_USERS_INTERNAL_COLLECTION, &doc, NULL);
+    mongo_insert(&conn, MONGO_USERS_COLLECTION, &doc, NULL);
 
     bson_destroy(&doc);
 
@@ -668,7 +665,7 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
     bson_append_string(&query, dbkey_user_name, username);
     bson_finish(&query);
 
-    mongo_remove(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, NULL);
+    mongo_remove(&conn, MONGO_USERS_COLLECTION, &query, NULL);
 
     bson_destroy(&query);
 
@@ -700,7 +697,7 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
     bson field;
     BsonSelectReportFields(&field, 1, dbkey_user_name);
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -920,8 +917,6 @@ static bool UserExists(const char *username)
 
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
 {
-    const char *usersCollection = GetUsersCollection(conn);
-
     bson query;
 
     bson_empty(&query);
@@ -937,24 +932,8 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
     }
     bson_finish(&pull_op);
 
-    mongo_update(conn, usersCollection, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    mongo_update(conn, MONGO_USERS_COLLECTION, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&pull_op);
-}
-
-/*****************************************************************************/
-
-static const char *GetUsersCollection(EnterpriseDB *conn)
-{
-    switch (GetAuthenticationMode(conn))
-    {
-    case AUTHENTICATION_MODE_LDAP:
-    case AUTHENTICATION_MODE_AD:
-        return MONGO_USERS_LDAP_COLLECTION;
-
-    default:
-    case AUTHENTICATION_MODE_INTERNAL:
-        return MONGO_USERS_INTERNAL_COLLECTION;
-    }
 }
 
 /*****************************************************************************/
@@ -963,7 +942,7 @@ static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn)
 {
     char result[32] = { 0 };
 
-    CFDB_HandleGetValue(dbkey_mpsettings_auth_mode, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+    CFDB_HandleGetValue(settingLabels[SETTING_AUTH_MODE], result, sizeof(result), "internal", conn, MONGO_SETTINGS_COLLECTION);
 
     if (StringSafeEqual(result, "ldap"))
     {
@@ -985,7 +964,7 @@ static bool IsRBACOn(EnterpriseDB *conn)
 {
     char result[8] = { 0 };
 
-    CFDB_HandleGetValue(dbkey_mpsettings_rbac, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+    CFDB_HandleGetValue(settingLabels[SETTING_RBAC], result, sizeof(result), "true", conn, MONGO_SETTINGS_COLLECTION);
 
     if (strcmp(result, "false") == 0)
     {
@@ -1011,9 +990,7 @@ static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName)
     bson_append_int(&field, dbkey_user_roles, 1);
     bson_finish(&field);
 
-    const char *usersCollection = GetUsersCollection(conn);
-
-    mongo_cursor *cursor = mongo_find(conn, usersCollection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -1225,4 +1202,71 @@ static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName)
     DeleteItemList(roleNames);
 
     return errid;
+}
+
+//*****************************************************************************
+
+const char *HubSettingToString(HubSetting setting)
+{
+    return settingLabels[setting];
+}
+
+HubSetting HubSettingFromString(const char *setting)
+{
+    for (size_t i = 0; i < SETTING_MAX; i++)
+    {
+        if (StringSafeEqual(settingLabels[i], setting))
+        {
+            return (HubSetting)i;
+        }
+    }
+
+    return SETTING_UNKNOWN;
+}
+
+bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size)
+{
+    switch (setting)
+    {
+    case SETTING_RBAC:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_RBAC), value_out, size, "true", conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_AUTH_MODE:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_AUTH_MODE), value_out, size, "internal", conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_ENCRYPTION:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_ENCRYPTION), value_out, size, "plain", conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_LOGIN_ATTRIBUTE:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), value_out, size, "uid", conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_BASE_DN:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_BASE_DN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_USERS_DIRECTORY:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_USERS_DIRECTORY), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_HOST:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_HOST), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_AD_DOMAIN:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_AD_DOMAIN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
+    default:
+        assert(false && "Attempted to get unknown setting");
+        return false;
+    }
+}
+
+bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value)
+{
+    assert(setting > 0 && setting < SETTING_MAX);
+    if (setting <= 0 || setting >= SETTING_MAX)
+    {
+        return false;
+    }
+
+    const char *setting_key = HubSettingToString(setting);
+
+    return CFDB_PutValue(conn, setting_key, value, MONGO_SETTINGS_COLLECTION);
 }

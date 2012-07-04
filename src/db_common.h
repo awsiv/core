@@ -3,8 +3,8 @@
 
 #include <mongo.h>
 
-int CFDB_Open(EnterpriseDB *conn);
-int CFDB_Close(EnterpriseDB *conn);
+bool CFDB_Open(EnterpriseDB *conn);
+bool CFDB_Close(EnterpriseDB *conn);
 
 const char *DBHostname();
 int DBPort();

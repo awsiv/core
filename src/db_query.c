@@ -69,7 +69,8 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
         return false;
     }
 
-    CFDB_HandleGetValue(lval, rval, size, &conn, db_name);
+    // TODO: why is this function not returning this result?
+    CFDB_HandleGetValue(lval, rval, size, NULL, &conn, db_name);
 
     CFDB_Close(&conn);
     return true;
@@ -84,24 +85,26 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
 
     threshold_str[0] = '\0';
 
-    if (!CFDB_GetValue(CFMP_BLUEHOST_THRESHOLD, threshold_str, CF_SMALLBUF, MONGO_MP_SETTINGS_COLLECTION))
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
     {
+        return false;
+    }
+
+    if (!CFDB_GetSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str, CF_SMALLBUF))
+    {
+        CFDB_Close(&conn);
         return false;
     }
 
     if (strlen(threshold_str) == 0)     // no key in db then insert hardcoded default
     {
         snprintf(threshold_str, CF_SMALLBUF, "%lu", retval);
-        EnterpriseDB conn;
-        if (CFDB_Open(&conn))
-        {
-            if (!CFDB_PutValue(&conn, CFMP_BLUEHOST_THRESHOLD, threshold_str, MONGO_MP_SETTINGS_COLLECTION))
-            {
-                CFDB_Close(&conn);
-                return false;
-            }
 
+        if (!CFDB_UpdateSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str))
+        {
             CFDB_Close(&conn);
+            return false;
         }
     }
     else
@@ -110,6 +113,8 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
     }
 
     *threshold = retval;
+
+    CFDB_Close(&conn);
     return true;
 }
 
@@ -233,7 +238,7 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, char *db_name)
+bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name)
 {
     bson query;
     bson_iterator it1;
@@ -259,7 +264,18 @@ bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, c
 
     mongo_cursor_destroy(cursor);
 
-    return rval[0] != '\0';
+    if (rval[0] != '\0')
+    {
+        return true;
+    }
+    else
+    {
+        if (default_rval)
+        {
+            strcpy(rval, default_rval);
+        }
+        return false;
+    }
 }
 
 

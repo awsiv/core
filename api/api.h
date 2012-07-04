@@ -40,6 +40,8 @@ PHP_FUNCTION(cfapi_user_list);
 PHP_FUNCTION(cfapi_user_get);
 PHP_FUNCTION(cfapi_user_put);
 PHP_FUNCTION(cfapi_user_delete);
+PHP_FUNCTION(cfapi_settings_get);
+PHP_FUNCTION(cfapi_settings_post);
 
 /**
   Reporting engine

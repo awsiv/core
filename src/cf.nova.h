@@ -37,7 +37,6 @@
 # define MONGO_HAVE_STDINT
 # define MONGO_BASE "cfreport"
 # define MONGO_KMBASE "cfknow"
-# define MONGO_MPBASE "phpcfengine"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
 # define MONGO_HOSTS_COLLECTION "hosts"
 # define MONGO_MON_MG_COLLECTION "monitoring_mg"
