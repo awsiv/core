@@ -94,7 +94,13 @@ class EventTracker extends Cf_controller
       $resource=$this->input->post('resource');
       $incList=$this->input->post('inclist');
       $exList=$this->input->post('exlist');
-      $from =$this->input->post('startTime');
+      $from =$this->input->post('from');
+      $startTime=$this->input->post('startTime');
+      //if its the first time request for the tracker
+      if($from == false){
+          $from = $startTime;
+      }
+     
       
       $cause_rx='.*'; /* regx to include every thig */
       $to=0; /* get current time stamp */
@@ -108,18 +114,27 @@ class EventTracker extends Cf_controller
            echo 'Invalid Inputs';
            return;
       }
-      
+
       try
        {
           $logData=array();
           if($reportType =='not_kept'){
-              $logData=$this->report_model->getPromisesNotKeptLog($username, NULL,$resource, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+              $logData=$this->report_model->getPromisesNotKeptLog($username, NULL, $resource, $cause_rx, intval($from), $to, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                            
+              //only used for getting the total summary
+              $summary=$this->report_model->getPromisesNotKeptLog($username, NULL, $resource, $cause_rx,  intval($startTime), $to, explode(',',$incList), explode(',',$exList), 1, 1);
+              $hosts=$this->report_model->getPromisesNotKeptLog($username, NULL,$resource, $cause_rx, intval($startTime), $to, explode(',',$incList), explode(',',$exList), 1, 1,true);
           }
           
           if($reportType =='repaired'){
               $logData = $this->report_model->getPromisesRepairedLog($username, NULL, $resource, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+              
+              //only used for getting the total summary
+              $summary= $this->report_model->getPromisesRepairedLog($username, NULL, $resource, $cause_rx,  intval($startTime), $to, explode(',',$incList), explode(',',$exList), 1, 1);
+              $hosts=$this->report_model->getPromisesRepairedLog($username, NULL, $resource, $cause_rx, intval($startTime), $to, explode(',',$incList), explode(',',$exList), 1, 1,true);
           }    
           
+         
           $return_data=array();
           $return_data['data']=array();
           if(is_array($logData) && key_exists('data', $logData) && count($logData['data'])>0){
@@ -132,9 +147,10 @@ class EventTracker extends Cf_controller
              } 
           }
           
-          $return_data['meta']=array('update_time'=> now(),'hosts'=>$logData['meta']['related'],'events'=>$logData['meta']['count'],'type'=>$reportType);
+          $return_data['meta']=array('update_time'=> now(),'hosts'=>$hosts['meta']['count'],'events'=>$summary['meta']['count'],'type'=>$reportType);
           
           ksort($return_data['data']);
+          sleep(2);
           echo json_encode($return_data);
           
        }catch(Exception $e)
@@ -147,7 +163,8 @@ class EventTracker extends Cf_controller
     
     function delete($id)
     {
-        $filter=array('trackerName'=>$id,'userName'=>$this->session->userdata('username'));
+        
+        $filter=array('trackerName'=>urldecode($id),'userName'=>$this->session->userdata('username'));
         try
         {
            $this->tracker_model->delete($filter); 
@@ -172,15 +189,27 @@ class EventTracker extends Cf_controller
                    );
         try{
         $result=$this->tracker_model->update_tracker($filter,$inputs);
-        if($result!==FALSE){
+        if($result!== FALSE){
             echo json_encode(array(
                            'id'=>$result->getName(),
                            'resource'=>$result->getResource(),
                            'startTime'=>$result->getDateTime(),
                            'type'=>$result->getReportType()
                   ));
+            
            }
-           
+        else{
+         $this->output->set_status_header('500', "Cannot update the tracker"); 
+                $error_html = '<p class="error">';
+                foreach ($this->tracker_model->getErrors() as $error)
+                {
+                    $error_html.= '<span>' . $error . '</span><br/>';
+                };
+                $error_html.='<p>';
+                log_message('error', 'Could not Update data');
+          echo $error_html;
+          }
+         
         }catch(Exception $e){
             $this->output->set_status_header('500', "Cannot update the tracker"); 
         }
