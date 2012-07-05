@@ -31,6 +31,7 @@ load_data cfreport hosts
 load_data cfreport promises_exp
 load_data cfreport promises_unexp
 load_data cfreport archive
+load_data cfreport monitoring_mg
 
 
 echo "Importing data complete"

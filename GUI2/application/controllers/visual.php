@@ -3,6 +3,11 @@
 class Visual extends Cf_Controller
 {
 
+    private static $sortTable = array(
+        'last-measured' => 'sortVitalsByLastMeasured',
+        'average' => 'sortVitalsByAverage'
+    );
+
     function Visual()
     {
         parent::__construct();
@@ -14,9 +19,10 @@ class Visual extends Cf_Controller
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->css('tabs-custom.css');
         $this->load->model('vitals_model');
+        $this->load->model('host_model');
     }
 
-    function vital($hostkey = NULL)
+    function vital($hostkey = NULL,$obs=NULL)
     {
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
         $username = $this->session->userdata('username');
@@ -31,7 +37,8 @@ class Visual extends Cf_Controller
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_vital') . " Signs",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'hostKey' => $hostkey
+            'hostKey' => $hostkey,
+            'obs' => $obs
         );
 
         if ($hostkey != 'none')

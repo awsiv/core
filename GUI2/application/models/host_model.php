@@ -37,6 +37,36 @@ class host_model extends Cf_Model
     }
 
     /**
+     * get the host list by contex supplied
+     * @param string $username
+     * @param array $includes
+     * @param array $excludes
+     * return  array
+     */
+    function getHostListByContext($username, $includes=array(), $excludes = array())
+    {
+          try
+        {
+            $rawdata =cfpr_astrolabe_host_list($username, $includes, $excludes);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            generate_errormessage($e);
+            throw $e;
+        }
+
+    }
+
+    /**
      *
      * @param type $username
      * @param type $ipregx
@@ -335,10 +365,10 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
-    
-    
-    function getHostMeter($username,$hostkey){
-         try
+
+    function getHostMeter($username, $hostkey)
+    {
+        try
         {
             $rawdata = cfpr_host_meter($username, $hostkey);
             $data = $this->checkData($rawdata);
@@ -356,9 +386,8 @@ class host_model extends Cf_Model
             log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
-        
-    }   
-    
+    }
+
 }
 
 ?>
