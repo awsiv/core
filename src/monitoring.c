@@ -1330,6 +1330,8 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
         snprintf(value, CF_BUFSIZE, "%s", matches->name);
     }
 
+    DeleteItemList(matches);
+
     if (a.measure.history_type && strcmp(a.measure.history_type, "log") == 0)
     {
         snprintf(filename, CF_BUFSIZE, "%s%cstate%c%s_measure.log", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, handle);
