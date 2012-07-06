@@ -324,6 +324,47 @@ PHP_FUNCTION(cfapi_user_put)
     RETURN_BOOL(true);
 }
 
+PHP_FUNCTION(cfapi_user_post)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *username_arg = NULL; int username_arg_len = 0;
+    const char *password = NULL; int password_len = 0;
+    bool active;
+    const char *email = NULL; int email_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+                              &username, &username_len,
+                              &username_arg, &username_arg_len,
+                              &password, &password_len,
+                              &active,
+                              &email, &email_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+
+    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
+    if (errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(errid, "Access denied");
+    }
+
+    cfapi_errid err = CFDB_UpdateUser(username_arg, password, active, email);
+    switch (err)
+    {
+    case ERRID_SUCCESS:
+        RETURN_BOOL(true);
+
+    case ERRID_ITEM_NONEXISTING:
+        THROW_GENERIC(err, "User must be created first in order to update");
+
+    default:
+        THROW_GENERIC(err, "Error updating user");
+    }
+}
+
 PHP_FUNCTION(cfapi_user_delete)
 {
     const char *username = NULL; int username_len = 0;

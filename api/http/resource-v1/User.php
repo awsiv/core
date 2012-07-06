@@ -37,6 +37,27 @@ class User extends Resource
         return $response;
     }
 
+    function post($request, $username)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $data = json_decode($request->data);
+
+        $response = new Response($request);
+
+        if (cfapi_user_post($user, $username, $data->password, $data->active,
+                $data->email))
+        {
+            $response->code = Response::NOCONTENT;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
+
     function delete($request, $username)
     {
         $user = $_SERVER['PHP_AUTH_USER'];

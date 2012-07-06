@@ -640,6 +640,18 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool act
     return errid;
 }
 
+cfapi_errid CFDB_UpdateUser(const char *username, const char *password, bool active, const char *email)
+{
+    cfapi_errid errid = CFDB_DeleteUser(username);
+
+    if (errid != ERRID_SUCCESS)
+    {
+        return errid;
+    }
+
+    return CFDB_CreateUser(username, password, active, email);
+}
+
 cfapi_errid CFDB_DeleteUser(const char *username)
 {
     EnterpriseDB conn;
