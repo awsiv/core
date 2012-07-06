@@ -1044,12 +1044,13 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
-HubUser *NewHubUser(const char *username, bool active)
+HubUser *NewHubUser(const char *username, bool active, const char *email)
 {
     HubUser *user = xmalloc(sizeof(HubUser));
 
     user->username = SafeStringDuplicate(username);
     user->active = active;
+    user->email = SafeStringDuplicate(email);
 
     return user;
 }

@@ -16,7 +16,7 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
     {
         if ($data === null && json_last_error() !== JSON_ERROR_NONE)
         {
-            $this->fail("Bad json string input string.");
+            $this->fail("Bad json input string");
         }
         return $data;
     }

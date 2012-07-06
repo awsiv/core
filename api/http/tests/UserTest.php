@@ -24,7 +24,9 @@ class UserTest extends APIBaseTest
         {
             // add new user
             $this->pest->put('/user/snookie', '{
-                    "password": "pass"
+                    "password": "pass",
+                    "active": true,
+                    "email": "snookie@cfengine.com"
                 }');
             $this->assertEquals(201, $this->pest->lastStatus());
 
@@ -32,6 +34,8 @@ class UserTest extends APIBaseTest
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals(true, $users[0]['active']);
+            $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
 
             // delete user
             $this->pest->delete('/user/snookie');

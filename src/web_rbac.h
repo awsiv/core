@@ -35,7 +35,7 @@ HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);
 HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 HubQuery *CFDB_GetRBACForUser(char *userName);
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active);
+cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active, const char *email);
 cfapi_errid CFDB_DeleteUser(const char *username);
 HubQuery *CFDB_ListUsers(const char *usernameRx);
 

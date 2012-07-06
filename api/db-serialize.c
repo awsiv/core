@@ -10,6 +10,11 @@ JsonElement *HubUserToJson(const HubUser *user)
     JsonObjectAppendString(obj, "username", user->username);
     JsonObjectAppendBool(obj, "active", user->active);
 
+    if (user->email)
+    {
+        JsonObjectAppendString(obj, "email", user->email);
+    }
+
     return obj;
 }
 

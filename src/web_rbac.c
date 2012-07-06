@@ -38,6 +38,7 @@
 # define dbkey_user_salt "salt"
 # define dbkey_user_active "active"
 # define dbkey_user_roles "roles"
+# define dbkey_user_email "email"
 
 # define dbkey_role_name "name"
 # define dbkey_role_description "description"
@@ -587,7 +588,7 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active)
+cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active, const char *email)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
@@ -612,6 +613,12 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool act
     bson_append_string(&doc, dbkey_user_password, hashed_password);
     bson_append_string(&doc, dbkey_user_salt, salt);
     bson_append_bool(&doc, dbkey_user_active, active);
+
+    if (!NULL_OR_EMPTY(email))
+    {
+        bson_append_string(&doc, dbkey_user_email, email);
+    }
+
     bson_append_int(&doc, cfr_time, time(NULL));
     bson_finish(&doc);
 
@@ -683,9 +690,10 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 2,
+    BsonSelectReportFields(&field, 3,
                            dbkey_user_name,
-                           dbkey_user_active);
+                           dbkey_user_active,
+                           dbkey_user_email);
 
     mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -702,7 +710,10 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
         bool active = false;
         BsonBoolGet(&cursor->current, dbkey_user_active, &active);
 
-        HubUser *user = NewHubUser(username, active);
+        const char *email = NULL;
+        BsonStringGet(&cursor->current, dbkey_user_email, &email);
+
+        HubUser *user = NewHubUser(username, active, email);
         PrependRlistAlien(&(hq->records), user);
     }
 

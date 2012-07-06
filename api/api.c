@@ -39,7 +39,8 @@ PHP_FUNCTION(cfapi_auth)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && password_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
     cfapi_errid err = CFDB_UserAuthenticate(username, password, password_len);
     switch (err)
@@ -64,7 +65,7 @@ PHP_FUNCTION(cfapi_role_list)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
 
     HubQuery *result = CFDB_ListRoles(username);
     if (result->errid != ERRID_SUCCESS)
@@ -94,7 +95,8 @@ PHP_FUNCTION(cfapi_role_get)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && role);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(role_len, "role");
 
     HubQuery *result = CFDB_GetRoleByNameAuth(username, role);
     if (result->errid != ERRID_SUCCESS)
@@ -136,7 +138,8 @@ PHP_FUNCTION(cfapi_role_put)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && name_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(name_len, "name");
 
     {
         HubQuery *roles = CFDB_GetRoleByNameAuth(username, name);
@@ -179,7 +182,8 @@ PHP_FUNCTION(cfapi_role_delete)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && name_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(name_len, "name");
 
     cfapi_errid err = CFDB_DeleteRole(username, name, true);
     if (err != ERRID_SUCCESS)
@@ -202,7 +206,7 @@ PHP_FUNCTION(cfapi_user_list)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
 
     cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
     if (errid != ERRID_SUCCESS)
@@ -238,7 +242,8 @@ PHP_FUNCTION(cfapi_user_get)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
     cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
     if (errid != ERRID_SUCCESS)
@@ -256,10 +261,12 @@ PHP_FUNCTION(cfapi_user_get)
         RETURN_NULL();
     }
 
-    JsonElement *user_json = HubUserToJson((HubUser *)result->records->item);
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, HubUserToJson((HubUser *)result->records->item));
+
     DeleteHubQuery(result, DeleteHubUser);
 
-    RETURN_JSON(PackageResult(user_json, 1, 1));
+    RETURN_JSON(PackageResult(data, 1, 1));
 }
 
 PHP_FUNCTION(cfapi_user_put)
@@ -268,17 +275,21 @@ PHP_FUNCTION(cfapi_user_put)
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
     bool active;
+    const char *email = NULL; int email_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssb",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
-                              &active) == FAILURE)
+                              &active,
+                              &email, &email_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len && password_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+    ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
     cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
     if (errid != ERRID_SUCCESS)
@@ -305,7 +316,7 @@ PHP_FUNCTION(cfapi_user_put)
     }
 
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username_arg, password, active)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username_arg, password, active, email)) != ERRID_SUCCESS)
     {
         THROW_GENERIC(err, "Unable to create user");
     }
@@ -325,7 +336,8 @@ PHP_FUNCTION(cfapi_user_delete)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
     cfapi_errid err = CFDB_UserIsAdminWhenRBAC(username);
     if (err != ERRID_SUCCESS)
@@ -354,7 +366,7 @@ PHP_FUNCTION(cfapi_settings_get)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
 
     JsonElement *settings = JsonObjectCreate(50);
 
@@ -429,7 +441,8 @@ PHP_FUNCTION(cfapi_settings_post)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && post_data_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(post_data_len, "post_data");
 
     JsonElement *new_settings = JsonParse(&post_data);
     if (!new_settings)
@@ -507,7 +520,8 @@ PHP_FUNCTION(cfapi_query_post)
         THROW_ARGS_MISSING();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && query_len);
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
     JsonElement *query_parsed = JsonParse(&query);
     if (!query_parsed)

@@ -32,10 +32,10 @@
         RETURN_NULL(); \
     }
 
-#define ARGUMENT_CHECK_CONTENTS(cond) \
+#define ARGUMENT_CHECK_CONTENTS(cond, arg) \
  if(!(cond)) \
     { \
-    zend_throw_exception(cfapi_exception, "One or more required arguments are empty", ERRID_ARGUMENT_WRONG TSRMLS_CC); \
+    zend_throw_exception(cfapi_exception, "Required argument is empty: " arg, ERRID_ARGUMENT_WRONG TSRMLS_CC); \
     RETURN_NULL(); \
     }
 
