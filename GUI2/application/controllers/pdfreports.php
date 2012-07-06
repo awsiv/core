@@ -292,7 +292,7 @@ class pdfreports extends Cf_Controller
         $this->email->to($to);
 
         $this->email->subject($subject);
-        $this->email->message('Email from cfengine.');
+        $this->email->message($message);
         $this->email->attach($filename);
 
         if (!$this->email->send())
