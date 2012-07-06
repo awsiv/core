@@ -560,6 +560,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     AgentConnection *conn;
     char peer[CF_MAXVARSIZE], ipv4[CF_MAXVARSIZE],
         digest[CF_MAXVARSIZE], user[CF_SMALLBUF];
+    extern int COLLECT_WINDOW;
 
     a.copy.portnumber = (short) Nova_ParseHostname(host, peer);
 
@@ -610,7 +611,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     // We don't want to formally wait, blocking, or we can be DDOSed
     // If the hub doesn't ask for reports in < 10s, it is probably not going to
     
-    sleep(10);
+    sleep(COLLECT_WINDOW);
     
     DisconnectServer(conn);
     DeleteRlist(a.copy.servers);
