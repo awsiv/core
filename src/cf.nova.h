@@ -581,6 +581,12 @@ struct HubVital_
 
 typedef struct
 {
+    char *username;
+    bool active;
+} HubUser;
+
+typedef struct
+{
     char *userName;
     char *classRxInclude;
     char *classRxExclude;
@@ -855,6 +861,8 @@ void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(HubVital *hv);
+HubUser *NewHubUser(const char *username, bool active);
+void DeleteHubUser(HubUser *user);
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude, const char *classRxExclude,
                             const char *bundleRxInclude, const char *bundleRxExclude);
 void DeleteHubUserRBAC(HubUserRBAC *userRbac);

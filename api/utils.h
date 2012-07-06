@@ -26,6 +26,12 @@
         RETURN_NULL(); \
     }
 
+#define THROW_FORBIDDEN() \
+    { \
+        zend_throw_exception(cfapi_exception, "Forbidden", ERRID_RBAC_ACCESS_DENIED TSRMLS_CC); \
+        RETURN_NULL(); \
+    }
+
 #define ARGUMENT_CHECK_CONTENTS(cond) \
  if(!(cond)) \
     { \

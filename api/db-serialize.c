@@ -2,12 +2,13 @@
 
 #include <assert.h>
 
-JsonElement *HubUserRBACToJson(const HubUserRBAC *user)
+JsonElement *HubUserToJson(const HubUser *user)
 {
     assert(user);
 
     JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "username", user->userName);
+    JsonObjectAppendString(obj, "username", user->username);
+    JsonObjectAppendBool(obj, "active", user->active);
 
     return obj;
 }

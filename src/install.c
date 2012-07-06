@@ -1044,6 +1044,23 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
+HubUser *NewHubUser(const char *username, bool active)
+{
+    HubUser *user = xmalloc(sizeof(HubUser));
+
+    user->username = SafeStringDuplicate(username);
+    user->active = active;
+
+    return user;
+}
+
+void DeleteHubUser(HubUser *user)
+{
+    free(user->username);
+
+    free(user);
+}
+
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude,
                             const char *classRxExclude, const char *bundleRxInclude,
                             const char *bundleRxExclude)

@@ -204,7 +204,13 @@ PHP_FUNCTION(cfapi_user_list)
 
     ARGUMENT_CHECK_CONTENTS(username_len);
 
-    HubQuery *result = CFDB_ListUsers(username, NULL);
+    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
+    if (errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(errid, "Access denied");
+    }
+
+    HubQuery *result = CFDB_ListUsers(NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");
@@ -213,9 +219,9 @@ PHP_FUNCTION(cfapi_user_list)
     JsonElement *data = JsonArrayCreate(500);
     for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
-        JsonArrayAppendObject(data, HubUserRBACToJson((HubUserRBAC *)rp->item));
+        JsonArrayAppendObject(data, HubUserToJson((HubUser *)rp->item));
     }
-    DeleteHubQuery(result, DeleteHubUserRBAC);
+    DeleteHubQuery(result, DeleteHubUser);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
@@ -234,7 +240,13 @@ PHP_FUNCTION(cfapi_user_get)
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
 
-    HubQuery *result = CFDB_ListUsers(username, username_arg);
+    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
+    if (errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(errid, "Access denied");
+    }
+
+    HubQuery *result = CFDB_ListUsers(username_arg);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error looking up user");
@@ -244,8 +256,8 @@ PHP_FUNCTION(cfapi_user_get)
         RETURN_NULL();
     }
 
-    JsonElement *user_json = HubUserRBACToJson((HubUserRBAC *)result->records->item);
-    DeleteHubQuery(result, DeleteHubUserRBAC);
+    JsonElement *user_json = HubUserToJson((HubUser *)result->records->item);
+    DeleteHubQuery(result, DeleteHubUser);
 
     RETURN_JSON(PackageResult(user_json, 1, 1));
 }
@@ -255,19 +267,27 @@ PHP_FUNCTION(cfapi_user_put)
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
+    bool active;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssb",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
-                              &password, &password_len) == FAILURE)
+                              &password, &password_len,
+                              &active) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len && password_len);
 
+    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
+    if (errid != ERRID_SUCCESS)
     {
-        HubQuery *users = CFDB_ListUsers(username, username_arg);
+        THROW_GENERIC(errid, "Access denied");
+    }
+
+    {
+        HubQuery *users = CFDB_ListUsers(username_arg);
         if (users->errid != ERRID_SUCCESS)
         {
             THROW_GENERIC(users->errid, "Unable to lookup user");
@@ -275,17 +295,17 @@ PHP_FUNCTION(cfapi_user_put)
         if (RlistLen(users->records) >= 1)
         {
             cfapi_errid err = ERRID_UNKNOWN;
-            if ((err = CFDB_DeleteUser(username, username_arg)) != ERRID_SUCCESS)
+            if ((err = CFDB_DeleteUser(username_arg)) != ERRID_SUCCESS)
             {
                 THROW_GENERIC(err, "Unable to delete existing user");
             }
         }
 
-        DeleteHubQuery(users, DeleteHubUserRBAC);
+        DeleteHubQuery(users, DeleteHubUser);
     }
 
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username, username_arg, password)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username_arg, password, active)) != ERRID_SUCCESS)
     {
         THROW_GENERIC(err, "Unable to create user");
     }
@@ -307,7 +327,13 @@ PHP_FUNCTION(cfapi_user_delete)
 
     ARGUMENT_CHECK_CONTENTS(username_len && username_arg_len);
 
-    cfapi_errid err = CFDB_DeleteUser(username, username_arg);
+    cfapi_errid err = CFDB_UserIsAdminWhenRBAC(username);
+    if (err != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(err, "Access denied");
+    }
+
+    err = CFDB_DeleteUser(username_arg);
     if (err != ERRID_SUCCESS)
     {
         THROW_GENERIC(err, "Unable to delete user");

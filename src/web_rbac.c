@@ -587,20 +587,12 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, const char *password)
+cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return ERRID_DBCONNECT;
-    }
-
-    cfapi_errid errid = UserIsRoleAdmin(&conn, creating_user);
-
-    if (errid != ERRID_SUCCESS)
-    {
-        CFDB_Close(&conn);
-        return errid;
     }
 
     if (UserExists(username))
@@ -619,6 +611,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
     bson_append_string(&doc, dbkey_user_name, username);
     bson_append_string(&doc, dbkey_user_password, hashed_password);
     bson_append_string(&doc, dbkey_user_salt, salt);
+    bson_append_bool(&doc, dbkey_user_active, active);
     bson_append_int(&doc, cfr_time, time(NULL));
     bson_finish(&doc);
 
@@ -626,6 +619,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
 
     bson_destroy(&doc);
 
+    cfapi_errid errid = ERRID_SUCCESS;
     if (!MongoCheckForError(&conn, "CFDB_CreateUser", NULL, false))
     {
         errid = ERRID_DB_OPERATION;
@@ -639,19 +633,12 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
     return errid;
 }
 
-cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
+cfapi_errid CFDB_DeleteUser(const char *username)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return ERRID_DBCONNECT;
-    }
-
-    cfapi_errid errid = UserIsRoleAdmin(&conn, deleting_user);
-    if (errid != ERRID_SUCCESS)
-    {
-        CFDB_Close(&conn);
-        return errid;
     }
 
     if (!UserExists(username))
@@ -669,6 +656,7 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
 
     bson_destroy(&query);
 
+    cfapi_errid errid = ERRID_SUCCESS;
     if (!MongoCheckForError(&conn, "CFDB_DeleteUser", NULL, false))
     {
         errid = ERRID_DB_OPERATION;
@@ -678,7 +666,7 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
     return errid;
 }
 
-HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
+HubQuery *CFDB_ListUsers(const char *usernameRx)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
@@ -695,7 +683,9 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 1, dbkey_user_name);
+    BsonSelectReportFields(&field, 2,
+                           dbkey_user_name,
+                           dbkey_user_active);
 
     mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -709,7 +699,10 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
         BsonStringGet(&cursor->current, dbkey_user_name, &username);
         assert(username);
 
-        HubUserRBAC *user = NewHubUserRBAC(username, NULL, NULL, NULL, NULL);
+        bool active = false;
+        BsonBoolGet(&cursor->current, dbkey_user_active, &active);
+
+        HubUser *user = NewHubUser(username, active);
         PrependRlistAlien(&(hq->records), user);
     }
 
@@ -863,7 +856,7 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username)
+cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username)
 {
     EnterpriseDB conn;
 
@@ -905,10 +898,10 @@ static bool RoleExists(const char *name)
 
 static bool UserExists(const char *username)
 {
-    HubQuery *hq = CFDB_ListUsers(NULL, username);
+    HubQuery *hq = CFDB_ListUsers(username);
     bool exists = (hq->records == NULL) ? false : true;
 
-    DeleteHubQuery(hq, DeleteHubUserRBAC);
+    DeleteHubQuery(hq, DeleteHubUser);
 
     return exists;
 }

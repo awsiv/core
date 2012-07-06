@@ -10,7 +10,7 @@
 #include "cf.nova.h"
 #include "json.h"
 
-JsonElement *HubUserRBACToJson(const HubUserRBAC *user);
+JsonElement *HubUserToJson(const HubUser *user);
 JsonElement *HubRoleToJson(const HubRole *role);
 
 #endif

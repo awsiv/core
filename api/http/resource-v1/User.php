@@ -23,7 +23,7 @@ class User extends Resource
         $data = json_decode($request->data);
 
         $response = new Response($request);
-        if (cfapi_user_put($user, $username, $data->password))
+        if (cfapi_user_put($user, $username, $data->password, $data->active))
         {
             $response->code = Response::CREATED;
         }
