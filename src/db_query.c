@@ -273,6 +273,7 @@ bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *def
         if (default_rval)
         {
             strcpy(rval, default_rval);
+            return true;
         }
         return false;
     }
