@@ -4,6 +4,7 @@
             contextWidgetElement: 'hclist',
             baseUrl: '',
             interval: 0, // Interval in minutes to refresh the widget
+            defaultNumberOfGraphs : 10,
             vitalsurl: '/vitals/node_vitals',
             vitalsurlForHost: '/vitals/host_vitals',
             vitalsurlForConfiguration: '/vitals/config_vitals',
@@ -18,7 +19,6 @@
         errorDiv: $('<div style="display:none">').addClass('error'),
 
         _startIndex: 0,
-        _defaultNumberOfGraphs: 10,
 
         _cachedData: [],
         _hostView: false,
@@ -29,6 +29,7 @@
 
         vitalsSelect: $('<select id="vitalsSelect">'),
         vitalsSortBySelect: $('<select id="vitalsSortBySelect">'),
+        vitalsOrderBySelect: $('<select id="vitalsSortBySelect">'),
         selectVitalsValues: {
             'loadavg': 'load average',
             'diskfree': 'Disk free',
@@ -42,6 +43,7 @@
 
         selectedVital: 'loadavg',
         selectedVitalSortBy: 'last-measured',
+        selectedVitalOrderBy: 'desc',
 
         _timer: null,
         _vitalConfig: null,
@@ -165,7 +167,23 @@
                 $self.refreshForNodeView();
                 $self.refreshForNodeView();
             });
-            $self.element.find('.graph-container-header-top-menu').append($self.vitalsSortBySelect);
+
+            var $orderByValues = {"desc":"Descending","asc":"Ascending"};
+            $.each($orderByValues, function(key, value) {
+                $self.vitalsOrderBySelect
+                .append($('<option></option>')
+                    .attr('value', key)
+                    .text(value));
+            });
+            $self.vitalsOrderBySelect.change(function() {
+                $self.selectedVitalOrderBy = ($(this).val());
+                $self.clearCanvas();
+                $self.refreshForNodeView();
+                $self.refreshForNodeView();
+            });
+
+
+            $self.element.find('.graph-container-header-top-menu').append($self.vitalsSortBySelect).append($self.vitalsOrderBySelect);
         },
 
         _fetchConfig: function() {
@@ -199,7 +217,8 @@
                 'type': 'Get',
                 'data': {
                     'obs': self.selectedVital,
-                    'sort': self.selectedVitalSortBy
+                    'sort': self.selectedVitalSortBy,
+                    'sortOrder': self.selectedVitalOrderBy
                 },
                 'success': function(data) {
                     if (data === null || data.length === 0) {
@@ -355,8 +374,8 @@
         drawGraphCanvas: function(data) {
             var self = this;
             self.element.find('.graph-container-header-top-menu').show();
-            var offset = self._startIndex * self._defaultNumberOfGraphs;
-            var slicedData = data.slice(offset, offset + self._defaultNumberOfGraphs);
+            var offset = self._startIndex * self.options.defaultNumberOfGraphs;
+            var slicedData = data.slice(offset, offset + self.options.defaultNumberOfGraphs);
             $.each(slicedData, function(key, value) {
                 var perfdata = (value.perfdata);
                 var meta = value.meta;
@@ -381,7 +400,7 @@
                 self.plotGraph($plotdiv, meta, perfdata);
             });
 
-            if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs + self. _defaultNumberOfGraphs) < data.length) {
+            if ((data.length > self.options.defaultNumberOfGraphs) && (self._startIndex * self.options.defaultNumberOfGraphs + self.options.defaultNumberOfGraphs) < data.length) {
                 // show load more button
                 self.showLoadMoreButton();
             } else {
@@ -423,7 +442,7 @@
 
 
 
-                if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs + self. _defaultNumberOfGraphs) < data.length) {
+                if ((data.length > self.options.defaultNumberOfGraphs) && (self._startIndex * self.options.defaultNumberOfGraphs + self.options.defaultNumberOfGraphs) < data.length) {
                     // show load more button
                     self.showLoadMoreButton();
                 } else {

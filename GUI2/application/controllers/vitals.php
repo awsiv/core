@@ -10,6 +10,8 @@ class Vitals extends Cf_REST_Controller
         'average' => '_sortVitalsByAverage'
     );
 
+    private static $sortOrder = 'desc';
+
     function __construct()
     {
         parent::__construct();
@@ -29,7 +31,14 @@ class Vitals extends Cf_REST_Controller
         {
             return 0;
         }
-        return ($lastValue1 < $lastValue2) ? +1 : -1;
+        if (self::$sortOrder === 'desc')
+        {
+            return ($lastValue1 < $lastValue2) ? +1 : -1;
+        }
+        else
+        {
+            return ($lastValue1 > $lastValue2) ? +1 : -1;
+        }
     }
 
     function _sortVitalsByAverage($data1, $data2)
@@ -45,7 +54,6 @@ class Vitals extends Cf_REST_Controller
         {
             foreach ($data1['perfdata'] as $d1)
             {
-
                 $sumData1 += $d1[1];
             }
             $averageData1 = $sumData1 / $data1Count;
@@ -63,7 +71,14 @@ class Vitals extends Cf_REST_Controller
         {
             return 0;
         }
-        return ($averageData1 < $averageData2) ? +1 : -1;
+        if (self::$sortOrder === 'desc')
+        {
+            return ($averageData1 < $averageData2) ? +1 : -1;
+        }
+        else
+        {
+            return ($averageData1 > $averageData2) ? +1 : -1;
+        }
     }
 
     function node_vitals_get()
@@ -76,6 +91,7 @@ class Vitals extends Cf_REST_Controller
         $data = array();
         $obs = $this->param('obs', TRUE) ? $this->param('obs', TRUE) : 'loadavg';
         $sort = $this->param('sort', TRUE) ? $this->param('sort', TRUE) : 'last-measured';
+        self::$sortOrder = $this->param('sortOrder', TRUE) ? strtolower($this->param('sortOrder', TRUE)) : 'desc';
         foreach ($listOfHost as $index => $host)
         {
             $key = $host['hostkey'];
