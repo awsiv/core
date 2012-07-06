@@ -590,6 +590,17 @@ void RegisterBundleDependence(char *name, const Promise *pp)
     char assertion[CF_BUFSIZE];
     char *handle;
 
+    /*
+     * NOVA_BUNDLEDEPENDENCE is used in a single place, namely in the generation
+     * of knowledge map. This list is not being emptied anywhere, so just avoid
+     * populating it if generation of knowledge map is not requested, otherwise
+     * it creates a memory leak for long-living processes.
+     */
+    if (SHOWREPORTS == false)
+    {
+        return;
+    }
+
     if (pp == NULL || pp->bundle == NULL)
     {
         return;
