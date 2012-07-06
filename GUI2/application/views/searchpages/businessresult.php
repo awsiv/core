@@ -98,9 +98,7 @@
         </fieldset>
         <br/>
         <fieldset id="emailfieldset" style="display: none; margin-top: 10px">
-            <legend><span style="padding: 3px; background: #4A575C; font-size: 11px; border-radius: 5px 5px 5px 5px;color: #fff">
-                    Email details<span>
-                        </legend>
+            <legend><span>Email details</span></legend>
                         <label for="to_contacts">To: </label>
                         <input type="text"  value="" id="to_contacts" name="to_contacts"  size="50"/>
                         <label for="from_contacts">From: </label>

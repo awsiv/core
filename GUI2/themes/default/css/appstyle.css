@@ -1903,11 +1903,18 @@ div.ui-dialog .ui-dialog-buttonpane{
     border-radius: 5px 5px 5px 5px;
 }
 
-.stylized form fieldset ,.form fieldset ledgend{
+.stylized form fieldset{
     font-size:1.1em; /* bump up legend font size, not too large or it'll overwrite border on left */
     /* be careful with padding, it'll shift the nice offset on top of border  */
 }
 
+.stylized form fieldset legend span{
+    padding: 3px;
+    background: #4A575C;
+    font-size: 11px;
+    border-radius: 5px 5px 5px 5px;
+    color: #FFF;
+}
 .stylized form label {
     display: block;  /* block float the labels to left column, set a width */
     float: left;
