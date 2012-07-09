@@ -64,6 +64,20 @@ class HostTest extends RestBaseTest
         }
     }
 
+    public function testHostByContext()
+    {
+        try
+        {
+            $jsonArray = $this->getResults('/host?context=PK_SHA_30565.*' . $ip);
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(1, sizeof($jsonArray));
+        }
+        catch (Pest_NotFound $e)
+        {
+            $this->fail('Resource not found');
+        }
+    }
+
     public function testHostByInvalidName()
     {
         try
