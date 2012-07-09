@@ -2,11 +2,12 @@
 
 class Authentication_model extends Cf_Model
 {
-    protected $userResource= 'user';
-    protected $baseResource= 'api';
-    protected $rest='';
-    
-      public function __construct()
+
+    protected $userResource = 'user';
+    protected $baseResource = 'api';
+    protected $rest = '';
+
+    public function __construct()
     {
         parent::__construct();
         $this->load->config('ion_auth', TRUE);
@@ -14,101 +15,115 @@ class Authentication_model extends Cf_Model
         $this->load->helper('date');
         $this->load->library('mongo_db');
     }
-    
-    
-    public function setRestClient($rest){
-        $this->rest=$rest;
-         //var_dump($rest);
 
+    public function setRestClient($rest)
+    {
+        $this->rest = $rest;
+        //var_dump($rest);
     }
+
     /**
      * For login operation
      * @param type $username
      * @param type $password
      * @param type $remmember
-     * @return type 
+     * @return type
      */
-    function login($identity, $password, $mode='basic'){
-        $this->rest->setCredentials($identity,$password);
-        $this->rest->setAuthMode($mode);
-        $body=$this->rest->get('');
-        $status = $this->rest->status();
-        if($status==200){
+    function login($identity, $password, $mode = 'basic')
+    {
+        $this->rest->setupAuth($identity, $password);
+
+        try
+        {
+            $body = $this->rest->get('/');
             $this->update_last_login($identity);
             return true;
-        }else{
-            $this->setError($body);
+        }
+        catch (Pest_Unauthorized $e)
+        {
+            $this->setError($e->getMessage());
+            return false;
+        }
+        catch (Pest_UnknownResponse $e)
+        {
+            $this->setError($e->getMessage());
             return false;
         }
     }
-    
+
     /**
      * Get Roles for a users
      */
-    
-    function getRolesForUser($username){
-        $user=$this->getUserDetails($username);
-        if(key_exists('roles', $user)){
+    function getRolesForUser($username)
+    {
+        $user = $this->getUserDetails($username);
+        if (key_exists('roles', $user))
+        {
             return $user['roles'];
         }
         return false;
     }
-    
+
     /**
-     * 
+     *
      */
-   function getAllRoles(){
-       
-   }
-   
+    function getAllRoles()
+    {
+
+    }
+
     /**
      * Generate the details for given object i.e user
      * @param type $username
      * @param type $password
      * @param type $object
-     * @return type 
+     * @return type
      */
-    function getUserDetails($username){
-        $body=$this->rest->get($this->userResource.'/'.$username);
+    function getUserDetails($username)
+    {
+        $body = $this->rest->get($this->userResource . '/' . $username);
         $status = $this->rest->status();
-        try{
-            if($status==200){
-               $data=$this->checkData($body);
-                   if (is_array($data) && $this->hasErrors() == 0)
-                    {
-                        return $data['data'][0];
-                    }
-                    else
-                    {
-                        throw new Exception($this->getErrorsString());
-                    }
-            }else{
+        try
+        {
+            if ($status == 200)
+            {
+                $data = $this->checkData($body);
+                if (is_array($data) && $this->hasErrors() == 0)
+                {
+                    return $data['data'][0];
+                }
+                else
+                {
+                    throw new Exception($this->getErrorsString());
+                }
+            }
+            else
+            {
                 $this->setError($body);
                 throw new Exception($body);
             }
-        }catch(Exception $e){
-           log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
-    
-    
+
     /**
-     *Update the last login time for user in local db related to the user.
+     * Update the last login time for user in local db related to the user.
      * @param type $username
-     * @return type 
+     * @return type
      */
-    
-    
-   public function update_last_login($username)
+    public function update_last_login($username)
     {
         $this->load->helper('date');
         $this->mongo_db->where(array('username' => $username));
         $this->mongo_db->update('users', array('last_login' => now()));
         return TRUE;
     }
-    
-    private function remember_user($user,$password)
+
+    private function remember_user($user, $password)
     {
         if (!$id)
         {
@@ -137,5 +152,7 @@ class Authentication_model extends Cf_Model
         }
         return FALSE;
     }
+
 }
+
 ?>
