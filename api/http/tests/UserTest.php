@@ -87,4 +87,21 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
+    public function testUserNotFound()
+    {
+        try
+        {
+            $jsonArray = $this->getResults('/user/xxxxxxx');
+            $this->fail("Should not get here, user found");
+        }
+        catch (Pest_NotFound $e)
+        {
+            // pass
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

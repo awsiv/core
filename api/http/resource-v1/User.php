@@ -10,8 +10,16 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $response->body = cfapi_user_get($user, $username);
-        $response->code = Response::OK;
+        $payload = cfapi_user_get($user, $username);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
 
         return $response;
     }
