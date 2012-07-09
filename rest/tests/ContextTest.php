@@ -51,4 +51,18 @@ class ContextTest extends RestBaseTest
         }
     }
 
+    public function testContextByName()
+    {
+        try
+        {
+            $jsonArray = $this->getResults('/context?name=io_writtendata_.*' . $ip);
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(2, sizeof($jsonArray));
+        }
+        catch (Pest_NotFound $e)
+        {
+            $this->fail('Resource not found');
+        }
+    }
+
 }
