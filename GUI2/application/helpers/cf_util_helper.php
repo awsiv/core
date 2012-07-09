@@ -117,7 +117,7 @@ function autocomplete($report_data, $column) {
 
 function getonlineusernames() {
     $onlineuser = array();
-    $CI = get_instance();
+    $CI = &get_instance();
     $CI->load->library(array('mongo_db', 'ion_auth'));
     $result = $CI->mongo_db->get('onlineusers');
     foreach ($result as $docs) {
@@ -489,5 +489,6 @@ function generate_errormessage($exception){
 
         return $text;
     }
+    
 
 ?>

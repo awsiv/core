@@ -89,16 +89,18 @@ class Ion_auth
 	{
                 $this->ci = & get_instance();
                 $this->ci->load->config('ion_auth', TRUE);
-                $this->ci->load->config('appsettings', TRUE);
+                //$this->ci->load->config('appsettings', TRUE);
                 $this->ci->load->library('email');
                 $this->ci->load->library('session');
-                $this->ci->load->library('Auth_Ldap');
+               // $this->ci->load->library('Auth_Ldap');
                 $this->ci->load->library('encrypt');
                 $this->ci->lang->load('ion_auth');
                 $this->ci->load->model('ion_auth_model_mongo');
                 $this->ci->load->model('settings_model');
-                $this->ci->load->model('astrolabe_model');
+                $this->ci->load->model(array('astrolabe_model','authentication_model'));
                 $this->ci->load->helper('cookie');
+                
+               
 
                 $this->messages = array();
                 $this->errors = array();
@@ -112,21 +114,10 @@ class Ion_auth
                 //load the mode of authentication
                 $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
 
-                if(!$this->mode){
-                    $this->set_error('backend_error');
-                    log_message('info', 'cannot find any mode switching to internal database');
-                    $this->mode='database';
-                   //return FALSE;
-                }
-                if($this->ci->config->item('auth_mode') &&$this->ci->config->item('auth_mode') !=''){
-                   $this->mode=strtolower($this->ci->config->item('auth_mode'));
-                }
-
-                if($this->ci->session->userdata('mode')!==FALSE)
-                {
-                    $this->mode=$this->ci->session->userdata('mode');
-                }
-                 //$this->mode='database';
+                
+                $this->auth_model = $this->ci->authentication_model;
+                $this->auth_model->setRestClient($this->getRestClient());
+                
 
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
@@ -137,10 +128,11 @@ class Ion_auth
                             $this->on_login_successful($username);
                         }
 		}
+                
                 $this->email=$this->ci->settings_model->app_settings_get_item('appemail');
                 if(!($this->email || empty($this->email))){
                     $this->email=$this->ci->config->item('admin_email', 'ion_auth');
-                  }
+                }
 	}
 
 	/**
@@ -167,7 +159,7 @@ class Ion_auth
 	 **/
 	public function activate($id, $code=false)
 	{
-		if ($this->ci->ion_auth_model_mongo->activate($id, $code))
+		if ($this->ci->login->activate($id, $code))
 		{
 			$this->set_message('activate_successful');
 			return TRUE;
@@ -176,7 +168,29 @@ class Ion_auth
 		$this->set_error('activate_unsuccessful');
 		return FALSE;
 	}
+        
+        /**
+         * Get Rest Client
+         */
+        
+          function getRestClient(){
+  
+            $apiServer = 'http://10.0.0.74/api';
+            $http_auth ='basic';
+            $config = array('server' => $apiServer);
+            $this->ci->load->spark('restclient/2.1.0');
+            $this->ci->load->library('cf_rest');
 
+            if ($this->logged_in())
+            {
+                $username=$this->ci->session->userdata('username');
+                $password=$this->ci->session->userdata('password');
+                $config = array('server' => $apiServer, 'http_auth' => $http_auth, 'http_user' => $username, 'http_pass' => $password);
+            }
+            $this->ci->cf_rest->initialize($config);
+            return $this->ci->cf_rest;
+         }
+        
 	/**
 	 * Deactivate user.
 	 *
@@ -388,53 +402,20 @@ class Ion_auth
 		}
 	}
 
-	/**
-	 * login
-	 *
-	 * @return void
-	 * @author Mathew
-	 **/
+   /**
+    *
+    * @param type $identity
+    * @param type $password
+    * @param type $remember
+    * @return type 
+    */
 	public function login($identity, $password, $remember=false)
 	{
-           $this->ci->session->set_userdata('mode',$this->mode);
-              if($this->mode!='database')
-              {
-                 $ret=$this->ci->auth_ldap->login($identity,$password);
-
-                     if(is_array($ret))
-                     {
-                      $this->ci->session->set_userdata($ret);
-                      $this->ci->session->set_userdata('pwd', $password);
-
-                      $this->on_login_successful($identity);
-                      return TRUE;
-                     }
-                      foreach((array)$this->ci->auth_ldap->get_unformatted_error() as $error){
-                       $this->set_error($error);
-                     }
-                   //fall back to database and store the mode for latter use in application
-                   log_message('error', 'Error authenticationg to '.$this->mode.' server falling back to internal database');
-                   if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember,true))
-		     {
-                       $this->set_mode('database');
-                       $this->ci->session->set_userdata('mode','database');
-		       $this->set_message('login_successful');
-                       $this->on_login_successful($identity);
-		       return TRUE;
-		    }
-                //$this->set_error('login_unsuccessful');
-		return FALSE;
+             $val=$this->auth_model->login($identity, $password);
+             if($val){
+                 return true;
              }
-
-		if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember))
-		{
-			$this->set_message('login_successful');
-                        $this->on_login_successful($identity);
-			return TRUE;
-		}
-
-		$this->set_error('login_unsuccessful');
-		return FALSE;
+             return false;
 	}
 
         protected function on_login_successful($username)
@@ -508,7 +489,8 @@ class Ion_auth
 	 * @return bool
 	 * @author Ben Edmunds
 	 **/
-	public function is_admin($check_real_assigned_roles = false)
+
+        public function is_admin($check_real_assigned_roles = false)
 	{
                 $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
 

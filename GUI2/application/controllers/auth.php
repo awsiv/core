@@ -26,6 +26,7 @@ class Auth extends Controller
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
+        
         $this->carabiner->css(
                 array(
                     array('contextfinder.css'),
@@ -148,16 +149,24 @@ class Auth extends Controller
             $this->session->set_userdata('user_timezone', $this->input->post('timezone'));
 
             if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember))
-            { //if the login is successful
-                //redirect them back to the home page
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                //redirect($this->config->item('base_url'), 'refresh');
-                redirect('auth/index', 'refresh');
+            { 
+                //$this->session->set_flashdata('message', $this->ion_auth->messages());
+                $session_data = array(
+                    'username'=>trim($this->input->post($identifier)),
+                    //'roles' => $result->roles
+                );
+                
+                //$user=$this->authentication_model->getUserDetails(trim($this->input->post($identifier)),$this->input->post('password'));
+               $this->session->set_userdata('username', $this->input->post($identifier));
+               $this->session->set_userdata('password', $this->input->post('password'));
+               //$this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
+               redirect('auth/index', 'refresh');
+                
             }
             else
             { //if the login was un-successful
                 //redirect them back to the login page
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
+                $this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
                 redirect('auth/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
             }
         }
