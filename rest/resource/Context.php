@@ -7,15 +7,16 @@ class Context extends Resource
 {
     function get($request)
     {
-        Utils::checkValidQueryParams(array('hostkey', 'context'));
+        Utils::checkValidQueryParams(array('hostkey', 'context', 'name'));
 
         $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $context = Utils::queryParam('context');
+        $name = Utils::queryParam('name');
 
         $response = new Response($request);
         $payload = cfmod_resource_context($username,
-                $hostkey, $context,
+                $hostkey, $context, $name,
                 DefaultParameters::from(), DefaultParameters::to(),
                 DefaultParameters::page(), DefaultParameters::count());
 
