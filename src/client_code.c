@@ -406,11 +406,6 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
                     }
                 }
             }
-            else
-            {
-                CfOut(cf_verbose, "",
-                      "!! Existing network measurement incorrect - overwriting");
-            }
         }
 
     }
@@ -442,7 +437,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
     bson_finish(&update);
 
     mongo_update(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT, NULL);
-    CfOut(cf_verbose, "", "!! NEW network measurement added");
+
     bson_destroy(&query);
     bson_destroy(&update);
 }
