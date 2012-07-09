@@ -188,32 +188,6 @@ cfpr_ldap_get_several_attributes(
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_enterprise_version)
-{
-    const int bufsize = 256;
-    char buf[bufsize];
-
-    buf[0] = '\0';
-
-    Nova2PHP_enterprise_version(buf, bufsize);
-
-    RETURN_STRING(buf, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_community_version)
-{
-    const int bufsize = 256;
-    char buf[bufsize];
-
-    buf[0] = '\0';
-    Nova2PHP_community_version(buf, bufsize);
-    RETURN_STRING(buf, 1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_getlicense_summary)
 {
     char s[4096] = { 0 };
