@@ -81,12 +81,10 @@ class Authentication_model extends Cf_Model
      */
     function getUserDetails($username)
     {
-        $body = $this->rest->get($this->userResource . '/' . $username);
-        $status = $this->rest->status();
+        $body = $this->rest->get('/'.$this->userResource . '/' . $username);
         try
         {
-            if ($status == 200)
-            {
+           
                 $data = $this->checkData($body);
                 if (is_array($data) && $this->hasErrors() == 0)
                 {
@@ -96,12 +94,16 @@ class Authentication_model extends Cf_Model
                 {
                     throw new Exception($this->getErrorsString());
                 }
-            }
-            else
-            {
-                $this->setError($body);
-                throw new Exception($body);
-            }
+        }
+         catch (Pest_Unauthorized $e)
+        {
+            $this->setError($e->getMessage());
+            return false;
+        }
+        catch (Pest_UnknownResponse $e)
+        {
+            $this->setError($e->getMessage());
+            return false;
         }
         catch (Exception $e)
         {

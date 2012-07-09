@@ -122,6 +122,23 @@ class Ion_auth
         $this->auth_model->setRestClient($this->getRestClient());
 
 
+        if (!$this->mode)
+        {
+            $this->set_error('backend_error');
+            log_message('info', 'cannot find any mode switching to internal database');
+            $this->mode = 'database';
+            //return FALSE;
+        }
+        if ($this->ci->config->item('auth_mode') && $this->ci->config->item('auth_mode') != '')
+        {
+            $this->mode = strtolower($this->ci->config->item('auth_mode'));
+        }
+
+        if ($this->ci->session->userdata('mode') !== FALSE)
+        {
+            $this->mode = $this->ci->session->userdata('mode');
+        }
+        //$this->mode='database';
         //auto-login the user if they are remembered
         if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
         {
@@ -131,7 +148,6 @@ class Ion_auth
                 $this->on_login_successful($username);
             }
         }
-
         $this->email = $this->ci->settings_model->app_settings_get_item('appemail');
         if (!($this->email || empty($this->email)))
         {
@@ -161,7 +177,7 @@ class Ion_auth
      * @return void
      * @author Mathew
      * */
-    public function activate($id, $code = false)
+    public function activate($id, $code=false)
     {
         if ($this->ci->login->activate($id, $code))
         {
@@ -406,17 +422,17 @@ class Ion_auth
     }
 
     /**
+     * login
      *
-     * @param type $identity
-     * @param type $password
-     * @param type $remember
-     * @return type
-     */
-    public function login($identity, $password, $remember = false)
+     * @return void
+     * @author Mathew
+     * */
+    public function login($username, $password, $remember=false)
     {
-        $val = $this->auth_model->login($identity, $password);
+        $val = $this->auth_model->login($username, $password);
         if ($val)
         {
+            $this->on_login_successful($username);
             return true;
         }
         return false;
@@ -482,9 +498,7 @@ class Ion_auth
      * */
     public function logged_in()
     {
-        $identity = $this->ci->config->item('identity', 'ion_auth');
-
-        return (bool) $this->ci->session->userdata($identity);
+        return (bool) $this->ci->session->userdata('username');
     }
 
     /**
@@ -495,12 +509,8 @@ class Ion_auth
      * */
     public function is_admin($check_real_assigned_roles = false)
     {
-        $admin_role = $this->ci->settings_model->app_settings_get_item('admin_role');
-
-        if ($admin_role === False)
-        {
-            $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
-        }
+        //$admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
+        $admin_role = 'admin';
 
         if ($check_real_assigned_roles == false)
         {
@@ -508,16 +518,15 @@ class Ion_auth
         }
         else
         {
-            if ($this->ci->settings_model->app_settings_get_item('mode') == 'database' || $this->ci->session->userdata('mode') == 'database')
-            {
-                $tmp = $this->get_user_role($this->ci->session->userdata('id'));
-                $user_role = $tmp[0]['roles'];
-            }
-            else
-            {
-                $tmp = $this->get_ldap_user_details_from_local_db($this->ci->session->userdata('user_id'));
-                $user_role = $tmp->roles;
-            }
+            //if ($this->ci->settings_model->app_settings_get_item('mode') == 'database' || $this->ci->session->userdata('mode') == 'database')
+            // {
+            $user_role = $this->get_user_role($this->ci->session->userdata('username'));
+            /* }
+              else
+              {
+              $tmp = $this->get_ldap_user_details_from_local_db($this->ci->session->userdata('user_id'));
+              $user_role = $tmp->roles;
+              } */
         }
 
         if ($user_role === False || empty($user_role))
@@ -601,19 +610,19 @@ class Ion_auth
      * @return objects Users
      * @author Ben Edmunds
      * */
-    public function get_users($role_name = false, $limit = NULL, $offset = NULL)
+    public function get_users($role_name=false, $limit=NULL, $offset=NULL)
     {
         return $this->ci->ion_auth_model_mongo->get_users($role_name, $limit, $offset);
     }
 
-    public function get_user_role($id)
+    public function get_user_role($username)
     {
-        return $this->ci->ion_auth_model_mongo->get_users_role($id);
+        return $this->auth_model->getRolesForUser($username);
     }
 
     public function get_user_rolelist($id)
     {
-        $roles = $this->ci->ion_auth_model_mongo->get_users_role($id);
+        $roles = $this->auth_model->getRolesForUser($id);
         if (!empty($roles) && $roles !== False)
         {
             return $roles[0]['roles'];
@@ -627,7 +636,7 @@ class Ion_auth
      * @return array Users
      * @author Ben Edmunds
      * */
-    public function get_users_array($role_name = false, $limit = NULL, $offset = NULL)
+    public function get_users_array($role_name=false, $limit=NULL, $offset=NULL)
     {
         if (strtolower($this->mode) != 'database')
         {
@@ -734,9 +743,9 @@ class Ion_auth
      * @return object User
      * @author Ben Edmunds
      * */
-    public function get_user($id = false)
+    public function get_user($id=false)
     {
-        return $this->ci->ion_auth_model_mongo->get_user($id);
+        return $this->auth_model->getUserDetails($id);
     }
 
     /**
@@ -748,17 +757,6 @@ class Ion_auth
     public function get_user_by_email($email)
     {
         return $this->ci->ion_auth_model_mongo->get_user_by_email($email);
-    }
-
-    /**
-     * Get User as Array
-     *
-     * @return array User
-     * @author Ben Edmunds
-     * */
-    public function get_user_array($id = false)
-    {
-        return $this->ci->ion_auth_model_mongo->get_user($id);
     }
 
     /**
@@ -1079,35 +1077,9 @@ class Ion_auth
      * @return array
      * @author sudhir
      * */
-    public function get_roles($username = NULL)
+    public function get_roles()
     {
-        /* if(strtolower($this->mode)!='database'){
-          if(!$this->ci->session->userdata('pwd')){
-          $this->set_error('login_mode_changed');
-          }
-          if($this->ci->session->userdata('dn')){
-          $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
-          }
-          return $this->ci->auth_ldap->get_all_ldap_roles( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
-          } */
-        return $this->ci->ion_auth_model_mongo->get_roles($username);
-    }
-
-    public function get_roles_fromdb()
-    {
-        return $this->ci->ion_auth_model_mongo->get_roles($this->ci->session->userdata('username'));
-    }
-
-    /**
-     * get_role
-     * particular get role in the system
-     *
-     * @return object
-     * @author sudhir
-     * */
-    public function get_role($username = NULL, $rolename = NULL)
-    {
-        return $this->ci->ion_auth_model_mongo->get_role($username, $rolename);
+        return $this->auth_model->getRolesAllRoles();
     }
 
     /**

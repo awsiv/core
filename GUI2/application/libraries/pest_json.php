@@ -43,11 +43,7 @@ class pest_json extends Pest
         return parent::prepRequest($opts, $url);
     }
 
-    public function processBody($body)
-    {
-        return json_decode($body, true);
-    }
-
+  
     public function __construct($param)
     {
         parent::__construct($param['base_url']);

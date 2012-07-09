@@ -26,11 +26,11 @@ class Auth extends Controller
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
-
+        
         $this->carabiner->css(
                 array(
                     array('contextfinder.css'),
-                    array('users_roles.css'),
+                    array('users_roles.css'),                    
                     array('tabs-custom.css')
                     )
                 );
@@ -81,13 +81,16 @@ class Auth extends Controller
             redirect('auth/permission_deny', 'refresh');
         }
 
+       
         $this->_check_admin_permissions();
-
+        
+        
+       
         $requiredjs = array(
             //array('widgets/classfinderbox.js'),
             array('widgets/contextfinder.js'),
-            array('widgets/classfinder.js'),
-            array('widgets/policyfinder.js'),
+            array('widgets/classfinder.js'),   
+            array('widgets/policyfinder.js'),            
             array('jquery.form.js'),
             array('jquery.blockUI.js'),
         );
@@ -146,19 +149,19 @@ class Auth extends Controller
             $this->session->set_userdata('user_timezone', $this->input->post('timezone'));
 
             if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember))
-            {
+            { 
                 //$this->session->set_flashdata('message', $this->ion_auth->messages());
                 $username=trim($this->input->post($identifier));
                 $session_data = array(
                     'username'=>$username,
-                     'roles'=>$this->ion_auth->get_roles($username),
+                     'roles'=>$this->ion_auth->get_user_role($username),
                      'password'=>$this->input->post('password')
                     //'roles' => $result->roles
                 );
                $this->session->set_userdata($session_data);
                $this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
                redirect('auth/index', 'refresh');
-
+                
             }
             else
             { //if the login was un-successful
@@ -926,8 +929,8 @@ class Auth extends Controller
             {
                 $assigned_roles = $user->roles;
             }
-
-
+           
+           
             // create data for checkbox
             if (!empty($assigned_roles))
             {
@@ -1022,14 +1025,14 @@ class Auth extends Controller
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
 
             $this->form_validation->set_rules('description', 'Description', 'required|xss_clean|trim');
-
+            
             $this->form_validation->set_rules('crxi', 'Include classes', 'required|xss_clean|callback_includeClassValidate');
-
+            
             $this->form_validation->set_rules('crxx', 'Exclude classes', 'xss_clean');
             $this->form_validation->set_rules('brxi', 'Include bundlers', 'xss_clean');
             $this->form_validation->set_rules('brxx', 'Include bundlers', 'xss_clean');
 
-
+            
             if ($this->form_validation->run() == true)
             {
                 $data = array('name' => $this->input->post('name'),
@@ -1088,7 +1091,7 @@ class Auth extends Controller
     /**
      *Function to validate include classes for roles. Each role MUST have one class into include(crxi) list
      * @param type $crxi
-     * @return boolean
+     * @return boolean 
      */
     function includeClassValidate($crxi) {
         $crxi = array_filter(array_unique($crxi));
@@ -1101,10 +1104,10 @@ class Auth extends Controller
             }
         }
 
-        $this->form_validation->set_message('includeClassValidate', 'Role must have at least one include class');
+        $this->form_validation->set_message('includeClassValidate', 'Role must have at least one include class');        
         return false;
     }
-
+    
     function __load_role_add_edit($op, $rolename)
     {
         $this->_check_admin_permissions();
