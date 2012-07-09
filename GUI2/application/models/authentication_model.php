@@ -34,7 +34,7 @@ class Authentication_model extends Cf_Model
         $body=$this->rest->get('');
         $status = $this->rest->status();
         if($status==200){
-            $this->update_last_login($username);
+            $this->update_last_login($identity);
             return true;
         }else{
             $this->setError($body);
@@ -42,8 +42,25 @@ class Authentication_model extends Cf_Model
         }
     }
     
+    /**
+     * Get Roles for a users
+     */
     
+    function getRolesForUser($username){
+        $user=$this->getUserDetails($username);
+        if(key_exists('roles', $user)){
+            return $user['roles'];
+        }
+        return false;
+    }
     
+    /**
+     * 
+     */
+   function getAllRoles(){
+       
+   }
+   
     /**
      * Generate the details for given object i.e user
      * @param type $username
@@ -51,17 +68,15 @@ class Authentication_model extends Cf_Model
      * @param type $object
      * @return type 
      */
-    function getUserDetails($username,$password,$object=NULL){
-        $user=$object==NULL?$username:$object;
-        $this->rest->initialize(array('server' => $this->apiServer, 'http_auth' => $this->http_auth, 'http_user'=>$username,'http_pass'=>$password));
-        $body=$this->rest->get($this->baseResource.'/'.$this->userResource.'/'.$user);
+    function getUserDetails($username){
+        $body=$this->rest->get($this->userResource.'/'.$username);
         $status = $this->rest->status();
         try{
             if($status==200){
                $data=$this->checkData($body);
                    if (is_array($data) && $this->hasErrors() == 0)
                     {
-                        return $data['data'];
+                        return $data['data'][0];
                     }
                     else
                     {

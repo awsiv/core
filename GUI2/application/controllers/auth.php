@@ -51,7 +51,6 @@ class Auth extends Controller
         $this->data['userroles'] = $this->session->userdata('roles');
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
-
         $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
         //notifier( get_nodehost_from_server().'/userloggedin', $_data );
         if (is_ajax())
@@ -141,25 +140,23 @@ class Auth extends Controller
         $this->form_validation->set_rules('password', 'Password', 'required');
 
         if ($this->form_validation->run() == true)
-        { //check to see if the user is logging in
-            //check for "remember me"
+        { 
             $remember = (bool) $this->input->post('remember');
-
             // add a session variable for the timezone information of the user for date conversion
             $this->session->set_userdata('user_timezone', $this->input->post('timezone'));
 
             if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember))
             { 
                 //$this->session->set_flashdata('message', $this->ion_auth->messages());
+                $username=trim($this->input->post($identifier));
                 $session_data = array(
-                    'username'=>trim($this->input->post($identifier)),
+                    'username'=>$username,
+                     'roles'=>$this->ion_auth->get_roles($username),
+                     'password'=>$this->input->post('password')
                     //'roles' => $result->roles
                 );
-                
-                //$user=$this->authentication_model->getUserDetails(trim($this->input->post($identifier)),$this->input->post('password'));
-               $this->session->set_userdata('username', $this->input->post($identifier));
-               $this->session->set_userdata('password', $this->input->post('password'));
-               //$this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
+               $this->session->set_userdata($session_data);
+               $this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
                redirect('auth/index', 'refresh');
                 
             }
@@ -1368,10 +1365,10 @@ class Auth extends Controller
     function _check_admin_permissions()
     {
         // if user auhenticated as database, and curremt MP mode is LDAP or AD  - show message that he CAN'T work with users
-        if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database')
+       /* if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database')
         {
             redirect('auth/no_permission_for_local_admin', 'location', 302);
-        }
+        }*/
     }
 
 }
