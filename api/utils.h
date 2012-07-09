@@ -56,4 +56,6 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
 EnterpriseDB *EnterpriseDBAcquire(void);
 bool EnterpriseDBRelease(EnterpriseDB *conn);
 
+Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
+
 #endif

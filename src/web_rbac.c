@@ -82,6 +82,7 @@ static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
 static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
+static HubQuery *CFDB_GetRBACForUser(char *userName);
 
 /*****************************************************************************/
 
@@ -461,7 +462,7 @@ cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_GetRBACForUser(char *userName)
+static HubQuery *CFDB_GetRBACForUser(char *userName)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.
@@ -588,7 +589,8 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active, const char *email)
+cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active, const char *email,
+                            const Rlist *roles)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
@@ -612,6 +614,7 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool act
     bson_append_string(&doc, dbkey_user_name, username);
     bson_append_string(&doc, dbkey_user_password, hashed_password);
     bson_append_string(&doc, dbkey_user_salt, salt);
+    BsonAppendStringArrayRlist(&doc, dbkey_user_roles, roles);
     bson_append_bool(&doc, dbkey_user_active, active);
 
     if (!NULL_OR_EMPTY(email))
@@ -640,7 +643,8 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool act
     return errid;
 }
 
-cfapi_errid CFDB_UpdateUser(const char *username, const char *password, bool active, const char *email)
+cfapi_errid CFDB_UpdateUser(const char *username, const char *password, bool active, const char *email,
+                            const Rlist *roles)
 {
     cfapi_errid errid = CFDB_DeleteUser(username);
 
@@ -649,7 +653,7 @@ cfapi_errid CFDB_UpdateUser(const char *username, const char *password, bool act
         return errid;
     }
 
-    return CFDB_CreateUser(username, password, active, email);
+    return CFDB_CreateUser(username, password, active, email, roles);
 }
 
 cfapi_errid CFDB_DeleteUser(const char *username)
@@ -702,10 +706,11 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 3,
+    BsonSelectReportFields(&field, 4,
                            dbkey_user_name,
                            dbkey_user_active,
-                           dbkey_user_email);
+                           dbkey_user_email,
+                           dbkey_user_roles);
 
     mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -725,7 +730,9 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
         const char *email = NULL;
         BsonStringGet(&cursor->current, dbkey_user_email, &email);
 
-        HubUser *user = NewHubUser(username, active, email);
+        Rlist *roles = BsonStringArrayAsRlist(&cursor->current, dbkey_user_roles);
+
+        HubUser *user = NewHubUser(username, active, email, roles);
         PrependRlistAlien(&(hq->records), user);
     }
 

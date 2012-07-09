@@ -292,6 +292,23 @@ void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues)
     }
 }
 
+void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist)
+{
+    int i = 0;
+    char index_str[32];
+    {
+        bson_append_start_array(b, key);
+
+        for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
+        {
+            snprintf(index_str, sizeof(index_str), "%d", i);
+            bson_append_string(b, index_str, ScalarValue(rp));
+        }
+
+        bson_append_finish_object(b);
+    }
+}
+
 /*****************************************************************************/
 
 bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter)
