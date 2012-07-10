@@ -40,6 +40,7 @@ long BsonLongGet(const bson *b, const char *key);
 bool BsonGetArrayValue(const bson *b, const char *key, bson *sub);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
+JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type);
 
 /*
  * WARNING:
