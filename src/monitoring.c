@@ -1274,9 +1274,10 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
             if (a.measure.extraction_regex)
             {
                 CfOut(cf_verbose, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
-                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 strncpy(value, ExtractFirstReference(a.measure.extraction_regex, match->name), CF_MAXVARSIZE - 1);
+                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 AppendItem(&matches, value, NULL);
+                
             }
             break;
         }
@@ -1291,8 +1292,8 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
             if (a.measure.extraction_regex)
             {
                 CfOut(cf_verbose, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
-                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 strncpy(value, ExtractFirstReference(a.measure.extraction_regex, match->name), CF_MAXVARSIZE - 1);
+                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 AppendItem(&matches, value, NULL);
             }
         }
