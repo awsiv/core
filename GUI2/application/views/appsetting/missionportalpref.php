@@ -1,12 +1,22 @@
 <div class="outerdiv">
 <div class=" innerdiv ">
     <div class="panelhead">Mission Portal settings</div>
-    <div id="infoMessage"><?php echo $message;?></div>
+    <div id="infoMessage"><?php echo $message;?>
+     <?php
+            if (($this->session->flashdata('message'))) {
+                $flashMessage  = $this->session->flashdata('message');
+                $content = $flashMessage['content'];
+                $content_class = $flashMessage['type'];
+
+            ?>
+            <p class="<?php echo $content_class; ?>"><?php echo $content; ?></p>
+     <?php } ?>
+    </div>
     <div class="form">
    <?php // Change the css classes to suit your needs
 
 $attributes = array('class' => '', 'id' => 'mpsettings');
-echo form_open('settings/manage/'.$op, $attributes); ?>
+echo form_open('settings/show', $attributes); ?>
  <p>
         <label for="appemail">Administrative email <span class="required">*</span></label>
         <?php echo tooltip('tooltip_application_email','',true) ; //echo form_error('appemail'); ?>
@@ -17,10 +27,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <p id='admingrpsec'>
     <label for="admin_role">Administrative role<span class="required"></span></label>
    <?php if(isset($roles)){
-    echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); 
+    echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain');
     echo form_dropdown('admin_role', $roles, isset($admin_role)?$admin_role:'select');
     }?>
-    
+
    <?php if(isset($selected_role)){
      echo form_label($selected_role,'',array('id'=>'selected_grplbl'));
    }?>
@@ -35,10 +45,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
                      <input id="mode1" name="mode" type="radio" class="" value="database" <?php echo (isset($database))?$database:$this->form_validation->set_radio('mode', 'database') ; ?> checked="checked"/>
         		<label for="mode" class="">Internal</label>
-                        
+
                         <input id="mode2" name="mode" type="radio" class="" value="ldap" <?php echo (isset($ldap))?$ldap:$this->form_validation->set_radio('mode', 'ldap'); ?> />
         		<label for="mode" class="">LDAP</label>
-                        
+
                         <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory))?$active_directory:$this->form_validation->set_radio('mode', 'active_directory') ; ?> />
         		<label for="mode" class="">Active Directory</label>
 
@@ -72,10 +82,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <input id="users_directory" type="text" name="users_directory[]"  value="<?php echo $users_directory ?>" class="usrdir"/>
         <?php if(!isset($user_dirs)){ ?>
         <button id="addmore">add</button>
-        <?php } ?> 
+        <?php } ?>
         <span id="effective_dir"></span>
 </p>
- <?php 
+ <?php
        if(isset($user_dirs)){
          $number_of_dirs=count($user_dirs);
          $i=1;
@@ -91,7 +101,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                     );
               echo form_button($data);
                if($i==$number_of_dirs){
-                  echo form_button(array('id'=>'addmore','content'=>'add')); 
+                  echo form_button(array('id'=>'addmore','content'=>'add'));
               }
               echo "</p>";
               $i++;
@@ -115,7 +125,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <p>
    <label for="encryption">Encryption<span class="required"></span></label>
         <?php  // echo form_error('mode'); ?>
-      
+
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
                      <input id="sec1" name="encryption" type="radio" class="" value="plain" <?php echo (isset($plain))?$plain:$this->form_validation->set_radio('encryption', 'plain') ; ?>/>
                      <label for="encryption" class="">None</label>
@@ -134,31 +144,31 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 <p><label></label> <a class="btn testldap" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
 </fieldset>
-<p>    
+<p>
     <label for="fall back for">Fall-back role ( if authentication server down)<span class="required"></span></label>
     <?php echo tooltip('tooltip_fall_back','',true) ;// echo form_error('active_directory_domain'); ?>
     <?php echo form_dropdown('fall_back_for', $roles, $fall_back_for?$fall_back_for:'select');?>
 </p>
 <p>
     <label for="rbac">Role based access control <span class="required">*</span></label>
-        <?php 
+        <?php
         $elem = array(
                 'name'        => 'rbac',
                 'id'          => 'rbac_on',
                 'value'       => 'true',
-                'checked'     => (isset($rbac) && $rbac== 'true' ? TRUE : '')
+                'checked'     => (isset($rbac) && $rbac ? TRUE : '')
             );
         echo form_radio($elem); ?>
         <label for="mode" class="">On</label>
-        <?php 
+        <?php
         $elem = array(
                 'name'        => 'rbac',
                 'id'          => 'rbac_off',
                 'value'       => 'false',
-                'checked'     => (isset($rbac) && $rbac  == 'false' ? TRUE : '')
+                'checked'     => (isset($rbac) && !$rbac ? TRUE : '')
             );
-        echo form_radio($elem); ?>                
-        
+        echo form_radio($elem); ?>
+
         <label for="mode" class="">Off</label>
 </p>
 
@@ -207,7 +217,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 $('.ldaprelated').show();
                 $("#addmore").show();
                 //$('#getgrpsbtn').show()
-                
+
             }
             else if($("input[@name='mode']:checked").val() == 'active_directory'){
                 $('#ldapsettings').show()
@@ -222,39 +232,39 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 set_bind_dn();
                 }
      }
-     
+
      function set_bind_dn(){
             if($('#users_directory').val()!=''){
               $('#effective_dir').text('bind dn: '+$("#users_directory").val()+','+$("#base_dn").val())
                }else{
               $('#effective_dir').text('bind dn: '+$("#base_dn").val())
-                }  
+                }
      }
-     
-     
+
+
      $("input[name='users_directory[]']").keyup(function(){
         set_bind_dn();
      });
-     
+
      $("input[name='base_dn']").keyup(function(){
         set_bind_dn();
      });
-     
+
     $("#addmore").bind('click', function(event){
         event.preventDefault();
         var num=$('.usrdir').length;
         var newElem = $('#users_directory').clone().attr('id', 'users_directory_'+num).val('');
         var rmNewElem=$('<button>').attr('class','rmbtns').text('remove');
         var container=$("<p>").append('<label>').append(newElem).append(rmNewElem).append($(this));
-        $('#userdirs').append(container);    
+        $('#userdirs').append(container);
     });
-    
+
     $(".rmbtns").live('click',function(event){
        var addmorebtn=$('#addmore');
        if($(this).parent().prev().find('#effective_dir').length>0){
            $('#effective_dir').before(addmorebtn);
        }else{
-          $(this).parent().prev().append(addmorebtn); 
+          $(this).parent().prev().append(addmorebtn);
        }
        $(this).parent().remove();
     });
@@ -269,7 +279,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          // if($(this).attr('id')=='getgrpsbtn'){
          //    dlgtitle='Get roles' ;
          // }
-           
+
           $(this).ajaxyDialog({title:dlgtitle,clickData:{
              'mode':$("input:radio[name=mode]:checked").val(),
              'host':$("#host").val(),
@@ -284,16 +294,16 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          change:function(response){
              $('#infoMessage').html(response.message);
              // $("select[name='admin_role']").remove();
-             // $('#selected_grplbl').remove();  
+             // $('#selected_grplbl').remove();
              // grpcontainer.append(response.roles);
              // $('#getgrpsbtn').before(response.roles);
          }
-        
+
        }).ajaxyDialog('open');
-       
+
       });
-      
-      $("input[name='mode']").change(function(){  
+
+      $("input[name='mode']").change(function(){
       settings_toggle();
       /*var selbox=$("select[name='admin_role']");
       if($(this).val()==mode){
@@ -303,11 +313,11 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
       }
      else{
           selbox.remove();
-          $('#selected_grplbl').remove();      
+          $('#selected_grplbl').remove();
       }*/
-          
+
      });
-    <?php if ($this->setting_lib->get_tooltips_status()) { ?>   
+    <?php if ($this->setting_lib->get_tooltips_status()) { ?>
     $('span.hint').each(function() // Find all inputs with formtip spans next to them
     {
         $(this).next('input, select, textarea').eq(0).qtip( // Stick a tooltip on the spans related input
@@ -324,7 +334,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
             show:{ event: 'foucs mouseenter'},
             hide: { event: 'mouseout'}
         });
-    }); 
+    });
    <?php } ?>
 
 });

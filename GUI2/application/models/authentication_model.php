@@ -19,7 +19,6 @@ class Authentication_model extends Cf_Model
     public function setRestClient($rest)
     {
         $this->rest = $rest;
-        //var_dump($rest);
     }
 
     /**

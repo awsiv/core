@@ -10,11 +10,35 @@ class Settings extends Cf_Controller
         $this->load->library('ion_auth');
         $this->load->helper('form');
         $this->load->helper('url');
-        $this->load->model('settings_model');
+        $this->load->model('settings_rest_model');
+        $this->settings_rest_model->setRestClient($this->ion_auth->getRestClient());
     }
 
-    function manage($op = false, $id = false)
+    function show()
     {
+
+        $requiredjs = array(
+            array('widgets/notes.js'),
+        );
+        $this->carabiner->js($requiredjs);
+
+        if (!$this->ion_auth->is_accessible())
+        {
+            redirect('auth/setting');
+        }
+
+        try
+        {
+            $settingsValue = $this->settings_rest_model->get_app_settings();
+        }
+        catch (Exception $e)
+        {
+            // for now set the setting value as empty array whn error
+            show_error($e->getMessage());
+        }
+
+
+
         $bc = array(
             'title' => $this->lang->line('breadcrumb_setting'),
             'url' => 'auth/setting',
@@ -23,6 +47,99 @@ class Settings extends Cf_Controller
             'replace_existing' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
+        $user_dir = '';
+
+        $required_if_ldap = $this->__ldap_check();
+        $required_if_database = $this->__db_check();
+        $required_if_ad = $this->__AD_check();
+
+        $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
+        $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('rbac', 'Role based acccess control', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
+        $this->form_validation->set_rules('users_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
+        $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
+        $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
+        $this->form_validation->set_rules('admin_role', 'valid role');
+        $this->form_validation->set_rules('external_admin_username', 'External admin user name', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+
+        $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        $this->form_validation->set_rules('bluehost_threshold_global', 'Blue host horizon', 'callback_validate_bluehost_threshold');
+        $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
+        if ($this->form_validation->run() == true)
+        {
+            if ($this->_updateData())
+            {
+                $this->session->set_flashdata('message', array('content' => 'Settings updated sucessfully', 'type' => 'success'));
+                //refresh
+                redirect('settings/show');
+            }
+            else
+            {
+                $this->session->set_flashdata('message', array('content' => 'Something went wrong while updating the settings', 'type' => 'error'));
+                //refresh
+                redirect('settings/show');
+            }
+        }
+
+
+
+        $bluehost_threshold_min = isset($settingsValue['bluehost_threshold_global']) ? $settingsValue['bluehost_threshold_global'] * 60 : null;
+        $form_data = array(
+            'appemail' => set_value('appemail'),
+            'mode' => set_value('mode', $settingsValue['authMode']),
+            'host' => set_value('host', $settingsValue['ldapHost']),
+            'base_dn' => set_value('base_dn'),
+            'login_attribute' => set_value('login_attribute', $settingsValue['ldapLoginAttribute']),
+            'users_directory' => $user_dir,
+            'active_directory_domain' => set_value('active_directory_domain'),
+            'fall_back_for' => $this->input->post('fall_back_for'),
+            'admin_role' => $this->input->post('admin_role'),
+            'encryption' => set_value('encryption', $settingsValue['ldapEncryption']),
+            'external_admin_username' => $this->input->post('external_admin_username'),
+            'rbac' => set_value('rbac', $settingsValue['rbac']),
+            'bluehost_threshold_global' => set_value($bluehost_threshold_min)
+        );
+        $data = array(
+            'title' => "CFEngine Mission Portal - Settings",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'message' => validation_errors(),
+        );
+        $data['rolesacc']['admin'] = 'admin';
+        $data['roles'] = $data['rolesacc'];
+
+        $data = array_merge($form_data, $data);
+        $this->template->load('template', 'appsetting/missionportalpref', $data);
+    }
+
+    /**
+     * updates the setting data
+     */
+    function _updateData()
+    {
+        $data = array();
+        $data['rbac'] = set_value('rbac');
+        $data['authMode'] = set_value('mode');
+        $data['ldapEncryption'] = set_value('encryption');
+        $data['ldapLoginAttribute'] = set_value('login_attribute');
+        $data['ldapHost'] = set_value('host');
+
+        try
+        {
+            $this->settings_rest_model->updateData($data);
+            return true;
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        return false;
+    }
+
+    function manage($op = false, $id = false)
+    {
 
         if (!$this->ion_auth->is_accessible())
         {
@@ -61,36 +178,8 @@ class Settings extends Cf_Controller
                 'op' => 'create'
             );
 
-
-            //for fall back roles list
-            /* disabled. If RBAC is ON admin role is hardcoded.
-             * if not - we shoudl discus this.
-             */
-            /*
-              $roles = $this->ion_auth->get_roles_fromdb();
-              foreach ((array) $roles as $role) {
-              $data['roles'][$role['name']] = $role['name'];
-              }
-             */
-
-
-            //for selecting admin_role from list, populated list depends on the mode selected and saved
-
-            /* if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
-              $roles_acc_mode = $this->ion_auth->get_roles();
-              foreach ((array) $roles_acc_mode as $role) {
-              key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
-              }
-              } else
-              {
-              $data['selected_role']=$this->settings_model->app_settings_get_item('admin_role');
-              } */
-            //$data['rolesacc']=$data['roles'];
-            //tmp solutiom
-            $data['rolesacc']['admin'] = 'admin'; //$data['roles'];
+            $data['rolesacc']['admin'] = 'admin';
             $data['roles'] = $data['rolesacc'];
-            // ---- end TMP solution
-            //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
 
             if (is_object($settings))
@@ -146,10 +235,7 @@ class Settings extends Cf_Controller
                     'host' => set_value('host'),
                     'base_dn' => set_value('base_dn'),
                     'login_attribute' => set_value('login_attribute'),
-                    //'users_directory[]' => set_value('users_directory[]'),
-                    //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
-                    //'member_attribute' => set_value('member_attribute'),
                     'encryption' => set_value('encryption')
                 );
 
@@ -170,9 +256,7 @@ class Settings extends Cf_Controller
                 'base_dn' => set_value('base_dn'),
                 'login_attribute' => set_value('login_attribute'),
                 'users_directory' => implode(';', $this->input->post('users_directory')),
-                //  	'active_directory' => set_value('active_directory'),
                 'active_directory_domain' => set_value('active_directory_domain'),
-                //'member_attribute' => set_value('member_attribute'),
                 'fall_back_for' => $this->input->post('fall_back_for'),
                 'admin_role' => $this->input->post('admin_role'),
                 'encryption' => set_value('encryption'),
@@ -180,7 +264,7 @@ class Settings extends Cf_Controller
                 'rbac' => set_value('rbac'),
                 'bluehost_threshold_global' => "$bluehost_threshold_min",
             );
-// run insert model to write data to db
+            // run insert model to write data to db
             $inserted = '';
             if ($op == 'edit')
             {
@@ -319,27 +403,8 @@ class Settings extends Cf_Controller
                         $data[$property] = $this->form_validation->set_value($property, $value);
                     }
                 }
-                //$this->load->view('appsetting/missionportalpref',$data);
-                /* Disabled
-                  $roles = $this->ion_auth->get_roles_fromdb();
-                  foreach ((array) $roles as $role) {
-                  $data['roles'][$role['name']] = $role['name'];
-                  }
-                 */
-                //perviously used for selecting the roles form the resective source now , the roles are used form DB only
-                /* if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
-                  $roles_acc_mode = $this->ion_auth->get_roles();
-                  foreach ((array) $roles_acc_mode as $role) {
-                  key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
-                  }
-                  }
-                  else
-                  {
-                  $data['selected_role']=$this->input->post('admin_role');
-                  } */
-                //$data['rolesacc']=$data['roles'];
-                //tmp solutiom
-                $data['rolesacc']['admin'] = 'admin'; //$data['roles'];
+
+                $data['rolesacc']['admin'] = 'admin';
                 $data['roles'] = $data['rolesacc'];
 
 
@@ -451,19 +516,6 @@ class Settings extends Cf_Controller
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
         //previously used for obtaining roles form ldap now local roles is used with ldap users
 
-        /* $roles = $this->auth_ldap->get_all_ldap_roles($this->input->post('username'), $this->input->post('password'));
-          $rolesarry=array();
-          foreach ((array)$roles as $role){
-          if(key_exists('name', $role)){
-          $rolesarry[$role['name']]=$role['name'];
-          }
-          if(key_exists('displayname', $role)){
-          $rolesarry[$role['displayname']]=$role['displayname'];
-          }
-
-          } */
-
-        //print_r($result);
         $message = "<div>";
         if ($result)
         {
