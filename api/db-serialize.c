@@ -15,6 +15,16 @@ JsonElement *HubUserToJson(const HubUser *user)
         JsonObjectAppendString(obj, "email", user->email);
     }
 
+    if (user->roles)
+    {
+        JsonElement *roles = JsonArrayCreate(50);
+        for (const Rlist *rp = user->roles; rp; rp = rp->next)
+        {
+            JsonArrayAppendString(roles, ScalarValue(rp));
+        }
+        JsonObjectAppendArray(obj, "roles", roles);
+    }
+
     return obj;
 }
 

@@ -493,7 +493,7 @@ class Settings extends Cf_Controller
 
     function get_native_roles()
     {
-        $roles = $this->ion_auth->get_roles_fromdb();
+        $roles = $this->ion_auth->get_roles();
         $rolesarr = array();
         foreach ($roles as $role)
         {

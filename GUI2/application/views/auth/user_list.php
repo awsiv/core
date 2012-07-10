@@ -32,7 +32,7 @@
                                 <?php  if($this->ion_auth->mode=="database"){?>
 				<td><?php
                                     if($is_admin) {
-                                        echo ($user['active']) ? anchor("auth/deactivate/".$user['_id']->__toString(), 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
+                                        echo ($user['active']) ? anchor("auth/deactivate/".$username/*$user['_id']->__toString()*/, 'Active', array('class'=>'activate')) : anchor("auth/activate/". $username, 'Inactive',array('class'=>'inactivate'));
                                     }else{
                                      echo ($user['active']) ? 'Active' :  'Inactive';
                                     }
@@ -47,16 +47,16 @@
         if ($this->ion_auth->mode != "database") {
             echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
         } else {
-            echo anchor("auth/edit_user/" . $user['_id']->__toString(), ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
+            echo anchor("auth/edit_user/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
         }
 
         if ($this->ion_auth->mode == "database") {
             if ($user['username'] != $loggedinusername) {
-                if ($username != $fall_back_for) { // if this is not "admin" user
-                    echo anchor("auth/delete_user/" . $user['_id']->__toString(), ' ', array('class' => 'delete', 'title' => 'delete user'));
-                }
+                ///if ($username != $fall_back_for) { // if this is not "admin" user
+                    echo anchor("auth/delete_user/" . $username, ' ', array('class' => 'delete', 'title' => 'delete user'));
+               // }
             } elseif ($user['username'] == $loggedinusername) {
-                echo anchor("auth/change_password/" . $user['_id']->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password'));
+                echo anchor("auth/change_password/" . $username, ' ', array('class' => 'changepassword', 'title' => 'change password'));
             }
         }
     }

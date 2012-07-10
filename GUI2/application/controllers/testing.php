@@ -847,5 +847,30 @@ class Testing extends CI_Controller
             var_dump($array);
         }
     }
+    
+    function restTest($val){
+        // Load the rest client spark
+       $this->load->spark('restclient/2.1.0');
+
+        // Load the library
+        $this->load->library('rest');
+        
+        // Run some setup
+        $this->rest->initialize(array('server' => 'http://10.0.0.74/rest', 'http_auth' => 'basic', 'http_user'=>'admin','http_pass'=>'admin'));
+         
+         //get hpsts
+        $hosts = $this->rest->get($val);
+       
+        //get status
+        $status = $this->rest->status();
+        
+        //get info
+        $info=$this->rest->info();
+        
+        var_dump($hosts);
+        var_dump($status);
+        var_dump($info);
+
+    }
 
 }

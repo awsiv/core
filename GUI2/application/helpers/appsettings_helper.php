@@ -54,6 +54,8 @@ function initializeHub() {
            $ret['name']=$data['name'];
            $ret['version']=$data['version'];
        }
+       $ret['name']="Enterprise";
+       $ret['version']='2.3.xx';
        return $ret;
    }
    

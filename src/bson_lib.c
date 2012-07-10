@@ -7,6 +7,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "bson_lib.h"
 #include "files_names.h"
 #include "item_lib.h"
+#include "json.h"
 
 #include <assert.h>
 
@@ -286,6 +287,23 @@ void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues)
         {
             snprintf(iStr, sizeof(iStr), "%d", i);
             bson_append_string(b, iStr, ip->name);
+        }
+
+        bson_append_finish_object(b);
+    }
+}
+
+void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist)
+{
+    int i = 0;
+    char index_str[32];
+    {
+        bson_append_start_array(b, key);
+
+        for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
+        {
+            snprintf(index_str, sizeof(index_str), "%d", i);
+            bson_append_string(b, index_str, ScalarValue(rp));
         }
 
         bson_append_finish_object(b);
@@ -782,4 +800,195 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
 
     return count;
 }
+
+/*****************************************************************************/
+
+JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type) //type: array|object
+// function map bson object/array with it's tree to json object/array
+// do not support bson_date -> it is skipped from mapping
+{
+    if (bson == NULL)
+    {
+        return NULL;
+    }
+
+    bson_iterator it;
+    bson_iterator_from_buffer(&it, bson);
+
+    JsonElement *json_ret;
+    if (type == BSON_ARRAY)
+    {
+        json_ret = JsonArrayCreate(10);
+    }
+    else if (type == BSON_OBJECT)
+    {
+        json_ret = JsonObjectCreate(10);
+    }
+    else
+    {
+        return NULL;
+    }
+
+    int size = 0;
+
+    while (bson_iterator_next(&it))
+    {
+        switch ((int)bson_iterator_type(&it))
+        {
+            case BSON_OBJECT:
+            {
+                JsonElement *json_obj = NULL;
+
+                json_obj = BsonContainerToJsonContainer(bson_iterator_value(&it), BSON_OBJECT);
+                if (json_obj != NULL)
+                {
+                    ++size;
+                    if (type == BSON_OBJECT)
+                    {
+                        JsonObjectAppendObject(json_ret,
+                                               bson_iterator_key(&it),
+                                               json_obj);
+                    }
+                    else // ARRAY
+                    {
+                        JsonArrayAppendObject(json_ret,
+                                              json_obj);
+                    }
+                }
+                break;
+            }
+            case BSON_ARRAY:
+            {
+                JsonElement *json_arr = NULL;
+
+                json_arr = BsonContainerToJsonContainer(bson_iterator_value(&it), BSON_ARRAY);
+                if (json_arr != NULL)
+                {
+                    ++size;
+                    if (type == BSON_OBJECT)
+                    {
+                        JsonObjectAppendArray(json_ret,
+                                              bson_iterator_key(&it),
+                                              json_arr);
+                    }
+                    else // ARRAY
+                    {
+                        JsonArrayAppendArray(json_ret,
+                                             json_arr);
+                    }
+                }
+            break;
+            }
+            case BSON_BINDATA:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendString(json_ret,
+                                           bson_iterator_key(&it),
+                                           bson_iterator_bin_data(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendString(json_ret,
+                                          bson_iterator_bin_data(&it));
+                }
+                break;
+            }
+            case BSON_DOUBLE:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendReal(json_ret,
+                                         bson_iterator_key(&it),
+                                         bson_iterator_double(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendReal(json_ret,
+                                        bson_iterator_double(&it));
+                }
+                break;
+            }
+            case BSON_STRING:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendString(json_ret,
+                                           bson_iterator_key(&it),
+                                           bson_iterator_string(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendString(json_ret,
+                                          bson_iterator_string(&it));
+                }
+                break;
+            }
+            case BSON_BOOL:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendBool(json_ret,
+                                         bson_iterator_key(&it),
+                                         bson_iterator_bool(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendBool(json_ret,
+                                        bson_iterator_bool(&it));
+                }
+                break;
+            }
+            case BSON_DATE: // currently unsupported
+            {
+                break;
+            }
+            case BSON_INT:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendInteger(json_ret,
+                                            bson_iterator_key(&it),
+                                            bson_iterator_int(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendInteger(json_ret,
+                                           bson_iterator_int(&it));
+                }
+                break;
+            }
+            case BSON_LONG:
+            {
+                ++size;
+                if (type == BSON_OBJECT)
+                {
+                    JsonObjectAppendInteger(json_ret,
+                                            bson_iterator_key(&it),
+                                            (int)bson_iterator_long(&it));
+                }
+                else // ARRAY
+                {
+                    JsonArrayAppendInteger(json_ret,
+                                           (int)bson_iterator_long(&it));
+                }
+                break;
+            }
+        }
+    }
+
+    if (size == 0)
+    {
+        JsonElementDestroy(json_ret);
+        return NULL;
+    }
+
+    return json_ret;
+}
+
 /*****************************************************************************/

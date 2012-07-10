@@ -4,6 +4,7 @@ require_once "APIBaseTest.php";
 
 class UserTest extends APIBaseTest
 {
+
     public function testListUsers()
     {
         try
@@ -18,16 +19,14 @@ class UserTest extends APIBaseTest
         }
     }
 
-    // not really a "unit" test :)
-    public function testAddUpdateDeleteUser()
-    {
-        try
-        {
-            // add new user
-            $this->pest->put('/user/snookie', '{
+    
+    public function testAddUser(){
+        try{
+          $this->pest->put('/user/snookie', '{
                     "password": "pass",
                     "active": true,
-                    "email": "snookie@cfengine.com"
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
                 }');
             $this->assertEquals(201, $this->pest->lastStatus());
 
@@ -37,34 +36,108 @@ class UserTest extends APIBaseTest
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals(true, $users[0]['active']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
-
-            // update email
+            $this->assertEquals('jersey', $users[0]['roles'][0]);
+            
+            //test newly created user can log in or not
+            $this->pest->setupAuth("snookie", "pass");
+            $response=$this->getResults('');
+            $this->assertValidJson($response);
+            
+        }catch(Exception $e){
+            $this->fail($e);
+        }
+    }
+    
+    
+    public function testUpdateEmail(){
+        try{
             $this->pest->post('/user/snookie', '{
                     "email": "snookie2@cfengine.com"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
-
-            // check email was updated
+            
+            // check only email was updated and nothing other
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
-
-            // update deactivate
+            
+            //test if only email was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $this->getResults('');
+            $this->assertValidJson($response);
+            
+        }catch(Exception $e){
+            $this->fail($e);
+        }
+    }
+    
+    public function testUpdateStatus(){
+        try{
             $this->pest->post('/user/snookie', '{
                     "active": false
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
 
             // check email was updated
-            $users = $this->getResults('/user');
+            $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals(false, $users[0]['active']);
-
-            // delete user
-            $this->pest->delete('/user/snookie');
+            
+            //test only status was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $response=$this->getResults('');
+            $this->assertValidJson($response);
+            
+         }catch(Exception $e){
+              $this->fail($e);
+         }
+    }
+    
+    public function testUpdateRoles(){
+        try{
+         $this->pest->post('/user/snookie', '{
+                    "roles": [ "jersey", "wenches" ]
+                }');
             $this->assertEquals(204, $this->pest->lastStatus());
+
+            // check roles was updated
+            $users = $this->getResults('/user');
+            $this->assertValidJson($users);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('jersey', $users[0]['roles'][0]);
+            $this->assertEquals('wenches', $users[0]['roles'][1]);
+            
+            //test only roles was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $response=$this->getResults('');
+            $this->assertValidJson($response);
+            
+        }catch(Exception $e){
+              $this->fail($e);
+         }
+    }
+    
+    public function testDeleteUser(){
+        try{
+            $this->pest->delete('/user/snookie');
+            $this->assertEquals(204, $this->pest->lastStatus()); 
+        }catch(Exception $e){
+               $this->fail($e);
+        }
+    }
+
+    public function testUserNotFound()
+    {
+        try
+        {
+            $jsonArray = $this->getResults('/user/xxxxxxx');
+            $this->fail("Should not get here, user found");
+        }
+        catch (Pest_NotFound $e)
+        {
+            // pass
         }
         catch (Pest_Exception $e)
         {

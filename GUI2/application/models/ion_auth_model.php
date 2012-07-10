@@ -74,10 +74,11 @@ class Ion_auth_model extends CI_Model
     {
         parent::__construct();
         $this->load->database();
+        $this->load->spark('restclient/2.1.0');
         $this->load->config('ion_auth', TRUE);
         $this->load->helper('cookie');
         $this->load->helper('date');
-        $this->load->library('session');
+        $this->load->library(array('session','rest'));
 
         $this->tables = $this->config->item('tables', 'ion_auth');
         $this->columns = $this->config->item('columns', 'ion_auth');
@@ -618,6 +619,15 @@ class Ion_auth_model extends CI_Model
         }
 
         return FALSE;
+    }
+    
+    
+     function login($username,$password){
+        $this->rest->initialize(array('server' => $apiServer, 'http_auth' => $http_auth, 'http_user'=>$username,'http_pass'=>$password));
+        $status = $this->rest->status();
+        if($status==200){
+            return true;
+        }
     }
 
     /**

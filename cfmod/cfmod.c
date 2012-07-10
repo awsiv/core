@@ -34,9 +34,9 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_software, NULL)
     PHP_FE(cfmod_resource_setuid, NULL)
     PHP_FE(cfmod_resource_file, NULL)
-        // private API
-    PHP_FE(cfpr_enterprise_version, NULL)
-    PHP_FE(cfpr_community_version, NULL)
+
+
+    // private API
     PHP_FE(cfpr_getlicense_summary, NULL)
     PHP_FE(cfpr_getlicense_expiry, NULL)
     PHP_FE(cfpr_getlicense_owner, NULL)

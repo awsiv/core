@@ -277,13 +277,15 @@ PHP_FUNCTION(cfapi_user_put)
     const char *password = NULL; int password_len = 0;
     bool active;
     const char *email = NULL; int email_len = 0;
+    zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsa",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
                               &active,
-                              &email, &email_len) == FAILURE)
+                              &email, &email_len,
+                              &roles_arg) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -316,12 +318,16 @@ PHP_FUNCTION(cfapi_user_put)
         DeleteHubQuery(users, DeleteHubUser);
     }
 
+    Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username_arg, password, active, email)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username_arg, password, active, email, roles)) != ERRID_SUCCESS)
     {
+        DeleteRlist(roles);
         THROW_GENERIC(err, "Unable to create user");
     }
 
+    DeleteRlist(roles);
     RETURN_BOOL(true);
 }
 
@@ -332,13 +338,15 @@ PHP_FUNCTION(cfapi_user_post)
     const char *password = NULL; int password_len = 0;
     bool active;
     const char *email = NULL; int email_len = 0;
+    zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsa",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
                               &active,
-                              &email, &email_len) == FAILURE)
+                              &email, &email_len,
+                              &roles_arg) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -352,7 +360,10 @@ PHP_FUNCTION(cfapi_user_post)
         THROW_GENERIC(errid, "Access denied");
     }
 
-    cfapi_errid err = CFDB_UpdateUser(username_arg, password, active, email);
+    Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+    cfapi_errid err = CFDB_UpdateUser(username_arg, password, active, email, roles);
+    DeleteRlist(roles);
+
     switch (err)
     {
     case ERRID_SUCCESS:

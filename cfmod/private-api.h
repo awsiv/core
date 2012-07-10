@@ -9,23 +9,6 @@
 
 #include "php_cfmod.h"
 
-/*! \brief Get the name and version of an enterprise version of CFEngine
-\verbatim
-{
-  name: Nova,
-  version: "2.2.0"
-}
-\endverbatim
- */
-PHP_FUNCTION(cfpr_enterprise_version);
-
-/*! \brief Get the name and version of the core/community version
-\verbatim
-CFEngine Core 3.0.0
-\endverbatim
- */
-PHP_FUNCTION(cfpr_community_version);
-
 /*! \brief Gets a license summary.
  *  \warning Reads from scratch area.
  */

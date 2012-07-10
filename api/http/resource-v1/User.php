@@ -10,8 +10,16 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $response->body = cfapi_user_get($user, $username);
-        $response->code = Response::OK;
+        $payload = cfapi_user_get($user, $username);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
 
         return $response;
     }
@@ -21,11 +29,12 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $data = json_decode($request->data);
+        $roles = $data->roles ? $data->roles : array();
 
         $response = new Response($request);
 
         if (cfapi_user_put($user, $username, $data->password, $data->active,
-                $data->email))
+                $data->email, $roles))
         {
             $response->code = Response::CREATED;
         }
@@ -42,11 +51,12 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $data = json_decode($request->data);
+        $roles = $data->roles ? $data->roles : array();
 
         $response = new Response($request);
 
         if (cfapi_user_post($user, $username, $data->password, $data->active,
-                $data->email))
+                $data->email, $roles))
         {
             $response->code = Response::NOCONTENT;
         }

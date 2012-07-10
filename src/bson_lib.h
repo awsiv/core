@@ -23,6 +23,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendStringSafe(bson *b, const char *key, char *value);
 bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue);
 void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
+void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
 void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values);
 bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter);
 bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeValues);
@@ -39,6 +40,7 @@ long BsonLongGet(const bson *b, const char *key);
 bool BsonGetArrayValue(const bson *b, const char *key, bson *sub);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
+JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type);
 
 /*
  * WARNING:

@@ -26,6 +26,7 @@ class Auth extends Controller
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
+        
         $this->carabiner->css(
                 array(
                     array('contextfinder.css'),
@@ -50,7 +51,6 @@ class Auth extends Controller
         $this->data['userroles'] = $this->session->userdata('roles');
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
-
         $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
         //notifier( get_nodehost_from_server().'/userloggedin', $_data );
         if (is_ajax())
@@ -81,8 +81,9 @@ class Auth extends Controller
             redirect('auth/permission_deny', 'refresh');
         }
 
+       
         $this->_check_admin_permissions();
-
+        
         $requiredjs = array(
             //array('widgets/classfinderbox.js'),
             array('widgets/contextfinder.js'),
@@ -140,19 +141,24 @@ class Auth extends Controller
         $this->form_validation->set_rules('password', 'Password', 'required');
 
         if ($this->form_validation->run() == true)
-        { //check to see if the user is logging in
-            //check for "remember me"
+        { 
             $remember = (bool) $this->input->post('remember');
-
             // add a session variable for the timezone information of the user for date conversion
             $this->session->set_userdata('user_timezone', $this->input->post('timezone'));
 
             if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember))
-            { //if the login is successful
-                //redirect them back to the home page
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                //redirect($this->config->item('base_url'), 'refresh');
-                redirect('auth/index', 'refresh');
+            { 
+                //$this->session->set_flashdata('message', $this->ion_auth->messages());
+                $username=trim($this->input->post($identifier));
+                $session_data = array(
+                    'username'=>$username,
+                     'roles'=>$this->ion_auth->get_user_role($username),
+                     'password'=>$this->input->post('password')
+                );
+               $this->session->set_userdata($session_data);
+               $this->session->set_flashdata('message', $this->ion_auth->errors());
+               redirect('auth/index', 'refresh');
+                
             }
             else
             { //if the login was un-successful
@@ -753,6 +759,7 @@ class Auth extends Controller
             {
                 $forgotten = $this->ion_auth->forgotten_password($this->input->post('email'));
             }
+            
             if (is_ajax())
             {
                 $this->data['message'] = $this->ion_auth->messages();
@@ -761,7 +768,7 @@ class Auth extends Controller
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
 
                 // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
+               // $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
 
                 // on success - return json - we will  not redraw entire form
                 $data['status'] = 'all_ok';
@@ -798,18 +805,17 @@ class Auth extends Controller
             $this->data['user_name'] = array('name' => 'user_name',
                 'id' => 'first_name',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('user_name', $user->username),
+                'value' => $this->form_validation->set_value('user_name', $user['username']),
             );
 
             $this->data['email'] = array('name' => 'email',
                 'id' => 'email',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('email', $user->email),
+                'value' => $this->form_validation->set_value('email',  key_exists('email', $user)?$user['email']:''),
             );
 
             //get user roles
-            $tmp = $this->ion_auth->get_users_role($id);
-            $assigned_roles = $tmp[0]['roles'];
+            $assigned_roles = $this->ion_auth->get_user_role($id);
 
 
             // create data for checkbox
@@ -1004,7 +1010,7 @@ class Auth extends Controller
         }
 
         $this->data['is_admin'] = $this->ion_auth->is_admin();
-
+      
         if (!empty($op))
         {
             $this->data['title'] = "Create role";
@@ -1073,8 +1079,9 @@ class Auth extends Controller
         }
         else
         {
-            $this->data['roles'] = $this->ion_auth->get_roles($this->session->userdata('username'));
-
+             
+            $this->data['roles'] = $this->ion_auth->get_roles();
+           
             $this->data['message'] = (validation_errors()) ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $this->load->view('auth/list_role', $this->data);
         }
@@ -1359,10 +1366,10 @@ class Auth extends Controller
     function _check_admin_permissions()
     {
         // if user auhenticated as database, and curremt MP mode is LDAP or AD  - show message that he CAN'T work with users
-        if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database')
+       /* if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database')
         {
             redirect('auth/no_permission_for_local_admin', 'location', 302);
-        }
+        }*/
     }
 
 }
