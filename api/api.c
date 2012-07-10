@@ -578,3 +578,23 @@ PHP_FUNCTION(cfapi_query_post)
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
+
+/******************************************************************************/
+/* TODO: user management (RBAC) needed here */
+PHP_FUNCTION(cfapi_exec_sql)
+{
+    char *sql;
+    int sql_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &sql, &sql_len) == FAILURE)
+    {
+       THROW_ARGS_MISSING();
+    }
+
+    JsonElement *data = EnterpriseExecuteSQL(sql);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+}
+
+/******************************************************************************/
