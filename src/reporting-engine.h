@@ -13,5 +13,6 @@
 
 JsonElement *ReportingEngineQuery(JsonElement *query);
 
+JsonElement *EnterpriseExecuteSQL(char *select_op);
 
 #endif
