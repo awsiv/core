@@ -4,7 +4,7 @@ class Authentication_model extends Cf_Model
 {
 
     protected $userResource = 'user';
-    protected $baseResource = 'api';
+    protected $rolesResource = 'role';
     protected $rest = '';
 
     public function __construct()
@@ -31,23 +31,18 @@ class Authentication_model extends Cf_Model
      */
     function login($identity, $password, $mode = 'basic')
     {
-        $this->rest->setupAuth($identity, $password);
-
         try
         {
+            $this->rest->setupAuth($identity, $password);
             $body = $this->rest->get('/');
             $this->update_last_login($identity);
             return true;
         }
-        catch (Pest_Unauthorized $e)
+        catch (Exception $e)
         {
-            $this->setError($e->getMessage());
-            return false;
-        }
-        catch (Pest_UnknownResponse $e)
-        {
-            $this->setError($e->getMessage());
-            return false;
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+           
         }
     }
 
@@ -65,11 +60,55 @@ class Authentication_model extends Cf_Model
     }
 
     /**
-     *
+     * Get all roles
      */
     function getAllRoles()
     {
+        try
+        {
+            $body = $this->rest->get('/' . $this->rolesResource);
+            $data = $this->checkData($body);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data['data'];
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
 
+    /**
+     * Get all users 
+     */
+    function getAllUsers()
+    {
+        try
+        {
+            $body = $this->rest->get('/' . $this->userResource);
+            $data = $this->checkData($body);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data['data'];
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
     }
 
     /**
@@ -81,37 +120,54 @@ class Authentication_model extends Cf_Model
      */
     function getUserDetails($username)
     {
-        $body = $this->rest->get('/'.$this->userResource . '/' . $username);
+        
         try
         {
-           
-                $data = $this->checkData($body);
-                if (is_array($data) && $this->hasErrors() == 0)
-                {
-                    return $data['data'][0];
-                }
-                else
-                {
-                    throw new Exception($this->getErrorsString());
-                }
-        }
-         catch (Pest_Unauthorized $e)
-        {
-            $this->setError($e->getMessage());
-            return false;
-        }
-        catch (Pest_UnknownResponse $e)
-        {
-            $this->setError($e->getMessage());
-            return false;
+            $body = $this->rest->get('/' . $this->userResource . '/' . $username);
+            $data = $this->checkData($body);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data['data'][0];
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
         }
         catch (Exception $e)
         {
+            $this->setError($e->getMessage());
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
 
+    
+    /**
+     *
+     * @param type $username
+     * @param type $data 
+     */
+    function update_user($username,$data){
+        
+        try
+        {
+            $this->rest->post('/' . $this->userResource . '/' . $username, $data);
+            if($this->rest->lastStatus() == 204){
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+    
+    
+    
     /**
      * Update the last login time for user in local db related to the user.
      * @param type $username

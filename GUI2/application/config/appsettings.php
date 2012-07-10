@@ -24,4 +24,4 @@ $config['default'] = 'themes/default/';
  *REST setting
  */
 
-$config['rest_server'] ='http://10.0.0.74/api';
+$config['rest_server'] ='http://10.0.0.32/api';

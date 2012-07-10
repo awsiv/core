@@ -84,8 +84,6 @@ class Auth extends Controller
        
         $this->_check_admin_permissions();
         
-        
-       
         $requiredjs = array(
             //array('widgets/classfinderbox.js'),
             array('widgets/contextfinder.js'),
@@ -156,17 +154,16 @@ class Auth extends Controller
                     'username'=>$username,
                      'roles'=>$this->ion_auth->get_user_role($username),
                      'password'=>$this->input->post('password')
-                    //'roles' => $result->roles
                 );
                $this->session->set_userdata($session_data);
-               $this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
+               $this->session->set_flashdata('message', $this->ion_auth->errors());
                redirect('auth/index', 'refresh');
                 
             }
             else
             { //if the login was un-successful
                 //redirect them back to the login page
-                $this->session->set_flashdata('message', $this->authentication_model->getErrorsString());
+                $this->session->set_flashdata('message', $this->ion_auth->errors());
                 redirect('auth/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
             }
         }
@@ -762,6 +759,7 @@ class Auth extends Controller
             {
                 $forgotten = $this->ion_auth->forgotten_password($this->input->post('email'));
             }
+            
             if (is_ajax())
             {
                 $this->data['message'] = $this->ion_auth->messages();
@@ -770,7 +768,7 @@ class Auth extends Controller
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
 
                 // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
+               // $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
 
                 // on success - return json - we will  not redraw entire form
                 $data['status'] = 'all_ok';
@@ -807,18 +805,17 @@ class Auth extends Controller
             $this->data['user_name'] = array('name' => 'user_name',
                 'id' => 'first_name',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('user_name', $user->username),
+                'value' => $this->form_validation->set_value('user_name', $user['username']),
             );
 
             $this->data['email'] = array('name' => 'email',
                 'id' => 'email',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('email', $user->email),
+                'value' => $this->form_validation->set_value('email',  key_exists('email', $user)?$user['email']:''),
             );
 
             //get user roles
-            $tmp = $this->ion_auth->get_users_role($id);
-            $assigned_roles = $tmp[0]['roles'];
+            $assigned_roles = $this->ion_auth->get_user_role($id);
 
 
             // create data for checkbox
@@ -1013,7 +1010,7 @@ class Auth extends Controller
         }
 
         $this->data['is_admin'] = $this->ion_auth->is_admin();
-
+      
         if (!empty($op))
         {
             $this->data['title'] = "Create role";
@@ -1082,8 +1079,9 @@ class Auth extends Controller
         }
         else
         {
-            $this->data['roles'] = $this->ion_auth->get_roles($this->session->userdata('username'));
-
+             
+            $this->data['roles'] = $this->ion_auth->get_roles();
+           
             $this->data['message'] = (validation_errors()) ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $this->load->view('auth/list_role', $this->data);
         }

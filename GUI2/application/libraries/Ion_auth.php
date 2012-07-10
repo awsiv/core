@@ -429,13 +429,22 @@ class Ion_auth
      * */
     public function login($username, $password, $remember=false)
     {
-        $val = $this->auth_model->login($username, $password);
-        if ($val)
+        try
         {
-            $this->on_login_successful($username);
-            return true;
+            $val = $this->auth_model->login($username, $password);
+            if ($val)
+            {
+                $this->on_login_successful($username);
+                return true;
+            }
+            return false;
         }
-        return false;
+        catch (Exception $e)
+        {
+           //$this->set_error('login_unsuccessful'); 
+           $this->set_error($e->getMessage());
+           return false;
+        }
     }
 
     protected function on_login_successful($username)
@@ -604,17 +613,6 @@ class Ion_auth
         return $this->ci->ion_auth_model_mongo->profile($identity);
     }
 
-    /**
-     * Get Users
-     *
-     * @return objects Users
-     * @author Ben Edmunds
-     * */
-    public function get_users($role_name=false, $limit=NULL, $offset=NULL)
-    {
-        return $this->ci->ion_auth_model_mongo->get_users($role_name, $limit, $offset);
-    }
-
     public function get_user_role($username)
     {
         return $this->auth_model->getRolesForUser($username);
@@ -622,7 +620,7 @@ class Ion_auth
 
     public function get_user_rolelist($id)
     {
-        $roles = $this->auth_model->getRolesForUser($id);
+        $roles = $this->get_user_role($id);
         if (!empty($roles) && $roles !== False)
         {
             return $roles[0]['roles'];
@@ -636,7 +634,7 @@ class Ion_auth
      * @return array Users
      * @author Ben Edmunds
      * */
-    public function get_users_array($role_name=false, $limit=NULL, $offset=NULL)
+    public function get_users_array()
     {
         if (strtolower($this->mode) != 'database')
         {
@@ -668,7 +666,7 @@ class Ion_auth
             //var_dump($users_collection);
             return $users_collection;
         }
-        return $this->ci->ion_auth_model_mongo->get_users_by_role($role_name, $limit, $offset);
+        return $this->auth_model->getAllUsers();
     }
 
     /**
@@ -762,27 +760,48 @@ class Ion_auth
     /**
      * update_user
      *
-     * @return void
-     * @author Phil Sturgeon
+     * @return boolean
+     * 
      * */
     public function update_user($id, $data)
     {
         $roles = $this->get_user_rolelist($id);
-        $admin_role = $this->ci->settings_model->app_settings_get_item('admin_role');
-        $count = $this->ci->ion_auth_model_mongo->count_users_in_role($admin_role);
+        //$admin_role = $this->ci->settings_model->app_settings_get_item('admin_role');
+        $admin_role = 'admin';
+        $count = $this->count_users_in_role($admin_role);
         if ($count <= 1 && in_array($admin_role, $roles) && !in_array($admin_role, $data['roles']))
         {
             $this->set_error('one_admin_required');
             return FALSE;
         }
-        if ($this->ci->ion_auth_model_mongo->update_user($id, $data))
-        {
-            $this->set_message('update_successful');
-            return TRUE;
-        }
 
-        $this->set_error('update_unsuccessful');
-        return FALSE;
+        try
+        {
+            if ($this->auth_model->update_user($id, $data))
+            {
+                $this->set_message('update_successful');
+                return TRUE;
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->set_error('update_unsuccessful');
+            return FALSE;
+        }
+    }
+
+    public function count_users_in_role($role)
+    {
+        $users = $this->get_users_array();
+        $count = 0;
+        foreach ((array) $users as $user)
+        {
+            if (in_array($role, $user['roles']))
+            {
+                $count++;
+            }
+        }
+        return $count;
     }
 
     public function is_ldap_user_exists()
@@ -858,8 +877,9 @@ class Ion_auth
     public function delete_user($id)
     {
         $roles = $this->get_user_rolelist($id);
-        $admin_role = $this->ci->settings_model->app_settings_get_item('admin_role');
-        $count = $this->ci->ion_auth_model_mongo->count_users_in_role($admin_role);
+        //$admin_role = $this->ci->settings_model->app_settings_get_item('admin_role');
+        $admin_role = 'admin';
+        $count = $this->count_users_in_role($admin_role);
         if ($count <= 1 && in_array($admin_role, $roles))
         {
             $this->set_error('one_admin_required');
@@ -1079,7 +1099,7 @@ class Ion_auth
      * */
     public function get_roles()
     {
-        return $this->auth_model->getRolesAllRoles();
+        return $this->auth_model->getAllRoles();
     }
 
     /**
