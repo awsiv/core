@@ -571,7 +571,7 @@ class Ion_auth
     /**
      *
      */
-    public function is_accessable()
+    public function is_accessible()
     {
         $isadmin = $this->ci->settings_model->app_settings_get_item('admin_role');
         if ($isadmin !== FALSE && (!$this->is_admin() && !$this->is_in_fallback_role()))

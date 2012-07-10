@@ -1293,7 +1293,7 @@ class Auth extends Controller
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - Settings",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            "is_displayable" => $this->ion_auth->is_accessable()
+            "is_displayable" => $this->ion_auth->is_accessible()
         );
         $this->template->load('template', 'auth/usersettings', $data);
     }

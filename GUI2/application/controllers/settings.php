@@ -24,7 +24,7 @@ class Settings extends Cf_Controller
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-        if (!$this->ion_auth->is_accessable())
+        if (!$this->ion_auth->is_accessible())
         {
             redirect('auth/setting');
         }
