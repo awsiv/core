@@ -119,6 +119,45 @@ class UserTest extends APIBaseTest
          }
     }
     
+    public function testBrowseOwnDetails(){
+        try{
+          $this->pest->setupAuth("snookie", "pass");
+          $users=$this->getResults('/user/snookie');
+          $this->assertEquals('snookie', $users[0]['username']);
+          $this->assertEquals(true, $users[0]['active']);
+          $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
+            
+         }catch(Exception $e){
+            $this->fail($e);
+          }
+        
+    }
+    
+    public function testChangePassword(){
+     try{
+          //change password
+          $this->pest->post('/user/snookie', '{
+                    "password": "pass2"
+                }');
+          $this->assertEquals(204, $this->pest->lastStatus());
+          
+          //check if authentication is successful for new password
+          $this->pest->setupAuth("snookie", "pass2");
+          $response=$this->getResults('');
+          $this->assertValidJson($response);
+          
+          //check if roles are still there
+          $users=$this->getResults('/user/snookie');
+          $this->assertEquals('jersey', $users[0]['roles'][0]);
+          $this->assertEquals('wenches', $users[0]['roles'][1]);
+
+        }catch(Exception $e){
+             $this->fail($e);
+        }
+    }
+    
+    
+    
     public function testDeleteUser(){
         try{
             $this->pest->delete('/user/snookie');
@@ -128,6 +167,7 @@ class UserTest extends APIBaseTest
         }
     }
 
+  
     public function testUserNotFound()
     {
         try
