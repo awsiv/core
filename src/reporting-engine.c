@@ -79,11 +79,16 @@ JsonElement *EnterpriseExecuteSQL(char *select_op)
 static int BuildOutput(void *out, int argc, char **argv, char **azColName)
 {
     JsonElement *result = (JsonElement *) out;
-    int i;
-    for(i=0; i<argc; i++)
+
+    JsonElement *row = JsonObjectCreate(10);
+
+    for(int i=0; i<argc; i++)
     {
-        JsonObjectAppendString(result, azColName[i], argv[i] ? argv[i] : "NULL");
+        JsonObjectAppendString(row, azColName[i], argv[i] ? argv[i] : "NULL");
     }
+
+    JsonArrayAppendObject(result, row);
+
     return 0;
 }
 
@@ -94,11 +99,9 @@ JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
     /* Query sqlite and print table contents */
     char *err = 0;
 
-    JsonElement *result = JsonObjectCreate(5);
+    JsonElement *result = JsonArrayCreate(5);
 
     int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result, &err);
-
-    JsonObjectGetAsString(result, "os");
 
     if( rc != SQLITE_OK )
     {
