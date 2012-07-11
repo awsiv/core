@@ -187,24 +187,6 @@ cfpr_ldap_get_several_attributes(
 }
 
 /******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicense_summary)
-{
-    char s[4096] = { 0 };
-
-    s[0] = '\0';
-
-    CFDB_GetValue("license_report", s, sizeof(s), MONGO_SCRATCH);
-
-    if (strlen(s) < 2)
-    {
-        snprintf(s, sizeof(s), "{\"error\":\"Too early to retrieve license details, please try again later\"}");
-    }
-
-    RETURN_STRING(s, 1);
-}
-
-/******************************************************************************/
 PHP_FUNCTION(cfpr_hub_key)
 {
     const int bufsize = 4096;
@@ -220,6 +202,7 @@ PHP_FUNCTION(cfpr_hub_key)
 }
 
 /******************************************************************************/
+
 PHP_FUNCTION(cfpr_get_hub_master)
 {
     const int bufsize = 4096;
@@ -233,95 +216,6 @@ PHP_FUNCTION(cfpr_get_hub_master)
     }
 
     RETURN_STRING("Unknown Hub Master!", 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicense_expiry)
-{
-    char s[4096];
-
-    s[0] = '\0';
-
-    CFDB_GetValue("license_expires", s, sizeof(s), MONGO_SCRATCH);
-
-    if (strlen(s) < 2)
-    {
-        snprintf(s, sizeof(s), "no license");
-    }
-
-    RETURN_STRING(s, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicense_installtime)
-{
-    char s[4096];
-
-    s[0] = '\0';
-
-    CFDB_GetValue("license_installtime", s, sizeof(s), MONGO_SCRATCH);
-
-    if (strlen(s) < 2)
-    {
-        snprintf(s, sizeof(s), "no license");
-    }
-
-    RETURN_STRING(s, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicense_owner)
-{
-    char s[4096];
-
-    s[0] = '\0';
-    CFDB_GetValue("license_owner", s, sizeof(s), MONGO_SCRATCH);
-
-    if (strlen(s) < 3)
-    {
-        snprintf(s, sizeof(s), "unknown licensee");
-    }
-
-    RETURN_STRING(s, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicenses_promised)
-{
-    char s[4096];
-    int i = -1;
-
-    s[0] = '\0';
-    CFDB_GetValue("licenses_promised", s, sizeof(s), MONGO_SCRATCH);
-
-    sscanf(s, "%d", &i);
-    if (i == -1)
-    {
-        snprintf(s, sizeof(s), "No licenses promised");
-    }
-
-    RETURN_STRING(s, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_getlicenses_granted)
-{
-    char s[4096];
-    int i = -1;
-
-    CFDB_GetValue("licenses_granted", s, sizeof(s), MONGO_SCRATCH);
-    sscanf(s, "%d", &i);
-    if (i == -1)
-    {
-        snprintf(s, sizeof(s), "No license granted!");
-    }
-
-    RETURN_STRING(s, 1);
 }
 
 /******************************************************************************/

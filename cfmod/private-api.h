@@ -9,36 +9,6 @@
 
 #include "php_cfmod.h"
 
-/*! \brief Gets a license summary.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicense_summary);
-
-/*! \brief Gets the license expiry date.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicense_expiry);
-
-/*! \brief Gets the owner of the license.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicense_owner);
-
-/*! \brief Gets the number of licenses the policy promises to have.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicenses_promised);
-
-/*! \brief Gets the number of licenses granted by the license.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicenses_granted);
-
-/*! \brief Gets the date the license file was written to the masterfiles directory
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_getlicense_installtime);
-
 /*! \brief
  * \param hostKey
  * \param contextExpression

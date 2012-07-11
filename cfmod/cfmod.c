@@ -37,12 +37,6 @@ static zend_function_entry cfmod_functions[] =
 
 
     // private API
-    PHP_FE(cfpr_getlicense_summary, NULL)
-    PHP_FE(cfpr_getlicense_expiry, NULL)
-    PHP_FE(cfpr_getlicense_owner, NULL)
-    PHP_FE(cfpr_getlicenses_promised, NULL)
-    PHP_FE(cfpr_getlicenses_granted, NULL)
-    PHP_FE(cfpr_getlicense_installtime, NULL)
     PHP_FE(cfpr_get_class_frequency, NULL)
     PHP_FE(cfpr_report_class_frequency, NULL)
     PHP_FE(cfpr_network_speed, NULL)
