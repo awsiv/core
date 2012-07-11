@@ -5992,13 +5992,15 @@ int CFDB_QueryIsMaster(void)
         {
             CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
         }
+
+        bson_destroy(&result);
     }
     else
     {
         MongoCheckForError(&conn, "CFDB_QueryIsMaster()", "", NULL);
     }
+
     bson_destroy(&cmd);
-    bson_destroy(&result);
     CFDB_Close(&conn);
 
     if (!ret)
@@ -6040,14 +6042,17 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
         {
             CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
         }
+
+        bson_destroy(&result);
     }
     else
     {
         MongoCheckForError(&conn, "CFDB_QueryIsMaster()", "", NULL);
     }
+
     bson_destroy(&cmd);
-    bson_destroy(&result);
     CFDB_Close(&conn);
+
     return ret;
 }
 
