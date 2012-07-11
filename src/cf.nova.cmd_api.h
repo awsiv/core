@@ -9,8 +9,6 @@
 
 #include <stdbool.h>
 
-void Nova2Txt_getlicense(char *buffer, int bufsize);
-
 void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
 char *Nova_LongState(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);

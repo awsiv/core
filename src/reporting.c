@@ -2081,110 +2081,6 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
 
 /*****************************************************************************/
 
-void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *webdriver)
-{
-    CF_DB *dbp;
-    CF_DBC *dbcp;
-    int ksize, vsize;
-    void *value;
-    char *key;
-    int min = 9999999, max = -1, count, lic1, lic2, i = 0;
-    long ltime;
-    time_t now, dt, then;
-    double average, granted, sum_t = 0, ex_t = 0, lic_t = 0;
-    FILE *fout = stdout;
-    char timebuffer[26];
-
-    CfOut(cf_verbose, "", " -> Writing license summary");
-
-// Calculate utilization in each dt of the record
-
-    then = time(NULL);          // Set this to now for first round
-
-    if (OpenDB(&dbp, dbid_license))
-    {
-        if (NewDBCursor(dbp, &dbcp))
-        {
-            while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
-            {
-                if (value == NULL)
-                {
-                    continue;
-                }
-
-                count = lic1 = lic2 = 0;
-                ltime = 0L;
-
-                sscanf(value, "%d,%d,%d,%ld", &count, &lic1, &lic2, &ltime);
-
-                i++;
-                now = (time_t) ltime;
-
-                if (count > max)
-                {
-                    max = count;
-                }
-
-                if (count < min)
-                {
-                    min = count;
-                }
-
-                dt = now - then;
-
-                if (dt > 0)
-                {
-                    ex_t += (double) dt *count;
-                    lic_t += (double) dt *lic1;
-
-                    sum_t += (double) dt;
-                }
-
-                if (then > 0)
-                {
-                    then = now;
-                }
-                else
-                {
-                    then = time(NULL);
-                }
-            }
-
-            DeleteDBCursor(dbp, dbcp);
-        }
-        CloseDB(dbp);
-    }
-
-    now = time(NULL);
-    char name[CF_BUFSIZE];
-    snprintf(name, sizeof(name), "Mean observable license usage");
-    fprintf(fout, "<div id=\"reporttext\">");
-    fprintf(fout, "<h4>Last measured on %s based on %d samples</h4>", cf_strtimestamp_local(now, timebuffer), i);
-    fprintf(fout, "<table class=\"border\">\n");
-
-    if (sum_t > 0)
-    {
-        average = ex_t / sum_t;
-        granted = lic_t / sum_t;
-        fprintf(fout, "<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n", min);
-        fprintf(fout, "<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n", max);
-        fprintf(fout, "<tr><td>Mean actual usage</td><td> &ge; %lf</td></tr>\n", average);
-        fprintf(fout, "<tr><td>Mean expected usage</td><td> &le; %lf</td><tr>\n", granted);
-        fprintf(fout, "<tr><td>Mean utilization</td><td> &le; %lf %%</td><tr>\n", average / granted * 100.0);
-    }
-    else
-    {
-        fprintf(fout, "<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n", min);
-        fprintf(fout, "<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n", max);
-        fprintf(fout, "<tr><td>Mean usage</td><td> unknown</td><tr>\n");
-    }
-
-    fprintf(fout, "</table></div>\n");
-
-}
-
-/*****************************************************************************/
-
 void Nova_ZenossSummary(const char *docroot)
 {
     char name[CF_MAXVARSIZE];
@@ -2674,14 +2570,6 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
     else if (strcmp(lsdata, "setuid") == 0)
     {
         Nova2Txt_setuid_report(hostkey, name, true, classregex);
-        return;
-    }
-    else if (strcmp(lsdata, "license") == 0)
-    {
-        char buffer[CF_BUFSIZE];
-
-        Nova2Txt_getlicense(buffer, CF_BUFSIZE);
-        printf("%s\n", buffer);
         return;
     }
 

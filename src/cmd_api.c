@@ -13,13 +13,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scorecards.h"
 #include "db_query.h"
 
-
-void Nova2Txt_getlicense(char *buffer, int bufsize)
-{
-    NewClass("am_policy_hub");
-    CFDB_GetValue("license_report", buffer, bufsize, MONGO_SCRATCH);
-}
-
 /*****************************************************************************/
 
 int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg)
