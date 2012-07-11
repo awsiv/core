@@ -291,15 +291,13 @@ PHP_FUNCTION(cfapi_user_put)
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
-    bool active;
     const char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssa",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
-                              &active,
                               &email, &email_len,
                               &roles_arg) == FAILURE)
     {
@@ -337,7 +335,7 @@ PHP_FUNCTION(cfapi_user_put)
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
 
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username_arg, password, active, email, roles)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username_arg, password, email, roles)) != ERRID_SUCCESS)
     {
         DeleteRlist(roles);
         THROW_GENERIC(err, "Unable to create user");
@@ -352,15 +350,13 @@ PHP_FUNCTION(cfapi_user_post)
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
-    bool active;
     const char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssa",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
-                              &active,
                               &email, &email_len,
                               &roles_arg) == FAILURE)
     {
@@ -377,7 +373,7 @@ PHP_FUNCTION(cfapi_user_post)
     }
 
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
-    cfapi_errid err = CFDB_UpdateUser(username_arg, password, active, email, roles);
+    cfapi_errid err = CFDB_UpdateUser(username_arg, password, email, roles);
     DeleteRlist(roles);
 
     switch (err)

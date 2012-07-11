@@ -19,12 +19,11 @@ class UserTest extends APIBaseTest
         }
     }
 
-    
+
     public function testAddUser(){
         try{
           $this->pest->put('/user/snookie', '{
                     "password": "pass",
-                    "active": true,
                     "email": "snookie@cfengine.com",
                     "roles": [ "jersey" ]
                 }');
@@ -34,67 +33,43 @@ class UserTest extends APIBaseTest
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
-            $this->assertEquals(true, $users[0]['active']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
-            
+
             //test newly created user can log in or not
             $this->pest->setupAuth("snookie", "pass");
             $response=$this->getResults('');
             $this->assertValidJson($response);
-            
+
         }catch(Exception $e){
             $this->fail($e);
         }
     }
-    
-    
+
+
     public function testUpdateEmail(){
         try{
             $this->pest->post('/user/snookie', '{
                     "email": "snookie2@cfengine.com"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
-            
+
             // check only email was updated and nothing other
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
-            
+
             //test if only email was edited
             $this->pest->setupAuth("snookie", "pass");
             $this->getResults('');
             $this->assertValidJson($response);
-            
+
         }catch(Exception $e){
             $this->fail($e);
         }
     }
-    
-    public function testUpdateStatus(){
-        try{
-            $this->pest->post('/user/snookie', '{
-                    "active": false
-                }');
-            $this->assertEquals(204, $this->pest->lastStatus());
 
-            // check email was updated
-            $users = $this->getResults('/user/snookie');
-            $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
-            $this->assertEquals(false, $users[0]['active']);
-            
-            //test only status was edited
-            $this->pest->setupAuth("snookie", "pass");
-            $response=$this->getResults('');
-            $this->assertValidJson($response);
-            
-         }catch(Exception $e){
-              $this->fail($e);
-         }
-    }
-    
     public function testUpdateRoles(){
         try{
          $this->pest->post('/user/snookie', '{
@@ -108,31 +83,30 @@ class UserTest extends APIBaseTest
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
             $this->assertEquals('wenches', $users[0]['roles'][1]);
-            
+
             //test only roles was edited
             $this->pest->setupAuth("snookie", "pass");
             $response=$this->getResults('');
             $this->assertValidJson($response);
-            
+
         }catch(Exception $e){
               $this->fail($e);
          }
     }
-    
+
     public function testBrowseOwnDetails(){
         try{
           $this->pest->setupAuth("snookie", "pass");
           $users=$this->getResults('/user/snookie');
           $this->assertEquals('snookie', $users[0]['username']);
-          $this->assertEquals(true, $users[0]['active']);
           $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
-            
+
          }catch(Exception $e){
             $this->fail($e);
           }
-        
+
     }
-    
+
     public function testChangePassword(){
      try{
           //change password
@@ -140,12 +114,12 @@ class UserTest extends APIBaseTest
                     "password": "pass2"
                 }');
           $this->assertEquals(204, $this->pest->lastStatus());
-          
+
           //check if authentication is successful for new password
           $this->pest->setupAuth("snookie", "pass2");
           $response=$this->getResults('');
           $this->assertValidJson($response);
-          
+
           //check if roles are still there
           $users=$this->getResults('/user/snookie');
           $this->assertEquals('jersey', $users[0]['roles'][0]);
@@ -155,19 +129,17 @@ class UserTest extends APIBaseTest
              $this->fail($e);
         }
     }
-    
-    
-    
+
     public function testDeleteUser(){
         try{
             $this->pest->delete('/user/snookie');
-            $this->assertEquals(204, $this->pest->lastStatus()); 
+            $this->assertEquals(204, $this->pest->lastStatus());
         }catch(Exception $e){
                $this->fail($e);
         }
     }
 
-  
+
     public function testUserNotFound()
     {
         try

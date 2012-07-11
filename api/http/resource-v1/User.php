@@ -33,7 +33,7 @@ class User extends Resource
 
         $response = new Response($request);
 
-        if (cfapi_user_put($user, $username, $data->password, $data->active,
+        if (cfapi_user_put($user, $username, $data->password,
                 $data->email, $roles))
         {
             $response->code = Response::CREATED;
@@ -55,7 +55,7 @@ class User extends Resource
 
         $response = new Response($request);
 
-        if (cfapi_user_post($user, $username, $data->password, $data->active,
+        if (cfapi_user_post($user, $username, $data->password,
                 $data->email, $roles))
         {
             $response->code = Response::NOCONTENT;

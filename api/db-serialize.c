@@ -8,7 +8,6 @@ JsonElement *HubUserToJson(const HubUser *user)
 
     JsonElement *obj = JsonObjectCreate(5);
     JsonObjectAppendString(obj, "username", user->username);
-    JsonObjectAppendBool(obj, "active", user->active);
 
     if (user->email)
     {

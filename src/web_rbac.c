@@ -36,7 +36,6 @@
 # define dbkey_user_name "username"
 # define dbkey_user_password "password"
 # define dbkey_user_salt "salt"
-# define dbkey_user_active "active"
 # define dbkey_user_roles "roles"
 # define dbkey_user_email "email"
 
@@ -589,7 +588,22 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool active, const char *email,
+cfapi_errid CFDB_CreateUser(const char *username, const char *password, const char *email, const Rlist *roles)
+{
+    if (UserExists(username))
+    {
+        return ERRID_ITEM_EXISTS;
+    }
+
+    if (!username || !password)
+    {
+        return ERRID_ARGUMENT_MISSING;
+    }
+
+    return CFDB_UpdateUser(username, password, email, roles);
+}
+
+cfapi_errid CFDB_UpdateUser(const char *username, const char *password, const char *email,
                             const Rlist *roles)
 {
     EnterpriseDB conn;
@@ -598,62 +612,62 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, bool act
         return ERRID_DBCONNECT;
     }
 
-    if (UserExists(username))
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, dbkey_user_name, username);
+    bson_finish(&query);
+
+    bson set_op;
+    bson_init(&set_op);
+    bson_append_start_object(&set_op, "$set");
     {
-        CFDB_Close(&conn);
-        return ERRID_ITEM_EXISTS;
+        if (!NULL_OR_EMPTY(username))
+        {
+            bson_append_string(&set_op, dbkey_user_name, username);
+        }
+
+        if (!NULL_OR_EMPTY(password))
+        {
+            char *salt = GenerateSalt();
+            assert(salt);
+            char *hashed_password = HashPassword(password, strlen(password), salt);
+            assert(hashed_password);
+
+            bson_append_string(&set_op, dbkey_user_password, hashed_password);
+            bson_append_string(&set_op, dbkey_user_salt, salt);
+
+            free(salt);
+            free(hashed_password);
+        }
+
+        if (roles)
+        {
+            BsonAppendStringArrayRlist(&set_op, dbkey_user_roles, roles);
+        }
+
+        if (!NULL_OR_EMPTY(email))
+        {
+            bson_append_string(&set_op, dbkey_user_email, email);
+        }
     }
+    bson_append_finish_object(&set_op);
+    bson_finish(&set_op);
 
-    char *salt = GenerateSalt();
-    assert(salt);
-    char *hashed_password = HashPassword(password, strlen(password), salt);
-    assert(hashed_password);
+    mongo_update(&conn, MONGO_USERS_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson doc;
-    bson_init(&doc);
-    bson_append_string(&doc, dbkey_user_name, username);
-    bson_append_string(&doc, dbkey_user_password, hashed_password);
-    bson_append_string(&doc, dbkey_user_salt, salt);
-    BsonAppendStringArrayRlist(&doc, dbkey_user_roles, roles);
-    bson_append_bool(&doc, dbkey_user_active, active);
-
-    if (!NULL_OR_EMPTY(email))
-    {
-        bson_append_string(&doc, dbkey_user_email, email);
-    }
-
-    bson_append_int(&doc, cfr_time, time(NULL));
-    bson_finish(&doc);
-
-    mongo_insert(&conn, MONGO_USERS_COLLECTION, &doc, NULL);
-
-    bson_destroy(&doc);
+    bson_destroy(&query);
+    bson_destroy(&set_op);
 
     cfapi_errid errid = ERRID_SUCCESS;
-    if (!MongoCheckForError(&conn, "CFDB_CreateUser", NULL, false))
+    bool updated = false;
+    if (!MongoCheckForError(&conn, "CFDB_UpdateUser", NULL, &updated))
     {
         errid = ERRID_DB_OPERATION;
     }
 
     CFDB_Close(&conn);
 
-    free(salt);
-    free(hashed_password);
-
     return errid;
-}
-
-cfapi_errid CFDB_UpdateUser(const char *username, const char *password, bool active, const char *email,
-                            const Rlist *roles)
-{
-    cfapi_errid errid = CFDB_DeleteUser(username);
-
-    if (errid != ERRID_SUCCESS)
-    {
-        return errid;
-    }
-
-    return CFDB_CreateUser(username, password, active, email, roles);
 }
 
 cfapi_errid CFDB_DeleteUser(const char *username)
@@ -706,9 +720,8 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 4,
+    BsonSelectReportFields(&field, 3,
                            dbkey_user_name,
-                           dbkey_user_active,
                            dbkey_user_email,
                            dbkey_user_roles);
 
@@ -724,15 +737,12 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
         BsonStringGet(&cursor->current, dbkey_user_name, &username);
         assert(username);
 
-        bool active = false;
-        BsonBoolGet(&cursor->current, dbkey_user_active, &active);
-
         const char *email = NULL;
         BsonStringGet(&cursor->current, dbkey_user_email, &email);
 
         Rlist *roles = BsonStringArrayAsRlist(&cursor->current, dbkey_user_roles);
 
-        HubUser *user = NewHubUser(username, active, email, roles);
+        HubUser *user = NewHubUser(username, email, roles);
         PrependRlistAlien(&(hq->records), user);
     }
 
