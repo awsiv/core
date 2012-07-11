@@ -4,6 +4,7 @@
 #include "web_rbac.h"
 #include "utils.h"
 #include "db-serialize.h"
+#include "db_query.h"
 
 static const char *API_NAME = "CFEngine Enterprise API";
 static const char *API_VERSION = "v1";
@@ -19,6 +20,21 @@ PHP_FUNCTION(cfapi)
     JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
     JsonObjectAppendString(info, "databaseHostname", DBHostname());
     JsonObjectAppendInteger(info, "databasePort", DBPort());
+
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    JsonObjectAppendBool(info, "databaseConnected", conn);
+
+    if (conn)
+    {
+        JsonElement *license = NULL;
+        cfapi_errid err = CFDB_QueryLicense(conn, &license);
+        if (err == ERRID_SUCCESS)
+        {
+            JsonObjectAppendObject(info, "license", license);
+        }
+
+        EnterpriseDBRelease(conn);
+    }
 
     JsonElement *output = JsonArrayCreate(1);
     JsonArrayAppendObject(output, info);

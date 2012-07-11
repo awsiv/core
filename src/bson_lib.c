@@ -114,13 +114,13 @@ bool BsonArrayGet(const bson *b, const char *key, const char **out)
     }
 }
 
-bool BsonObjectGet(const bson *b, const char *key, bson **out)
+bool BsonObjectGet(const bson *b, const char *key, bson *out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == BSON_OBJECT)
     {
-        bson_iterator_subobject(&it, *out);
+        bson_iterator_subobject(&it, out);
         return true;
     }
     else
@@ -803,17 +803,17 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
 
 /*****************************************************************************/
 
-JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type) //type: array|object
+JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, _Bool ignore_timestamp) //type: array|object
 // function map bson object/array with it's tree to json object/array
 // do not support bson_date -> it is skipped from mapping
 {
-    if (bson == NULL)
+    if (b == NULL)
     {
         return NULL;
     }
 
     bson_iterator it;
-    bson_iterator_from_buffer(&it, bson);
+    bson_iterator_init(&it, b);
 
     JsonElement *json_ret;
     if (type == BSON_ARRAY)
@@ -833,13 +833,20 @@ JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type) //ty
 
     while (bson_iterator_next(&it))
     {
+        if (ignore_timestamp && StringSafeEqual(bson_iterator_key(&it), cfr_day))
+        {
+            continue;
+        }
+
         switch ((int)bson_iterator_type(&it))
         {
             case BSON_OBJECT:
             {
                 JsonElement *json_obj = NULL;
 
-                json_obj = BsonContainerToJsonContainer(bson_iterator_value(&it), BSON_OBJECT);
+                bson child;
+                bson_iterator_subobject(&it, &child);
+                json_obj = BsonContainerToJsonContainer(&child, BSON_OBJECT, ignore_timestamp);
                 if (json_obj != NULL)
                 {
                     ++size;
@@ -861,7 +868,9 @@ JsonElement* BsonContainerToJsonContainer(const char *bson, bson_type type) //ty
             {
                 JsonElement *json_arr = NULL;
 
-                json_arr = BsonContainerToJsonContainer(bson_iterator_value(&it), BSON_ARRAY);
+                bson child;
+                bson_iterator_subobject(&it, &child);
+                json_arr = BsonContainerToJsonContainer(&child, BSON_ARRAY, ignore_timestamp);
                 if (json_arr != NULL)
                 {
                     ++size;

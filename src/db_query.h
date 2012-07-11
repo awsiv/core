@@ -5,6 +5,7 @@
 #include "scorecards.h"
 #include "db_common.h"
 #include "sequence.h"
+#include "json.h"
 
 //*****************************************************************************
 // Set Queries
@@ -126,6 +127,7 @@ bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *def
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize);
+cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out);
 
 //*****************************************************************************
 // General Utilities / Deprecation Candidates

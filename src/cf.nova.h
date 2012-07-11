@@ -1020,7 +1020,6 @@ void Nova_SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *
                                    char *web);
 void Nova_NoteVarUsage(void);
 void Nova_SummarizeComms(void);
-void Nova_SummarizeLicense(char *stylesheet, char *banner, char *footer, char *webdriver);
 void Nova_ZenossSummary(const char *docroot);
 void Nova_NoteVarUsageDB(void);
 
@@ -1425,6 +1424,21 @@ typedef struct
 #define cfr_last_execution "lx"
 #define cfr_last_update_size "us"
 #define cfr_count "cn"
+#define cfr_license "license"
+#define cfr_license_expires "expires"
+#define cfr_license_install_time "installTime"
+#define cfr_license_owner "owner"
+#define cfr_license_granted "granted"
+#define cfr_license_promised "promised"
+#define cfr_license_usage "licenseUsage"
+#define cfr_license_usage_last_measured "lastMeasured"
+#define cfr_license_usage_samples "samples"
+#define cfr_license_usage_max_observed_level "maxObservedLevel"
+#define cfr_license_usage_min_observed_level "minObservedLevel"
+#define cfr_license_usage_mean_usage "meanUsage"
+#define cfr_license_usage_mean_utilization_cumulative "meanCumulativeUtilization"
+#define cfr_license_usage_used_today "usedToday"
+
 
 #define cfr_lastseen_hosts "lastseen_hosts"
 #define cfr_deleted_hosts  "deleted_hosts"

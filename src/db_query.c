@@ -1131,14 +1131,13 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
         BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
         assert(hostkey);
 
-        bson *compliance_shifts = NULL;
-        BsonObjectGet(mongo_cursor_bson( cursor ), cfr_compliance_shifts, &compliance_shifts);
-        if (compliance_shifts)
+        bson compliance_shifts;
+        if (BsonObjectGet(mongo_cursor_bson( cursor ), cfr_compliance_shifts, &compliance_shifts))
         {
             HubHostComplianceShifts *record = NewHubHostComplianceShifts(hostkey);
 
             bson_iterator compliance_shifts_iter;
-            bson_iterator_init(&compliance_shifts_iter, compliance_shifts);
+            bson_iterator_init(&compliance_shifts_iter, &compliance_shifts);
 
             while (bson_iterator_next(&compliance_shifts_iter))
             {
@@ -1169,6 +1168,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
             }
 
             SequenceAppend(records, record);
+            bson_destroy(&compliance_shifts);
         }
     }
 
@@ -6183,6 +6183,39 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 
     bson_destroy(&cmd);
     return ret;
+}
+
+
+//*****************************************************************************
+
+
+cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
+{
+    bson query;
+    bson fields;
+    BsonSelectReportFields(&fields, 2, cfr_license, cfr_license_usage);
+    bson record;
+
+    bool found = mongo_find_one(conn, MONGO_SCRATCH, bson_empty(&query), &fields, &record) == MONGO_OK;
+    if (found)
+    {
+        bson license_object;
+        if (BsonObjectGet(&record, cfr_license, &license_object))
+        {
+            *license_out = BsonContainerToJsonContainer(&license_object, BSON_OBJECT, true);
+
+            bson license_usage_object;
+            if (BsonObjectGet(&record, cfr_license_usage, &license_usage_object))
+            {
+                JsonElement *license_usage_json = BsonContainerToJsonContainer(&license_usage_object, BSON_OBJECT, true);
+                JsonObjectAppendObject(*license_out, cfr_license_usage, license_usage_json);
+            }
+        }
+
+        bson_destroy(&fields);
+    }
+
+    return found ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
 }
 
 /*****************************************************************************/

@@ -2146,3 +2146,80 @@ void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_
     bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
+
+void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted)
+{
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_start_object(&set_op, cfr_license);
+        {
+            bson_append_int(&set_op, cfr_license_expires, expires);
+            bson_append_int(&set_op, cfr_license_install_time, install_time);
+            bson_append_string(&set_op, cfr_license_owner, owner);
+            bson_append_int(&set_op, cfr_license_granted, num_granted);
+            bson_append_int(&set_op, cfr_day, time(NULL));
+        }
+        bson_append_finish_object(&set_op);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
+
+    bson empty;
+    mongo_update(conn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
+}
+
+void CFDB_SaveLicenseNumberPromised(EnterpriseDB *conn, size_t num_promised)
+{
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+
+        bson_append_long(&set_op, cfr_license_promised, num_promised);
+        bson_append_int(&set_op, cfr_day, time(NULL));
+
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
+
+    bson empty;
+    mongo_update(conn, MONGO_SCRATCH "." cfr_license, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
+}
+
+void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_samples, size_t min_observed_level,
+                           size_t max_observed_level, double mean_usage, double mean_utilization_cumulative,
+                           size_t num_used_today)
+{
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_object(&set_op, cfr_license_usage);
+            {
+                bson_append_int(&set_op, cfr_license_usage_last_measured, last_measured);
+                bson_append_int(&set_op, cfr_license_usage_samples, num_samples);
+                bson_append_int(&set_op, cfr_license_usage_min_observed_level, min_observed_level);
+                bson_append_int(&set_op, cfr_license_usage_max_observed_level, max_observed_level);
+                bson_append_double(&set_op, cfr_license_usage_mean_usage, mean_usage);
+                bson_append_double(&set_op, cfr_license_usage_mean_utilization_cumulative, mean_utilization_cumulative);
+                bson_append_int(&set_op, cfr_license_usage_used_today, num_used_today);
+                bson_append_int(&set_op, cfr_day, time(NULL));
+            }
+            bson_append_finish_object(&set_op);
+        }
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
+
+    bson empty;
+    mongo_update(conn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
+}

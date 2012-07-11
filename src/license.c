@@ -50,7 +50,7 @@ int EnterpriseExpiry(void)
 {
     struct stat sb;
     char name[CF_MAXVARSIZE], hash[CF_MAXVARSIZE], serverkey[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
-        installed_time[CF_MAXVARSIZE];
+        installed_time_str[CF_MAXVARSIZE];
     char company[CF_BUFSIZE], snumber[CF_SMALLBUF];
     int m_now, m_expire, d_now, d_expire, number = 1;
 
@@ -237,26 +237,27 @@ int EnterpriseExpiry(void)
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
 #ifndef __CDT_PARSER__
-    snprintf(installed_time, CF_MAXVARSIZE, "%ld", sb.st_mtime);
+    time_t install_time = sb.st_mtime;
+    snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", sb.st_mtime);
+#else
+    time_t install_time = 0;
 #endif
-    NewScalar("sys", "licenses_installtime", installed_time, cf_str);
+    NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
     if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
     {
-        char editionStr[8];
-
-        snprintf(editionStr, sizeof(editionStr), "%c", edition);
-
         EnterpriseDB conn;
         if (CFDB_Open(&conn))
         {
-            CFDB_PutValue(&conn, "license_owner", company, MONGO_SCRATCH);
-            CFDB_PutValue(&conn, "licenses_granted", snumber, MONGO_SCRATCH);
-            CFDB_PutValue(&conn, "license_expires", EXPIRY, MONGO_SCRATCH);
-            CFDB_PutValue(&conn, "license_installtime", installed_time, MONGO_SCRATCH);
-            CFDB_PutValue(&conn, "license_edition", editionStr, MONGO_SCRATCH);
+            time_t expiry = 0;
+            {
+                struct tm t = { 0 };
+                strptime(EXPIRY, "%d %b %d", &t);
+                expiry = mktime(&t);
+            }
 
+            CFDB_SaveLicense(&conn, expiry, install_time, company, LICENSES);
             CFDB_Close(&conn);
         }
     }
@@ -425,7 +426,8 @@ void CheckLicenses(void)
             EnterpriseDB conn;
             if (CFDB_Open(&conn))
             {
-                CFDB_PutValue(&conn, "licenses_promised", retval.item, MONGO_SCRATCH);
+                size_t promised = StringToLong((const char *)retval.item);
+                CFDB_SaveLicenseNumberPromised(&conn, promised);
                 CFDB_Close(&conn);
             }
         }
@@ -464,7 +466,6 @@ static void Nova_LogLicenseStatus(void)
     CF_DB *dbp;
     CF_DBC *dbcp;
     char datestr[CF_MAXVARSIZE], data[CF_MAXVARSIZE];
-    char buffer[CF_BUFSIZE] = { 0 }, work[CF_BUFSIZE] = { 0 };
     Rval retval;
     int licenses = 0, count = 0;
     Promise *pp = NewPromise("track_license", "License tracker");
@@ -479,7 +480,6 @@ static void Nova_LogLicenseStatus(void)
     char *key;
     void *value;
     long ltime;
-    char timebuffer[26];
 
     dummyattr.transaction.ifelapsed = 1440;     // 1 day
     dummyattr.transaction.expireafter = 1440;   // 1 day
@@ -605,52 +605,31 @@ static void Nova_LogLicenseStatus(void)
 
     CloseDB(dbp);
 
-    now = time(NULL);
-    snprintf(buffer, sizeof(buffer), "{");
-    snprintf(work, sizeof(work), "\"Last measured on\":\"%s\", \"Samples\":%d,", cf_strtimestamp_local(now, timebuffer),
-             i);
-    Join(buffer, work, sizeof(buffer));
-
-    if (sum_t > 0)
-    {
-        average = ex_t / sum_t;
-        granted = lic_t / sum_t;
-        snprintf(work, sizeof(work), "\"Minimum observed level\":%d,", min);
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Maximum observed level\":%d,", max);
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Mean weighted usage over interval\":%lf,", average);
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Mean utilization over cumulative period (percent)\":%.2lf",
-                 average / granted * 100.0);
-        Join(buffer, work, sizeof(buffer));
-    }
-    else
-    {
-        snprintf(work, sizeof(work), "\"Minimum observed level\":%d,", min);
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Maximum observed level\":%d,", max);
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Mean usage\":\"unknown\",");
-        Join(buffer, work, sizeof(buffer));
-        snprintf(work, sizeof(work), "\"Actual licenses used today\": %d", count);
-        Join(buffer, work, sizeof(buffer));
-    }
-
-    snprintf(work, sizeof(work), "}");
-    Join(buffer, work, sizeof(buffer));
-
 #ifdef HAVE_LIBMONGOC
     if (CFDB_QueryIsMaster())
     {
         EnterpriseDB conn;
         if (CFDB_Open(&conn))
         {
-            CFDB_PutValue(&conn, "license_report", buffer, MONGO_SCRATCH);
+            now = time(NULL);
+
+            if (sum_t > 0)
+            {
+                average = ex_t / sum_t;
+                granted = lic_t / sum_t;
+
+                CFDB_SaveLicenseUsage(&conn, now, i, min, max, average, average / granted * 100.0, count);
+            }
+            else
+            {
+                CFDB_SaveLicenseUsage(&conn, now, i, min, max, -1.0, -1.0, count);
+            }
+
             CFDB_Close(&conn);
         }
     }
 #endif
+
     YieldCurrentLock(thislock);
     DeletePromise(pp);
 }
