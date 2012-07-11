@@ -68,13 +68,15 @@ PHP_FUNCTION(cfmod_resource_host)
     char *username = NULL, *hostname = NULL, *ip = NULL;
     long from = 0,
          to = 0;
+    char *context = NULL;
     PageInfo page = { 0 };
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllll",
                               &username, &len,
                               &hostname, &len,
                               &ip, &len,
+                              &context, &len,
                               &from,
                               &to,
                               &page.pageNum,
@@ -89,6 +91,7 @@ PHP_FUNCTION(cfmod_resource_host)
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+        HostClassFilterAddClasses(filter, context, NULL);
 
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
@@ -830,16 +833,17 @@ PHP_FUNCTION(cfmod_resource_variable)
 
 PHP_FUNCTION(cfmod_resource_context)
 {
-    char *username = NULL, *hostkey = NULL, *context = NULL;
+    char *username = NULL, *hostkey = NULL, *context = NULL, *name = NULL;
     int len;
     long from = 0,
          to = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllll",
                               &username, &len,
                               &hostkey, &len,
                               &context, &len,
+                              &name, &len,
                               &from,
                               &to,
                               &page.pageNum,
@@ -860,7 +864,7 @@ PHP_FUNCTION(cfmod_resource_context)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryClasses(&conn, hostkey, NULL, false, from, to, filter, false);
+        result = CFDB_QueryClasses(&conn, hostkey, name, true, from, to, filter, false);
 
         DATABASE_CLOSE(&conn);
 

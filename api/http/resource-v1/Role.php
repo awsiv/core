@@ -10,8 +10,17 @@ class Role extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $response->body = cfapi_role_get($user, $rolename);
-        $response->code = Response::OK;
+        $payload = cfapi_role_get($user, $rolename);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
 
         return $response;
     }
@@ -28,6 +37,27 @@ class Role extends Resource
                 $data->includeBundles, $data->excludeBundles))
         {
             $response->code = Response::CREATED;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
+
+    function post($request, $rolename)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $data = json_decode($request->data);
+
+        $response = new Response($request);
+        if (cfapi_role_post($user, $rolename, $data->description,
+                $data->includeContext, $data->excludeContext,
+                $data->includeBundles, $data->excludeBundles))
+        {
+            $response->code = Response::NOCONTENT;
         }
         else
         {

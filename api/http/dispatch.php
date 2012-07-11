@@ -65,11 +65,11 @@ catch (ResponseException $e)
         $response = $e->response($request);
     }
 }
-catch (CFAPIExceptionAccess $e)
+catch (CFAPIException $e)
 {
     $response = new Response($request);
     $response->body = $e->getMessage();
-    $response->code = Response::FORBIDDEN;
+    $response->code = 500;//$e->getCode();
 }
 catch (Exception $e)
 {

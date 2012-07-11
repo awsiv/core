@@ -42,8 +42,8 @@ HubQuery *CFDB_ListUsers(const char *usernameRx);
 cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,
                             const char *includeClassRx, const char *excludeClassRx, const char *includeBundleRx, const char *excludeBundleRx);
 cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool deassociateUsers);
-cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
-                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
+cfapi_errid CFDB_UpdateRole(const char *updatingUser, const char *roleName, const char *description,
+                            const char *includeClassRx, const char *excludeClassRx, const char *includeBundleRx, const char *excludeBundleRx);
 HubQuery *CFDB_ListRoles(const char *listing_user);
 
 cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username);

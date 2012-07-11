@@ -158,25 +158,17 @@ PHP_FUNCTION(cfapi_role_put)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(name_len, "name");
 
+    if (!CFDB_UserIsAdminWhenRBAC(username))
     {
-        HubQuery *roles = CFDB_GetRoleByNameAuth(username, name);
-        if (roles->errid != ERRID_SUCCESS)
-        {
-            THROW_GENERIC(roles->errid, "Unable to lookup role");
-        }
-        if (RlistLen(roles->records) >= 1)
-        {
-            cfapi_errid err = ERRID_UNKNOWN;
-            if ((err = CFDB_DeleteRole(username, name, true)) != ERRID_SUCCESS)
-            {
-                THROW_GENERIC(err, "Unable to delete existing role");
-            }
-        }
-
-        DeleteHubQuery(roles, DeleteHubRole);
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Must be admin to add roles");
     }
 
-    cfapi_errid err = ERRID_UNKNOWN;
+    cfapi_errid err = CFDB_DeleteRole(username, name, true);
+    if (err != ERRID_SUCCESS && err != ERRID_ITEM_NONEXISTING)
+    {
+        THROW_GENERIC(err, "Error trying to delete existing role");
+    }
+
     if ((err = CFDB_CreateRole(username, name, description,
                                include_context_rx, exclude_context_rx,
                                include_bundle_rx, exclude_bundle_rx)) != ERRID_SUCCESS)
@@ -186,6 +178,49 @@ PHP_FUNCTION(cfapi_role_put)
 
     RETURN_BOOL(true);
 }
+
+
+PHP_FUNCTION(cfapi_role_post)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *name = NULL; int name_len = 0;
+    const char *description = NULL; int description_len = 0;
+    const char *include_context_rx = NULL; int include_context_rx_len = 0;
+    const char *exclude_context_rx = NULL; int exclude_context_rx_len = 0;
+    const char *include_bundle_rx = NULL; int include_bundle_rx_len = 0;
+    const char *exclude_bundle_rx = NULL; int exclude_bundle_rx_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssss",
+                              &username, &username_len,
+                              &name, &name_len,
+                              &description, &description_len,
+                              &include_context_rx, &include_context_rx_len,
+                              &exclude_context_rx, &exclude_context_rx_len,
+                              &include_bundle_rx, &include_bundle_rx_len,
+                              &exclude_bundle_rx, &exclude_bundle_rx_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(name_len, "name");
+
+    if (!CFDB_UserIsAdminWhenRBAC(username))
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Must be admin to edit roles");
+    }
+
+    cfapi_errid err = ERRID_UNKNOWN;
+    if ((err = CFDB_UpdateRole(username, name, description,
+                              include_context_rx, exclude_context_rx,
+                              include_bundle_rx, exclude_bundle_rx)) != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(err, "Unable to update role");
+    }
+
+    RETURN_BOOL(true);
+}
+
 
 PHP_FUNCTION(cfapi_role_delete)
 {
@@ -262,10 +297,9 @@ PHP_FUNCTION(cfapi_user_get)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
+    if (!CFDB_UserIsAdminWhenRBAC(username) && !StringSafeEqual(username, username_arg))
     {
-        THROW_GENERIC(errid, "Access denied");
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only get its own user");
     }
 
     HubQuery *result = CFDB_ListUsers(username_arg);
@@ -366,13 +400,19 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
-    {
-        THROW_GENERIC(errid, "Access denied");
-    }
+    bool username_is_admin = CFDB_UserIsAdminWhenRBAC(username) == ERRID_SUCCESS;
 
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+    if (roles && !username_is_admin)
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Only admins can edit roles for a user");
+    }
+
+    if (!username_is_admin && !StringSafeEqual(username, username_arg))
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only update its own user");
+    }
+
     cfapi_errid err = CFDB_UpdateUser(username_arg, password, email, roles);
     DeleteRlist(roles);
 

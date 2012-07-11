@@ -70,9 +70,9 @@ typedef enum
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
-static bool RoleExists(const char *name);
 static bool UserExists(const char *username);
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
+static bool RoleExists(const char *name);
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
@@ -880,8 +880,9 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
-                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
+cfapi_errid CFDB_UpdateRole(const char *updatingUser, const char *roleName, const char *description,
+                            const char *includeClassRx, const char *excludeClassRx,
+                            const char *includeBundleRx, const char *excludeBundleRx)
 {
     cfapi_errid errid = CFDB_DeleteRole(updatingUser, roleName, false);
 
