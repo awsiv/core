@@ -24,16 +24,16 @@ class Settings_rest_model extends Cf_Model
     function get_app_settings()
     {
         $defaultFields = array(
-            'appemail' => '',
+            'appemail' => null,
             'rbac' => null,
             'authMode' => null,
             'ldapEncryption' => null,
             'ldapLoginAttribute' => null,
-            'ldapHost' => '',
+            'ldapHost' => null,
             "ldapBaseDN" => null,
             "ldapUsersDirectory" =>'',
             "activeDirectoryDomain" => null,
-            "blueHostHorizon" => 400
+            "blueHostHorizon" => null
         );
 
 
@@ -68,8 +68,7 @@ class Settings_rest_model extends Cf_Model
         {
             try
             {
-                           $data['authMode'] = 'internal'; //TMP
-                           $this->rest->post('/settings', $data);
+                $this->restClient->post('/settings', $data);
             }
             catch (Exception $e)
             {
