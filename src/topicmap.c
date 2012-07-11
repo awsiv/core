@@ -81,7 +81,7 @@ void Nova_DumpTopics()
         topic_context[0] = '\0';
         topic_id = 0;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
 
@@ -214,7 +214,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
             {
@@ -268,7 +268,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
         topic_context[0] = '\0';
         topicid = 0;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
             {
@@ -368,7 +368,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
         topic_context[0] = '\0';
         topic_id = 0;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
 
@@ -507,7 +507,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
@@ -641,7 +641,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
         represents[0] = '\0';
         locator_type = cfk_literal;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
 
@@ -737,7 +737,7 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
             {
@@ -842,7 +842,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
@@ -940,7 +940,7 @@ void Nova_FillInGoalComment(Item *ip)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
 
@@ -996,7 +996,7 @@ const char *Nova_GetBundleComment(char *bundle)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             /* Query specific search/marshalling */
 
@@ -1481,7 +1481,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 
         topic_id = 0;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
@@ -1584,7 +1584,7 @@ Item *Nova_GetTopicsInContext(char *context)
         topic_context[0] = '\0';
         topic_id = 0;
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
             {

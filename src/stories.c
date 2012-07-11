@@ -797,7 +797,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    topic_context[0] = '\0';
    topic_id = 0;
    
-   while (bson_iterator_next(&it1))
+   while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
       {
       /* Query episodeecific search/marshalling */
       

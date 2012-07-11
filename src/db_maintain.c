@@ -266,7 +266,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
         memset(keyHash, 0, sizeof(keyHash));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
 
             if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
@@ -369,7 +369,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 
         memset(keyHash, 0, sizeof(keyHash));
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
 
             if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)

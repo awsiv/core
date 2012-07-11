@@ -371,7 +371,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
 
         bson_iterator_init(&it1, mongo_cursor_bson( cursor ) );
 
-        while (bson_iterator_next(&it1))
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
