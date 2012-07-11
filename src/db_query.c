@@ -91,11 +91,7 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
         return false;
     }
 
-    if (!CFDB_GetSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str, CF_SMALLBUF))
-    {
-        CFDB_Close(&conn);
-        return false;
-    }
+    CFDB_GetSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str, CF_SMALLBUF);
 
     if (strlen(threshold_str) == 0)     // no key in db then insert hardcoded default
     {

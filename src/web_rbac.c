@@ -1286,6 +1286,9 @@ bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, si
     case SETTING_AD_DOMAIN:
         return CFDB_HandleGetValue(HubSettingToString(SETTING_AD_DOMAIN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
 
+    case SETTING_BLUEHOST_HORIZON:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_BLUEHOST_HORIZON), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
     default:
         assert(false && "Attempted to get unknown setting");
         return false;
