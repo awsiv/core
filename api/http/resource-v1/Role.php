@@ -10,8 +10,17 @@ class Role extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $response->body = cfapi_role_get($user, $rolename);
-        $response->code = Response::OK;
+        $payload = cfapi_role_get($user, $rolename);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
 
         return $response;
     }

@@ -21,29 +21,29 @@ class RoleTest extends APIBaseTest
     public function testAddRole(){
         try{
          $this->pest->put('/role/jersey', '{
-                    "description": "Jersey Shore Role",
-                     "classrxinclude":"linux",
-                     "classrxexclude":"windows",
-                     "bundlerxinlcude":"bundle_1",
-                     "bundlerxexclude":"bundle_2"
+                     "description": "Jersey Shore Role",
+                     "includeContext":"linux",
+                     "excludeContext":"windows",
+                     "includeBundles":"bundle_1",
+                     "excludeBundles":"bundle_2"
                 }');
             $this->assertEquals(201, $this->pest->lastStatus());
 
             // check role was added
-            $roles = $this->getResults('/role');
+            $roles = $this->getResults('/role/jersey');
             $this->assertValidJson($roles);
-            $this->assertEquals('jersey', $roles[1]['name']);
-            $this->assertEquals('linux', $roles[1]['classrxinclude']);
-            $this->assertEquals('windows', $roles[1]['classrxexclude']);
-            $this->assertEquals('bundle_1', $roles[1]['bundlerxinlcude']);
-            $this->assertEquals('bundle_2', $roles[1]['bundlerxexclude']);
-             
+            $this->assertEquals('jersey', $roles[0]['name']);
+            $this->assertEquals('linux', $roles[0]['includeContext']);
+            $this->assertEquals('windows', $roles[0]['excludeContext']);
+            $this->assertEquals('bundle_1', $roles[0]['includeBundles']);
+            $this->assertEquals('bundle_2', $roles[0]['excludeBundles']);
+
         }catch(Pest_Exception $e)
         {
-            $this->fail($e); 
+            $this->fail($e);
         }
     }
-    
+
     public function testEditRole(){
          try
         {
@@ -65,7 +65,7 @@ class RoleTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
+
     public function testDeleteRole(){
          // delete role
         try{
@@ -77,5 +77,5 @@ class RoleTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
+
 }

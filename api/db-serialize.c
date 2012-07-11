@@ -39,5 +39,25 @@ JsonElement *HubRoleToJson(const HubRole *role)
         JsonObjectAppendString(obj, "description", role->description);
     }
 
+    if (!NULL_OR_EMPTY(role->classRxInclude))
+    {
+        JsonObjectAppendString(obj, "includeContext", role->classRxInclude);
+    }
+
+    if (!NULL_OR_EMPTY(role->classRxInclude))
+    {
+        JsonObjectAppendString(obj, "excludeContext", role->classRxExclude);
+    }
+
+    if (!NULL_OR_EMPTY(role->classRxInclude))
+    {
+        JsonObjectAppendString(obj, "includeBundles", role->bundleRxInclude);
+    }
+
+    if (!NULL_OR_EMPTY(role->classRxInclude))
+    {
+        JsonObjectAppendString(obj, "excludeBundles", role->bundleRxExclude);
+    }
+
     return obj;
 }
