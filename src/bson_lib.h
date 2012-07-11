@@ -41,6 +41,7 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
 JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, bool ignore_timestamp);
+int BsonIsTypeValid(bson_type type);
 
 /*
  * WARNING:

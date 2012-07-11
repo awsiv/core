@@ -999,5 +999,22 @@ JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, _Bool i
 
     return json_ret;
 }
+/*****************************************************************************
+ * Return value:                                                             *
+ * -1 = invalid type                                                         *
+ * 0  = BSON_EOO (end of object)                                             *
+ * 1  = valid bson_type                                                      *
+ *****************************************************************************/
+int BsonIsTypeValid(bson_type type)
+{
+    if(type < 0 || type > 18)
+    {
+        return -1;
+    }
+    else if( type == BSON_EOO )
+    {
+        return BSON_EOO;
+    }
 
-/*****************************************************************************/
+    return 1;
+}
