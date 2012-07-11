@@ -30,23 +30,43 @@ class Settings_rest_model extends Cf_Model
      */
     function get_app_settings()
     {
+        $defaultFields = array(
+            'appemail' => 'nias@asd.com',
+            'rbac' => null,
+            'authMode' => null,
+            'ldapEncryption' => null,
+            'ldapLoginAttribute' => null,
+            'ldapHost' => '',
+            "ldapBaseDN" => null,
+            "ldapUsersDirectory" => null,
+            "activeDirectoryDomain" => null,
+            "blueHostHorizon" => 400
+        );
+
+
         try
         {
             $settings = $this->restClient->get('/settings');
             $data = $this->checkData($settings);
             if (is_array($data) && $this->hasErrors() == 0)
             {
-                return $data['data'][0];
+                $dataMeregedWithDefault = array_merge($defaultFields, $data['data'][0]);
+                return $dataMeregedWithDefault;
             }
             else
             {
                 throw new Exception($this->getErrorsString());
             }
         }
+        catch (Pest_UnknownResponse $e)
+        {
+            throw new Exception('Cannot find the rest server.');
+        }
         catch (Exception $e)
         {
             throw $e;
         }
+
     }
 
     function updateData($data)
@@ -55,7 +75,8 @@ class Settings_rest_model extends Cf_Model
         {
             try
             {
-                $this->restClient->post('/settings', $data);
+                           $data['authMode'] = 'database'; //TMP
+                           $this->restClient->post('/settings', $data);
             }
             catch (Exception $e)
             {

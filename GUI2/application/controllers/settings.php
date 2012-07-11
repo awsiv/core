@@ -38,7 +38,6 @@ class Settings extends Cf_Controller
         }
 
 
-
         $bc = array(
             'title' => $this->lang->line('breadcrumb_setting'),
             'url' => 'auth/setting',
@@ -47,7 +46,6 @@ class Settings extends Cf_Controller
             'replace_existing' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        $user_dir = '';
 
         $required_if_ldap = $this->__ldap_check();
         $required_if_database = $this->__db_check();
@@ -59,7 +57,7 @@ class Settings extends Cf_Controller
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
-        $this->form_validation->set_rules('users_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
+        $this->form_validation->set_rules('user_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
         $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
         $this->form_validation->set_rules('admin_role', 'valid role');
@@ -86,21 +84,28 @@ class Settings extends Cf_Controller
 
 
 
-        $bluehost_threshold_min = isset($settingsValue['bluehost_threshold_global']) ? $settingsValue['bluehost_threshold_global'] * 60 : null;
+
+        $bluehost_threshold_min_raw = set_value('bluehost_threshold_global', $settingsValue['blueHostHorizon']);
+        $bluehost_threshold_min = $bluehost_threshold_min_raw * 60;
+
+
+        $userDirectory = $this->input->post('user_directory') ? $this->input->post('user_directory') : explode(';', $settingsValue['ldapUsersDirectory']);
+
         $form_data = array(
-            'appemail' => set_value('appemail'),
+            'appemail' => set_value('appemail', $settingsValue['appemail']),
             'mode' => set_value('mode', $settingsValue['authMode']),
             'host' => set_value('host', $settingsValue['ldapHost']),
-            'base_dn' => set_value('base_dn'),
+            'base_dn' => set_value('base_dn', $settingsValue['ldapBaseDN']),
             'login_attribute' => set_value('login_attribute', $settingsValue['ldapLoginAttribute']),
-            'users_directory' => $user_dir,
+            'users_directory' => set_value('user_directory', explode(';', $settingsValue['ldapUsersDirectory'])),
             'active_directory_domain' => set_value('active_directory_domain'),
             'fall_back_for' => $this->input->post('fall_back_for'),
             'admin_role' => $this->input->post('admin_role'),
             'encryption' => set_value('encryption', $settingsValue['ldapEncryption']),
             'external_admin_username' => $this->input->post('external_admin_username'),
             'rbac' => set_value('rbac', $settingsValue['rbac']),
-            'bluehost_threshold_global' => set_value($bluehost_threshold_min)
+            'bluehost_threshold_global' => set_value('bluehost_threshold_global', $bluehost_threshold_min),
+            'user_dirs' => $userDirectory
         );
         $data = array(
             'title' => "CFEngine Mission Portal - Settings",
@@ -119,12 +124,17 @@ class Settings extends Cf_Controller
      */
     function _updateData()
     {
+        $userDirectory= $this->input->post('user_directory') ? $this->input->post('user_directory') : array();
         $data = array();
         $data['rbac'] = set_value('rbac');
         $data['authMode'] = set_value('mode');
         $data['ldapEncryption'] = set_value('encryption');
         $data['ldapLoginAttribute'] = set_value('login_attribute');
         $data['ldapHost'] = set_value('host');
+        $data["ldapBaseDN"] = set_value('base_dn');
+        $data['ldapUsersDirectory'] = implode(';', $userDirectory);
+        $data['activeDirectoryDomain'] = set_value('active_directory_domain');
+        $data['blueHostHorizon'] = set_value('bluehost_threshold_global');
 
         try
         {
