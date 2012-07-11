@@ -1568,9 +1568,6 @@ typedef struct
 #define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
 #define CFRID_VIRTUAL_BUNDLES "virtual-bundles"
 
-// appsettings keys
-#define CFMP_BLUEHOST_THRESHOLD "bluehost_threshold_global"
-
 #ifdef HAVE_CONSTELLATION
 # include <cf.constellation.h>
 #endif
