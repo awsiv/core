@@ -45,9 +45,9 @@ JsonElement *EnterpriseExecuteSQL(char *select_op)
     int rc = sqlite3_open(":memory:", &db);
     if( rc )
     {
-        CfOut(cf_error, "Can't open temporary database: %s\n", sqlite3_errmsg(db));
+        CfOut(cf_error, "","Can't open temporary database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-        return(1);
+        return NULL; /* TODO: return empty object? */
     }
 
     /* Query MongoDB and dump the result into Sqlite */
@@ -64,7 +64,7 @@ JsonElement *EnterpriseExecuteSQL(char *select_op)
 
     return out;
 #else
-    return NULL; /* TODO: not configured with sqlite3 */
+    return NULL; /* TODO: Return error - not configured with sqlite3 */
 #endif
 }
 
@@ -102,7 +102,7 @@ JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
 
     if( rc != SQLITE_OK )
     {
-        CfOut(cf_error, "SQL error: %s\n", err);
+        CfOut(cf_error, "", "SQL error: %s\n", err);
         sqlite3_free(err);
         return NULL; /* TODO: Empty object ? */
     }
@@ -253,7 +253,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO filechanges VALUES('%s','%s',%d);",
+                 "INSERT INTO filechanges VALUES('%s','%s',%ld);",
                  hC->hh->keyhash, hC->path, hC->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -348,7 +348,7 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO promisenk VALUES('%s','%s', '%s',%d);",
+                 "INSERT INTO promisenk VALUES('%s','%s', '%s',%ld);",
                  hp->hh->hostname, hp->handle, hp->cause, hp->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
