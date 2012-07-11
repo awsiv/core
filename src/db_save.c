@@ -2002,19 +2002,12 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
         {
             bson_iterator_init(&it1, mongo_cursor_bson(cursor));
             objectId[0] = '\0';
-            while (bson_iterator_next(&it1))
+            while (bson_iterator_next(&it1) == BSON_OID)
             {
-                switch (bson_iterator_type(&it1))
+                if (strcmp(bson_iterator_key(&it1), "_id") == 0)
                 {
-                case BSON_OID:
-                    if (strcmp(bson_iterator_key(&it1), "_id") == 0)
-                    {
-                        bson_oid_to_string(bson_iterator_oid(&it1), objectId);
-                        found = true;
-                    }
-                    break;
-                default:
-                    break;
+                    bson_oid_to_string(bson_iterator_oid(&it1), objectId);
+                    found = true;
                 }
             }
         }
