@@ -22,6 +22,7 @@ static zend_function_entry cfapi_functions[] =
     PHP_FE(cfapi_role_list, NULL)
     PHP_FE(cfapi_role_get, NULL)
     PHP_FE(cfapi_role_put, NULL)
+    PHP_FE(cfapi_role_post, NULL)
     PHP_FE(cfapi_role_delete, NULL)
     PHP_FE(cfapi_user_list, NULL)
     PHP_FE(cfapi_user_get, NULL)
