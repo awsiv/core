@@ -262,10 +262,9 @@ PHP_FUNCTION(cfapi_user_get)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
+    if (!CFDB_UserIsAdminWhenRBAC(username) && !StringSafeEqual(username, username_arg))
     {
-        THROW_GENERIC(errid, "Access denied");
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only get its own user");
     }
 
     HubQuery *result = CFDB_ListUsers(username_arg);
@@ -366,13 +365,19 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
-    {
-        THROW_GENERIC(errid, "Access denied");
-    }
+    bool username_is_admin = CFDB_UserIsAdminWhenRBAC(username) == ERRID_SUCCESS;
 
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+    if (roles && !username_is_admin)
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Only admins can edit roles for a user");
+    }
+
+    if (!username_is_admin && !StringSafeEqual(username, username_arg))
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only update its own user");
+    }
+
     cfapi_errid err = CFDB_UpdateUser(username_arg, password, email, roles);
     DeleteRlist(roles);
 

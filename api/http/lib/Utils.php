@@ -1,6 +1,23 @@
 <?php
 
-class Utils {
+class Utils
+{
+    const ERRID_UNKNOWN = 0;
+    const ERRID_SUCCESS = 1;
+    const ERRID_DBCONNECT = 2;
+    const ERRID_DBCLOSE = 3;
+    const ERRID_DB_OPERATION = 4;
+    const ERRID_ARGUMENT_MISSING = 5;
+    const ERRID_ARGUMENT_WRONG = 6;
+    const ERRID_BUFFER_FULL = 7;
+    const ERRID_ITEM_NONEXISTING = 8;
+    const ERRID_ITEM_EXISTS = 9;
+    const ERRID_ITEM_MULTIPLE = 10;
+    const ERRID_RBAC_DISABLED = 11;
+    const ERRID_RBAC_ACCESS_DENIED = 12;
+    const ERRID_CONSTELLATION_LICENSE = 13;
+    const ERRID_DATA_UNAVAILABLE = 14;
+    const ERRID_HOST_NOT_FOUND = 15;
 
     public static function queryParam($name, $defaultValue = NULL)
     {
@@ -56,6 +73,30 @@ class Utils {
                     Response::BADREQUEST);
         }
         return $state;
+    }
+
+    public static function CFAPIErrorCodeToHttpCode($cfapi_code)
+    {
+        switch ($cfapi_code)
+        {
+            case ERRID_SUCCESS:
+                return 200;
+            case ERRID_ARGUMENT_MISSING:
+            case ERRID_ARGUMENT_WRONG:
+            case ERRID_ITEM_NONEXISTING:
+                return 400;
+            case ERRID_ITEM_EXISTS:
+                return 409;
+            case ERRID_RBAC_ACCESS_DENIED:
+                return 403;
+            case ERRID_DATA_UNAVAILABLE:
+            case ERRID_HOST_NOT_FOUND:
+                return 404;
+
+            default:
+                return 500;
+
+        }
     }
 }
 

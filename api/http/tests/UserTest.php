@@ -121,7 +121,7 @@ class UserTest extends APIBaseTest
           $this->assertValidJson($response);
 
           //check if roles are still there
-          $users=$this->getResults('/user/snookie');
+          $users = $this->getResults('/user/snookie');
           $this->assertEquals('jersey', $users[0]['roles'][0]);
           $this->assertEquals('wenches', $users[0]['roles'][1]);
 
