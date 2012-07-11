@@ -17,7 +17,7 @@
             // Change the css classes to suit your needs
 
             $attributes = array('class' => '', 'id' => 'mpsettings');
-            echo form_open('settings/show', $attributes);
+            echo form_open('settings/manage', $attributes);
             ?>
             <p>
                 <label for="appemail">Administrative email <span class="required">*</span></label>
@@ -87,11 +87,15 @@
                     <p>
                         <label for="users_directory">User directory <span class="required ldaprelated">*</span></label>
                         <?php echo tooltip('tooltip_user_dir', '', true); // echo form_error('login_attribute'); ?>
-                        <?php
-                        if (empty($user_dirs)) {    ?>
+                        <?php if (empty($user_dirs))
+                        {
+                            ?>
                             <input id="users_directory" type="text" name="user_directory[]" class="usrdir"/>
                             <button id="addmore">add</button>
-                            <?php  }   else  {
+                            <?php
+                        }
+                        else
+                        {
                             $number_of_dirs = count($user_dirs);
                             foreach ($user_dirs as $i => $dirs)
                             {
@@ -124,27 +128,49 @@
                 </div>
                 <p class="adrelated">
                     <label for="active_directory_domain">Active directory domain <span class="required">*</span></label>
-                    <?php echo tooltip('tooltip_ad_domain_name', '', true); // echo form_error('active_directory_domain');      ?>
+<?php echo tooltip('tooltip_ad_domain_name', '', true); // echo form_error('active_directory_domain');        ?>
                     <input id="active_directory_domain" type="text" name="active_directory_domain"  value="<?php echo $active_directory_domain ?>"  />
                 </p>
 
                 <p>
                     <label for="encryption">Encryption<span class="required"></span></label>
-                    <?php // echo form_error('mode');     ?>
-
-                    <?php // Change or Add the radio values/labels/css classes to suit your needs     ?>
-                    <input id="sec1" name="encryption" type="radio" class="" value="plain" <?php echo (isset($plain)) ? $plain : $this->form_validation->set_radio('encryption', 'plain'); ?>/>
+                    <?php
+                    $elem = array(
+                        'name' => 'encryption',
+                        'id' => 'sec1',
+                        'value' => 'plain',
+                        'checked' => (isset($encryption) && $encryption === 'plain' ? TRUE : '')
+                    );
+                    echo form_radio($elem);
+                    ?>
+<?php // Change or Add the radio values/labels/css classes to suit your needs       ?>
                     <label for="encryption" class="">None</label>
 
-                    <input id="sec2" name="encryption" type="radio" class="" value="ssl" <?php echo (isset($ssl)) ? $ssl : $this->form_validation->set_radio('encryption', 'ssl'); ?> />
+                    <?php
+                    $elem = array(
+                        'name' => 'encryption',
+                        'id' => 'sec1',
+                        'value' => 'ssl',
+                        'checked' => (isset($encryption) && $encryption === 'ssl' ? TRUE : '')
+                    );
+                    echo form_radio($elem);
+                    ?>
                     <label for="encryption" class="">SSL</label>
 
-                    <input id="sec3" name="encryption" type="radio" class="" value="start_tls" <?php echo (isset($start_tls)) ? $start_tls : $this->form_validation->set_radio('encryption', 'start_tls'); ?> />
+                    <?php
+                    $elem = array(
+                        'name' => 'encryption',
+                        'id' => 'sec1',
+                        'value' => 'start_tls',
+                        'checked' => (isset($encryption) && $encryption === 'start_tls' ? TRUE : '')
+                    );
+                    echo form_radio($elem);
+                    ?>
                     <label for="encryption" class="">STARTTLS</label>
                 </p>
                 <p>
                     <label for="external_admin_username">External admin user name<span class="required">*</span></label>
-                    <?php echo tooltip('tooltip_external_admin_username', '', true); ?>
+<?php echo tooltip('tooltip_external_admin_username', '', true); ?>
                     <input id="external_admin_username" type="text" name="external_admin_username" value="<?php echo (isset($external_admin_username) ? $external_admin_username : '') ?>" />
                 </p>
 
@@ -152,8 +178,8 @@
             </fieldset>
             <p>
                 <label for="fall back for">Fall-back role ( if authentication server down)<span class="required"></span></label>
-                <?php echo tooltip('tooltip_fall_back', '', true); // echo form_error('active_directory_domain');  ?>
-                <?php echo form_dropdown('fall_back_for', $roles, $fall_back_for ? $fall_back_for : 'select'); ?>
+                <?php echo tooltip('tooltip_fall_back', '', true); // echo form_error('active_directory_domain');   ?>
+<?php echo form_dropdown('fall_back_for', $roles, $fall_back_for ? $fall_back_for : 'select'); ?>
             </p>
             <p>
                 <label for="rbac">Role based access control <span class="required">*</span></label>
@@ -193,10 +219,10 @@
             </p>
 
             <p  id="btnholder">
-                <?php echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Submit')); ?>
+<?php echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Submit')); ?>
             </p>
 
-            <?php echo form_close(); ?>
+<?php echo form_close(); ?>
 
         </div>
     </div>

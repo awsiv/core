@@ -14,7 +14,7 @@ class Settings extends Cf_Controller
         $this->settings_rest_model->setRestClient($this->ion_auth->getRestClient());
     }
 
-    function show()
+    function manage()
     {
 
         $requiredjs = array(
@@ -48,7 +48,6 @@ class Settings extends Cf_Controller
         $this->breadcrumb->setBreadCrumb($bc);
 
         $required_if_ldap = $this->__ldap_check();
-        $required_if_database = $this->__db_check();
         $required_if_ad = $this->__AD_check();
 
         $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
@@ -68,25 +67,25 @@ class Settings extends Cf_Controller
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
         if ($this->form_validation->run() == true)
         {
-            if ($this->_updateData())
+            $returnData = $this->_updateData();
+            if (is_array($returnData) && $returnData['status'])
             {
-                $this->session->set_flashdata('message', array('content' => 'Settings updated sucessfully', 'type' => 'success'));
+                $this->session->set_flashdata('message', array('content' => $returnData['message'], 'type' => 'success'));
                 //refresh
-                redirect('settings/show');
+                redirect('settings/manage');
             }
             else
             {
-                $this->session->set_flashdata('message', array('content' => 'Something went wrong while updating the settings', 'type' => 'error'));
+                $this->session->set_flashdata('message', array('content' => $returnData['message'], 'type' => 'error'));
                 //refresh
-                redirect('settings/show');
+                redirect('settings/manage');
             }
         }
 
 
 
 
-        $bluehost_threshold_min_raw = set_value('bluehost_threshold_global', $settingsValue['blueHostHorizon']);
-        $bluehost_threshold_min = $bluehost_threshold_min_raw * 60;
+        $bluehost_threshold_min = set_value('bluehost_threshold_global', $settingsValue['blueHostHorizon'] / 60);
 
 
         $userDirectory = $this->input->post('user_directory') ? $this->input->post('user_directory') : explode(';', $settingsValue['ldapUsersDirectory']);
@@ -102,7 +101,7 @@ class Settings extends Cf_Controller
             'fall_back_for' => $this->input->post('fall_back_for'),
             'admin_role' => $this->input->post('admin_role'),
             'encryption' => set_value('encryption', $settingsValue['ldapEncryption']),
-            'external_admin_username' => $this->input->post('external_admin_username'),
+            'external_admin_username' => set_value('external_admin_username'),
             'rbac' => set_value('rbac', $settingsValue['rbac']),
             'bluehost_threshold_global' => set_value('bluehost_threshold_global', $bluehost_threshold_min),
             'user_dirs' => $userDirectory
@@ -124,7 +123,14 @@ class Settings extends Cf_Controller
      */
     function _updateData()
     {
-        $userDirectory= $this->input->post('user_directory') ? $this->input->post('user_directory') : array();
+        $returnData = array();
+        $returnData['status'] = false;
+        $returnData['message'] = 'Data update failed';
+
+        $userDirectory = $this->input->post('user_directory') ? $this->input->post('user_directory') : array();
+        $blueHostHorizon = set_value('bluehost_threshold_global') * 60;
+
+
         $data = array();
         $data['rbac'] = set_value('rbac');
         $data['authMode'] = set_value('mode');
@@ -134,300 +140,25 @@ class Settings extends Cf_Controller
         $data["ldapBaseDN"] = set_value('base_dn');
         $data['ldapUsersDirectory'] = implode(';', $userDirectory);
         $data['activeDirectoryDomain'] = set_value('active_directory_domain');
-        $data['blueHostHorizon'] = set_value('bluehost_threshold_global');
+        $data['blueHostHorizon'] = $blueHostHorizon; // store it in seconds
 
         try
         {
             $this->settings_rest_model->updateData($data);
-            return true;
+            $returnData['status'] = true;
+            $returnData['message'] = 'Data updated sucessfully';
+            return $returnData;
         }
         catch (Exception $e)
         {
-            return false;
+            $returnData['status'] = false;
+            $returnData['message'] = "Update failed: ".$e->getMessage();
+            return $returnData;
         }
-        return false;
+        return $returnData;
     }
 
-    function manage($op = false, $id = false)
-    {
 
-        if (!$this->ion_auth->is_accessible())
-        {
-            redirect('auth/setting');
-        }
-        $requiredjs = array(
-            array('widgets/notes.js'),
-        );
-        $this->carabiner->js($requiredjs);
-        $required_if_ldap = $this->__ldap_check();
-        $required_if_database = $this->__db_check();
-        $required_if_ad = $this->__AD_check();
-        $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
-        $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
-        $this->form_validation->set_rules('rbac', 'Role based acccess control', 'xss_clean|trim|required');
-        $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-        $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-        $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
-        $this->form_validation->set_rules('users_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
-        $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
-        //$this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
-        $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
-        $this->form_validation->set_rules('admin_role', 'valid role');
-        $this->form_validation->set_rules('external_admin_username', 'External admin user name', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-
-        $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-        $this->form_validation->set_rules('bluehost_threshold_global', 'Blue host horizon', 'callback_validate_bluehost_threshold');
-        $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
-
-        if ($this->form_validation->run() == FALSE)
-        { // validation hasn't been passed
-            $data = array(
-                'title' => "CFEngine Mission Portal - Settings",
-                'breadcrumbs' => $this->breadcrumblist->display(),
-                'message' => validation_errors(),
-                'op' => 'create'
-            );
-
-            $data['rolesacc']['admin'] = 'admin';
-            $data['roles'] = $data['rolesacc'];
-            $settings = $this->settings_model->get_app_settings();
-
-            if (is_object($settings))
-            {// the information has therefore been successfully saved in the db
-                foreach ($settings as $property => $value)
-                {
-                    if ($property == 'mode' || $property == 'active_directory' || $property == 'encryption')
-                    {
-                        if (!$this->input->post('mode'))
-                        {
-                            $data[$value] = 'checked="checked"';
-                            continue;
-                        }
-                    }
-                    if ($property == 'users_directory')
-                    {
-                        $user_dir = explode(';', $value);
-                        $i = 0;
-                        foreach ($user_dir as $dirs)
-                        {
-                            if ($i > 0)
-                            {
-                                $data['user_dirs'][$i] = array('name' => 'users_directory[]',
-                                    'id' => 'users_directory_' . $i,
-                                    'type' => 'text',
-                                    'value' => $this->form_validation->set_value('users_directory[]', $dirs),
-                                );
-                            }
-                            else
-                            {
-                                $data[$property] = $this->form_validation->set_value('users_directory[]', $user_dir[$i]);
-                            }
-                            $i++;
-                        }
-                        continue;
-                    }
-                    if ($property != '_id')
-                    {
-                        $data[$property] = $this->form_validation->set_value($property, $value);
-                    }
-                    if ($property == 'bluehost_threshold_global')
-                    {
-                        $data[$property] = $this->form_validation->set_value($property, $data[$property] / 60);
-                    }
-                }
-                $data['op'] = 'edit';
-            }
-            else
-            {
-                $form_data = array(
-                    'appemail' => set_value('appemail'),
-                    'mode' => set_value('mode'),
-                    'host' => set_value('host'),
-                    'base_dn' => set_value('base_dn'),
-                    'login_attribute' => set_value('login_attribute'),
-                    'active_directory_domain' => set_value('active_directory_domain'),
-                    'encryption' => set_value('encryption')
-                );
-
-                $data = array_merge($form_data, $data);
-            }
-
-            $this->template->load('template', 'appsetting/missionportalpref', $data);
-        }
-        else
-        {
-
-            $user_dir = $this->input->post('users_directory');
-            $bluehost_threshold_min = $this->input->post('bluehost_threshold_global') * 60;
-            $form_data = array(
-                'appemail' => set_value('appemail'),
-                'mode' => set_value('mode'),
-                'host' => set_value('host'),
-                'base_dn' => set_value('base_dn'),
-                'login_attribute' => set_value('login_attribute'),
-                'users_directory' => implode(';', $this->input->post('users_directory')),
-                'active_directory_domain' => set_value('active_directory_domain'),
-                'fall_back_for' => $this->input->post('fall_back_for'),
-                'admin_role' => $this->input->post('admin_role'),
-                'encryption' => set_value('encryption'),
-                'external_admin_username' => $this->input->post('external_admin_username'),
-                'rbac' => set_value('rbac'),
-                'bluehost_threshold_global' => "$bluehost_threshold_min",
-            );
-            // run insert model to write data to db
-            $inserted = '';
-            if ($op == 'edit')
-            {
-                $settings = $this->settings_model->get_app_settings();
-                $inserted = $this->settings_model->update_app_settings($form_data, $settings->_id->__toString());
-                $this->ion_auth->set_mode($form_data['mode']);
-            }
-            else
-            {
-                $inserted = $this->settings_model->insert_app_settings($form_data);
-            }
-
-            // check auth mode and create admin user in ldap_users
-            if ($form_data['mode'] != 'database'
-                    && (trim($form_data['external_admin_username']) != '')
-            //  && (trim($settings->external_admin_username) != trim($form_data['external_admin_username']))
-            )
-            {
-
-                $user = array();
-
-                // load model
-                $this->load->model('ion_auth_model_mongo');
-
-                $old_external_admin_username = trim($settings->external_admin_username);
-
-                if ($old_external_admin_username != '')
-                {
-                    $user = $this->ion_auth->get_ldap_user_details_from_local_db($old_external_admin_username);
-                }
-
-                // check if we have info about old user
-                if (!empty($user))
-                {
-                    //1. delete external_admin and admin role from old user
-                    //1.1 delete admin role (all admin roles, in case user has more than 1)
-                    if (isset($user->roles))
-                    {
-
-                        $positions = array_keys((array) $user->roles, $form_data['fall_back_for']);
-                        if (count($positions))
-                        {
-                            foreach ($positions as $index)
-                            {
-                                unset($user->roles[$index]);
-                            }
-                        }
-
-                        // update user roles
-                        $this->ion_auth->update_ldap_users($user->username, $user->roles);
-                    }
-
-                    //1.2 delete external_admin field
-                    $this->ion_auth_model_mongo->unset_field_ldap_user($user->_id, array('external_admin' => 1));
-                }
-
-                //create external admin username user with fallback role
-                $new_external_admin_username = trim($form_data['external_admin_username']);
-
-                //2. Set admin role and external_admin field
-                $user = $this->ion_auth->get_ldap_user_details_from_local_db($new_external_admin_username);
-                $roles = array();
-
-                if (!empty($user))
-                {
-                    //2.1 delete  admin roles if that user has one or many
-                    if (isset($user->roles))
-                    {
-                        // delete admin role if exist
-                        $positions = array_keys((array) $user->roles, $form_data['fall_back_for']);
-                        if (count($positions))
-                        {
-                            foreach ($positions as $index)
-                            {
-                                unset($user->roles[$index]);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $user->roles = array();
-                    }
-
-                    $roles = $user->roles;
-                }
-
-                //add roles to new user + delete all null, empty or false values in roles array
-                $this->ion_auth->update_ldap_users($new_external_admin_username, array_filter(array_merge((array) $roles, (array) $form_data['admin_role'])));
-
-
-                //2.2 add external_admin field
-                $this->ion_auth_model_mongo->update_ldap_user($new_external_admin_username, array('external_admin' => true));
-            }
-
-
-
-            if ($inserted)
-            {// the information has therefore been successfully saved in the db
-//redirect('settings/success');
-                $data = array(
-                    'title' => "CFEngine Mission Portal - Settings",
-                    'breadcrumbs' => $this->breadcrumblist->display(),
-                    'op' => 'edit',
-                    'message' => '<p class="success"> Settings configured sucessfully</p>'
-                );
-                foreach ($form_data as $property => $value)
-                {
-                    if ($property == 'mode' || $property == 'encryption')
-                    {
-                        $data[$value] = ' checked="checked"';
-                        continue;
-                    }
-                    if ($property == 'users_directory' && is_array($user_dir))
-                    {
-                        $i = 0;
-                        foreach ($user_dir as $dirs)
-                        {
-                            if ($i > 0)
-                            {
-                                $data['user_dirs'][$i] = array('name' => 'users_directory[]',
-                                    'id' => 'users_directory_' . $i,
-                                    'type' => 'text',
-                                    'value' => $dirs,
-                                );
-                            }
-                            else
-                            {
-                                $data[$property] = $this->form_validation->set_value('users_directory[]', $user_dir[$i]);
-                            }
-                            $i++;
-                        }
-                        continue;
-                    }
-                    if ($property != '_id')
-                    {
-                        $data[$property] = $this->form_validation->set_value($property, $value);
-                    }
-                }
-
-                $data['rolesacc']['admin'] = 'admin';
-                $data['roles'] = $data['rolesacc'];
-
-
-                // ---- end TMP solution
-                $this->template->load('template', 'appsetting/missionportalpref', $data);
-            }
-            else
-            {
-                echo 'An error occurred saving your information. Please try again later';
-// Or whatever error handling is necessary
-            }
-        }
-    }
 
     function __ldap_check()
     {
