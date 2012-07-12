@@ -2266,7 +2266,6 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
         bson_iterator it1;
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        int type1 = 0;
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
             CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
