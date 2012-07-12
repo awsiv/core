@@ -7,6 +7,7 @@
 #include "db_save.h"
 #include "granules.h"
 #include "item_lib.h"
+#include "sort.h"
 
 #include <assert.h>
 

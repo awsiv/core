@@ -16,6 +16,8 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "string_lib.h"
+#include "sort.h"
+
 #include <assert.h>
 
 static void DateStrToTime(const char *inStr, time_t *t);

@@ -12,6 +12,7 @@
 #include "db_query.h"
 #include "bson_lib.h"
 #include "item_lib.h"
+#include "sort.h"
 
 #include <assert.h>
 

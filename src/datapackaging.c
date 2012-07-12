@@ -21,6 +21,7 @@
 #include "granules.h"
 #include "files_names.h"
 #include "item_lib.h"
+#include "sort.h"
 
 #define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
 
