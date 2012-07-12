@@ -48,7 +48,8 @@
 
 # define SALT_SIZE 10
 
-static const char *settingLabels[SETTING_MAX] = {
+static const char *settingLabels[SETTING_MAX] =
+{
     [SETTING_UNKNOWN] = "unknown",
     [SETTING_RBAC] = "rbac",
     [SETTING_AUTH_MODE] = "authMode",
@@ -59,6 +60,20 @@ static const char *settingLabels[SETTING_MAX] = {
     [SETTING_LDAP_HOST] = "ldapHost",
     [SETTING_AD_DOMAIN] = "activeDirectoryDomain",
     [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon"
+};
+
+static const JsonPrimitiveType setting_types[SETTING_MAX] =
+{
+    [SETTING_UNKNOWN] = JSON_PRIMITIVE_TYPE_NULL,
+    [SETTING_RBAC] = JSON_PRIMITIVE_TYPE_BOOL,
+    [SETTING_AUTH_MODE] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_ENCRYPTION] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_LOGIN_ATTRIBUTE] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_BASE_DN] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_USERS_DIRECTORY] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_HOST] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_AD_DOMAIN] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER
 };
 
 typedef enum
@@ -1245,17 +1260,22 @@ const char *HubSettingToString(HubSetting setting)
     return settingLabels[setting];
 }
 
-HubSetting HubSettingFromString(const char *setting)
+HubSetting HubSettingFromString(const char *setting_key)
 {
     for (size_t i = 0; i < SETTING_MAX; i++)
     {
-        if (StringSafeEqual(settingLabels[i], setting))
+        if (StringSafeEqual(settingLabels[i], setting_key))
         {
             return (HubSetting)i;
         }
     }
 
     return SETTING_UNKNOWN;
+}
+
+JsonPrimitiveType HubSettingGetType(HubSetting setting)
+{
+    return setting_types[setting];
 }
 
 bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size)
@@ -1307,3 +1327,4 @@ bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *valu
 
     return CFDB_PutValue(conn, setting_key, value, MONGO_SETTINGS_COLLECTION);
 }
+

@@ -50,7 +50,8 @@ cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username);
 HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 
 const char *HubSettingToString(HubSetting setting);
-HubSetting HubSettingFromString(const char *setting);
+HubSetting HubSettingFromString(const char *setting_key);
+JsonPrimitiveType HubSettingGetType(HubSetting setting);
 
 bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size);
 bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value);

@@ -57,5 +57,6 @@ EnterpriseDB *EnterpriseDBAcquire(void);
 bool EnterpriseDBRelease(EnterpriseDB *conn);
 
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
+const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
 
 #endif

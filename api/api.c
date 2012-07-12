@@ -563,22 +563,22 @@ PHP_FUNCTION(cfapi_settings_post)
     // first validate that all settings are valid
     {
         JsonIterator iter = JsonIteratorInit(new_settings);
-        const char *setting = NULL;
-        while ((setting = JsonIteratorNextKey(&iter)))
+        const char *setting_key = NULL;
+        while ((setting_key = JsonIteratorNextKey(&iter)))
         {
-            if (HubSettingFromString(setting) == SETTING_UNKNOWN)
+            const HubSetting setting = HubSettingFromString(setting_key);
+            if (setting == SETTING_UNKNOWN)
             {
-                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Invalid setting: %s", setting);
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Invalid setting: %s", setting_key);
             }
 
             const JsonElement *value = JsonIteratorCurrentValue(&iter);
-
             if (JsonGetElementType(value) != JSON_ELEMENT_TYPE_PRIMITIVE ||
-                    JsonGetPrimitiveType(value) != JSON_PRIMITIVE_TYPE_STRING)
+                    JsonGetPrimitiveType(value) != HubSettingGetType(setting))
             {
-                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Setting value for %s must be a string", setting);
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Setting type for %s is ",
+                              JsonPrimitiveTypeToString(HubSettingGetType(setting)));
             }
-
         }
     }
 
@@ -591,13 +591,32 @@ PHP_FUNCTION(cfapi_settings_post)
     // update settings
     {
         JsonIterator iter = JsonIteratorInit(new_settings);
-        const char *setting = NULL;
-        while ((setting = JsonIteratorNextKey(&iter)))
+        const char *setting_key = NULL;
+        while ((setting_key = JsonIteratorNextKey(&iter)))
         {
-            const char *value = JsonPrimitiveGetAsString(JsonIteratorCurrentValue(&iter));
-            if (!CFDB_UpdateSetting(conn, HubSettingFromString(setting), value))
+            const HubSetting setting = HubSettingFromString(setting_key);
+            const JsonElement *value = JsonIteratorCurrentValue(&iter);
+
+            const char *value_str = NULL;
+            switch (JsonIteratorCurrentPrimitiveType(&iter))
             {
-                THROW_GENERIC(ERRID_DB_OPERATION, "Unable to write setting: %s", setting);
+            case JSON_PRIMITIVE_TYPE_STRING:
+                value_str = JsonPrimitiveGetAsString(value);
+                break;
+            case JSON_PRIMITIVE_TYPE_INTEGER:
+                value_str = StringFromLong(JsonPrimitiveGetAsInteger(value));
+                break;
+            case JSON_PRIMITIVE_TYPE_BOOL:
+                value_str = JsonPrimitiveGetAsBool(value) ? "true" : "false";
+                break;
+            default:
+                assert(false && "Never reach");
+            }
+            assert(value_str);
+
+            if (!CFDB_UpdateSetting(conn, setting, value_str))
+            {
+                THROW_GENERIC(ERRID_DB_OPERATION, "Unable to write setting: %s", setting_key);
             }
         }
     }

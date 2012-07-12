@@ -65,3 +65,20 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
 
     return rp;
 }
+
+const char *JsonPrimitiveTypeToString(JsonPrimitiveType type)
+{
+    switch (type)
+    {
+    case JSON_PRIMITIVE_TYPE_STRING:
+        return "string";
+    case JSON_PRIMITIVE_TYPE_REAL:
+    case JSON_PRIMITIVE_TYPE_INTEGER:
+        return "number";
+    case JSON_PRIMITIVE_TYPE_BOOL:
+        return "boolean";
+    default:
+        assert(false && "Never reach");
+        return "(null)";
+    }
+}
