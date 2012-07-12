@@ -22,8 +22,9 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db);
 void EnterpriseDBToSqlite3_Contexts(sqlite3 *db);
 void EnterpriseDBToSqlite3_Variables(sqlite3 *db);
 void EnterpriseDBToSqlite3_Software(sqlite3 *db);
-#endif
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db);
+
+#endif
 /******************************************************************/
 
 JsonElement *ReportingEngineQuery(JsonElement *query)
