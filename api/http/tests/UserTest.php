@@ -162,6 +162,16 @@ class UserTest extends APIBaseTest
                $this->fail($e);
         }
     }
+
+    
+     public function testRandomUserLogin(){
+        try{
+           $this->pest->setupAuth("asdasd", "asdasdsa");
+           $this->assertEquals(401, $this->pest->lastStatus());
+        }catch(Exception $e){
+               $this->fail($e);
+        }
+    }
     
 
     public function testUserNotFound()
