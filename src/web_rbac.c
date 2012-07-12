@@ -76,13 +76,6 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
     [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER
 };
 
-typedef enum
-{
-    AUTHENTICATION_MODE_INTERNAL,
-    AUTHENTICATION_MODE_LDAP,
-    AUTHENTICATION_MODE_AD
-} AuthenticationMode;
-
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 static bool UserExists(const char *username);
@@ -333,7 +326,8 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
     return ERRID_RBAC_ACCESS_DENIED;
 }
 
-cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
+cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len,
+                                  AuthenticationMode *auth_mode_out)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
@@ -342,15 +336,34 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
     }
 
     cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
+    AuthenticationMode mode = GetAuthenticationMode(&conn);
 
-    switch (GetAuthenticationMode(&conn))
+    switch (mode)
     {
     case AUTHENTICATION_MODE_LDAP:
+    {
         result = LDAPAuthenticate(&conn, username, password, password_len, false);
+        if (result != ERRID_SUCCESS)
+        {
+            if (UserIsRoleAdmin(&conn, username))
+            {
+                result = InternalAuthenticate(&conn, username, password, password_len);
+                mode = AUTHENTICATION_MODE_INTERNAL;
+            }
+        }
         break;
+    }
 
     case AUTHENTICATION_MODE_AD:
         result = LDAPAuthenticate(&conn, username, password, password_len, true);
+        if (result != ERRID_SUCCESS)
+        {
+            if (UserIsRoleAdmin(&conn, username))
+            {
+                result = InternalAuthenticate(&conn, username, password, password_len);
+                mode = AUTHENTICATION_MODE_INTERNAL;
+            }
+        }
         break;
 
     case AUTHENTICATION_MODE_INTERNAL:
@@ -359,6 +372,11 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
     }
 
     CFDB_Close(&conn);
+
+    if (auth_mode_out)
+    {
+        *auth_mode_out = mode;
+    }
     return result;
 }
 

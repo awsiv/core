@@ -28,7 +28,15 @@ typedef enum
     SETTING_MAX
 } HubSetting;
 
-cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
+typedef enum
+{
+    AUTHENTICATION_MODE_INTERNAL,
+    AUTHENTICATION_MODE_LDAP,
+    AUTHENTICATION_MODE_AD
+} AuthenticationMode;
+
+cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len,
+                                  AuthenticationMode *auth_mode_out);
 
 cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);

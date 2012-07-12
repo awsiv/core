@@ -9,8 +9,11 @@ class Status extends Resource
     {
         Utils::checkValidQueryParams(array());
 
+        $user = $_SERVER['PHP_AUTH_USER'];
+        $pass = $_SERVER['PHP_AUTH_PW'];
+
         $response = new Response($request);
-        $response->body = cfapi();
+        $response->body = cfapi($user, $pass);
         $response->code = Response::OK;
 
         return $response;

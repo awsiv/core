@@ -10,6 +10,7 @@
 #include "api-php.h"
 #include "json.h"
 #include "db_common.h"
+#include "web_rbac.h"
 
 #define THROW_GENERIC(code, msg, ...) \
     { \
@@ -58,5 +59,6 @@ bool EnterpriseDBRelease(EnterpriseDB *conn);
 
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
+const char *AuthenticationModeToString(AuthenticationMode mode);
 
 #endif

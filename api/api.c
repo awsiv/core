@@ -13,16 +13,39 @@ static const char *API_VERSION = "v1";
 
 PHP_FUNCTION(cfapi)
 {
-    JsonElement *info = JsonObjectCreate(4);
+    const char *username = NULL; int username_len = 0;
+    const char *password = NULL; int password_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &password, &password_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(password_len, "password");
+
+    AuthenticationMode auth_mode;
+    if (CFDB_UserAuthenticate(username, password, password_len, &auth_mode) != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Forbidden");
+    }
+
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    JsonElement *info = JsonObjectCreate(10);
 
     JsonObjectAppendString(info, "apiName", API_NAME);
     JsonObjectAppendString(info, "apiVersion", API_VERSION);
     JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
     JsonObjectAppendString(info, "databaseHostname", DBHostname());
     JsonObjectAppendInteger(info, "databasePort", DBPort());
-
-    EnterpriseDB *conn = EnterpriseDBAcquire();
-    JsonObjectAppendBool(info, "databaseConnected", conn);
+    JsonObjectAppendString(info, "authMode", AuthenticationModeToString(auth_mode));
 
     if (conn)
     {
@@ -59,7 +82,7 @@ PHP_FUNCTION(cfapi_auth)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    cfapi_errid err = CFDB_UserAuthenticate(username, password, password_len);
+    cfapi_errid err = CFDB_UserAuthenticate(username, password, password_len, NULL);
     switch (err)
     {
     case ERRID_SUCCESS:

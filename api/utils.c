@@ -82,3 +82,20 @@ const char *JsonPrimitiveTypeToString(JsonPrimitiveType type)
         return "(null)";
     }
 }
+
+const char *AuthenticationModeToString(AuthenticationMode mode)
+{
+    switch (mode)
+    {
+    case AUTHENTICATION_MODE_INTERNAL:
+        return "internal";
+    case AUTHENTICATION_MODE_LDAP:
+        return "ldap";
+    case AUTHENTICATION_MODE_AD:
+        return "activeDirectory";
+
+    default:
+        assert(false && "Never reach");
+        return NULL;
+    }
+}
