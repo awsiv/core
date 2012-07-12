@@ -213,7 +213,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO variables VALUES('%s','%s','%s','%s','%s');",
-                 hc->hh->hostname, hc->scope, hc->lval, rval_scalar, hc->dtype);
+                 hc->hh->keyhash, hc->scope, hc->lval, rval_scalar, hc->dtype);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -306,7 +306,7 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO software VALUES('%s','%s','%s','%s');",
-                 hs->hh->hostname, hs->name, hs->version, hs->arch);
+                 hs->hh->keyhash, hs->name, hs->version, hs->arch);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -425,7 +425,7 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO promisenk VALUES('%s','%s', '%s',%ld);",
-                 hp->hh->hostname, hp->handle, hp->cause, hp->t);
+                 hp->hh->keyhash, hp->handle, hp->cause, hp->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
