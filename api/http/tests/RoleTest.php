@@ -31,13 +31,15 @@ class RoleTest extends APIBaseTest
 
             // check role was added
             $roles = $this->getResults('/role/jersey');
+            
             $this->assertValidJson($roles);
+            $this->assertEquals('Jersey Shore Role', $roles[0]['description']);
             $this->assertEquals('jersey', $roles[0]['name']);
             $this->assertEquals('linux', $roles[0]['includeContext']);
             $this->assertEquals('windows', $roles[0]['excludeContext']);
             $this->assertEquals('bundle_1', $roles[0]['includeBundles']);
             $this->assertEquals('bundle_2', $roles[0]['excludeBundles']);
-
+             
         }catch(Pest_Exception $e)
         {
             $this->fail($e);
@@ -53,7 +55,7 @@ class RoleTest extends APIBaseTest
                     "crxi":"linux,windows"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
-
+            
             // check role was added
             $roles = $this->getResults('/role');
             $this->assertValidJson($roles);
