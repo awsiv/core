@@ -17,10 +17,14 @@ check_PROGRAMS = \
         reporting_engine_test
 
 if MONGO
-check_PROGRAMS += scorecards_test
+check_PROGRAMS += scorecards_test \
+                  bson_lib_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
+
+bson_lib_test_SOURCES = $(MOCKERY_SOURCES) bson_lib_test.c
+bson_lib_test_LDADD = $(top_builddir)/src/libpromises.la
 
 endif
 
