@@ -23,6 +23,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db);
 void EnterpriseDBToSqlite3_Variables(sqlite3 *db);
 void EnterpriseDBToSqlite3_Software(sqlite3 *db);
 #endif
+void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db);
 /******************************************************************/
 
 JsonElement *ReportingEngineQuery(JsonElement *query)
@@ -56,6 +57,7 @@ JsonElement *EnterpriseExecuteSQL(char *select_op)
     EnterpriseDBToSqlite3_Variables(db);
     EnterpriseDBToSqlite3_FileChanges(db);
     EnterpriseDBToSqlite3_Software(db);
+    EnterpriseDBToSqlite3_PromiseStatusLast(db);
 
     /* Now query the in-memory database */
     JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op);
@@ -312,6 +314,77 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db)
     }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
+}
+
+/******************************************************************/
+/*TODO: Conversion functions and definitions are all over the place*/
+/* Needs unification, this is taken from public-api.c             */
+/******************************************************************/
+static const char *LABEL_STATE_REPAIRED = "repaired";
+static const char *LABEL_STATE_NOTKEPT = "notkept";
+static const char *LABEL_STATE_KEPT = "kept";
+static const char *LABEL_STATE_UNKNOWN = "unknown";
+
+static const char *PromiseStateToString(PromiseState state)
+{
+    switch (state)
+    {
+    case PROMISE_STATE_REPAIRED:
+        return LABEL_STATE_REPAIRED;
+    case PROMISE_STATE_NOTKEPT:
+        return LABEL_STATE_NOTKEPT;
+    case PROMISE_STATE_KEPT:
+        return LABEL_STATE_KEPT;
+    default:
+        return LABEL_STATE_UNKNOWN;
+    }
+}
+
+/******************************************************************/
+
+void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    CFDB_Open(&dbconn);
+
+    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+
+    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY, false, 0, time(NULL), false, filter);
+
+    CFDB_Close(&dbconn);
+
+    /* Table schema */
+
+    char table_schema[CF_BUFSIZE] = {0};
+    snprintf(table_schema, sizeof(table_schema),
+             "CREATE TABLE promisestatus("
+             "hostkey VARCHAR(100), "
+             "handle VARCHAR(50), "
+             "status VARCHAR(10), "
+             "time BIGINT, "
+             "FOREIGN key(hostkey) REFERENCES contexts(hostkey));");
+
+    char *err = 0;
+    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
+
+    /* Dump HubQuery into in-memory sqlite table */
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseCompliance *hc = (HubPromiseCompliance *) rp->item;
+
+        char insert_op[CF_BUFSIZE] = {0};
+
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO promisestatus VALUES('%s','%s','%s',%ld);",
+                 hc->hh->keyhash, hc->handle, PromiseStateToString(hc->status), hc->t);
+
+        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
+
+        /* TODO: Error Handling */
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromiseCompliance);
 }
 
 /******************************************************************/
