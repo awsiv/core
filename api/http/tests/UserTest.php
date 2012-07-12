@@ -19,10 +19,11 @@ class UserTest extends APIBaseTest
         }
     }
 
-
-    public function testAddUser(){
-        try{
-          $this->pest->put('/user/snookie', '{
+    public function testAddUser()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
                     "password": "pass",
                     "email": "snookie@cfengine.com",
                     "roles": [ "jersey" ]
@@ -38,17 +39,19 @@ class UserTest extends APIBaseTest
 
             //test newly created user can log in or not
             $this->pest->setupAuth("snookie", "pass");
-            $response=$this->getResults('');
+            $response = $this->getResults('');
             $this->assertValidJson($response);
-
-        }catch(Exception $e){
+        }
+        catch (Exception $e)
+        {
             $this->fail($e);
         }
     }
 
-
-    public function testUpdateEmail(){
-        try{
+    public function testUpdateEmail()
+    {
+        try
+        {
             $this->pest->post('/user/snookie', '{
                     "email": "snookie2@cfengine.com"
                 }');
@@ -64,15 +67,18 @@ class UserTest extends APIBaseTest
             $this->pest->setupAuth("snookie", "pass");
             $this->getResults('');
             $this->assertValidJson($response);
-
-        }catch(Exception $e){
+        }
+        catch (Exception $e)
+        {
             $this->fail($e);
         }
     }
 
-    public function testUpdateRoles(){
-        try{
-         $this->pest->post('/user/snookie', '{
+    public function testUpdateRoles()
+    {
+        try
+        {
+            $this->pest->post('/user/snookie', '{
                     "roles": [ "jersey", "wenches" ]
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
@@ -86,59 +92,68 @@ class UserTest extends APIBaseTest
 
             //test only roles was edited
             $this->pest->setupAuth("snookie", "pass");
-            $response=$this->getResults('');
+            $response = $this->getResults('');
             $this->assertValidJson($response);
-
-        }catch(Exception $e){
-              $this->fail($e);
-         }
-    }
-
-    public function testBrowseOwnDetails(){
-        try{
-          $this->pest->setupAuth("snookie", "pass");
-          $users=$this->getResults('/user/snookie');
-          $this->assertEquals(200, $this->pest->lastStatus());
-          $this->assertEquals('snookie', $users[0]['username']);
-
-         }catch(Exception $e){
+        }
+        catch (Exception $e)
+        {
             $this->fail($e);
-          }
-
+        }
     }
 
-    public function testChangePassword(){
-     try{
-          //change password
-          $this->pest->post('/user/snookie', '{
+    public function testBrowseOwnDetails()
+    {
+        try
+        {
+            $this->pest->setupAuth("snookie", "pass");
+            $users = $this->getResults('/user/snookie');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertEquals('snookie', $users[0]['username']);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testChangePassword()
+    {
+        try
+        {
+            //change password
+            $this->pest->post('/user/snookie', '{
                     "password": "pass2"
                 }');
-          $this->assertEquals(204, $this->pest->lastStatus());
+            $this->assertEquals(204, $this->pest->lastStatus());
 
-          //check if authentication is successful for new password
-          $this->pest->setupAuth("snookie", "pass2");
-          $response=$this->getResults('');
-          $this->assertValidJson($response);
+            //check if authentication is successful for new password
+            $this->pest->setupAuth("snookie", "pass2");
+            $response = $this->getResults('');
+            $this->assertValidJson($response);
 
-          //check if roles are still there
-          $users = $this->getResults('/user/snookie');
-          $this->assertEquals('jersey', $users[0]['roles'][0]);
-          $this->assertEquals('wenches', $users[0]['roles'][1]);
-
-        }catch(Exception $e){
-             $this->fail($e);
+            //check if roles are still there
+            $users = $this->getResults('/user/snookie');
+            $this->assertEquals('jersey', $users[0]['roles'][0]);
+            $this->assertEquals('wenches', $users[0]['roles'][1]);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
         }
     }
 
-    public function testDeleteUser(){
-        try{
+    public function testDeleteUser()
+    {
+        try
+        {
             $this->pest->delete('/user/snookie');
             $this->assertEquals(204, $this->pest->lastStatus());
-        }catch(Exception $e){
-               $this->fail($e);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
         }
     }
-
 
     public function testUserNotFound()
     {
@@ -156,4 +171,5 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
 }
