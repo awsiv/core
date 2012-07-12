@@ -522,6 +522,11 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendString(settings, HubSettingToString(SETTING_AD_DOMAIN), buffer);
     }
 
+    if (CFDB_GetSetting(conn, SETTING_BLUEHOST_HORIZON, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendInteger(settings, HubSettingToString(SETTING_BLUEHOST_HORIZON), StringToLong(buffer));
+    }
+
     if (!EnterpriseDBRelease(conn))
     {
         THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
