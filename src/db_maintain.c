@@ -24,6 +24,18 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn);
 static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey);
 static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey);
 
+// WHAT: CFDB_PurgeSoftwareInvalidTimestamp
+//       removes software reports from all hosts with 0 timestamp
+//
+// WHY:  In Nova v2.1 there was a bug which populated timestamp = 0
+//       for software installed report
+//       As of Nova 2.2, the bug no longer exists and
+//       this function can be removed in future releases
+//       when all hubs have been upgraded to 2.3 for instance
+
+static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn);
+
+/*****************************************************************************/
 
 void CFDB_Maintenance(void)
 {
@@ -35,6 +47,9 @@ void CFDB_Maintenance(void)
     }
 
     CFDB_EnsureIndices(&dbconn);
+
+    CFDB_PurgeSoftwareInvalidTimestamp(&dbconn);
+
     CFDB_PurgeTimestampedReports(&dbconn);
 
     // support for old DB PromiseLogs format
@@ -990,6 +1005,8 @@ int CFDB_PurgeDeletedHosts(void)
     return true;
 }
 
+/*****************************************************************************/
+
 void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey)
 {
     assert(hostkey);
@@ -1025,4 +1042,35 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
     notkept /= num_samples;
 
     CFDB_SaveHostComplianceShift(conn, hostkey, kept, repaired, notkept, num_samples, from);
+}
+
+/*****************************************************************************/
+
+static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn)
+{
+    CfOut(cf_verbose, "", " -> Purge invalid timestamps in software reports");
+
+    bson query;
+
+    bson_init(&query);
+    bson_append_int(&query, cfr_software_t, 0);
+    bson_finish(&query);
+
+    bson unset_op;
+
+    bson_init(&unset_op);
+    {
+        bson_append_start_object(&unset_op, "$unset");
+        bson_append_int(&unset_op, cfr_software, 1);
+        bson_append_int(&unset_op, cfr_software_t, 1);
+        bson_append_finish_object(&unset_op);
+    }
+    bson_finish(&unset_op);
+
+    mongo_update(conn, MONGO_DATABASE, &query, &unset_op, MONGO_UPDATE_MULTI, NULL);
+
+    bson_destroy(&unset_op);
+    bson_destroy(&query);
+
+    MongoCheckForError(conn, "PurgeSoftwareInvalidTimestamp", NULL, NULL);
 }
