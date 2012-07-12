@@ -98,8 +98,8 @@ class UserTest extends APIBaseTest
         try{
           $this->pest->setupAuth("snookie", "pass");
           $users=$this->getResults('/user/snookie');
+          $this->assertEquals(200, $this->pest->lastStatus());
           $this->assertEquals('snookie', $users[0]['username']);
-          $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
 
          }catch(Exception $e){
             $this->fail($e);
