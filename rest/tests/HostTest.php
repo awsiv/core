@@ -93,4 +93,36 @@ class HostTest extends RestBaseTest
         }
     }
 
+    public function testHostInFullTimeframe()
+    {
+        try
+        {
+            $from = 0;
+            $to = time(NULL);
+            $jsonArray = $this->getResults('/host?from=' . $from . '&to=' . $to);
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(2, sizeof($jsonArray));
+        }
+        catch (Pest_NotFound $e)
+        {
+            $this->fail('Resource not found');
+        }
+    }
+
+    public function testHostInTimeframe()
+    {
+        try
+        {
+            $from = 1328000000;
+            $to = time(NULL);
+            $jsonArray = $this->getResults('/host?from=' . $from . '&to=' . $to);
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(1, sizeof($jsonArray));
+        }
+        catch (Pest_NotFound $e)
+        {
+            $this->fail('Resource not found');
+        }
+    }
+
 }
