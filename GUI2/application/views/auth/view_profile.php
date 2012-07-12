@@ -11,7 +11,7 @@
         <table cellspasing="5" style="width:30%; float: left">
             <tr>
                 <td>User name</td>
-                <td><?php echo $user->username ?></td>
+                <td><?php echo $user['username']?></td>
             </tr>
            <?php if ($this->session->userdata('mode') == 'database') { ?>
             <tr>
@@ -21,7 +21,7 @@
             <tr>
                 <td>Change password</td>
                 <td>
-                    <?php  echo anchor("auth/change_password/" . $user->_id->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password')); ?>
+                    <?php  echo anchor("auth/change_password/" . $user['username'], ' ', array('class' => 'changepassword', 'title' => 'change password')); ?>
                 </td>
             </tr>
             <?php } ?>
@@ -32,7 +32,7 @@
                 <td colspan="2"><div class="DragNDrop assigned dialog_box_style ui-dialog"  style="position: relative">
                         <div class="itemwrapper assigneditems">
 
-                            <?php if (!empty($user->roles)) { 
+                            <?php if (!empty($user['roles'])) { 
                                 $i = 1;
                                 $first = true;
                                 $fist_item_class = ' class="first"';
@@ -40,7 +40,7 @@
 
                                 echo '<ul id="roles" class="roleslist itemlist assignedList">';
 
-                                foreach ($user->roles as $item) {
+                                foreach ($user['roles'] as $item) {
                                     echo '<li ' . ($first === TRUE ? $fist_item_class : '') . ' >';
                                     echo $item;
                                     echo "</li>";

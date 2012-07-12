@@ -5,9 +5,6 @@
 			<th>Email</th>
                         
 			<th>Roles</th>
-                        <?php if($this->ion_auth->mode =="database"){?>
-			<th>Status</th>
-                        <?php } ?>
                         <th>Action</th>
                      
 		</tr>
@@ -29,16 +26,7 @@
                                 ?>                     
                                 <td class="<?php if(!empty($roles_str)) { ?>showqtip <?php } ?>" title="<?php echo $roles_str ?>"><?php echo getCuttedText($roles_str, 5, 60) ?></td>
                           
-                                <?php  if($this->ion_auth->mode=="database"){?>
-				<td><?php
-                                    if($is_admin) {
-                                        echo ($user['active']) ? anchor("auth/deactivate/".$username/*$user['_id']->__toString()*/, 'Active', array('class'=>'activate')) : anchor("auth/activate/". $username, 'Inactive',array('class'=>'inactivate'));
-                                    }else{
-                                     echo ($user['active']) ? 'Active' :  'Inactive';
-                                    }
-                                
-                                    ?></td>
-                            <?php } ?>
+                           
 
                 <td class="actioncol"> 
                 <?php

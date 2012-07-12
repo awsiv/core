@@ -19,6 +19,7 @@ class Authentication_model extends Cf_Model
     public function setRestClient($rest)
     {
         $this->rest = $rest;
+        //var_dump($rest);
     }
 
     /**
@@ -41,7 +42,6 @@ class Authentication_model extends Cf_Model
         {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
-           
         }
     }
 
@@ -85,7 +85,128 @@ class Authentication_model extends Cf_Model
     }
 
     /**
-     * Get all users 
+     * Get the details of a role
+     * @param type $rolename 
+     */
+    function getRoleDetails($rolename)
+    {
+        try
+        {
+            $body = $this->rest->get('/' . $this->rolesResource . '/' . $rolename);
+            $data = $this->checkData($body);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data['data'][0];
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     * For creating users
+     * @param type $data 
+     */
+    function createRole($data)
+    {
+        try
+        {
+            $this->rest->put('/' . $this->rolesResource . '/' . $data['name'], $data);
+            if ($this->rest->lastStatus() == 201)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     *
+     * @param type $username
+     * @param type $data
+     * @return type boolean
+     */
+    function updateRole($rolename, $data)
+    {
+        try
+        {
+            $this->rest->post('/' . $this->rolesResource . '/' . $rolename, $data);
+            if ($this->rest->lastStatus() == 204)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     * Deletes a role
+     * @param type $rolename 
+     */
+    function deleteRole($rolename)
+    {
+        try
+        {
+            $this->rest->delete('/' . $this->rolesResource . '/' . $rolename);
+            if ($this->rest->lastStatus() == 204)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     * Create a user
+     * @param type $data
+     * @return type 
+     */
+    function createUser($data)
+    {
+        try
+        {
+            $this->rest->put('/' . $this->userResource . '/' . $data['username'], $data);
+            if ($this->rest->lastStatus() == 201)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e->getMessage());
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     *
+     * @return type array data
      */
     function getAllUsers()
     {
@@ -119,7 +240,7 @@ class Authentication_model extends Cf_Model
      */
     function getUserDetails($username)
     {
-        
+
         try
         {
             $body = $this->rest->get('/' . $this->userResource . '/' . $username);
@@ -141,18 +262,19 @@ class Authentication_model extends Cf_Model
         }
     }
 
-    
     /**
      *
      * @param type $username
      * @param type $data 
      */
-    function update_user($username,$data){
-        
+    function update_user($username, $data)
+    {
+
         try
         {
             $this->rest->post('/' . $this->userResource . '/' . $username, $data);
-            if($this->rest->lastStatus() == 204){
+            if ($this->rest->lastStatus() == 204)
+            {
                 return true;
             }
             return false;
@@ -164,9 +286,50 @@ class Authentication_model extends Cf_Model
             throw $e;
         }
     }
+
+    /**
+     * Delete the supplied user
+     * @param type $username 
+     */
+    function deleteUser($username)
+    {
+        try
+        {
+            $this->rest->delete('/' . $this->userResource . '/' . $username);
+            if ($this->rest->lastStatus() == 204)
+            {
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
     
     
-    
+    function change_password($username,$old,$new){
+     try
+        {
+          $this->rest->setupAuth($username,$old);
+          $this->update_user($username, array('password'=>$new));
+          if ($this->rest->lastStatus() == 204)
+            {
+                $this->rest->setupAuth($username,$new);
+                return true;
+            }
+            return false;
+        }
+        catch (Exception $e)
+        {
+           log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+           throw $e; 
+        }
+        
+    }
+
     /**
      * Update the last login time for user in local db related to the user.
      * @param type $username

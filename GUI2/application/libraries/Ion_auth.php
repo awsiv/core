@@ -236,14 +236,22 @@ class Ion_auth
      * */
     public function change_password($identity, $old, $new)
     {
-        if ($this->ci->ion_auth_model_mongo->change_password($identity, $old, $new))
+     try
         {
-            $this->set_message('password_change_successful');
-            return TRUE;
-        }
+            if ($this->auth_model->change_password($identity, $old, $new))
+            {
+                $this->set_message('password_change_successful');
+                return TRUE;
+            }
 
-        $this->set_error('password_change_unsuccessful');
-        return FALSE;
+            $this->set_error('password_change_unsuccessful');
+            return FALSE;
+        }
+        catch (Exception $e)
+        {
+              $this->set_error($e->getMessage());
+              return FALSE;
+        }
     }
 
     /**
@@ -352,73 +360,25 @@ class Ion_auth
      * @return void
      * @author Mathew
      * */
-    public function register($username, $password, $email, $role, $additional_data = false) //need to test email activation
+    public function register($data) //need to test email activation
     {
-        $email_activation = $this->ci->config->item('email_activation', 'ion_auth');
-
-        if (!$email_activation)
-        {
-            $id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $role, $additional_data);
+       try{
+            $id = $this->auth_model->createUser($data);
             if ($id !== FALSE)
             {
                 $this->set_message('account_creation_successful');
-                return $id;
+                return TRUE;
             }
             else
             {
                 $this->set_error('account_creation_unsuccessful');
                 return FALSE;
-            }
-        }
-        else
-        {
-            $id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $role, $additional_data);
-
-            if (!$id)
-            {
-                $this->set_error('account_creation_unsuccessful');
-                return FALSE;
-            }
-
-            $deactivate = $this->ci->ion_auth_model_mongo->deactivate($id);
-
-            if (!$deactivate)
-            {
-                $this->set_error('deactivate_unsuccessful');
-                return FALSE;
-            }
-
-            $activation_code = $this->ci->ion_auth_model_mongo->activation_code;
-            $identity = $this->ci->config->item('identity', 'ion_auth');
-            $user = $this->ci->ion_auth_model_mongo->get_user($id);
-
-            $data = array(
-                'identity' => $user->{$identity},
-                'id' => $user->id,
-                'email' => $email,
-                'activation' => $activation_code,
-            );
-
-            $message = $this->ci->load->view($this->ci->config->item('email_templates', 'ion_auth') . $this->ci->config->item('email_activate', 'ion_auth'), $data, true);
-
-            $this->ci->email->clear();
-            $config['mailtype'] = $this->ci->config->item('email_type', 'ion_auth');
-            $this->ci->email->initialize($config);
-            $this->ci->email->set_newline("\r\n");
-            $this->ci->email->from($this->email, $this->ci->config->item('site_title', 'ion_auth'));
-            $this->ci->email->to($email);
-            $this->ci->email->subject($this->ci->config->item('site_title', 'ion_auth') . ' - Account Activation');
-            $this->ci->email->message($message);
-
-            if ($this->ci->email->send() == TRUE)
-            {
-                $this->set_message('activation_email_successful');
-                return $id;
-            }
-
-            $this->set_error('activation_email_unsuccessful');
+            }  
+       }catch(Exception $e)
+       {
+            $this->set_error($e->getMessage());
             return FALSE;
-        }
+       }
     }
 
     /**
@@ -441,9 +401,9 @@ class Ion_auth
         }
         catch (Exception $e)
         {
-           //$this->set_error('login_unsuccessful'); 
-           $this->set_error($e->getMessage());
-           return false;
+            //$this->set_error('login_unsuccessful'); 
+            $this->set_error($e->getMessage());
+            return false;
         }
     }
 
@@ -529,7 +489,7 @@ class Ion_auth
         {
             //if ($this->ci->settings_model->app_settings_get_item('mode') == 'database' || $this->ci->session->userdata('mode') == 'database')
             // {
-            $user_role = $this->get_user_role($this->ci->session->userdata('username'));
+            $user_role = $this->get_user_rolelist($this->ci->session->userdata('username'));
             /* }
               else
               {
@@ -623,7 +583,7 @@ class Ion_auth
         $roles = $this->get_user_role($id);
         if (!empty($roles) && $roles !== False)
         {
-            return $roles[0]['roles'];
+            return $roles;
         }
         return array();
     }
@@ -669,72 +629,7 @@ class Ion_auth
         return $this->auth_model->getAllUsers();
     }
 
-    /**
-     * Get Newest Users
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_newest_users($limit = 10)
-    {
-        return (object) $this->ci->ion_auth_model_mongo->get_newest_users($limit);
-    }
-
-    /**
-     * Get Newest Users Array
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_newest_users_array($limit = 10)
-    {
-        return $this->ci->ion_auth_model_mongo->get_newest_users($limit);
-    }
-
-    /**
-     * Get Active Users
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_active_users($role_name = false)
-    {
-        return (object) $this->ci->ion_auth_model_mongo->get_active_users($role_name);
-    }
-
-    /**
-     * Get Active Users Array
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_active_users_array($role_name = false)
-    {
-        return $this->ci->ion_auth_model_mongo->get_active_users($role_name);
-    }
-
-    /**
-     * Get In-Active Users
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_inactive_users($role_name = false)
-    {
-        return (object) $this->ci->ion_auth_model_mongo->get_inactive_users($role_name);
-    }
-
-    /**
-     * Get In-Active Users Array
-     *
-     * @return object Users
-     * @author Ben Edmunds
-     * */
-    public function get_inactive_users_array($role_name = false)
-    {
-        return $this->ci->ion_auth_model_mongo->get_inactive_users($role_name);
-    }
-
+    
     /**
      * Get User
      *
@@ -746,16 +641,6 @@ class Ion_auth
         return $this->auth_model->getUserDetails($id);
     }
 
-    /**
-     * Get User by Email
-     *
-     * @return object User
-     * @author Ben Edmunds
-     * */
-    public function get_user_by_email($email)
-    {
-        return $this->ci->ion_auth_model_mongo->get_user_by_email($email);
-    }
 
     /**
      * update_user
@@ -885,14 +770,19 @@ class Ion_auth
             $this->set_error('one_admin_required');
             return FALSE;
         }
-        if ($this->ci->ion_auth_model_mongo->delete_user($id))
-        {
-            $this->set_message('user_delete_successful');
-            return TRUE;
+        try{
+            if ($this->auth_model->deleteUser($id))
+            {
+                $this->set_message('user_delete_successful');
+                return TRUE;
+            }
+            $this->set_error('user_delete_unsuccessful');
+            return FALSE;
         }
-
-        $this->set_error('user_delete_unsuccessful');
-        return FALSE;
+        catch(Exception $e){
+            $this->set_error($e->getMessage());
+            return FALSE;
+        }
     }
 
     /**
@@ -901,11 +791,11 @@ class Ion_auth
      * @param type $name role name
      * @return type bool
      */
-    public function delete_role($username, $name)
+    public function delete_role($rolename)
     {
         try
         {
-            if ($this->ci->ion_auth_model_mongo->delete_role($username, $name))
+            if ($this->auth_model->deleteRole($rolename))
             {
                 $this->set_message('role_delete_successful');
                 return TRUE;
@@ -915,42 +805,12 @@ class Ion_auth
         }
         catch (Exception $e)
         {
-            $this->set_error('role_delete_unsuccessful');
-            throw $e;
+            $this->set_error($e->getMessage());
+            return false;
         }
     }
 
-    /**
-     * extra_where
-     *
-     * Crazy function that allows extra where field to be used for user fetching/unique checking etc.
-     * Basically this allows users to be unique based on one other thing than the identifier which is helpful
-     * for sites using multiple domains on a single database.
-     *
-     * @return void
-     * @author Phil Sturgeon
-     * */
-    public function extra_where()
-    {
-        $where = & func_get_args();
-
-        $this->_extra_where = count($where) == 1 ? $where[0] : array($where[0] => $where[1]);
-    }
-
-    /**
-     * extra_set
-     *
-     * Set your extra field for registration
-     *
-     * @return void
-     * @author Phil Sturgeon
-     * */
-    public function extra_set()
-    {
-        $set = & func_get_args();
-
-        $this->_extra_set = count($set) == 1 ? $set[0] : array($set[0] => $set[1]);
-    }
+   
 
     /**
      * set_message_delimiters
@@ -1101,6 +961,26 @@ class Ion_auth
     {
         return $this->auth_model->getAllRoles();
     }
+    
+    /**
+     * Returns the details of a role in arrAY.
+     * @param type $rolename
+     * @return type 
+     */
+    public function get_role_detail($rolename)
+    {
+        try{
+           $data=$this->auth_model->getRoleDetails($rolename);
+           if(is_array($data)){
+             return $data;  
+           }
+           $this->set_error('error_fetching_details');
+           return false;
+        }
+        catch(Exception $e){
+            $this->set_error($e->getMessage());
+        }
+    }
 
     /**
      * create_role
@@ -1109,14 +989,12 @@ class Ion_auth
      * @return object
      * @author sudhir
      * */
-    public function create_role($username, $data)
+    public function create_role($data)
     {
-        $id = $this->ci->ion_auth_model_mongo->create_role($username, $data);
-
-        if ($id !== FALSE)
+        if ($this->auth_model->createRole($data))
         {
             $this->set_message('role_creation_successful');
-            return $id;
+            return true;
         }
         else
         {
@@ -1125,23 +1003,25 @@ class Ion_auth
         }
     }
 
-    /**
-     * update_role
-     * Update the role
-     * @param
-     * username - current logged user
-     * rolename - name of the role
-     * data - new values
-     *
-     * @return bool
-     * @author sudhir
-     * */
-    public function update_role($username, $data)
+ 
+    public function update_role($rolename, $data)
     {
-        if ($this->ci->ion_auth_model_mongo->update_role($username, $data))
+
+        try
         {
-            $this->set_message('role_update_successful');
-            return TRUE;
+            if ($this->auth_model->updateRole($rolename, $data))
+            {
+                $this->set_message('role_update_successful');
+                return TRUE;
+            }
+
+            $this->set_error('role_update_unsuccessful');
+            return FALSE;
+        }
+        catch (Exception $e)
+        {
+            $this->set_error($e->getMessage());
+            return FALSE;
         }
     }
 

@@ -48,5 +48,13 @@ class pest_json extends Pest
     {
         parent::__construct($param['base_url']);
     }
+    
+    public function processError($body)
+    {
+       if($this->lastStatus()===0){
+            return "Rest server not found";
+       } 
+       return $body;
+    }
 
 }

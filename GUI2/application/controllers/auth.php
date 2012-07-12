@@ -267,34 +267,25 @@ class Auth extends Controller
         }
         else
         {
-            $identity = isset($id) ? $id : $this->session->userdata($this->session->userdata('user_id'));
-            $result = $this->mongo_db->select(array('password', 'username'))
-                    ->where(array('_id' => new MongoId($identity)))
-                    ->limit(1)
-                    ->get_object('users');
-
-            $username = $result->username;
-            $oldPass = $result->password;
+            $username = isset($id) ? $id : $this->session->userdata('username');
+            
             $this->load->model('repository_model');
             $userInfo = array('userId' => $username);
             $oldKey = $this->repository_model->get_key($userInfo); // have to have old pass key before change
-
-            $change = $this->ion_auth->change_password($identity, $this->input->post('old'), $this->input->post('new'));
+            
+            $change = $this->ion_auth->change_password($username, $this->input->post('old'), $this->input->post('new'));
 
             if ($change)
             { //if the password was successfully changed
                 //$this->session->set_flashdata('message', $this->ion_auth->messages());
                 //$this->logout();
                 // change the svn password as well here
+                $this->session->set_userdata('password',$this->input->post('new'));
                 $this->change_svn_password_entries($username, $oldKey);
                 if (is_ajax())
                 {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['users'] = $this->ion_auth->get_users_array();
-
-                    // get system settings to protect "fall_back_for" user from editing
-                    $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
 
                     $this->data['old_password'] = array('name' => 'old',
                         'id' => 'old',
@@ -527,13 +518,15 @@ class Auth extends Controller
 
         if ($this->form_validation->run() == true)
         {
-            $username = strtolower($this->input->post('user_name'));
-            $email = $this->input->post('email');
-            $password = $this->input->post('password');
-            $roles = $this->input->post('roles');
+           $data=array(
+            'username' => strtolower($this->input->post('user_name')),
+            'email' => $this->input->post('email'),
+            'password' => $this->input->post('password'),
+            'roles' => $this->input->post('roles')
+            );
         }
 
-        if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $roles))
+        if ($this->form_validation->run() == true && $this->ion_auth->register($data))
         { //check to see if we are creating the user
             //redirect them back to the admin page
             if (is_ajax())
@@ -692,7 +685,7 @@ class Auth extends Controller
         }
         else
         {
-            $userdata = $this->ion_auth->get_user($this->session->userdata('_id'));
+            $userdata = $this->ion_auth->get_user($this->session->userdata('username'));
         }
 
         $this->data['user'] = $userdata;
@@ -956,7 +949,7 @@ class Auth extends Controller
     function _get_roles_not_assigned_to_user($assignedRoles = array())
     {
 
-        $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
+        $roles = $this->ion_auth->get_roles();
         // get roles list, only roles which NOT assigned to user
         if (!empty($assignedRoles))
         {
@@ -1032,21 +1025,22 @@ class Auth extends Controller
             
             if ($this->form_validation->run() == true)
             {
-                $data = array('name' => $this->input->post('name'),
+                $data = array(
+                    'name' => $this->input->post('name'),
                     'description' => $this->input->post('description'),
-                    'crxi' => implode(",", array_filter(array_unique((array) $this->input->post('crxi')))),
-                    'crxx' => implode(",", array_filter(array_unique((array) $this->input->post('crxx')))),
-                    'brxi' => implode(",", array_filter(array_unique((array) $this->input->post('brxi')))),
-                    'brxx' => implode(",", array_filter(array_unique((array) $this->input->post('brxx'))))
+                    'includeContext' => implode(",", array_filter(array_unique((array) $this->input->post('crxi')))),
+                    'excludeContext' => implode(",", array_filter(array_unique((array) $this->input->post('crxx')))),
+                    'includeBundles' => implode(",", array_filter(array_unique((array) $this->input->post('brxi')))),
+                    'excludeBundles' => implode(",", array_filter(array_unique((array) $this->input->post('brxx'))))
                 );
 
-                if (($op == 'edit' && !$this->ion_auth->update_role($this->session->userdata('username'), $data)))
+                if (($op == 'edit' && !$this->ion_auth->update_role($rolename, $data)))
                 {
                     $this->__load_role_add_edit($op, $rolename);
                     return;
                 }
-
-                if ($op == 'create' && $this->ion_auth->create_role($this->session->userdata('username'), $data) === FALSE)
+                
+                if ($op == 'create' && $this->ion_auth->create_role($data) === FALSE)
                 {
                     $this->__load_role_add_edit($op, $rolename);
                     return;
@@ -1111,9 +1105,7 @@ class Auth extends Controller
         $this->_check_admin_permissions();
 
         $this->load->helper('create_html_list_from_string');
-
         $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-
         // on error - return json - we will  not redraw entire form
         if ($this->data['message'] != '')
         {
@@ -1169,24 +1161,30 @@ class Auth extends Controller
                 return;
             }
 
-            $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
-
+            $role = $this->ion_auth->get_role_detail($rolename);
+            //if details could not be retrived from the servera about role, don't return edit form.
+            if($role!==false)
+            {
             $this->data['title'] = "Update Role";
             $this->data['operation'] = "Edit";
             $this->data['name']['enable'] = 'enable';
-
             $this->data['name']['value'] = $this->form_validation->set_value('name', $role['name']);
             $this->data['description']['value'] = $this->form_validation->set_value('description', array_key_exists('description', $role) ? $role['description'] : "");
 
             //classes
-            $this->data['crxi']['value'] = $this->form_validation->set_value('crxi', array_key_exists('classrxinclude', $role) ? $role['classrxinclude'] : "");
-            $this->data['crxx']['value'] = $this->form_validation->set_value('crxx', array_key_exists('classrxexclude', $role) ? $role['classrxexclude'] : "");
+            $this->data['crxi']['value'] = $this->form_validation->set_value('crxi', array_key_exists('includeContext', $role) ? $role['includeContext'] : "");
+            $this->data['crxx']['value'] = $this->form_validation->set_value('crxx', array_key_exists('excludeContext', $role) ? $role['excludeContext'] : "");
 
             // bundles
-            $this->data['brxi']['value'] = $this->form_validation->set_value('brxi', array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "");
-            $this->data['brxx']['value'] = $this->form_validation->set_value('brxx', array_key_exists('bundlerxexclude', $role) ? $role['bundlerxexclude'] : "");
-        }
+            $this->data['brxi']['value'] = $this->form_validation->set_value('brxi', array_key_exists('includeBundles', $role) ? $role['includeBundles'] : "");
+            $this->data['brxx']['value'] = $this->form_validation->set_value('brxx', array_key_exists('excludeBundles', $role) ? $role['excludeBundles'] : "");
+            }
+            else{
+                $this->data['message']=$this->ion_auth->errors();
+                return;
+            }
 
+        }
 
         $this->data['op'] = $op;
 
@@ -1212,10 +1210,6 @@ class Auth extends Controller
             $this->data['users'] = $this->ion_auth->get_users_array();
             $this->data['userrole'] = $this->session->userdata('role');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
-
-            // get system settings to protect "fall_back_for" user from editing
-            $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
             $this->load->view('auth/user_list', $this->data);
         }
         else
@@ -1237,27 +1231,23 @@ class Auth extends Controller
         if ($name == '')
         {
             $this->permission_deny($this->lang->line('empty_rolename'));
+            return;
         }
 
         if ($name == 'admin')
         {
             $this->permission_deny($this->lang->line('admin_role_delete_forbidden'));
+            return;
         }
 
         if ($this->ion_auth->is_admin(true) === false)
         {
             $this->permission_deny($this->lang->line('no_permission'));
+            return;
         }
 
-        try
-        {
-            $this->ion_auth->delete_role($this->session->userdata('username'), $name);
-        }
-        catch (Exception $e)
-        {
-            $this->ion_auth->set_error($e->getMessage());
-        }
-
+        $this->ion_auth->delete_role($name);
+       
         if (is_ajax())
         {
             $this->data['message'] = $this->ion_auth->errors() ? $this->ion_auth->errors() : $this->ion_auth->messages();

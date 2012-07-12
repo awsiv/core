@@ -164,8 +164,12 @@
         $('a.delete').live('click',function(event){
             event.preventDefault();
             $("#error_status").html('');
-       
-            $('#confirmation span').text('Are you sure you want to delete this role?');
+            var msg='Are you sure you want to delete this role?';
+            
+            if($(event.target).attr('title') == 'delete user'){
+               msg= 'Are you sure you want to delete this user?';
+            }
+            $('#confirmation span').text(msg);
 
             // create buttons - cancel and confirm
             var cancelBtn  = generateDialogBtn('Cancel', $confirmation);
