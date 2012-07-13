@@ -634,6 +634,12 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
         time_t then, lastseen, now = time(NULL);
         char tbuf[CF_BUFSIZE], eventname[CF_BUFSIZE];
 
+        if (sizeof(entry) < vsize)
+        {
+            CfOut(cf_error, "", "Invalid value in promise compliance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+            continue;
+        }
+
         strcpy(eventname, (char *) key);
 
         memcpy(&entry, stored, sizeof(entry));
@@ -1974,6 +1980,12 @@ void Nova_SummarizeComms()
 
         if (value != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid value in lastseen database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.Q.q;
@@ -2037,6 +2049,12 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
         {
             if (value == NULL)
             {
+                continue;
+            }
+
+            if (sizeof(pt) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in values database. Expected size: %zu, actual size: %d", sizeof(pt), vsize);
                 continue;
             }
 
@@ -2349,6 +2367,12 @@ void Nova_NoteVarUsageDB(void)
     {
         if (val != NULL)
         {
+            if (sizeof(Variable) != valSize)
+            {
+                CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
+                continue;
+            }
+
             /* May not read from val directly due to unaligned access */
             Variable varDb;
             memcpy(&varDb, val, sizeof(Variable));

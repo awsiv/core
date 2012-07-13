@@ -78,6 +78,12 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
 
         if (value != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in performance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.t;
@@ -210,6 +216,12 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
 
         if (value != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in classes database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.t;
@@ -965,6 +977,12 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
         char eventname[CF_BUFSIZE];
         char name[CF_BUFSIZE] = "";
 
+        if (sizeof(entry) < vsize)
+        {
+            CfOut(cf_error, "", "Invalid entry in promise compliance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+            continue;
+        }
+
         strcpy(eventname, (char *) key);
         memcpy(&entry, stored, sizeof(entry));
 
@@ -1301,6 +1319,12 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
                 continue;
             }
 
+            if (sizeof(pt) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in values database. Expected size: %zu, actual size: %d", sizeof(pt), vsize);
+                continue;
+            }
+
             if (!Nova_CoarseLaterThan(key, ref))
             {
                 continue;
@@ -1358,6 +1382,12 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
     {
         if (val != NULL)
         {
+            if (sizeof(Variable) < valSize)
+            {
+                CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
+                continue;
+            }
+
             Variable var;
             /* Properly align */
             memcpy(&var, val, sizeof(Variable));
@@ -1457,6 +1487,12 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
 
         if (value != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in lastseen database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.lastseen;
@@ -1950,6 +1986,12 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
         if (value != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in bundles database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.t;
