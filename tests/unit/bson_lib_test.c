@@ -18,7 +18,8 @@ static void test_conversion_beetwen_json_and_bson_simple(void **state)
     JsonElementPrint(writer_in, json_in, 1);
 
     bson buffer;
-    if (!BsonInitFromJsonString(&buffer, StringWriterData(writer_in)))
+    if (!BsonInitFromJsonStringF(&buffer, "{'string': '%s', 'bool': %s, 'int': %d}",
+                                 "my_string", "true", 1234))
     {
         assert_false(true);
     }
@@ -65,7 +66,7 @@ static void test_conversion_beetwen_json_and_bson_object(void **state)
     JsonElementPrint(writer_in, json_in, 1);
 
     bson buffer;
-    if (!BsonInitFromJsonString(&buffer, StringWriterData(writer_in)))
+    if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
     }
@@ -115,7 +116,7 @@ static void test_conversion_beetwen_json_and_bson_array_complex(void **state)
     JsonElementPrint(writer_in, json_in, 1);
 
     bson buffer;
-    if (!BsonInitFromJsonString(&buffer, StringWriterData(writer_in)))
+    if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
     }
@@ -155,7 +156,7 @@ static void test_conversion_beetwen_json_and_bson_array_simple(void **state)
     JsonElementPrint(writer_in, json_in, 1);
 
     bson buffer;
-    if (!BsonInitFromJsonString(&buffer, StringWriterData(writer_in)))
+    if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
     }

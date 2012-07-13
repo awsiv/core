@@ -944,7 +944,9 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
 {
     assert(json_string);
 
-    JsonElement *json_query = JsonParse(&json_string);
+    const char * json_string_new = SearchAndReplace(json_string, "'", "\"");
+
+    JsonElement *json_query = JsonParse(&json_string_new);
     if (json_query == NULL)
     {
         return false;
@@ -959,6 +961,32 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
     bson_finish(bson_ret);
 
     return true;
+}
+
+/*****************************************************************************/
+
+static bool BsonInitFromJsonStringFV(bson *bson_ret, const char *fmt, va_list ap)
+{
+    char *str = NULL;
+
+    xvasprintf(&str, fmt, ap);
+    bool ret = BsonInitFromJsonString(bson_ret, str);
+
+    free(str);
+    return ret;
+}
+
+/*****************************************************************************/
+
+bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    bool res = BsonInitFromJsonStringFV(bson_ret, fmt, ap);
+    va_end(ap);
+
+    return res;
 }
 
 /*****************************************************************************/
