@@ -5,17 +5,7 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: datapackaging.c                                                     */
-/*                                                                           */
-/* Created: Wed Jun 16 14:26:50 2010                                         */
-/*                                                                           */
-/*****************************************************************************/
-
-#include "cf3.defs.h"
-#include "cf3.extern.h"
-#include "cf.nova.h"
+#include "datapack.h"
 
 #include "lastseen.h"
 #include "granules.h"

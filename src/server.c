@@ -21,6 +21,7 @@
 #include "vars.h"
 #include "item_lib.h"
 #include "conversion.h"
+#include "datapack.h"
 
 Rlist *SERVER_KEYRING = NULL;
 static int Nova_ParseHostname(char *name, char *hostname);

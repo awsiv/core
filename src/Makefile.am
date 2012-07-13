@@ -32,7 +32,7 @@ libcfnova_la_SOURCES = \
         monitoring.c \
         ontology.c \
         server.c \
-        datapackaging.c \
+        datapackaging.c datapack.h \
         outputs.c \
         promises.c \
         processes.c \

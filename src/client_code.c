@@ -15,6 +15,7 @@
 #include "crypto.h"
 #include "item_lib.h"
 #include "bson_lib.h"
+#include "datapack.h"
 
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);
