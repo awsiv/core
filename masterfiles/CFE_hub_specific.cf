@@ -616,7 +616,7 @@ bundle agent cfengine_policysrv
              comment => "Install packages from the list",
               handle => "cfengine_policysrv_packages_install_package_redhat",
       package_policy => "add",
-      package_method => yum;
+      package_method => yum_rpm;
 
   debian.am_policy_hub::
 
