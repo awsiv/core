@@ -45,9 +45,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_report_overall_summary, NULL)
     PHP_FE(cfpr_hosts_compliance_for_bundles, NULL)
     PHP_FE(cfpr_hosts_compliance_for_promises, NULL)
-    PHP_FE(cfpr_ldap_authenticate, NULL)
-    PHP_FE(cfpr_ldap_get_single_attribute_list, NULL)
-    PHP_FE(cfpr_ldap_get_several_attributes, NULL)
     PHP_FE(cfpr_vitals_list, NULL)
     PHP_FE(cfpr_vitals_view_magnified, NULL)
     PHP_FE(cfpr_vitals_view_week, NULL)
@@ -250,7 +247,6 @@ zend_module_entry cfmod_module_entry = {
 ZEND_GET_MODULE(cfmod)
      extern int AM_PHP_MODULE;  // TODO: Defined in cf.nova.web.api.h, but apparently need to redifine here??
 
-     zend_class_entry *cfmod_ldap_exception_ce;
      zend_class_entry *cfmod_exception_db;
      zend_class_entry *cfmod_exception_args;
      zend_class_entry *cfmod_exception_rbac;
@@ -259,13 +255,6 @@ ZEND_GET_MODULE(cfmod)
 PHP_MINIT_FUNCTION(cfmod)
 {
     zend_class_entry *exception_class_entry = zend_exception_get_default(TSRMLS_CC);
-
-    zend_class_entry cfmod_ldap_exception_class_entry;
-
-    INIT_CLASS_ENTRY(cfmod_ldap_exception_class_entry, "CfmodLdapException", NULL);
-
-    cfmod_ldap_exception_ce = zend_register_internal_class_ex(&cfmod_ldap_exception_class_entry,
-                                                              exception_class_entry, NULL TSRMLS_CC);
 
     zend_class_entry cfmod_exception_db_class_entry;
 

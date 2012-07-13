@@ -109,45 +109,6 @@ PHP_FUNCTION(cfpr_vitals_analyse_year);
  */
 PHP_FUNCTION(cfpr_vitals_analyse_histogram);
 
-/*! \brief Authenticate against an LDAP database
- * \param hostname
- * \param domain
- * \param password
- * \param startTLS
- * \returns True if successful
- */
-PHP_FUNCTION(cfpr_ldap_authenticate);
-
-/*! \brief LDAP Search values for a single attribute
- * \param uri
- * \param user
- * \param baseDN
- * \param filter
- * \param attributeName
- * \param scope
- * \param security
- * \param password
- * \param page
- * \param linesPerPage
- * \param startTLS
- */
-PHP_FUNCTION(cfpr_ldap_get_single_attribute_list);
-
-/*! \brief LDAP Search values for a list of attributes
- * \param uri
- * \param user
- * \param baseDN
- * \param filter
- * \param attributeNames
- * \param scope
- * \param security
- * \param password
- * \param page
- * \param linesPerPage
- * \param startTLS
- */
-PHP_FUNCTION(cfpr_ldap_get_several_attributes);
-
 /*! \brief Get last date when host was updated
  * \param hostKey
  */

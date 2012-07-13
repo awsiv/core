@@ -25,7 +25,6 @@ extern zend_module_entry cfmod_module_entry;
 
 #define phpext_cfmod_ptr &cfmod_module_entry
 
-extern zend_class_entry *cfmod_ldap_exception_ce;
 extern zend_class_entry *cfmod_exception_db;
 extern zend_class_entry *cfmod_exception_args;
 extern zend_class_entry *cfmod_exception_rbac;
