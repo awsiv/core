@@ -19,6 +19,7 @@
 
 #include "constraints.h"
 #include "item_lib.h"
+#include "conversion.h"
 
 Item *NOVA_HANDLE_OUTPUTS = NULL;
 Item *NOVA_BUNDLE_OUTPUTS = NULL;

@@ -15,8 +15,10 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
 #include "string_lib.h"
 #include "sort.h"
+#include "conversion.h"
 
 #include <assert.h>
 

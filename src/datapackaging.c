@@ -22,6 +22,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "sort.h"
+#include "conversion.h"
 
 #define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
 
@@ -1992,141 +1993,6 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
     DeleteDBCursor(dbp, dbcp);
     DeleteItemList(file);
     CloseDB(dbp);
-}
-
-/*****************************************************************************/
-/* Level                                                                     */
-/*****************************************************************************/
-
-int Nova_CoarseLaterThan(char *bigger, char *smaller)
-{
-    char month_small[CF_SMALLBUF];
-    char month_big[CF_SMALLBUF];
-    int m_small, day_small, year_small, m_big, year_big, day_big;
-
-    sscanf(smaller, "%d %s %d", &day_small, month_small, &year_small);
-    sscanf(bigger, "%d %s %d", &day_big, month_big, &year_big);
-
-    if (year_big < year_small)
-    {
-        return false;
-    }
-
-    m_small = Month2Int(month_small);
-    m_big = Month2Int(month_big);
-
-    if (m_big < m_small)
-    {
-        return false;
-    }
-
-    if (day_big < day_small && m_big == m_small && year_big == year_small)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int Nova_LaterThan(char *bigger, char *smaller)
-{
-    char month_small[CF_SMALLBUF];
-    char month_big[CF_SMALLBUF];
-    int m_small, day_small, year_small, m_big, year_big, day_big;
-    int min_small, min_big, hour_small, hour_big;
-
-// Format: Fri Mar 27 15:45:52 2009
-
-    month_small[0] = '\0';
-    month_big[0] = '\0';
-
-    sscanf(smaller, "%*s %s %d %d:%d:%*d %d", month_small, &day_small, &hour_small, &min_small, &year_small);
-    sscanf(bigger, "%*s %s %d %d:%d:%*d %d", month_big, &day_big, &hour_big, &min_big, &year_big);
-
-    if (year_big < year_small)
-    {
-        return false;
-    }
-
-    m_small = Month2Int(month_small);
-    m_big = Month2Int(month_big);
-
-    if (m_big < m_small)
-    {
-        return false;
-    }
-
-    if (day_big < day_small && m_big == m_small && year_big == year_small)
-    {
-        return false;
-    }
-
-    if (hour_big < hour_small && day_big == day_small && m_big == m_small && year_big == year_small)
-    {
-        return false;
-    }
-
-    if (min_big < min_small && hour_big == hour_small && day_big == day_small
-        && m_big == m_small && year_big == year_small)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-char *Nova_ShortArch(char *arch)
-{
-    if (strcmp(arch, "i386") == 0)
-    {
-        return "3";
-    }
-
-    if (strcmp(arch, "i486") == 0)
-    {
-        return "4";
-    }
-
-    if (strcmp(arch, "i586") == 0)
-    {
-        return "5";
-    }
-
-    if (strcmp(arch, "i686") == 0)
-    {
-        return "6";
-    }
-
-    if (strcmp(arch, "noarch") == 0)
-    {
-        return "";
-    }
-
-    if (strcmp(arch, "x86_64") == 0)
-    {
-        return "x";
-    }
-
-    if (strcmp(arch, "s390") == 0)
-    {
-        return "t";
-    }
-
-    if (strcmp(arch, "s390x") == 0)
-    {
-        return "s";
-    }
-
-    if (strcmp(arch, "default") == 0)
-    {
-        return "d";
-    }
-
-    return arch;
 }
 
 /*****************************************************************************/

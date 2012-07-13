@@ -22,8 +22,7 @@
   included file COSL.txt.
 */
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
+#include "conversion.h"
 
 #include "env_context.h"
 #include "db_common.h"
@@ -197,4 +196,191 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
     }
     
     return return_list;
+}
+
+const char *Nova_ShortArch(const char *arch)
+{
+    if (strcmp(arch, "i386") == 0)
+    {
+        return "3";
+    }
+
+    if (strcmp(arch, "i486") == 0)
+    {
+        return "4";
+    }
+
+    if (strcmp(arch, "i586") == 0)
+    {
+        return "5";
+    }
+
+    if (strcmp(arch, "i686") == 0)
+    {
+        return "6";
+    }
+
+    if (strcmp(arch, "noarch") == 0)
+    {
+        return "";
+    }
+
+    if (strcmp(arch, "x86_64") == 0)
+    {
+        return "x";
+    }
+
+    if (strcmp(arch, "s390") == 0)
+    {
+        return "t";
+    }
+
+    if (strcmp(arch, "s390x") == 0)
+    {
+        return "s";
+    }
+
+    if (strcmp(arch, "default") == 0)
+    {
+        return "d";
+    }
+
+    return arch;
+}
+
+const char *Nova_LongArch(const char *arch)
+{
+    if (arch == NULL)
+    {
+        return "*";
+    }
+
+    if (strcmp(arch, "3") == 0)
+    {
+        return "i386";
+    }
+
+    if (strcmp(arch, "4") == 0)
+    {
+        return "i486";
+    }
+
+    if (strcmp(arch, "5") == 0)
+    {
+        return "i586";
+    }
+
+    if (strcmp(arch, "6") == 0)
+    {
+        return "i686";
+    }
+
+    if (strcmp(arch, "") == 0)
+    {
+        return "noarch";
+    }
+
+    if (strcmp(arch, "\n") == 0)
+    {
+        return "*";
+    }
+
+    if (strcmp(arch, "x") == 0)
+    {
+        return "x86_64";
+    }
+
+    if (strcmp(arch, "t") == 0)
+    {
+        return "s390";
+    }
+
+    if (strcmp(arch, "s") == 0)
+    {
+        return "s390x";
+    }
+
+    if (strcmp(arch, "d") == 0)
+    {
+        return "default";
+    }
+
+    return arch;
+}
+
+int Nova_CoarseLaterThan(const char *bigger, const char *smaller)
+{
+    char month_small[CF_SMALLBUF];
+    char month_big[CF_SMALLBUF];
+    int m_small, day_small, year_small, m_big, year_big, day_big;
+
+    sscanf(smaller, "%d %s %d", &day_small, month_small, &year_small);
+    sscanf(bigger, "%d %s %d", &day_big, month_big, &year_big);
+
+    if (year_big < year_small)
+    {
+        return false;
+    }
+
+    m_small = Month2Int(month_small);
+    m_big = Month2Int(month_big);
+
+    if (m_big < m_small)
+    {
+        return false;
+    }
+
+    if (day_big < day_small && m_big == m_small && year_big == year_small)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+int Nova_LaterThan(const char *bigger, const char *smaller)
+{
+    char month_small[CF_SMALLBUF];
+    char month_big[CF_SMALLBUF];
+    int m_small, day_small, year_small, m_big, year_big, day_big;
+    int min_small, min_big, hour_small, hour_big;
+
+// Format: Fri Mar 27 15:45:52 2009
+
+    month_small[0] = '\0';
+    month_big[0] = '\0';
+
+    sscanf(smaller, "%*s %s %d %d:%d:%*d %d", month_small, &day_small, &hour_small, &min_small, &year_small);
+    sscanf(bigger, "%*s %s %d %d:%d:%*d %d", month_big, &day_big, &hour_big, &min_big, &year_big);
+
+    if (year_big < year_small)
+    {
+        return false;
+    }
+
+    m_small = Month2Int(month_small);
+    m_big = Month2Int(month_big);
+
+    if (m_big < m_small)
+    {
+        return false;
+    }
+
+    if (day_big < day_small && m_big == m_small && year_big == year_small)
+    {
+        return false;
+    }
+
+    if (hour_big < hour_small && day_big == day_small && m_big == m_small && year_big == year_small)
+    {
+        return false;
+    }
+
+    if (min_big < min_small && hour_big == hour_small && day_big == day_small
+        && m_big == m_small && year_big == year_small)
+    {
+        return false;
+    }
+
+    return true;
 }

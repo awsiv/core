@@ -751,10 +751,6 @@ void Nova_PackMeter(Item **reply, char *header, time_t date, enum cfd_menu type)
 void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type);
 void Nova_PackBundles(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackExecutionStatus(Item **reply, char *header);
-int Nova_CoarseLaterThan(char *key, char *from);
-int Nova_YearSlot(char *day, char *month, char *lifecycle);
-int Nova_LaterThan(char *bigger, char *smaller);
-char *Nova_ShortArch(char *arch);
 
 /* dataunpack.c */
 
@@ -788,7 +784,6 @@ void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data);
-char *Nova_LongArch(char *arch);
 
 /* histogram.c */
 

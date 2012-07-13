@@ -10,6 +10,7 @@
 
 #include "db_common.h"
 #include "item_lib.h"
+#include "conversion.h"
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {

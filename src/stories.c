@@ -13,6 +13,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "sort.h"
+#include "conversion.h"
 
 #include "bson_lib.h"
 #include "db_query.h"

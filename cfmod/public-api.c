@@ -3,6 +3,7 @@
 #include "db_query.h"
 #include "web_rbac.h"
 #include "common.h"
+#include "conversion.h"
 
 static const char *API_NAME = "CFEngine Nova";
 static const char *API_VERSION = "v1";

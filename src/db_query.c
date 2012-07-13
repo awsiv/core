@@ -16,6 +16,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "sort.h"
+#include "conversion.h"
 
 #include <assert.h>
 
@@ -503,7 +504,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
     return NewHubQuery(host_list, NULL);
 }
 
-HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
+HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)
 {

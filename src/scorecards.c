@@ -11,6 +11,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "string_lib.h"
 #include "granules.h"
 #include "files_names.h"
+#include "conversion.h"
 
 #include "db_query.h"
 

@@ -797,68 +797,6 @@ void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-char *Nova_LongArch(char *arch)
-{
-    if (arch == NULL)
-    {
-        return "*";
-    }
-
-    if (strcmp(arch, "3") == 0)
-    {
-        return "i386";
-    }
-
-    if (strcmp(arch, "4") == 0)
-    {
-        return "i486";
-    }
-
-    if (strcmp(arch, "5") == 0)
-    {
-        return "i586";
-    }
-
-    if (strcmp(arch, "6") == 0)
-    {
-        return "i686";
-    }
-
-    if (strcmp(arch, "") == 0)
-    {
-        return "noarch";
-    }
-
-    if (strcmp(arch, "\n") == 0)
-    {
-        return "*";
-    }
-
-    if (strcmp(arch, "x") == 0)
-    {
-        return "x86_64";
-    }
-
-    if (strcmp(arch, "t") == 0)
-    {
-        return "s390";
-    }
-
-    if (strcmp(arch, "s") == 0)
-    {
-        return "s390x";
-    }
-
-    if (strcmp(arch, "d") == 0)
-    {
-        return "default";
-    }
-
-    return arch;
-}
-
-/*****************************************************************************/
-
 void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
     CfOut(cf_verbose, "", " -> Execution status...........................");

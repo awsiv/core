@@ -12,6 +12,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "files_names.h"
 #include "scorecards.h"
 #include "db_query.h"
+#include "conversion.h"
 
 /*****************************************************************************/
 

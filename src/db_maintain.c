@@ -17,6 +17,7 @@
 #include "bson_lib.h"
 #include "granules.h"
 #include "item_lib.h"
+#include "conversion.h"
 
 #include <assert.h>
 
