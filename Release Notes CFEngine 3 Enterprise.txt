@@ -1,6 +1,6 @@
-CFENGINE 3 ENTERPRISE 2.2.1
+CFENGINE 3 ENTERPRISE 2.2.2
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: June 25th, 2012
+RELEASE DATE: July 26th, 2012
 SCOPE: Official release of CFEngine 3 Enterprise
 
 PLATFORMS SUPPORTED:
@@ -30,7 +30,7 @@ Solaris 	10 					i86pc	 		No libvirt
 Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
 Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.4
+Community version base: 3.3.5
 
 
 COMPATIBILITY MATRIX: 
@@ -40,6 +40,16 @@ HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
 2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+
+BUGFIXES SINCE 2.2.1:
+* Fixes for segmentation faults caused by destroying empty bson objects
+* Close a memory leak in knowledge map generation
+* Close a memory leak in custom measurement promises
+* REST API improvements to list hosts by context regular expression and filter by name
+* Purge software report data with invalid timestamps during db maintenance
+* Fixes for Internet Explorer 8-specific bugs
+* Add explanatory text when software reports are empty
+* Minor UI improvements
 
 BUGFIXES SINCE 2.2.0:
 * Navigation Tree usability fixes (renaming of nodes, reloading of tree)
