@@ -803,6 +803,166 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
 
 /*****************************************************************************/
 
+// false <-> failure
+static bool JsonPrimitiveToBson(const JsonElement *primitive, bson *buffer, const char *insert_key)
+// if insert_key is null insert object keyname
+{
+    if ((primitive == NULL) || (buffer == NULL))
+    {
+        return false;
+    }
+
+    if (JsonGetElementType(primitive) != JSON_ELEMENT_TYPE_PRIMITIVE)
+    {
+        return false;
+    }
+
+    bool err = true;
+    const char *key = NULL;
+    if (insert_key == NULL)
+    {
+        key = JsonGetPropertyAsString(primitive);
+    }
+    else
+    {
+        key = insert_key;
+    }
+    const char *value = JsonPrimitiveGetAsString(primitive);
+
+
+    switch (JsonGetPrimitiveType(primitive))
+    {
+        case JSON_PRIMITIVE_TYPE_INTEGER:
+        {
+            bson_append_int(buffer, key, (int)StringToLong(value));
+            break;
+        }
+        case JSON_PRIMITIVE_TYPE_STRING:
+        {
+            bson_append_string(buffer, key, value);
+            break;
+        }
+        case JSON_PRIMITIVE_TYPE_REAL:
+        {
+            bson_append_double(buffer, key, (double)StringToDouble(value));
+            break;
+        }
+        case JSON_PRIMITIVE_TYPE_BOOL:
+        {
+            bson_append_bool(buffer, key, StringSafeCompare(value,"false")? true:false);
+            break;
+        }
+        default:
+        {
+            err = false;
+            break;
+        }
+    }
+
+    return err;
+}
+
+/*****************************************************************************/
+
+// false <-> failure
+static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
+{
+    if (user_query == NULL || buffer == NULL)
+    {
+        return false;
+    }
+
+    JsonIterator it = JsonIteratorInit(user_query);
+    while (JsonIteratorNextValue(&it) != NULL)
+    {
+        // SIMPLE QUERY SUPPORT
+        if (JsonIteratorCurrentElementType(&it) == JSON_ELEMENT_TYPE_PRIMITIVE)
+        {
+            if (!JsonPrimitiveToBson(JsonIteratorCurrentValue(&it), buffer, NULL))
+            {
+                return false;
+            }
+        }
+        else // COMPLEX QUERY SUPPORT
+        {
+            if (JsonIteratorCurrentContrainerType(&it) == JSON_CONTAINER_TYPE_OBJECT)
+            {
+                bson_append_start_object(buffer, JsonIteratorCurrentKey(&it));
+
+                if (!JsonComplexToBson(JsonIteratorCurrentValue(&it), buffer))
+                {
+                    return false;
+                }
+
+                bson_append_finish_object(buffer);
+            }
+            else // ARRAY
+            {
+                bson_append_start_array(buffer, JsonIteratorCurrentKey(&it));
+
+                char iStr[CF_SMALLBUF];
+                int i = 0;
+
+                JsonIterator it2 = JsonIteratorInit(JsonIteratorCurrentValue(&it));
+                while(JsonIteratorNextValue(&it2) != NULL)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+
+                    if (JsonIteratorCurrentElementType(&it2) == JSON_ELEMENT_TYPE_CONTAINER)
+                    {
+                        bson_append_start_object(buffer, iStr);
+
+                        if (!JsonComplexToBson(JsonIteratorCurrentValue(&it2), buffer))
+                        {
+                            return false;
+                        }
+                        bson_append_finish_object(buffer);
+                    }
+                    else
+                    {
+                        if (!JsonPrimitiveToBson(JsonIteratorCurrentValue(&it2), buffer, iStr))
+                        {
+                            return false;
+                        }
+                    }
+
+                    i++;
+                }
+
+                bson_append_finish_object(buffer);
+            }
+        }
+    }
+
+    return true;
+}
+
+
+/*****************************************************************************/
+
+bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
+{
+    assert(json_string);
+
+    JsonElement *json_query = JsonParse(&json_string);
+    if (json_query == NULL)
+    {
+        return false;
+    }
+
+    bson_init(bson_ret);
+    if (!JsonComplexToBson(json_query, bson_ret))
+    {
+        bson_destroy(bson_ret);
+        return false;
+    }
+    bson_finish(bson_ret);
+
+    return true;
+}
+
+/*****************************************************************************/
+
 JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, _Bool ignore_timestamp) //type: array|object
 // function map bson object/array with it's tree to json object/array
 // do not support bson_date -> it is skipped from mapping
