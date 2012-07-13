@@ -675,36 +675,9 @@ PHP_FUNCTION(cfapi_query_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
-    JsonElement *query_parsed = JsonParse(&query);
-    if (!query_parsed)
-    {
-        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Could not parse JSON argument");
-    }
-
-    JsonElement *data = ReportingEngineQuery(query_parsed);
-    JsonElementDestroy(query_parsed);
+    JsonElement *data = EnterpriseExecuteSQL(username, query);
 
     assert(result);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
-
-/******************************************************************************/
-/* TODO: user management (RBAC) needed here */
-PHP_FUNCTION(cfapi_exec_sql)
-{
-    char *sql;
-    int sql_len;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
-                              &sql, &sql_len) == FAILURE)
-    {
-       THROW_ARGS_MISSING();
-    }
-
-    JsonElement *data = EnterpriseExecuteSQL(sql);
-
-    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
-}
-
-/******************************************************************************/

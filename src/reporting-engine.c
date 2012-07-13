@@ -25,20 +25,10 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db);
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db);
 
 #endif
-/******************************************************************/
-
-JsonElement *ReportingEngineQuery(JsonElement *query)
-{
-    JsonElement *result = JsonObjectCreate(5);
-
-    JsonObjectAppendString(result, "hello", "world");
-
-    return result;
-}
 
 /******************************************************************/
 
-JsonElement *EnterpriseExecuteSQL(char *select_op)
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
 {
     #if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;

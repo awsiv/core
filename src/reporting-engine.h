@@ -10,9 +10,6 @@
 #include "cf.nova.h"
 #include "json.h"
 
-
-JsonElement *ReportingEngineQuery(JsonElement *query);
-
-JsonElement *EnterpriseExecuteSQL(char *select_op);
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op);
 
 #endif

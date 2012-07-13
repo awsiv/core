@@ -49,7 +49,5 @@ PHP_FUNCTION(cfapi_settings_post);
   Reporting engine
   */
 PHP_FUNCTION(cfapi_query_post);
-PHP_FUNCTION(cfapi_exec_sql);
-
 
 #endif
