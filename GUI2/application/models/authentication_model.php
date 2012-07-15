@@ -35,8 +35,13 @@ class Authentication_model extends Cf_Model
         {
             $this->rest->setupAuth($identity, $password);
             $body = $this->rest->get('/');
-            $this->update_last_login($identity);
-            return true;
+            $data = $this->checkData($body);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                $this->update_last_login($identity);
+                return $data['data'][0];
+            }
+            throw new Exception($this->getErrorsString());
         }
         catch (Exception $e)
         {
@@ -44,7 +49,7 @@ class Authentication_model extends Cf_Model
             throw $e;
         }
     }
-
+    
     /**
      * Get Roles for a users
      */
