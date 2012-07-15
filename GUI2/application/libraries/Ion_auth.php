@@ -80,7 +80,7 @@ class Ion_auth
      * @var array
      * */
     public $_extra_set = array();
-    public $mode = 'database';
+    public $mode = 'internal';
 
     /**
      * __construct
@@ -99,8 +99,7 @@ class Ion_auth
         $this->ci->load->library('encrypt');
         $this->ci->lang->load('ion_auth');
         $this->ci->load->model('ion_auth_model_mongo');
-        $this->ci->load->model('settings_model');
-        $this->ci->load->model(array('astrolabe_model', 'authentication_model'));
+        $this->ci->load->model(array('astrolabe_model', 'authentication_model','authentication_model_mongo','settings_rest_model'));
         $this->ci->load->helper('cookie');
 
 
@@ -115,30 +114,31 @@ class Ion_auth
         $this->info_start_delimiter = $this->ci->config->item('info_start_delimiter', 'ion_auth');
         $this->info_end_delimiter = $this->ci->config->item('info_end_delimiter', 'ion_auth');
         //load the mode of authentication
-        $this->mode = $this->ci->settings_model->app_settings_get_item('mode');
+       
 
-
+        $this->auth_model_mongo=$this->ci->authentication_model_mongo;
         $this->auth_model = $this->ci->authentication_model;
-        $this->auth_model->setRestClient($this->getRestClient());
-
+        $this->settings_rest_model=$this->ci->settings_rest_model;
+        
+        $restClient=$this->getRestClient();
+        $this->auth_model->setRestClient($restClient);
+        $this->settings_rest_model->setRestClient($restClient);
+        
+        $this->mode = $this->settings_rest_model->app_settings_get_item('authMode');
 
         if (!$this->mode)
         {
             $this->set_error('backend_error');
             log_message('info', 'cannot find any mode switching to internal database');
-            $this->mode = 'database';
+            $this->mode = 'internal';
             //return FALSE;
         }
-        if ($this->ci->config->item('auth_mode') && $this->ci->config->item('auth_mode') != '')
-        {
-            $this->mode = strtolower($this->ci->config->item('auth_mode'));
-        }
-
+        
         if ($this->ci->session->userdata('mode') !== FALSE)
         {
             $this->mode = $this->ci->session->userdata('mode');
         }
-        //$this->mode='database';
+        //$this->mode='internal';
         //auto-login the user if they are remembered
         if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
         {
@@ -148,11 +148,12 @@ class Ion_auth
                 $this->on_login_successful($username);
             }
         }
-        $this->email = $this->ci->settings_model->app_settings_get_item('appemail');
+      // $this->email = $this->settings_rest_model->app_settings_get_item('appemail');
         if (!($this->email || empty($this->email)))
         {
             $this->email = $this->ci->config->item('admin_email', 'ion_auth');
         }
+        
     }
 
     /**
@@ -171,23 +172,7 @@ class Ion_auth
         return call_user_func_array(array($this->ci->ion_auth_model_mongo, $method), $arguments);
     }
 
-    /**
-     * Activate user.
-     *
-     * @return void
-     * @author Mathew
-     * */
-    public function activate($id, $code=false)
-    {
-        if ($this->ci->login->activate($id, $code))
-        {
-            $this->set_message('activate_successful');
-            return TRUE;
-        }
-
-        $this->set_error('activate_unsuccessful');
-        return FALSE;
-    }
+   
 
     /**
      * Get Rest Client
@@ -210,23 +195,7 @@ class Ion_auth
         return $this->ci->pest_json;
     }
 
-    /**
-     * Deactivate user.
-     *
-     * @return void
-     * @author Mathew
-     * */
-    public function deactivate($id)
-    {
-        if ($this->ci->ion_auth_model_mongo->deactivate($id))
-        {
-            $this->set_message('deactivate_successful');
-            return TRUE;
-        }
 
-        $this->set_error('deactivate_unsuccessful');
-        return FALSE;
-    }
 
     /**
      * Change password.
@@ -392,8 +361,9 @@ class Ion_auth
         try
         {
             $val = $this->auth_model->login($username, $password);
-            if ($val)
+            if (is_array($val) && !empty($val))
             {
+                $this->ci->session->set_userdata('mode',$val['authMode']);
                 $this->on_login_successful($username);
                 return true;
             }
@@ -409,24 +379,15 @@ class Ion_auth
 
     protected function on_login_successful($username)
     {
-        if ($this->mode != 'database')
-        {
-            if ($this->ci->ion_auth_model_mongo->is_first_login_ldap())
+         if ($this->auth_model_mongo->is_first_login_ldap($username,$this->mode))
             {
                 $this->ci->astrolabe_model->add_builtin_profiles($username);
+                $this->auth_model_mongo->add_last_login_ldap($username,$this->mode);
             }
-
-            $this->ci->ion_auth_model_mongo->update_last_login_ldap($username);
-        }
         else
-        {
-            if ($this->ci->ion_auth_model_mongo->is_first_login())
             {
-                $this->ci->astrolabe_model->add_builtin_profiles($username);
-            }
-
-            $this->ci->ion_auth_model_mongo->update_last_login($username);
-        }
+            $this->auth_model_mongo->update_last_login_ldap($username,$this->mode);
+            } 
     }
 
     /**
@@ -487,7 +448,7 @@ class Ion_auth
         }
         else
         {
-            //if ($this->ci->settings_model->app_settings_get_item('mode') == 'database' || $this->ci->session->userdata('mode') == 'database')
+            //if ($this->ci->settings_model->app_settings_get_item('mode') == 'internal' || $this->ci->session->userdata('mode') == 'internal')
             // {
             $user_role = $this->get_user_rolelist($this->ci->session->userdata('username'));
             /* }
@@ -506,35 +467,13 @@ class Ion_auth
         return in_array($admin_role, $user_role);
     }
 
-    /**
-     * is_in_fallback_role
-     *
-     * @return bool
-     * @author sudhir
-     * */
-    public function is_in_fallback_role()
-    {
-        $admin_role = $this->ci->settings_model->app_settings_get_item('fall_back_for');
-
-        if ($admin_role === False)
-        {
-            $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
-        }
-        $user_role = $this->ci->session->userdata('role');
-        if ($user_role === False)
-        {
-            return false;
-        }
-        return in_array($admin_role, $user_role);
-    }
 
     /**
      *
      */
     public function is_accessible()
     {
-        $isadmin = $this->ci->settings_model->app_settings_get_item('admin_role');
-        if ($isadmin !== FALSE && (!$this->is_admin() && !$this->is_in_fallback_role()))
+        if (!$this->is_admin())
         {
             return false;
         }
@@ -596,7 +535,7 @@ class Ion_auth
      * */
     public function get_users_array()
     {
-        if (strtolower($this->mode) != 'database')
+        if (strtolower($this->mode) != 'internal')
         {
             if (!$this->ci->session->userdata('pwd'))
             {

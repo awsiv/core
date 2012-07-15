@@ -78,7 +78,7 @@ $lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes v
 $lang['error_fetching_role']                    ="Cannot query for available role names, but user can login into mission portal with limited access";
 
 //login page message
-$lang['login_database'] ='Internal authentication';
+$lang['login_internal'] ='Internal authentication';
 $lang['login_ldap']='Open LDAP';
 $lang['login_active_directory']='Active Directory';
 $lang['login_mode_not_found']='Cannot find backend';
