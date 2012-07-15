@@ -25,39 +25,41 @@
                 <input id="appemail" type="text" name="appemail" maxlength="50" value="<?php echo $appemail; ?>"  />
             </p>
 
-
-            <p id='admingrpsec'>
-                <label for="admin_role">Administrative role<span class="required"></span></label>
-                <?php
-                if (isset($roles))
-                {
-                    echo tooltip('tooltip_admin_grp', '', true); // echo form_error('active_directory_domain');
-                    echo form_dropdown('admin_role', $roles, isset($admin_role) ? $admin_role : 'select');
-                }
-                ?>
-
-                <?php
-                if (isset($selected_role))
-                {
-                    echo form_label($selected_role, '', array('id' => 'selected_grplbl'));
-                }
-                ?>
- <!--<a class="btn testldap" id="getgrpsbtn" href="<?php echo site_url('settings/ldaptest') ?>">Get roles</a>-->
-            </p>
-
-
-
             <p>
                 <label for="authentication">Authentication method <span class="required">*</span></label>
-                <?php // echo form_error('mode');  ?>
-                <?php // Change or Add the radio values/labels/css classes to suit your needs  ?>
-                <input id="mode1" name="mode" type="radio" class="" value="database" <?php echo (isset($database)) ? $database : $this->form_validation->set_radio('mode', 'database'); ?> checked="checked"/>
+                 <?php
+                    $elem = array(
+                        'name' => 'mode',
+                        'id' => 'mode1',
+                        'value' => 'internal',
+                        'checked' => (isset($mode) && $mode === 'internal' ? TRUE : $this->form_validation->set_radio('mode', 'internal'))
+                    );
+                    echo form_radio($elem);
+                    ?>
                 <label for="mode" class="">Internal</label>
-
-                <input id="mode2" name="mode" type="radio" class="" value="ldap" <?php echo (isset($ldap)) ? $ldap : $this->form_validation->set_radio('mode', 'ldap'); ?> />
+                
+                 <?php
+                    $elem = array(
+                        'name' => 'mode',
+                        'id' => 'mode2',
+                        'value' => 'ldap',
+                        'checked' => (isset($mode) && $mode === 'ldap' ? TRUE : $this->form_validation->set_radio('mode', 'ldap'))
+                    );
+                    echo form_radio($elem);
+                    ?>
+                
                 <label for="mode" class="">LDAP</label>
 
-                <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory)) ? $active_directory : $this->form_validation->set_radio('mode', 'active_directory'); ?> />
+                
+                <?php
+                    $elem = array(
+                        'name' => 'mode',
+                        'id' => 'mode3',
+                        'value' => 'active_directory',
+                        'checked' => (isset($mode) && $mode === 'active_directory' ? TRUE : $this->form_validation->set_radio('mode', 'active_directory'))
+                    );
+                    echo form_radio($elem);
+                 ?>
                 <label for="mode" class="">Active Directory</label>
 
             </p>
@@ -87,7 +89,8 @@
                     <p>
                         <label for="users_directory">User directory <span class="required ldaprelated">*</span></label>
                         <?php echo tooltip('tooltip_user_dir', '', true); // echo form_error('login_attribute'); ?>
-                        <?php if (empty($user_dirs))
+                        <?php 
+                        if (empty($user_dirs))
                         {
                             ?>
                             <input id="users_directory" type="text" name="user_directory[]" class="usrdir"/>
@@ -176,11 +179,8 @@
 
                 <p><label></label> <a class="btn testldap" id="testsettings" href="<?php echo site_url('settings/ldaptest') ?>">Test settings</a></p>
             </fieldset>
-            <p>
-                <label for="fall back for">Fall-back role ( if authentication server down)<span class="required"></span></label>
-                <?php echo tooltip('tooltip_fall_back', '', true); // echo form_error('active_directory_domain');   ?>
-<?php echo form_dropdown('fall_back_for', $roles, $fall_back_for ? $fall_back_for : 'select'); ?>
-            </p>
+          
+            
             <p>
                 <label for="rbac">Role based access control <span class="required">*</span></label>
                 <?php
@@ -237,7 +237,7 @@
         var grpcontainer=$('#admingrpsec');
         settings_toggle();
         function settings_toggle(){
-            if ($("input[@name='mode']:checked").val() == 'database')
+            if ($("input[@name='mode']:checked").val() == 'internal')
             {
                 $('#ldapsettings').hide();
 
