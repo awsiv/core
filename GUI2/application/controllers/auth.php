@@ -56,10 +56,6 @@ class Auth extends Controller
         if (is_ajax())
         {
             $this->data['users'] = $this->ion_auth->get_users_array();
-
-            // get system settings to protect "fall_back_for" user from editing
-            $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
             $this->load->view('auth/user_list', $this->data);
         }
         else
@@ -158,7 +154,7 @@ class Auth extends Controller
                      'roles'=>$this->ion_auth->get_user_role($username),
                      'password'=>$this->input->post('password')
                 );
-               $this->session->set_userdata($session_data);
+            $this->session->set_userdata($session_data);
                $this->session->set_flashdata('message', $this->ion_auth->errors());
                redirect('auth/index', 'refresh');
                 
@@ -199,7 +195,7 @@ class Auth extends Controller
                 'id' => 'password',
                 'type' => 'password',
             );
-            $mode = $this->setting_lib->get_backend_mode();
+            $mode = $this->setting_lib->get_authentication_mode();
             if ($mode != '' || $mode !== false)
             {
                 $this->data['mode'] = $this->lang->line('login_' . $mode);
@@ -411,93 +407,6 @@ class Auth extends Controller
         }
     }
 
-    //activate the user
-    function activate($id, $code = false)
-    {
-        $activation = $this->ion_auth->activate($id, $code);
-
-        if ($activation)
-        {
-            if (is_ajax())
-            {
-                $this->data['message'] = $this->ion_auth->messages();
-                $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['is_admin'] = $this->ion_auth->is_admin();
-
-                // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
-                $this->load->view('auth/user_list', $this->data);
-            }
-            else
-            {
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect('auth/index', 'refresh');
-            }
-        }
-        else
-        {
-            //redirect them to the forgot password page
-            $this->session->set_flashdata('message', $this->ion_auth->errors());
-            redirect("auth/forgot_password", 'refresh');
-        }
-    }
-
-    //deactivate the user
-    function deactivate($id = NULL)
-    {
-
-
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('confirm', 'confirmation', 'required');
-        $this->form_validation->set_rules('id', 'user ID', 'required');
-
-        if ($this->form_validation->run() == FALSE)
-        {
-
-            // insert csrf check
-            $this->data['csrf'] = $this->_get_csrf_nonce();
-            $this->data['user'] = $this->ion_auth->get_user($id);
-            $this->load->view('auth/deactivate_user', $this->data);
-        }
-        else
-        {
-            // do we really want to deactivate?
-            if ($this->input->post('confirm') == 'yes')
-            {
-                // do we have a valid request?
-                if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
-                {
-                    show_404();
-                }
-
-                // do we have the right userlevel?
-                if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
-                {
-                    $this->ion_auth->deactivate($id);
-                }
-            }
-
-            //redirect them back to the auth page
-            if (is_ajax())
-            {
-                $this->data['message'] = $this->ion_auth->messages();
-                $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['is_admin'] = $this->ion_auth->is_admin();
-
-                // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
-                $this->load->view('auth/user_list', $this->data);
-            }
-            else
-            {
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect('auth/index', 'refresh');
-            }
-        }
-    }
-
     //create a new user
     function create_user()
     {
@@ -538,9 +447,6 @@ class Auth extends Controller
                 $this->data['users'] = $this->ion_auth->get_users_array();
                 $this->data['userrole'] = $this->session->userdata('role');
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
-
-                // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
 
                 // on success - return json - we will  not redraw entire form
                 $data['status'] = 'all_ok';
@@ -648,9 +554,6 @@ class Auth extends Controller
                 );
             }
 
-            // get system settings to protect "fall_back_for" user from editing
-            $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
             $this->data['op'] = 'create';
             $this->load->view('auth/add_edit_user', $this->data);
         }
@@ -682,7 +585,7 @@ class Auth extends Controller
 
     function view_profile()
     {
-        if ($this->setting_lib->get_authentication_mode() != 'database')
+        if ($this->setting_lib->get_authentication_mode() != 'internal')
         {
             $userdata = $this->ion_auth->get_ldap_user_details_from_local_db($this->session->userdata('user_id'));
         }
@@ -763,8 +666,6 @@ class Auth extends Controller
                 // $this->data['userroles'] = $this->session->userdata('roles');
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
 
-                // get system settings to protect "fall_back_for" user from editing
-               // $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
 
                 // on success - return json - we will  not redraw entire form
                 $data['status'] = 'all_ok';
@@ -873,9 +774,6 @@ class Auth extends Controller
                 $this->data['users'] = $this->ion_auth->get_users_array();
 
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
-
-                // get system settings to protect "fall_back_for" user from editing
-                $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
 
                 $data['status'] = 'all_ok';
                 $data['responseText'] = $this->load->view('auth/user_list', $this->data, true);
@@ -1358,11 +1256,11 @@ class Auth extends Controller
      */
     function _check_admin_permissions()
     {
-        // if user auhenticated as database, and curremt MP mode is LDAP or AD  - show message that he CAN'T work with users
-       /* if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database')
+        //if user auhenticated as internal, and curremt MP mode is LDAP or AD  - show message that he CAN'T work with users
+       if ($this->session->userdata('mode') == 'internal' && $this->setting_lib->get_authentication_mode() != 'internal')
         {
             redirect('auth/no_permission_for_local_admin', 'location', 302);
-        }*/
+        }
     }
 
 }
