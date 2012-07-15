@@ -13,7 +13,7 @@
                 <td>User name</td>
                 <td><?php echo $user['username']?></td>
             </tr>
-           <?php if ($this->session->userdata('mode') == 'database') { ?>
+           <?php if ($this->session->userdata('mode') == 'internal') { ?>
             <tr>
                 <td>Email</td>
                 <td><?php echo $user->email ?></td>

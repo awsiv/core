@@ -86,7 +86,7 @@ if($this->agent->is_browser('Safari')){
                                       <a href="#" class="searchsubmit">&nbsp;</a>
                               </form>
                           </div>
-                             <?php //if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
+                             <?php //if($this->ion_auth->mode == "internal") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
                              if ($this->ion_auth->is_admin() == true ) { 
                                 echo anchor('auth/admin_page', ' ', array('class'=>'btn adminbtn'));
                              }
