@@ -14,7 +14,6 @@ class Settings_rest_model extends Cf_Model
     function __construct()
     {
         parent::__construct();
-        $this->load->library('mongo_db');
     }
 
     function setRestClient($restClient)
@@ -31,14 +30,14 @@ class Settings_rest_model extends Cf_Model
     function get_app_settings()
     {
         $defaultFields = array(
-            'appemail' => 'nias@asd.com',
+            'appemail' => '',
             'rbac' => null,
             'authMode' => null,
             'ldapEncryption' => null,
             'ldapLoginAttribute' => null,
             'ldapHost' => '',
             "ldapBaseDN" => null,
-            "ldapUsersDirectory" => null,
+            "ldapUsersDirectory" =>'',
             "activeDirectoryDomain" => null,
             "blueHostHorizon" => 400
         );
@@ -75,7 +74,7 @@ class Settings_rest_model extends Cf_Model
         {
             try
             {
-                           $data['authMode'] = 'database'; //TMP
+                           $data['authMode'] = 'internal'; //TMP
                            $this->restClient->post('/settings', $data);
             }
             catch (Exception $e)
@@ -84,6 +83,14 @@ class Settings_rest_model extends Cf_Model
             }
         }
     }
+    
+    function app_settings_get_item($item)
+    {
+       $settings=$this->get_app_settings();
+       return $settings[$item];   
+    }
+    
+    
 
 }
 
