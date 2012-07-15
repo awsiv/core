@@ -58,10 +58,7 @@ class Settings extends Cf_Controller
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('user_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
-        $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
-        $this->form_validation->set_rules('admin_role', 'valid role');
         $this->form_validation->set_rules('external_admin_username', 'External admin user name', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('bluehost_threshold_global', 'Blue host horizon', 'callback_validate_bluehost_threshold');
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
@@ -76,10 +73,14 @@ class Settings extends Cf_Controller
             }
             else
             {
-                $this->session->set_flashdata('message', array('content' => $returnData['message'], 'type' => 'error'));
-                //refresh
-                redirect('settings/manage');
+                //$this->session->set_flashdata('message', array('content' => $returnData['message'], 'type' => 'error'));
+                $feedback = " <p class=\"error\">" .$returnData['message']."</p>";
+                //redirect('settings/manage');
             }
+            
+            
+        } else {
+            $feedback = validation_errors();
         }
 
 
@@ -89,30 +90,25 @@ class Settings extends Cf_Controller
 
 
         $userDirectory = $this->input->post('user_directory') ? $this->input->post('user_directory') : explode(';', $settingsValue['ldapUsersDirectory']);
-
+        $userDirectory=array_filter($userDirectory);
         $form_data = array(
             'appemail' => set_value('appemail', $settingsValue['appemail']),
             'mode' => set_value('mode', $settingsValue['authMode']),
             'host' => set_value('host', $settingsValue['ldapHost']),
             'base_dn' => set_value('base_dn', $settingsValue['ldapBaseDN']),
             'login_attribute' => set_value('login_attribute', $settingsValue['ldapLoginAttribute']),
-            'users_directory' => set_value('user_directory', explode(';', $settingsValue['ldapUsersDirectory'])),
             'active_directory_domain' => set_value('active_directory_domain'),
-            'fall_back_for' => $this->input->post('fall_back_for'),
-            'admin_role' => $this->input->post('admin_role'),
             'encryption' => set_value('encryption', $settingsValue['ldapEncryption']),
             'external_admin_username' => set_value('external_admin_username'),
             'rbac' => set_value('rbac', $settingsValue['rbac']),
             'bluehost_threshold_global' => set_value('bluehost_threshold_global', $bluehost_threshold_min),
-            'user_dirs' => $userDirectory
+            'user_dirs' => $userDirectory,
         );
         $data = array(
             'title' => "CFEngine Mission Portal - Settings",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'message' => validation_errors(),
+            'message' => $feedback,
         );
-        $data['rolesacc']['admin'] = 'admin';
-        $data['roles'] = $data['rolesacc'];
 
         $data = array_merge($form_data, $data);
         $this->template->load('template', 'appsetting/missionportalpref', $data);
@@ -225,7 +221,7 @@ class Settings extends Cf_Controller
 
     function __db_check()
     {
-        if ($this->input->post('mode') && strtolower($this->input->post('mode')) == 'database')
+        if ($this->input->post('mode') && strtolower($this->input->post('mode')) == 'internal')
         {
             return '|required';
         }
