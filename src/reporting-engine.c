@@ -17,6 +17,7 @@
 JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
 
 /* Conversion functions */
+void EnterpriseDBToSqlite3_Hosts(sqlite3 *db);
 void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db);
 void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db);
 void EnterpriseDBToSqlite3_Contexts(sqlite3 *db);
@@ -44,6 +45,7 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
 
     /* Query MongoDB and dump the result into Sqlite */
 
+    EnterpriseDBToSqlite3_Hosts(db);
     EnterpriseDBToSqlite3_Contexts(db);
     EnterpriseDBToSqlite3_Variables(db);
     EnterpriseDBToSqlite3_FileChanges(db);
@@ -104,6 +106,61 @@ JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
     }
 
     return result;
+}
+
+/******************************************************************/
+
+void EnterpriseDBToSqlite3_Hosts(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    CFDB_Open(&dbconn);
+
+    /* TODO: Move host class filtering to the cfmod implementation */
+
+    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+
+    HubQuery *hq = CFDB_QueryHostsByAddress(&dbconn, NULL, NULL, filter);
+
+    CFDB_Close(&dbconn);
+
+    /* Table schema in sqlite */
+    /* TODO: define global constants for comumn sizes*/
+
+    char table_schema[CF_BUFSIZE] = {0};
+
+    snprintf(table_schema, sizeof(table_schema),
+             "CREATE TABLE hosts("
+             "hostkey VARCHAR(100) PRIMARY KEY, "
+             "ip VARCHAR(50), "
+             "hostname VARCHAR(100), "
+             "hoststatus VARCHAR(20));");
+
+    char *err = 0;
+    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
+
+    /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
+    for (Rlist *rp = hq->hosts; rp != NULL; rp = rp->next)
+    {
+        HubHost *hh = (HubHost *) rp->item;
+
+        char insert_op[CF_BUFSIZE] = {0};
+
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO hosts VALUES('%s','%s','%s','%s');",
+                 hh->keyhash, hh->ipaddr, hh->hostname, Nova_HostColourToString(hh->colour));
+
+        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
+
+        if( rc != SQLITE_OK )
+        {
+            CfOut(cf_error, "", "SQL error: %s\n", err);
+            sqlite3_free(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, NULL);
 }
 
 /******************************************************************/
