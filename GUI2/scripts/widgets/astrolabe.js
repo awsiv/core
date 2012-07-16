@@ -408,7 +408,6 @@
             $dialog.keypress(function(event) {
                 if (event.keyCode == $.ui.keyCode.ENTER) {
                     event.preventDefault();
-                     console.log(this);
                     btns[operation]();
                     $dialog.dialog('close');
                     $dialog.dialog('destroy');
