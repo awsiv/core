@@ -16,6 +16,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "item_lib.h"
+#include "conversion.h"
 
 static int CheckRegistryLogKey(void);
 
