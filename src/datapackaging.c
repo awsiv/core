@@ -1388,7 +1388,7 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
 
             Variable var;
             /* Properly align */
-            memcpy(&var, val, MIN(vsize, sizeof(Variable)));
+            memcpy(&var, val, MIN(valSize, sizeof(Variable)));
 
             if (var.e.t < from)
             {
