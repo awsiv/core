@@ -13,10 +13,12 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "sort.h"
-#include "conversion.h"
 
 #include "bson_lib.h"
 #include "db_query.h"
+
+static int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize);
+static int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list);
 
 /***************************************************************************
 
@@ -1587,3 +1589,101 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
    }
 }
 
+/*****************************************************************************/
+
+int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize)
+{
+    char buffer[CF_BUFSIZE];
+    HubVariable *hv;
+    HubQuery *hq;
+    Rlist *rp;
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
+
+    returnval[0] = '\0';
+
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        hv = (HubVariable *) rp->item;
+
+        if (strlen(hv->dtype) > 1)      // list
+        {
+            char b[CF_BUFSIZE];
+
+            b[0] = '\0';
+            PrintRlist(b, CF_BUFSIZE, hv->rval.item);
+            snprintf(returnval, bufsize - 1, "%s", b);
+        }
+        else
+        {
+            snprintf(returnval, bufsize - 1, "%s", (char *) hv->rval.item);
+        }
+    }
+
+    if (hq->records == NULL)
+    {
+        snprintf(buffer, sizeof(buffer), "Unknown value");
+    }
+
+    DeleteHubQuery(hq, DeleteHubVariable);
+
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    return true;
+}
+
+/*****************************************************************************/
+
+int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
+/* This function allocates memory which needs to be deleted afterwards */
+{
+    char buffer[CF_BUFSIZE];
+    HubVariable *hv;
+    HubQuery *hq;
+    Rlist *rp;
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
+
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        hv = (HubVariable *) rp->item;
+
+        if (strlen(hv->dtype) > 1)      // list
+        {
+            *list = CopyRvalItem((Rval) {hv->rval.item, CF_LIST}).item;
+        }
+        else
+        {
+            // Shoud not get here
+        }
+    }
+
+    if (hq->records == NULL)
+    {
+        snprintf(buffer, sizeof(buffer), "Unknown value");
+    }
+
+    DeleteHubQuery(hq, DeleteHubVariable);
+
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    return true;
+}

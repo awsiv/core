@@ -134,5 +134,6 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out);
 //*****************************************************************************
 void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
 Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
+bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format);
 
 #endif
