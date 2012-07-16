@@ -26,7 +26,9 @@ class Astrolabe_Model extends CI_Model
                 where(array('username' => $username))->
                 get('astrolabe.profile');
 
-        return array_map("profile_id", $data);
+        $profiles=array_map("profile_id", $data);
+        return array_unique($profiles);
+        
     }
 
     function profile_get($username, $profileId)

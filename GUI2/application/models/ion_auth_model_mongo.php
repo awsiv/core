@@ -632,7 +632,8 @@ class Ion_auth_model_mongo extends CI_Model
         {
             $username = $this->session->userdata('user_id');
         }
-        return $this->mongo_db->get_where_object('ldap_users', array('username' => $username), 1);
+        $user= $this->mongo_db->get_where_object('ldap_users', array('username' => $username), 1);
+        return $user;
     }
 
     /**
