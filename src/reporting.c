@@ -2367,7 +2367,7 @@ void Nova_NoteVarUsageDB(void)
     {
         if (val != NULL)
         {
-            if (sizeof(Variable) != valSize)
+            if (sizeof(Variable) < valSize)
             {
                 CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
                 continue;
