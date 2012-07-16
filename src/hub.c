@@ -397,7 +397,7 @@ void SplayLongUpdates(void)
         
         count++;
         
-        memcpy(&entry, value, sizeof(entry));
+        memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
         if (entry.time < 0 || entry.time > now + 300)
         {

@@ -577,7 +577,7 @@ void SetMeasurementPromises(Item **classlist)
             }
 
             strcpy(eventname, (char *) key);
-            memcpy(&entry, stored, sizeof(entry));
+            memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
             CfOut(cf_verbose, "", " -> Setting measurement event %s\n", eventname);
 
