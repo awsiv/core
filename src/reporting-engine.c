@@ -25,6 +25,9 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db);
 void EnterpriseDBToSqlite3_Software(sqlite3 *db);
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db);
 
+char *SqliteEscapeSingleQuote(char *str, int strSz);
+
+
 #endif
 
 /******************************************************************/
@@ -194,8 +197,9 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db)
 
     snprintf(table_schema, sizeof(table_schema),
              "CREATE TABLE contexts("
-             "hostkey VARCHAR(100) PRIMARY KEY, "
-             "name VARCHAR(50));");
+             "hostkey VARCHAR(100), "
+             "name VARCHAR(50), "
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -254,7 +258,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
              "name VARCHAR(50), "
              "value VARCHAR(100), "
              "type VARCHAR(20), "
-             "FOREIGN key(hostkey) REFERENCES contexts(hostkey));");
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -284,10 +288,9 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
         }
 
         char insert_op[CF_BUFSIZE] = {0};
-
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO variables VALUES('%s','%s','%s','%s','%s');",
-                 hc->hh->keyhash, hc->scope, hc->lval, rval_scalar, hc->dtype);
+                 hc->hh->keyhash, hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, sizeof(rval_scalar)), hc->dtype);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -324,7 +327,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
              "hostkey VARCHAR(100), "
              "filename VARCHAR(400), "
              "changetime BIGINT, "
-             "FOREIGN key(hostkey) REFERENCES contexts(hostkey));");
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -383,7 +386,7 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db)
              "name VARCHAR(50), "
              "version VARCHAR(50), "
              "architecture VARCHAR(20), "
-             "FOREIGN key(hostkey) REFERENCES contexts(hostkey));");
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -466,7 +469,7 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
              "handle VARCHAR(50), "
              "status VARCHAR(10), "
              "time BIGINT, "
-             "FOREIGN key(hostkey) REFERENCES contexts(hostkey));");
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -521,7 +524,8 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
              "hostkey VARCHAR(100), "
              "handle VARCHAR(100), "
              "reason VARCHAR(500), "
-             "time BIGINT);");
+             "time BIGINT, "
+             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -561,5 +565,33 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
 }
 
 /******************************************************************/
+
+char *SqliteEscapeSingleQuote(char *str, int strSz)
+/* Escapes characters esc in the string str of size strSz  */
+{
+    char strDup[CF_BUFSIZE];
+    int strPos, strDupPos;
+
+    if (sizeof(strDup) < strSz)
+    {
+        FatalError("Too large string passed to SqliteEscapeSingleQuote()\n");
+    }
+
+    snprintf(strDup, sizeof(strDup), "%s", str);
+    memset(str, 0, strSz);
+
+    for (strPos = 0, strDupPos = 0; strPos < strSz - 2; strPos++, strDupPos++)
+    {
+        if (strDup[strDupPos] == '\'')
+        {
+            str[strPos] = '\'';
+            strPos++;
+        }
+
+        str[strPos] = strDup[strDupPos];
+    }
+
+    return str;
+}
 
 #endif
