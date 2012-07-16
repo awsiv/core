@@ -642,7 +642,7 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
 
         strcpy(eventname, (char *) key);
 
-        memcpy(&entry, stored, sizeof(entry));
+        memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
         then = entry.t;
         measure = entry.Q.q;
@@ -1986,7 +1986,7 @@ void Nova_SummarizeComms()
                 continue;
             }
 
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.Q.q;
             average = (double) entry.Q.expect;
@@ -2059,7 +2059,7 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
             }
 
             char name[CF_BUFSIZE];
-            memcpy(&pt, value, sizeof(pt));
+            memcpy(&pt, value, MIN(vsize, sizeof(pt)));
             snprintf(name, CF_BUFSIZE, "<td>%.4lf</td><td>%.4lf</td><td>%.4lf</td>", pt.kept, pt.repaired, pt.notkept);
             AppendItem(&data, key, name);
         }
@@ -2375,7 +2375,7 @@ void Nova_NoteVarUsageDB(void)
 
             /* May not read from val directly due to unaligned access */
             Variable varDb;
-            memcpy(&varDb, val, sizeof(Variable));
+            memcpy(&varDb, val, MIN(valSize, sizeof(Variable)));
 
             if (varDb.e.t < now - varExpireAge)
             {

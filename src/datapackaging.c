@@ -84,7 +84,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
                 continue;
             }
 
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.t;
             measure = entry.Q.q;
@@ -222,7 +222,7 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
                 continue;
             }
 
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.t;
             average = entry.Q.expect;
@@ -984,7 +984,7 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
         }
 
         strcpy(eventname, (char *) key);
-        memcpy(&entry, stored, sizeof(entry));
+        memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
         then = entry.t;
         measure = entry.Q.q;
@@ -1330,7 +1330,7 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
                 continue;
             }
 
-            memcpy(&pt, value, sizeof(pt));
+            memcpy(&pt, value, MIN(vsize, sizeof(pt)));
             char name[CF_BUFSIZE];
             snprintf(name, sizeof(name), "%s,%.4lf,%.4lf,%.4lf\n", key, pt.kept, pt.repaired, pt.notkept);
 
@@ -1390,7 +1390,7 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
 
             Variable var;
             /* Properly align */
-            memcpy(&var, val, sizeof(Variable));
+            memcpy(&var, val, MIN(vsize, sizeof(Variable)));
 
             if (var.e.t < from)
             {
@@ -1493,7 +1493,7 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
                 continue;
             }
 
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.lastseen;
             average = (double) entry.Q.expect;
@@ -1992,7 +1992,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
                 continue;
             }
 
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.t;
             compliance = (double) entry.Q.q;
