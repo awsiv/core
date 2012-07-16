@@ -39,7 +39,8 @@ libcfnova_la_SOURCES = \
         pscalar.c \
         reporting.c \
         syntax.c \
-        copernicus.c
+        copernicus.c \
+        conversion.c
 
 if NT
 libcfnova_la_SOURCES += \
@@ -69,7 +70,6 @@ libcfnova_la_SOURCES += \
         bson_lib.c bson_lib.h \
         client_code.c \
         cmd_api.c cf.nova.cmd_api.h \
-        conversion.c \
         dataunpack.c \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \

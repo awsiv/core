@@ -6548,3 +6548,68 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     return 0;
 }
 
+static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
+{
+    bool return_ip_address;
+
+    if(strcmp(return_format, "address") == 0)
+    {
+        return_ip_address = true;
+    }
+    else if(strcmp(return_format, "name") == 0)
+    {
+        return_ip_address = false;
+    }
+    else
+    {
+        FatalError("HubHostListToRlist: Unknown return format %s", return_format);
+    }
+
+    Rlist *return_list = NULL;
+
+    for(Rlist *rp = hub_host_list; rp != NULL; rp = rp->next)
+    {
+        HubHost *hh = (HubHost *)rp->item;
+
+        if(return_ip_address)
+        {
+            PrependRScalar(&return_list, hh->ipaddr, CF_SCALAR);
+        }
+        else
+        {
+            PrependRScalar(&return_list, hh->hostname, CF_SCALAR);
+        }
+    }
+
+    return return_list;
+}
+
+bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
+{
+    if(!IsDefinedClass("am_policy_hub"))
+    {
+        CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (not running as a hub)");
+        return false;
+    }
+
+    EnterpriseDB conn;
+
+    if(!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+    HostClassFilterAddClasses(filter, class_name, NULL);
+
+    HubQuery *hq = CFDB_QueryHostsByHostClassFilter(&conn, filter);
+
+    DeleteHostClassFilter(filter);
+    CFDB_Close(&conn);
+
+    *return_list = HubHostListToRlist(hq->hosts, return_format);
+
+    DeleteHubQuery(hq, NULL);
+
+    return true;
+}
