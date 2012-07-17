@@ -379,14 +379,15 @@ class Ion_auth
 
     protected function on_login_successful($username)
     {
-         if ($this->auth_model_mongo->is_first_login_ldap($username,$this->mode))
+         $isFirstLogin=$this->auth_model_mongo->is_first_login($username,$this->mode);
+         if ($isFirstLogin)
             {
                 $this->ci->astrolabe_model->add_builtin_profiles($username);
-                $this->auth_model_mongo->add_last_login_ldap($username,$this->mode);
+                $this->auth_model_mongo->add_last_login($username,$this->mode);
             }
         else
             {
-            $this->auth_model_mongo->update_last_login_ldap($username,$this->mode);
+            $this->auth_model_mongo->update_last_login($username,$this->mode);
             } 
     }
 

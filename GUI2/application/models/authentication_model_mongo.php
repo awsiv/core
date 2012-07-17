@@ -14,18 +14,13 @@ class authentication_model_mongo extends CI_Model
     
     public function get_user($username,$mode)
     {
-        //if no id was passed use the current users id
-        if (empty($id))
-        {
-            $id = $this->session->userdata('username');
-        }
-        return $this->mongo_db->get_where_object('users', array('username' => $username, 'mode'=>$mode), 1);
+        return $this->mongo_db->get_where_object('users', array('username' => $username, 'source'=>$mode), 1);
     }
     
-    public function is_first_login()
+    public function is_first_login($username,$mode)
     {
-        $user = $this->get_user();
-        if ($user)
+        $user = $this->get_user($username,$mode);
+        if ($user === NULL)
         {
             return true;
         }
