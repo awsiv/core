@@ -1318,6 +1318,7 @@ typedef struct
 #define cfr_bundlecomp    "bc"
 #define cfr_bundleavg     "bv"
 #define cfr_bundledev     "bd"
+#define cfr_bundle_namespace "ns"
 #define cfr_meter         "me"
 #define cfr_meterkept     "K"
 #define cfr_meterrepaired "R"

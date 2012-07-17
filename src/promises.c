@@ -486,7 +486,7 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 
 /*****************************************************************************/
 
-void LastSawBundle(char *name,double compliance)
+void LastSawBundle(const Bundle *bundle, double compliance)
 {
     Event e, newe;
     time_t now = time(NULL);
@@ -497,7 +497,7 @@ void LastSawBundle(char *name,double compliance)
        return;
     }
     
-    if (ReadDB(dbp, name, &e, sizeof(e)))
+    if (ReadDB(dbp, bundle->name, &e, sizeof(e)))
     {
         newe.Q = QAverage(e.Q, compliance, 0.7);
     }
@@ -510,7 +510,9 @@ void LastSawBundle(char *name,double compliance)
     
     if (THIS_AGENT_TYPE == cf_agent)
     {
-        WriteDB(dbp, name, &newe, sizeof(newe));
+        char *fqname = BundleQualifiedName(bundle);
+        WriteDB(dbp, fqname, &newe, sizeof(newe));
+        free(fqname);
     }
 
     CloseDB(dbp);

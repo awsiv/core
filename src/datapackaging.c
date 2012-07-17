@@ -1944,7 +1944,7 @@ void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_me
 void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     char line[CF_MAXTRANSSIZE];
-    char bundle[CF_MAXVARSIZE];
+    char bundle_fqname[CF_MAXVARSIZE];
     Item *file = NULL;
     int first = true, ksize, vsize;
     time_t tid = time(NULL);
@@ -1980,7 +1980,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
     {
         time_t then;
 
-        strncpy(bundle, (char *) key, ksize);
+        strncpy(bundle_fqname, (char *) key, ksize);
 
         if (value != NULL)
         {
@@ -2005,7 +2005,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
         if (now - then > (double) LASTSEENEXPIREAFTER)
         {
             DBCursorDeleteEntry(dbcp);
-            CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", bundle);
+            CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", bundle_fqname);
             continue;
         }
 
@@ -2015,9 +2015,17 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
             AppendItem(reply, header, NULL);
         }
 
-        snprintf(line, sizeof(line), "%s %ld %.2lf %.2lf %.2lf\n",
-                 bundle,
-                 (long) then, compliance, average, sqrt(var));
+        char bundle_namespace[CF_MAXVARSIZE];
+        char bundle_name[CF_MAXVARSIZE];
+        if (!BundleQualifiedNameSplit(bundle_fqname, bundle_namespace, bundle_name))
+        {
+            CfOut(cf_inform, "", " !! Unable to extract bundle name and namespace from %s:", bundle_fqname);
+            continue;
+        }
+
+        snprintf(line, sizeof(line), "%s %ld %.2lf %.2lf %.2lf %s\n",
+                 bundle_name,
+                 (long) then, compliance, average, sqrt(var), bundle_namespace);
 
         AppendItem(reply, line, NULL);
     }

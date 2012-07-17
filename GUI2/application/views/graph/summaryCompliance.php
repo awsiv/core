@@ -1,6 +1,7 @@
 <div id="compliance_summary" style="height:120px;width:550px;"></div>
 <script type="text/javascript">
-    //<![CDATA[
+//<![CDATA[
+$(document).ready(function() {    
 var labelType, useGradients, nativeTextSupport, animate;
 
 (function() {
@@ -35,7 +36,6 @@ function init(){
       color: ['#779a62','#f0d76a','#cc4358'],
       'label': <?php echo $graphSeries['labels']; ?>,
       'values':  <?php echo $graphSeries['values']; ?>
-
   };
   //end
  
@@ -86,5 +86,6 @@ function init(){
     barChart.loadJSON(json);
 }
 init();
+});
 //]]>
 </script>
