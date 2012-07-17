@@ -766,10 +766,6 @@ void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
-    char bundle[CF_SMALLBUF];
-    double compliance, average, dev;
-    long fthen;
-
     CfOut(cf_verbose, "", " -> Bundle data...........................");
 
     if (dbconn)
@@ -779,9 +775,15 @@ void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%25s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
+        char bundle_name[CF_SMALLBUF] = { 0 }, bundle_namespace[CF_SMALLBUF] = { 0 };
+        double compliance = 0.0, average = 0.0, dev = 0.0;
+        long fthen = 0;
 
-        CfDebug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s", bundle, compliance, average, dev, cf_ctime(&fthen));
+        sscanf(ip->name, "%127s %ld %lf %lf %lf %127s\n", bundle_name, &fthen, &compliance, &average, &dev, bundle_namespace);
+
+        CfDebug("Bundle: $%s.%s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",
+                !NULL_OR_EMPTY(bundle_namespace) ? bundle_namespace : "default",
+                bundle_name, compliance, average, dev, cf_ctime(&fthen));
     }
 }
 

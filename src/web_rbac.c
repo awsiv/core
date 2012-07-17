@@ -121,7 +121,7 @@ static char *GenerateSalt()
 
 static char *HashPassword(const char *clear_password, size_t clear_password_len, const char *db_salt)
 {
-    char *salt_password = StringConcatenate(db_salt, SALT_SIZE, clear_password, clear_password_len);
+    char *salt_password = StringConcatenate(2, db_salt, clear_password);
     char *salt_password_hashed = SHAHash(salt_password, SALT_SIZE + clear_password_len);
 
     free(salt_password);

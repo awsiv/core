@@ -1652,15 +1652,8 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
+void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, const Item *data)
 {
-    Item *ip;
-    char bundle[CF_MAXVARSIZE];
-    char varName[CF_MAXVARSIZE];
-    double compliance = 0, average = 0, dev = 0;
-    long fthen = 0;
-    time_t then = 0;
-
 // find right host
     bson host_key;
 
@@ -1674,9 +1667,17 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
     {
         bson_append_start_object(&set_op, "$set");
 
-        for (ip = data; ip != NULL; ip = ip->next)
+        for (const Item *ip = data; ip != NULL; ip = ip->next)
         {
-            sscanf(ip->name, "%250s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
+            char bundle_name[CF_MAXVARSIZE] = { 0 };
+            char bundle_namespace[CF_MAXVARSIZE] = { 0 };
+            char varName[CF_MAXVARSIZE];
+            double compliance = 0, average = 0, dev = 0;
+            long fthen = 0;
+            time_t then = 0;
+
+            sscanf(ip->name, "%250s %ld %lf %lf %lf %250s\n",
+                   bundle_name, &fthen, &compliance, &average, &dev, bundle_namespace);
 
             then = (time_t) fthen;
 
@@ -1686,7 +1687,7 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
                 continue;
             }
 
-            snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle);
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle_name);
 
             {
                 bson_append_start_object(&set_op, varName);
@@ -1694,6 +1695,11 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
                 bson_append_double(&set_op, cfr_bundlecomp, compliance);
                 bson_append_double(&set_op, cfr_bundleavg, average);
                 bson_append_double(&set_op, cfr_bundledev, dev);
+
+                if (!NULL_OR_EMPTY(bundle_namespace))
+                {
+                    bson_append_string_n(&set_op, cfr_bundle_namespace, bundle_namespace, 255);
+                }
                 bson_append_int(&set_op, cfr_time, then);
 
                 bson_append_finish_object(&set_op); // varName
