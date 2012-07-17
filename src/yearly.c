@@ -52,7 +52,7 @@ int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, ch
         {
             cfv->min = rq;
         }
-        
+
         cfv->data_E[i] = ry;
         cfv->data_q[i] = rq;
         cfv->data_dq[i] = rg;

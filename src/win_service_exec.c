@@ -4,14 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_service_exec.c                                                  */
-/*                                                                           */
-/* Created: Mon Nov 23 15:58:19 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 /* Functions to run the cf-execd as a windows service.
  * It can for example be registered in windows as follows:
  * sc create CfengineNovaExec binpath= "c:\Program Files\Cfengine\bin\cf-execd.exe"
