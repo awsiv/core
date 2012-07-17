@@ -336,6 +336,12 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 const Policy *policy = PolicyFromPromise(pp);
                 bp = GetBundle(policy, bundlename, "agent");
 
+                if(bp == NULL)
+                {
+                    CfOut(cf_error, "", " Non-existent bundle \"%s\" referenced in \"%s\"\n", bundlename, (char *)cp->rval.item);
+                    break;
+                }
+
                 for (rp = bp->args; rp != NULL; rp = rp->next)
                 {
                     fprintf(fp, "bundles::\n\n");
