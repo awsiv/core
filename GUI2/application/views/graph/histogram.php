@@ -11,7 +11,7 @@
 <script language="javascript" type="text/javascript">
 //<![CDATA[
 (function(){
-    var viewdata = <?php //echo ($graphdata); ?>;
+    var viewdata = <?php echo ($graphdata); ?>;
     //avg data
     var options = {grid:   { hoverable: true, clickable: true},
         series: { bars: {
@@ -26,10 +26,11 @@
 
     $.plot($("#placeholder-histogram_<?php echo $observable; ?>"), 
         [
-            { label: "", 
-            data: viewdata,  
-            bars: { show: true,barWidth: 1,lineWidth: .1, fill: true}, 
-            color: "#0000FF"
+            { 
+                label: "", 
+                data: viewdata,  
+                bars: { show: true,barWidth: 1,lineWidth: .1, fill: true}, 
+                color: "#0000FF"
             }
         ], 
         options);
