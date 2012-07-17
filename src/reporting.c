@@ -1985,12 +1985,6 @@ void Nova_SummarizeComms()
 
         if (value != NULL)
         {
-            if (sizeof(entry) < vsize)
-            {
-                CfOut(cf_error, "", "Invalid value in lastseen database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
-                continue;
-            }
-
             memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.Q.q;
