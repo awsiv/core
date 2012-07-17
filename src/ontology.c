@@ -198,7 +198,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
         // Look at the unexpanded promise to see the variable refs
 
-        for (cp = pp->org_pp->conlist; cp != NULL; cp = cp->next)
+        for (cp = pp->conlist; cp != NULL; cp = cp->next)
         {
             if (strcmp(cp->lval, "usebundle") == 0)
             {
@@ -210,13 +210,49 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 case CF_FNCALL:
                     fnp = (FnCall *) cp->rval.item;
                     bundlename = fnp->name;
+                    break;
+                }
+            }
+        }
+
+        for (cp = pp->org_pp->conlist; cp != NULL; cp = cp->next)
+        {
+            if (strcmp(cp->lval, "usebundle") == 0)
+            {
+                Rlist *allvars = NULL;
+
+                switch (cp->rval.rtype)
+                {
+                case CF_SCALAR:
+
+                    MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {cp->rval.item, CF_SCALAR}, pp);
+
+                    for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
+                    {
+                        fprintf(fp, "bundles::\n\n");
+                        fprintf(fp, "  \"%s\"\n", bundlename);
+                        if (strchr(rp2->item, '.'))
+                        {
+                            fprintf(fp, "      association => a(\"%s\",\"variables::%s\",\"%s\");\n",
+                                    NOVA_ISIMPACTED, (const char *) rp2->item, NOVA_IMPACTS);
+                        }
+                        else
+                        {
+                            fprintf(fp, "      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",
+                                    NOVA_ISIMPACTED, pp->bundle, (const char *) rp2->item, NOVA_IMPACTS);
+                        }
+                    }
+
+                    DeleteRlist(allvars);
+                    break;
+
+                case CF_FNCALL:
+                    fnp = (FnCall *) cp->rval.item;
 
                     // For each argument, variables in actual params affect the bundle
 
                     for (rp = fnp->args; rp != NULL; rp = rp->next)
                     {
-                        Rlist *allvars = NULL;
-
                         MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {rp->item, CF_SCALAR}, pp);
 
                         for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
@@ -239,6 +275,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                     }
 
                     break;
+
                 default:
                     break;
                 }
