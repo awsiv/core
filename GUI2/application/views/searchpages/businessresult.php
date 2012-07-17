@@ -61,11 +61,11 @@
                <?php if ($report_result['meta']['count'] > 0 ) {
                   $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 5);
                   include 'paging_footer.php';
-                  if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
+                  ?>
                     <?php if (isset($report_link) && !empty($report_link)) { ?>
                         <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
                         <?php } ?>
-               <?php } } ?>
+               <?php } ?>
             </div>
             <div class="clear"></div> 
             <div id="mainResultTable">
