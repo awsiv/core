@@ -731,7 +731,7 @@
 
             hosts: function(self, includes, excludes) {
 
-                var url = self.options.baseUrl + '/astrolabe/host?';
+                var url = self.options.baseUrl + '/astrolabe/host?nocache=' + Math.random() + '&';
 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes) + '&';
