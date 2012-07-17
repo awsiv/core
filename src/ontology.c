@@ -506,7 +506,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
     {
         fprintf(fp, "  \"%s\"\n", pp->classes);
         fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", KM_AFFECTS_CERT_B,
-                rp->item, KM_AFFECTS_CERT_F);
+                (char *)rp->item, KM_AFFECTS_CERT_F);
     }
     
     DeleteRlist(class_list);
