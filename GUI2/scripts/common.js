@@ -78,6 +78,48 @@ var common = (function(){
 
         javascriptTimeToUnixTime: function(javascriptTime) {
             return javascriptTime / 1000;
+        },
+        
+        getTimeStamp:function(timeString,isUtc){
+            if(timeString==''){
+                return 0;
+            }
+            var ts=timeString.split(' ');
+            var YMD=ts[0].split('-');
+            var HMS=ts[1].split(':');
+            var myTS= new Date(0);
+            myTS.setFullYear(YMD[0]);
+            myTS.setMonth(YMD[1]-1);
+            myTS.setDate(YMD[2]);
+            myTS.setHours(HMS[0]);
+            myTS.setMinutes(HMS[1]);
+            //var utcTimestamp=Date.UTC(YMD[0],YMD[1]-1,YMD[2],HMS[0],HMS[1],0,0)/1000;
+            var utcDate=new Date(myTS.getTime()+myTS.getTimezoneOffset());
+           // var utcDate=new Date(myTS.getUTCFullYear(), myTS.getUTCMonth(), myTS.getUTCDate(),  myTS.getUTCHours(), myTS.getUTCMinutes(), myTS.getUTCSeconds());
+            if(isUtc==undefined){
+                return Math.round(myTS.getTime());
+            }else{
+                return Math.round(utcDate.getTime()/1000);
+            } 
+        },
+        
+        getLocalTimeStringFromUTC:function(utcTimeStamp){
+            var d=new Date(0);
+           d.setUTCSeconds(utcTimeStamp);
+      
+           var month=common.getDoubleDigits(d.getMonth()+1);
+           var date=common.getDoubleDigits(d.getDate());
+           var hour=common.getDoubleDigits(d.getHours());
+           var minutes=common.getDoubleDigits(d.getMinutes());
+           var dateString=d.getFullYear()+'-'+month+'-'+date+' '+hour+':'+minutes;
+           return dateString;
+        },
+        
+        getDoubleDigits:function(number){
+            if(number < 10){
+                return '0'+number;
+            }
+            return number;
         }
     };
 })();
@@ -86,7 +128,7 @@ var common = (function(){
 var mediator = (function(){
     var subscribe = function(channel, fn){
         if (!mediator.channels[channel]) mediator.channels[channel] = [];
-        mediator.channels[channel].push({ context: this, callback: fn });
+        mediator.channels[channel].push({context: this, callback: fn});
         return this;
     },
 

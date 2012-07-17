@@ -839,10 +839,12 @@ class report_model extends Cf_Model
             if ($hosts_only)
             {
                 $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, $cause_rx, $from, $to, $inclist, $exlist, $rows, $page_number);
+             
             }
             else
             {
                 $rawdata = cfpr_report_notkept($username, $hostkey, $search, $cause_rx, $from, $to, $inclist, $exlist, "time", true, $rows, $page_number);
+                
             }
 
             $data = $this->checkData($rawdata);
