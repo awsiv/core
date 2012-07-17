@@ -261,7 +261,10 @@ class Search extends Cf_Controller
         $paramArray['report'] = $report_type; // we need this for the ajax queries
         foreach ($paramArray as $index => $value)
         {
-            $paramArray[$index] = urldecode($value);
+             if ($index == "fromText" || $index == "toText")
+                 {
+                       $paramArray[$index] = '';
+                 }
         }
 
        // do a redirect here if it is a post
@@ -462,8 +465,8 @@ class Search extends Cf_Controller
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
                     $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
                     
-                    $from_timestamp = strtotime($from);
-                    $to_timestamp   = strtotime($to);
+                    $from_timestamp = intval($from);
+                    $to_timestamp   = intval($to);
                     
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
@@ -490,8 +493,8 @@ class Search extends Cf_Controller
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
                     $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
 
-                    $from_timestamp = strtotime($from);
-                    $to_timestamp   = strtotime($to);
+                    $from_timestamp = intval($from);
+                    $to_timestamp   = intval($to);
                     
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
@@ -597,8 +600,8 @@ class Search extends Cf_Controller
                     $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
                
-                    $from_timestamp = strtotime($from);
-                    $to_timestamp   = strtotime($to);
+                    $from_timestamp = intval($from);
+                    $to_timestamp   = intval($to);
 
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
@@ -627,9 +630,9 @@ class Search extends Cf_Controller
                     
                     $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
-
-                    $from_timestamp = strtotime($from);
-                    $to_timestamp   = strtotime($to);
+                      
+                    $from_timestamp = intval($from);
+                    $to_timestamp   = intval($to);
                     
                     if ($report_type == "promises-not-kept-summary")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
