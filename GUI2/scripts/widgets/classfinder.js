@@ -78,7 +78,7 @@
             }else if (jqXHR.status == 404) {
                 serverMsg = 'Requested URL not found.';
             }else if (jqXHR.status == 500) {
-                serverMsg = 'Internel Server Error. ' + jqXHR.responseText;
+                serverMsg = 'Internal Server Error. ' + jqXHR.responseText;
             }else if (errorThrown == 'parsererror') {
                 serverMsg = 'Error.\nParsing JSON Request failed.';
             }else if (errorThrown == 'timeout') {

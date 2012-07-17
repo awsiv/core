@@ -81,7 +81,7 @@
                     serverMsg= x.responseText;
                     break;
                 case 500:
-                    serverMsg='Internel Server Error. '+x.responseText;
+                    serverMsg='Internal Server Error. '+x.responseText;
                     break;
                 default:
                     serverMsg='Unknow Error.\n'+x.responseText;
