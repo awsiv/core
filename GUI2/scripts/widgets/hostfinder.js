@@ -536,7 +536,7 @@
 			}else if (x.status == 404) {
 			serverMsg = 'Requested URL not found.';
 			}else if (x.status == 500) {
-			serverMsg = 'Internel Server Error.' + x.responseText;
+			serverMsg = 'Internal Server Error.' + x.responseText;
 			}else if (e == 'parsererror') {
 			serverMsg = 'Error.\nParsing JSON Request failed.';
 			}else if (e == 'timeout') {
