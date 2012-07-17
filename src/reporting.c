@@ -634,9 +634,15 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
         time_t then, lastseen, now = time(NULL);
         char tbuf[CF_BUFSIZE], eventname[CF_BUFSIZE];
 
+        if (sizeof(entry) < vsize)
+        {
+            CfOut(cf_error, "", "Invalid value in promise compliance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+            continue;
+        }
+
         strcpy(eventname, (char *) key);
 
-        memcpy(&entry, stored, sizeof(entry));
+        memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
         then = entry.t;
         measure = entry.Q.q;
@@ -1974,7 +1980,7 @@ void Nova_SummarizeComms()
 
         if (value != NULL)
         {
-            memcpy(&entry, value, sizeof(entry));
+            memcpy(&entry, value, MIN(vsize, sizeof(entry)));
 
             then = entry.Q.q;
             average = (double) entry.Q.expect;
@@ -2040,8 +2046,14 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
                 continue;
             }
 
+            if (sizeof(pt) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in values database. Expected size: %zu, actual size: %d", sizeof(pt), vsize);
+                continue;
+            }
+
             char name[CF_BUFSIZE];
-            memcpy(&pt, value, sizeof(pt));
+            memcpy(&pt, value, MIN(vsize, sizeof(pt)));
             snprintf(name, CF_BUFSIZE, "<td>%.4lf</td><td>%.4lf</td><td>%.4lf</td>", pt.kept, pt.repaired, pt.notkept);
             AppendItem(&data, key, name);
         }
@@ -2349,9 +2361,15 @@ void Nova_NoteVarUsageDB(void)
     {
         if (val != NULL)
         {
+            if (sizeof(Variable) < valSize)
+            {
+                CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
+                continue;
+            }
+
             /* May not read from val directly due to unaligned access */
             Variable varDb;
-            memcpy(&varDb, val, sizeof(Variable));
+            memcpy(&varDb, val, MIN(valSize, sizeof(Variable)));
 
             if (varDb.e.t < now - varExpireAge)
             {

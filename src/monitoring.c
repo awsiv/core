@@ -563,8 +563,14 @@ void SetMeasurementPromises(Item **classlist)
     {
         if (stored != NULL)
         {
+            if (sizeof(entry) < vsize)
+            {
+                CfOut(cf_error, "", "Invalid entry in measurements database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                continue;
+            }
+
             strcpy(eventname, (char *) key);
-            memcpy(&entry, stored, sizeof(entry));
+            memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
             CfOut(cf_verbose, "", " -> Setting measurement event %s\n", eventname);
 
