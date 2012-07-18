@@ -52,7 +52,7 @@ class pest_json extends Pest
     public function processError($body)
     {
        if($this->lastStatus()===0){
-            return "Rest server not found";
+            return "Cannot find rest server";
        } 
        return $body;
     }

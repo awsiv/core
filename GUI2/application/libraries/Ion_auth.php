@@ -118,13 +118,13 @@ class Ion_auth
 
         $this->auth_model_mongo=$this->ci->authentication_model_mongo;
         $this->auth_model = $this->ci->authentication_model;
-        $this->settings_rest_model=$this->ci->settings_rest_model;
+        //$this->settings_rest_model=$this->ci->settings_rest_model;
         
         $restClient=$this->getRestClient();
         $this->auth_model->setRestClient($restClient);
-        $this->settings_rest_model->setRestClient($restClient);
+        //$this->settings_rest_model->setRestClient($restClient);
         
-        $this->mode = $this->settings_rest_model->app_settings_get_item('authMode');
+       // $this->mode = $this->settings_rest_model->app_settings_get_item('authMode');
 
         if (!$this->mode)
         {
@@ -148,11 +148,12 @@ class Ion_auth
                 $this->on_login_successful($username);
             }
         }
-      // $this->email = $this->settings_rest_model->app_settings_get_item('appemail');
+        
+       /*$this->email = $this->settings_rest_model->app_settings_get_item('appemail');
         if (!($this->email || empty($this->email)))
         {
             $this->email = $this->ci->config->item('admin_email', 'ion_auth');
-        }
+        }*/
         
     }
 
@@ -400,7 +401,7 @@ class Ion_auth
     public function logout()
     {
         $identity = $this->ci->config->item('identity', 'ion_auth');
-        $this->ci->session->unset_userdata($identity);
+        $this->ci->session->unset_userdata('username');
         $this->ci->session->unset_userdata('role');
         $this->ci->session->unset_userdata('id');
         $this->ci->session->unset_userdata('user_id');
