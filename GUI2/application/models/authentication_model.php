@@ -5,7 +5,6 @@ class Authentication_model extends Cf_Model
 
     protected $userResource = 'user';
     protected $rolesResource = 'role';
-    protected $rest = '';
 
     public function __construct()
     {
@@ -14,12 +13,6 @@ class Authentication_model extends Cf_Model
         $this->load->helper('cookie');
         $this->load->helper('date');
         $this->load->library('mongo_db');
-    }
-
-    public function setRestClient($rest)
-    {
-        $this->rest = $rest;
-        //var_dump($rest);
     }
 
     /**

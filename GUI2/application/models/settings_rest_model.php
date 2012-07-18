@@ -9,16 +9,10 @@ class Settings_rest_model extends Cf_Model
 {
 
     var $errors;
-    var $restClient = null;
 
     function __construct()
     {
         parent::__construct();
-    }
-
-    function setRestClient($restClient)
-    {
-        $this->restClient = $restClient;
     }
 
     /**
@@ -45,7 +39,7 @@ class Settings_rest_model extends Cf_Model
 
         try
         {
-            $settings = $this->restClient->get('/settings');
+            $settings = $this->rest->get('/settings');
             $data = $this->checkData($settings);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -75,7 +69,7 @@ class Settings_rest_model extends Cf_Model
             try
             {
                            $data['authMode'] = 'internal'; //TMP
-                           $this->restClient->post('/settings', $data);
+                           $this->rest->post('/settings', $data);
             }
             catch (Exception $e)
             {

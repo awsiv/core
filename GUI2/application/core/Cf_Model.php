@@ -7,6 +7,7 @@ class Cf_Model extends CI_Model {
     const ERROR = 'ERROR';
     
     protected $errors = array();
+    protected $rest ='';
 
     public function __construct() {
         parent::__construct();
@@ -37,6 +38,15 @@ class Cf_Model extends CI_Model {
      */
     function clearErrors() {
         $this->errors = array();
+    }
+    
+    /**
+     * For setting the rest Client library to make rest calls
+     * @param type $rest 
+     */
+     public function setRestClient($rest)
+    {
+        $this->rest = $rest;
     }
 
     /**
