@@ -286,4 +286,15 @@ $lang['unknown_error'] = "Unknown error - description out of bounds";
 $lang['cf_mod_expection_error']='Server Internal Error.';
 $lang['warning_only_suse'] = "This report is only supported for SUSE platforms";
 $lang['warning_only_suse_redhat'] = "This report is only supported for SUSE and Redhat platforms";
+
+/*license page license Usage keys*/
+
+$lang['lastMeasured']="Last measured on";
+$lang['samples']="Samples";
+$lang['minObservedLevel']="Minimum observed level";
+$lang['maxObservedLevel']="Maximum observed level";
+$lang['meanUsage']="Mean weighted usage over interval";
+$lang['meanCumulativeUtilization']="Mean utilization over cumulative period (percent)";
+$lang['usedToday']="Used today";
+
 ?>

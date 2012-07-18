@@ -19,13 +19,15 @@ class Welcome extends Cf_Controller
             'url' => 'welcome/index',
             'isRoot' => true
         );
-
+        $this->load->model('license_model');
+        $this->license_model->setRestClient($this->ion_auth->getRestClient());
         $this->breadcrumb->setBreadCrumb($bc);
         $this->carabiner->js('widgets/licensemeter.js');
         try
         {
             $expirydate = strtotime(cfpr_getlicense_expiry());
             $startDate = cfpr_getlicense_installtime();
+            //$this->license_model->getActivatedDate());
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
             if ($datediff > 0)
@@ -519,6 +521,8 @@ class Welcome extends Cf_Controller
     function license()
     {
         $this->carabiner->js('/widgets/licensemeter.js');
+        $this->load->model('license_model');
+        $this->license_model->setRestClient($this->ion_auth->getRestClient());
         $bc = array(
             'title' => $this->lang->line('breadcrumb_license'),
             'url' => 'welcome/license',
@@ -528,8 +532,10 @@ class Welcome extends Cf_Controller
         $this->breadcrumb->setBreadCrumb($bc);
         try
         {
+            $licenseDetails=$this->license_model->getLicenseDetails();
             $expirydate = strtotime(cfpr_getlicense_expiry());
             $startDate = cfpr_getlicense_installtime();
+            
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
             if ($datediff > 0)
@@ -557,10 +563,11 @@ class Welcome extends Cf_Controller
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - License Usage Status ",
             'ret2' => cfpr_getlicenses_promised(),
-            'ret3' => cfpr_getlicenses_granted(),
-            'started' => date('D F d h:m:s Y', $startDate),
+            'licenseGranted' => $licenseDetails['granted'],
+            'started' => date('D F d h:m:s Y', $licenseDetails['installTime']),
             'expiry' => cfpr_getlicense_expiry(),
-            'txt' => cfpr_getlicense_summary(),
+            'licenseSummary'=>$licenseDetails['licenseUsage'],
+            'licenseOwner'=>$licenseDetails['owner'],
             'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
             'daysleft' => $daysleft
