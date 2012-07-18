@@ -16,6 +16,7 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"
+#include "reporting.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
