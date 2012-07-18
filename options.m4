@@ -40,12 +40,6 @@ if test $WITH_MONGO = 1; then
     AC_CHECK_LIB(bson, bson_init, [], [AC_MSG_ERROR(Cannot find bson_init)])
     AC_CHECK_HEADERS(mongo.h, [], [AC_MSG_ERROR(Cannot find mongo.h)])
     AC_CHECK_HEADERS(bson.h, [], [AC_MSG_ERROR(Cannot find bson.h)])
-    AC_CHECK_HEADERS(encoding.h, [], [AC_MSG_ERROR(Cannot find encoding.h)],[#include <bson.h>])
-    AC_CHECK_HEADERS(env.h, [], [AC_MSG_ERROR(Cannot find env.h)])
-    AC_CHECK_HEADERS(gridfs.h, [], [AC_MSG_ERROR(Cannot find gridfs.h)])
-    AC_CHECK_HEADERS(md5.h, [], [AC_MSG_ERROR(Cannot find md5.h)])
-
-    AC_CHECK_MEMBER([mongo_connection_options.host], AC_DEFINE([MONGO_OLD_CONNECT], [], [Use deprecated MongoDB client API]),[],[[#include <mongo.h>]])
   ])
 fi
 
