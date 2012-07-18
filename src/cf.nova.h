@@ -919,8 +919,8 @@ unsigned long long GetInstantUint64Value(const char *name, const char *subname, 
 /* promise_db.c */
 
 #ifdef HAVE_LIBMONGOC
-void CFDB_SaveExpandedPromise(Promise *pp);
-void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies);
+void CFDB_SaveExpandedPromise(const Promise *pp);
+void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
 #endif
 
 /* promises.c */
@@ -951,7 +951,7 @@ void Nova_ZenossSummary(const char *docroot);
 void Nova_NoteVarUsageDB(void);
 
 void Nova_OpenCompilationReportFiles(const char *fname);
-void Nova_ShowPromises(Bundle *bundles, Body *bodies);
+void Nova_ShowPromises(const Bundle *bundles, const Body *bodies);
 void Nova_ShowPromise(const char *version, Promise *pp, int indent);
 int Nova_ExportReports(char *reportName);
 void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char *classregex);

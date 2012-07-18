@@ -13,11 +13,11 @@
 #include "files_names.h"
 #include "db_common.h"
 
-static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body);
+static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body);
 
 /*****************************************************************************/
 
-void CFDB_SaveExpandedPromise(Promise *pp)
+void CFDB_SaveExpandedPromise(const Promise *pp)
 {
     Constraint *cp;
     char rval_buffer[CF_BUFSIZE];
@@ -128,12 +128,9 @@ void CFDB_SaveExpandedPromise(Promise *pp)
 
 /*****************************************************************************/
 
-void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
+void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
 {
-    Body *bdp;
-    Bundle *bp;
     Rlist *rp;
-    SubType *st;
     Promise *pp;
     Constraint *cp;
     EnterpriseDB dbconn = { 0 };
@@ -152,9 +149,9 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
     bson b;
     mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
 
-    for (bp = bundles; bp != NULL; bp = bp->next)
+    for (const Bundle *bp = bundles; bp != NULL; bp = bp->next)
     {
-        for (st = bp->subtypes; st != NULL; st = st->next)
+        for (const SubType *st = bp->subtypes; st != NULL; st = st->next)
         {
             CfDebug("PROMISE-TYPE: %s\n", st->name);
 
@@ -250,7 +247,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
     mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b), NULL);
 
-    for (bdp = bodies; bdp != NULL; bdp = bdp->next)
+    for (const Body *bdp = bodies; bdp != NULL; bdp = bdp->next)
     {
         CFDB_SaveBody(&dbconn, bdp);
     }
@@ -260,7 +257,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
 /*****************************************************************************/
 
-static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body)
+static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
 {
     Rlist *rp;
     Constraint *cp;

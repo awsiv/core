@@ -2305,7 +2305,7 @@ void Nova_OpenCompilationReportFiles(const char *fname)
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(Bundle *bundles, Body *bodies)
+void Nova_ShowPromises(const Bundle *bundles, const Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
 
