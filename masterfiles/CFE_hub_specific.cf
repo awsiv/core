@@ -159,7 +159,7 @@ bundle agent cfengine_php_mod
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
 
-  redhat_5|redhat_6::
+  redhat_5|redhat_6|centos_6::
 
    "/etc/php.d/mcrypt.ini"
         comment => "Put mcrypt.ini to its place",
@@ -492,7 +492,7 @@ bundle agent cfengine_policysrv
             comment => "Get the whole contents of the file to extract a timezone later on",
              handle => "cfengine_policysrv_vars_buffer_suse";
 
-  (redhat_5|redhat_6).am_policy_hub::
+  (redhat_5|redhat_6|centos_6).am_policy_hub::
 
    "match_package" slist => {
                              "httpd",
@@ -505,7 +505,7 @@ bundle agent cfengine_policysrv
                  comment => "Define a list of packages to be installed on RedHat",
                   handle => "cfengine_policysrv_vars_match_package_redhat";
 
-  (centos|fedora).am_policy_hub::
+  (centos_5|fedora).am_policy_hub::
 
    "match_package" slist => {
                              "httpd",
