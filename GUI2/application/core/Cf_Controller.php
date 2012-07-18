@@ -26,6 +26,7 @@ class cf_base_controller extends CI_Controller
     function initialize()
     {
         $this->ion_auth->setRestClient($this->getRestClient());
+
     }
 
     function getProductName()
@@ -81,7 +82,7 @@ class Cf_Controller extends cf_base_Controller
 
         if (!$this->ion_auth->logged_in() && !is_ajax())
         {
-            redirect('auth/index', 'refresh');
+            redirect('login/index', 'refresh');
         }
         else
         {
@@ -91,7 +92,6 @@ class Cf_Controller extends cf_base_Controller
 
         $this->ion_auth->setRestClient($this->getRestClient());
         $this->getProductName();
-
     }
 
 }

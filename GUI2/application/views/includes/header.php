@@ -67,7 +67,7 @@ if($this->agent->is_browser('Safari')){
                        <p id="userbox">
 	                Hello  <?php echo $this->session->userdata('username');?>
                         &nbsp;| &nbsp;
-                        <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
+                        <a href="<?php echo site_url('login/logout'); ?>" title="logout">logout</a>
                         <span class="online_users"> Online users: <strong id="ttlonlinenum"><?php echo $this->onlineusers->total_users()?></strong></span>
                         <br /><span class="online_users">you are logged in with <?php
                         switch ($this->session->userdata('mode')) {
