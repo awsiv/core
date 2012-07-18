@@ -14,6 +14,26 @@ class Settings extends Cf_Controller
         $this->settings_rest_model->setRestClient($this->ion_auth->getRestClient());
     }
 
+
+    function index() {
+        $bc = array(
+            'title' => $this->lang->line('breadcrumb_setting'),
+            'url' => 'settings/index',
+            'isRoot' => false,
+            'directchild' => true,
+            'replace_existing' => true,
+        );
+
+        $this->breadcrumb->setBreadCrumb($bc);
+
+        $data = array(
+            'title' => $this->lang->line('mission_portal_title') . " - Settings",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            "is_displayable" => $this->ion_auth->is_accessible()
+        );
+        $this->template->load('template', 'auth/usersettings', $data);
+    }
+
     function manage()
     {
 
@@ -24,7 +44,7 @@ class Settings extends Cf_Controller
 
         if (!$this->ion_auth->is_accessible())
         {
-            redirect('auth/setting');
+            redirect('settings/index');
         }
 
         try
@@ -40,7 +60,7 @@ class Settings extends Cf_Controller
 
         $bc = array(
             'title' => $this->lang->line('breadcrumb_setting'),
-            'url' => 'auth/setting',
+            'url' => 'settings/manage',
             'isRoot' => false,
             'directchild' => true,
             'replace_existing' => true

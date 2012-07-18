@@ -1162,31 +1162,7 @@ class Auth extends cf_base_controller
         }
     }
 
-    function setting()
-    {
-        if (!$this->ion_auth->logged_in())
-        {
-            //redirect them to the login page
-            redirect('auth/login', 'refresh');
-        }
-        $bc = array(
-            'title' => $this->lang->line('breadcrumb_setting'),
-            'url' => 'auth/setting',
-            'isRoot' => false,
-            'directchild' => true,
-            'replace_existing' => true,
-        );
-
-        $this->breadcrumb->setBreadCrumb($bc);
-
-        $data = array(
-            'title' => $this->lang->line('mission_portal_title') . " - Settings",
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            "is_displayable" => $this->ion_auth->is_accessible()
-        );
-        $this->template->load('template', 'auth/usersettings', $data);
-    }
-
+    
     /*
      * if ajax - show message on top of the page div id=error_status
      *
