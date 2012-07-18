@@ -12,15 +12,13 @@ if (!class_exists('Controller'))
 
 }
 
-class Auth extends Controller
+class Auth extends cf_base_controller
 {
 
     function __construct()
     {
         parent::__construct();
-        initializeHub();
-        init_productname();
-        $this->load->library(array('ion_auth', 'ion_auth', 'form_validation', 'breadcrumb', 'breadcrumblist', 'carabiner', 'onlineUsers', 'user_agent', 'setting_lib'));
+        $this->load->library(array('form_validation'));
         $this->lang->load('cf_message');
         //list of errors wrapped in <p> class of errors
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');

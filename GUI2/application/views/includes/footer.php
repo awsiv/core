@@ -1,5 +1,5 @@
 <div id="footer">
-    <p class="grid_7"><?php $product=get_productname(); echo $product['name'].' '.$product['version']?> running on <?php echo cfpr_community_version(); ?> </p>
+    <p class="grid_7"><?php echo CFE_PRODUCT_NAME .' '. CFE_HUB_VERSION; ?> running on <?php echo CFE_CORE_VERSION; ?> </p>
     <p class="grid_5 alignright">Copyright &copy; 2012 CFEngine AS - All rights reserved. (<a href="http://cfengine.com/commercial-license" target="_blank">License information</a>)</p>
     <p class="clear"></p>
 </div>

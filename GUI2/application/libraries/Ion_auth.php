@@ -81,6 +81,7 @@ class Ion_auth
      * */
     public $_extra_set = array();
     public $mode = 'internal';
+    public $restClient = null;
 
     /**
      * __construct
@@ -114,17 +115,11 @@ class Ion_auth
         $this->info_start_delimiter = $this->ci->config->item('info_start_delimiter', 'ion_auth');
         $this->info_end_delimiter = $this->ci->config->item('info_end_delimiter', 'ion_auth');
         //load the mode of authentication
-       
+
 
         $this->auth_model_mongo=$this->ci->authentication_model_mongo;
         $this->auth_model = $this->ci->authentication_model;
-        //$this->settings_rest_model=$this->ci->settings_rest_model;
-        
-        $restClient=$this->getRestClient();
-        $this->auth_model->setRestClient($restClient);
-        //$this->settings_rest_model->setRestClient($restClient);
-        
-       // $this->mode = $this->settings_rest_model->app_settings_get_item('authMode');
+
 
         if (!$this->mode)
         {
@@ -133,7 +128,7 @@ class Ion_auth
             $this->mode = 'internal';
             //return FALSE;
         }
-        
+
         if ($this->ci->session->userdata('mode') !== FALSE)
         {
             $this->mode = $this->ci->session->userdata('mode');
@@ -148,13 +143,24 @@ class Ion_auth
                 $this->on_login_successful($username);
             }
         }
-        
+
        /*$this->email = $this->settings_rest_model->app_settings_get_item('appemail');
         if (!($this->email || empty($this->email)))
         {
             $this->email = $this->ci->config->item('admin_email', 'ion_auth');
         }*/
-        
+
+    }
+
+    function setRestClient($restClient)
+    {
+        $this->restClient = $restClient;
+        $this->auth_model->setRestClient($this->getRestClient());
+    }
+
+    function getRestClient()
+    {
+        return $this->restClient;
     }
 
     /**
@@ -171,29 +177,6 @@ class Ion_auth
         }
 
         return call_user_func_array(array($this->ci->ion_auth_model_mongo, $method), $arguments);
-    }
-
-   
-
-    /**
-     * Get Rest Client
-     */
-    function getRestClient()
-    {
-
-        $apiServer = $this->ci->config->item('rest_server');
-        $http_auth = 'basic';
-        $config = array('base_url' => $apiServer);
-        $this->ci->load->library('pest_json', $config);
-
-
-        if ($this->logged_in())
-        {
-            $username = $this->ci->session->userdata('username');
-            $password = $this->ci->session->userdata('password');
-            $this->ci->pest_json->setupAuth($username, $password);
-        }
-        return $this->ci->pest_json;
     }
 
 
@@ -343,7 +326,7 @@ class Ion_auth
             {
                 $this->set_error('account_creation_unsuccessful');
                 return FALSE;
-            }  
+            }
        }catch(Exception $e)
        {
             $this->set_error($e->getMessage());
@@ -372,7 +355,7 @@ class Ion_auth
         }
         catch (Exception $e)
         {
-            //$this->set_error('login_unsuccessful'); 
+            //$this->set_error('login_unsuccessful');
             $this->set_error($e->getMessage());
             return false;
         }
@@ -389,7 +372,7 @@ class Ion_auth
         else
             {
             $this->auth_model_mongo->update_last_login($username,$this->mode);
-            } 
+            }
     }
 
     /**
@@ -570,7 +553,7 @@ class Ion_auth
         return $this->auth_model->getAllUsers();
     }
 
-    
+
     /**
      * Get User
      *
@@ -587,7 +570,7 @@ class Ion_auth
      * update_user
      *
      * @return boolean
-     * 
+     *
      * */
     public function update_user($id, $data)
     {
@@ -751,7 +734,7 @@ class Ion_auth
         }
     }
 
-   
+
 
     /**
      * set_message_delimiters
@@ -902,18 +885,18 @@ class Ion_auth
     {
         return $this->auth_model->getAllRoles();
     }
-    
+
     /**
      * Returns the details of a role in arrAY.
      * @param type $rolename
-     * @return type 
+     * @return type
      */
     public function get_role_detail($rolename)
     {
         try{
            $data=$this->auth_model->getRoleDetails($rolename);
            if(is_array($data)){
-             return $data;  
+             return $data;
            }
            $this->set_error('error_fetching_details');
            return false;
@@ -944,7 +927,7 @@ class Ion_auth
         }
     }
 
- 
+
     public function update_role($rolename, $data)
     {
 
