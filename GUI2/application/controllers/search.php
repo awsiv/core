@@ -41,7 +41,7 @@ class Search extends Cf_Controller
             'software-installed' => 'software_installed',
             'values' => 'variables',
             'virtual-bundles' => 'virtualbundles',
-            'weakest-hosts'   => 'weakest_hosts_filter'
+            'weakest-hosts' => 'weakest_hosts_filter'
         );
     }
 
@@ -75,7 +75,7 @@ class Search extends Cf_Controller
                 // key based on name, all characters except letters and numbers were deleted
                 // we need this for faster alphabet sorting
                 $report_key = strtolower(preg_replace('#\W#', '', $report['name']));
-                
+
                 if (key_exists($report['category'], $treeview_reports))
                 {
                     $treeview_reports[$report['category']][$report_key] = $report;
@@ -86,12 +86,13 @@ class Search extends Cf_Controller
                     $treeview_reports[$report['category']][$report_key] = $report;
                 }
             }
-            
+
             //this could be done with usort and closures .... if we support  php 5.3 +
-            foreach ($treeview_reports as $category => $name) {
-               ksort($treeview_reports[$category], SORT_STRING);
+            foreach ($treeview_reports as $category => $name)
+            {
+                ksort($treeview_reports[$category], SORT_STRING);
             }
-              
+
             return $treeview_reports;
         }
         catch (Exception $e)
@@ -134,11 +135,11 @@ class Search extends Cf_Controller
     }
 
     // generate the save search menu for the reports menu
-    function generateSaveSearchMenu(){
-    $data['saved_search_menu'] = $this->_integrateSaveSearches();
-    $this->load->view('/searchpages/saveSearchMenu', $data);
+    function generateSaveSearchMenu()
+    {
+        $data['saved_search_menu'] = $this->_integrateSaveSearches();
+        $this->load->view('/searchpages/saveSearchMenu', $data);
     }
-
 
     function index()
     {
@@ -265,16 +266,18 @@ class Search extends Cf_Controller
                  {
                        $paramArray[$index] = '';
                  }
+             $paramArray[$index] = urldecode($value);
         }
 
-       // do a redirect here if it is a post
-       // fix for back button with Post/Redirect/Get
-       if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
-           // redirect with correct params
-           redirect('search/index/'.$this->assoc_to_uri($paramArray));
-       }
+        // do a redirect here if it is a post
+        // fix for back button with Post/Redirect/Get
+        if (strtolower($_SERVER["REQUEST_METHOD"]) === "post")
+        {
+            // redirect with correct params
+            redirect('search/index/' . $this->assoc_to_uri($paramArray));
+        }
 
-       try
+        try
         {
             $data = array(
                 'report_type' => $report_type,
@@ -361,7 +364,8 @@ class Search extends Cf_Controller
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'hostkey' => $hostkey,
-                        'clevel' => $clevel
+                        'clevel' => $clevel,
+                        'host_only' => $hosts_only
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -380,11 +384,12 @@ class Search extends Cf_Controller
                     {
                         $data['report_result'] = $this->report_model->getBusinessValueReport($username, $hostkey, $date, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                     }
-                                        
+
                     $pdfurlParams = array('type' => $report_type,
                         'date' => $date,
                         'inclist' => $incList,
                         'exlist' => $exList,
+                        'host_only' => $hosts_only
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -398,7 +403,8 @@ class Search extends Cf_Controller
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -418,7 +424,8 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'search' => $name,
                         'state' => $state,
-                        'clevel' => $clevel
+                        'clevel' => $clevel,
+                        'host_only' => $hosts_only
                     );
 
                     if ($hosts_only)
@@ -451,7 +458,8 @@ class Search extends Cf_Controller
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'hostkey' => $hostkey,
-                        'version' => $version
+                        'version' => $version,
+                        'host_only' => $hosts_only
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -464,17 +472,18 @@ class Search extends Cf_Controller
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
                     $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
-                    
-                    $from_timestamp = intval($from);
-                    $to_timestamp   = intval($to);
-                    
+
+                    $from_timestamp = intval($from) ? intval($from): -1;
+                    $to_timestamp   = intval($to) ? intval($to) : time();
+
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist'  => $exList,
-                        'hostkey' => $hostkey,                        
-                        'from'    => $from_timestamp,
-                        'to'      => $to_timestamp,
-                        'search'  => $name
+                        'exlist' => $exList,
+                        'hostkey' => $hostkey,
+                        'from' => $from_timestamp,
+                        'to' => $to_timestamp,
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -491,18 +500,19 @@ class Search extends Cf_Controller
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $diff = isset($getparams['diff']) ? urldecode($getparams['diff']) : urldecode($this->input->post('diff'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                    $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
+                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
 
-                    $from_timestamp = intval($from);
-                    $to_timestamp   = intval($to);
-                    
+                    $from_timestamp = intval($from) ? intval($from) : -1 ;
+                    $to_timestamp   = intval($to) ? intval($to) : time();
+
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist'  => $exList,
-                        'diff'    => $diff,
-                        'from'    => $from_timestamp,
-                        'to'      => $to_timestamp,
-                        'search'  => $name
+                        'exlist' => $exList,
+                        'diff' => $diff,
+                        'from' => $from_timestamp,
+                        'to' => $to_timestamp,
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -525,7 +535,8 @@ class Search extends Cf_Controller
                         'key' => $key,
                         'address' => $address,
                         'ago' => $ago,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
 
@@ -545,7 +556,8 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'version' => $version,
                         'arch' => $arch,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
 
@@ -565,7 +577,8 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'version' => $version,
                         'arch' => $arch,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_result'] = $this->report_model->getPatchesInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
@@ -581,9 +594,9 @@ class Search extends Cf_Controller
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'search' => $name,
+                        'host_only' => $hosts_only
                     );
                     $pdfurlParams = array_map('urlencode', $pdfurlParams);
-                    //$data['report_result'] = cfpr_report_performance($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-performed", true, $rows, $page_number);
                     $data['report_result'] = $this->report_model->getPerformance($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -595,21 +608,22 @@ class Search extends Cf_Controller
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                    $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
-                    
+                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
+
                     $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
-               
-                    $from_timestamp = intval($from);
-                    $to_timestamp   = intval($to);
+
+                    $from_timestamp = intval($from) ? intval($from) : -1;
+                    $to_timestamp   = intval($to) ? intval($to) : time();
 
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist'  => $exList,
-                        'search'  => $name,
-                        'from'    => $from_timestamp,
-                        'to'      => $to_timestamp,
-                        'cause'   => $cause_rx
+                        'exlist' => $exList,
+                        'search' => $name,
+                        'from' => $from_timestamp,
+                        'to' => $to_timestamp,
+                        'cause' => $cause_rx,
+                        'host_only' => $hosts_only
                     );
 
                     if ($report_type == "promises-repaired-log")
@@ -626,30 +640,31 @@ class Search extends Cf_Controller
                 case "promises-not-kept-log":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                    $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
-                    
+                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
+
                     $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
-                      
-                    $from_timestamp = intval($from);
-                    $to_timestamp   = intval($to);
-                    
+
+                    $from_timestamp = intval($from) ? intval($from) : -1;
+                    $to_timestamp   = intval($to) ? intval($to) : time();
+
                     if ($report_type == "promises-not-kept-summary")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-not-kept-log")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $pdfurlParams = array('type' => $report_type,
-                        'inclist'   => $incList,
-                        'exlist'    => $exList,
-                        'search'    => $name,
-                        'from'      => $from_timestamp,
-                        'to'        => $to_timestamp,
-                        'cause'     => $cause_rx
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name,
+                        'from' => $from_timestamp,
+                        'to' => $to_timestamp,
+                        'cause' => $cause_rx,
+                        'host_only' => $hosts_only
                     );
 
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link']  = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "setuid-programs":
@@ -658,7 +673,8 @@ class Search extends Cf_Controller
                     $pdfurlParams = array('type' => $report_type, # changed / into -
                         'inclist' => $incList,
                         'exlist' => $exList,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_result'] = $this->report_model->getReportSetUid($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
@@ -677,7 +693,8 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'version' => $version,
                         'arch' => $arch,
-                        'search' => $name
+                        'search' => $name,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_result'] = $this->report_model->getSoftwareInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
@@ -703,7 +720,8 @@ class Search extends Cf_Controller
                         'scope' => $scope,
                         'lval' => $lval,
                         'rval' => $rval,
-                        'var_type' => $type
+                        'var_type' => $type,
+                        'host_only' => $hosts_only
                     );
 
                     $data['report_result'] = $this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
@@ -731,43 +749,48 @@ class Search extends Cf_Controller
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
-                    
+
                     break;
-                
+
                 case "weakest-hosts":
                     $requiredjs = array(
                         array('jit/jit-yc.js'),
                         array('graphs/host-meter.js'),
                     );
-                    
+
                     $this->carabiner->js('jquery.tablesorter.min.js');
                     $this->carabiner->js('picnet.jquery.tablefilter.js');
                     $this->carabiner->js('jquery.tablesorter.pager.js');
                     $this->carabiner->js($requiredjs);
                     $jsIE = array('jit/Extras/excanvas.js');
                     $this->carabiner->group('iefix', array('js' => $jsIE));
-                   
-                    try {
+
+                    try
+                    {
                         $this->load->model('summary_model');
                         $ret = $this->host_model->getComplianceList($username, explode(',', $incList), explode(',', $exList), $rows, $page_number);
-                        
-                        if (is_array($ret)) {
-                            foreach ($ret['data'] as $index => $val) {
+
+                        if (is_array($ret))
+                        {
+                            foreach ($ret['data'] as $index => $val)
+                            {
                                 $rawData = $this->host_model->getHostMeter($this->session->userdata('username'), $val['key']);
                                 $graphData = $this->summary_model->getConvertedSummaryComplianceGraphData($rawData);
                                 $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
                             }
                         }
-                    } catch (Exception $e) {
+                    }
+                    catch (Exception $e)
+                    {
                         show_error($e->getMessage(), 500);
                     }
 
-                    $data['report_result']        = $ret;
+                    $data['report_result'] = $ret;
                     $data['resultView'] = 'weakest_hosts_result';
-                    
+
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
-                    
+
                 default:
                     $this->template->load('template', 'searchpages/nodata', $data);
             }
@@ -807,5 +830,6 @@ class Search extends Cf_Controller
         {
             show_error_custom("View not found", 400);
         }
-    }    
+    }
+
 }

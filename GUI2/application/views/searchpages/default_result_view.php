@@ -25,7 +25,15 @@ if ($report_result['meta']['count'] > 0) {
     echo '</div>';
     include 'paging_footer.php';
 } else {
-    echo"<div class=\"clearboth\"></div><div class='info'>" . $this->lang->line("no_data") . "</div>";
+
+    // additional info message for patch insallted, available and software report
+    $additionalWarningMessage = "";
+    $reportTypesArray = array('patches-installed','software-installed','patches-available');
+    if (in_array($report_type, $reportTypesArray)) {
+       $additionalWarningMessage =  $this->lang->line("if_only_package_promise");
+    }
+
+    echo"<div class=\"clearboth\"></div><div class='info'>" . $this->lang->line("no_data")." ".$additionalWarningMessage. "</div>";
 }
 ?>
 </div>

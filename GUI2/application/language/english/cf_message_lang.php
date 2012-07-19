@@ -91,6 +91,7 @@ $lang['notes'] = 'Notes';
  * and open the template in the editor.
  */
 $lang['no_data'] 	         = 'Sorry, this report is empty.';
+$lang['if_only_package_promise'] = 'This report will only contain data if there is a packages promise in the policy.';
 $lang['license_to']               ='This edition is licensed to ';
 $lang['front_greeting']          ='CFEngine 3 Enterprise';
 $lang['report_hostgp_help']    ='A set of classes to include and exclude to get a list of desired hosts';
@@ -284,4 +285,5 @@ $lang['unknown_error'] = "Unknown error - description out of bounds";
  */
 $lang['cf_mod_expection_error']='Server Internal Error.';
 $lang['warning_only_suse'] = "This report is only supported for SUSE platforms";
+$lang['warning_only_suse_redhat'] = "This report is only supported for SUSE and Redhat platforms";
 ?>

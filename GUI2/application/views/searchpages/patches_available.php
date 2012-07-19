@@ -10,6 +10,9 @@
             <?php if ($report_type == "patches-installed") { ?>
                 <div class="warning"><label><?php echo $this->lang->line('warning_only_suse'); ?></label></div>
             <?php } ?>
+             <?php if ($report_type == "patches-available") { ?>
+                <div class="warning"><label><?php echo $this->lang->line('warning_only_suse_redhat'); ?></label></div>
+            <?php } ?>
             <?php $this->load->view('searchpages/buttons_for_filter', array('morefilters' => true)); ?>
             <?php $this->load->view('searchpages/hidden_fields_for_set_context'); ?>
           </form>

@@ -46,7 +46,7 @@ $lang['update_successful'] 		 	 = 'Account information updated successfully';
 $lang['update_unsuccessful'] 		 	 = 'Unable to update account information';
 $lang['user_delete_successful'] 		 	 = 'User deleted';
 $lang['user_delete_unsuccessful'] 		 	 = 'Unable to delete user';
-$lang['one_admin_required']                                        ="At least one admin account is required by CFEngine Nova Mission Portal";
+$lang['one_admin_required']                                        ="At least one admin account is required by CFEngine Enterprise Mission Portal";
 
 //role createion
 $lang['role_creation_successful']              ="Role created successfully";
@@ -58,7 +58,7 @@ $lang['role_delete_successful']                = 'Role deleted';
 $lang['role_delete_unsuccessful']              = 'Unable to delete role';
 $lang['role_update_successful']                = 'Role information updated successfully';
 $lang['role_update_unsuccessful']              = 'Unable to update role';
-$lang['no_roles_for_user']                     = "User does not belong to any role, but can login to the Nova Mission Portal with limited access";
+$lang['no_roles_for_user']                     = "User does not belong to any role, but can login to the Enterprise Mission Portal with limited access";
 $lang['backend_error']                         = "Cannot connect to the user database. Please make sure it exists.";
 $lang['admin_role_deletion']                   = "Cannot delete the admin role";
 $lang['no_admin_role']                         = "No admin role selected yet";

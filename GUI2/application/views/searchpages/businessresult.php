@@ -61,11 +61,11 @@
                <?php if ($report_result['meta']['count'] > 0 ) {
                   $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 5);
                   include 'paging_footer.php';
-                  if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
+                  ?>
                     <?php if (isset($report_link) && !empty($report_link)) { ?>
                         <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
                         <?php } ?>
-               <?php } } ?>
+               <?php } ?>
             </div>
             <div class="clear"></div> 
             <div id="mainResultTable">
@@ -104,7 +104,7 @@
                         <label for="from_contacts">From: </label>
                         <input type="text" class="" value="<?php echo $fromEmail ?>" id="from_contacts" name="from_contacts" size="50" />
                         <label for="mail_subject">Subject: </label>
-                        <input type="text" class="" value="" id="mail_subject" name="mail_subject"  size="50" />
+                        <input type="text" class="" value="<?php echo $report_title; ?>" id="mail_subject" name="mail_subject"  size="50" />
 
 
                         <label for="mail_desc">Message: </label>
@@ -193,41 +193,58 @@
                                 $('#tempdiv',$dialog).show().removeClass('error');
                                 $('#tempdiv',$dialog).addClass('info');
                                 $('#tempdiv',$dialog).append(data.message);
-                                $(":button:contains('Send')").hide();
+                                $(":button:contains('Ok')").hide();
                                 $('#tempdiv').find('a').live('click',function() {
                                     $dialog.dialog('close');
                                 });
                             } else {
-                                     // we are not getting anything from server, must probably an error case
-                                    var  error = "Something went wrong while generating this report.Please check the logs for more details.";
-                                    $('#loading',$dialog).slideUp();
-                                    $('#tempdiv',$dialog).removeClass('info');
-                                    $('#tempdiv',$dialog).addClass('error');
-                                    $('#tempdiv',$dialog).show().html(error);
+                                // we are not getting anything from server, must probably an error case
+                                var  error = "Something went wrong while generating this report.Please check the logs for more details.";
+                                $('#loading',$dialog).slideUp();
+                                $('#tempdiv',$dialog).removeClass('info');
+                                $('#tempdiv',$dialog).addClass('error');
+                                $('#tempdiv',$dialog).show().html(error);
+                                $(":button:contains('Ok')").hide();
+                                $(":button:contains('Redo')").show();
                             }
 
                         },
                         error: function(jqXHR, textStatus, errorThrown){
-                            $('#loading',$dialog).slideUp(); 
+                            $('#loading',$dialog).slideUp();
                             $('#tempdiv',$dialog).removeClass('info');
-                            $('#tempdiv',$dialog).addClass('error');                                
+                            $('#tempdiv',$dialog).addClass('error');
+                            var  error = "Something went wrong while generating this report.Please check the logs for more details.";
+
+                            if (!errorThrown || 0 === errorThrown.length) {
+                                errorThrown = error;
+                            }
                             $('#tempdiv',$dialog).show().html(errorThrown);
+                            $(":button:contains('Ok')").hide();
+                            $(":button:contains('Redo')").show();
+
                         }
                     });
 
                 },
                 'Cancel': function() {
-                    $('#loading',$dialog).hide(); 
+                    $('#loading',$dialog).hide();
                     $('#tempdiv',$dialog).html('');
                     $('#tempdiv',$dialog).addClass('info');
                     $(this).dialog('close');
+                },
+                'Redo': function() {
+                    $('#loading',$dialog).hide();
+                    $('#tempdiv',$dialog).html('').removeClass();
+                    $(":button:contains('Redo')").hide();
+                    $(":button:contains('Ok')").show();
+
                 }
             },
             open: function() {
                 $('form',$dialog).show();
                 $('#to_contacts',$dialog).focus();
                 $('#tempdiv',$dialog).html('').hide();
-                $(":button:contains('Send')").show();
+                $(":button:contains('Redo')").hide();
                 $(":button:contains('Cancel')").show();
                 $(":button:contains('Ok')").show();
             },
