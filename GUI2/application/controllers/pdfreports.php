@@ -90,7 +90,7 @@ class pdfreports extends Cf_Controller
 
         if (trim($report_format) === 'pdf')
         {
-            $filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.pdf';
+            $filename = 'CFEngine_Enterprise_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.pdf';
 
             $pdf = $this->cf_pdf;
             try
@@ -111,7 +111,7 @@ class pdfreports extends Cf_Controller
         }
         else if (trim($report_format) === 'csv')
         {
-            $filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.csv';
+            $filename = 'CFEngine_Enterprise_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.csv';
             $this->cf_csv->setFileName($filename);
             $this->reportGenerator = $this->cf_csv;
         }
@@ -205,10 +205,10 @@ class pdfreports extends Cf_Controller
         {
             try
             {
-                $to = $_POST['to'];
-                $from = $_POST['from'];
-                $subject = $_POST['subject'];
-                $msg = $_POST['message'];
+                $to      = $this->input->post('to');
+                $from    = $this->input->post('from');
+                $subject = $this->input->post('subject'); 
+                $msg     = $this->input->post('message'); 
                 // write the file
                 // check for directory
                 $this->checkTempDir();
