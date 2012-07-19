@@ -35,7 +35,7 @@ class authentication_model_mongo extends CI_Model
         return TRUE;
     }
     
-    public function add_last_login_ldap($username,$mode)
+    public function add_last_login($username,$mode)
     {
         $this->load->helper('date');
         $data=array(
