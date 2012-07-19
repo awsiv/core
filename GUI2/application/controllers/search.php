@@ -266,6 +266,7 @@ class Search extends Cf_Controller
                  {
                        $paramArray[$index] = '';
                  }
+             $paramArray[$index] = urldecode($value);
         }
 
         // do a redirect here if it is a post
