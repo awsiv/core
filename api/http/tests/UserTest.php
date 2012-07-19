@@ -65,7 +65,7 @@ class UserTest extends APIBaseTest
 
             //test if only email was edited
             $this->pest->setupAuth("snookie", "pass");
-            $response=$this->getResults('');
+            $response = $this->getResults('');
             $this->assertValidJson($response);
         }
         catch (Exception $e)
@@ -101,15 +101,18 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testBrowseOwnDetails(){
-        try{
-          $this->pest->setupAuth("snookie", "pass");
-          $users=$this->getResults('/user/snookie');
-         
-          $this->assertEquals('snookie', $users[0]['username']);
-          $this->assertEquals('snookie2@cfengine.com',$users[0]['email']);
+    public function testBrowseOwnDetails()
+    {
+        try
+        {
+            $this->pest->setupAuth("snookie", "pass");
+            $users = $this->getResults('/user/snookie');
 
-         }catch(Exception $e){
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
+        }
+        catch (Exception $e)
+        {
             $this->fail($e);
         }
     }
@@ -153,26 +156,18 @@ class UserTest extends APIBaseTest
         }
     }
 
-    
-     public function testRandomUserLogin(){
-        try{
-           $this->pest->setupAuth("asdasd", "asdasdsa");
-           $this->assertEquals(401, $this->pest->lastStatus());
-        }catch(Exception $e){
-               $this->fail($e);
+    public function testRandomUserLogin()
+    {
+        try
+        {
+            $this->pest->setupAuth("asdasd", "asdasdsa");
+            $this->assertEquals(401, $this->pest->lastStatus());
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
         }
     }
-
-    
-     public function testRandomUserLogin(){
-        try{
-           $this->pest->setupAuth("asdasd", "asdasdsa");
-           $this->assertEquals(401, $this->pest->lastStatus());
-        }catch(Exception $e){
-               $this->fail($e);
-        }
-    }
-    
 
     public function testUserNotFound()
     {
