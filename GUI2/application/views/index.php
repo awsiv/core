@@ -45,7 +45,7 @@
 
                   <div id="licenseinfo"class="push_4"><?php
                       echo $this->lang->line('license_to');
-                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo showqtip', 'title'=>tooltip('tooltip_license_report')));?></div>
+                      echo  anchor('welcome/license',$licenseOwner,array('class'=>'licenseinfo showqtip', 'title'=>tooltip('tooltip_license_report')));?></div>
                   <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">
                       <div></div>
