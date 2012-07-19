@@ -283,4 +283,5 @@ $lang['promise_body_null'] = " No promise body found";
  */
 $lang['cf_mod_expection_error']='Server Internal Error.';
 $lang['warning_only_suse'] = "This report is only supported for SUSE platforms";
+$lang['warning_only_suse_redhat'] = "This report is only supported for SUSE and Redhat platforms";
 ?>
