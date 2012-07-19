@@ -161,7 +161,13 @@ class UserTest extends APIBaseTest
         try
         {
             $this->pest->setupAuth("asdasd", "asdasdsa");
-            $this->assertEquals(401, $this->pest->lastStatus());
+            $this->getResults('');
+            $this->fail("Should not reach");
+        }
+        catch (Pest_Unauthorized $e)
+        {
+            // pass
+            return;
         }
         catch (Exception $e)
         {
