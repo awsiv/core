@@ -4,6 +4,7 @@ require_once "APIBaseTest.php";
 
 class SettingsTest extends APIBaseTest
 {
+
     public function testGetSettings()
     {
         try
@@ -76,12 +77,12 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
-     public function testUpdateLdapSetting()
+
+    public function testUpdateLdapSetting()
     {
         try
         {
-           $this->pest->post('/settings', '{
+            $this->pest->post('/settings', '{
                 "ldapHost": "yahoo.com",
                 "ldapBaseDN":"dc=cfengine;dc=com",
                 "ldapLoginAttribute":"uid",
@@ -93,22 +94,22 @@ class SettingsTest extends APIBaseTest
 
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
-            $this->assertEquals('ldap',$settings[0]['authMode']);
+            $this->assertEquals('ldap', $settings[0]['authMode']);
             $this->assertEquals('yahoo.com', $settings[0]['ldapHost']);
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
             $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);
             $this->assertEquals('ou=jersey', $settings[0]['ldapUsersDirectory']);
-            //$this->assertEquals('shore', $settings[0]['ldapUsersDirectory'][1]);
+//$this->assertEquals('shore', $settings[0]['ldapUsersDirectory'][1]);
             $this->assertEquals('ssl', $settings[0]['ldapEncryption']);
-            //$this->assertEquals('ronnie', $settings[0]['externalAdmin']);
+//$this->assertEquals('ronnie', $settings[0]['externalAdmin']);
         }
         catch (Pest_Exception $e)
         {
             $this->fail($e);
         }
     }
-    
-     public function testLdapLogin()
+
+    public function testLdapLogin()
     {
         try
         {
@@ -125,12 +126,11 @@ class SettingsTest extends APIBaseTest
             $this->pest->setupAuth("ronnie", "password");
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
-              
         }
         catch (Pest_Exception $e)
         {
             $this->fail($e);
         }
     }
-    
+
 }
