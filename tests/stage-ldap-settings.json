@@ -1,0 +1,8 @@
+{
+    "authMode": "ldap",
+    "ldapHost": "ldap.intra.cfengine.com",
+    "ldapBaseDN": "dc=cfengine,dc=com",
+    "ldapLoginAttribute": "uid",
+    "ldapUsersDirectory": "ou=people",
+    "ldapEncryption": "ssl",
+}
