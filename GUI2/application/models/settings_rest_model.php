@@ -53,10 +53,12 @@ class Settings_rest_model extends Cf_Model
         }
         catch (Pest_UnknownResponse $e)
         {
+             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw new Exception('Cannot find the rest server.');
         }
         catch (Exception $e)
         {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
 
@@ -72,6 +74,7 @@ class Settings_rest_model extends Cf_Model
             }
             catch (Exception $e)
             {
+                 log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
                 throw $e;
             }
         }

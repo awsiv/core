@@ -102,12 +102,10 @@ class Auth extends cf_controller
         $this->data['username'] = $this->session->userdata('username');
         $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
 
-        // get system settings to protect "fall_back_for" user from editing
-        $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
-
+        
         // get system setting for RBAC, if it is OFF - show warning message on users and roles page
         $this->data['rbac_setting'] = $this->setting_lib->get_rbac_setting();
-
+        
         //list the users
         $this->data['users'] = $this->ion_auth->get_users_array();
         $this->data['breadcrumbs'] = $this->breadcrumblist->display();

@@ -22,7 +22,7 @@ class Setting_lib
         $this->settings_model=$this->ci->settings_model;
      
         $this->settings_rest_model=$this->ci->settings_rest_model;
-        $this->settings_rest_model->setRestClient($this->ci->ion_auth->getRestClient());
+        $this->settings_rest_model->setRestClient($this->ci->getRestClient());
     }
 
     public function get_blue_host_threshold()

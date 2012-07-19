@@ -77,6 +77,25 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
+    
+     public function testUpdateSettingRbac()
+    {
+        try
+        {
+            $this->pest->post('/settings', '{
+                "rbac": false
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals(3600, $settings[0]['blueHostHorizon']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 
     public function testUpdateLdapSetting()
     {
@@ -124,7 +143,7 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $this->pest->setupAuth("ronnie", "password");
-            $settings = $this->getResults('');
+            $settings = $this->getResults('/');
             $this->fail("Should not reach");
         }
         catch (Pest_Unauthorized $e)
@@ -137,5 +156,7 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
+    
+    
 
 }
