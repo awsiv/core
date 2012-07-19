@@ -83,7 +83,7 @@ class SettingsTest extends APIBaseTest
         try
         {
             $this->pest->post('/settings', '{
-                "ldapHost": "yahoo.com",
+                "ldapHost": "yahoo.comxxx",
                 "ldapBaseDN":"dc=cfengine;dc=com",
                 "ldapLoginAttribute":"uid",
                 "ldapUsersDirectory":"ou=jersey",
@@ -95,7 +95,7 @@ class SettingsTest extends APIBaseTest
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
             $this->assertEquals('ldap', $settings[0]['authMode']);
-            $this->assertEquals('yahoo.com', $settings[0]['ldapHost']);
+            $this->assertEquals('yahoo.comxxx', $settings[0]['ldapHost']);
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
             $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);
             $this->assertEquals('ou=jersey', $settings[0]['ldapUsersDirectory']);
@@ -109,12 +109,12 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testLdapLogin()
+    public function testLdapBadLogin()
     {
         try
         {
             $this->pest->post('/settings', '{
-                "ldapHost":"yahoo.com",
+                "ldapHost":"yahoo.comxxx",
                 "ldapBaseDN":"dc=cfengine;dc=com",
                 "ldapLoginAttribute":"uid",
                 "ldapUsersDirectory":"ou=jersey",
@@ -124,8 +124,13 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $this->pest->setupAuth("ronnie", "password");
-            $settings = $this->getResults('/settings');
-            $this->assertValidJson($settings);
+            $settings = $this->getResults('');
+            $this->fail("Should not reach");
+        }
+        catch (Pest_Unauthorized $e)
+        {
+            // pass
+            return;
         }
         catch (Pest_Exception $e)
         {
