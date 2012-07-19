@@ -851,7 +851,7 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
 char *Name2Id(char *s);
 void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *inferences);
 
-void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version);
+void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version);
 void Nova_BundleReference(FILE *fp, char *bundle);
 void Nova_TypeNode(FILE *fp, char *type);
 void Nova_PromiseNode(FILE *fp, Promise *pp, int calltype);
@@ -860,7 +860,7 @@ void Nova_BundleNode(FILE *fp, char *bundle);
 void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
-void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id);
+void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id);
 void Nova_ShowBundleDependence(FILE *fp);
 char *NovaEscape(const char *s);        /* Thread-unsafe */
 void NovaShowValues(FILE *fp, BodySyntax bs);
@@ -941,26 +941,6 @@ int Nova_ValidateRegistryPromiser(char *s, Attributes a, Promise *pp);
 
 int CheckRegistrySanity(Attributes a, Promise *pp);
 
-/* reporting.c */
-
-void Nova_SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot,
-                                   char *web);
-void Nova_NoteVarUsage(void);
-void Nova_SummarizeComms(void);
-void Nova_ZenossSummary(const char *docroot);
-void Nova_NoteVarUsageDB(void);
-
-void Nova_OpenCompilationReportFiles(const char *fname);
-void Nova_ShowPromises(const Bundle *bundles, const Body *bodies);
-void Nova_ShowPromise(const char *version, Promise *pp, int indent);
-int Nova_ExportReports(char *reportName);
-void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char *classregex);
-
-#ifdef HAVE_LIBMONGOC
-void Nova_ImportReports(const char *input_file);
-
-int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin);
-#endif
 
 void Nova_TrackExecution();
 

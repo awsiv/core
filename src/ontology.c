@@ -107,7 +107,7 @@ void Nova_RegisterDoc(Item **list, char *dir, char *doc)
 
 /*********************************************************************/
 
-void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
+void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 {
     char promise_id[CF_BUFSIZE];
     Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
@@ -1071,7 +1071,7 @@ void NovaShowValues(FILE *fp, BodySyntax bs)
 
 /*****************************************************************************/
 
-void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id)
+void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id)
 {
     Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
     Bundle *bp;

@@ -5,11 +5,10 @@
 
 */
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
-#include "cf.nova.h"
-#include "cf.nova.cmd_api.h"
+#include "nova-reporting.h"
 
+#include "cf3.extern.h"
+#include "cf.nova.cmd_api.h"
 #include "env_context.h"
 #include "lastseen.h"
 #include "files_names.h"
@@ -2306,7 +2305,7 @@ void Nova_OpenCompilationReportFiles(const char *fname)
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(const Bundle *bundles, const Body *bodies)
+void Nova_ShowPromises(ReportOutputType type, const Bundle *bundles, const Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
 
@@ -2316,19 +2315,19 @@ void Nova_ShowPromises(const Bundle *bundles, const Body *bodies)
     }
 
 #else
-    ShowPromisesInReport(bundles, bodies);
+    ShowPromisesInReport(type, bundles, bodies);
 #endif
 }
 
 /*****************************************************************************/
 
-void Nova_ShowPromise(const char *version, Promise *pp, int indent)
+void Nova_ShowPromise(ReportOutputType type, const char *version, const Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
 
     if (SHOWREPORTS)
     {
-	CFDB_SaveExpandedPromise(pp);
+        CFDB_SaveExpandedPromise(pp);
     }
 
     if (FKNOW)
@@ -2336,7 +2335,7 @@ void Nova_ShowPromise(const char *version, Promise *pp, int indent)
         Nova_MapPromiseToTopic(FKNOW, pp, version);
     }
 #else
-    ShowPromiseInReport(version, pp, indent);
+    ShowPromiseInReport(type, version, pp, indent);
 #endif
 }
 

@@ -37,7 +37,7 @@ libcfnova_la_SOURCES = \
         promises.c \
         processes.c \
         pscalar.c \
-        reporting.c \
+        nova-reporting.c nova-reporting.h \
         syntax.c \
         copernicus.c \
         conversion.c

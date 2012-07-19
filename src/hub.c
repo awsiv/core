@@ -21,7 +21,7 @@
 #include "hub-worker.h"
 #include "item_lib.h"
 #include "conversion.h"
-#include "reporting.h"
+#include "nova-reporting.h"
 
 /*******************************************************************/
 

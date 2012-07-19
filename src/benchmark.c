@@ -7,6 +7,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "benchmark.h"
 
 #include "db_save.h"
+#include "nova-reporting.h"
 
 int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
 /**
