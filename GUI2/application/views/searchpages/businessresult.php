@@ -104,7 +104,7 @@
                         <label for="from_contacts">From: </label>
                         <input type="text" class="" value="<?php echo $fromEmail ?>" id="from_contacts" name="from_contacts" size="50" />
                         <label for="mail_subject">Subject: </label>
-                        <input type="text" class="" value="" id="mail_subject" name="mail_subject"  size="50" />
+                        <input type="text" class="" value="<?php echo $report_title; ?>" id="mail_subject" name="mail_subject"  size="50" />
 
 
                         <label for="mail_desc">Message: </label>
