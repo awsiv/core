@@ -19,7 +19,10 @@
      </p>
       <p>
         <label for="num_rows">Default number of rows shown in reports table <span class="required">*</span></label>
-        <input id="num_rows" type="text" name="num_rows" maxlength="50" value="<?php echo empty($num_rows)?20:$num_rows; ?>"  />
+        <?php
+         $arrayListRows = array("25"=>"25","50"=>"50","100"=>"100","250"=>"250","500"=>"500","1000"=>"1000");
+         echo form_dropdown('num_rows', $arrayListRows,array(0=>$num_rows));
+        ?>
      </p>
 
      <p  id="btnholder">
