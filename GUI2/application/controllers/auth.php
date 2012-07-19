@@ -46,7 +46,7 @@ class Auth extends Controller
             redirect('auth/login', 'refresh');
         }
         $this->data['title'] = $this->lang->line('mission_portal_title') . " - Admin";
-        $this->data['username'] = $this->session->userdata('username');
+        $this->data['username'] = $this->session->userdata('username');  
         //list the users
         $this->data['userroles'] = $this->session->userdata('roles');
         $this->data['is_admin'] = $this->ion_auth->is_admin();
@@ -110,6 +110,9 @@ class Auth extends Controller
 
         // get system settings to protect "fall_back_for" user from editing
         $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
+
+        // get system setting for RBAC, if it is OFF - show warning message on users and roles page
+        $this->data['rbac_setting'] = $this->setting_lib->get_rbac_setting();
 
         //list the users
         $this->data['users'] = $this->ion_auth->get_users_array();

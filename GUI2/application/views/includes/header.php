@@ -32,7 +32,7 @@ if($this->agent->is_browser('Opera'))
              });
    });
 </script>
-<?
+<?php
   }
 if($this->agent->is_browser('Safari')){
 ?>
