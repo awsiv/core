@@ -482,14 +482,8 @@ class Auth extends cf_controller
 
     function view_profile()
     {
-        if ($this->setting_lib->get_authentication_mode() != 'internal')
-        {
-            $userdata = $this->ion_auth->get_ldap_user_details_from_local_db($this->session->userdata('user_id'));
-        }
-        else
-        {
-            $userdata = $this->ion_auth->get_user($this->session->userdata('username'));
-        }
+       
+        $userdata = $this->ion_auth->get_user($this->session->userdata('username'));
 
         $this->data['user'] = $userdata;
 
