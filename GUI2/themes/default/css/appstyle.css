@@ -3416,3 +3416,11 @@ input[type="checkbox"]{
   margin:10px 0;
 }
 
+.rback_off_warning {
+    float: right; 
+    margin:10px 10px 10px 0; 
+    background: #fff;
+    border: 1px solid red; 
+    padding: 5px; 
+    border-radius: 5px 5px 5px 5px;
+}

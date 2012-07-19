@@ -33,13 +33,17 @@ if($is_admin){?>
     <a class="green_btn" id="add_role" href="<?php echo site_url("auth/manage_role/create") ?>" form="role">
         <span>Add Role</span>
     </a>
-    
-    
-  
 </p>
 <?php } ?>
 
 <?php } else { ?>
-
-<div id="infoMessage"><?php echo $this->lang->line('nothing_found'); ?></div>
+        <div id="infoMessage">
+            <?php 
+            if($is_admin) { 
+                echo $this->lang->line('nothing_found');
+            } else { 
+                echo $this->lang->line('no_permission');
+            }
+            ?>
+        </div>
 <?php } ?>

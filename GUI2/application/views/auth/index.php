@@ -3,15 +3,18 @@
     <div class="innerdiv">
         <div id="infoMessage"><?php echo $message; ?></div> 
         <div id="darktabs" class="user_roles_management">
-            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="margin-left: 0px;">        
+            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="margin-left: 0px;">    
+                <?php if ($rbac_setting !== true && $is_admin == true) { ?>
+                    <div class="rback_off_warning">RBAC is currently <b>globally off</b>, remember to turn it <b>on</b> in <a href="<?php echo site_url('auth/setting')?>">Mission Portal settings</a> to enforce it.</div>
+                <?php } ?>
                 <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                     <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
                         <a href="<?php echo site_url('auth/index'); ?>">Users</a>
                     </li>
                     <li class="ui-state-default ui-corner-top">
                         <a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a>
-                    </li>
-                </ul>        
+                    </li> 
+                </ul>
                 <div class="holder">
                     <div id="error_status"></div>
                     <div id="admin_content" class="tables">
