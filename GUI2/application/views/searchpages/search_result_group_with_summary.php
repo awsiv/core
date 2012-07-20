@@ -1,6 +1,6 @@
 <?php $displayText = ($report_type == "promise-compliance") ? 'promise' : 'bundle'; ?>
 <?php
-if (is_array($report_result) && !empty($report_result['data'])) {
+if (is_array($report_result) && !empty($report_result['meta'])) {
     if (isset($report_result['meta']['old_skipped']) &&
         $report_result['meta']['old_skipped'] > 0) {
         echo "<div class='warning'> Warning: You are running an older version of CFEngine on ";
