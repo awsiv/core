@@ -17,7 +17,7 @@
                  ?>
                 <?php echo form_open("login/index");?>
                 <input type="hidden" id="type_form" name="type_form" value="login"></input>
-                    <h3>Login <span class="modeinfo">(<?php echo $mode?>)</span></h3>
+                <h3>Login <span class="modeinfo"><?php echo isset ($mode) ?"(".$mode.")" :""?></span></h3>
                      <hr></hr>
                     <p>
                       <label for="<?php echo strtolower($lbl_identifier);?>"><?php echo $lbl_identifier;?></label>

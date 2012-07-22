@@ -107,14 +107,17 @@ class Login extends cf_base_controller
                 'id' => 'password',
                 'type' => 'password',
             );
-            $mode = $this->setting_lib->get_authentication_mode();
-            if ($mode != '' || $mode !== false)
+            
+            // need to be discuseed for exposing this before login 
+            //$mode = $this->setting_lib->get_authentication_mode();
+            $mode = "";
+            if ($mode != '' && $mode !== false)
             {
                 $this->data['mode'] = $this->lang->line('login_' . $mode);
             }
             else
             {
-                $this->data['mode'] = $this->lang->line('login_mode_not_found');
+               // $this->data['mode'] = $this->lang->line('login_mode_not_found');
             }
 
 
