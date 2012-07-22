@@ -16,16 +16,20 @@
                     <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $this->lang->line($type )?> hosts</span>
                     </p>
        <?php
-           echo $tabledata;
+               echo form_open($this->uri->uri_string());
+               echo form_submit('submit', 'Delete Selected hosts');
+               echo $tabledata; 
+               echo form_close();
+               
                 $pg = paging($current, $number_of_rows, $count, 10);?>
                 <div class="Paging">
                 <div class="pages">
                     <div class="inside">
                         <?php 
-                        $first = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['first']);
-                        $prev = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/". $pg['prev']);
-                        $next = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['next']);
-                        $last= site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['last']);
+                        $first = site_url("welcome/hosts/$type/$params"."rows/$number_of_rows/page/" . $pg['first']);
+                        $prev = site_url("welcome/hosts/$type/$params"."rows/$number_of_rows/page/". $pg['prev']);
+                        $next = site_url("welcome/hosts/$type/$params"."rows/$number_of_rows/page/" . $pg['next']);
+                        $last= site_url("welcome/hosts/$type/$params"."rows/$number_of_rows/page/" . $pg['last']);
                         ?>
                         <a href="<?php echo $first?>" title="Go to First Page" class="first"><span>First</span></a>
                         <a href="<?php echo $prev?>" title="Go to Previous Page" class="prev"><span><</span></a>

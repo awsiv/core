@@ -313,8 +313,9 @@ class cf_table {
                 $btns = anchor('visual/vital/' . $cols['key'], ' ', array('title' => $this->CI->lang->line('tooltip_vital_signs'), 'class' => 'vitalsbtn showqtip'))
                         . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));
                 $cell3 = array('data' => $btns, 'class' => 'actioncol');
+                $delChkBox=array('name'=>'host[]','value'=>$cols['key'],'style'=>'margin-right:9px');
                 $this->CI->table->add_row(array(
-                    anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
+                    form_checkbox($delChkBox).anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
                     $cell2,
                     $cell3
                 ));
@@ -324,8 +325,9 @@ class cf_table {
                 $btns = anchor('visual/vital/' . $cols['key'], ' ', array('title' => $this->CI->lang->line('tooltip_vital_signs'), 'class' => 'vitalsbtn showqtip'))
                         . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));
                 $cell3 = array('data' => $btns, 'class' => 'actioncol');
+                $delChkBox=array('name'=>'host[]','value'=>$cols['key'],'style'=>'margin-right:9px');
                 $this->CI->table->add_row(array(
-                    anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
+                    form_checkbox($delChkBox).anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
                     $cell2,
                     $cell3
                 ));
@@ -334,8 +336,9 @@ class cf_table {
                         . anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'))
                         . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title'=>tooltip('tool_tip_host_delete'), 'class' => 'deletehostbtn showqtip'));
                 $cell = array('data' => $lnk, 'class' => 'actioncol');
+                $delChkBox=array('name'=>'host[]','value'=>$cols['key'],'style'=>'margin-right:9px');
                 $this->CI->table->add_row(array(
-                    anchor('welcome/host/' . $cols['key'], $title, 'class=""'),
+                    form_checkbox($delChkBox).anchor('welcome/host/' . $cols['key'], $title, 'class=""'),
                     $cell,
                 ));
             }
