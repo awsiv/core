@@ -5,7 +5,9 @@ if(db["appsettings"].findOne())
     db["appsettings"].update({},{$set:{
 	"bluehost_threshold_global": "3000000",
 	"external_admin_username": "",
-	"rbac" : "false"
+	"rbac" : "false",
+        "admin_role":"admin",
+        "fall_back_for":"admin"
     }}, false, true);
 }
 else
