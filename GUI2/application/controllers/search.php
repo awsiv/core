@@ -45,28 +45,6 @@ class Search extends Cf_Controller
         );
     }
 
-    /**
-     * Function to convert associative array to path segement
-     * Discards the empty value
-     */
-    function assoc_to_uri($array, $removekeys=array())
-    {
-        $temp = array();
-        foreach ((array) $array as $key => $val)
-        {
-            if (trim($val))
-            {
-                
-                if (!in_array($key, $removekeys))
-                {
-                    $temp[] = $key;
-                    $temp[] = urlencode($val);
-                }
-            }
-        }
-        return implode('/', $temp);
-    }
-
     function __reports_menu()
     {
         try
@@ -274,7 +252,7 @@ class Search extends Cf_Controller
         if (strtolower($_SERVER["REQUEST_METHOD"]) === "post")
         {
             // redirect with correct params
-            redirect('search/index/' . $this->assoc_to_uri($paramArray, array('fromText', 'toText')));
+            redirect('search/index/' . assoc_to_uri($paramArray, array('fromText', 'toText')));
         }
 
         try
