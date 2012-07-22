@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Cf_REST_Controller extends CI_Controller
+class Cf_REST_Controller extends cf_base_controller
 {
 
     protected $request = NULL;
@@ -16,14 +16,10 @@ class Cf_REST_Controller extends CI_Controller
     {
         parent::__construct();
 
-        initializeHub();
 
         $this->load->library(array(
             'security',
-            'setting_lib',
-            'ion_auth',
-            'OnlineUsers'
-        ));
+            ));
 
         if (!$this->ion_auth->logged_in() && !is_ajax())
         {
