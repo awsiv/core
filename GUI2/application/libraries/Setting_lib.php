@@ -74,8 +74,7 @@ class Setting_lib
      * @return type Example results: database, ldap, active_directory
      */
     public function get_authentication_mode() {
-       // return $this->settings_rest_model->app_settings_get_item('authMode');
-        return 'internal';
+       return $this->settings_rest_model->app_settings_get_item('authMode');
     }
 
 }
