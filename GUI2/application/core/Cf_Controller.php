@@ -79,17 +79,20 @@ class Cf_Controller extends cf_base_Controller
     function __construct()
     {
         parent::__construct();
-
+        
         if (!$this->ion_auth->logged_in() && !is_ajax())
         {
-            redirect('login/index', 'refresh');
+       
+            if (!$this->ion_auth->login_remembered_user())
+            {
+                redirect('login/index', 'refresh');
+            }
+            
         }
-        else
-        {
-            $this->onlineusers->onlineusers();
-            $this->setRestClientAuthentication();
-        }
-
+        
+        $this->onlineusers->onlineusers();
+        $this->setRestClientAuthentication();
+     
         $this->ion_auth->setRestClient($this->getRestClient());
         $this->getProductName();
     }
