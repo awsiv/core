@@ -118,17 +118,30 @@ bundle agent update_bins
 
  packages:
 
-  # update packages after all Cfengine have been killed
+  # update packages after all CFEngine have been killed
 
-  stopped_cfprocs::
+  stopped_cfprocs.!windows::
 
    "$(novapkg)"
                     comment => "Update Nova package to a newer version",
-                     handle => "update_bins_packages_nova_update_all",
+                     handle => "update_bins_packages_nova_update_not_windows",
              package_policy => "update",
              package_select => ">=",            # picks the newest Nova available
       package_architectures => { "$(pkgarch)" },
             package_version => "9.9.9",         # Install new Nova anyway
+             package_method => u_generic( "$(local_software_dir)" ),
+                 ifvarclass => "nova_edition",
+                    classes => u_if_else("bin_update_success", "bin_update_fail");
+
+  stopped_cfprocs.windows::
+
+   "$(novapkg)" 
+                    comment => "Update Nova package to a newer version",
+                     handle => "update_bins_packages_nova_update_windows_only",
+             package_policy => "update",
+             package_select => ">=",            # picks the newest Nova available
+      package_architectures => { "$(pkgarch)" },
+            package_version => "9.9.9.9",       # Install new Nova anyway
              package_method => u_generic( "$(local_software_dir)" ),
                  ifvarclass => "nova_edition",
                     classes => u_if_else("bin_update_success", "bin_update_fail");
