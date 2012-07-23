@@ -187,7 +187,7 @@
                 $elem = array(
                     'name' => 'rbac',
                     'id' => 'rbac_on',
-                    'value' => 'true',
+                    'value' => 1,
                     'checked' => (isset($rbac) && $rbac ? TRUE : '')
                 );
                 echo form_radio($elem);
@@ -197,7 +197,7 @@
                 $elem = array(
                     'name' => 'rbac',
                     'id' => 'rbac_off',
-                    'value' => 'false',
+                    'value' => 0,
                     'checked' => (isset($rbac) && !$rbac ? TRUE : '')
                 );
                 echo form_radio($elem);

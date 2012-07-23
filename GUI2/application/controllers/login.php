@@ -63,9 +63,7 @@ class Login extends cf_base_controller
                 //$this->session->set_flashdata('message', $this->ion_auth->messages());
                 $username = trim($this->input->post($identifier));
                 $session_data = array(
-                    'username' => $username,
-                    'roles' => $this->ion_auth->get_user_role($username),
-                    'password' => $this->input->post('password')
+                    'roles' => $this->ion_auth->get_user_role($username)
                 );
                 $this->session->set_userdata($session_data);
                 $this->session->set_flashdata('message', $this->ion_auth->errors());

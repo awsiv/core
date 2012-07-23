@@ -5,6 +5,7 @@
  */
 class authentication_model_mongo extends CI_Model
 {
+  protected $collection='users';
   public function __construct()
     {
         parent::__construct();
@@ -14,7 +15,7 @@ class authentication_model_mongo extends CI_Model
     
     public function get_user($username,$mode)
     {
-        return $this->mongo_db->get_where_object('users', array('username' => $username, 'source'=>$mode), 1);
+        return $this->mongo_db->get_where_object($this->collection, array('username' => $username, 'source'=>$mode), 1);
     }
     
     public function is_first_login($username,$mode)
@@ -31,7 +32,7 @@ class authentication_model_mongo extends CI_Model
     {
         $this->load->helper('date');
         $this->mongo_db->where(array('username' => $username,'source'=>$mode));
-        $this->mongo_db->update('users', array('last_login' => now()));
+        $this->mongo_db->update($this->collection, array('last_login' => now()));
         return TRUE;
     }
     
@@ -44,8 +45,18 @@ class authentication_model_mongo extends CI_Model
                  "last_login"=>now()
         );
         $this->mongo_db->where(array('username' => $username,'mode'=>$mode));
-        $id = $this->mongo_db->insert('users', $data);
+        $id = $this->mongo_db->insert($this->collection, $data);
         return TRUE;
+    }
+    
+    public function update_remmember_code($username,$code)
+    {
+        $this->mongo_db->where(array('username' => $username));
+        $result=$this->mongo_db->update($this->collection, array('remember_code'=>$code)); 
+        if($result){
+            return TRUE;
+        }
+        return FALSE;
     }
     
     

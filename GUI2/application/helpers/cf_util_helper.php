@@ -92,28 +92,6 @@ function paging($page, $rp, $total, $limit) {
     return $paging;
 }
 
-/**
- * For using the array returned as a list  for autocompletion
- * @param <type> $report as array  and the column ie filter for which the autocompletion is to be done
- * @return json array
- * @author sudhir
- */
-function autocomplete($report_data, $column) {
-    $decoded_data = json_decode($report_data);
-    $column_index = $decoded_data->meta->header->$column;
-    $column = array();
-    foreach ($decoded_data->data as $rows) {
-        array_push($column, $rows[$column_index]);
-    }
-    $unique_elements = array_unique($column);
-    if (is_array($unique_elements)) {  //necessary because the array_unique some times return associative array
-        $val = array_values($unique_elements);
-        return json_encode($val);
-    } else {
-        return json_encode($unique_elements);
-    }
-}
-
 
 function getonlineusernames() {
     $onlineuser = array();
@@ -220,32 +198,6 @@ function formatSeconds($s) {
     return $str;
 }
 
-/**
- *
- * @param <type> $url
- * @param <type> $_data
- *
- */
-function notifier($url, $_data) {
-    //$_data=array("name"=>"sudhir","login"=>true);
-    $data = array();
-    while (list($n, $v) = each($_data)) {
-        $data[] = urlencode($n) . "=" . urlencode($v);
-    }
-    $data = implode('&', $data);
-    $ch = curl_init();
-
-    // set URL and other appropriate options
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    // grab URL and pass it to the browser
-    curl_exec($ch);
-
-    // close cURL resource, and free up system resources
-    curl_close($ch);
-}
 
 //checking the format of json data returned from the core before echoing back to user
 function sanitycheckjson($data, $noecho=false) {
@@ -488,6 +440,30 @@ function generate_errormessage($exception){
             $text .= '...';
 
         return $text;
+    }
+    
+    
+    
+     /**
+     * Function to convert associative array to path segement
+     * Discards the empty value
+     */
+    function assoc_to_uri($array, $removekeys=array())
+    {
+        $temp = array();
+        foreach ((array) $array as $key => $val)
+        {
+            if (trim($val))
+            {
+                
+                if (!in_array($key, $removekeys))
+                {
+                    $temp[] = $key;
+                    $temp[] = urlencode($val);
+                }
+            }
+        }
+        return implode('/', $temp);
     }
     
 

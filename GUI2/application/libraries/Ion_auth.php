@@ -135,14 +135,15 @@ class Ion_auth
         }
         //$this->mode='internal';
         //auto-login the user if they are remembered
-        if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
-        {
-            if ($this->ci->ion_auth_model_mongo->login_remembered_user() == TRUE)
-            {
-                $username = $this->ci->session->userdata('username');
-                $this->on_login_successful($username);
-            }
-        }
+        
+//        if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
+//        {
+//            if ($this->login_remembered_user() == TRUE)
+//            {
+//                $username = $this->ci->session->userdata('username');
+//                //$this->on_login_successful($username);
+//            }
+//        }
 
        /*$this->email = $this->settings_rest_model->app_settings_get_item('appemail');
         if (!($this->email || empty($this->email)))
@@ -340,15 +341,21 @@ class Ion_auth
      * @return void
      * @author Mathew
      * */
-    public function login($username, $password, $remember=false)
+    public function login($username, $password,$remember=false)
     {
         try
         {
             $val = $this->auth_model->login($username, $password);
             if (is_array($val) && !empty($val))
             {
+                $this->ci->session->set_userdata('username',$username);
+                $this->ci->session->set_userdata('password',$password);
                 $this->ci->session->set_userdata('mode',$val['authMode']);
                 $this->on_login_successful($username);
+                if ($remember)
+                {
+                    $this->remember_user($username, $password,$val['authMode']);
+                }
                 return true;
             }
             return false;
@@ -374,6 +381,57 @@ class Ion_auth
             $this->auth_model_mongo->update_last_login($username,$this->mode);
             }
     }
+    
+    
+    protected function remember_user($username,$password,$mode)
+    {
+        $this->ci->load->library('encrypt');
+        $passHash=sha1($password);
+        $encryptedPass=$this->ci->encrypt->encode($password, $passHash);
+        $ret=$this->auth_model_mongo->update_remmember_code($username,$passHash,$mode);
+        if ($ret)
+        {
+            set_cookie(array(
+                'name' => 'identity',
+                'value' => $username,
+                'expire' =>$this->ci->config->item('user_expire', 'ion_auth'),
+            ));
+            
+            set_cookie(array(
+                'name' => 'mode',
+                'value' => $mode,
+                'expire' => $this->ci->config->item('user_expire', 'ion_auth'),
+            ));
+
+            set_cookie(array(
+                'name' => 'remember_code',
+                'value' => $encryptedPass,
+                'expire' => $this->ci->config->item('user_expire', 'ion_auth'),
+            ));
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    
+    public function login_remembered_user(){
+        $this->ci->load->library('encrypt');
+       if (!get_cookie('identity') || !get_cookie('remember_code') || !get_cookie('mode'))
+        {
+            return FALSE;
+        }
+        
+        $username= get_cookie('identity');
+        $encryptedPass=get_cookie('remember_code');
+        $mode=get_cookie('mode');
+        $user=$this->auth_model_mongo->get_user($username,$mode);
+        if($user != NULL){
+            $password=$this->ci->encrypt->decode($encryptedPass,$user->remember_code);
+            $ret=$this->login($username, $password);
+            return $ret;
+        }
+        return FALSE;
+    }
 
     /**
      * logout
@@ -397,6 +455,10 @@ class Ion_auth
         if (get_cookie('remember_code'))
         {
             delete_cookie('remember_code');
+        }
+         if (get_cookie('mode'))
+        {
+            delete_cookie('mode');
         }
 
         $this->ci->session->sess_destroy();

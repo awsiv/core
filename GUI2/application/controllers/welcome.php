@@ -317,7 +317,8 @@ class Welcome extends Cf_Controller
         );
         $this->template->load('template', 'goals', $data);
     }
-
+    
+ 
     function hosts($colour = NULL)
     {
         if ($colour == NULL)
@@ -326,6 +327,7 @@ class Welcome extends Cf_Controller
             return;
         }
         $this->carabiner->js('jquery.tablesorter.min.js');
+        $username=$this->session->userdata('username');
         $result = array();
         $this->load->library(array('cf_table'));
         $getparams = $this->uri->uri_to_assoc(4);
@@ -337,25 +339,40 @@ class Welcome extends Cf_Controller
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $includes = isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array('.*');
         $excludes = isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array('');
+        
+        $toBeDeletedHosts=$this->input->post('host');
+        if($toBeDeletedHosts !==false && count($toBeDeletedHosts)>0){
+            foreach($toBeDeletedHosts as $host){
+              $this->host_model->deleteHost($username, $host);
+            }
+        }
+        $paramsArray=array_merge($getparams,array("rows"=>$rows));
+        // do a redirect here if it is a post
+        // fix for back button with Post/Redirect/Get
+        if (strtolower($_SERVER["REQUEST_METHOD"]) === "post")
+        {
+            // redirect with correct params
+            redirect("welcome/hosts/$colour/".assoc_to_uri($paramsArray));
+        }
 
         try
         {
             switch ($colour)
             {
                 case "red":
-                    $result = $this->host_model->getHostByColor('red', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('red', $username, $includes, $excludes, $rows, $page_number);
                     break;
                 case "green":
-                    $result = $this->host_model->getHostByColor('green', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('green', $username, $includes, $excludes, $rows, $page_number);
                     break;
                 case "yellow":
-                    $result = $this->host_model->getHostByColor('yellow', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('yellow', $username, $includes, $excludes, $rows, $page_number);
                     break;
                 case "blue":
-                    $result = $this->host_model->getHostByColor('blue', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('blue', $username, $includes, $excludes, $rows, $page_number);
                     break;
                 case "black":
-                    $result = $this->host_model->getHostByColor('black', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('black', $username, $includes, $excludes, $rows, $page_number);
                     break;
             }
         }
