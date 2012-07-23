@@ -165,7 +165,6 @@
                 $self.selectedVitalSortBy = ($(this).val());
                 $self.clearCanvas();
                 $self.refreshForNodeView();
-                $self.refreshForNodeView();
             });
 
             var $orderByValues = {"desc":"Descending","asc":"Ascending"};
@@ -178,7 +177,6 @@
             $self.vitalsOrderBySelect.change(function() {
                 $self.selectedVitalOrderBy = ($(this).val());
                 $self.clearCanvas();
-                $self.refreshForNodeView();
                 $self.refreshForNodeView();
             });
 

@@ -74,18 +74,19 @@
         var drawVitals = false;
         var $tabs=$("#tabs-layout");
 
-        $tabs.tabs({});
-        $tabs.bind( "tabsselect", function(event, ui) {
-            if (ui.index === 3) {
-                // we are in vitals tab
-                drawVitals = true;
-                $('#vitalsContainer').vitalSigns('refresh');
-            } else {
-                drawVitals = false;
+        $tabs.tabs({ show: function(event, ui) {
+                if (ui.index === 3) {
+                    // we are in vitals tab
+                    drawVitals = true;
+                    $('#vitalsContainer').vitalSigns('refresh');
+                } else {
+                    drawVitals = false;
+                }
             }
-
-
         });
+
+
+
 
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
