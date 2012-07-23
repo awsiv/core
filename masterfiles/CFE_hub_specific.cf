@@ -96,6 +96,12 @@ bundle agent cfengine_php_mod
 
   redhat_5|redhat_6|centos_5|centos_6::
 
+   "/etc/ld.so.conf.d/cfengine.conf"
+        comment => "Make sure LD knows about libpromises",
+        handle => "cfengine_php_mod_files_ldconfig_redhat5",
+        edit_line => insert_libpromises_ldconfig,
+        classes => if_repaired("reload_ldconfig");
+    
    "/etc/php.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
          handle => "cfengine_php_mod_files_cfmod_ini_redhat5",
@@ -465,6 +471,12 @@ bundle agent cfengine_php_mod
 
  commands:
 
+  reload_ldconfig.redhat::
+
+    "/sbin/ldconfig"
+        comment => "Reload dynamic libraries on RedHat/CentOS/Fedora",
+         handle => "cfenging_php_mod_commands_ldconfig_redhat";
+
   restart_webserver.redhat::
 
    "/etc/init.d/httpd restart"
@@ -483,6 +495,13 @@ bundle agent cfengine_php_mod
       comment => "Restart apache2 service on SuSE",
        handle => "cfengine_php_mod_commands_apache2_suse";
 
+}
+
+bundle edit_line insert_libpromises_ldconfig
+
+{
+    insert_lines:
+        "$(sys.workdir)/lib";
 }
 
 ##################################################################
