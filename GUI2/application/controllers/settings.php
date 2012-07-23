@@ -148,7 +148,7 @@ class Settings extends Cf_Controller
 
 
         $data = array();
-        $data['rbac'] = set_value('rbac');
+        $data['rbac'] = (bool)set_value('rbac');
         $data['authMode'] = set_value('mode');
         $data['ldapEncryption'] = set_value('encryption');
         $data['ldapLoginAttribute'] = set_value('login_attribute');
