@@ -7,6 +7,7 @@ class pdfreports extends Cf_Controller
     public $storeDir = './tmp/';
     public $truncateWarning = null;
     public $report_id;
+    public $reportTimeZone;
 
     function __construct()
     {
@@ -86,7 +87,9 @@ class pdfreports extends Cf_Controller
             $params['page'] = $this->input->post('page');
             $params['rows'] = $this->input->post('rows');
         }
-
+        
+        $timezone=isset($params['timezone']) && trim($params['timezone'] != '') ? $params['timezone'] : $this->input->post('timezone');
+        $this->reportTimeZone=$timezone;
 
         if (trim($report_format) === 'pdf')
         {
@@ -357,7 +360,7 @@ class pdfreports extends Cf_Controller
         $count = count($data);
         for ($i = 0; $i < $count; $i++)
         {
-            $data[$i][$index] = getDateStatus($data[$i][$index], false, true);
+            $data[$i][$index] = getDateStatus($data[$i][$index], false, true,$this->reportTimeZone);
         }
     }
 
