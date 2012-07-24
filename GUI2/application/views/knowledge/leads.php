@@ -1,6 +1,6 @@
-<div>
-    <h1><b><?php echo $this->lang->line('knowledge_insight_leads'); ?> <?php echo $topicDetail['topic']; ?>:</b></h1>
-    <div style="margin-left: 12px;">
+<div style="font-size: 11px;">
+    <h3><b><?php echo $this->lang->line('knowledge_insight_leads'); ?> <?php echo $topicDetail['topic']; ?>:</b></h3>
+    <div>
         <ul>
             <?php if (is_array($topicLeads) && !empty($topicLeads)) { foreach ((array) $topicLeads as $allLeads) {
                 ?>
@@ -8,7 +8,7 @@
                 <?php $searchContext =  ($topicDetail['context'] === $allLeads['context'])? true:false; ?>
                 <span style="color: #212121;">In the context of <?php echo $allLeads['context'] ?><?php if ($searchContext) { ?> (Searched context)<?php } ?>, <?php echo $topicDetail['topic']; ?></span>
             </li>
-            <ul style="padding: 15px;">
+            <ul style="padding: 5px;">
                     <?php
                     if (is_array($allLeads['leads']) && !empty ($allLeads['leads'])) {
                     foreach ((array) $allLeads['leads'] as $lead) {
