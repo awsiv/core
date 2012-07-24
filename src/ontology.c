@@ -14,6 +14,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "mod_files.h"
+#include "expand.h"
 
 /*****************************************************************************/
 

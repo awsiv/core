@@ -16,6 +16,7 @@
 
 #include "env_context.h"
 #include "vars.h"
+#include "expand.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
