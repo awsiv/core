@@ -1933,6 +1933,14 @@ void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_me
         return;
     }
 
+    if(sb.st_mtime < from)
+    {
+        char timebuf[26];
+        CfOut(cf_inform, "", "Software report is unchanged since %s -- skipping",
+              cf_strtimestamp_local(sb.st_mtime, timebuf));
+        return;
+    }
+
     AppendItem(reply, header, NULL);
 
     snprintf(line, sizeof(line), "S:%ld\n", lastSeenSw);
