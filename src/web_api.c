@@ -4939,31 +4939,6 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid)
 }
 
 /*****************************************************************************/
-
-char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid errid)
-{
-    out[0] = '{';
-    FormatErrorJsonAttribute(out + 1, outSz - 1, errid);
-    EndJoin(out, "}", outSz);
-
-    return out;
-}
-
-/*****************************************************************************/
-
-void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid)
-{
-    char work[CF_MAXVARSIZE];
-
-    ReplaceTrailingChar(buf, ',', '\0');
-    strlcat(buf, "], ", bufsize);
-
-    FormatErrorJsonAttribute(work, sizeof(work), errid);
-    EndJoin(buf, work, bufsize);
-    EndJoin(buf, "}", bufsize);
-}
-
-/*****************************************************************************/
 #ifndef NDEBUG
 bool IsEnvMissionPortalTesting()
 {
