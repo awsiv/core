@@ -326,7 +326,7 @@ class Search extends Cf_Controller
                         unset($tempParamArray['page']);
                         unset($tempParamArray['rows']);
 
-                        $data['detail_result_url'] = $this->assoc_to_uri($tempParamArray);
+                        $data['detail_result_url'] = assoc_to_uri($tempParamArray);
                         $data['clevel'] = $clevel;
 
                         $data['report_result'] = $this->report_model->getHostWithBundles($username, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $clevel);
@@ -345,8 +345,8 @@ class Search extends Cf_Controller
                         'clevel' => $clevel,
                         'host_only' => $hosts_only
                     );
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
 
@@ -369,8 +369,8 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'host_only' => $hosts_only
                     );
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "contexts":
@@ -385,8 +385,8 @@ class Search extends Cf_Controller
                         'host_only' => $hosts_only
                     );
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
 
@@ -418,12 +418,12 @@ class Search extends Cf_Controller
                         unset($tempParamArray['clevel']);
                         unset($tempParamArray['page']);
                         unset($tempParamArray['rows']);
-                        $data['detail_result_url'] = $this->assoc_to_uri($tempParamArray);
+                        $data['detail_result_url'] = assoc_to_uri($tempParamArray);
                         $data['resultView'] = 'search_result_group_with_summary';
                     }
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = $this->report_model->getPromiseCompliance($username, $hostkey, $name, $state, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only, $clevel);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
@@ -439,8 +439,8 @@ class Search extends Cf_Controller
                         'version' => $version,
                         'host_only' => $hosts_only
                     );
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = $this->report_model->getComplianceSummary($username, $hostkey, $version, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
@@ -464,8 +464,8 @@ class Search extends Cf_Controller
                         'host_only' => $hosts_only
                     );
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
@@ -493,8 +493,8 @@ class Search extends Cf_Controller
                         'host_only' => $hosts_only
                     );
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
@@ -519,8 +519,8 @@ class Search extends Cf_Controller
 
 
                     $data['report_result'] = $this->report_model->getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -540,8 +540,8 @@ class Search extends Cf_Controller
 
 
                     $data['report_result'] = $this->report_model->getPatchesAvailable($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "patches-installed":
@@ -560,8 +560,8 @@ class Search extends Cf_Controller
                     );
 
                     $data['report_result'] = $this->report_model->getPatchesInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -576,8 +576,8 @@ class Search extends Cf_Controller
                     );
                     $pdfurlParams = array_map('urlencode', $pdfurlParams);
                     $data['report_result'] = $this->report_model->getPerformance($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -609,8 +609,8 @@ class Search extends Cf_Controller
                     if ($report_type == "promises-repaired-summary")
                         $data['report_result'] = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -641,8 +641,8 @@ class Search extends Cf_Controller
                     );
 
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "setuid-programs":
@@ -656,8 +656,8 @@ class Search extends Cf_Controller
                     );
 
                     $data['report_result'] = $this->report_model->getReportSetUid($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "software-installed":
@@ -676,8 +676,8 @@ class Search extends Cf_Controller
                     );
 
                     $data['report_result'] = $this->report_model->getSoftwareInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -703,8 +703,8 @@ class Search extends Cf_Controller
                     );
 
                     $data['report_result'] = $this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;
@@ -724,8 +724,8 @@ class Search extends Cf_Controller
 
                     $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name, $username, $rows, $page_number);
 
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
 
                     break;

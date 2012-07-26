@@ -93,6 +93,12 @@
                 <option value="csv">csv</option>
             </select> 
             <br/>
+            <label for="time_zone">Reported DateTime: </label>
+            <select id="timezone" name="timezone">
+                <option value="local" selected>Local</option>
+                <option value="gmt">GMT</option>
+            </select> 
+            <br/>
             <label for="sendemail" >Send in email: </label>
             <input type="checkbox" id="sendemail" value="email" name="sendemail" onclick="$('#emailfieldset').toggle();">
         </fieldset>
@@ -183,7 +189,8 @@
                             'pdfaction': $('#sendemail',$dialog).is(':checked') ? $('#sendemail',$dialog).val() : null, 
                             'page':'<?php echo $current; ?>',
                             'rows':'<?php echo $number_of_rows; ?>',
-                            'download':$('#report_download',$dialog).val()
+                            'download':$('#report_download',$dialog).val(),
+                            'timezone':$('#timezone',$dialog).val()
                         },
                         dataType:'json',
                         async: true,

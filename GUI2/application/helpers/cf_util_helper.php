@@ -118,7 +118,7 @@ function getonlineusernames() {
  * @return <string> datetime with wrapped in span with colorclass
  * 
  */
-function getDateStatus($timestamp, $noColor = false, $onlyDate = false) {
+function getDateStatus($timestamp, $noColor = false, $onlyDate = false, $timezone='local') {
 
     $timestamp = intval($timestamp, 10);
     // check for 0 val 
@@ -153,10 +153,20 @@ function getDateStatus($timestamp, $noColor = false, $onlyDate = false) {
      */
     $script_tz = date_default_timezone_get(); // backup the default timezone
     $CI = & get_instance();
-    $tz_string = $CI->session->userdata('user_timezone');
-    if (!date_default_timezone_set($tz_string)) {
-         date_default_timezone_set($script_tz); // if not invalid timezone identifier set it.
+    if ($timezone == 'local') //if to be converted to local time.
+    {
+        $tz_string = $CI->session->userdata('user_timezone');
+        if (!date_default_timezone_set($tz_string))
+        {
+            date_default_timezone_set($script_tz); // if not invalid timezone identifier set it.
+        }
     }
+    
+    if($timezone =='gmt')
+    {
+         date_default_timezone_set('UTC');
+    }
+    
     $formattedDate = date('M jS Y H:i', $timestamp);
     // add time zone info
     $timeZoneinfo = date ('P',$timestamp);
