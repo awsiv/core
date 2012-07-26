@@ -582,7 +582,7 @@ class Ion_auth
      * */
     public function get_users_array()
     {
-        if (strtolower($this->mode) != 'internal')
+        /*if (strtolower($this->mode) != 'internal')
         {
             if (!$this->ci->session->userdata('pwd'))
             {
@@ -611,8 +611,10 @@ class Ion_auth
             }
             //var_dump($users_collection);
             return $users_collection;
-        }
-        return $this->auth_model->getAllUsers();
+        }*/
+       
+        $users=$this->auth_model->getAllUsers();
+        return $users;
     }
 
 

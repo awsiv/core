@@ -32,11 +32,11 @@
                 <?php
          
  if ($is_admin || ($this->ion_auth->mode != "internal" && !$this->ion_auth->is_ldap_user_exists())) {
-        if ($this->ion_auth->mode != "internal") {
-            echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
-        } else {
+        //if ($this->ion_auth->mode != "internal") {
+//            echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
+//        } else {
             echo anchor("auth/edit_user/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
-        }
+        //}
 
         if ($this->ion_auth->mode == "internal") {
             if ($user['username'] != $loggedinusername) {

@@ -1,3 +1,4 @@
+
 <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
     <?php echo form_open("auth/edit_user_ldap/".$this->uri->segment(3),array('id'=>'edit_user'));?>
