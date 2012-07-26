@@ -13,5 +13,6 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri, char *user, char *basedn, char *
 int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char *filter, char *name, char *scopes,
                                        char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,
                                        int bufsize, const char **const errstr);
+void *CfLDAPValue(char *uri, char *dn, char *filter, char *name, char *scope, char *sec);
 
 #endif

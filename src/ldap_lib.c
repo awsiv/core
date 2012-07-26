@@ -808,48 +808,6 @@ bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd,
 }
 
 /*****************************************************************************/
-/* JSON functions                                                            */
-/*****************************************************************************/
-
-//CODE EXAMPLE
-
-/*
-void test(void)
-{
-       if (Nova2PHP_LDAPAuthenticate("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","q1w2e3r4t5"))
-             {
-             char buffer[1000000] = {0};
-
-             printf("Authenticated\n");
-
-             Rlist *names = SplitStringAsRList("uid,mail,sn,altSecurityIdentities",',');
-
-             buffer[0] = '\0';
-             if (CfLDAP_JSON_GetSeveralAttributes(
-                       "ldap://10.0.0.152",
-                       "uid=sudhir","ou=people,dc=cfengine,dc=com",
-                     "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))" ,
-                     names,
-                     "subtree",
-                     "sasl",
-                       "password",
-                     1,
-                     100,
-                     buffer,1000000) == 0)
-                {
-                printf("JSON2: %s\n",buffer);
-                }
-
-             }
-          else
-             {
-             printf("NOT Authenticated\n");
-             }
-}
-
-*/
-
-/*****************************************************************************/
 
 int CfLDAP_JSON_GetSeveralAttributes(char *uri, char *authdn, char *basedn, char *filter, Rlist *names, char *scopes,
                                      char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,

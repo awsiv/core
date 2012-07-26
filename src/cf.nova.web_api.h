@@ -93,20 +93,6 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name);
 int Nova_GetTopicIdForTopic(char *typed_topic);
 #endif
 
-/*
- * Returned error strings are statically allocated and do not need freeing.
- * NULL is placed to errstr if no error occured.
- */
-int Nova2PHP_LDAPAuthenticate(char *uri, char *basedn, char *passwd, bool starttls, const char **const errstr);
-void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec);
-
-int Nova2PHP_LDAPGetSeveralAttributes(char *uri, char *user, char *basedn, char *filter, Rlist *names, char *scopes,
-                                      char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,
-                                      int bufsize, const char **const errstr);
-int Nova2PHP_LDAPGetSingleAttributeList(char *uri, char *user, char *basedn, char *filter, char *name, char *scopes,
-                                        char *sec, char *passwd, bool starttls, int page, int linesperpage,
-                                        char *buffer, int bufsize, const char **const errstr);
-
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
