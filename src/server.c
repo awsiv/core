@@ -246,6 +246,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackBundles(reply, CFR_BUNDLES, from, type);
         Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
         Nova_PackSoftware(reply, CFR_SOFTWARE, from, type);
+        Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
         Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
         Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
         break;
@@ -267,6 +268,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackCompliance(reply, CFR_PCOMPLIANCE, from, type);
         Nova_PackTotalCompliance(reply, CFR_TCOMPLIANCE, from, type);
         Nova_PackSoftware(reply, CFR_SOFTWARE, from, type);
+        Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
         Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
         Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
         Nova_Pack_promise_output_common(reply, CFR_PROMISEOUT, from, type);
@@ -277,7 +279,6 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackNotKeptLog(reply, CFR_NOTKEPTLOG, from, type);
         Nova_PackMeter(reply, CFR_METER, from, type);
         Nova_PackBundles(reply, CFR_BUNDLES, from, type);
-        Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
         Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
         break;
 
