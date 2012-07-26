@@ -3234,28 +3234,39 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 /*****************************************************************************/
 
 static void GetOldClientVersions(Rlist **rp)
-{
-    PrependRScalar(rp, (void *) "cfengine_3_2.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "cfengine_3_1.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
+{    
+    PrependRScalar(rp, (void *) "nova_2_1.*", CF_SCALAR);    
+    PrependRScalar(rp, (void *) "nova_2_0.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "nova_1_.*", CF_SCALAR);
 }
 
+/*****************************************************************************/
+/* IMPORTANT: Need to update this list for future releases                   */
+/* eg. nova2_3_.*, nova_2_4.*                                                */
+/*****************************************************************************/
+static void GetNewClientVersions(Rlist **rp)
+{
+    PrependRScalar(rp, (void *) "nova_2_2_.*", CF_SCALAR);
+}
+
+/*****************************************************************************/
+
 static void SkipOldClientVersionsFilter(bson_buffer *bb)
-/* NOTE: Ignore data from agent versions < 3.3.0 */
+/* NOTE: Ignore data from agent versions < Nova 2.2.0 */
 {
     if (bb == NULL)
     {
         return;
     }
 
-    Rlist *old_client_versions = NULL;
-    GetOldClientVersions(&old_client_versions);
+    Rlist *new_client_versions = NULL;
+    GetNewClientVersions(&new_client_versions);
 
     bson_buffer *ignore_class_buffer = bson_append_start_object(bb, cfr_class_keys);
-    BsonAppendArrayRx(ignore_class_buffer, "$nin", old_client_versions);
+    BsonAppendArrayRx(ignore_class_buffer, "$in", new_client_versions);
     bson_append_finish_object(ignore_class_buffer);
 
-    DeleteRlist(old_client_versions);
+    DeleteRlist(new_client_versions);
 }
 
 /*****************************************************************************/
