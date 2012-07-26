@@ -102,27 +102,34 @@
                             $number_of_dirs = count($user_dirs);
                             foreach ($user_dirs as $i => $dirs)
                             {
-                                echo "<p>";
-                                echo form_label();
                                 $input = array(
                                     'name' => 'user_directory[]',
                                     'id' => 'user_directory-' . $i,
                                     'value' => $dirs,
                                     'class' => 'usrdir');
-                                $i++;
+               
                                 echo form_input($input);
-                                $data = array(
+                                
+                                if($i==$number_of_dirs-1){
+                                   echo form_button(array('id' => 'addmore', 'content' => 'add'));
+                                }
+                                
+                                if ($i <= $number_of_dirs && $i!==0)
+                                {
+                                     $data = array(
                                     'name' => 'button',
                                     'content' => 'remove',
                                     'type' => 'button',
                                     'class' => 'rmbtns'
-                                );
-                                echo form_button($data);
-                                if ($i == $number_of_dirs)
-                                {
-                                    echo form_button(array('id' => 'addmore', 'content' => 'add'));
+                                    );
+                                    echo form_button($data);
                                 }
-                                echo "</p>";
+                          
+                                if($number_of_dirs > 1 && $i !=$number_of_dirs-1){
+                                     echo "</p><p>";
+                                     echo form_label();
+                                }
+                                    
                             }
                         }
                         ?>
