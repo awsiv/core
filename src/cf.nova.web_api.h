@@ -45,18 +45,6 @@ typedef enum cfapi_errid
 
 /* reports */
 
-/* Corresponding names and descriptions are in web_api.c:CDP_REPORTS */
-typedef enum cdp_report
-{
-    cdp_acls,
-    cdp_commands,
-    cdp_filechanges,
-    cdp_filediffs,
-    cdp_registry,
-    cdp_services,
-    cdp_unknown
-} cdp_report;
-
 typedef struct
 {
     Rlist *classRxIncludes;
@@ -238,17 +226,10 @@ int Nova2PHP_validate_policy(char *file, char *buffer, int bufsize);
  * commenting
  */
 
-char *Nova2PHP_get_help_text(char *key);
-
 int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t datetime, char *note, char *returnval, int bufsize);
 int Nova2PHP_get_notes(char *keyhash, char *cid, char *username, char *filter_username, time_t from, time_t to, PageInfo *page,
                        char *returnval, int bufsize);
 int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize);
-
-void Nova2PHP_cdp_reportnames(char *buf, int bufSz);
-int Nova2PHP_cdp_report(char *hostkey, char *reportName, PageInfo *page, char *buf, int bufSz);
-char *GetCdpTableHeader(cdp_report cdpType);
-cdp_report CdpReportNameToType(char *reportName);
 
 int Nova2PHP_delete_host(char *keyHash);
 

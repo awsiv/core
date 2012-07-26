@@ -90,7 +90,6 @@ void EnterpriseModuleTrick()
         Nova2PHP_get_knowledge_view(0, NULL);
 
         CfLDAPAuthenticate(NULL, NULL, NULL, NULL, false);
-        Nova2PHP_cdp_report(NULL, NULL, NULL, NULL, 10000);
     }
 #endif
 

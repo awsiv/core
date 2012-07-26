@@ -148,11 +148,6 @@ static zend_function_entry cfmod_functions[] =
          */
     PHP_FE(cfpr_validate_policy, NULL)
         /*
-         *  CDP reports
-         */
-    PHP_FE(cfpr_cdp_reportnames, NULL)
-    PHP_FE(cfpr_cdp_report, NULL)
-        /*
          * Commenting
          */
     PHP_FE(cfpr_add_note, NULL)

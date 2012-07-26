@@ -790,21 +790,6 @@ PHP_FUNCTION(cfpr_replica_status);
 PHP_FUNCTION(cfpr_validate_policy);
 
 /*
- *  CDP reports
- */
-/*! \brief A list of all report names for content-driven policies
- */
-PHP_FUNCTION(cfpr_cdp_reportnames);
-
-/*! \brief Get a content-driven policy report for a host
- * \param hostKey
- * \param reportName
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_cdp_report);
-
-/*
  * Commenting
  */
 

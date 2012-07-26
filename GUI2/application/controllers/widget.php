@@ -543,12 +543,6 @@ class Widget extends Cf_Controller
         echo $this->breadcrumblist->display();
     }
 
-    function cdpreports()
-    {
-        $data = cfpr_cdp_reportnames();
-        sanitycheckjson($data);
-    }
-
     function astrolabeAddNodeDialog($label = NULL, $class = NULL)
     {
         $data['label'] = $label;

@@ -4446,42 +4446,6 @@ PHP_FUNCTION(cfpr_report_description)
 }
 
 /******************************************************************************/
-/*                    Content-Driven Policy Reports                           */
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_cdp_reportnames)
-{
-    char buf[1024] = { 0 };
-
-    Nova2PHP_cdp_reportnames(buf, sizeof(buf));
-
-    RETURN_STRING(buf, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_cdp_report)
-{
-    char buffer[CF_WEBBUFFER];  // one row is ~300 bytes
-    char *hostkey, *reportName;
-    int hk_len, rn_len;
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters
-        (ZEND_NUM_ARGS()TSRMLS_CC, "ssll", &hostkey, &hk_len, &reportName, &rn_len, &(page.resultsPerPage),
-         &(page.pageNum)) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    buffer[0] = '\0';
-    Nova2PHP_cdp_report(hostkey, reportName, &page, buffer, sizeof(buffer));
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
 
 PHP_FUNCTION(cfpr_validate_policy)
 {

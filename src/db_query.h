@@ -87,14 +87,8 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter);
 Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, char *bNameReferenced);
 HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex);
-Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep);
-Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep);
-Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, char *promiseType);
 int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType, char *fileName, char *outBuf,
                              int outBufSz);
-Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep);
-Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep);
-Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle);
 Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *ip, time_t from, time_t to, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
 Item *CFDB_GetLastseenCache(void);
