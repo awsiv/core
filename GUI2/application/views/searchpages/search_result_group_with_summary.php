@@ -3,15 +3,7 @@
 if (is_array($report_result) && !empty($report_result['meta'])) {
     if (isset($report_result['meta']['old_skipped']) &&
         $report_result['meta']['old_skipped'] > 0) {
-        echo "<div class='warning'> Warning: You are running an older version of CFEngine on ";
-        echo $report_result['meta']['old_skipped'];
-        echo " ";
-        if ($report_result['meta']['old_skipped'] == 1) {
-            echo "host";
-        } else {
-            echo "hosts";
-        }
-        echo " within selected context. Data from these clients is not compatible with this report and has therefore been excluded.</div>";
+        echo "<div class='warning'> Warning: Agents prior to version 2.2.0 are not compatible with this report and are therefore omitted.</div>";
     }
 }
 ?>
