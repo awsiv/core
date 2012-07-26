@@ -4711,56 +4711,6 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 
 /*****************************************************************************/
 
-void Nova2PHP_enterprise_version(char *buf, int bufsize)
-{
-    char *name;
-    const char *version;
-    cfapi_errid retErrid = ERRID_SUCCESS;
-
-# ifdef HAVE_CONSTELLATION
-
-    retErrid = Constellation_CheckLicenseInDB();
-
-    switch (retErrid)
-    {
-    case ERRID_SUCCESS:
-        name = "Constellation";
-        version = Constellation_Version();
-        break;
-
-    case ERRID_CONSTELLATION_LICENSE:
-        retErrid = ERRID_SUCCESS;       /* not error to have Nova only */
-        /* fallthrough */
-    default:
-        name = "Enterprise";
-        version = Nova_Version();
-        break;
-    }
-
-# else
-
-    name = "Enterprise";
-    version = Nova_Version();
-
-# endif
-
-    char errbuf[CF_MAXVARSIZE];
-
-    snprintf(buf, bufsize, "{ \"name\": \"%s\", \"version\" : \"%s\", %s}",
-             name, version, FormatErrorJsonAttribute(errbuf, sizeof(errbuf), retErrid));
-
-}
-
-/*****************************************************************************/
-
-int Nova2PHP_community_version(char *buf, int bufsize)
-{
-    strlcpy(buf, NameVersion(), bufsize);
-    return true;
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize, PageInfo *page)
 {
 # ifndef NDEBUG
