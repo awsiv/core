@@ -161,6 +161,12 @@ function getDateStatus($timestamp, $noColor = false, $onlyDate = false, $timezon
             date_default_timezone_set($script_tz); // if not invalid timezone identifier set it.
         }
     }
+    
+    if($timezone =='gmt')
+    {
+         date_default_timezone_set('UTC');
+    }
+    
     $formattedDate = date('M jS Y H:i', $timestamp);
     // add time zone info
     $timeZoneinfo = date ('P',$timestamp);
