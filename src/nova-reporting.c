@@ -2286,26 +2286,37 @@ void Nova_NoteVarUsageDB(void)
 
 /*****************************************************************************/
 
-void Nova_OpenCompilationReportFiles(const char *fname)
+ReportContext *Nova_OpenCompilationReportFiles(const char *fname)
 {
 #if defined(HAVE_LIBMONGOC)
-    if ((FREPORT_TXT = fopen(NULLFILE, "w")) == NULL)
+
+    ReportContext *context = ReportContextNew();
     {
-        FatalError("Could not write output log to %s", NULLFILE);
+        FILE *ftxt = NULL;
+        if ((ftxt = fopen(NULLFILE, "w")) == NULL)
+        {
+            FatalError("Could not write output log to %s", NULLFILE);
+        }
+        ReportContextAddWriter(context, REPORT_OUTPUT_TYPE_TEXT, FileWriter(ftxt));
     }
 
-    if ((FREPORT_HTML = fopen(NULLFILE, "w")) == NULL)
     {
-        FatalError("Could not write output log to %s", NULLFILE);
+        FILE *fhtml = NULL;
+        if ((fhtml = fopen(NULLFILE, "w")) == NULL)
+        {
+            FatalError("Could not write output log to %s", NULLFILE);
+        }
+        ReportContextAddWriter(context, REPORT_OUTPUT_TYPE_HTML, FileWriter(fhtml));
     }
+    return context;
 #else
-    OpenCompilationReportFiles(fname);
+    return OpenCompilationReportFiles(fname);
 #endif
 }
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(ReportOutputType type, const Bundle *bundles, const Body *bodies)
+void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Bundle *bundles, const Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
 
@@ -2315,13 +2326,13 @@ void Nova_ShowPromises(ReportOutputType type, const Bundle *bundles, const Body 
     }
 
 #else
-    ShowPromisesInReport(type, bundles, bodies);
+    ShowPromisesInReport(context, type, bundles, bodies);
 #endif
 }
 
 /*****************************************************************************/
 
-void Nova_ShowPromise(ReportOutputType type, const char *version, const Promise *pp, int indent)
+void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
 
@@ -2335,7 +2346,7 @@ void Nova_ShowPromise(ReportOutputType type, const char *version, const Promise 
         Nova_MapPromiseToTopic(FKNOW, pp, version);
     }
 #else
-    ShowPromiseInReport(type, version, pp, indent);
+    ShowPromiseInReport(context, type, version, pp, indent);
 #endif
 }
 

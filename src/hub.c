@@ -108,10 +108,13 @@ int main(int argc, char *argv[])
 {
     GenericAgentConfig config = CheckOpts(argc, argv);
 
-    Policy *policy = GenericInitialize("hub", config);
+    ReportContext *report_context = OpenReports("hub");
+    Policy *policy = GenericInitialize("hub", config, report_context);
     ThisAgentInit();
     KeepPromises(policy, config);
     StartHub();
+
+    ReportContextDestroy(report_context);
     return 0;
 }
 
@@ -200,12 +203,16 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             exit(0);
 
         case 's':
-            CheckOpts(argc, argv);
-            InitializeGA();
+            {
+                CheckOpts(argc, argv);
+                ReportContext *report_context = ReportContextNew();
+                InitializeGA(report_context);
 
-            SplayLongUpdates();
-            exit(0);
-            break;
+                SplayLongUpdates();
+                ReportContextDestroy(report_context);
+                exit(0);
+                break;
+            }
 
         default:
             Syntax("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
