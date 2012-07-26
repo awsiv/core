@@ -157,6 +157,35 @@ class SettingsTest extends APIBaseTest
         }
     }
     
+    public function testLdapGoodLogin()
+    {
+        try
+        {
+            $this->pest->post('/settings', '{
+                "ldapHost":"10.0.0.145",
+                "ldapBaseDN":"dc=cf022osx;dc=cfengine;dc=com",
+                "ldapLoginAttribute":"uid",
+                "ldapUsersDirectory":"cn=users",
+                "ldapEncryption":"ssl",
+                "authMode":"ldap"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("sudhir", "q1w2e3r4t5");
+            $settings = $this->getResults('/');
+            var_dump($settings);
+            $this->assertValidJson($settings);
+        }
+        catch (Pest_Unauthorized $e)
+        {
+           $this->fail($e);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+    
     
 
 }
