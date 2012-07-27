@@ -857,14 +857,6 @@ bundle agent cfengine_web_server(state)
                 comment => "Check if a keyword \"off\" is inputs",
                  handle => "cfengine_web_server_classes_off";
 
-# we only care about selinux for redhat for now, can add more
- 
- redhat::
-
-   "disable_selinux" expression => returnszero("/usr/sbin/selinuxenabled", "noshell"),
-                        comment => "Check if selinux is enabled",
-                         handle => "cfengine_web_server_classes_disable_selinux";
-
 #
 
  processes:
@@ -915,14 +907,6 @@ bundle agent cfengine_web_server(state)
 
  commands:
 
-  web_servers.disable_selinux::
-
-   "/usr/sbin/setenforce 0"
-      comment => "Disable SELINUX every hour",
-       handle => "cfengine_web_server_commands_disable_selinux",
-#      classes => cmd_repair("0", "cmd_fixed_setenforce"),
-       action => if_elapsed("60");
-
   web_ok.suse_start_apache::
 
    "/etc/init.d/apache2 $(start_type)"
@@ -966,17 +950,6 @@ bundle agent cfengine_web_server(state)
 #
 #     edit_line => append_if_no_line("Listen 443"),
 #     classes => if_ok("web_ok");
-
-#
-
- reports:
-
-  disable_selinux::
-
-   " NB - Disabling SELinux to allow PHP to function",
-      comment => "Alert message on screen once a day",
-       handle => "cfengine_web_server_reports_disable_selinux",
-       action => if_elapsed("1440");
 
 }
 
@@ -1133,4 +1106,49 @@ processes:
         classes => if_repaired("mongod_log_rotated"),
          action => if_elapsed("10000");
  
+}
+
+##################################################################
+#
+# cfengine_disable_selinux
+#  - Ensure everything will work smoothly. Put SELinux to
+# Permissive mode by now
+#
+##################################################################
+
+bundle agent cfengine_disable_selinux
+{
+ classes:
+
+# we only care about selinux for redhat for now, can add more
+ 
+  redhat::
+
+   "disable_selinux" expression => returnszero("/usr/sbin/selinuxenabled", "noshell"),
+                        comment => "Check if selinux is enabled",
+                         handle => "cfengine_disable_selinux_classes_disable_selinux";
+
+#
+
+ commands:
+
+  am_policy_hub.disable_selinux::
+
+   "/usr/sbin/setenforce 0"
+      comment => "Disable SELINUX every hour",
+       handle => "cfengine_disable_selinux_commands_disable_selinux",
+#      classes => cmd_repair("0", "cmd_fixed_setenforce"),
+       action => if_elapsed("60");
+
+#
+
+ reports:
+
+  disable_selinux::
+
+   " NB - Disabling SELinux to allow PHP to function",
+      comment => "Alert message on screen once a day",
+       handle => "cfengine_disable_selinux_reports_disable_selinux",
+       action => if_elapsed("1440");
+
 }
