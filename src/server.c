@@ -28,7 +28,10 @@
 
 #include "hub.h"
 #include "transaction.h"
+
+#if defined(HAVE_LIBMONGOC)
 #include "db_common.h" 
+#endif
 
 Rlist *SERVER_KEYRING = NULL;
 static int Nova_ParseHostname(char *name, char *hostname);
