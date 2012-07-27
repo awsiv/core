@@ -12,6 +12,8 @@
 #include "item_lib.h"
 #include "conversion.h"
 
+/***********************************************************************/
+
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
     EnterpriseDB dbconn;
@@ -31,7 +33,6 @@ bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
     case cfd_menu_full:
         Nova_QueryClientForReports(&dbconn, conn, menu_str, time(0) - SECONDS_PER_WEEK);
         break;
-
     case cfd_menu_relay:
 # ifdef HAVE_CONSTELLATION
     {

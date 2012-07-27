@@ -41,7 +41,6 @@ void Nova_SequentialScan(Item *masterlist)
 
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 {
-#define MINUTES_PER_HOUR 60
 
     AgentConnection *conn;
     int long_time_no_see = false;
