@@ -283,6 +283,11 @@ p#userbox a{
    
 }
 
+#searcharea form .dateField
+{
+    width: 143px;
+}
+
 .searchbox input{
     width:174px; 
     color: #666666 !important;
