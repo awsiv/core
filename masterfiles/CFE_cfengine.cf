@@ -29,6 +29,10 @@ bundle agent cfengine_management
             handle => "cfengine_management_update_folders",
            comment => "Create empty directories for CFE self-upgrade";
 
+   "hub" usebundle => cfengine_disable_selinux,
+            handle => "cfengine_management_disable_selinux",
+           comment => "Disable SELinux for now";
+
    "hub" usebundle => cfengine_policysrv,
             handle => "cfengine_management_policysrv",
            comment => "Prepare the policy hub";
