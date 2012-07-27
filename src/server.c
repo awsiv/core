@@ -10,9 +10,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
-#include "cf3.server.h"
+#include "server.h"
 #include "cf.nova.h"
 #include "client_protocol.h"
 
