@@ -21,8 +21,6 @@ load_data() {
     fi
 }
 
-load_data phpcfengine users
-load_data phpcfengine roles
 load_data phpcfengine appsettings
 load_data phpcfengine usersettings
 load_data phpcfengine custom_search
@@ -32,6 +30,10 @@ load_data cfreport promises_exp
 load_data cfreport promises_unexp
 load_data cfreport archive
 load_data cfreport monitoring_mg
+
+load_data cfreport users
+load_data cfreport roles
+load_data cfreport settings
 
 
 echo "Importing data complete"

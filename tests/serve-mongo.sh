@@ -12,4 +12,4 @@ mkdir -p log
 mkdir -p $DBPATH
 
 echo "Starting ${SERVICE_NAME}"
-exec mongod --dbpath $DBPATH --logpath $LOGPATH --port $PORT
+exec mongod --nojournal --dbpath $DBPATH --logpath $LOGPATH --port $PORT
