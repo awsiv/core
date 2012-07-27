@@ -26,7 +26,7 @@
         <tr>
             <td id ="promise-repaired" class="bundlelist-table">
                 <?php
-                if (is_array($repaired) && $notkept['meta']['count']>0) {
+                if (is_array($repaired) && $repaired['meta']['count']>0) {
 
                     $repaired['meta']['header']['Hosts'] = 3;
                     foreach ($repaired['data'] as &$r) {
