@@ -173,7 +173,6 @@ class SettingsTest extends APIBaseTest
 
             $this->pest->setupAuth("sudhir", "q1w2e3r4t5");
             $settings = $this->getResults('/');
-            var_dump($settings);
             $this->assertValidJson($settings);
         }
         catch (Pest_Unauthorized $e)
@@ -181,6 +180,39 @@ class SettingsTest extends APIBaseTest
            $this->fail($e);
         }
         catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+    
+    
+    /**
+     * For grabbing the details specially the role name of the the logged in ldap user.
+     */
+    public function testLdapUserDetails()
+    {
+        //since the database is filled with the required information by previous test we can just try to grab the details.
+        try
+        {
+            $detail = $this->getResults('/user/sudhir');
+            $this->assertValidJson($detail);
+            $this->assertTrue(is_array($detail[0]['roles']));
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+    
+    public function testGetUsers()
+    {
+        try
+        {
+            $usersJsonArray = $this->getResults('/user');
+            $this->assertValidJson($usersJsonArray);
+            $this->assertGreaterThan(1,sizeof($usersJsonArray));
+        }
+        catch (Exception $e)
         {
             $this->fail($e);
         }

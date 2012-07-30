@@ -4,7 +4,8 @@ require_once "APIBaseTest.php";
 
 class UserTest extends APIBaseTest
 {
-
+   
+    
     public function testListUsers()
     {
         try
@@ -191,5 +192,6 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
+    
 
 }
