@@ -37,7 +37,7 @@ class Authentication_model extends Cf_Model
         }
         catch (Exception $e)
         {
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'login '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -47,12 +47,19 @@ class Authentication_model extends Cf_Model
      */
     function getRolesForUser($username)
     {
-        $user = $this->getUserDetails($username);
-        if (key_exists('roles', $user))
-        {
-            return $user['roles'];
+        try{
+            
+            $user = $this->getUserDetails($username);
+            if (key_exists('roles', $user))
+            {
+                return $user['roles'];
+            }
+            
+        }catch(Exception $e){
+             log_message('error', "getRolesForUser , Error grabbing roles for user");
+             return false;
         }
-        return false;
+       
     }
 
     /**
@@ -76,7 +83,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error','getAllRoles '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -103,7 +110,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'getRoleDetails '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -126,7 +133,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'createRole '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -150,7 +157,7 @@ class Authentication_model extends Cf_Model
         }
         catch (Exception $e)
         {
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'updateRole '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -172,7 +179,7 @@ class Authentication_model extends Cf_Model
         }
         catch (Exception $e)
         {
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'deleteRole '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -196,7 +203,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'createUser '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -223,7 +230,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'getAllUsers '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -254,7 +261,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', "getUserDetails  ".  get_class($e)." ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -279,7 +286,7 @@ class Authentication_model extends Cf_Model
         catch (Exception $e)
         {
             $this->setError($e->getMessage());
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error', 'update_user '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -301,7 +308,7 @@ class Authentication_model extends Cf_Model
         }
         catch (Exception $e)
         {
-            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            log_message('error','deleteUser '.get_class($e)."  ". $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
@@ -321,7 +328,7 @@ class Authentication_model extends Cf_Model
         }
         catch (Exception $e)
         {
-           log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+           log_message('error', 'change_password '.get_class($e)."  ".$e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
            throw $e; 
         }
         
