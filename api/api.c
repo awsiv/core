@@ -550,6 +550,11 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendInteger(settings, HubSettingToString(SETTING_BLUEHOST_HORIZON), StringToLong(buffer));
     }
 
+    if (CFDB_GetSetting(conn, SETTING_EXTERNAL_ADMIN_USERNAME, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_EXTERNAL_ADMIN_USERNAME), buffer);
+    }
+
     if (!EnterpriseDBRelease(conn))
     {
         THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");

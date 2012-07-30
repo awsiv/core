@@ -77,8 +77,8 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
-     public function testUpdateSettingRbac()
+
+    public function testUpdateSettingRbac()
     {
         try
         {
@@ -90,6 +90,40 @@ class SettingsTest extends APIBaseTest
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
             $this->assertEquals(3600, $settings[0]['blueHostHorizon']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testUpdateSettingExternalAdminUsername()
+    {
+        try
+        {
+            // default external admin is 'admin'
+            $settings = $this->getResults('/settings');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($settings);
+            $this->assertEquals('admin', $settings[0]['externalAdminUsername']);
+
+            // try changing external admin to snookie
+            $this->pest->post('/settings', '{
+                "externalAdminUsername": "snookie"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('snookie', $settings[0]['externalAdminUsername']);
+
+            // change back to not confuse other tests
+            $this->pest->post('/settings', '{
+                "externalAdminUsername": "admin"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('admin', $settings[0]['externalAdminUsername']);
         }
         catch (Pest_Exception $e)
         {
@@ -156,7 +190,7 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
+
     public function testLdapGoodLogin()
     {
         try
@@ -177,15 +211,14 @@ class SettingsTest extends APIBaseTest
         }
         catch (Pest_Unauthorized $e)
         {
-           $this->fail($e);
+            $this->fail($e);
         }
         catch (Pest_Exception $e)
         {
             $this->fail($e);
         }
     }
-    
-    
+
     /**
      * For grabbing the details specially the role name of the the logged in ldap user.
      */
@@ -203,21 +236,19 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
+
     public function testGetUsers()
     {
         try
         {
             $usersJsonArray = $this->getResults('/user');
             $this->assertValidJson($usersJsonArray);
-            $this->assertGreaterThan(1,sizeof($usersJsonArray));
+            $this->assertGreaterThan(1, sizeof($usersJsonArray));
         }
         catch (Exception $e)
         {
             $this->fail($e);
         }
     }
-    
-    
 
 }

@@ -51,6 +51,7 @@
 static const char *settingLabels[SETTING_MAX] =
 {
     [SETTING_UNKNOWN] = "unknown",
+
     [SETTING_RBAC] = "rbac",
     [SETTING_AUTH_MODE] = "authMode",
     [SETTING_LDAP_ENCRYPTION] = "ldapEncryption",
@@ -59,12 +60,14 @@ static const char *settingLabels[SETTING_MAX] =
     [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
     [SETTING_LDAP_HOST] = "ldapHost",
     [SETTING_AD_DOMAIN] = "activeDirectoryDomain",
-    [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon"
+    [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon",
+    [SETTING_EXTERNAL_ADMIN_USERNAME] = "externalAdminUsername"
 };
 
 static const JsonPrimitiveType setting_types[SETTING_MAX] =
 {
     [SETTING_UNKNOWN] = JSON_PRIMITIVE_TYPE_NULL,
+
     [SETTING_RBAC] = JSON_PRIMITIVE_TYPE_BOOL,
     [SETTING_AUTH_MODE] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_ENCRYPTION] = JSON_PRIMITIVE_TYPE_STRING,
@@ -73,7 +76,8 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
     [SETTING_LDAP_USERS_DIRECTORY] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_HOST] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_AD_DOMAIN] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER
+    [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER,
+    [SETTING_EXTERNAL_ADMIN_USERNAME] = JSON_PRIMITIVE_TYPE_STRING
 };
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
@@ -1331,6 +1335,9 @@ bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, si
         free(default_str);
         return found;
     }
+
+    case SETTING_EXTERNAL_ADMIN_USERNAME:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_EXTERNAL_ADMIN_USERNAME), value_out, size, "admin", conn, MONGO_SETTINGS_COLLECTION);
 
     default:
         assert(false && "Attempted to get unknown setting");
