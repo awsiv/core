@@ -362,7 +362,7 @@
                 $(parentNode).attr('label', nodeprop.label);
                 $(parentNode).attr('class-regex', nodeprop.classRegex);
                 $(parentNode).find('div.showqtip').first().attr('oldtitle', nodeprop.classRegex);
-                $(parentNode).find('div.nodeHeader').children('span.nodeLabel').html(nodeprop.label);
+                $(parentNode).find('div.showqtip').first().find('div.nodeHeader').children('span.nodeLabel').html(nodeprop.label);
                 $self._saveProfile($self._currentProfile, parentNode);
                 //$self._loadProfile($self._currentProfile);
                 $self._loadNode($self._superNode, true);
