@@ -390,7 +390,6 @@
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
                     if (operation == 'update') {
-
                       $(this).find('#astrolabe-add-node-label').val($(parentNode).attr('label'));
                       $(this).find('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'));
                     }
@@ -402,7 +401,12 @@
                     buttons: btns,
                     draggable: false,
                     modal: true,
-                    resizable: false
+                    resizable: false,
+                    close:function(event,ui){  //strongly need to clear out the cache.
+                           $(this).dialog('destroy');
+                           $(this).dialog('close');
+                           $(this).remove();
+                    }
                 });
 
             $dialog.keypress(function(event) {
@@ -729,8 +733,8 @@
         _requestUrls: {
 
             hosts: function(self, includes, excludes) {
-
-                var url = self.options.baseUrl + '/astrolabe/host?nocache=' + Math.random() + '&';
+                var uniqueTimeStamp=new Date();
+                var url = self.options.baseUrl + '/astrolabe/host?nocache=' + uniqueTimeStamp.getTime() + '&';
 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes) + '&';
