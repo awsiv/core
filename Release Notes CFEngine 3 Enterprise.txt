@@ -43,13 +43,19 @@ HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 
 BUGFIXES SINCE 2.2.1:
 * Fixes for segmentation faults caused by destroying empty bson objects
+* Increase robustness in case of corrupted local databases
 * Close a memory leak in knowledge map generation
 * Close a memory leak in custom measurement promises
+* Properly adjust to timezones when time-range is specified for reports
 * REST API improvements to list hosts by context regular expression and filter by name
-* Purge software report data with invalid timestamps during db maintenance
+* Support exporting of reports when only hostnames are reported
 * Fixes for Internet Explorer 8-specific bugs
+* Purge software report data with invalid timestamps during db maintenance
+* Include software dates data in delta reports
 * Add explanatory text when software reports are empty
-* Minor UI improvements
+* Add explanatory text to bundle reports for old agents being skipped
+* Various fixes to the CFEngine update process
+* Various UI fixes and usability improvements
 
 BUGFIXES SINCE 2.2.0:
 * Navigation Tree usability fixes (renaming of nodes, reloading of tree)
