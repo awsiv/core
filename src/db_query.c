@@ -3301,6 +3301,15 @@ int CFDB_CountSkippedOldAgents(mongo_connection *conn, char *keyhash,
 
     DeleteRlist(old_client_versions);
 
+    /* New client versions exist with old version (during upgrade) */
+
+    Rlist *new_client_versions = NULL;
+    GetNewClientVersions(&new_client_versions);
+
+    BsonAppendExcludeRxList(&bb, cfr_class_keys, new_client_versions);
+
+    DeleteRlist(new_client_versions);
+
     bson query;
     bson_from_buffer(&query, &bb);
 
