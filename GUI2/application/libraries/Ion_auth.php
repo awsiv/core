@@ -626,7 +626,14 @@ class Ion_auth
      * */
     public function get_user($id=false)
     {
-        return $this->auth_model->getUserDetails($id);
+        try
+        {
+            return $this->auth_model->getUserDetails($id);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
     }
 
 
