@@ -78,7 +78,9 @@ class Cf_Model extends CI_Model {
               [errid] => 0
               [msg] => Success
               ) */
-            if (isset($data_check['error'])) {
+            
+            //skipped it temporary as invalid status is being reported from core.
+           /* if (isset($data_check['error'])) {
 
                 if ($this->_is_warning($data_check['error']['errid'])) {
                     $this->setError($data_check['error']['msg'],$data_check['error']['errid'],  self::WARNING);
@@ -87,7 +89,7 @@ class Cf_Model extends CI_Model {
                     $this->setError($data_check['error']['msg'],$data_check['error']['errid']);
                     $returnVal = $data_check;
                 }
-            }
+            }*/
         }
         if ($returnVal) {
             $returnVal = $data_check;
