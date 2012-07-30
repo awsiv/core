@@ -3179,9 +3179,9 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 
 static void GetOldClientVersions(Rlist **rp)
 {    
-    PrependRScalar(rp, (void *) "nova_2_1.*", CF_SCALAR);    
-    PrependRScalar(rp, (void *) "nova_2_0.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "nova_1_.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "cfengine_3_2.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "cfengine_3_1.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
 }
 
 /*****************************************************************************/
@@ -3191,6 +3191,7 @@ static void GetOldClientVersions(Rlist **rp)
 static void GetNewClientVersions(Rlist **rp)
 {
     PrependRScalar(rp, (void *) "nova_2_2_.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "nova_2_3_.*", CF_SCALAR);
 }
 
 /*****************************************************************************/
