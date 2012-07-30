@@ -3249,6 +3249,15 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 
     DeleteRlist(old_client_versions);
 
+    /* New client versions exist with old version (during upgrade) */
+
+    Rlist *new_client_versions = NULL;
+    GetNewClientVersions(&new_client_versions);
+
+    BsonAppendExcludeRxList(&query, cfr_class_keys, new_client_versions);
+
+    DeleteRlist(new_client_versions);
+
     bson_finish(&query);
 
     result = mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query);
