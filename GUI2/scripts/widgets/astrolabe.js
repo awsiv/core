@@ -175,6 +175,7 @@
             }
 
             if (event !== null && event !== undefined) {
+                self._scrollable_list.jScrollPane($self.options.scrollPaneOptions);                
                 event.stopPropagation();
             }
         },
