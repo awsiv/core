@@ -1,4 +1,4 @@
-{
+[{
     "pt" : "vars",
     "c" : "any",
     "px" : "dummy",
@@ -9,3 +9,4 @@
     "hx" : "promise_promises_cf_4",
     "nx" : [ "string => dummy" ]
 }
+]

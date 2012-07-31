@@ -1,4 +1,4 @@
-{
+[{
     "bn" : "cronjob",
     "bt" : "agent",
     "ba" : [ "commands", "user", "hours", "mins" ],
@@ -9,4 +9,4 @@
     "l" : 479,
     "h" : "promise_cfengine_stdlib_cf_479",
     "n" : [ "string => \/var\/spool\/cron\/tabs" ]
-}
+}]

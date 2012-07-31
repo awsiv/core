@@ -71,8 +71,13 @@ Abstract class CI_BaseTestCase extends CI_TestCase
               // var_dump($fileContent);
                 die('no array for '.$collection);
             }
-            $insertData = array($collection=>$c);
-            $res = $mongoCollection->batchInsert($insertData,array('continueOnError' => false,'fsync'=>true));
+            $insertData = $c;
+            $mongoCollection->drop();
+
+            if ($collection === 'monitoring_mg') {
+
+            }
+                $res = $mongoCollection->batchInsert($insertData,array('continueOnError' => false,'fsync'=>true));
         }
 
 

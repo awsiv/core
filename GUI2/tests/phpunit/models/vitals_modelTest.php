@@ -6,7 +6,7 @@ class test_vitals_model extends CI_BaseTestCase
     private $ci_obj;
     private $username = "admin";
     private $hostkey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-    
+
 
     private function validateJson($json)
     {
@@ -47,7 +47,6 @@ class test_vitals_model extends CI_BaseTestCase
     public function testVitalList()
     {
         $graphdata = $this->_ci->vitals_model->getVitalsList($this->username, $this->hostkey);
-        var_dump($graphdata);
         $this->assertTrue(is_array($graphdata) && !empty($graphdata['obs']));
     }
 

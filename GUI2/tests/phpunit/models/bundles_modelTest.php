@@ -37,7 +37,6 @@ class test_bundles_model extends CI_BaseTestCase
     public function test_get_all_bundles()
     {
         $bundles = $this->ci_obj->bundle_model->getAllBundles($this->username);
-        var_dump($bundles);
         $this->assertNotEmpty($bundles);
     }
 

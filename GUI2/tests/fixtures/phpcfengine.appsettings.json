@@ -1,4 +1,4 @@
-{
+[{
     "active_directory_domain" : "activedir.test.cfengine.com",
     "admin_role" : "admin",
     "appemail" : "admin@cfengine.com",
@@ -15,3 +15,4 @@
     "rbac" : "false",
     "users_directory" : ""
 }
+]
