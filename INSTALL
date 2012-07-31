@@ -1,11 +1,224 @@
-== cfmod ==
+CFENGINE 3 ENTERPRISE 2.2.2
+CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
+RELEASE DATE: 2012
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 2.2.x (successor to CFENgine Nova 2.1.x)
 
-In order to manually install cfmod to the machine, you'll need to do the following:
+-----------------------------------------------------------
+ TABLE OF CONTENTS:
+ PLATFORMS SUPPORTED
+ COMPATIBILITY MATRIX
+ REQUIREMENTS
+ INSTALLATION INSTRUCTIONS (CLEAN INSTALL)
+ UPGRADE PROCEDURE
+ SOFTWARE DEPENDENCIES
+-----------------------------------------------------------
 
-1) Make a symlink from php library directory (typically something like
-/usr/lib/php5/20100525) to $installdir/lib/php/cfmod.so
+PLATFORMS SUPPORTED:
+CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the following Operating Systems:
 
-2) Put a configuration file (with .ini extension) to php configuration directory
-(typically something like /etc/php5/conf.d):
+Hub:
+NAME		VERSION					ARCHITECTURE
+Debian 		6 					i686,x86-64
+Ubuntu 		8.04, 10.04, 12.04 			i686,x86-64
+RHEL 		5					i686,x86-64
 
-extension=cfmod.so
+Clients:
+NAME:		VERSION					ARCHITECTURE		COMMENT
+AIX		5.3, 6.1 				power 			No libvirt
+CentOS		5, 6 					i686,x86-64
+Debian 		5, 6 					i686,x86-64
+Fedora 		14, 15, 16 				i686,x86-64
+FreeBSD 	7, 8 					i686,amd64		No libvirt
+HP-UX										Contact your sales representative
+NetBSD 		4.0, 5.0 				i686,amd64		No libvirt
+NetBSD 		5.1 					i686,x86-64		No libvirt
+openSUSE 	10.2, 10.3, 11.1, 11.2, 11.3, 11.4 	i686,x86-64
+RHEL 		4, 5, 6 				i686,x86-64
+SLES 		9, 10, 11 				i686,x86-64
+SLES 		10, 11 					s390x
+SUSE Linux 	9.1, 9.2, 9.3, 10.0, 10.1 		i686,x86-64
+Solaris		8, 9, 10 				sparc	 		No libvirt
+Solaris 	10 					i86pc	 		No libvirt
+Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
+Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
+
+Community version base: 3.3.5
+
+
+COMPATIBILITY MATRIX: 
+HUB	CLIENT		TESTED		SUPPORTED	COMMENT
+2.2.2	2.2.x		Yes		Yes
+2.2.2	2.1.x		Yes		Yes		Bundle compliance report not compatible
+2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
+2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+
+As always, test thoroughly in your lab before upgrading production environments!
+
+
+REQUIREMENTS:
+CFEngine recommends that your hub machine should have at least 2 GB of memory and a modern processor. CFEngine recommends to have 256 MB available memory on the clients. For machines under CFEngine’s management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting.
+
+A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, subversion, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
+
+Requirements specific to MongoDB:
+1. Filesystem type:
+- ext4 ( kernel version >= 2.6.23 )
+- xfs ( kernel version >= 2.6.25 )
+2. Memory: Approximately 8 GB per 500 hosts
+3. Turn off NUMA if running on numa hardware. http://www.mongodb.org/display/DOCS/NUMA
+4. Do not use large VM pages with Linux (info about large pages: http://linuxgazette.net/155/krishnakumar.html)
+5. Set file descriptor limit and user process limit to 4k+ (see etc/limits and ulimit)
+
+For those running databases on ext4 filesystems, a 2.6.23 kernel is required for efficient filesystem preallocation, 2.6.25 is required for XFS support of the same feature. High filesystem I/O following the allocation of new database files is one symptom of this problem.
+
+
+INSTALLATION INSTRUCTIONS (CLEAN INSTALL):
+* Clean install is tested, upgrade from previous versions of CFEngine 3 Nova tested (see previous section)
+* As always, install HUB first, then client(s).
+* For large systems (> 1000 hosts) we recommend increasing the memory limit in php.conf on the HUB (for instance to 128 MB)
+
+CFEngine 3 Enterprise is provided in two packages, cfengine-nova_2.2.x and cfengine-nova-expansion_2.2.x (the nova name remains in the packages to ensure backwards compatibility with package managers). The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
+
+The general installation steps are as follows:
+1. Copy the CFEngine 3 Enterprise packages to the system.
+2. Unpack the software
+3. (Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
+4. (Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
+5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
+     $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
+6. CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions.
+
+If you wish to manually install cfmod to the machine, you'll need to do the following:
+1. Make a symlink from php library directory (typically something like
+     /usr/lib/php5/20100525) to $installdir/lib/php/cfmod.so
+2. Put a configuration file (with .ini extension) to php configuration directory (typically something like /etc/php5/conf.d):
+     extension=cfmod.so
+
+
+UPGRADE PROCEDURE:
+The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 2.2 Owner's Manual for upgrading from older versions. 
+
+Start with the hub (policy server):
+1. Stop all CFE processes (/etc/init.d/cfengine3 stop)
+2. Unpack the new software packages
+3. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
+     $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
+4. Remove Mongodb lock if present:
+     $ rm -f /var/cfengine/state/mongod.lock
+5. Copy the new CFE_ prefixed policy files to $(sys.workdir)/masterfiles (the files with a prefix "CFE_" are maintained by CFEngine, do not make changes to these, they are there to ensure that the Mission Portal works properly).
+     $ cd /var/cfengine/share/NovaBase
+     $ cp CFE_cfengine.cf CFE_knowledge.cf CFE_hub_specific.cf /var/cfengine/masterfiles
+6. Modify two lines in /var/cfengine/masterfiles/update.cf (lines 131 and 298)
+ 6.1 Line 131: Change package version number (replace line with the following)
+        package_version => "9.9.9",         # Install new Nova anyway
+ 6.2 Line 298: Change to run mongod without journaling (replace line with the following)
+        "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $ (sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
+7. Copy the modified update.cf to the inputs directory:
+     $ cp /var/cfengine/masterfiles/update.cf /var/cfengine/inputs/update.cf
+8. Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
+     $ rm -rf /var/www/*
+9. Restart CFEngine processes
+     $ /etc/init.d/cfengine3 start
+
+For client upgrades there are 2 approaches: manual or automatic upgrade.
+* Manual: Update cfengine-nova on each client by rpm or dpkg command. Update cf-twin as described in step 3 in the update procedure for the hub (i.e. overwrite the old cf-twin).
+* Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in /var/cfengine/master_software_updates and CFEngine 3 Enterprise will take care of the rest.
+
+CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions and troubleshooting tips.
+
+
+SOFTWARE DEPENDENCIES (specific to CFEngine 3 Enterprise)
+The CFEngine 3 Enterprise agents on client hosts do not require any additional packages for operation and/or install. The
+following section is for the hub only.
+
+CFEngine 3 Enterprise will automatically detect if the necessary packages are already installed on the hub. If new package installation is required, CFEngine 3 Enterprise will install all of them from its default software repository (if configured properly). If the system does not have a default software repository configured, manual installation of these packages will be required.
+
+Note that these mandatory packages may have additional dependencies on their own, and hence additional packages may be installed during the installation process. This process will be handled automatically by CFEngine bootstrap. We do not recommend configuring every component on your own, please contact your CFEngine sales representative in case you cannot use CFEngine's bootstrap procedure.
+
+OpenSuSE 11:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.15-3.7)
+- PHP5 Module for Apache 2.0 (apache2-mod_php5, version 5.3.3-0.19.1)
+- Apache 2 "prefork" MPM (Multi-Processing Module; apache2-prefork, version 2.2.15-3.7)
+- PHP5 Core Files (php5, version 5.3.3-0.19.1)
+- PHP5 Extension Module
+	(php5-json, version 5.3.3-0.19.1)
+	(php5-pear, version 5.3.3-0.19.1)
+	(php5-mcrypt, version 5.3.3-0.19.1)
+	(php5-bcmatch, version 5.3.3-0.19.1)
+- A Concurrent Versioning system (subversion, version 1.6.9-4.7.1)
+
+SLES 11:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.10-2.24.5)
+- PHP5 Module for Apache 2.0 (apache2-mod_php5, version 5.2.6-50.24.1)
+- Apache 2 "prefork" MPM (Multi-Processing Module; apache2-prefork, version 2.2.10-2.24.5)
+- PHP5 Core Files (php5, version 5.2.6-50.24.11)
+- PHP5 Extension Module
+	(php5-json, version 5.2.6-50.24.1)
+	(php5-pear, version 5.2.6-50.24.1)
+	(php5-mcrypt, version 5.2.6-50.24.1)
+	(php5-bcmatch, version 5.2.6-50.24.1)
+- A Concurrent Versioning system (subversion, version 1.5.7-0.1.1)
+
+RHEL 5:
+- Apache HTTP Server (httpd, version 2.2.3-45.el5)
+- PHP5 Core Files (php, version 5.1.6-27.el5)
+- PHP5 Extension Module
+	(php-bcmath, version 5.1.6-27.el5)
+	(php-pear, version 5.1.6-27.el5)
+- A Concurrent Versioning system (subversion, version 1.5.7-0.1.1)
+
+RHEL 6:
+- Apache HTTP Server (httpd, version 2.2.15-9.el6)
+- PHP5 Core Files (php, version 5.3.2-6.el6)
+- PHP5 Extension Module
+	(php-bcmath, version 5.3.2-6.el6)
+	(php-pear, version 1:1.9.0-2.el6)
+- A Concurrent Versioning system (subversion, version 1.6.11-2.el6_1.4)
+
+CentOS 5:
+- Apache HTTP Server (httpd, version 2.2.3-45)
+- PHP5 Core Files (php, version 5.1.6-27)
+- PHP5 Extension Module
+	(php-bcmath, version 5.1.6-27)
+	(php-pear, version 5.1.6-27)
+	(php-mcrypt, version 5.1.6-27)
+- A Concurrent Versioning system (subversion, version 1.6.11-7)
+
+DEBIAN 5:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.9-10+lenny9)
+- PHP5 Core Files (php5, version 5.2.6.dfsg.1-1+lenny13)
+- PHP5 Extension Module
+	(php5-cli, version 5.2.6.dfsg.1-1+lenny13)
+	(php5-mcrypt, version 5.2.6.dfsg.1-1+lenny13)
+	(php-pear, version 5.2.6.dfsg.1-1+lenny13)
+- A Concurrent Versioning system (subversion, version 1.5.1dfsg1-7)
+
+DEBIAN 6:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.16-6+squeeze1)
+- PHP5 Core Files (php5, version 5.3.3-7+squeeze3)
+- PHP5 Extension Module
+	(php5-cli, version 5.3.3-7+squeeze3)
+	(php5-mcrypt, version 5.3.3-7+squeeze3)
+	(php-pear, version 5.3.3-7+squeeze3)
+- A Concurrent Versioning system (subversion, version 1.6.12dfsg-6)
+
+UBUNTU 8:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.8-1)
+- PHP5 Core Files (php5, version 5.2.4-2ubuntu5.17)
+- PHP5 Extension Module
+	(php5-cli, version 5.2.4-2ubuntu5.17)
+	(php5-mcrypt, version 5.2.3-0ubuntu1)
+	(php-pear, version version 5.2.4-2ubuntu5.17)
+- A Concurrent Versioning system (subversion, version 1.4.6dfsg1-2ubuntu1.3)
+
+UBUNTU 10:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.14-5ubuntu8.4)
+- PHP5 Core Files (php5, version 5.3.2-1ubuntu4.9)
+- PHP5 Extension Module
+	(php5-cli, version 5.3.2-1ubuntu4.9)
+	(php5-mcrypt, version 5.3.2-0ubuntu1)
+	(php-pear, version version 5.3.2-1ubuntu4.9)
+- A Concurrent Versioning system (subversion, version 1.6.6dfsg-2ubuntu1)
+
+
