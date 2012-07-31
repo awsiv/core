@@ -1,0 +1,17 @@
+{
+    "active_directory_domain" : "activedir.test.cfengine.com",
+    "admin_role" : "admin",
+    "appemail" : "admin@cfengine.com",
+    "base_dn" : "dc=activedir,dc=test,dc=cfengine,dc=com",
+    "bluehost_threshold_global" : "3000000",
+    "encryption" : "plain",
+    "experimental" : true,
+    "external_admin_username" : "sudhir",
+    "fall_back_for" : "admin",
+    "host" : "10.0.0.140",
+    "login_attribute" : "",
+    "member_attribute" : "memberUid",
+    "mode" : "database",
+    "rbac" : "false",
+    "users_directory" : ""
+}

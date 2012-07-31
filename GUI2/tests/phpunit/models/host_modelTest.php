@@ -1,6 +1,6 @@
 <?php
 
-class test_host_model extends CI_TestCase
+class test_host_model extends CI_BaseTestCase
 {
 
     private $hostkey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
@@ -10,6 +10,7 @@ class test_host_model extends CI_TestCase
 
     public function setUp()
     {
+        parent::setUp();
         $this->load = new Mock_Core_Loader();
         // mock up a ci instance
         $this->_ci = new StdClass;

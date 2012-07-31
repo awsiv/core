@@ -1,13 +1,14 @@
 <?php
 
-class test_tracker_model extends CI_TestCase
+class test_tracker_model extends CI_BaseTestCase
 {
 
     private $ci_obj;
     private $username = "admin";
 
-    public function set_up()
+    public function setUp()
     {
+        parent::setUp();
         $config = $this->getMock('CI_Config', NULL, array(), '', FALSE);
 
          $this->ci_set_config(array(

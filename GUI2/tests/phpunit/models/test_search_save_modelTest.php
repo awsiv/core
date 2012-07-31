@@ -1,11 +1,11 @@
 <?php
 
-class test_search_save_modelTest extends CI_TestCase
+class test_search_save_modelTest extends CI_BaseTestCase
 {
 
     private $_ci;
 
-    public function set_up()
+    public function setUp()
     {
 
         $config = $this->getMock('CI_Config', NULL, array(), '', FALSE);

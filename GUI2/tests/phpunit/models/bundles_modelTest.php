@@ -1,13 +1,15 @@
 <?php
 
-class test_bundles_model extends CI_TestCase
+class test_bundles_model extends CI_BaseTestCase
 {
 
     private $ci_obj;
     private $username = "admin";
 
-    public function set_up()
+    public function setUp()
     {
+
+        parent::setUp();
         // Instantiate a new loader
         $this->load = new Mock_Core_Loader();
         // mock up a ci instance
@@ -35,6 +37,7 @@ class test_bundles_model extends CI_TestCase
     public function test_get_all_bundles()
     {
         $bundles = $this->ci_obj->bundle_model->getAllBundles($this->username);
+        var_dump($bundles);
         $this->assertNotEmpty($bundles);
     }
 
@@ -56,7 +59,7 @@ class test_bundles_model extends CI_TestCase
     {
         $args = $this->ci_obj->bundle_model->getBundleClassesUsed($this->username, 'agent', 'cronjob');
         $this->assertNotEmpty($args);
-        $expectedArray = array(array(0, "SuSE"), array(0, "any"), array(0, "changed_crontab"), array(0, "fedora"), array(0, "redhat"), array(0, "windows"));
+        $expectedArray = array(array(0, "SuSE"), array(0, "any"));
         $this->assertEquals($args, $expectedArray);
     }
 

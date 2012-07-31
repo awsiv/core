@@ -1,11 +1,12 @@
 <?php
 
-class test_vitals_model extends CI_TestCase
+class test_vitals_model extends CI_BaseTestCase
 {
 
     private $ci_obj;
     private $username = "admin";
     private $hostkey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
+    
 
     private function validateJson($json)
     {
@@ -16,8 +17,9 @@ class test_vitals_model extends CI_TestCase
         $this->assertEquals($retValue, 0, "This should return 0 in case of no error, returned value is $retValue");
     }
 
-    public function set_up()
+    public function setUp()
     {
+        parent::setUp();
         // Instantiate a new loader
         $this->load = new Mock_Core_Loader();
         // mock up a ci instance
@@ -45,6 +47,7 @@ class test_vitals_model extends CI_TestCase
     public function testVitalList()
     {
         $graphdata = $this->_ci->vitals_model->getVitalsList($this->username, $this->hostkey);
+        var_dump($graphdata);
         $this->assertTrue(is_array($graphdata) && !empty($graphdata['obs']));
     }
 
