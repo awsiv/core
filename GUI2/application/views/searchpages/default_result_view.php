@@ -10,7 +10,6 @@ if (is_array($report_result) && key_exists('truncated', $report_result['meta']))
 if (isset($report_result['meta']['old_skipped']) &&
     $report_result['meta']['old_skipped'] > 0) {
     echo "<div class='warning'> Warning: Agents prior to version 2.2.0 are not compatible with this report and are therefore omitted.</div>";
-    echo $report_result['meta']['old_skipped'];
 }
 
 if ($report_result['meta']['count'] > 0) {
