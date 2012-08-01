@@ -23,7 +23,6 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 static LDAP *NovaLDAPConnect(const char *uri, bool starttls, const char **errstr);
 static int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 static int NovaStr2Scope(const char *scope);
-static Rlist *LDAPKeyInRlist(Rlist *list, char *key);
 
 #endif
 
@@ -1152,29 +1151,5 @@ static int NovaStr2Scope(const char *scope)
     return LDAP_SCOPE_SUBTREE;
 }
 
-/*******************************************************************/
-
-static Rlist *LDAPKeyInRlist(Rlist *list, char *key)
-{
-    Rlist *rp;
-    CfAssoc *ap;
-
-    for (rp = list; rp != NULL; rp = rp->next)
-    {
-        if (rp->type != CF_SCALAR)
-        {
-            continue;
-        }
-
-        ap = (CfAssoc *) rp->item;
-
-        if (strcmp((char *) ap->lval, key) == 0)
-        {
-            return rp;
-        }
-    }
-
-    return NULL;
-}
 
 #endif
