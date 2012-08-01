@@ -273,10 +273,12 @@ PHP_FUNCTION(cfapi_role_delete)
 
 PHP_FUNCTION(cfapi_user_list)
 {
-    const char *username = NULL; int username_len = 0;
+    const char *username = NULL, *password = NULL;
+    int username_len = 0, password_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
-                              &username, &username_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &password, &password_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -289,7 +291,7 @@ PHP_FUNCTION(cfapi_user_list)
         THROW_GENERIC(errid, "Access denied");
     }
 
-    HubQuery *result = CFDB_ListUsers(NULL);
+    HubQuery *result = CFDB_ListUsers(username, password, NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");
@@ -308,10 +310,12 @@ PHP_FUNCTION(cfapi_user_list)
 PHP_FUNCTION(cfapi_user_get)
 {
     const char *username = NULL; int username_len = 0;
+    const char *password = NULL; int password_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
                               &username, &username_len,
+                              &password, &password_len,
                               &username_arg, &username_arg_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
@@ -325,7 +329,7 @@ PHP_FUNCTION(cfapi_user_get)
         THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only get its own user");
     }
 
-    HubQuery *result = CFDB_ListUsers(username_arg);
+    HubQuery *result = CFDB_ListUsers(username, password, username_arg);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error looking up user");
@@ -365,34 +369,26 @@ PHP_FUNCTION(cfapi_user_put)
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
     {
-        THROW_GENERIC(errid, "Access denied");
-    }
-
-    {
-        HubQuery *users = CFDB_ListUsers(username_arg);
-        if (users->errid != ERRID_SUCCESS)
+        cfapi_errid delete_result = CFDB_DeleteUser(username, username_arg);
+        switch (delete_result)
         {
-            THROW_GENERIC(users->errid, "Unable to lookup user");
-        }
-        if (RlistLen(users->records) >= 1)
-        {
-            cfapi_errid err = ERRID_UNKNOWN;
-            if ((err = CFDB_DeleteUser(username_arg)) != ERRID_SUCCESS)
-            {
-                THROW_GENERIC(err, "Unable to delete existing user");
-            }
-        }
+        case ERRID_SUCCESS:
+            break;
 
-        DeleteHubQuery(users, DeleteHubUser);
+        case ERRID_ITEM_NONEXISTING:
+            break;
+
+        default:
+            THROW_GENERIC(delete_result, "Unable to delete existing user");
+            break;
+        }
     }
 
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
 
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username_arg, password, email, roles)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username, username_arg, password, email, roles)) != ERRID_SUCCESS)
     {
         DeleteRlist(roles);
         THROW_GENERIC(err, "Unable to create user");
@@ -423,20 +419,8 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    bool username_is_admin = CFDB_UserIsAdminWhenRBAC(username) == ERRID_SUCCESS;
-
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
-    if (roles && !username_is_admin)
-    {
-        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Only admins can edit roles for a user");
-    }
-
-    if (!username_is_admin && !StringSafeEqual(username, username_arg))
-    {
-        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only update its own user");
-    }
-
-    cfapi_errid err = CFDB_UpdateUser(username_arg, password, email, roles);
+    cfapi_errid err = CFDB_UpdateUser(username, username_arg, password, email, roles);
     DeleteRlist(roles);
 
     switch (err)
@@ -467,16 +451,10 @@ PHP_FUNCTION(cfapi_user_delete)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    cfapi_errid err = CFDB_UserIsAdminWhenRBAC(username);
-    if (err != ERRID_SUCCESS)
+    cfapi_errid result = CFDB_DeleteUser(username, username_arg);
+    if (result != ERRID_SUCCESS)
     {
-        THROW_GENERIC(err, "Access denied");
-    }
-
-    err = CFDB_DeleteUser(username_arg);
-    if (err != ERRID_SUCCESS)
-    {
-        THROW_GENERIC(err, "Unable to delete user");
+        THROW_GENERIC(result, "Unable to delete user");
     }
 
     RETURN_BOOL(true);

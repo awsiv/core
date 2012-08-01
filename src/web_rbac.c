@@ -80,9 +80,12 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
     [SETTING_EXTERNAL_ADMIN_USERNAME] = JSON_PRIMITIVE_TYPE_STRING
 };
 
+static const char *_EXTERNAL_FILTER_LDAP = "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson)(mail=*))";
+static const char *_EXTERNAL_FILTER_AD = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
+
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
-static bool UserExists(const char *username);
+static bool _UserExistsInternal(EnterpriseDB *conn, const char *username);
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
 static bool RoleExists(const char *name);
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
@@ -94,6 +97,7 @@ static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
 static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRBACForUser(char *userName);
+cfapi_errid _UpdateUser(EnterpriseDB *conn, const char *username, const char *password, const char *email, const Rlist *roles);
 
 /*****************************************************************************/
 
@@ -623,11 +627,10 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
     return start;
 }
 
-/*****************************************************************************/
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, const char *email, const Rlist *roles)
+cfapi_errid _CreateUser(EnterpriseDB *conn, const char *username, const char *password, const char *email, const Rlist *roles)
 {
-    if (UserExists(username))
+    if (_UserExistsInternal(conn, username))
     {
         return ERRID_ITEM_EXISTS;
     }
@@ -637,18 +640,40 @@ cfapi_errid CFDB_CreateUser(const char *username, const char *password, const ch
         return ERRID_ARGUMENT_MISSING;
     }
 
-    return CFDB_UpdateUser(username, password, email, roles);
+    return _UpdateUser(conn, username, password, email, roles);
 }
 
-cfapi_errid CFDB_UpdateUser(const char *username, const char *password, const char *email,
-                            const Rlist *roles)
-{
+cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Rlist *roles)
+{    
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return ERRID_DBCONNECT;
     }
 
+    if (GetAuthenticationMode(&conn) != AUTHENTICATION_MODE_INTERNAL)
+    {
+        return ERRID_ACCESS_DENIED_EXTERNAL;
+    }
+
+    if (!UserIsRoleAdmin(&conn, creating_username))
+    {
+        return ERRID_ACCESS_DENIED;
+    }
+
+    cfapi_errid result = _CreateUser(&conn, username, password, email, roles);
+
+    if (!CFDB_Close(&conn))
+    {
+        return ERRID_DBCONNECT;
+    }
+
+    return result;
+}
+
+cfapi_errid _UpdateUser(EnterpriseDB *conn, const char *username, const char *password, const char *email,
+                        const Rlist *roles)
+{
     bson query;
     bson_init(&query);
     bson_append_string(&query, dbkey_user_name, username);
@@ -690,24 +715,23 @@ cfapi_errid CFDB_UpdateUser(const char *username, const char *password, const ch
     bson_append_finish_object(&set_op);
     bson_finish(&set_op);
 
-    mongo_update(&conn, MONGO_USERS_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    mongo_update(conn, MONGO_USERS_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
 
     cfapi_errid errid = ERRID_SUCCESS;
     bool updated = false;
-    if (!MongoCheckForError(&conn, "CFDB_UpdateUser", NULL, &updated))
+    if (!MongoCheckForError(conn, "CFDB_UpdateUser", NULL, &updated))
     {
         errid = ERRID_DB_OPERATION;
     }
 
-    CFDB_Close(&conn);
-
     return errid;
 }
 
-cfapi_errid CFDB_DeleteUser(const char *username)
+cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email,
+                            const Rlist *roles)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
@@ -715,9 +739,37 @@ cfapi_errid CFDB_DeleteUser(const char *username)
         return ERRID_DBCONNECT;
     }
 
-    if (!UserExists(username))
+    if (GetAuthenticationMode(&conn) != AUTHENTICATION_MODE_INTERNAL)
     {
         CFDB_Close(&conn);
+        return ERRID_ACCESS_DENIED_EXTERNAL;
+    }
+
+    if (!UserIsRoleAdmin(&conn, updating_username))
+    {
+        if (!StringSafeEqual(updating_username, username))
+        {
+            CFDB_Close(&conn);
+            return ERRID_ACCESS_DENIED;
+        }
+
+        if (roles)
+        {
+            CFDB_Close(&conn);
+            return ERRID_ACCESS_DENIED;
+        }
+    }
+
+    cfapi_errid result = _UpdateUser(&conn, username, password, email, roles);
+
+    CFDB_Close(&conn);
+    return result;
+}
+
+cfapi_errid _DeleteUser(EnterpriseDB *conn, const char *username)
+{
+    if (!_UserExistsInternal(conn, username))
+    {
         return ERRID_ITEM_NONEXISTING;
     }
 
@@ -726,33 +778,214 @@ cfapi_errid CFDB_DeleteUser(const char *username)
     bson_append_string(&query, dbkey_user_name, username);
     bson_finish(&query);
 
-    mongo_remove(&conn, MONGO_USERS_COLLECTION, &query, NULL);
+    mongo_remove(conn, MONGO_USERS_COLLECTION, &query, NULL);
 
     bson_destroy(&query);
 
     cfapi_errid errid = ERRID_SUCCESS;
-    if (!MongoCheckForError(&conn, "CFDB_DeleteUser", NULL, false))
+    if (!MongoCheckForError(conn, "CFDB_DeleteUser", NULL, false))
     {
         errid = ERRID_DB_OPERATION;
     }
-
-    CFDB_Close(&conn);
     return errid;
 }
 
-HubQuery *CFDB_ListUsers(const char *usernameRx)
+cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username)
 {
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
-        return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+        return ERRID_DBCONNECT;
     }
 
+    if (GetAuthenticationMode(&conn) != AUTHENTICATION_MODE_INTERNAL)
+    {
+        return ERRID_ACCESS_DENIED_EXTERNAL;
+    }
+
+    if (!UserIsRoleAdmin(&conn, deleting_username))
+    {
+        return ERRID_ACCESS_DENIED;
+    }
+
+    cfapi_errid result = _DeleteUser(&conn, username);
+
+    CFDB_Close(&conn);
+    return result;
+}
+
+static bool _UserIsExternalAdmin(EnterpriseDB *conn, const char *username)
+{
+    char admin_username[1024] = { 0 };
+    if (!CFDB_GetSetting(conn, SETTING_EXTERNAL_ADMIN_USERNAME, admin_username, sizeof(admin_username)))
+    {
+        assert(false && "External admin username should have default value");
+        return false;
+    }
+    return StringSafeEqual(username, admin_username);
+}
+
+static Rlist *_GetExternalUsernamesLdap(EnterpriseDB *conn, const char *username, const char *password, const char *uri, const char *base_dn,
+                                        const char *login_attribute, bool start_tls, const Rlist *user_directories)
+{
+    Rlist *result = NULL;
+    for (const Rlist *rp = user_directories; rp; rp = rp->next)
+    {
+        const char *user_dir = ScalarValue(rp);
+        char *dn = StringConcatenate(3, user_dir, ",", base_dn);
+        char *bind_dn = StringConcatenate(7, login_attribute, "=", username, ",", user_dir, ",", base_dn);
+
+        const char *errstr = NULL;
+        Rlist *partial_result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, login_attribute, "subtree", "sasl",
+                                                              start_tls, 0, 0, &errstr);
+
+        free(dn);
+        free(bind_dn);
+
+        for (const Rlist *rp2 = partial_result; rp2; rp2 = rp2->next)
+        {
+            PrependRlist(&result, rp2->item, CF_SCALAR);
+        }
+        DeleteRlist(partial_result);
+    }
+
+    // TODO: signal error
+    return result;
+}
+
+static Rlist *_GetExternalUsernamesAD(EnterpriseDB *conn, const char *username, const char *password, const char *uri, const char *base_dn,
+                                      const char *login_attribute, bool start_tls, const char *user_directory)
+{
+    char *dn = NULL;
+    if (!user_directory)
+    {
+        dn = SafeStringDuplicate(base_dn);
+    }
+    else
+    {
+        dn = StringConcatenate(3, user_directory, ",", base_dn);
+    }
+    assert(dn);
+
+    char *bind_dn = NULL;
+    {
+        char ad_domain[1024] = { 0 };
+        if (CFDB_GetSetting(conn, SETTING_AD_DOMAIN, ad_domain, sizeof(ad_domain)))
+        {
+            assert(false && "Must have AD-domain set to use AD");
+            return NULL;
+        }
+
+        if (StringMatchFull("(\\w+\\.)+\\w{2,5}", ad_domain))
+        {
+            bind_dn = StringConcatenate(3, username, "@", ad_domain);
+        }
+        else
+        {
+            bind_dn = StringConcatenate(3, ad_domain, "\\", username);
+        }
+    }
+    assert(bind_dn);
+
+    const char *errstr = NULL;
+    Rlist *result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, login_attribute, "subtree", "sasl",
+                                         start_tls, 0, 0, &errstr);
+
+    free(dn);
+    free(bind_dn);
+
+    if (!result)
+    {
+        // TODO: signal error
+        return NULL;
+    }
+
+    return result;
+}
+
+static HubQuery *_ListUsersExternal(EnterpriseDB *conn, const char *username, const char *password, AuthenticationMode mode)
+{
+    char login_attribute[CF_SMALLBUF] = { 0 };
+    if (!CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, login_attribute, sizeof(login_attribute)))
+    {
+        assert(false && "Should have login attribute by default");
+        return NULL;
+    }
+
+    char base_dn[1024] = { 0 };
+    if (!CFDB_GetSetting(conn, SETTING_LDAP_BASE_DN, base_dn, sizeof(base_dn)))
+    {
+        assert(false && "Need base domain name to use ldap");
+        return NULL;
+    }
+
+    char encryption[1024] = { 0 };
+    if (!CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, encryption, sizeof(encryption)))
+    {
+        assert(false && "Encryption should have a default setting");
+        return NULL;
+    }
+
+    char host[1024] = { 0 };
+    if (!CFDB_GetSetting(conn, SETTING_LDAP_HOST, host, sizeof(host)))
+    {
+        assert(false && "Need host setting to use ldap");
+        return NULL;
+    }
+
+    Rlist *user_directories = NULL;
+    {
+        char user_dirs[1024] = { 0 };
+        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, host, sizeof(host)))
+        {
+            assert(false && "Need host setting to use ldap");
+            return NULL;
+        }
+        user_directories = SplitStringAsRList(user_dirs, ';');
+    }
+
+    char *uri = NULL;
+    if (StringSafeEqual("ssl", encryption))
+    {
+        uri = StringConcatenate(2, "https://", host);
+    }
+    else
+    {
+        uri = StringConcatenate(2, "http://", host);
+    }
+
+    bool start_tls = StringSafeEqual("start_tls", encryption);
+
+    Rlist *external_usernames = NULL;
+    switch (mode)
+    {
+    case AUTHENTICATION_MODE_LDAP:
+        external_usernames = _GetExternalUsernamesLdap(conn, username, password, uri, base_dn, login_attribute, start_tls, user_directories);
+        break;
+
+    case AUTHENTICATION_MODE_AD:
+        external_usernames = _GetExternalUsernamesAD(conn, username, password, uri, base_dn, login_attribute, start_tls, ScalarValue(user_directories));
+        break;
+
+    default:
+        assert(false && "External authentication mode not supported");
+        break;
+    }
+
+    free(uri);
+    DeleteRlist(user_directories);
+
+    // TODO: check error
+    return NewHubQueryErrid(NULL, external_usernames, ERRID_SUCCESS);
+}
+
+HubQuery *_ListUsersInternal(EnterpriseDB *conn, const char *username_rx)
+{
     bson query;
     bson_init(&query);
-    if (!NULL_OR_EMPTY(usernameRx))
+    if (!NULL_OR_EMPTY(username_rx))
     {
-        bson_append_regex(&query, dbkey_user_name, usernameRx, "");
+        bson_append_regex(&query, dbkey_user_name, username_rx, "");
     }
     bson_finish(&query);
 
@@ -762,7 +995,7 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
                            dbkey_user_email,
                            dbkey_user_roles);
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_USERS_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -783,8 +1016,44 @@ HubQuery *CFDB_ListUsers(const char *usernameRx)
         PrependRlistAlien(&(hq->records), user);
     }
 
-    CFDB_Close(&conn);
     return hq;
+}
+
+HubQuery *CFDB_ListUsers(const char *listing_username, const char *requestor_password, const char *username_rx)
+{
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
+    {
+        return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+
+    AuthenticationMode mode = GetAuthenticationMode(&conn);
+
+    HubQuery *users = NULL;
+    if (mode == AUTHENTICATION_MODE_INTERNAL)
+    {
+        if (!UserIsRoleAdmin(&conn, listing_username))
+        {
+            CFDB_Close(&conn);
+            return NewHubQueryErrid(NULL, NULL, ERRID_ACCESS_DENIED);
+        }
+
+        users = _ListUsersInternal(&conn, username_rx);
+    }
+    else
+    {
+        if (!_UserIsExternalAdmin(&conn, listing_username))
+        {
+            CFDB_Close(&conn);
+            return NewHubQueryErrid(NULL, NULL, ERRID_ACCESS_DENIED_EXTERNAL);
+        }
+
+        users = _ListUsersExternal(&conn, listing_username, requestor_password, mode);
+    }
+    assert(users);
+
+    CFDB_Close(&conn);
+    return users;
 }
 
 
@@ -974,9 +1243,9 @@ static bool RoleExists(const char *name)
     return exists;
 }
 
-static bool UserExists(const char *username)
+static bool _UserExistsInternal(EnterpriseDB *conn, const char *username)
 {
-    HubQuery *hq = CFDB_ListUsers(username);
+    HubQuery *hq = _ListUsersInternal(conn, username);
     bool exists = (hq->records == NULL) ? false : true;
 
     DeleteHubQuery(hq, DeleteHubUser);

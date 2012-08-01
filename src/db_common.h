@@ -1,7 +1,7 @@
 #ifndef CFENGINE_NOVA_DB_COMMON_H
 #define CFENGINE_NOVA_DB_COMMON_H
 
-#include <mongo.h>
+#include "cf.nova.h"
 
 bool CFDB_Open(EnterpriseDB *conn);
 bool CFDB_Close(EnterpriseDB *conn);

@@ -219,9 +219,8 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    /**
-     * For grabbing the details specially the role name of the the logged in ldap user.
-     */
+    /*
+    //For grabbing the details specially the role name of the the logged in ldap user.
     public function testLdapUserDetails()
     {
         //since the database is filled with the required information by previous test we can just try to grab the details.
@@ -237,18 +236,7 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testGetUsers()
-    {
-        try
-        {
-            $usersJsonArray = $this->getResults('/user');
-            $this->assertValidJson($usersJsonArray);
-            $this->assertGreaterThan(1, sizeof($usersJsonArray));
-        }
-        catch (Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
+     */
+
 
 }

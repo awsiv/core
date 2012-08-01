@@ -43,10 +43,10 @@ cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);
 HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 
-cfapi_errid CFDB_CreateUser(const char *username, const char *password, const char *email, const Rlist *roles);
-cfapi_errid CFDB_UpdateUser(const char *username, const char *password, const char *email, const Rlist *roles);
-cfapi_errid CFDB_DeleteUser(const char *username);
-HubQuery *CFDB_ListUsers(const char *usernameRx);
+cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Rlist *roles);
+cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email, const Rlist *roles);
+cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username);
+HubQuery *CFDB_ListUsers(const char *listing_username, const char *requestor_password, const char *username_rx);
 
 cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,
                             const char *includeClassRx, const char *excludeClassRx, const char *includeBundleRx, const char *excludeBundleRx);
