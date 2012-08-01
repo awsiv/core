@@ -25,30 +25,18 @@ Abstract class CI_BaseTestCase extends CI_TestCase
 
     public function tearDown()
     {
-        $fixtures = array(
-            'hosts' => 'cfreport',
-            'promises_exp' => 'cfreport',
-            'promises_unexp' => 'cfreport',
-            'roles' => 'cfreport',
-            'settings' => 'cfreport',
-            'users' => 'cfreport',
-            'monitoring_mg' => 'cfreport',
-            'custom_search' => 'phpcfengine',
-            'trackers' => 'phpcfengine'
-        );
-
-        foreach ($fixtures as $collection => $db)
+        $database = array('cfreport', 'phpcfengine');
+        foreach ($database as $db)
         {
             $mongodb = $this->mongoInstance->$db;
-            $mongoCollection = $mongodb->$collection;
-            $res = $mongoCollection->drop();
+            $mongodb->drop();
         }
     }
 
     protected function loadFixtures()
     {
         $fixtures = array(
-             'settings' => 'cfreport',
+            'settings' => 'cfreport',
             'roles' => 'cfreport',
             'users' => 'cfreport',
             'hosts' => 'cfreport',
@@ -66,25 +54,13 @@ Abstract class CI_BaseTestCase extends CI_TestCase
             $fileContent = file_get_contents($fileName);
 
 
-            $c = json_decode($fileContent, true);
-            if (!is_array($c)) {
-              // var_dump($fileContent);
-                die('no array for '.$collection);
+            $insertData = json_decode($fileContent, true);
+            if (!is_array($insertData))
+            {
+                die('cannot json decode for ' . $collection . ' ');
             }
-            $insertData = $c;
             $mongoCollection->drop();
-
-            if ($collection === 'monitoring_mg') {
-
-            }
-                $res = $mongoCollection->batchInsert($insertData,array('continueOnError' => false,'fsync'=>true));
+            $res = $mongoCollection->batchInsert($insertData, array('continueOnError' => false, 'fsync' => true));
         }
-
-
-
-        // read the file
     }
-
 }
-
-// EOF
