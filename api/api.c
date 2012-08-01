@@ -662,5 +662,10 @@ PHP_FUNCTION(cfapi_query_post)
 
     assert(result);
 
+    if (data == NULL)
+    {
+        data = JsonArrayCreate(0);
+    }
+
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
