@@ -647,10 +647,13 @@ PHP_FUNCTION(cfapi_query_post)
 {
     const char *username = NULL; int username_len = 0;
     const char *query = NULL; int query_len = 0;
+    zval *context_includes = NULL, *context_excludes = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaa",
                               &username, &username_len,
-                              &query, &query_len) == FAILURE)
+                              &query, &query_len,
+                              &context_includes,
+                              &context_excludes) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -658,7 +661,14 @@ PHP_FUNCTION(cfapi_query_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
-    JsonElement *data = EnterpriseExecuteSQL(username, query);
+    Rlist *include_list = PHPStringArrayToRlist(context_includes, true);
+    Rlist *exclude_list = PHPStringArrayToRlist(context_excludes, true);
+
+    JsonElement *data = EnterpriseExecuteSQL(username, query, include_list,
+                                             exclude_list);
+
+    DeleteRlist(include_list);
+    DeleteRlist(exclude_list);
 
     assert(result);
 

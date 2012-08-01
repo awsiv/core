@@ -17,13 +17,13 @@
 JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
 
 /* Conversion functions */
-void EnterpriseDBToSqlite3_Hosts(sqlite3 *db);
-void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db);
-void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db);
-void EnterpriseDBToSqlite3_Contexts(sqlite3 *db);
-void EnterpriseDBToSqlite3_Variables(sqlite3 *db);
-void EnterpriseDBToSqlite3_Software(sqlite3 *db);
-void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db);
+void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 
 char *SqliteEscapeSingleQuote(char *str, int strSz);
 
@@ -32,9 +32,10 @@ char *SqliteEscapeSingleQuote(char *str, int strSz);
 
 /******************************************************************/
 
-JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
+                                  Rlist *context_include, Rlist *context_exclude)
 {
-    #if defined(HAVE_LIBSQLITE3)
+#if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
 
     /* Open an in-memory database */
@@ -46,14 +47,18 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
         return NULL; /* TODO: return empty object? */
     }
 
+    /* Apply RBAC & Context filters */
+    HostClassFilter *context_filter = NULL;
+    context_filter = NewHostClassFilterLists(context_include, context_exclude);
+
     /* Query MongoDB and dump the result into Sqlite */
 
-    EnterpriseDBToSqlite3_Hosts(db);
-    EnterpriseDBToSqlite3_Contexts(db);
-    EnterpriseDBToSqlite3_Variables(db);
-    EnterpriseDBToSqlite3_FileChanges(db);
-    EnterpriseDBToSqlite3_Software(db);
-    EnterpriseDBToSqlite3_PromiseStatusLast(db);
+    EnterpriseDBToSqlite3_Hosts(db, context_filter);
+    EnterpriseDBToSqlite3_Contexts(db, context_filter);
+    EnterpriseDBToSqlite3_Variables(db, context_filter);
+    EnterpriseDBToSqlite3_FileChanges(db, context_filter);
+    EnterpriseDBToSqlite3_Software(db, context_filter);
+    EnterpriseDBToSqlite3_PromiseStatusLast(db, context_filter);
 
     /* Now query the in-memory database */
     JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op);
@@ -113,7 +118,7 @@ JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Hosts(sqlite3 *db)
+void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -121,10 +126,6 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db)
     {
         return;
     }
-
-    /* TODO: Move host class filtering to the cfmod implementation */
-
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryHostsByAddress(&dbconn, NULL, NULL, filter);
 
@@ -178,7 +179,7 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Contexts(sqlite3 *db)
+void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -186,10 +187,6 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db)
     {
         return;
     }
-
-    /* TODO: Move host class filtering to the cfmod implementation */
-
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryClasses(&dbconn, NULL, NULL, false, 0, time(NULL),
                                      filter, false);
@@ -243,7 +240,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
+void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -251,8 +248,6 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
     {
         return;
     }
-
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL,
                                        false, 0, time(NULL), filter);
@@ -317,7 +312,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
+void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -325,9 +320,6 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
     {
         return;
     }
-
-    /* TODO: Move hostclass filtering into cfmod */
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, false, 0, time(NULL), false, filter);
 
@@ -378,7 +370,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Software(sqlite3 *db)
+void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -386,8 +378,6 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db)
     {
         return;
     }
-
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, NULL, cfr_software, NULL,NULL,NULL, false, filter, false);
 
@@ -464,7 +454,7 @@ static const char *PromiseStateToString(PromiseState state)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
+void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -472,8 +462,6 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
     {
         return;
     }
-
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY, false, 0, time(NULL), false, filter);
 
@@ -527,7 +515,7 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
 /******************************************************************/
 /* CAUTION: THIS IS EXPERIMENTAL IMPLEMENTATION ONLY */
 
-void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
+void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -535,9 +523,6 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
     {
         return;
     }
-
-    /* TODO: move hostclass filtering into cfmod */
-    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     /* Table schema in sqlite */
     char table_schema[CF_BUFSIZE] = {0};
