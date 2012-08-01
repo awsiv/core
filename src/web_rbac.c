@@ -836,7 +836,7 @@ static Rlist *_GetExternalUsernamesLdap(EnterpriseDB *conn, const char *username
         char *bind_dn = StringConcatenate(7, login_attribute, "=", username, ",", user_dir, ",", base_dn);
 
         const char *errstr = NULL;
-        Rlist *partial_result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, login_attribute, "subtree", "sasl",
+        Rlist *partial_result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_LDAP, login_attribute, "subtree", "sasl",
                                                               start_tls, 0, 0, &errstr);
 
         free(dn);
