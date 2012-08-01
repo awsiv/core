@@ -87,7 +87,9 @@ The general installation steps are as follows:
 4. (Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
 5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
      $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
-6. CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions.
+6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait 10-15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
+
+See Enterprise 2.2 Owner's Manual for more detailed installation instructions and troubleshooting tips.
 
 If you wish to manually install cfmod to the machine, you'll need to do the following:
 1. Make a symlink from php library directory (typically something like
