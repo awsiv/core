@@ -59,6 +59,8 @@ static const char *settingLabels[SETTING_MAX] =
     [SETTING_LDAP_BASE_DN] = "ldapBaseDN",
     [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
     [SETTING_LDAP_HOST] = "ldapHost",
+    [SETTING_LDAP_PORT] = "ldapPort",
+    [SETTING_LDAP_PORT_SSL] = "ldapPortSSL",
     [SETTING_AD_DOMAIN] = "activeDirectoryDomain",
     [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon",
     [SETTING_EXTERNAL_ADMIN_USERNAME] = "externalAdminUsername"
@@ -75,6 +77,8 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
     [SETTING_LDAP_BASE_DN] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_USERS_DIRECTORY] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_HOST] = JSON_PRIMITIVE_TYPE_STRING,
+    [SETTING_LDAP_PORT] = JSON_PRIMITIVE_TYPE_INTEGER,
+    [SETTING_LDAP_PORT_SSL] = JSON_PRIMITIVE_TYPE_INTEGER,
     [SETTING_AD_DOMAIN] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER,
     [SETTING_EXTERNAL_ADMIN_USERNAME] = JSON_PRIMITIVE_TYPE_STRING
@@ -936,7 +940,7 @@ static HubQuery *_ListUsersExternal(EnterpriseDB *conn, const char *username, co
     Rlist *user_directories = NULL;
     {
         char user_dirs[1024] = { 0 };
-        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, host, sizeof(host)))
+        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, host, sizeof(user_dirs)))
         {
             assert(false && "Need host setting to use ldap");
             return NULL;
@@ -944,14 +948,29 @@ static HubQuery *_ListUsersExternal(EnterpriseDB *conn, const char *username, co
         user_directories = SplitStringAsRList(user_dirs, ';');
     }
 
+
     char *uri = NULL;
     if (StringSafeEqual("ssl", encryption))
     {
-        uri = StringConcatenate(2, "https://", host);
+        char port_ssl[1024] = { 0 };
+        if (!CFDB_GetSetting(conn, SETTING_LDAP_PORT_SSL, port_ssl, sizeof(port_ssl)))
+        {
+            assert(false && "LDAP port for SSL should have a default");
+            return NULL;
+        }
+
+        uri = StringConcatenate(4, "https://", host, ":", port_ssl);
     }
     else
     {
-        uri = StringConcatenate(2, "http://", host);
+        char port[1024] = { 0 };
+        if (!CFDB_GetSetting(conn, SETTING_LDAP_PORT, port, sizeof(port)))
+        {
+            assert(false && "LDAP port should have a default");
+            return NULL;
+        }
+
+        uri = StringConcatenate(4, "http://", host, ":", port);
     }
 
     bool start_tls = StringSafeEqual("start_tls", encryption);
@@ -1593,6 +1612,12 @@ bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, si
 
     case SETTING_LDAP_HOST:
         return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_HOST), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_PORT:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_PORT), value_out, size, "389", conn, MONGO_SETTINGS_COLLECTION);
+
+    case SETTING_LDAP_PORT_SSL:
+        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_PORT_SSL), value_out, size, "636", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_AD_DOMAIN:
         return CFDB_HandleGetValue(HubSettingToString(SETTING_AD_DOMAIN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
