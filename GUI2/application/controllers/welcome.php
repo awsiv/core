@@ -55,8 +55,10 @@ class Welcome extends Cf_Controller
             'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
             'daysleft' => $daysleft,
-            'mp_auth_mode' => $this->setting_lib->get_authentication_mode(),
-            'user_auth_mode' => $this->session->userdata('mode')
+            'mp_auth_mode' => $this->setting_lib->get_authentication_mode(),        
+            'user_auth_mode' => $this->session->userdata('mode'),
+            'show_business_room' => $this->setting_lib->get_show_business_room_setting(),
+            'show_planning_room' => $this->setting_lib->get_show_planning_room_setting()              
         );
         $this->template->load('template', 'index', $data);
     }

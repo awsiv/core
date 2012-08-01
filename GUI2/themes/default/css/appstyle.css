@@ -333,10 +333,33 @@ p#userbox a{
     margin-top: 55px;
 }
 
-#work .dash ul{
-    width:510px;
+.room_nav_wrapper {
+   float:left;
+   width:100%;
+   overflow:hidden;
+   position:relative;
 }
 
+.room_nav_wrapper ul {
+   clear:left;
+   float:left;
+   list-style:none;
+   margin:0;
+   padding:0;
+   position:relative;
+   left:50%;
+   text-align:center
+}
+
+.room_nav_wrapper ul li {
+    display:block;
+    float:left;
+    list-style:none;
+    margin:0;
+    padding:0;
+    position:relative;
+    right:50%;
+}
 
 .dash ul{
     list-style: none;

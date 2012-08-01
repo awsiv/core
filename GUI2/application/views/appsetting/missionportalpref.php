@@ -149,7 +149,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'checked'     => (isset($rbac) && $rbac== 'true' ? TRUE : '')
             );
         echo form_radio($elem); ?>
-        <label for="mode" class="">On</label>
+        <label for="rbac" class="">On</label>
         <?php 
         $elem = array(
                 'name'        => 'rbac',
@@ -159,9 +159,57 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
             );
         echo form_radio($elem); ?>                
         
-        <label for="mode" class="">Off</label>
+        <label for="rbac" class="">Off</label>
 </p>
+          <p>
+                <label for="business_room">Show Business Room <span class="required">*</span></label>
+                <?php
+                $elem = array(
+                    'name' => 'business_room',
+                    'id' => 'business_room_on',
+                    'value' => 1,
+                    'checked' => (isset($business_room) && $business_room ? TRUE : '')
+                );
+                echo form_radio($elem);
+                ?>
+                <label for="business_room_on" class="">On</label>
+                <?php
+                $elem = array(
+                    'name' => 'business_room',
+                    'id' => 'business_room_off',
+                    'value' => 0,
+                    'checked' => (isset($business_room) && !$business_room ? TRUE : '')
+                );
+                echo form_radio($elem);
+                ?>
 
+                <label for="business_room_off" class="">Off</label>
+            </p>
+
+            <p>
+                <label for="planning_room">Show Planning Room <span class="required">*</span></label>
+                <?php
+                $elem = array(
+                    'name' => 'planning_room',
+                    'id' => 'planning_room_on',
+                    'value' => 1,
+                    'checked' => (isset($planning_room) && $planning_room ? TRUE : '')
+                );
+                echo form_radio($elem);
+                ?>
+                <label for="planning_room_on" class="">On</label>
+                <?php
+                $elem = array(
+                    'name' => 'planning_room',
+                    'id' => 'planning_room_off',
+                    'value' => 0,
+                    'checked' => (isset($planning_room) && !$planning_room ? TRUE : '')
+                );
+                echo form_radio($elem);
+                ?>
+
+                <label for="planning_room_off" class="">Off</label>
+            </p>            
  <p>
         <label for="bluehost_threshold_global">Unreachable host threshold (minutes) <span class="required">*</span></label>
         <?php echo tooltip('tooltip_bluehost_threshold','',true); ?>
