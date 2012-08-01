@@ -117,7 +117,10 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     /* TODO: Move host class filtering to the cfmod implementation */
 
@@ -179,7 +182,10 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     /* TODO: Move host class filtering to the cfmod implementation */
 
@@ -241,7 +247,11 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
     HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL,
@@ -311,7 +321,10 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     /* TODO: Move hostclass filtering into cfmod */
     HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
@@ -369,7 +382,10 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
@@ -452,7 +468,10 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 
@@ -512,7 +531,10 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db)
 {
     EnterpriseDB dbconn;
 
-    CFDB_Open(&dbconn);
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
 
     /* TODO: move hostclass filtering into cfmod */
     HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
