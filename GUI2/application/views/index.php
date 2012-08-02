@@ -33,13 +33,22 @@
                   
                   <?php } ?>
                   <div class="grid_8 push_2 dash">
+                      <div class="room_nav_wrapper">
                       <ul>
-                          <li class="showqtip engineering" title="<?php echo tooltip('tooltip_engineeringroom')?>"><?php echo anchor('engineering',' ',array('class'=>'ico'));?><?php echo anchor('engineering','Engineering',array('class'=>'text'));?></li>
-                          <li class="showqtip status" title="<?php echo tooltip('tooltip_statusroom') ?>"><?php echo anchor('welcome/status',' ',array('class'=>'ico'));?><?php echo anchor('welcome/status','Business',array('class'=>'text'));?></li>
-                          <li class="showqtip planning" title="<?php echo tooltip('tooltip_planningroom')?>"><?php echo anchor('welcome/planning',' ',array('class'=>'ico'));?><?php echo anchor('welcome/planning','Planning',array('class'=>'text'));?> </li>
+                          <li class="showqtip engineering" title="<?php echo tooltip('tooltip_engineeringroom')?>"><?php echo anchor('engineering',' ',array('class'=>'ico'));?><?php echo anchor('engineering','Status and<br /> Reports',array('class'=>'text'));?></li>
+                          
+                          <?php if ($show_business_room == true) { ?>
+                            <li class="showqtip status" title="<?php echo tooltip('tooltip_statusroom') ?>"><?php echo anchor('welcome/status',' ',array('class'=>'ico'));?><?php echo anchor('welcome/status','Business',array('class'=>'text'));?></li>
+                          <?php } ?>
+                          
+                          <?php if ($show_planning_room == true) { ?>
+                            <li class="showqtip planning" title="<?php echo tooltip('tooltip_planningroom')?>"><?php echo anchor('welcome/planning',' ',array('class'=>'ico'));?><?php echo anchor('welcome/planning','Planning',array('class'=>'text'));?> </li>
+                          <?php } ?>      
+                            
                           <li class="showqtip library" title="<?php echo tooltip('tooltip_libraryroom')?>"><?php echo anchor('knowledge/index',' ',array('class'=>'ico'));?><?php echo anchor('knowledge/index','Library',array('class'=>'text'));?></li>
                           <p class="clearleft"></p>
                       </ul>
+                      </div>    
                   </div>                  
                  <div class="clear"></div>
 

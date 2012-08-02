@@ -69,8 +69,8 @@ class Setting_lib
      * @return boolean  if it is set returns (bool)true else false
      */
     public function get_rbac_setting() {
-       return  $this->ci->settings_model->app_settings_get_item('rbac') === "true" ? true : false;
-    }
+       return  $this->ci->settings_model->app_settings_get_item('rbac') === "true" ? true : false; 
+   }
 
 
     /**
@@ -91,6 +91,21 @@ class Setting_lib
         return $this->ci->settings_model->app_settings_get_item('mode');
     }
 
+    
+    /**
+     *  return setting for business room icon on main page
+     * @return type boolean
+     */
+    public function get_show_business_room_setting() {
+        return $this->ci->settings_model->app_settings_get_item('business_room');      
+    } 
+    
+    /**
+     *  return setting for planning room icon on main page
+     * @return type boolean
+     */
+    public function get_show_planning_room_setting() {
+        return $this->ci->settings_model->app_settings_get_item('planning_room');             
+    }    
 }
-
 ?>

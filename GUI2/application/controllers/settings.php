@@ -38,6 +38,9 @@ class Settings extends Cf_Controller
         $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
         $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
         $this->form_validation->set_rules('rbac', 'Role based acccess control', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('business_room', 'Show Business Room', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('planning_room', 'Show Planning Room', 'xss_clean|trim|required');        
+        
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
@@ -178,6 +181,8 @@ class Settings extends Cf_Controller
                 'encryption' => set_value('encryption'),
                 'external_admin_username' => $this->input->post('external_admin_username'),
                 'rbac' => set_value('rbac'),
+                'business_room' => set_value('business_room'),                
+                'planning_room' => set_value('planning_room'),                    
                 'bluehost_threshold_global' => "$bluehost_threshold_min",
             );
 // run insert model to write data to db

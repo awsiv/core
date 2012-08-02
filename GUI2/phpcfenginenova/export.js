@@ -7,7 +7,9 @@ if(db["appsettings"].findOne())
 	"external_admin_username": "",
 	"rbac" : "false",
         "admin_role":"admin",
-        "fall_back_for":"admin"
+        "fall_back_for":"admin",        
+        "business_room": "1",
+        "planning_room": "1"
     }}, false, true);
 }
 else
@@ -28,7 +30,9 @@ else
 	"member_attribute": "",
 	"mode": "database",
 	"rbac": "false",
-	"users_directory": ""
+	"users_directory": "",
+        "business_room": "1",
+        "planning_room": "1"        
     });
 }
 
