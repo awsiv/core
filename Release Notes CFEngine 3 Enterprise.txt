@@ -10,6 +10,7 @@ All documentation for 2.2.0 and 2.2.1 will apply to 2.2.2, except issues noted i
  TABLE OF CONTENTS:
  PLATFORMS SUPPORTED
  COMPATIBILITY MATRIX
+ CHANGE LOG FROM 2.2.1
  BUGFIXES SINCE 2.2.1
  BUGFIXES SINCE 2.2.0
  CHANGE LOG FROM 2.1.3
@@ -64,6 +65,9 @@ HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 
 As always, test thoroughly in your lab before upgrading production environments!
 
+CHANGE LOG FROM 2.2.1:
+* Rename Engineering room to Status and Reports room
+* Make the display of the Business and Planning rooms configurable (option to show or hide rooms)
 
 BUGFIXES SINCE 2.2.1:
 * Fixes for segmentation faults caused by destroying empty bson objects

@@ -133,24 +133,11 @@ CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's
 
 
 SOFTWARE DEPENDENCIES (specific to CFEngine 3 Enterprise)
-The CFEngine 3 Enterprise agents on client hosts do not require any additional packages for operation and/or install. The
-following section is for the hub only.
+The CFEngine 3 Enterprise agents on client hosts do not require any additional packages for operation and/or install. The following section is for the hub only.
 
 CFEngine 3 Enterprise will automatically detect if the necessary packages are already installed on the hub. If new package installation is required, CFEngine 3 Enterprise will install all of them from its default software repository (if configured properly). If the system does not have a default software repository configured, manual installation of these packages will be required.
 
 Note that these mandatory packages may have additional dependencies on their own, and hence additional packages may be installed during the installation process. This process will be handled automatically by CFEngine bootstrap. We do not recommend configuring every component on your own, please contact your CFEngine sales representative in case you cannot use CFEngine's bootstrap procedure.
-
-OpenSuSE 11:
-- The Apache Web Server Version 2.0 (apache2, version 2.2.15-3.7)
-- PHP5 Module for Apache 2.0 (apache2-mod_php5, version 5.3.3-0.19.1)
-- Apache 2 "prefork" MPM (Multi-Processing Module; apache2-prefork, version 2.2.15-3.7)
-- PHP5 Core Files (php5, version 5.3.3-0.19.1)
-- PHP5 Extension Module
-	(php5-json, version 5.3.3-0.19.1)
-	(php5-pear, version 5.3.3-0.19.1)
-	(php5-mcrypt, version 5.3.3-0.19.1)
-	(php5-bcmatch, version 5.3.3-0.19.1)
-- A Concurrent Versioning system (subversion, version 1.6.9-4.7.1)
 
 SLES 11:
 - The Apache Web Server Version 2.0 (apache2, version 2.2.10-2.24.5)
