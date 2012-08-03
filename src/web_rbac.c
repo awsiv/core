@@ -332,9 +332,10 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
                 return ERRID_RBAC_ACCESS_DENIED;
             }
         }
+
+        bson_destroy(&record);
     }
 
-    bson_destroy(&record);
     return ERRID_RBAC_ACCESS_DENIED;
 }
 
