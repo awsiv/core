@@ -12,7 +12,7 @@ $lang['cons_logo_link_text']='Enterprise mission portal';
  * Bread crumbs text
  */
 $lang['breadcrumb_status']           ='Business';
-$lang['breadcrumb_engineering']      ='Engineering';
+$lang['breadcrumb_engineering']      ='Status and Reports';
 $lang['breadcrumb_planning']         ='Planning';
 $lang['breadcrumb_goals']            ='Company goals';
 $lang['breadcrumb_weakest_host']     ='Weakest Host';
