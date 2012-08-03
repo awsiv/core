@@ -20,7 +20,9 @@ Hub:
 NAME		VERSION					ARCHITECTURE
 Debian 		6 					i686,x86-64
 Ubuntu 		8.04, 10.04, 12.04 			i686,x86-64
-RHEL 		5					i686,x86-64
+RHEL 		5, 6					i686,x86-64
+CentOS		5, 6					i686,x86-64
+SLES		11					i686,x86-64
 
 Clients:
 NAME:		VERSION					ARCHITECTURE		COMMENT
@@ -115,7 +117,7 @@ Start with the hub (policy server):
  6.1 Line 131: Change package version number (replace line with the following)
         package_version => "9.9.9",         # Install new Nova anyway
  6.2 Line 298: Change to run mongod without journaling (replace line with the following)
-        "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $ (sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
+        "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $(sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
 7. Copy the modified update.cf to the inputs directory:
      $ cp /var/cfengine/masterfiles/update.cf /var/cfengine/inputs/update.cf
 8. Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
