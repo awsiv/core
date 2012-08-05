@@ -334,10 +334,16 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
                 /* Bundlename is a conduit that is said to affect its formal
                    parameters, through the substituted values */
 
+                if (IsCf3VarString(bundlename))
+                {
+                    // Method by parameter cannot be determined before runtime
+                    break;
+                }
+                
                 const Policy *policy = PolicyFromPromise(pp);
                 bp = GetBundle(policy, bundlename, "agent");
 
-                if(bp == NULL)
+                if (bp == NULL)
                 {
                     CfOut(cf_error, "", " Non-existent bundle \"%s\" referenced in \"%s\"\n", bundlename, (char *)cp->rval.item);
                     break;

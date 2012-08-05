@@ -777,14 +777,10 @@ else
 
 /* BEGIN RESULT DOCUMENT */
 
-BsonSelectReportFields(&field, 7,
+BsonSelectReportFields(&field, 3,
                        cfk_topicname,
                        cfk_topicid,
-                       cfk_topiccontext,
-                       cfk_associations,
-                       cfk_associd,
-                       cfk_assoccontext,
-                       cfk_assocname);
+                       cfk_topiccontext);
 
 /* BEGIN SEARCH for matching topics */
 
@@ -793,14 +789,14 @@ cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&query);
 bson_destroy(&field);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor) == MONGO_OK)  // loops over documents
    {
    bson_iterator_init(&it1, mongo_cursor_bson(cursor));
    
    topic_name[0] = '\0';
    topic_context[0] = '\0';
    topic_id = 0;
-   
+
    while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
       {
       /* Query episodeecific search/marshalling */
@@ -819,9 +815,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
          {
          topic_id = (int)bson_iterator_int(&it1);
          }
-      }
 
-   PrependFullItem(&list,topic_name,topic_context,topic_id,0);
+      PrependFullItem(&list,topic_name,topic_context,topic_id,0);
+      }
    }
 
 mongo_cursor_destroy(cursor);
@@ -1440,8 +1436,6 @@ if (strlen(topic) == 0)
 
 // Add each starting topic to a root list
 
-printf("LOOKOR %s,%s,%d\n",topic,context,topic_id);
-
 episode = NewChapter(topic,context,topic_id);
 
 // Now make a recursive story, priming the tree with this reference
@@ -1465,11 +1459,12 @@ void Constellation_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *
 
 { int pos,len = 0,i,count = 0;
   Chapter *tp;
-  char *topic = NULL,*context = NULL,*assoc,previous[CF_MAXVARSIZE],work[CF_BUFSIZE];
+  char *topic = NULL,*context = NULL,*assoc,previous[CF_MAXVARSIZE];
   StoryLine *ptr,*ptr2;
   int topic_id;
+  JsonElement *json_array_out = JsonArrayCreate(100);
 
-snprintf(buffer,bufsize,"{");
+// A list of narrative elements = (story = (intro,assoc,topic,id),notes)
   
 for (ptr = list; ptr != NULL; ptr=ptr->next)
    {
@@ -1491,10 +1486,10 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
       continue;
       }
 
-   snprintf(work,CF_BUFSIZE,"\"story\" : [");
-   Join(buffer,work,bufsize);
+   // STORY
    
-   //printf("SHOW STORY about %s::%s....................\n",ptr->story->history[0]->context,ptr->story->history[0]->topic);
+   JsonElement *json_narrative_obj = JsonObjectCreate(2);
+   JsonElement *json_story_arr = JsonArrayCreate(5);
 
    for (i = 0; ptr->story->history[i] != NULL; i++)
       {
@@ -1506,28 +1501,31 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
 
       // THIS NEEDS TO POINT TO topic_id to link up in the mission portal
 
-      snprintf(work,CF_BUFSIZE,"{ \"id\" : %d, ",topic_id);
-      Join(buffer,work,bufsize);
-      
+      JsonElement *json_obj = JsonObjectCreate(5);
+
       if (count == 0)
          {
-         snprintf(work,bufsize,"\"text\" : \"%s %s (in %s)\"},",assoc,topic,context);
+         JsonObjectAppendString(json_obj, "intro", "");       
          }
       else if (count == 1)
          {
-         snprintf(work,bufsize,"\"text\" : \"%s \"%s\" (in %s)\"},",assoc,topic,context);
+         JsonObjectAppendString(json_obj, "intro", "");
          }
       else if (ptr->story->history[i+1] == NULL)
          {
-         snprintf(work,bufsize,"\"text\" : \"moreover this (%s) %s %s (in %s)\"},",previous,assoc,topic,context);
+         JsonObjectAppendString(json_obj, "intro", "moreover this");
          }
       else 
          {
-         snprintf(work,bufsize,"\"text\" : \"which %s %s (in %s)\"},",assoc,topic,context);
+         JsonObjectAppendString(json_obj, "intro", "which");
          }
 
-      Join(buffer,work,bufsize);
-      
+      JsonObjectAppendString(json_obj, "association", assoc);
+      JsonObjectAppendString(json_obj, "topic", topic);         
+      JsonObjectAppendInteger(json_obj, "topic_id", topic_id);
+      JsonObjectAppendString(json_obj, "context", context);
+
+      JsonArrayAppendObject(json_story_arr, json_obj);
       strncpy(previous,topic,CF_MAXVARSIZE);
       count++;
       }
@@ -1535,7 +1533,7 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
    ptr->done = true;
 
    // Aggregate similar outcomes - perhaps this could be improved later (difficult)
-   
+
    for (ptr2 = ptr->next; ptr2 != NULL; ptr2=ptr2->next)
       {
       if ((pos = SameStoryDifferentOutcome(ptr->story,ptr2->story)))
@@ -1545,12 +1543,14 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
          assoc = ptr2->story->history[pos]->assoc;
          topic_id = ptr2->story->history[pos]->topic_id;
          ptr2->done = true;
-         
-         snprintf(work,bufsize,"{ \"id\" : %d, ",topic_id);
-         Join(buffer,work,bufsize);
 
-         snprintf(work,bufsize,"\"text\" : \"and %s %s (in %s)\"},",assoc,topic,context);
-         Join(buffer,work,bufsize);
+         JsonElement *json_obj = JsonObjectCreate(5);
+         JsonObjectAppendString(json_obj, "assoc", assoc);
+         JsonObjectAppendString(json_obj, "topic", topic);
+         JsonObjectAppendInteger(json_obj, "topic_id", topic_id);
+         JsonObjectAppendString(json_obj, "context", context);
+
+         JsonArrayAppendObject(json_story_arr, json_obj);
          }
       else
          {
@@ -1559,15 +1559,14 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
          }
       }
 
-   *(buffer+strlen(buffer)-1) = '\0';
-   Join(buffer,"],\n",bufsize);
-
-   snprintf(work,bufsize,"\"notes\" : [");
-   Join(buffer,work,bufsize);
-   
-   strcpy(previous,"this");
+   JsonObjectAppendArray(json_narrative_obj, "story", json_story_arr);
 
    // Addendum - what else could affect the story outcome, coming in from the side?
+   // NOTES
+   
+   JsonElement *json_notes_arr = JsonArrayCreate(4);
+   
+   strcpy(previous,"this");
 
    for (i = 0; ptr->story->history[i] != NULL; i++)
       {
@@ -1577,16 +1576,26 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
          
          for (ip = ptr->story->history[i]->indirect_inferences; ip != NULL; ip=ip->next)
             {
-            snprintf(work,CF_BUFSIZE,"\"%s %s %s, which might also influence the result\",",ptr->story->topic,ip->name,ip->classes);
-            Join(buffer,work,bufsize);
+            JsonElement *json_obj = JsonObjectCreate(5);
+            JsonObjectAppendString(json_obj, "assoc", ip->name);
+            JsonObjectAppendString(json_obj, "topic", ptr->story->topic);
+            JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+            JsonObjectAppendString(json_obj, "context", ip->classes);
+            JsonArrayAppendObject(json_notes_arr, json_obj);   
             }
          }
       }
 
-   *(buffer+strlen(buffer)-1) = '\0';
-   Join(buffer,"]",bufsize);
-   Join(buffer,"]",bufsize);
+   JsonObjectAppendArray(json_narrative_obj, "notes", json_notes_arr);
+   JsonArrayAppendObject(json_array_out, json_narrative_obj);   
    }
+
+    Writer *writer = StringWriter();
+    JsonElementPrint(writer, json_array_out, 1);
+    JsonElementDestroy(json_array_out);
+    snprintf(buffer,CF_BUFSIZE-1,"%s", StringWriterData(writer));
+    WriterClose(writer);
+
 }
 
 /*****************************************************************************/
