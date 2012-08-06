@@ -87,7 +87,7 @@
 
                 <div class="clear"></div>
 
-                <div class="innerdiv grid_8 topicHits" style="border:1px solid #AAAAAA;">
+                <div class="innerdiv grid_8 omega topicHits" style="border:1px solid #AAAAAA;margin-left: 11px;">
                     <?php
                     if ($showTopicHits)
                     {
