@@ -93,6 +93,10 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
 bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffer, int bufsize);
 
+void Con2PHP_get_story_by_id(int id,char *buffer,int bufsize);
+void Con2PHP_get_story_by_name(char *typed_topic,char *buffer,int bufsize);
+
+
 int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, char *classreg, char *returnval,
                              int bufsize);
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
