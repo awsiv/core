@@ -16,12 +16,14 @@
 #include "mod_files.h"
 #include "expand.h"
 
+#include <assert.h>
+
 /*****************************************************************************/
 
 static char *NovaEscape(const char *s); /* Thread-unsafe */
-static void Nova_ShowBundleDependence(FILE *fp);
-static void NovaShowValues(FILE *fp, BodySyntax bs);
-static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id);
+static void Nova_ShowBundleDependence(Writer *writer);
+static void NovaShowValues(Writer *writer, BodySyntax bs);
+static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp, char *promise_id);
 
 /*****************************************************************************/
 
@@ -115,8 +117,15 @@ void Nova_RegisterDoc(Item **list, char *dir, char *doc)
 
 /*********************************************************************/
 
-void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
+void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *pp, const char *version)
 {
+    Writer *writer = report_context->report_writers[REPORT_OUTPUT_TYPE_KNOWLEDGE];
+    assert(writer);
+    if (!writer)
+    {
+        return;
+    }
+
     char promise_id[CF_BUFSIZE];
     Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
     Rlist *class_list = SplitRegexAsRList(pp->classes, "[.!()|&]+", 100, false);
@@ -125,35 +134,35 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
     if (LICENSES == 0)
     {
-        fprintf(fp, "license expired or no license");
+        WriterWriteF(writer, "license expired or no license");
         return;
     }
 
     strcpy(promise_id, PromiseID(pp));
 
-    fprintf(fp, "\ntopics:\n\n");
+    WriterWriteF(writer, "\ntopics:\n\n");
 
-    fprintf(fp, "bundles::\n");
-    fprintf(fp, "  \"%s\";\n", pp->bundle);
+    WriterWriteF(writer, "bundles::\n");
+    WriterWriteF(writer, "  \"%s\";\n", pp->bundle);
 
-    fprintf(fp, "class_contexts::\n");
-    fprintf(fp, "  \"%s\";\n", pp->classes);
+    WriterWriteF(writer, "class_contexts::\n");
+    WriterWriteF(writer, "  \"%s\";\n", pp->classes);
 
 /* First the bundle container */
 
-    fprintf(fp, "promisers::\n\n");
-    fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-    fprintf(fp, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
+    WriterWriteF(writer, "promisers::\n\n");
+    WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+    WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
             "has promiser");
-    fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-    fprintf(fp,
+    WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+    WriterWriteF(writer,
             "      association => a(\"makes promise of type\",\"promise_types::%s\",\"promises have been made by\");\n",
             pp->agentsubtype);
-    fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-    fprintf(fp, "      association => a(\"has alias\",\"%s\",\"is a promise handle for\");\n", promise_id);
+    WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+    WriterWriteF(writer, "      association => a(\"has alias\",\"%s\",\"is a promise handle for\");\n", promise_id);
 
-    fprintf(fp, "promise_types::\n");
-    fprintf(fp, "  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype, "is promised in", pp->bundle,
+    WriterWriteF(writer, "promise_types::\n");
+    WriterWriteF(writer, "  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype, "is promised in", pp->bundle,
             "has promises of type");
 
 /* Look for copies and edits that lead to influence imports */
@@ -166,33 +175,33 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
         for (rp = servers; rp != NULL; rp = rp->next)
         {
-            fprintf(fp, "files:: \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",
+            WriterWriteF(writer, "files:: \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",
                     pp->promiser, (const char *) rp->item);
 
-            fprintf(fp, "class_contexts:: \"%s\" association => a(\"uses data from\",\"hosts::%s\",\"provides data for\");  \n",
+            WriterWriteF(writer, "class_contexts:: \"%s\" association => a(\"uses data from\",\"hosts::%s\",\"provides data for\");  \n",
                     pp->classes, (const char *) rp->item);
 
-            fprintf(fp, "class_contexts:: \"%s\" association => a(\"%s\",\"hosts::%s\",\"%s\");  \n",
+            WriterWriteF(writer, "class_contexts:: \"%s\" association => a(\"%s\",\"hosts::%s\",\"%s\");  \n",
                     pp->classes, KM_CONNECTS_UNCERT_F, (const char *) rp->item, KM_CONNECTS_UNCERT_F);
 
         }
 
         if (source)
         {
-            fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", pp->promiser,
+            WriterWriteF(writer, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", pp->promiser,
                     source);
         }
 
         if (edit_bundle)
            {
-           fprintf(fp, "bundles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");  \n", pp->bundle, KM_USES_CERT_F, (const char *) edit_bundle->name,KM_USES_CERT_B);
+           WriterWriteF(writer, "bundles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");  \n", pp->bundle, KM_USES_CERT_F, (const char *) edit_bundle->name,KM_USES_CERT_B);
         
             if (strcmp(edit_bundle->name, "insert_file") == 0)  // stdlib
             {
                 if (edit_bundle->args)  // Single arg
                 {
-                    fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", NovaEscape(pp->promiser), (const char *) edit_bundle->args);
-                    fprintf(fp, "handles:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", promise_id, (const char *) edit_bundle->args);                    
+                    WriterWriteF(writer, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", NovaEscape(pp->promiser), (const char *) edit_bundle->args);
+                    WriterWriteF(writer, "handles:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", promise_id, (const char *) edit_bundle->args);
                 }
             }
         }
@@ -237,16 +246,16 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
                     for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
                     {
-                        fprintf(fp, "bundles::\n\n");
-                        fprintf(fp, "  \"%s\"\n", bundlename);
+                        WriterWriteF(writer, "bundles::\n\n");
+                        WriterWriteF(writer, "  \"%s\"\n", bundlename);
                         if (strchr(rp2->item, '.'))
                         {
-                            fprintf(fp, "      association => a(\"%s\",\"variables::%s\",\"%s\");\n",
+                            WriterWriteF(writer, "      association => a(\"%s\",\"variables::%s\",\"%s\");\n",
                                     NOVA_ISIMPACTED, (const char *) rp2->item, NOVA_IMPACTS);
                         }
                         else
                         {
-                            fprintf(fp, "      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",
+                            WriterWriteF(writer, "      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",
                                     NOVA_ISIMPACTED, pp->bundle, (const char *) rp2->item, NOVA_IMPACTS);
                         }
                     }
@@ -265,16 +274,16 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
                         for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
                         {
-                            fprintf(fp, "bundles::\n\n");
-                            fprintf(fp, "  \"%s\"\n", bundlename);
+                            WriterWriteF(writer, "bundles::\n\n");
+                            WriterWriteF(writer, "  \"%s\"\n", bundlename);
                             if (strchr(rp2->item, '.'))
                             {
-                                fprintf(fp, "      association => a(\"%s\",\"variables::%s\",\"%s\");\n",
+                                WriterWriteF(writer, "      association => a(\"%s\",\"variables::%s\",\"%s\");\n",
                                         NOVA_ISIMPACTED, (const char *) rp2->item, NOVA_IMPACTS);
                             }
                             else
                             {
-                                fprintf(fp, "      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",
+                                WriterWriteF(writer, "      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",
                                         NOVA_ISIMPACTED, pp->bundle, (const char *) rp2->item, NOVA_IMPACTS);
                             }
                         }
@@ -310,11 +319,11 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
                     char bodyref[CF_MAXVARSIZE];
 
                     snprintf(bodyref, CF_MAXVARSIZE, "bodies::%s", bodyname);
-                    fprintf(fp, "promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype,
+                    WriterWriteF(writer, "promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype,
                             KM_USES_POSS_F, bodyref, KM_USES_POSS_B);
-                    fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", promise_id,
+                    WriterWriteF(writer, "handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", promise_id,
                             KM_USES_CERT_F, bodyref, KM_USES_CERT_B);
-                    fprintf(fp, "body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", cp->lval,
+                    WriterWriteF(writer, "body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", cp->lval,
                             KM_USES_POSS_F, bodyref, "has a body constraint of type");
                 }
             }
@@ -325,17 +334,17 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
                 if (pp->ref)
                 {
-                    fprintf(fp, "occurrences: \n\n");
-                    fprintf(fp, " bundles:: \"%s\"  representation => \"literal\",\n", pp->ref);
-                    fprintf(fp, " about_topics => { \"%s\"},",bundlename);
-                    fprintf(fp, "   represents => { \"description\" }; \ntopics:\n");
+                    WriterWriteF(writer, "occurrences: \n\n");
+                    WriterWriteF(writer, " bundles:: \"%s\"  representation => \"literal\",\n", pp->ref);
+                    WriterWriteF(writer, " about_topics => { \"%s\"},",bundlename);
+                    WriterWriteF(writer, "   represents => { \"description\" }; \ntopics:\n");
                 }
 
                 // The used bundle affects the parent, in principle
 
-                fprintf(fp, "bundles::\n\n");
-                fprintf(fp, "  \"%s\"\n", bundlename);
-                fprintf(fp, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", NOVA_IMPACTS,
+                WriterWriteF(writer, "bundles::\n\n");
+                WriterWriteF(writer, "  \"%s\"\n", bundlename);
+                WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", NOVA_IMPACTS,
                         (const char *) pp->bundle, NOVA_ISIMPACTED);
 
                 /* Bundlename is a conduit that is said to affect its formal
@@ -358,9 +367,9 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
                 for (rp = bp->args; rp != NULL; rp = rp->next)
                 {
-                    fprintf(fp, "bundles::\n\n");
-                    fprintf(fp, "  \"%s\"\n", bundlename);
-                    fprintf(fp, "      association => a(\"%s\",\"parameters::%s\",\"%s\");\n", NOVA_ISIMPACTED,
+                    WriterWriteF(writer, "bundles::\n\n");
+                    WriterWriteF(writer, "  \"%s\"\n", bundlename);
+                    WriterWriteF(writer, "      association => a(\"%s\",\"parameters::%s\",\"%s\");\n", NOVA_ISIMPACTED,
                             (const char *) rp->item, NOVA_IMPACTS);
                 }
 
@@ -373,10 +382,10 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
     for (cp = pp->conlist; cp != NULL; cp = cp->next)
     {
        
-       fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
+       WriterWriteF(writer, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
                KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
        
-       fprintf(fp, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", NovaEscape(pp->promiser),
+       WriterWriteF(writer, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", NovaEscape(pp->promiser),
                KM_AFFECTS_CERT_B,cp->lval, KM_AFFECTS_CERT_F);
     }
     
@@ -386,38 +395,38 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
     switch (pp->promisee.rtype)
     {
     case CF_SCALAR:
-        fprintf(fp, "promisees::\n\n");
-        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
+        WriterWriteF(writer, "promisees::\n\n");
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
                 NOVA_GIVES_PR);
-        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
-        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
                 KM_AFFECTS_CERT_F);
-        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, NovaEscape(pp->promiser),
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, NovaEscape(pp->promiser),
                 KM_AFFECTS_CERT_F);
 
-        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
-        fprintf(fp, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
 
         for (rp = GOALS; rp != NULL; rp = rp->next)
         {
             if (FullTextMatch(rp->item, pp->promisee.item))
             {
-                fprintf(fp, "promises::\n\n");
-                fprintf(fp, "  \"%s\"\n", promise_id);
-                fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
+                WriterWriteF(writer, "promises::\n\n");
+                WriterWriteF(writer, "  \"%s\"\n", promise_id);
+                WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                         (const char *) pp->promisee.item, NOVA_ISIMPACTED);
 
                 if (bundlename)
                 {
-                    fprintf(fp, "bundles::\n\n");
-                    fprintf(fp, "  \"%s\"\n", bundlename);
-                    fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
+                    WriterWriteF(writer, "bundles::\n\n");
+                    WriterWriteF(writer, "  \"%s\"\n", bundlename);
+                    WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                             (const char *) pp->promisee.item, NOVA_ISIMPACTED);
-                    fprintf(fp, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
+                    WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
                             (const char *) pp->promisee.item, NOVA_GOAL_INV);
                 }
             }
@@ -426,37 +435,37 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
     case CF_LIST:
 
-        fprintf(fp, "promisees::\n\n");
+        WriterWriteF(writer, "promisees::\n\n");
         for (rp = (Rlist *) pp->promisee.item; rp != NULL; rp = rp->next)
         {
-            fprintf(fp, "  \"%s\"\n", (const char *) rp->item);
-            fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
+            WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
+            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
                     NOVA_GIVES_PR);
-            fprintf(fp, "  \"%s\"\n", (const char *) rp->item);
-            fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+            WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
+            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
 
-            fprintf(fp, "  \"%s\"\n", (const char *) rp->item);
-            fprintf(fp, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
+            WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
+            WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
 
             for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
             {
                 if (FullTextMatch(rp2->item, rp->item))
                 {
-                    fprintf(fp, "promises::\n\n");
-                    fprintf(fp, "  \"%s\"\n", promise_id);
-                    fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
+                    WriterWriteF(writer, "promises::\n\n");
+                    WriterWriteF(writer, "  \"%s\"\n", promise_id);
+                    WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                             (const char *) rp2->item, NOVA_ISIMPACTED);
 
-                    fprintf(fp, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
+                    WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
                                 (const char *) rp->item, NOVA_GOAL_INV);
                     
                     if (bundlename)
                     {
-                        fprintf(fp, "bundles::\n\n");
-                        fprintf(fp, "  \"%s\"\n", bundlename);
-                        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
+                        WriterWriteF(writer, "bundles::\n\n");
+                        WriterWriteF(writer, "  \"%s\"\n", bundlename);
+                        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                                 (const char *) rp->item, NOVA_ISIMPACTED);
-                        fprintf(fp, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
+                        WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
                                 (const char *) rp->item, NOVA_GOAL_INV);
                     }
                 }
@@ -471,35 +480,35 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
 /* This promise handle's place in the cosmos */
 
-    fprintf(fp, "promises::\n\n");
+    WriterWriteF(writer, "promises::\n\n");
 
-    fprintf(fp, "\"%s\"\n", promise_id);
+    WriterWriteF(writer, "\"%s\"\n", promise_id);
 
     if (pp->ref)
     {
-        fprintf(fp, "   comment => \"%s\";\n", NovaEscape(pp->ref));
+        WriterWriteF(writer, "   comment => \"%s\";\n", NovaEscape(pp->ref));
     }
     else
     {
-        fprintf(fp, "   comment => \"(Uncommented \\\"%s\\\" promise by: %.25s..)\";\n", pp->agentsubtype,
+        WriterWriteF(writer, "   comment => \"(Uncommented \\\"%s\\\" promise by: %.25s..)\";\n", pp->agentsubtype,
                 NovaEscape(pp->promiser));
     }
 
-    fprintf(fp, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,
+    WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,
             pp->classes, NOVA_ACTIVATES);
-    fprintf(fp, "\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n", promise_id,
+    WriterWriteF(writer, "\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n", promise_id,
             pp->agentsubtype);
 
     for (rp = depends_on; rp != NULL; rp = rp->next)
     {
-        fprintf(fp, "  \"%s\"\n", promise_id);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, (const char *) rp->item,
+        WriterWriteF(writer, "  \"%s\"\n", promise_id);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, (const char *) rp->item,
                 NOVA_GIVES_PR);
-        fprintf(fp, "  \"%s\"\n", promise_id);
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, (const char *) rp->item,
+        WriterWriteF(writer, "  \"%s\"\n", promise_id);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, (const char *) rp->item,
                 KM_AFFECTS_CERT_F);
-        fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, (const char *) rp->item,
+        WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, (const char *) rp->item,
                 KM_AFFECTS_CERT_F);
     }
 
@@ -507,19 +516,19 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
     for (rp = class_list; rp != NULL; rp = rp->next)
     {
-        fprintf(fp, "  \"%s\"\n", promise_id);
-        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_USES_PR,
+        WriterWriteF(writer, "  \"%s\"\n", promise_id);
+        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_USES_PR,
                 NovaEscape(rp->item), NOVA_GIVES_PR);
     }
 
-    fprintf(fp," class_contexts::\n");
+    WriterWriteF(writer," class_contexts::\n");
 
     // Register which classes affect class expressions
     
     for (rp = class_list; rp != NULL; rp = rp->next)
     {
-        fprintf(fp, "  \"%s\"\n", pp->classes);
-        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", KM_AFFECTS_CERT_B,
+        WriterWriteF(writer, "  \"%s\"\n", pp->classes);
+        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", KM_AFFECTS_CERT_B,
                 (char *)rp->item, KM_AFFECTS_CERT_F);
     }
     
@@ -527,21 +536,21 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
 /* Now pointers to the policy compilation */
 
-    fprintf(fp, "\n occurrences:\n");
+    WriterWriteF(writer, "\n occurrences:\n");
 
-    fprintf(fp, "handles::\n");
-    fprintf(fp, "\"/promise/details/%s\",\n", promise_id);
-    fprintf(fp, "   about_topics => { \"handles::%s\" },\n", promise_id);
-    fprintf(fp, "   represents => { \"definition\" };\n\n");
+    WriterWriteF(writer, "handles::\n");
+    WriterWriteF(writer, "\"/promise/details/%s\",\n", promise_id);
+    WriterWriteF(writer, "   about_topics => { \"handles::%s\" },\n", promise_id);
+    WriterWriteF(writer, "   represents => { \"definition\" };\n\n");
 
-    fprintf(fp, "bundles::\n");
-    fprintf(fp, "\"/bundle/details/bundle/%s\"\n", pp->bundle);
-    fprintf(fp, "   about_topics => { \"bundles::%s\" },\n", pp->bundle);
-    fprintf(fp, "   represents => { \"parent bundle\" };\n\n");
+    WriterWriteF(writer, "bundles::\n");
+    WriterWriteF(writer, "\"/bundle/details/bundle/%s\"\n", pp->bundle);
+    WriterWriteF(writer, "   about_topics => { \"bundles::%s\" },\n", pp->bundle);
+    WriterWriteF(writer, "   represents => { \"parent bundle\" };\n\n");
 
 /*  Now we should analyze the classes to look for dependents and dependencies */
 
-    Nova_MapClassParameterAssociations(fp, pp, promise_id);
+    Nova_MapClassParameterAssociations(writer, pp, promise_id);
 
 // Look for any networks mentioned
 
@@ -692,20 +701,27 @@ void RegisterBundleDependence(char *name, const Promise *pp)
 
 /*****************************************************************************/
 
-static void Nova_ShowBundleDependence(FILE *fp)
+static void Nova_ShowBundleDependence(Writer *writer)
 {
     Item *ip;
 
     for (ip = NOVA_BUNDLEDEPENDENCE; ip != NULL; ip = ip->next)
     {
-        fprintf(fp, "%s", ip->name);
+        WriterWriteF(writer, "%s", ip->name);
     }
 }
 
 /*****************************************************************************/
 
-void ShowTopicRepresentation(FILE *fp)
+void ShowTopicRepresentation(const ReportContext *report_context)
 {
+    Writer *writer = report_context->report_writers[REPORT_OUTPUT_TYPE_KNOWLEDGE];
+    assert(writer);
+    if (!writer)
+    {
+        return;
+    }
+
     int i, j, k, l;
     const SubTypeSyntax *ss;
     const BodySyntax *bs, *bs2;
@@ -717,115 +733,115 @@ void ShowTopicRepresentation(FILE *fp)
         return;
     }
 
-    fprintf(fp,
+    WriterWriteF(writer,
             "\n# This information is jointly Copyrighted by (C) Cfengine and the Licensee may not be redistributed without the permission of both parties\ntopics:\n");
 
-    fprintf(fp,
+    WriterWriteF(writer,
             "any:: \"system_reports\" comment => \"Reports collected from Cfengine managed systems by a reporting hub\";\n");
-    fprintf(fp,
+    WriterWriteF(writer,
             "\"remote_scalars\" comment => \"Scalar variable values that are made accessible to remote agents through cf-serverd\";\n");
 
-    fprintf(fp, "system_reports::\n");
+    WriterWriteF(writer, "system_reports::\n");
 
     for (i = 0; i < cfrep_unknown; i++)
     {
-        fprintf(fp, "  \"%s\" comment => \"%s\",\n", BASIC_REPORTS[i].name_old, BASIC_REPORTS[i].description);
-        fprintf(fp, "         association => a(\"is now called\",\"%s\",\"was previously called\");\n",
+        WriterWriteF(writer, "  \"%s\" comment => \"%s\",\n", BASIC_REPORTS[i].name_old, BASIC_REPORTS[i].description);
+        WriterWriteF(writer, "         association => a(\"is now called\",\"%s\",\"was previously called\");\n",
                 BASIC_REPORTS[i].name);
 
-        fprintf(fp, "  \"%s\" comment => \"%s\",\n", BASIC_REPORTS[i].name, BASIC_REPORTS[i].description);
-        fprintf(fp, "         association => a(\"deals with\",\"%s\",\"reports\");\n", BASIC_REPORTS[i].category);
+        WriterWriteF(writer, "  \"%s\" comment => \"%s\",\n", BASIC_REPORTS[i].name, BASIC_REPORTS[i].description);
+        WriterWriteF(writer, "         association => a(\"deals with\",\"%s\",\"reports\");\n", BASIC_REPORTS[i].category);
     }
 
-    fprintf(fp, "  # New assocs\n");
+    WriterWriteF(writer, "  # New assocs\n");
 
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_classes].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::classes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_lastseen].name);
-    fprintf(fp, "   association => a(\"is affected by\",\"body_constraints::copy_from\",\"%s\");\n", NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_lastseen].name);
-    fprintf(fp, "   association => a(\"is affected by\",\"promise_types::access\",\"%s\");\n", NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_classes].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::classes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_lastseen].name);
+    WriterWriteF(writer, "   association => a(\"is affected by\",\"body_constraints::copy_from\",\"%s\");\n", NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_lastseen].name);
+    WriterWriteF(writer, "   association => a(\"is affected by\",\"promise_types::access\",\"%s\");\n", NOVA_REPORTED);
 
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_promise_compliance].name);
-    fprintf(fp, "    association => a(\"is based on\",\"promises\",\"%s\");\n", NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_promise_compliance].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise report\",\"%s\");\n", NOVA_SEEALSO, NOVA_SEEALSO);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_promise_compliance].name);
+    WriterWriteF(writer, "    association => a(\"is based on\",\"promises\",\"%s\");\n", NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_promise_compliance].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise report\",\"%s\");\n", NOVA_SEEALSO, NOVA_SEEALSO);
 
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_performance].name);
-    fprintf(fp, "    association => a(\"is based on\",\"promises\",\"%s\");\n", NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_setuid].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"hashes report\"\n");
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"hashes report\"\n");
-    fprintf(fp, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_change].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_change].name);
-    fprintf(fp, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_diff].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_diff].name);
-    fprintf(fp, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_software_installed].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_patch_status].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
-    fprintf(fp, "  \"%s\"\n", BASIC_REPORTS[cfrep_patch_avail].name);
-    fprintf(fp, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_performance].name);
+    WriterWriteF(writer, "    association => a(\"is based on\",\"promises\",\"%s\");\n", NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_setuid].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"hashes report\"\n");
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"hashes report\"\n");
+    WriterWriteF(writer, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_change].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_change].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_diff].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::files\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_diff].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_software_installed].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_patch_status].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
+    WriterWriteF(writer, "  \"%s\"\n", BASIC_REPORTS[cfrep_patch_avail].name);
+    WriterWriteF(writer, "    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n", NOVA_GEN, NOVA_REPORTED);
 
-    fprintf(fp, "system_policy::\n");
-    fprintf(fp, "  \"bundles\" comment => \"A modular collection of promises of different types\";\n");
-    fprintf(fp, "  \"bodies\" comment => \"A modular collection of body constraints for re-use\";\n");
-    fprintf(fp, "  \"class contexts\" comment => \"Class expressions that say where or when a promise applies\";\n");
-    fprintf(fp, "  \"promisees\" comment => \"Recipients of a promise, i.e. promise handles, or persons\";\n");
-    fprintf(fp, "  \"promisers\" comment => \"The objects affected by a promise\";\n");
-    fprintf(fp, "  \"promises\" comment => \"Complete occurrences of promiser + promisee + promise-body\";\n");
-    fprintf(fp, "  \"promise types\" comment => \"The types of promise that cfengine can keep\";\n");
-    fprintf(fp,
+    WriterWriteF(writer, "system_policy::\n");
+    WriterWriteF(writer, "  \"bundles\" comment => \"A modular collection of promises of different types\";\n");
+    WriterWriteF(writer, "  \"bodies\" comment => \"A modular collection of body constraints for re-use\";\n");
+    WriterWriteF(writer, "  \"class contexts\" comment => \"Class expressions that say where or when a promise applies\";\n");
+    WriterWriteF(writer, "  \"promisees\" comment => \"Recipients of a promise, i.e. promise handles, or persons\";\n");
+    WriterWriteF(writer, "  \"promisers\" comment => \"The objects affected by a promise\";\n");
+    WriterWriteF(writer, "  \"promises\" comment => \"Complete occurrences of promiser + promisee + promise-body\";\n");
+    WriterWriteF(writer, "  \"promise types\" comment => \"The types of promise that cfengine can keep\";\n");
+    WriterWriteF(writer,
             "  \"body constraints\" comment => \"The attributes that cfengine enables you to promise about the promiser\";\n");
-    fprintf(fp, "\"comments\"\n");
-    fprintf(fp, "      association => a(\"see instances of\",\"comment\",\"is one of a number of\");\n");
-    fprintf(fp, "\"functions\" comment => \"In-built functions that may be used to set variables or classes\";");
+    WriterWriteF(writer, "\"comments\"\n");
+    WriterWriteF(writer, "      association => a(\"see instances of\",\"comment\",\"is one of a number of\");\n");
+    WriterWriteF(writer, "\"functions\" comment => \"In-built functions that may be used to set variables or classes\";");
 
-    fprintf(fp, " \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
+    WriterWriteF(writer, " \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
 
-    fprintf(fp, "values::\n\n");
+    WriterWriteF(writer, "values::\n\n");
 
     for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
     {
-        fprintf(fp, "\"%s\"   comment =>\"Should match the generic pattern %s, i.e. %s\";\n",
+        WriterWriteF(writer, "\"%s\"   comment =>\"Should match the generic pattern %s, i.e. %s\";\n",
                 CF_VALUETYPES[i][1], NovaEscape(CF_VALUETYPES[i][0]), CF_VALUETYPES[i][2]);
     }
 
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[1][1], CF_DATATYPES[cf_int]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[3][1], CF_DATATYPES[cf_int]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[4][1], CF_DATATYPES[cf_int]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[5][1], CF_DATATYPES[cf_int]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[6][1], CF_DATATYPES[cf_real]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[9][1], CF_DATATYPES[cf_class]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[10][1], CF_DATATYPES[cf_str]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[11][1], CF_DATATYPES[cf_str]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[12][1], CF_DATATYPES[cf_str]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[13][1], CF_DATATYPES[cf_str]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[14][1], CF_DATATYPES[cf_str]);
-    fprintf(fp, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
+    WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
             CF_VALUETYPES[15][1], CF_DATATYPES[cf_str]);
 
-    fprintf(fp, "bundles::\n");
-    fprintf(fp, "\"sys\" comment => \"cfengine's internal bundle of system specific values\";\n");
-    Nova_ShowBundleDependence(fp);
+    WriterWriteF(writer, "bundles::\n");
+    WriterWriteF(writer, "\"sys\" comment => \"cfengine's internal bundle of system specific values\";\n");
+    Nova_ShowBundleDependence(writer);
 
     for (i = 0; i < CF3_MODULES; i++)
     {
@@ -836,7 +852,7 @@ void ShowTopicRepresentation(FILE *fp)
 
         for (j = 0; ss[j].bundle_type != NULL; j++)
         {
-            fprintf(fp,
+            WriterWriteF(writer,
                     "occurrences:  \"/docs/cf3-Reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" }, about_topics => { \"%s\"}; \n",
                     ss[j].subtype, ss[j].subtype,ss[j].subtype);
 
@@ -846,13 +862,13 @@ void ShowTopicRepresentation(FILE *fp)
 
                 for (l = 0; bs[l].lval != NULL; l++)
                 {
-                    fprintf(fp, "topics:\n promise_types::\n");
-                    fprintf(fp, "   \"%s\";\n", ss[j].subtype);
+                    WriterWriteF(writer, "topics:\n promise_types::\n");
+                    WriterWriteF(writer, "   \"%s\";\n", ss[j].subtype);
 
-                    fprintf(fp, "body_constraints::\n");
-                    fprintf(fp, "   \"%s\"\n", bs[l].lval);
-                    fprintf(fp, "   comment => \"%s\",\n", NovaEscape(bs[l].description));
-                    fprintf(fp, "   association => a(\"%s\",\"promise_types::%s\",\"%s\");\n", KM_PARTOF_POSS_F,
+                    WriterWriteF(writer, "body_constraints::\n");
+                    WriterWriteF(writer, "   \"%s\"\n", bs[l].lval);
+                    WriterWriteF(writer, "   comment => \"%s\",\n", NovaEscape(bs[l].description));
+                    WriterWriteF(writer, "   association => a(\"%s\",\"promise_types::%s\",\"%s\");\n", KM_PARTOF_POSS_F,
                             ss[j].subtype, KM_PARTOF_POSS_B);
 
                     if (bs[l].dtype == cf_body)
@@ -868,17 +884,17 @@ void ShowTopicRepresentation(FILE *fp)
 
                         for (k = 0; bs2[k].lval != NULL; k++)
                         {
-                            fprintf(fp, "   \"%s\"\n", bs2[k].lval);
-                            fprintf(fp, "   comment => \"%s\",\n", NovaEscape(bs2[k].description));
-                            fprintf(fp, "   association => a(\"%s\",\"%s\",\"%s\");\n", KM_PARTOF_POSS_F, bs[l].lval,
+                            WriterWriteF(writer, "   \"%s\"\n", bs2[k].lval);
+                            WriterWriteF(writer, "   comment => \"%s\",\n", NovaEscape(bs2[k].description));
+                            WriterWriteF(writer, "   association => a(\"%s\",\"%s\",\"%s\");\n", KM_PARTOF_POSS_F, bs[l].lval,
                                     KM_PARTOF_POSS_B);
 
-                            NovaShowValues(fp, bs2[k]);
+                            NovaShowValues(writer, bs2[k]);
                         }
                     }
                     else
                     {
-                        NovaShowValues(fp, bs[l]);
+                        NovaShowValues(writer, bs[l]);
                     }
                 }
             }
@@ -887,43 +903,43 @@ void ShowTopicRepresentation(FILE *fp)
 
     for (i = 0; CF_COMMON_BODIES[i].lval != NULL; i++)
     {
-        fprintf(fp, "   \"%s\";\n", CF_COMMON_BODIES[i].lval);
+        WriterWriteF(writer, "   \"%s\";\n", CF_COMMON_BODIES[i].lval);
     }
 
     for (i = 0; CF_COMMON_EDITBODIES[i].lval != NULL; i++)
     {
-        fprintf(fp, "   \"%s\";\n", CF_COMMON_EDITBODIES[i].lval);
+        WriterWriteF(writer, "   \"%s\";\n", CF_COMMON_EDITBODIES[i].lval);
     }
 
-    fprintf(fp, "miscellaneous_concepts::\n");
+    WriterWriteF(writer, "miscellaneous_concepts::\n");
 
-    fprintf(fp, "  \"data types\";\n");
+    WriterWriteF(writer, "  \"data types\";\n");
 
-    fprintf(fp, "data_types::\n");
+    WriterWriteF(writer, "data_types::\n");
 
     for (i = 0; CF_VARBODY[i].lval != NULL; i++)
     {
-        fprintf(fp, "  \"%s\" comment => \"%s matching %s\";\n", CF_VARBODY[i].lval, (char *) CF_VARBODY[i].description,
+        WriterWriteF(writer, "  \"%s\" comment => \"%s matching %s\";\n", CF_VARBODY[i].lval, (char *) CF_VARBODY[i].description,
                 (const char *) CF_VARBODY[i].range);
     }
 
-    fprintf(fp, "  \"class\" comment => \"A boolean returned by certain functions in classes promises\";\n");
+    WriterWriteF(writer, "  \"class\" comment => \"A boolean returned by certain functions in classes promises\";\n");
 
-    fprintf(fp, "functions::\n\n");
+    WriterWriteF(writer, "functions::\n\n");
 
     for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
-        fprintf(fp, " \"%s\" ", CF_FNCALL_TYPES[i].name);
-        fprintf(fp, "    comment => \"%s\",\n", CF_FNCALL_TYPES[i].description);
-        fprintf(fp, "    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",
+        WriterWriteF(writer, " \"%s\" ", CF_FNCALL_TYPES[i].name);
+        WriterWriteF(writer, "    comment => \"%s\",\n", CF_FNCALL_TYPES[i].description);
+        WriterWriteF(writer, "    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",
                 CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
     }
 
 // Things for monitoring system state
 
-    fprintf(fp, "things:\n");
+    WriterWriteF(writer, "things:\n");
 
-    fprintf(fp,
+    WriterWriteF(writer,
             "  \"monitoring classes\" comment => \"Classes set by cf-monitord based on the observed system state.\"; \n");
 
     for (i = 0; i < CF_OBSERVABLES; i++)
@@ -933,54 +949,54 @@ void ShowTopicRepresentation(FILE *fp)
             continue;
         }
 
-        fprintf(fp, " \"%s\" comment => \"%s\",", OBS[i][0], OBS[i][1]);
-        fprintf(fp, "      generalizations => { \"vital signs\", \"observables\" },");
-        fprintf(fp, "      determines => { \"actual state\" , \"monitoring classes\" };\n");
+        WriterWriteF(writer, " \"%s\" comment => \"%s\",", OBS[i][0], OBS[i][1]);
+        WriterWriteF(writer, "      generalizations => { \"vital signs\", \"observables\" },");
+        WriterWriteF(writer, "      determines => { \"actual state\" , \"monitoring classes\" };\n");
     }
 
 // Operating system classes
 
-    fprintf(fp, "operating_systems::");
+    WriterWriteF(writer, "operating_systems::");
 
     for (i = 2; CLASSTEXT[i] != NULL; i++)
     {
-        fprintf(fp, " \"%s\" generalizations => { \"operating systems\" };  ", CLASSTEXT[i]);
+        WriterWriteF(writer, " \"%s\" generalizations => { \"operating systems\" };  ", CLASSTEXT[i]);
     }
 
-    fprintf(fp, " \"debian\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"ubuntu\" generalizations => { \"linux\", \"debian\" };");
-    fprintf(fp, " \"redhat\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"sles\" generalizations => { \"suse\", \"linux\"};");
-    fprintf(fp, " \"suse\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"slackware\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"fedora\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"mandrake\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"mandriva\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"gentoo\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"unitedlinux\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"suncobalt\" generalizations => { \"linux\"};");
-    fprintf(fp, " \"Win2000\" generalizations => { \"windows\"};");
-    fprintf(fp, " \"WinXP\" generalizations => { \"windows\"};");
-    fprintf(fp, " \"WinServer2003\" generalizations => { \"windows\"};");
-    fprintf(fp, " \"WinVista\" generalizations => { \"windows\"};");
-    fprintf(fp, " \"WinServer2008\" generalizations => { \"windows\"};");
+    WriterWriteF(writer, " \"debian\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"ubuntu\" generalizations => { \"linux\", \"debian\" };");
+    WriterWriteF(writer, " \"redhat\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"sles\" generalizations => { \"suse\", \"linux\"};");
+    WriterWriteF(writer, " \"suse\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"slackware\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"fedora\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"mandrake\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"mandriva\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"gentoo\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"unitedlinux\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"suncobalt\" generalizations => { \"linux\"};");
+    WriterWriteF(writer, " \"Win2000\" generalizations => { \"windows\"};");
+    WriterWriteF(writer, " \"WinXP\" generalizations => { \"windows\"};");
+    WriterWriteF(writer, " \"WinServer2003\" generalizations => { \"windows\"};");
+    WriterWriteF(writer, " \"WinVista\" generalizations => { \"windows\"};");
+    WriterWriteF(writer, " \"WinServer2008\" generalizations => { \"windows\"};");
 
 
 // Monitoring
 
-    fprintf(fp, "ports::");
+    WriterWriteF(writer, "ports::");
 
     for (i = 0; i < ATTR; i++)
     {
-        fprintf(fp,
+        WriterWriteF(writer,
                 "  \"port %s\" comment => \"The standard reserved port for %s\", generalizations => { \"ports\" }, synonyms => {\"ports::%s\"}; ",
                 ECGSOCKS[i].portnr, ECGSOCKS[i].name, ECGSOCKS[i].name);
     }
 
-    fprintf(fp,
+    WriterWriteF(writer,
             "measurements:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
 
-    fprintf(fp, "anomalies::");
+    WriterWriteF(writer, "anomalies::");
 
     for (i = 0; OBS[i] != NULL; i++)
     {
@@ -993,7 +1009,7 @@ void ShowTopicRepresentation(FILE *fp)
         {
             for (k = 0; dev[k] != NULL; k++)
             {
-                fprintf(fp,
+                WriterWriteF(writer,
                         " \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",
                         OBS[i][0], level[j], dev[k], OBS[i][1], level[j]);
 
@@ -1001,12 +1017,12 @@ void ShowTopicRepresentation(FILE *fp)
                 {
                     if (strstr(OBS[i][0], "_low"))
                     {
-                        fprintf(fp, " \"%s_%s_%s\" caused_by => { \"Reduced incoming traffic\" };", OBS[i][0], level[j],
+                        WriterWriteF(writer, " \"%s_%s_%s\" caused_by => { \"Reduced incoming traffic\" };", OBS[i][0], level[j],
                                 dev[k]);
                     }
                     else if (strstr(OBS[i][0], "_high"))
                     {
-                        fprintf(fp, " \"%s_%s_%s\" caused_by => { \"Increased incoming traffic\" };", OBS[i][0],
+                        WriterWriteF(writer, " \"%s_%s_%s\" caused_by => { \"Increased incoming traffic\" };", OBS[i][0],
                                 level[j], dev[k]);
                     }
                 }
@@ -1014,12 +1030,12 @@ void ShowTopicRepresentation(FILE *fp)
                 {
                     if (strstr(OBS[i][0], "_low"))
                     {
-                        fprintf(fp, " \"%s_%s_%s\" caused_by => { \"Reduced outgoing traffic\" };", OBS[i][0], level[j],
+                        WriterWriteF(writer, " \"%s_%s_%s\" caused_by => { \"Reduced outgoing traffic\" };", OBS[i][0], level[j],
                                 dev[k]);
                     }
                     else if (strstr(OBS[i][0], "_high"))
                     {
-                        fprintf(fp, " \"%s_%s_%s\" caused_by => { \"Increased outgoing traffic\" };", OBS[i][0],
+                        WriterWriteF(writer, " \"%s_%s_%s\" caused_by => { \"Increased outgoing traffic\" };", OBS[i][0],
                                 level[j], dev[k]);
                     }
                 }
@@ -1030,7 +1046,7 @@ void ShowTopicRepresentation(FILE *fp)
 
 /*****************************************************************************/
 
-static void NovaShowValues(FILE *fp, BodySyntax bs)
+static void NovaShowValues(Writer *writer, BodySyntax bs)
 {
     int i;
     const char *range = NULL;
@@ -1054,11 +1070,11 @@ static void NovaShowValues(FILE *fp, BodySyntax bs)
         range = CF_DATATYPES[bs.dtype];
     }
 
-    fprintf(fp, "body_constraints::\n");
-    fprintf(fp,
+    WriterWriteF(writer, "body_constraints::\n");
+    WriterWriteF(writer,
             "   \"%s\" association => a(\"is a body constraint of type\",\"values::%s\",\"can be used in body constraints\"),\n",
             bs.lval, range);
-    fprintf(fp, "          comment => \"%s\";\n", NovaEscape(bs.description));
+    WriterWriteF(writer, "          comment => \"%s\";\n", NovaEscape(bs.description));
 
     switch (bs.dtype)
     {
@@ -1066,7 +1082,7 @@ static void NovaShowValues(FILE *fp, BodySyntax bs)
     case cf_ilist:
     case cf_rlist:
 
-        fprintf(fp, "   \"%s\" association => a(\"is a list of type\",\"%s\",\"is used in\");\n", bs.lval, range);
+        WriterWriteF(writer, "   \"%s\" association => a(\"is a list of type\",\"%s\",\"is used in\");\n", bs.lval, range);
 
     default:
         break;
@@ -1074,10 +1090,10 @@ static void NovaShowValues(FILE *fp, BodySyntax bs)
 
     if (CF_VALUETYPES[i][0] != NULL)
     {
-        fprintf(fp, "values::\n\n");
-        fprintf(fp, " \"%s\" comment => \"Represent type %s and should match %s\",\n", range, CF_DATATYPES[bs.dtype],
+        WriterWriteF(writer, "values::\n\n");
+        WriterWriteF(writer, " \"%s\" comment => \"Represent type %s and should match %s\",\n", range, CF_DATATYPES[bs.dtype],
                 NovaEscape(CF_VALUETYPES[i][0]));
-        fprintf(fp,
+        WriterWriteF(writer,
                 "    association => a(\"are used in constraint parameters\",\"body_constraints::%s\",\"takes value\");\n",
                 bs.lval);
     }
@@ -1085,7 +1101,7 @@ static void NovaShowValues(FILE *fp, BodySyntax bs)
 
 /*****************************************************************************/
 
-static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id)
+static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp, char *promise_id)
 {
     Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
     Bundle *bp;
@@ -1096,19 +1112,19 @@ static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char
 
     if (promise_id && pp->ref)
     {
-        fprintf(fp, "topics: handles:: \"%s\"  comment => \"%s\", ", promise_id, NovaEscape(pp->ref));
-        fprintf(fp, "association => a(\"is the promise_id for\",\"%s\",\"has a promise with promise_id\");\n",
+        WriterWriteF(writer, "topics: handles:: \"%s\"  comment => \"%s\", ", promise_id, NovaEscape(pp->ref));
+        WriterWriteF(writer, "association => a(\"is the promise_id for\",\"%s\",\"has a promise with promise_id\");\n",
                 NovaEscape(pp->promiser));
     }
     else if (promise_id)
     {
-        fprintf(fp, "topics: handles:: \"%s\" association => a(\"%s\",\"promisers::%s\",\"%s\");\n", promise_id,
+        WriterWriteF(writer, "topics: handles:: \"%s\" association => a(\"%s\",\"promisers::%s\",\"%s\");\n", promise_id,
                 NOVA_HANDLE, NovaEscape(pp->promiser), NOVA_HANDLE_INV);
     }
 
     if (promise_id)
     {
-        fprintf(fp, "occurrences:  \"/promise/details/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
+        WriterWriteF(writer, "occurrences:  \"/promise/details/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
                 promise_id, promise_id);
     }
 
@@ -1172,10 +1188,10 @@ static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char
 
     for (rp = dependency; rp != NULL; rp = rp->next)
     {
-        fprintf(fp, "topics:\n");
-        fprintf(fp, "class_contexts::");
-        fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ISIMPACTED,
+        WriterWriteF(writer, "topics:\n");
+        WriterWriteF(writer, "class_contexts::");
+        WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ISIMPACTED,
                 NovaEscape(rp->item), NOVA_IMPACTS);
 
         // Might need to break these up further
@@ -1213,14 +1229,14 @@ static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char
                     {
                         //Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclassPrint); //FIXME: Segfault on Solaris (Nullpointers?)
                         // found a connection
-                        fprintf(fp, "topics:\n");
-                        fprintf(fp, "promises::");
-                        fprintf(fp, "  \"%s\"\n", promise_id);
-                        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS, (char *) rp->item,
+                        WriterWriteF(writer, "topics:\n");
+                        WriterWriteF(writer, "promises::");
+                        WriterWriteF(writer, "  \"%s\"\n", promise_id);
+                        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS, (char *) rp->item,
                                 NOVA_ISIMPACTED);
-                        fprintf(fp, "promisers::");
-                        fprintf(fp, "  \"%s\"\n", NovaEscape(pp->promiser));
-                        fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS, (char *) rp->item,
+                        WriterWriteF(writer, "promisers::");
+                        WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
+                        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS, (char *) rp->item,
                                 NOVA_ISIMPACTED);
                         found = true;
                     }
@@ -1230,9 +1246,9 @@ static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char
                     if (strstr(pp2->classes, rp->item) && strcmp(rp->item, "any") != 0
                         && strcmp(pp->classes, "any") != 0)
                     {
-                        fprintf(fp, "class_contexts::");
-                        fprintf(fp, "  \"%s\"\n", pp->classes);
-                        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATES,
+                        WriterWriteF(writer, "class_contexts::");
+                        WriterWriteF(writer, "  \"%s\"\n", pp->classes);
+                        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATES,
                                 NovaEscape(rp->item), NOVA_ACTIVATES);
                     }
                 }

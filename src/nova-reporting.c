@@ -2341,9 +2341,9 @@ void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const
         CFDB_SaveExpandedPromise(pp);
     }
 
-    if (FKNOW)
+    if (context->report_writers[REPORT_OUTPUT_TYPE_KNOWLEDGE])
     {
-        Nova_MapPromiseToTopic(FKNOW, pp, version);
+        Nova_MapPromiseToTopic(context, pp, version);
     }
 #else
     ShowPromiseInReport(context, type, version, pp, indent);
