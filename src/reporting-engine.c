@@ -7,6 +7,7 @@
 #include "reporting-engine.h"
 #include "db_common.h"
 #include "db_query.h"
+#include "web_rbac.h"
 
 #if defined(HAVE_LIBSQLITE3)
 #include "sqlite3.h"
@@ -49,10 +50,13 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
 
     /* Apply RBAC & Context filters */
     HostClassFilter *context_filter = NULL;
-    context_filter = NewHostClassFilterLists(context_include, context_exclude);
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
+    context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
 
     /* Query MongoDB and dump the result into Sqlite */
-
     EnterpriseDBToSqlite3_Hosts(db, context_filter);
     EnterpriseDBToSqlite3_Contexts(db, context_filter);
     EnterpriseDBToSqlite3_Variables(db, context_filter);
