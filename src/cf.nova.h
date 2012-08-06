@@ -861,10 +861,6 @@ void Nova_BundleNode(FILE *fp, char *bundle);
 void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
-void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id);
-void Nova_ShowBundleDependence(FILE *fp);
-char *NovaEscape(const char *s);        /* Thread-unsafe */
-void NovaShowValues(FILE *fp, BodySyntax bs);
 void Nova_RegisterImg(Item **list, char *dir, char *pic);
 void Nova_RegisterDoc(Item **list, char *dir, char *doc);
 

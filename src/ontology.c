@@ -18,6 +18,13 @@
 
 /*****************************************************************************/
 
+static char *NovaEscape(const char *s); /* Thread-unsafe */
+static void Nova_ShowBundleDependence(FILE *fp);
+static void NovaShowValues(FILE *fp, BodySyntax bs);
+static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id);
+
+/*****************************************************************************/
+
 static Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
 /*****************************************************************************/
@@ -545,7 +552,7 @@ void Nova_MapPromiseToTopic(FILE *fp, const Promise *pp, const char *version)
 
 /*****************************************************************************/
 
-char *NovaEscape(const char *s)
+static char *NovaEscape(const char *s)
 {
     const char *sp1;
     char *sp2;
@@ -685,7 +692,7 @@ void RegisterBundleDependence(char *name, const Promise *pp)
 
 /*****************************************************************************/
 
-void Nova_ShowBundleDependence(FILE *fp)
+static void Nova_ShowBundleDependence(FILE *fp)
 {
     Item *ip;
 
@@ -1023,7 +1030,7 @@ void ShowTopicRepresentation(FILE *fp)
 
 /*****************************************************************************/
 
-void NovaShowValues(FILE *fp, BodySyntax bs)
+static void NovaShowValues(FILE *fp, BodySyntax bs)
 {
     int i;
     const char *range = NULL;
@@ -1078,7 +1085,7 @@ void NovaShowValues(FILE *fp, BodySyntax bs)
 
 /*****************************************************************************/
 
-void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id)
+static void Nova_MapClassParameterAssociations(FILE *fp, const Promise *pp, char *promise_id)
 {
     Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
     Bundle *bp;
