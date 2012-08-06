@@ -6,11 +6,19 @@ require_once __DIR__ . "/../lib/PestNova.php";
 
 abstract class APIBaseTest extends PHPUnit_Framework_TestCase
 {
+
     public $hostA = "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283";
     public $hostA_ip = "10.0.0.150";
-
     public $hostB = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
     public $hostB_ip = "10.0.0.153";
+    var $mongoInstance = null;
+
+    public function __construct()
+    {
+
+        $this->mongoInstance = new Mongo("localhost:27777");
+        parent::__construct();
+    }
 
     function assertValidJson($data)
     {
@@ -39,6 +47,8 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
         $this->pest = null;
         $this->pest = new PestNova($this->baseUrl);
         $this->pest->setupAuth("admin", "admin");
+
+        $this->loadFixtures();
     }
 
     public function getResults($path)
@@ -52,4 +62,48 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
     {
         $this->pest->curl_opts[CURLOPT_HTTPHEADER][] = $header;
     }
+
+    public function tearDown()
+    {
+        $database = array('cfreport', 'phpcfengine');
+        foreach ($database as $db)
+        {
+            $mongodb = $this->mongoInstance->$db;
+            $mongodb->drop();
+        }
+    }
+
+    public function loadFixtures()
+    {
+        {
+            $fixtures = array(
+                'settings' => 'cfreport',
+                'roles' => 'cfreport',
+                'users' => 'cfreport',
+                'hosts' => 'cfreport',
+                'logs_rep' => 'cfreport',
+                'logs_nk' => 'cfreport',
+                'archive' => 'cfreport'
+            );
+
+            foreach ($fixtures as $collection => $db)
+            {
+                $mongodb = $this->mongoInstance->$db;
+                $mongoCollection = $mongodb->$collection;
+                $fileName = __DIR__ . "/fixtures/" . $db . "." . $collection . '.json';
+                $fileContent = file_get_contents($fileName);
+
+
+                $c = json_decode($fileContent, true);
+                if (!is_array($c))
+                {
+                    echo ('Json decode failed for  ' . $collection .' ');
+                }
+                $insertData = $c;
+                $mongoCollection->drop();
+                $res = $mongoCollection->batchInsert($insertData, array('continueOnError' => false, 'fsync' => true));
+            }
+        }
+    }
+
 }

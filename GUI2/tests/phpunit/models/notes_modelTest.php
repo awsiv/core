@@ -1,12 +1,13 @@
 <?php
 
-class test_notes_model extends CI_TestCase
+class test_notes_model extends CI_BaseTestCase
 {
 
     private $ci_obj;
 
-    public function set_up()
+    public function setUp()
     {
+        parent::setUp();
         // Instantiate a new loader
         $this->load = new Mock_Core_Loader();
 
@@ -49,7 +50,7 @@ class test_notes_model extends CI_TestCase
     }
 
 
-    
+
 
 }
 

@@ -1,0 +1,12 @@
+[
+    {
+        "active" : 1,
+        "created_on" : 1308067460,
+        "email" : "admin@cfengine.com",
+        "ip_address" : "10.0.0.9",
+        "last_login" : 1328192918,
+        "password" : "fbca3dac873569d2152483c148e14eb5d84a1e87",
+        "roles" : [ "admin", "developer" ],
+        "username" : "admin"
+    }
+]

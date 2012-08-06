@@ -1,0 +1,12 @@
+[{
+    "pt" : "vars",
+    "c" : "any",
+    "px" : "dummy",
+    "bn" : "main",
+    "bt" : "agent",
+    "f" : "\/var\/cfengine\/inputs\/environment_none\/promises.cf",
+    "l" : 4,
+    "hx" : "promise_promises_cf_4",
+    "nx" : [ "string => dummy" ]
+}
+]

@@ -1,5 +1,5 @@
 <?php
-class test_class_model extends CI_TestCase
+class test_class_model extends CI_BaseTestCase
 {
 
     private $username = "admin";
@@ -7,6 +7,7 @@ class test_class_model extends CI_TestCase
 
     public function setUp()
     {
+        parent::setUp();
         // Instantiate a new loader
         $this->load = new Mock_Core_Loader();
         // mock up a ci instance

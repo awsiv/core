@@ -1,0 +1,6 @@
+[{
+    "ldapHost": "google.com",
+	"blueHostHorizon": "9000000000000",
+	"rbac": "true"
+}
+]

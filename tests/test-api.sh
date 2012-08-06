@@ -32,7 +32,7 @@ while ! mongo --port 27777 --eval 'db.ping'; do
 done
 
 # Load Mongo state
-./load-data.sh data/rest
+#./load-data.sh data/rest
 
 # Run tests
 php -c conf/php.ini /usr/bin/phpunit ../api/http/tests

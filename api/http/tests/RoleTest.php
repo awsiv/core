@@ -31,7 +31,7 @@ class RoleTest extends APIBaseTest
 
             // check role was added
             $roles = $this->getResults('/role/jersey');
-            
+
             $this->assertValidJson($roles);
             $this->assertEquals('Jersey Shore Role', $roles[0]['description']);
             $this->assertEquals('jersey', $roles[0]['name']);
@@ -39,7 +39,7 @@ class RoleTest extends APIBaseTest
             $this->assertEquals('windows', $roles[0]['excludeContext']);
             $this->assertEquals('bundle_1', $roles[0]['includeBundles']);
             $this->assertEquals('bundle_2', $roles[0]['excludeBundles']);
-             
+
         }catch(Pest_Exception $e)
         {
             $this->fail($e);
@@ -49,18 +49,17 @@ class RoleTest extends APIBaseTest
     public function testEditRole(){
          try
         {
-            // add new role
-            $this->pest->post('/role/jersey', '{
-                    "description": "Jersey Shore modified",
+            $this->pest->post('/role/admin', '{
+                    "description": "admin modified",
                     "crxi":"linux,windows"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
-            
+
             // check role was added
             $roles = $this->getResults('/role');
             $this->assertValidJson($roles);
-            $this->assertEquals('jersey', $roles[1]['name']);
-            $this->assertEquals('Jersey Shore modified', $roles[1]['description']);
+            $this->assertEquals('admin', $roles[0]['name']);
+            $this->assertEquals('admin modified', $roles[0]['description']);
         }
         catch (Pest_Exception $e)
         {
@@ -71,7 +70,7 @@ class RoleTest extends APIBaseTest
     public function testDeleteRole(){
          // delete role
         try{
-            $this->pest->delete('/role/jersey');
+            $this->pest->delete('/role/admin');
             $this->assertEquals(204, $this->pest->lastStatus());
              }
         catch (Pest_Exception $e)
