@@ -11,9 +11,6 @@
 
 #ifdef HAVE_CONSTELLATION
 
-PHP_FUNCTION(cfcon_get_story_by_name);
-PHP_FUNCTION(cfcon_get_story_by_id);
-
 PHP_FUNCTION(cfcon_compliance_summary_graph);
 PHP_FUNCTION(cfcon_compliance_virtualbundle_graph);
 PHP_FUNCTION(cfcon_count_repaired);

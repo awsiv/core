@@ -643,6 +643,11 @@ PHP_FUNCTION(cfpr_show_topic_category);
  */
 PHP_FUNCTION(cfpr_get_knowledge_view);
 
+
+PHP_FUNCTION(cfpr_get_story_by_name);
+PHP_FUNCTION(cfpr_get_story_by_id);
+
+
 /*! \brief Get a list of the top N hosts (sorted by compliance score)
  * \param resultsPerPage
  * \param pageNumber

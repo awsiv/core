@@ -45,6 +45,48 @@ static const char *LABEL_YELLOW = "yellow";
 /* API                                                                        */
 /******************************************************************************/
 
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_get_story_by_id)
+{
+    const int bufsize = 100000;
+    char buffer[bufsize];
+    long id;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "l", &id) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    buffer[0] = '\0';
+    Con2PHP_get_story_by_id((int) id, buffer, bufsize);
+
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_get_story_by_name)
+{
+    const int bufsize = 100000;
+    char buffer[bufsize];
+    char *search;
+    int s_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &search, &s_len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(s_len);
+
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_hub_key)
 {
     const int bufsize = 4096;
