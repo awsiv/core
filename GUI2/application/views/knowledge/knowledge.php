@@ -4,7 +4,8 @@
             <div class="engineeringNavigationContainer">
                 <div id="astrolabe"  class="astrolabe">
                     <div class="menu" style="text-align: center;margin: auto;"><span style="color: #FFFFFF;font-weight: bold">See also</span></div>
-                    <?php if ($showLeads)
+                    <?php
+                    if ($showLeads)
                     {
                         ?>
                         <div id="scrollable_list">
@@ -12,14 +13,14 @@
                             require_once('leads.php');
                             ?>
                         </div>
-<?php } ?>
+                    <?php } ?>
                 </div>
                 <div class="clear"></div>
             </div>
             <div class="clear"></div>
         </div>
 
-        <div id="darktabs" style="height: 473px;" >
+        <div id="darktabs" style="height: 480px;" >
             <div class="grid_8 omega" >
                 <div  id="tabs-layout">
                     <ul>
@@ -79,31 +80,41 @@
                         <div id="tabs-6" class="ui-corner-all">
                             <div id="story" style="position:relative"></div>
                         </div>
-<?php } ?>
+                    <?php } ?>
 
                 </div>
 
 
                 <div class="clear"></div>
 
+                <div class="innerdiv grid_8 topicHits" style="border:1px solid #AAAAAA;">
+                    <?php
+                    if ($showTopicHits)
+                    {
+                        ?>
+                        <div>
+                            <?php
+                            require_once('topics.php');
+                            ?>
+                        </div>
+                    <?php }
+                    else
+                    { ?>
+                    <div>
+                        No topics to display
+                    </div>
+<?php } ?>
+                </div>
+
             </div>
+
+
 
         </div>
         <div class="clear"></div>
     </div>
 
-    <div class="grid_12">
-        <?php
-        if ($showTopicHits)
-        {
-            ?>
-            <div>
-                <?php
-                require_once('topics.php');
-                ?>
-            </div>
-<?php } ?>
-    </div>
+
 
     <div class="clear"></div>
 </div>
@@ -116,11 +127,7 @@
 <script id="source" language="javascript" type="text/javascript">
 
 
-    $('#scrollable_list').jScrollPane({
-        showArrows: true,
-        autoReinitialise: false,
-        verticalArrowPositions: 'split'
-    });
+
 
 
 
@@ -171,15 +178,22 @@
 
 
         $('#tabs-layout div.ui-tabs-panel').height(function() {
-			return $('#darktabs').height()
-				   - $('#darktabs #tabs ul.ui-tabs-nav').outerHeight(true)
-				   - ($('#tabs-layout').outerHeight(true) - $('#tabs-layout').height())
-                                   // visible is important here, sine height of an invisible panel is 0
-				   - ($('#tabs-layout div.ui-tabs-panel:visible').outerHeight(true)
-					  - $('#tabs-layout div.ui-tabs-panel:visible').height());
-		});
+            return $('#darktabs').height()
+                - $('#darktabs #tabs ul.ui-tabs-nav').outerHeight(true)
+                - ($('#tabs-layout').outerHeight(true) - $('#tabs-layout').height())
+            // visible is important here, sine height of an invisible panel is 0
+                - ($('#tabs-layout div.ui-tabs-panel:visible').outerHeight(true)
+                - $('#tabs-layout div.ui-tabs-panel:visible').height());
+        });
 
+        $('#scrollable_list').height($('#darktabs').height() +  $('.topicHits').height() + 10);
+        $('#scrollable_list').jScrollPane({
+            showArrows: true,
+            autoReinitialise: true,
+            verticalArrowPositions: 'split'
+        });
     });
+
     var Log = {
         elem: false,
         write: function(text){
