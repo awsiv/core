@@ -89,7 +89,7 @@ class SettingsTest extends APIBaseTest
 
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
-            $this->assertEquals(3600, $settings[0]['blueHostHorizon']);
+            $this->assertFalse($settings[0]['rbac']);
         }
         catch (Pest_Exception $e)
         {
