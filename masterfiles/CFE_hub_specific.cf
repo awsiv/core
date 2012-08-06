@@ -607,7 +607,7 @@ bundle agent cfengine_policysrv
               handle => "cfengine_policysrv_packages_install_package_suse",
       package_policy => "add",
       package_method => zypper,
-             classes => if_repaired("a2enmod_ssl_rewrite");
+             classes => cf2_if_else("a2enmod_ssl_rewrite","dep_failure");
 
   redhat.am_policy_hub::
 
@@ -616,7 +616,8 @@ bundle agent cfengine_policysrv
              comment => "Install packages from the list",
               handle => "cfengine_policysrv_packages_install_package_redhat",
       package_policy => "add",
-      package_method => yum_rpm;
+      package_method => yum_rpm,
+             classes => cf2_if_else("do_nothing","dep_failure");
 
   debian.am_policy_hub::
 
@@ -626,7 +627,7 @@ bundle agent cfengine_policysrv
               handle => "cfengine_policysrv_packages_install_package_debian",
       package_policy => "add",
       package_method => apt,
-             classes => if_repaired("a2enmod_php5_rewrite");
+             classes => cf2_if_else("a2enmod_php5_rewrite","dep_failure");
 
 #
 
@@ -764,7 +765,18 @@ bundle agent cfengine_policysrv
 
    "$(sys.workdir)/state/mongod.lock"
         comment => "Remove stale mongod lock file",
+         handle => "cfengine_policysrv_files_remove_mongod_lock",
          delete => tidy;
+
+#
+
+ reports:
+
+  dep_failure::
+
+   "WARNING: One of software dependencies failed to install due to repository/network connection error"
+      comment => "Print warning on screen/syslog",
+       handle => "cfengine_policysrv_reports_warning_dep_install_failed";
 
 }
 
