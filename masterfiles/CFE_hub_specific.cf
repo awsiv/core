@@ -1176,3 +1176,91 @@ bundle agent cfengine_disable_selinux
        action => if_elapsed("1440");
 
 }
+
+##################################################################
+#
+# cfengine_selinux(condition)
+#  - Allow SELinux to run Mission Portal and Mongo DB
+#
+# condition
+#   fix: Leave SELinux running and pierce a hole for Mission Portal
+#   disable: Like what we have done. Set SELinux to Permissive mode
+#
+##################################################################
+
+bundle agent cfengine_selinux(condition)
+{
+ vars:
+
+  redhat::
+
+   "selinux_status"  string => execresult("/usr/sbin/getenforce","noshell"),
+                    comment => "Get SELinux status",
+                     handle => "cfengine_selinux_vars_selinux_status";
+
+#
+
+ classes:
+
+  redhat::
+
+   "fix_selinux"        expression => strcmp("$(condition)","fix"),
+                           comment => "Check to allow SELinux rules for Mission Portal to function",
+                            handle => "cfengine_selinux_classes_fix_selinux";
+
+   "disable_selinux"    expression => strcmp("$(condition)","disable"),
+                           comment => "Check to disable SELinux",
+                            handle => "cfengine_selinux_classes_disable_selinux";
+
+   "selinux_enforcing"  expression => strcmp("Enforcing","$(selinux_status)"),
+                           comment => "Check if SELinux is running",
+                            handle => "cfengine_selinux_classes_selinux_enforcing";
+
+   "mongod_port_not_ok"        not => returnszero("/usr/sbin/semanage port -l | grep 27017 > /dev/null", "useshell"),
+                           comment => "Check if a default mongod port is permitted",
+                            handle => "cfengine_selinux_classes_mongod_prot_not_ok";
+
+#
+
+ commands:
+
+  selinux_enforcing.fix_selinux::
+
+   "/usr/bin/chcon -R -h -t httpd_sys_content_t /var/cfengine/lib"
+      comment => "Allow apache to load CFEngine shared libraries with SELinux on",
+       handle => "cfengine_selinux_commands_allow_httpd_sys_content_t";
+
+   "/usr/bin/execstack -c /var/cfengine/lib/*.so.*"
+      comment => "Make shared libraries not to require executable stack",
+       handle => "cfengine_selinux_commands_fix_shared_libraries",
+      contain => in_shell;
+
+ # Add mongod default port to http_port_t module.
+ # Create a new mongo one seems a lot of work to do.
+
+  mongod_port_not_ok.fix_selinux::
+
+   "/usr/sbin/semanage port -a -t http_port_t -p tcp 27017"
+      comment => "Add mongod default port to SELinux",
+       handle => "cfengine_selinux_commands_allow_mongod_port";
+
+  disable_selinux::
+
+   "/usr/sbin/setenforce 0"
+      comment => "Disable SELinux every hour",
+       handle => "cfengine_selinux_commands_disable_selinux",
+#      classes => cmd_repair("0", "cmd_fixed_setenforce"),
+       action => if_elapsed("60");
+
+#
+
+ reports:
+
+  disable_selinux::
+
+   "NB - Disabling SELinux to allow Apache+PHP to function",
+      comment => "Alert message on screen once a day",
+       handle => "cfengine_selinux_reports_disable_selinux",
+       action => if_elapsed("1440");
+
+}
