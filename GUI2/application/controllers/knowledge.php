@@ -127,11 +127,18 @@ class Knowledge extends Cf_Controller
     {
 
         $this->_checkAccess();
+        $this->carabiner->css(
+                array(
+                    array('view/engineering.css'),
+                    array('astrolabe.css'),
+                    array('jScrollPane.css')
+                )
+        );
 
         // add a js file
         $this->carabiner->js('jit/jit-yc.js');
         $this->carabiner->js('jquery.cookie.js');
-        $this->carabiner->js('jquery.jsPlumb-1.3.3-all-min.js');
+        $this->carabiner->js('jScrollPane.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->css('tabs-custom.css');
@@ -184,15 +191,11 @@ class Knowledge extends Cf_Controller
             $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false : true;
 
             $data['currentPage'] = isset($getparams['page']) ? intval($getparams['page'], 10) : 1;
-            $data['number_of_rows'] = isset($getparams['rows']) ? intval($getparams['rows'], 10):$this->setting_lib->get_no_of_rows();
+            $data['number_of_rows'] = isset($getparams['rows']) ? intval($getparams['rows'], 10) : 15;
 
             //for story generation
-            if (is_constellation())
-            {
-                $data['story'] = $this->stories_model->getStoryByName($data['topicDetail']['topic']);
-                $stories = json_decode(utf8_encode($data['story']), true);
-                $data['showStory'] = (!is_array($stories) || empty($stories['F'])) ? false : true;
-            }
+            $data['stories'] = $this->stories_model->getStoryById($pid);
+            $data['showStory'] = is_array($data['stories']) ? true:false;
             $this->template->load('template', 'knowledge/knowledge', $data);
         }
         catch (Exception $e)

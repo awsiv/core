@@ -1,81 +1,139 @@
-<div id="body">
-    <div class="outerdiv">
-        <div id="custom-tabs" style="margin:15px;">
-            <ul>
-                <li><a href="#tabs-1"><?php echo $this->lang->line('knowledge_tab_map'); ?></a></li>
-                <?php if ($showLeads) { ?><li><a href="#tabs-2"><?php echo $this->lang->line('knowledge_tab_leads'); ?></a></li><?php } ?>
-                <?php if ($showTopicHits) { ?><li><a href="#tabs-3"><?php echo $this->lang->line('knowledge_tab_references'); ?></a></li><?php } ?>
-                <?php if ($showSameContext) { ?><li><a href="#tabs-4"><?php echo $this->lang->line('knowledge_tab_same_context'); ?></a></li> <?php } ?>
-                <?php if ($showSubTopics) { ?><li><a href="#tabs-5"><?php echo $this->lang->line('knowledge_tab_subtopic'); ?></a></li> <?php } ?>
-                <?php if (isset ($showStory)&&$showStory) { ?><li><a href="#tabs-6">Stories</a></li> <?php } ?>
-            </ul>
-
-            <div id="tabs-1" class="ui-corner-all">
-                <div class="panel">
-                    <div class="panelhead"><?php echo $this->lang->line('knowledge_copernicus'); ?>: <b><?php echo $topicDetail['topic']; ?></b> in the context of <b><?php echo $topicDetail['context']; ?></b></div>
-                    <div class="panelcontent"  style="height:100%;min-height: 400px;">
-                        <div id="infovis" style="width:95%;height:100%"></div>
-                        <div id="log"></div>
-
-                    </div>
+<div id="body" class="outerdiv">
+    <div class="engineeringContainer">
+        <div class="grid_4 alpha">
+            <div class="engineeringNavigationContainer">
+                <div id="astrolabe"  class="astrolabe">
+                    <div class="menu" style="text-align: center;margin: auto;"><span style="color: #FFFFFF;font-weight: bold">See also</span></div>
+                    <?php
+                    if ($showLeads)
+                    {
+                        ?>
+                        <div id="scrollable_list">
+                            <?php
+                            require_once('leads.php');
+                            ?>
+                        </div>
+                    <?php } ?>
                 </div>
+                <div class="clear"></div>
             </div>
-            <?php if ($showLeads) { ?>
-                <div id="tabs-2" class="ui-corner-all">
-                    <?php
-                    require_once('leads.php');
-                    ?>
-                </div>
-            <?php } ?>
-
-            <?php if ($showTopicHits) { ?>
-                <div id="tabs-3" class="ui-corner-all">
-                    <?php
-                    require_once('topics.php');
-                    ?>
-                </div>
-            <?php } ?>
-            <?php if ($showSameContext) { ?>
-                <div id="tabs-4" class="ui-corner-all">
-                    <?php
-                    require_once('subcategory.php');
-                    ?>
-
-                </div>
-            <?php } ?>
-
-            <?php if ($showSubTopics) { ?>
-                <div id="tabs-5" class="ui-corner-all">
-
-                    <?php
-                    require_once('category.php');
-                    ?>
-                </div>
-            <?php } ?>
-            
-             <?php if (isset($showStory)&&$showStory) { ?>
-                <div id="tabs-6" class="ui-corner-all">
-                   <div id="story" style="position:relative"></div>
-                </div>
-            <?php } ?>
+            <div class="clear"></div>
         </div>
+
+        <div id="darktabs" style="height: 480px;" >
+            <div class="grid_8 omega" >
+                <div  id="tabs-layout">
+                    <ul>
+                        <li><a href="#tabs-1"><?php echo $this->lang->line('knowledge_tab_map'); ?></a></li>
+                        <?php
+                        if ($showSameContext)
+                        {
+                            ?><li><a href="#tabs-4"><?php echo $this->lang->line('knowledge_tab_same_context'); ?></a></li> <?php } ?>
+                        <?php
+                        if ($showSubTopics)
+                        {
+                            ?><li><a href="#tabs-5"><?php echo $this->lang->line('knowledge_tab_subtopic'); ?></a></li> <?php } ?>
+                        <?php
+                        if (isset($showStory) && $showStory)
+                        {
+                            ?><li><a href="#tabs-6">Tell me about</a></li> <?php } ?>
+                    </ul>
+
+                    <div id="tabs-1" class="ui-corner-all">
+                        <div class="panel">
+                            <div class="panelhead"><?php echo $this->lang->line('knowledge_copernicus'); ?>: <b><?php echo $topicDetail['topic']; ?></b> in the context of <b><?php echo $topicDetail['context']; ?></b></div>
+                            <div class="panelcontent"  style="height:350px;min-height: 350px;">
+                                <div id="infovis" style="width:90%;height:350px;"></div>
+                                <div id="log"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    if ($showSameContext)
+                    {
+                        ?>
+                        <div id="tabs-4" class="ui-corner-all" style="overflow: auto;" >
+                            <?php
+                            require_once('subcategory.php');
+                            ?>
+
+                        </div>
+                    <?php } ?>
+
+                    <?php
+                    if ($showSubTopics)
+                    {
+                        ?>
+                        <div id="tabs-5" class="ui-corner-all">
+
+                            <?php
+                            require_once('category.php');
+                            ?>
+                        </div>
+                    <?php } ?>
+
+                    <?php
+                    if (isset($showStory) && $showStory)
+                    {
+                        ?>
+                        <div id="tabs-6" class="ui-corner-all">
+                             <?php
+                            require_once('story.php');
+                            ?>
+                        </div>
+                    <?php } ?>
+
+                </div>
+
+
+                <div class="clear"></div>
+
+                <div class="innerdiv grid_8 omega topicHits" style="border:1px solid #AAAAAA;margin-left: 11px;">
+                    <?php
+                    if ($showTopicHits)
+                    {
+                        ?>
+                        <div>
+                            <?php
+                            require_once('topics.php');
+                            ?>
+                        </div>
+                    <?php }
+                    else
+                    { ?>
+                    <div>
+                        No topics to display
+                    </div>
+<?php } ?>
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <div class="clear"></div>
     </div>
 
+
+
+    <div class="clear"></div>
 </div>
 <div class="clear"></div>
+
+
+
+
+
 <script id="source" language="javascript" type="text/javascript">
 
-    //<![CDATA[
-    var height = '';
-    $(document).ready(function() {
-        $('div#disambig').addClass('pagepanel');
-        $('div#disambig').find('h2').addClass('panelhead');
-        $('div#disambig').find('ul').addClass('panelcontent');       
-        
-        var   wheight = $(window).height(),
-        cheight = wheight - 250;
-        height = cheight;
-    });
+
+
+
+
+
+
 
     var labelType, useGradients, nativeTextSupport, animate;
 
@@ -96,7 +154,7 @@
 
         init();
 
-        $( "#custom-tabs" ).tabs(
+        $( "#tabs-layout" ).tabs(
         {
             cookie: {
                 // store cookie for a day, without, it would be a session cookie
@@ -104,28 +162,47 @@
                 name:'ktab_cookie',
                 path:'/'
             },
-            
+
+
             show: function(event, ui) {
-                
+
                 // remove the cookie if it is not the reference tab
                 var tabHash = '#tabs-3';
                 if (ui.tab.hash != tabHash) {
                     // remove the cookie
                     $.cookie('ktab_cookie', null, { path: '/',expires: -5 });
                 }
-                
+
             }
 
         });
 
+
+
+        $('#tabs-layout div.ui-tabs-panel').height(function() {
+            return $('#darktabs').height()
+                - $('#darktabs #tabs ul.ui-tabs-nav').outerHeight(true)
+                - ($('#tabs-layout').outerHeight(true) - $('#tabs-layout').height())
+            // visible is important here, sine height of an invisible panel is 0
+                - ($('#tabs-layout div.ui-tabs-panel:visible').outerHeight(true)
+                - $('#tabs-layout div.ui-tabs-panel:visible').height());
+        });
+
+        $('#scrollable_list').height($('#darktabs').height() +  $('.topicHits').height() + 10);
+        $('#scrollable_list').jScrollPane({
+            showArrows: true,
+            autoReinitialise: true,
+            verticalArrowPositions: 'split'
+        });
     });
+
     var Log = {
         elem: false,
         write: function(text){
             if (!this.elem)
                 this.elem = document.getElementById('log');
             this.elem.innerHTML = text;
-            if (text == 'done') this.elem.innerHTML = ''; // dont show the done label 
+            if (text == 'done') this.elem.innerHTML = ''; // dont show the done label
             this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
         }
     };
@@ -145,7 +222,7 @@
                 'render': function(node,canvas) {
                     var ctx = canvas.getCtx();
                     var pos = node.pos.getc(true),
-                    dim = node.getData('dim');
+                    dim = 18;
                     color = node.getData('color');
 
                     var radgrad = ctx.createRadialGradient(pos.x,pos.y,1,pos.x,pos.y,dim);
@@ -157,7 +234,7 @@
                 }            ,
                 'contains': function(node, pos){
                     var npos = node.pos.getc(true),
-                    dim = node.getData('dim');
+                    dim = 20;
                     return this.nodeHelper.circle.contains(npos, pos, dim);
 
                 }
@@ -169,7 +246,7 @@
         var fd = new $jit.ForceDirected({
             //id of the visualization container
             injectInto: 'infovis',
-            height:height,
+            height:350,
             //Enable zooming and panning
             //by scrolling and DnD
             Navigation: {
@@ -203,7 +280,7 @@
             //Add Tips
             Tips: {
                 enable: true,
-                onShow: function(tip, node) {                  
+                onShow: function(tip, node) {
                     //display node info in tooltip
                     tip.innerHTML = "<div class=\"tip-title\">" + node.data.fullname + "<\/div>"
                         + "<div class=\"tip-text\"><b>context:<\/b> " + node.data.context + "<\/div>";
@@ -242,13 +319,15 @@
             //Number of iterations for the FD algorithm
             iterations: 200,
             //Edge length
-            levelDistance: 180,
+            levelDistance: 90,
             // Add text to the labels. This method is only triggered
             // on label creation and only for DOM labels (not native canvas ones).
             onCreateLabel: function(domElement, node){
-                domElement.innerHTML = node.name;
+                var label = node.name.substring(0,10);
+                if (node.name.length>10) label += '....';
+                domElement.innerHTML = label;
                 var style = domElement.style;
-                style.fontSize = "0.7em";
+                style.fontSize = "0.6em";
                 style.color = "#000000";
             },
             // Change node styles when DOM labels are placed
@@ -268,110 +347,16 @@
         // compute positions incrementally and animate.
         fd.computeIncremental({
             iter: 40,
-            property: 'end',
+            property: ['end', 'start', 'current'],
             onStep: function(perc){
                 Log.write(perc + '% loaded...');
             },
             onComplete: function(){
                 Log.write('done');
-                fd.animate({
-                    modes: ['linear'],
-                    transition: $jit.Trans.Elastic.easeOut,
-                    duration: 2500
-                });
+                fd.plot();
             }
         });
         // end
 
     }
-<?php if(isset($showStory)&&$showStory){?>
-     jsPlumb.bind("ready", function() {
-       var story_json=<?php echo $story?>;
-       
-       var container=$("#story");
-       var   wheight = $(window).height(),
-            cheight = wheight - 250;
-            container.height(cheight);
-       var common = {
-	cssClass:"myCssClass"
-       };
-       
-       jsPlumb.Defaults.DragOptions = { cursor: 'pointer', zIndex:2000 };
-       jsPlumb.setMouseEventsEnabled(true);
-       //draw all the nodes
-       var nextleft=10,
-           nexttop=20,
-           direction='left';
-       jQuery.each(story_json.F, function(i, val) {
-           var linkLength=20;
-           if(!$('#'+val.id).length>0){
-            var nodeHtml=$('<div>').attr('id',val.id).addClass('topic').append('<strong>'+val.name+'</strong>');
-             
-            
-            if(direction=='left'){
-              nodeHtml.css({'left':nextleft+'px','top':nexttop+'px'}).appendTo(container);
-                
-            }
-            if(direction=='right'){
-              nodeHtml.css({'right':nextleft+'px','top':nexttop+'px'}).appendTo(container);
-            }
-            
-            //for extremely small nodes
-            if(val.name.length<15){
-              nextleft+=val.name.length*20+linkLength;    
-            }else{
-              nextleft+=val.name.length*10+linkLength;  
-            }
-           
-            
-            if(nextleft>container.width() && direction=='left'){
-               direction='right'
-               nexttop+=nodeHtml.height()+150;
-               nextleft=10;
-             }
-            if(nextleft<10 && direction=='right'){
-               direction='left'
-               nexttop+=nodeHtml.height()+150;
-               nextleft=10;
-             }
-            //console.log(nextleft);
-           }
-        });
-        
-        //drawing the links
-       jQuery.each(story_json.F, function(i, val) {
-          if(val.adjacencies.length !== 0){
-              jQuery.each(val.adjacencies, function(i, adj){
-                  var anchors=["BottomCenter", "BottomCenter"],
-                      topFrom=parseInt($('#'+adj.nodeFrom).css('top')),
-                      topTo=parseInt($('#'+adj.nodeTo).css('top'))
-              
-                    if(topFrom > topTo){
-                        anchors=["TopCenter", "BottomCenter"];
-                    }
-                    if(topFrom < topTo){
-                          anchors=["BottomCenter", "TopCenter"]; 
-                    }
-                    jsPlumb.connect({
-                            source:adj.nodeFrom,
-                            target:adj.nodeTo,
-                            anchors:anchors,
-                            endpoint:[ "Dot", { radius:5 }, common ],
-                            connector:[ "Bezier", { curviness:50 }, common ],
-                            overlays: [
-                                    [ "Arrow", { width:20, length:30, location:0.75, id:"arrow" }, common ],
-                                    [ "Label", {label:adj.data.association, id:"label",cssClass:"labelClass" } ]	
-                            ]
-                    });
-              });
-              //console.log(val.adjacencies.nodeFrom+' '+val.id);
-           }
-        });
-      }); 
-
-<?php } ?>
-
-
-   
-    //]]>
 </script>
