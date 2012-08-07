@@ -143,6 +143,14 @@ class UserTest extends APIBaseTest
     {
         try
         {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+
+            $this->assertEquals(201, $this->pest->lastStatus());
+
             //change password
             $this->pest->post('/user/snookie', '{
                     "password": "pass2"
@@ -157,7 +165,6 @@ class UserTest extends APIBaseTest
             //check if roles are still there
             $users = $this->getResults('/user/snookie');
             $this->assertEquals('jersey', $users[0]['roles'][0]);
-            $this->assertEquals('wenches', $users[0]['roles'][1]);
         }
         catch (Exception $e)
         {
@@ -169,6 +176,14 @@ class UserTest extends APIBaseTest
     {
         try
         {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+
+            $this->assertEquals(201, $this->pest->lastStatus());
+
             $this->pest->delete('/user/snookie');
             $this->assertEquals(204, $this->pest->lastStatus());
         }
