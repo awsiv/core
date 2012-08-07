@@ -79,18 +79,19 @@ class Utils
     {
         switch ($cfapi_code)
         {
-            case ERRID_SUCCESS:
+            case Utils::ERRID_SUCCESS:
                 return 200;
-            case ERRID_ARGUMENT_MISSING:
-            case ERRID_ARGUMENT_WRONG:
-            case ERRID_ITEM_NONEXISTING:
-                return 400;
-            case ERRID_ITEM_EXISTS:
+            case Utils::ERRID_ITEM_NONEXISTING:
+                return 404;
+            case Utils::ERRID_ARGUMENT_MISSING:
+            case Utils::ERRID_ARGUMENT_WRONG:
+                return 406;
+            case Utils::ERRID_ITEM_EXISTS:
                 return 409;
-            case ERRID_RBAC_ACCESS_DENIED:
+            case Utils::ERRID_RBAC_ACCESS_DENIED:
                 return 403;
-            case ERRID_DATA_UNAVAILABLE:
-            case ERRID_HOST_NOT_FOUND:
+            case Utils::ERRID_DATA_UNAVAILABLE:
+            case Utils::ERRID_HOST_NOT_FOUND:
                 return 404;
 
             default:

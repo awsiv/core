@@ -738,36 +738,41 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, const char *username, const char *pa
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email,
                             const Rlist *roles)
 {
-    EnterpriseDB conn;
-    if (!CFDB_Open(&conn))
+    EnterpriseDB conn[1];
+    if (!CFDB_Open(conn))
     {
         return ERRID_DBCONNECT;
     }
 
-    if (GetAuthenticationMode(&conn) != AUTHENTICATION_MODE_INTERNAL)
+    if (GetAuthenticationMode(conn) != AUTHENTICATION_MODE_INTERNAL)
     {
-        CFDB_Close(&conn);
+        CFDB_Close(conn);
         return ERRID_ACCESS_DENIED_EXTERNAL;
     }
 
-    if (!UserIsRoleAdmin(&conn, updating_username))
+    if (!UserIsRoleAdmin(conn, updating_username))
     {
         if (!StringSafeEqual(updating_username, username))
         {
-            CFDB_Close(&conn);
+            CFDB_Close(conn);
             return ERRID_ACCESS_DENIED;
         }
 
         if (roles)
         {
-            CFDB_Close(&conn);
+            CFDB_Close(conn);
             return ERRID_ACCESS_DENIED;
         }
     }
 
-    cfapi_errid result = _UpdateUser(&conn, username, password, email, roles);
+    if (!_UserExistsInternal(conn, username))
+    {
+        return ERRID_ITEM_NONEXISTING;
+    }
 
-    CFDB_Close(&conn);
+    cfapi_errid result = _UpdateUser(conn, username, password, email, roles);
+
+    CFDB_Close(conn);
     return result;
 }
 
@@ -1075,7 +1080,6 @@ HubQuery *CFDB_ListUsers(const char *listing_username, const char *listing_passw
     CFDB_Close(conn);
     return users;
 }
-
 
 
 //*****************************************************************************

@@ -69,7 +69,7 @@ catch (CFAPIException $e)
 {
     $response = new Response($request);
     $response->body = $e->getMessage();
-    $response->code = 500;//$e->getCode();
+    $response->code = Utils::CFAPIErrorCodeToHttpCode($e->getCode());
 }
 catch (Exception $e)
 {

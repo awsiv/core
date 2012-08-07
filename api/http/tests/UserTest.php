@@ -48,6 +48,26 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testUpdateUnknownUser()
+    {
+        try
+        {
+            $this->pest->post('/user/snookie', '{
+                    "email": "snookie2@cfengine.com"
+                }');
+            $this->fail('Should not get here');
+        }
+        catch (Pest_NotFound $e)
+        {
+            // pass
+            return;
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testUpdateEmail()
     {
         try

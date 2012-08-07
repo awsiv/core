@@ -183,6 +183,9 @@ class Pest {
       case 405:
         throw new Pest_MethodNotAllowed($this->processError($body));
         break;
+      case 406:
+        throw new Pest_NotAcceptable($this->processError($body));
+        break;
       case 409:
         throw new Pest_Conflict($this->processError($body));
         break;
@@ -219,6 +222,7 @@ class Pest_UnknownResponse extends Pest_Exception { }
 /* 403 */ class Pest_Forbidden extends Pest_ClientError {}
 /* 404 */ class Pest_NotFound extends Pest_ClientError {}
 /* 405 */ class Pest_MethodNotAllowed extends Pest_ClientError {}
+/* 406 */ class Pest_NotAcceptable extends Pest_ClientError {}
 /* 409 */ class Pest_Conflict extends Pest_ClientError {}
 /* 410 */ class Pest_Gone extends Pest_ClientError {}
 /* 422 */ class Pest_InvalidRecord extends Pest_ClientError {}

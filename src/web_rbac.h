@@ -50,6 +50,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
 cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username);
 HubQuery *CFDB_ListUsers(const char *listing_username, const char *listing_password, const char *username_rx);
 
+
 cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,
                             const char *includeClassRx, const char *excludeClassRx, const char *includeBundleRx, const char *excludeBundleRx);
 cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool deassociateUsers);
