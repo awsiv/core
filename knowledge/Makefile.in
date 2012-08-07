@@ -24,10 +24,10 @@ non-highlighted: CfengineStdLibrary.html cf3-upgrade.html scan_upgrade.cf  cf_Qu
 #
 
 $(top_builddir)/docs/guides/%.html:
-	(cd $(top_builddir)/docs/guides && make $*.html)
+	(cd $(top_builddir)/docs/guides && $(MAKE) $*.html)
 
 $(top_builddir)/docs/reference/cf3-Reference.html:
-	(cd $(top_builddir)/docs/reference && make cf3-Reference.html)
+	(cd $(top_builddir)/docs/reference && $(MAKE) cf3-Reference.html)
 
 %.html: $(top_builddir)/docs/guides/%.html
 	cp $< .

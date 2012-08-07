@@ -24,6 +24,6 @@ cfengine_enterprise_api_la_LIBADD = $(abs_top_builddir)/src/libpromises.la
 
 install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(phplibdir)
-        echo 'extension=cfengine-enterprise-api.so' > $(DESTDIR)$(phplibdir)/cfengine-enterprise-api.ini
+	echo 'extension=cfengine-enterprise-api.so' > $(DESTDIR)$(phplibdir)/cfengine-enterprise-api.ini
 
 endif
