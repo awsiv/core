@@ -194,12 +194,8 @@ class Knowledge extends Cf_Controller
             $data['number_of_rows'] = isset($getparams['rows']) ? intval($getparams['rows'], 10) : 15;
 
             //for story generation
-            if (is_constellation())
-            {
-                $data['story'] = $this->stories_model->getStoryByName($data['topicDetail']['topic']);
-                $stories = json_decode(utf8_encode($data['story']), true);
-                $data['showStory'] = (!is_array($stories) || empty($stories['F'])) ? false : true;
-            }
+            $data['stories'] = $this->stories_model->getStoryById($pid);
+            $data['showStory'] = is_array($data['stories']) ? true:false;
             $this->template->load('template', 'knowledge/knowledge', $data);
         }
         catch (Exception $e)

@@ -36,7 +36,7 @@
                         <?php
                         if (isset($showStory) && $showStory)
                         {
-                            ?><li><a href="#tabs-6">Stories</a></li> <?php } ?>
+                            ?><li><a href="#tabs-6">Tell me about</a></li> <?php } ?>
                     </ul>
 
                     <div id="tabs-1" class="ui-corner-all">
@@ -78,7 +78,9 @@
                     {
                         ?>
                         <div id="tabs-6" class="ui-corner-all">
-                            <div id="story" style="position:relative"></div>
+                             <?php
+                            require_once('story.php');
+                            ?>
                         </div>
                     <?php } ?>
 
