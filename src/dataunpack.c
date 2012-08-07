@@ -78,6 +78,31 @@ void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
+void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
+{
+    Item *ip;
+    char name[CF_MAXVARSIZE];
+    long date;
+    time_t then;
+
+    CfOut(cf_verbose, "", " -> Old File change data....................");
+
+    if (dbconn)
+    {
+        CFDB_SaveFileChangesOld(dbconn, id, data);
+    }
+
+    for (ip = data; ip != NULL; ip = ip->next)
+    {
+        // Extract records
+        sscanf(ip->name, "%ld,%255[^\n]", &date, name);
+        then = (time_t) date;
+        CfDebug("Old File-change event: in \"%s\" at %ld\n", name, then);
+    }
+}
+
+/*****************************************************************************/
+
 void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;

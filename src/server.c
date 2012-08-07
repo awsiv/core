@@ -322,6 +322,8 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
     case cfd_menu_delta:
         Nova_PackPerformance(reply, CFR_PERF, from, type);
         Nova_PackClasses(reply, CFR_CLASS, from, type);
+        // read from the old filechange log during until all clients have been upgraded
+        Nova_PackFileChangesOld(reply, CFR_FCHANGE_OLD, from, type);
         Nova_PackFileChanges(reply, CFR_FCHANGE, from, type);
         Nova_PackDiffs(reply, CFR_FDIFF, from, type);
         //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED
@@ -345,6 +347,8 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackPerformance(reply, CFR_PERF, from, type);
         Nova_PackClasses(reply, CFR_CLASS, from, type);
         Nova_PackSetuid(reply, CFR_SETUID, from, type);
+        // read from the old filechange log during until all clients have been upgraded
+        Nova_PackFileChangesOld(reply, CFR_FCHANGE_OLD, from, type);
         Nova_PackFileChanges(reply, CFR_FCHANGE, from, type);
         Nova_PackDiffs(reply, CFR_FDIFF, from, type);
         //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED

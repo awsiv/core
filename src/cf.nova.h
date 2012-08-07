@@ -91,7 +91,7 @@ typedef void EnterpriseDB;
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 30
+#define CF_CODEBOOK_SIZE 31
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 // for pdf reports
@@ -1228,7 +1228,8 @@ typedef struct
 #define CFR_PERF "PRF"
 #define CFR_CLASS "CLS"
 #define CFR_SETUID "SUI"
-#define CFR_FCHANGE "CHG"
+#define CFR_FCHANGE_OLD "CHG"
+#define CFR_FCHANGE "CNG"
 #define CFR_FDIFF "DIF"
 #define CFR_MONITOR_MAG "MNM"   // DEPRECATED from Nova 2.1.0 onwards
 #define CFR_MONITOR_WEEK "MNW"  // DEPRECATED from Nova 2.1.0 onwards
@@ -1308,6 +1309,8 @@ typedef struct
 #define cfr_promisecompl_keys "pck"
 #define cfr_promisestatus "s"
 #define cfr_filechanges   "fc"
+#define cfr_filechangetype    "fs"
+#define cfr_filechangemsg    "fm"
 #define cfr_filediffs     "fd"
 #define cfr_diff          "FD"
 #define cfr_bundles       "B"

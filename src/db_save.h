@@ -26,6 +26,7 @@ void CFDB_SaveSoftwareDates(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SavePerformance(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveSetUid(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *kH, Item *data);
+void CFDB_SaveFileChangesOld(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveFileChanges(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveBundles(EnterpriseDB *conn, char *kH, const Item *data);

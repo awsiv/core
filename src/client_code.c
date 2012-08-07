@@ -27,6 +27,7 @@ char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
     CFR_PERF,
     CFR_CLASS,
     CFR_SETUID,
+    CFR_FCHANGE_OLD,
     CFR_FCHANGE,
     CFR_FDIFF,
     CFR_MONITOR_MAG,
@@ -61,6 +62,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
     Nova_UnPackPerformance,     // DBOK
     Nova_UnPackClasses,         // DBOK (nopurge)
     Nova_UnPackSetuid,          // DBOK (nopurge)
+    Nova_UnPackFileChangesOld,     // DBOK
     Nova_UnPackFileChanges,     // DBOK
     Nova_UnPackDiffs,           // DBOK
     Nova_UnPackMonitorMag,      // DBOK   - DEPRECATED

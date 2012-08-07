@@ -1539,8 +1539,8 @@ void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 }
 
 /*****************************************************************************/
-
-void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
+// Deprecate in favour of CFDB_SaveFileChanges
+void CFDB_SaveFileChangesOld(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE] = { 0 }, nameNoDot[CF_MAXVARSIZE] = { 0 };
@@ -1576,6 +1576,76 @@ void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
 
                 bson_append_int(&set_op, cfr_time, then);
                 bson_append_string(&set_op, cfr_name, name);
+
+                bson_append_finish_object(&set_op); // varName
+            }
+        }
+        bson_append_finish_object(&set_op); // $set
+    }
+    bson_finish(&set_op);
+
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
+    bson_destroy(&host_key);
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
+{
+    Item *ip;
+    char name[CF_MAXVARSIZE] = { 0 }, nameNoDot[CF_MAXVARSIZE] = { 0 };
+    char varName[128] = { 0 };
+    time_t then;
+    long date;
+
+// find right host
+    bson host_key;
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
+    bson set_op;
+
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            char change[2] = {0};
+            char msg[CF_MAXVARSIZE] = {0},
+                 temp_name[CF_MAXVARSIZE] = {0};
+
+            change[0] = '\0';
+            sscanf(ip->name, "%ld,%255[^,],%1[^,],%255[^\n]", &date, temp_name, change, msg);
+            then = (time_t) date;
+
+            if(change[0] != '\0')
+            {
+                // data from new client 2.3 and above
+                snprintf(name, sizeof(name), "%s", temp_name);
+            }
+            else
+            {
+                continue;
+            }
+
+            char escapedname[CF_BUFSIZE] = { 0 };
+            EscapeJson(name, escapedname, sizeof(escapedname));
+            ReplaceChar(escapedname, nameNoDot, sizeof(nameNoDot), '.', '_');
+
+            snprintf(varName, sizeof(varName), "%s.%s@%ld", cfr_filechanges, nameNoDot, date);
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_string(&set_op, cfr_name, name);
+
+                bson_append_string(&set_op, cfr_filechangetype, change);
+                bson_append_string(&set_op, cfr_filechangemsg, msg);
 
                 bson_append_finish_object(&set_op); // varName
             }

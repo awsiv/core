@@ -332,7 +332,81 @@ void Nova_PackSetuid(Item **reply, char *header, time_t from, enum cfd_menu type
 }
 
 /*****************************************************************************/
+// for versions < 2.3
+// Deprecate in favour of Nova_PackFileChanges
+/*****************************************************************************/
+void Nova_PackFileChangesOld(Item **reply, char *header, time_t from, enum cfd_menu type)
+{
+    FILE *fin;
+    char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
+    Item *ip, *file = NULL;
+    char start[32];
+    long lthen;
+    time_t then, now = time(NULL);
+    int i = 0, first = true, kept = CF_CHANGE_HORIZON, repaired = 0, not_kept = 0;
 
+    CfOut(cf_verbose, "", " -> Packing old file change data");
+    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, CF_FILECHANGE);
+    MapName(name);
+
+    if ((fin = fopen(name, "r")) == NULL)
+    {
+        return;
+    }
+
+    while (!feof(fin))
+    {
+        line[0] = '\0';
+        fgets(line, sizeof(line), fin);
+
+        sscanf(line, "%ld", &lthen);
+        then = (time_t) lthen;
+
+        if (now - then < SECONDS_PER_DAY)
+        {
+            repaired++;
+        }
+
+        if (then < from)
+        {
+            continue;
+        }
+
+        PrependItem(&file, line, NULL);
+    }
+
+    fclose(fin);
+
+    for (ip = file; ip != NULL; ip = ip->next)
+    {
+        memset(start, 0, 32);
+        memset(name, 0, 255);
+
+        if (strlen(ip->name) == 0)
+        {
+            continue;
+        }
+
+        if (first)
+        {
+            first = false;
+            AppendItem(reply, header, NULL);
+        }
+
+        AppendItem(reply, ip->name, NULL);
+
+        if (++i > 12 * 24 * 7)
+        {
+            break;
+        }
+    }
+
+    DeleteItemList(file);
+    METER_KEPT[meter_other_day] = 100.0 * kept / (kept + repaired + not_kept);
+    METER_REPAIRED[meter_other_day] = 100.0 * repaired / (kept + repaired + not_kept);
+}
+
+/*****************************************************************************/
 void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
@@ -344,7 +418,7 @@ void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum cfd_menu
     int i = 0, first = true, kept = CF_CHANGE_HORIZON, repaired = 0, not_kept = 0;
 
     CfOut(cf_verbose, "", " -> Packing file change data");
-    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, CF_FILECHANGE);
+    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, CF_FILECHANGE_NEW);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)

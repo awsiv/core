@@ -14,6 +14,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t date, enum cfd_menu
 void Nova_PackClasses(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackSetuid(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackFileChanges(Item **reply, char *header, time_t date, enum cfd_menu type);
+void Nova_PackFileChangesOld(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackDiffs(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu type);
 void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu type);
@@ -40,6 +41,7 @@ void Nova_PackExecutionStatus(Item **reply, char *header);
 void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data);
