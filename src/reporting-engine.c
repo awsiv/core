@@ -299,7 +299,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO variables VALUES('%s','%s','%s','%s','%s');",
-                 hc->hh->keyhash, hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, sizeof(rval_scalar)), hc->dtype);
+                 hc->hh->keyhash, hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, strlen(rval_scalar)), hc->dtype);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
