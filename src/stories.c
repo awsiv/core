@@ -1546,7 +1546,7 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
 
          JsonElement *json_obj = JsonObjectCreate(5);
          JsonObjectAppendString(json_obj, "intro", "and");
-         JsonObjectAppendString(json_obj, "assoc", assoc);
+         JsonObjectAppendString(json_obj, "association", assoc);
          JsonObjectAppendString(json_obj, "topic", topic);
          JsonObjectAppendInteger(json_obj, "topic_id", topic_id);
          JsonObjectAppendString(json_obj, "context", context);
