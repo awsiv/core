@@ -84,7 +84,11 @@ CFEngine 3 Enterprise is provided in two packages, cfengine-nova_2.2.x and cfeng
 
 The general installation steps are as follows:
 1. Copy the CFEngine 3 Enterprise packages to the system.
-2. Unpack the software
+2. Unpack the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
+   [RedHat/CentOS/SUSE]
+     $ rpm -Uvh cfengine-nova-2.2.x-y.x86_64.rpm cfengine-nova-expansion-2.2.x-y.x86_64.rpm
+   [Debian/Ubuntu]
+     $ dpkg --install cfengine-nova_2.2.x-y_x86_64.deb cfengine-nova-expansion_2.2.x-y_x86_64.deb
 3. (Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
 4. (Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
 5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
@@ -105,7 +109,11 @@ The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CF
 
 Start with the hub (policy server):
 1. Stop all CFE processes (/etc/init.d/cfengine3 stop)
-2. Unpack the new software packages
+2. Upgrade the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
+   [RedHat/CentOS/SUSE]
+     $ rpm -Uvh cfengine-nova-2.2.x-y.x86_64.rpm cfengine-nova-expansion-2.2.x-y.x86_64.rpm
+   [Debian/Ubuntu]
+     $ dpkg --install cfengine-nova_2.2.x-y_x86_64.deb cfengine-nova-expansion_2.2.x-y_x86_64.deb
 3. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
      $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
 4. Remove Mongodb lock if present:
@@ -113,7 +121,7 @@ Start with the hub (policy server):
 5. Copy the new CFE_ prefixed policy files to $(sys.workdir)/masterfiles (the files with a prefix "CFE_" are maintained by CFEngine, do not make changes to these, they are there to ensure that the Mission Portal works properly).
      $ cd /var/cfengine/share/NovaBase
      $ cp CFE_cfengine.cf CFE_knowledge.cf CFE_hub_specific.cf /var/cfengine/masterfiles
-6. Modify two lines in /var/cfengine/masterfiles/update.cf (lines 131 and 298)
+6. Modify two lines in /var/cfengine/masterfiles/update.cf (lines 131 and 298; approximate location, please verify that you change the corresponding content)
  6.1 Line 131: Change package version number (replace line with the following)
         package_version => "9.9.9",         # Install new Nova anyway
  6.2 Line 298: Change to run mongod without journaling (replace line with the following)
