@@ -3,7 +3,7 @@ if(db["appsettings"].findOne())
 {
     /* New addition in Nova 2.2.0*/
     db["appsettings"].update({},{$set:{
-	"bluehost_threshold_global": "3000000",
+	"bluehost_threshold_global": "900",
 	"external_admin_username": "",
 	"rbac" : "false",
         "admin_role":"admin",
@@ -20,7 +20,7 @@ else
 	"admin_role": "admin",
 	"appemail": "",
 	"base_dn": "",
-	"bluehost_threshold_global": "3000000",
+	"bluehost_threshold_global": "900",
 	"encryption": "plain",
 	"experimental": true,
 	"external_admin_username": "",
