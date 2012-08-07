@@ -95,9 +95,10 @@ class UserList extends Resource
     function get($request)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
+        $pass = $_SERVER['PHP_AUTH_PW'];
 
         $response = new Response($request);
-        $response->body = cfapi_user_list($user);
+        $response->body = cfapi_user_list($user, $pass);
         $response->code = Response::OK;
 
         return $response;
