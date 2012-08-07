@@ -35,7 +35,7 @@ done
 #./load-data.sh data/rest
 
 # Run tests
-php -c conf/php.ini /usr/bin/phpunit ../api/http/tests
+php -c conf/php.ini -d extension=mongo.so /usr/bin/phpunit ../api/http/tests
 
 echo "Testsuite finished"
 
