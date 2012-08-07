@@ -49,7 +49,7 @@ static const char *LABEL_YELLOW = "yellow";
 
 PHP_FUNCTION(cfpr_get_story_by_id)
 {
-    const int bufsize = 100000;
+    const int bufsize = 1000000;
     char buffer[bufsize];
     long id;
 
@@ -69,7 +69,7 @@ PHP_FUNCTION(cfpr_get_story_by_id)
 
 PHP_FUNCTION(cfpr_get_story_by_name)
 {
-    const int bufsize = 100000;
+    const int bufsize = 1000000;
     char buffer[bufsize];
     char *search;
     int s_len;
