@@ -1089,7 +1089,7 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
     bson_destroy(&set_op);
     bson_destroy(&host_key);
 
-    MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
+    MongoCheckForError(conn, "SavePromiseLog", keyhash, NULL);
 }
 
 
