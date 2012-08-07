@@ -1039,40 +1039,40 @@ HubQuery *_ListUsersInternal(EnterpriseDB *conn, const char *username_rx)
     return hq;
 }
 
-HubQuery *CFDB_ListUsers(const char *listing_username, const char *requestor_password, const char *username_rx)
+HubQuery *CFDB_ListUsers(const char *listing_username, const char *listing_password, const char *username_rx)
 {
-    EnterpriseDB conn;
-    if (!CFDB_Open(&conn))
+    EnterpriseDB conn[1];
+    if (!CFDB_Open(conn))
     {
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    AuthenticationMode mode = GetAuthenticationMode(&conn);
+    AuthenticationMode mode = GetAuthenticationMode(conn);
 
     HubQuery *users = NULL;
     if (mode == AUTHENTICATION_MODE_INTERNAL)
     {
-        if (!UserIsRoleAdmin(&conn, listing_username))
+        if (!StringSafeEqual(listing_username, username_rx) && !UserIsRoleAdmin(conn, listing_username))
         {
-            CFDB_Close(&conn);
+            CFDB_Close(conn);
             return NewHubQueryErrid(NULL, NULL, ERRID_ACCESS_DENIED);
         }
 
-        users = _ListUsersInternal(&conn, username_rx);
+        users = _ListUsersInternal(conn, username_rx);
     }
     else
     {
-        if (!_UserIsExternalAdmin(&conn, listing_username))
+        if (!_UserIsExternalAdmin(conn, listing_username))
         {
-            CFDB_Close(&conn);
+            CFDB_Close(conn);
             return NewHubQueryErrid(NULL, NULL, ERRID_ACCESS_DENIED_EXTERNAL);
         }
 
-        users = _ListUsersExternal(&conn, listing_username, requestor_password, mode);
+        users = _ListUsersExternal(conn, listing_username, listing_password, mode);
     }
     assert(users);
 
-    CFDB_Close(&conn);
+    CFDB_Close(conn);
     return users;
 }
 

@@ -48,7 +48,7 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testAddUpdateEmail()
+    public function testUpdateEmail()
     {
         try
         {
@@ -85,6 +85,13 @@ class UserTest extends APIBaseTest
     {
         try
         {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
             $this->pest->post('/user/snookie', '{
                     "roles": [ "jersey", "wenches" ]
                 }');
@@ -112,11 +119,19 @@ class UserTest extends APIBaseTest
     {
         try
         {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+
+            $this->assertEquals(201, $this->pest->lastStatus());
+
             $this->pest->setupAuth("snookie", "pass");
             $users = $this->getResults('/user/snookie');
 
             $this->assertEquals('snookie', $users[0]['username']);
-            $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
+            $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
         }
         catch (Exception $e)
         {

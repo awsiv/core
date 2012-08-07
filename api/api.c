@@ -322,14 +322,20 @@ PHP_FUNCTION(cfapi_user_get)
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(password_len, "password");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    if (!CFDB_UserIsAdminWhenRBAC(username) && !StringSafeEqual(username, username_arg))
+    HubQuery *result = NULL;
     {
-        THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Non-admin users can only get its own user");
+        size_t anchored_len = strlen(username_arg) + 5;
+        char *anchored = xcalloc(anchored_len, sizeof(char));
+        AnchorRegex(username_arg, anchored, anchored_len);
+
+        result = CFDB_ListUsers(username, password, anchored);
+
+        free(anchored);
     }
 
-    HubQuery *result = CFDB_ListUsers(username, password, username_arg);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error looking up user");
