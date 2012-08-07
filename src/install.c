@@ -688,7 +688,7 @@ void DeleteHubSetUid(HubSetUid *hp)
 
 /*****************************************************************************/
 
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle)
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle, char change_type, char *change_msg)
 {
     HubFileChanges *hp;
 
@@ -699,6 +699,17 @@ HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handl
     hp->t = t;
     hp->handle = xstrdup(handle);
     hp->diff_record = NULL;
+
+    if(!NULL_OR_EMPTY(change_msg))
+    {
+        hp->msg = xstrdup(change_msg);
+    }
+    else
+    {
+        hp->msg = xstrdup("NA");
+    }
+
+    hp->type = change_type;
 
     return hp;
 }

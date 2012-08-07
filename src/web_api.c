@@ -2231,7 +2231,7 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2"
+             "\"header\": {\"Host\":0,\"File\":1,\"Change Type\":2,\"Change Detected at\":3"
              "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
@@ -2244,8 +2244,8 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
         EscapeJson(hC->path, jsonEscapedStr, sizeof(jsonEscapedStr));
 
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld ],",
-                 hC->hh->hostname, jsonEscapedStr, hC->t);
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",%ld],",
+                 hC->hh->hostname, jsonEscapedStr, hC->msg, hC->t);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))

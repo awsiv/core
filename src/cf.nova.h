@@ -324,6 +324,8 @@ typedef struct
     char *path;
     time_t t;
     char *handle;
+    char *msg;
+    char type;
 
     HubFileDiff *diff_record;
 } HubFileChanges;
@@ -771,7 +773,7 @@ HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState s
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
 HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t);
 void DeleteHubBundleSeen(HubBundleSeen *hp);
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle);
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle, char change_type, char *change_msg);
 void DeleteHubFileChanges(HubFileChanges *hp);
 HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);

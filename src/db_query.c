@@ -2279,6 +2279,10 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
 
                 rname[0] = '\0';
                 time_t timestamp = 0;
+                char change_type[2] = {0},
+                     change_msg[CF_MAXVARSIZE] = {0};
+
+                snprintf(change_type, sizeof(change_type), "U"); // default = unknown
 
                 while (bson_iterator_next(&it2))
                 {
@@ -2297,6 +2301,14 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                         {
                             timestamp = bson_iterator_int(&it3);
                         }
+                        else if (strcmp(bson_iterator_key(&it3), cfr_filechangetype) == 0)
+                        {
+                            strncpy(change_type, bson_iterator_string(&it3), 1);
+                        }
+                        else if (strcmp(bson_iterator_key(&it3), cfr_filechangemsg) == 0)
+                        {
+                            strncpy(change_msg, bson_iterator_string(&it3), sizeof(change_msg) - 1);
+                        }
                     }
 
                     bool matched = true;
@@ -2308,7 +2320,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                     {
                         found = true;
 
-                        PrependRlistAlienUnlocked(&record_list, NewHubFileChanges(hh, rname, timestamp, handle));
+                        PrependRlistAlienUnlocked(&record_list, NewHubFileChanges(hh, rname, timestamp, handle, change_type[0], change_msg));
                     }
                 }
             }
