@@ -4,8 +4,7 @@ require_once "APIBaseTest.php";
 
 class UserTest extends APIBaseTest
 {
-   
-    
+
     public function testListUsers()
     {
         try
@@ -49,10 +48,17 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testUpdateEmail()
+    public function testAddUpdateEmail()
     {
         try
         {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
             $this->pest->post('/user/snookie', '{
                     "email": "snookie2@cfengine.com"
                 }');
@@ -192,6 +198,5 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
-    
 
 }
