@@ -52,7 +52,7 @@ Solaris 	10 					i86pc	 		No libvirt
 Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
 Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.5
+Community version base: 3.3.6
 
 
 COMPATIBILITY MATRIX: 
