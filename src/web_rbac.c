@@ -1265,7 +1265,18 @@ static bool RoleExists(const char *name)
 
 static bool _UserExistsInternal(EnterpriseDB *conn, const char *username)
 {
-    HubQuery *hq = _ListUsersInternal(conn, username);
+
+    HubQuery *hq = NULL;
+    {
+        size_t anchor_len = strlen(username) + 5;
+        char *anchor = xcalloc(anchor_len, sizeof(char));
+        AnchorRegex(username, anchor, anchor_len);
+
+        hq = _ListUsersInternal(conn, anchor);
+
+        free(anchor);
+    }
+
     bool exists = (hq->records == NULL) ? false : true;
 
     DeleteHubQuery(hq, DeleteHubUser);
