@@ -1,0 +1,66 @@
+
+########################
+# GOALS as topics
+########################
+
+bundle knowledge goals
+{
+things:
+
+ goals::
+
+ "satisfied customers"
+   handle => "goal_satisfied", 
+   needs => { "available services", "compliance" },
+   comment => "Ensure excellence of user experience for customers in services and support";
+
+ "available services"
+   handle => "goal_available", 
+    needs => { "network services", "mail","configuration","web","storage","database","login","iaas" },
+   comment => "Keep online services running and available and at all times.";
+
+ "profitable growth"
+   handle => "goal_growth", 
+   needs => { "goals::scale" },
+   comment => "Capabilities to handle planned and unexpected growth of the organization";
+
+ "productive individuals"
+   handle => "goal_productive", 
+   needs => { "user management", "mail","web","storage","login", "directory services" },
+   comment => "Keep employees productive in their work with a stable and usable infrastructure";
+
+ "updated infrastructure"
+   handle => "goal_updated",
+   needs => { "software updates" },
+   comment => "Make sure that the latest tools and software are available and that security patches are installed";
+
+ "agility"
+   handle => "goal_agility", 
+   needs => { "boot services", "iaas" },
+   comment => "Keep infrastructure agile and adaptable";
+
+ "scalability"
+   handle => "goal_scale", 
+   comment => "Avoid performance bottlenecks in business and IT";
+
+ "efficiency"
+   handle => "goal_efficiency", 
+   needs => { "CFEngine" },
+   comment => "Keep performance to cost ratio high";
+
+ "regulatory compliance"
+   handle => "goal_compliance", 
+   needs => { "compliance", "security" },
+   comment => "Comply with audit requirements in finance/security";
+
+ "information security"
+   handle => "goal_infosec",
+   needs => { "software updates", "security" },
+   comment => "Determine policy for necessary and sufficient information security measures";
+
+
+
+
+
+}
+

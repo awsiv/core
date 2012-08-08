@@ -9,21 +9,25 @@ body common control
 {
 bundlesequence  => { 
                    "CfengineEnterpriseFundamentals",
-                   "enterprise_start",
-                   "knowledge_models",
+                   "mission_portal",
+                   "infrastructure_topics",
                    "manual_entries",
                    "system",
-                   "cf_assoc",
-                   "examples",
+                   "commentary",
+                   "code_usage",
                    "substrings",
+                   "CFEngine",
                    "CfengineSiteConfiguration",
-                   "enterprise_knowledge",
+
+                   #
+
+                   "locations",
+                   "goals",
+                   "my_organization",
                    "questions",
+                   "services",
+                   "persons",
                    "error_messages",
-
-                   # Add your own knowledge here
-
-                   "company_knowledge"
                    };
 
 
@@ -35,10 +39,24 @@ inputs         => {
                   "cf_associations.cf",
                   "cf_system.cf",
                   "examples.cf",
+                  "geography.cf",
+                  "persons.cf",
+                  "goals.cf",
+                  "services.cf",
+
+                  # Manually generated for now
+
                   "error_topics.cf",
+
+                  # Auto analysis of policy
+
+                  "$(sys.workdir)/promise_knowledge.cf",
+
+                  # Automatic scanning of documentation
+
                   "scan_solutions.cf",
                   "scan_substrings.cf",
-                  "$(sys.workdir)/promise_knowledge.cf",
+
                   "scan_bp3.cf",
                   "scan_SpecialTopic_DistributedScheduling.cf",
                   "scan_SpecialTopic_Reporting.cf",
