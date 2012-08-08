@@ -429,6 +429,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                     WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
                             (const char *) pp->promisee.item, NOVA_GOAL_INV);
                 }
+
+                WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
+                             (const char *) pp->promisee.item, NOVA_GOAL_INV);
+                
             }
         }
         break;
@@ -468,6 +472,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                         WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
                                 (const char *) rp->item, NOVA_GOAL_INV);
                     }
+                    
+                    WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
+                                 (const char *) pp->promisee.item, NOVA_GOAL_INV);
+
                 }
             }
         }

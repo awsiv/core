@@ -33,6 +33,7 @@ static void NewHit(Hit **list,char *context, char *locator, enum representations
 static void DeleteHitList(Hit *list);
 static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
 static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
+static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize);
 
 /*****************************************************************************/
 /* The main panels                                                           */
@@ -163,8 +164,8 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    char buffer[CF_BUFSIZE];
-    Nova_GetUniqueBusinessGoals(buffer, CF_BUFSIZE);
+    char buffer[1000000];
+    Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("GOALS: %s\n",buffer);
 
 }
@@ -228,6 +229,22 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     CFDB_Close(&conn);
 
     return topic_id;
+}
+
+
+/*****************************************************************************/
+
+static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize)
+{
+    Item *ip, *nn = Nova_ScanLeadsAssociations(handle_id, "is a handle for");
+
+    for (ip = nn; ip != NULL; ip = ip->next)
+       {
+       snprintf(buffer,bufsize,"%s",ip->classes);
+       return ip->counter;
+       }
+
+    return 0;
 }
 
 /*****************************************************************************/
@@ -807,7 +824,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "goal.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal.*");
     }
 
     if (!CFDB_Open(&conn))
@@ -839,37 +856,72 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     bson_destroy(&fields);
 
     JsonElement *json_array_out = JsonArrayCreate(100);
-
+    Item *checked = NULL;
+    
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        JsonElement *json_obj = JsonObjectCreate(3);
+        JsonElement *json_obj = JsonObjectCreate(4);
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-
+        
             /* Query specific search/marshalling */
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
             {
-                JsonObjectAppendString(json_obj, "desc", bson_iterator_string(&it1));       
+                if (IsItemIn(checked,bson_iterator_string(&it1)))
+                {
+                    continue;
+                }
+
+                JsonObjectAppendString(json_obj, "description", bson_iterator_string(&it1));
+                PrependItem(&checked,bson_iterator_string(&it1),NULL);
             }
             if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
             {
                 snprintf(topic_name, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
                 topic_id = Nova_GetTopicIdForTopic(topic_name);
-                JsonObjectAppendString(json_obj, "name", topic_name);
-                JsonObjectAppendInteger(json_obj, "pid", topic_id);
-            }
+
+                char refer[CF_BUFSIZE] = {0};
+                int referred = Nova_GetTopicIdForPromiseHandle(topic_id,refer,CF_BUFSIZE);
+
+                JsonObjectAppendString(json_obj, "name", refer);
+                JsonObjectAppendString(json_obj, "handle", topic_name);
+                JsonObjectAppendInteger(json_obj, "pid", referred);
+
+                Item *nn = Nova_NearestNeighbours(referred, "need(s)");
+                    
+                if (nn)
+                {
+                    JsonElement *json_array = JsonArrayCreate(50);
+
+                    for (Item *ip = nn; ip != NULL; ip = ip->next)
+                    {
+                        if (ip->counter == referred || ip->counter == topic_id)
+                        {
+                            continue;
+                        }
+                        
+                        JsonElement *json_service = JsonObjectCreate(3);
+                        JsonObjectAppendString(json_service, "topic", ip->name);
+                        JsonObjectAppendString(json_service, "context", ip->classes);
+                        JsonObjectAppendInteger(json_service, "topic_id", ip->counter);
+                        JsonArrayAppendObject(json_array, json_service);
+                    }
+
+                    JsonObjectAppendArray(json_obj, "comprises", json_array);
+
+                }
+            }        
         }
-
         JsonArrayAppendObject(json_array_out, json_obj);
-
     }
+
 
     Writer *writer = StringWriter();
     JsonElementPrint(writer, json_array_out, 1);
     JsonElementDestroy(json_array_out);
-    snprintf(buffer,CF_BUFSIZE-1,"%s", StringWriterData(writer));
+    snprintf(buffer, bufsize,"%s", StringWriterData(writer));
     WriterClose(writer);
 
     mongo_cursor_destroy(cursor);
