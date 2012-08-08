@@ -2,36 +2,49 @@
 bundle knowledge services
 
 {
+vars:
+
+  "mail_daemons" slist => { "sendmail", "postfix", "exim", "smtpd" };
+  "used_by_mail_daemons" slist => { "sendmail", "postfix", "exim", "saslauthd", "freshclam", "clamd", "clamav-milter", "spamd", "amavisd" };
 
 things:
 
- "Web Services";
- "Database service";
- "Storage";
- "Boot services"; 
- "SAP";
+ application_services::
 
+  "mail"               comment => "Electronic mail service, as made famous by the Unix operating system.";
+  "configuration"      comment => "Cfengine desired-state automation and self-repair service";
+  "web"                comment => "The WWW web service";
+  "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
+  "storage"            comment => "Remotely accessible disk volumes.";
+  "database"           comment => "Relational database services";
+  "login"              comment => "The ability to log onto systems with a username and password";
+  "iaas"               comment => "Infrastructure as a service (cloud/utility computing)",
+                          uses => { "virtualization" };
+  "RBAC"               comment => "Role Based Access Control";
 
-topics:
+  "daemon"            comment => "Unix parlance for a running background process that handles an application service";
 
  # This is example knowledge -- add your own
 
  services::
 
+  "software updates"     comment => "Software patches and updates for operating platforms";
+  "user management"      comment => "Identity services for login and accessability";
+  "dev"                  comment => "Product development";
+  "ops"                  comment => "Operations -- another term for system administration";
+
   "installation"         comment => "Installing computers from bare metal";
   "boot services"        comment => "Boot services are a way of booting a computer directly from the network";
   "application services" comment => "Software running on servers";
   "network services"     comment => "Network connectivity and availability";
-  "monitoring"           comment => "Pseudo-real-time status information about system components",
-                     association => a("contributes to","mission status","draws on data from");
+  "monitoring"           comment => "Pseudo-real-time status information about system components";
   "scheduling"           comment => "Set the time and place for jobs to run";
-  "desktop"              comment => "Confgure the desktop environment for workstations";
+  "desktop"              comment => "Configure the desktop environment for workstations";
   "access control"       comment => "Restricting user access to objects";
   "compliance"           comment => "Collective issues to ensure policy decisions are implemented";
+  "authentication"       comment => "Confirming the identity of individuals and hosts";
 
   "virtualization"       comment => "Virtual hosts running on a hypervisor";
-  "cloud"                comment => "Platform as a service. Implementing disposable virtual computers on demand.",
-                     association => a("typically implemented using","virtualization","may be used to implement");
   "time services"        comment => "Clock synchronization and timezones";
   "logging"              comment => "Archiving system messages and events";
   "monitoring"           comment => "Data sampling and collection";
@@ -79,41 +92,42 @@ topics:
    "cron" comment => "The periodic time based scheduler (as in chronometer)";
    "at"   comment => "The one-shot job scheduler";
 
- application_services::
 
-  "mail"               comment => "Electronic mail service, as made famous by the Unix operating system.";
-  "configuration"      comment => "Cfengine desired-state automation and self-repair service";
-  "web"                comment => "The WWW web service";
-  "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
-  "storage"            comment => "Remotely accessible disk volumes.";
-  "database"           comment => "Relational database services";
-  "login"              comment => "The ability to log onto systems with a username and password";
-  "daemons"            comment => "Unix parlance for a running background process that handles an application service";
-
-
-things:
-
- daemons::
+ daemon::
 
    "httpd" comment => "The apache web daemon",
            affects => { "application_services::web", "promise_types::processes" },
           provides => { "application_services::web", "www" },
+   generalizations => { "daemon" },
         is_part_of => { "application_services::web" };
 
-  "saslauthd"     comment => "Authentication module for the mail delivery service";
-  "freshclam"     comment => "Gets updates for the clam virus scanner";
-  "clamd"         comment => "A mail anti-virus content scanner";
-  "clamav-milter" comment => "Mail virus scanner interface for clamd";
-  "spamd"         comment => "A mail spam scanner, Spam Assassin service";
-  "amavisd"       comment => "Yet another virus/spam scanner";
-  "smtpd"         comment => "SMTP server used by postfix";
+  "saslauthd"     comment => "Authentication module for the mail delivery service",
+          generalizations => { "daemon" };
 
+  "freshclam"     comment => "Gets updates for the clam virus scanner",
+          generalizations => { "daemon" };
+
+  "clamd"         comment => "A mail anti-virus content scanner",
+          generalizations => { "daemon" };
+
+  "clamav-milter" comment => "Mail virus scanner interface for clamd",
+          generalizations => { "daemon" };
+
+  "spamd"         comment => "A mail spam scanner, Spam Assassin service",
+          generalizations => { "daemon" };
+
+  "amavisd"       comment => "Yet another virus/spam scanner",
+          generalizations => { "daemon" };
+
+  "smtpd"         comment => "SMTP server used by postfix",
+          generalizations => { "daemon" };
 
 
  "$(mail_daemons)" comment => "Email delivery software",
          affects => { "application_services::mail", "promise_types::processes" },
          provides => { "application_services::mail", "smtp" },
        is_part_of => { "application_services::mail" },
+          generalizations => { "daemon" },
              uses => { "@(used_by_mail_daemons)" };
 
 

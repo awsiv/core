@@ -10,7 +10,7 @@ body common control
 bundlesequence  => { 
                    "CfengineEnterpriseFundamentals",
                    "mission_portal",
-                   "knowledge_models",
+                   "infrastructure_topics",
                    "manual_entries",
                    "system",
                    "commentary",
@@ -42,6 +42,7 @@ inputs         => {
                   "geography.cf",
                   "persons.cf",
                   "goals.cf",
+                  "services.cf",
 
                   # Manually generated for now
 

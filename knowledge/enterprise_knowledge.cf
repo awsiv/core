@@ -999,15 +999,3 @@ occurrences:
 }
 
 
-
-bundle knowledge services
-{
-things:
-
- "Web Services";
- "Database service";
- "Storage";
- "Boot services"; 
- "SAP";
-
-}
