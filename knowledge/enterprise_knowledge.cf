@@ -1,9 +1,6 @@
 
 
-
-#######################################################################
-
-bundle knowledge enterprise_start
+bundle knowledge mission_portal
 
 {
 topics:
@@ -46,18 +43,6 @@ documentation::
  software::
 
    "Cfengine" comment => "A framework for automated, self-repairing system.";
-
- places::
-
-   "Salt Lake City" comment => "North America, Utah. Timezone MDT/GMT-6.";
-   "New York" comment => "North America, NY State, East Coast. Timezone EST/GMT-5.";
-   "Monterey" comment => "North America, California, West Coast. Timezone PST/GMT-8.";
-   "London"   comment => "United Kingdom, England. Timezone GMT.";
-   "Oslo"     comment => "Norway, South. Timezone CET/MET/GMT+1.";
-   "Bergen"     comment => "Norway, West. Timezone CET/MET/GMT+1.";
-   "Valbonne"     comment => "France, South. Timezone CET/MET/GMT+1.";
-   "Toulouse"     comment => "France, South. Timezone CET/MET/GMT+1.";
-   "Amsterdam"    comment => "Netherlands. Timezone CET/MET/GMT+1.";
 
 
   # These topics need repetition here compared to Copernicus
@@ -243,17 +228,11 @@ documentation::
 
 }
 
- 
 ############################################################################
 # The Map
 ############################################################################
 
-
-############################################################################
-# The Map
-############################################################################
-
-bundle knowledge tm
+bundle knowledge CFEngine
 
 {
 vars:
@@ -603,43 +582,6 @@ pattern_matching::
 
     "ldap functions";
     "server functions";
-
- ########################################################################
-
-  Persons::
-
-    "Alva Couch"
-       association => a("is one of the contributors to","convergent operators","was developed by");
-
-    "Jan Bergstra"
-       association => a("is one of the contributors to","promise theory","was developed by");
-
-    "Mark Burgess"
-       association => a("designed","cfengine","was designed by");
-    "Mark Burgess"
-       association => a("originated the idea of","convergent operators","was originated by");
-    "Mark Burgess"
-       association => a("is one of the contributors to","promise theory","was developed by");
-
-    "Steve Pepper"
-       association => a("is one of the contributors to","topic maps","was developed by");
-
-
- ########################################################################
-
-  Book::
-
-    "Principles of Network and System Administration"
-       association => a("$(wrote[b])","Mark Burgess","$(wrote[f])");
-
-    "Analytical Network and System Administration"
-       association => a("$(wrote[b])","Mark Burgess","$(wrote[f])");
-
-    "Handbook of Network and System Administration"
-       association => a("$(edited[b])","Mark Burgess","$(edited[f])");
-
-    "Handbook of Network and System Administration"
-       association => a("$(edited[b])","Jan Bergstra","$(edited[f])");
 
  ########################################################################
 
@@ -1056,3 +998,16 @@ occurrences:
 
 }
 
+
+
+bundle knowledge services
+{
+things:
+
+ "Web Services";
+ "Database service";
+ "Storage";
+ "Boot services"; 
+ "SAP";
+
+}
