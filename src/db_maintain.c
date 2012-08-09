@@ -38,31 +38,22 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn);
 
 /*****************************************************************************/
 
-void CFDB_Maintenance(void)
-{
-    EnterpriseDB dbconn;
+void CFDB_Maintenance(EnterpriseDB *dbconn)
+{    
+    CFDB_EnsureIndices(dbconn);
 
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
+    CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
 
-    CFDB_EnsureIndices(&dbconn);
-
-    CFDB_PurgeSoftwareInvalidTimestamp(&dbconn);
-
-    CFDB_PurgeTimestampedReports(&dbconn);
+    CFDB_PurgeTimestampedReports(dbconn);
 
     // support for old DB PromiseLogs format
-    CFDB_PurgePromiseLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
-    CFDB_PurgePromiseLogsFromMain(&dbconn, MONGO_LOGS_NOTKEPT_COLL, CF_HUB_PURGESECS, time(NULL));
-    CFDB_PurgePromiseLogsFromMain(&dbconn, MONGO_LOGS_REPAIRED_COLL, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogsFromMain(dbconn, MONGO_LOGS_NOTKEPT_COLL, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogsFromMain(dbconn, MONGO_LOGS_REPAIRED_COLL, CF_HUB_PURGESECS, time(NULL));
 
-    CFDB_PurgeTimestampedLongtermReports(&dbconn);
-    CFDB_PurgeDeprecatedVitals(&dbconn);
-
-    CFDB_Close(&dbconn);
+    CFDB_PurgeTimestampedLongtermReports(dbconn);
+    CFDB_PurgeDeprecatedVitals(dbconn);
 }
 
 /*****************************************************************************/

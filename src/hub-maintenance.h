@@ -9,7 +9,7 @@
 
 void Nova_Maintain(void);
 
-void Nova_CacheTotalCompliance(bool allSlots);
+void Nova_CacheTotalCompliance(EnterpriseDB *conn, bool allSlots);
 
 void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envClass, int slot,
                                   time_t start, time_t now);
