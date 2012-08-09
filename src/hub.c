@@ -66,39 +66,39 @@ static void Nova_CountMonitoredClasses(void);
 static const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
     "repository. It automatically schedules updates from clients\n" "that have registered by previous connection.";
 
-static const struct option OPTIONS[16] =
+static const struct option OPTIONS[17] =
 {
-    {"help", no_argument, 0, 'h'},
-    {"debug", optional_argument, 0, 'd'},
-    {"verbose", no_argument, 0, 'v'},
-    {"dry-run", no_argument, 0, 'n'},
-    {"version", no_argument, 0, 'V'},
-    {"file", required_argument, 0, 'f'},
-    {"no-lock", no_argument, 0, 'K'},
-    {"no-fork", no_argument, 0, 'F'},
-    {"continuous", no_argument, 0, 'c'},
     {"cache", no_argument, 0, 'a'},
-    {"logging", no_argument, 0, 'l'},
+    {"continuous", no_argument, 0, 'c'},
+    {"debug", optional_argument, 0, 'd'},
+    {"no-fork", no_argument, 0, 'F'},
+    {"file", required_argument, 0, 'f'},
+    {"help", no_argument, 0, 'h'},
     {"index", no_argument, 0, 'i'},
+    {"no-lock", no_argument, 0, 'K'},
+    {"logging", no_argument, 0, 'l'},
+    {"dry-run", no_argument, 0, 'n'},
     {"splay_updates", no_argument, 0, 's'},
+    {"version", no_argument, 0, 'V'},
+    {"verbose", no_argument, 0, 'v'},
     {NULL, 0, 0, '\0'}
 };
 
-static const char *HINTS[16] =
-{
-    "Print the help message",
-    "Set debugging level 0,1,2,3",
-    "Output verbose information about the behaviour of the agent",
-    "All talk and no action mode - make no changes, only inform of promises not kept",
-    "Output the version of the software",
-    "Specify an alternative input file than the default",
-    "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
-    "Run as a foreground processes (do not fork)",
-    "Continuous update mode of operation",
+static const char *HINTS[17] =
+{    
     "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
-    "Enable logging of report collection and maintenance to hub_log in the working directory",
+    "Continuous update mode of operation",
+    "Set debugging level 0,1,2,3",
+    "Run as a foreground processes (do not fork)",
+    "Specify an alternative input file than the default",
+    "Print the help message",
     "Reindex all collections in the CFEngine report database",
+    "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
+    "Enable logging of report collection and maintenance to hub_log in the working directory",
+    "All talk and no action mode - make no changes, only inform of promises not kept",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
+    "Output the version of the software",
+    "Output verbose information about the behaviour of the agent",
     NULL
 };
 
@@ -133,6 +133,20 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     {
         switch ((char) c)
         {
+
+        case 'c':
+            CONTINUOUS = true;
+            break;
+
+        case 'd':
+            NewClass("opt_debug");
+            DEBUG = true;
+            break;
+
+        case 'F':
+            NO_FORK = true;
+            break;
+
         case 'f':
 
             if (optarg && strlen(optarg) < 5)
@@ -144,63 +158,42 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             MINUSF = true;
             break;
 
-        case 'l':
-            LOGGING = true;
+        case 'h':
+            Syntax("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
+            exit(0);
+
+        case 'I':
+            INFORM = true;
             break;
 
-        case 'd':
-            NewClass("opt_debug");
-            DEBUG = true;
+
+        case 'a':
+            Nova_CacheTotalCompliance(true);
+            exit(0);
+            break;
+        case 'i':
+            CFDB_ReIndexAll();
+            exit(0);
             break;
 
         case 'K':
             IGNORELOCK = true;
             break;
 
-        case 'I':
-            INFORM = true;
+        case 'l':
+            LOGGING = true;
             break;
 
-        case 'v':
-            VERBOSE = true;
-            NO_FORK = true;
-            break;
+        case 'M':
+            ManPage("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
+            exit(0);
+
 
         case 'n':
             DONTDO = true;
             IGNORELOCK = true;
             NewClass("opt_dry_run");
             break;
-
-        case 'c':
-            CONTINUOUS = true;
-            break;
-
-        case 'a':
-            Nova_CacheTotalCompliance(true);
-            exit(0);
-            break;
-
-        case 'F':
-            NO_FORK = true;
-            break;
-
-        case 'i':
-            CFDB_ReIndexAll();
-            exit(0);
-            break;
-
-        case 'V':
-            PrintVersionBanner("cf-hub");
-            exit(0);
-
-        case 'h':
-            Syntax("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
-            exit(0);
-
-        case 'M':
-            ManPage("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
-            exit(0);
 
         case 's':
             {
@@ -213,6 +206,15 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 exit(0);
                 break;
             }
+
+        case 'V':
+            PrintVersionBanner("cf-hub");
+            exit(0);
+
+        case 'v':
+            VERBOSE = true;
+            NO_FORK = true;
+            break;
 
         default:
             Syntax("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
