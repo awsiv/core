@@ -131,10 +131,25 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
+    EnterpriseDB dbconn;
+
     while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnsVv", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
+        case 'a':
+            if (!CFDB_Open(&dbconn))
+            {
+                CfOut(cf_error, "", "Unable to connect to enterprise database");
+                exit(0);
+            }
+
+            Nova_CacheTotalCompliance(&dbconn, true);
+
+            CFDB_Close(&dbconn);
+
+            exit(0);
+            break;
 
         case 'c':
             CONTINUOUS = true;
@@ -168,11 +183,6 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             INFORM = true;
             break;
 
-
-        case 'a':
-            Nova_CacheTotalCompliance(true);
-            exit(0);
-            break;
         case 'i':
             CFDB_ReIndexAll();
             exit(0);
