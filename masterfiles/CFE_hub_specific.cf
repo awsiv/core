@@ -1276,3 +1276,21 @@ bundle agent cfengine_selinux(condition)
        action => if_elapsed("1440");
 
 }
+
+##################################################################
+#
+# cfengine_hub_maintain
+#  - Start the hub maintenance process
+#  - By default, this is run every 6 hours
+#  - Intervals less than this must be used with caution
+##################################################################
+
+bundle agent cfengine_hub_maintain
+{
+commands:
+ (Hr00|Hr06|Hr12|Hr18).Min00_05::
+
+"$(sys.cf_hub) -m"
+    handle => "cfengine_start_hub_start_maintenance",
+    comment => "Perform hub database maintenance. This removes expired entries in the enterprise database and creates a total compliance cache for Mission Portal";
+}
