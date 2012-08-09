@@ -1,0 +1,17 @@
+dn: dc=localhost
+objectclass: dcObject
+objectclass: organization
+objectClass: top
+o: Jersey
+
+dn: o=Jersey+ou=people+uid=snookie+userPassword=pass,dc=localhost
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Snookie
+sn: Polizzi
+o: Jersey
+ou: people
+uid: snookie
+userPassword:: cGFzcw==
