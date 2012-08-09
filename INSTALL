@@ -1,59 +1,17 @@
 CFENGINE 3 ENTERPRISE 2.2.2
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: 2012
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 2.2.x (successor to CFENgine Nova 2.1.x)
+RELEASE DATE: August 2012
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 2.2.x (successor to CFEngine Nova 2.1.x)
 
 -----------------------------------------------------------
  TABLE OF CONTENTS:
- PLATFORMS SUPPORTED
- COMPATIBILITY MATRIX
  REQUIREMENTS
  INSTALLATION INSTRUCTIONS (CLEAN INSTALL)
  UPGRADE PROCEDURE
  SOFTWARE DEPENDENCIES
 -----------------------------------------------------------
 
-PLATFORMS SUPPORTED:
-CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the following Operating Systems:
-
-Hub:
-NAME		VERSION					ARCHITECTURE
-Debian 		6 					i686,x86-64
-Ubuntu 		8.04, 10.04, 12.04 			i686,x86-64
-RHEL 		5, 6					i686,x86-64
-CentOS		5, 6					i686,x86-64
-SLES		11					i686,x86-64
-
-Clients:
-NAME:		VERSION					ARCHITECTURE		COMMENT
-AIX		5.3, 6.1 				power 			No libvirt
-CentOS		5, 6 					i686,x86-64
-Debian 		5, 6 					i686,x86-64
-Fedora 		14, 15, 16 				i686,x86-64
-FreeBSD 	7, 8 					i686,amd64		No libvirt
-HP-UX										Contact your sales representative
-NetBSD 		4.0, 5.0 				i686,amd64		No libvirt
-NetBSD 		5.1 					i686,x86-64		No libvirt
-openSUSE 	10.2, 10.3, 11.1, 11.2, 11.3, 11.4 	i686,x86-64
-RHEL 		4, 5, 6 				i686,x86-64
-SLES 		9, 10, 11 				i686,x86-64
-SLES 		10, 11 					s390x
-SUSE Linux 	9.1, 9.2, 9.3, 10.0, 10.1 		i686,x86-64
-Solaris		8, 9, 10 				sparc	 		No libvirt
-Solaris 	10 					i86pc	 		No libvirt
-Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
-Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
-
-Community version base: 3.3.5
-
-
-COMPATIBILITY MATRIX: 
-HUB	CLIENT		TESTED		SUPPORTED	COMMENT
-2.2.2	2.2.x		Yes		Yes
-2.2.2	2.1.x		Yes		Yes		Bundle compliance report not compatible
-2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
-2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
-2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "Release Notes CFEngine 3 Enterprise.txt" file that comes with this package.
 
 As always, test thoroughly in your lab before upgrading production environments!
 
