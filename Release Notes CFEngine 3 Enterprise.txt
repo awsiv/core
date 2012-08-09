@@ -30,7 +30,8 @@ Hub:
 NAME		VERSION					ARCHITECTURE
 Debian 		6 					i686,x86-64
 Ubuntu 		8.04, 10.04, 12.04 			i686,x86-64
-RHEL 		5					i686,x86-64
+RHEL 		5, 6					i686,x86-64
+CentOS		5, 6					i686,x86-64
 
 Clients:
 NAME:		VERSION					ARCHITECTURE		COMMENT

@@ -19,7 +19,7 @@ As always, test thoroughly in your lab before upgrading production environments!
 REQUIREMENTS:
 CFEngine recommends that your hub machine should have at least 2 GB of memory and a modern processor. CFEngine recommends to have 256 MB available memory on the clients. For machines under CFEngine’s management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting.
 
-A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, subversion, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
+Verify that the machine’s network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, subversion, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
 
 Requirements specific to MongoDB:
 1. Filesystem type:
@@ -63,7 +63,7 @@ If you wish to manually install cfmod to the machine, you'll need to do the foll
 
 
 UPGRADE PROCEDURE:
-The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 2.2 Owner's Manual for upgrading from older versions. 
+The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 2.2 Owner's Manual for upgrading from other versions. 
 
 Start with the hub (policy server):
 1. Stop all CFE processes (/etc/init.d/cfengine3 stop)
@@ -72,27 +72,54 @@ Start with the hub (policy server):
      $ rpm -Uvh cfengine-nova-2.2.x-y.x86_64.rpm cfengine-nova-expansion-2.2.x-y.x86_64.rpm
    [Debian/Ubuntu]
      $ dpkg --install cfengine-nova_2.2.x-y_x86_64.deb cfengine-nova-expansion_2.2.x-y_x86_64.deb
-3. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
-     $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
-4. Remove Mongodb lock if present:
+3. Remove Mongodb lock if present:
      $ rm -f /var/cfengine/state/mongod.lock
+4. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
+     $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
 5. Copy the new CFE_ prefixed policy files to $(sys.workdir)/masterfiles (the files with a prefix "CFE_" are maintained by CFEngine, do not make changes to these, they are there to ensure that the Mission Portal works properly).
      $ cd /var/cfengine/share/NovaBase
      $ cp CFE_cfengine.cf CFE_knowledge.cf CFE_hub_specific.cf /var/cfengine/masterfiles
-6. Modify two lines in /var/cfengine/masterfiles/update.cf (lines 131 and 298; approximate location, please verify that you change the corresponding content)
- 6.1 Line 131: Change package version number (replace line with the following)
-        package_version => "9.9.9",         # Install new Nova anyway
- 6.2 Line 298: Change to run mongod without journaling (replace line with the following)
-        "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $(sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
-7. Copy the modified update.cf to the inputs directory:
+6. If you run any Windows machines under CFEngine management, replace the packages promises in /var/cfengine/masterfiles/update.cf to ensure automatic upgrade of CFEngine clients. The modified version should look like this (modified package_version number and added separate section for windows):
+   packages:
+     # update packages after all CFEngine have been killed
+     stopped_cfprocs.!windows::
+      "$(novapkg)" 
+                     comment => "Update Nova package to a newer version",
+                      handle => "update_bins_packages_nova_update_all",
+              package_policy => "update",
+              package_select => ">=",           # picks the newest Nova available
+       package_architectures => { "$(pkgarch)" },
+             package_version => "9.9.9",        # Install new Nova anyway
+              package_method => u_generic( "$(local_software_dir)" ),
+                  ifvarclass => "nova_edition",
+                     classes => u_if_else("bin_update_success", "bin_update_fail");
+
+     stopped_cfprocs.windows::
+      "$(novapkg)" 
+                     comment => "Update Nova package to a newer version",
+                      handle => "update_bins_packages_nova_update_all",
+              package_policy => "update",
+              package_select => ">=",           # picks the newest Nova available
+       package_architectures => { "$(pkgarch)" },
+             package_version => "9.9.9.9",      # Install new Nova anyway
+              package_method => u_generic( "$(local_software_dir)" ),
+                  ifvarclass => "nova_edition",
+                     classes => u_if_else("bin_update_success", "bin_update_fail");
+7. Modify one line in /var/cfengine/masterfiles/update.cf (line 298; approximate location, please verify that you change the corresponding content)
+   Change to run mongod without journaling (replace line with the following)
+     "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $(sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
+8. Copy the modified update.cf to the inputs directory:
      $ cp /var/cfengine/masterfiles/update.cf /var/cfengine/inputs/update.cf
-8. Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
+9. Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
      $ rm -rf /var/www/*
-9. Restart CFEngine processes
+10. Restart CFEngine processes
      $ /etc/init.d/cfengine3 start
 
 For client upgrades there are 2 approaches: manual or automatic upgrade.
-* Manual: Update cfengine-nova on each client by rpm or dpkg command. Update cf-twin as described in step 3 in the update procedure for the hub (i.e. overwrite the old cf-twin).
+* Manual: Update cfengine-nova on each client by rpm, dpkg or corresponding Windows command. For Linux/UNIX systems, update cf-twin as described in step 4 in the upgrade procedure for the hub (i.e. overwrite the old cf-twin). For Windows systems copy/overwrite the content of 
+      C:\Program Files\Cfengine\bin
+   to 
+      C:\Program Files\Cfengine\bin-twin
 * Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in /var/cfengine/master_software_updates and CFEngine 3 Enterprise will take care of the rest.
 
 CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions and troubleshooting tips.
@@ -104,18 +131,6 @@ The CFEngine 3 Enterprise agents on client hosts do not require any additional p
 CFEngine 3 Enterprise will automatically detect if the necessary packages are already installed on the hub. If new package installation is required, CFEngine 3 Enterprise will install all of them from its default software repository (if configured properly). If the system does not have a default software repository configured, manual installation of these packages will be required.
 
 Note that these mandatory packages may have additional dependencies on their own, and hence additional packages may be installed during the installation process. This process will be handled automatically by CFEngine bootstrap. We do not recommend configuring every component on your own, please contact your CFEngine sales representative in case you cannot use CFEngine's bootstrap procedure.
-
-SLES 11:
-- The Apache Web Server Version 2.0 (apache2, version 2.2.10-2.24.5)
-- PHP5 Module for Apache 2.0 (apache2-mod_php5, version 5.2.6-50.24.1)
-- Apache 2 "prefork" MPM (Multi-Processing Module; apache2-prefork, version 2.2.10-2.24.5)
-- PHP5 Core Files (php5, version 5.2.6-50.24.11)
-- PHP5 Extension Module
-	(php5-json, version 5.2.6-50.24.1)
-	(php5-pear, version 5.2.6-50.24.1)
-	(php5-mcrypt, version 5.2.6-50.24.1)
-	(php5-bcmatch, version 5.2.6-50.24.1)
-- A Concurrent Versioning system (subversion, version 1.5.7-0.1.1)
 
 RHEL 5:
 - Apache HTTP Server (httpd, version 2.2.3-45.el5)
