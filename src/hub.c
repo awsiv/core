@@ -707,8 +707,7 @@ static void StartHub(void)
             NewClass("am_policy_hub");
             if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
             {
-                Nova_CollectReports();
-                Nova_Maintain();
+                Nova_CollectReports();               
             }
 
 #ifdef HAVE_CONSTELLATION
