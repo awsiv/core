@@ -77,6 +77,7 @@ static const struct option OPTIONS[17] =
     {"index", no_argument, 0, 'i'},
     {"no-lock", no_argument, 0, 'K'},
     {"logging", no_argument, 0, 'l'},
+    {"maintain", no_argument, 0, 'm'},
     {"dry-run", no_argument, 0, 'n'},
     {"splay_updates", no_argument, 0, 's'},
     {"version", no_argument, 0, 'V'},
@@ -95,6 +96,7 @@ static const char *HINTS[17] =
     "Reindex all collections in the CFEngine report database",
     "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
     "Enable logging of report collection and maintenance to hub_log in the working directory",
+    "Start database maintenance process. By default, entries older than 7 days (1 year for longterm reports) are purged.",
     "All talk and no action mode - make no changes, only inform of promises not kept",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
     "Output the version of the software",
@@ -129,7 +131,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
-    while ((c = getopt_long(argc, argv, "cdvKf:VhFlMaisn", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnsVv", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -188,6 +190,9 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             ManPage("cf-hub - cfengine's report aggregator", OPTIONS, HINTS, ID);
             exit(0);
 
+        case 'm':
+            Nova_Maintain();
+            exit(0);
 
         case 'n':
             DONTDO = true;
