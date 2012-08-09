@@ -874,6 +874,11 @@ static void Nova_ParallelizeScan(Item *masterlist)
             return;
         }
 
+        if (!RemoveFinishedPid(finished, children, &nchildren))
+        {
+            CfOut(cf_error, "", "Unexpected child reaped! pid %d.", finished);
+        }
+
         RemoveFinishedPid(finished, children, &nchildren);
     }
 
