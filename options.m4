@@ -46,7 +46,9 @@ fi
 AM_CONDITIONAL(MONGO, test "x$ac_cv_lib_mongoc_mongo_connect" = xyes)
 
 if test "x$ac_cv_lib_mongoc_mongo_connect" = xyes; then
-   NOVA_DOC_SUBDIR=nova/knowledge
+   if test "x$use_docs"; then
+      NOVA_DOC_SUBDIR=nova/knowledge
+   fi
 fi
 AC_SUBST([NOVA_DOC_SUBDIR])
 
