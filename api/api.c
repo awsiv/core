@@ -284,12 +284,7 @@ PHP_FUNCTION(cfapi_user_list)
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
-
-    cfapi_errid errid = CFDB_UserIsAdminWhenRBAC(username);
-    if (errid != ERRID_SUCCESS)
-    {
-        THROW_GENERIC(errid, "Access denied");
-    }
+    ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
     HubQuery *result = CFDB_ListUsers(username, password, NULL);
     if (result->errid != ERRID_SUCCESS)
@@ -325,30 +320,18 @@ PHP_FUNCTION(cfapi_user_get)
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    HubQuery *result = NULL;
+    HubUser *user = NULL;
+    cfapi_errid err = CFDB_GetUser(username, password, username_arg, &user);
+    if (err != ERRID_SUCCESS)
     {
-        size_t anchored_len = strlen(username_arg) + 5;
-        char *anchored = xcalloc(anchored_len, sizeof(char));
-        AnchorRegex(username_arg, anchored, anchored_len);
-
-        result = CFDB_ListUsers(username, password, anchored);
-
-        free(anchored);
+        THROW_GENERIC(err, "Error looking up user");
     }
-
-    if (result->errid != ERRID_SUCCESS)
-    {
-        THROW_GENERIC(result->errid, "Error looking up user");
-    }
-    if (RlistLen(result->records) < 1)
-    {
-        RETURN_NULL();
-    }
+    assert(user);
 
     JsonElement *data = JsonArrayCreate(1);
-    JsonArrayAppendObject(data, HubUserToJson((HubUser *)result->records->item));
+    JsonArrayAppendObject(data, HubUserToJson(user));
 
-    DeleteHubQuery(result, DeleteHubUser);
+    DeleteHubUser(user);
 
     RETURN_JSON(PackageResult(data, 1, 1));
 }
@@ -504,6 +487,11 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_ENCRYPTION), buffer);
     }
 
+    if (CFDB_GetSetting(conn, SETTING_LDAP_AUTHENTICATION_METHOD, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_AUTHENTICATION_METHOD), buffer);
+    }
+
     if (CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, buffer, sizeof(buffer)))
     {
         JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), buffer);
@@ -593,8 +581,18 @@ PHP_FUNCTION(cfapi_settings_post)
             if (JsonGetElementType(value) != JSON_ELEMENT_TYPE_PRIMITIVE ||
                     JsonGetPrimitiveType(value) != HubSettingGetType(setting))
             {
-                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Setting type for %s is ",
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Setting type for %s is %s", setting_key,
                               JsonPrimitiveTypeToString(HubSettingGetType(setting)));
+            }
+
+            if (JsonGetPrimitiveType(value) == JSON_PRIMITIVE_TYPE_STRING)
+            {
+                const char *range_rx = HubSettingStringRange(setting);
+                assert(range_rx);
+                if (!StringMatchFull(range_rx, JsonPrimitiveGetAsString(value)))
+                {
+                    THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Value for setting %s must match regular-expression %s", setting_key, range_rx);
+                }
             }
         }
     }

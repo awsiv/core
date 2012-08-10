@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SERVICE_NAME="PHP-FPM (+cfmod)"
+SERVICE_NAME="PHP-FPM (+cfmod +cfengine-enterprise-api)"
 
 ROOT=$(pwd)
 CFMOD=${ROOT}/../cfmod/.libs/cfmod.so

@@ -18,6 +18,8 @@ class Utils
     const ERRID_CONSTELLATION_LICENSE = 13;
     const ERRID_DATA_UNAVAILABLE = 14;
     const ERRID_HOST_NOT_FOUND = 15;
+    const ERRID_ACCESS_DENIED = 16;
+    const ERRID_ACCESS_DENIED_EXTERNAL = 17;
 
     public static function queryParam($name, $defaultValue = NULL)
     {
@@ -89,6 +91,8 @@ class Utils
             case Utils::ERRID_ITEM_EXISTS:
                 return 409;
             case Utils::ERRID_RBAC_ACCESS_DENIED:
+            case Utils::ERRID_ACCESS_DENIED:
+            case Utils::ERRID_ACCESS_DENIED_EXTERNAL:
                 return 403;
             case Utils::ERRID_DATA_UNAVAILABLE:
             case Utils::ERRID_HOST_NOT_FOUND:

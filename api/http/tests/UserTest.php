@@ -232,7 +232,7 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testUserNotFound()
+    public function testUserNotFoundAsAdmin()
     {
         try
         {
@@ -249,4 +249,28 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testLDAPAuthenticate()
+    {
+        try
+        {
+            $this->pest->post('/settings', '{
+                "authMode": "ldap",
+                "ldapHost": "localhost",
+                "ldapPort": 1025,
+                "ldapBaseDN": "dc=localhost",
+                "ldapLoginAttribute": "uid",
+                "ldapUsersDirectory": "ou=people",
+                "ldapAuthenticationMethod": "plain",
+                "ldapEncryption": "none"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("snookie", "pass");
+            $this->getResults('');
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

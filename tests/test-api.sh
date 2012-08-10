@@ -2,9 +2,12 @@
 
 export CFENGINE_TEST_OVERRIDE_MONGO_PORT=27777
 
+ROOT=$(dirname $(pwd))/
+
 PHP_FPM_PID=
 NGINX_PID=
 MONGO_PID=
+SLAPD_PID=
 
 kill_servers() {
   retcode=$?
@@ -12,6 +15,7 @@ kill_servers() {
   kill $PHP_FPM_PID 2>/dev/null || :
   kill $NGINX_PID 2>/dev/null || :
   kill $MONGO_PID 2>/dev/null || :
+  kill $SLAPD_PID 2>/dev/null || :
   exit $retcode
 }
 
@@ -26,10 +30,23 @@ NGINX_PID=$!
 ./serve-mongo.sh&
 MONGO_PID=$!
 
+echo "Clearing LDAP data"
+rm -rf ${ROOT}/tests/var/ldap/*
+
+./serve-slapd.sh&
+SLAPD_PID=$!
+
+# Wait for Slapd startup
+while ! ldapsearch -h localhost -p 1025 -x -b '' -s base '(objectclass=*)' 1>/dev/null 2>/dev/null; do
+  sleep 0.01
+done
+
 # Wait for Mongo to come online
 while ! mongo --port 27777 --eval 'db.ping'; do
   sleep 0.01
 done
+
+./load-data-ldap.sh data/ldap/jersey.ldif
 
 # Load Mongo state
 #./load-data.sh data/rest

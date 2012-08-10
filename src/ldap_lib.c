@@ -780,7 +780,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
 #ifdef HAVE_LIBLDAP
 
-bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, bool starttls, const char **const errstr)
+bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, const char *authentication_method, bool starttls, const char **const errstr)
 {
     LDAP *ld = NovaLDAPConnect(uri, starttls, errstr);
 
@@ -789,7 +789,12 @@ bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd,
         return false;
     }
 
-    int ret = NovaLDAPAuthenticate(ld, basedn, "sasl", passwd);
+    if (!authentication_method)
+    {
+        authentication_method = "sasl";
+    }
+
+    int ret = NovaLDAPAuthenticate(ld, basedn, authentication_method, passwd);
 
     ldap_unbind(ld);
 

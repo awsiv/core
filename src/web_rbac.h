@@ -18,6 +18,7 @@ typedef enum
     SETTING_RBAC,
     SETTING_AUTH_MODE,
     SETTING_LDAP_ENCRYPTION,
+    SETTING_LDAP_AUTHENTICATION_METHOD,
     SETTING_LDAP_LOGIN_ATTRIBUTE,
     SETTING_LDAP_BASE_DN,
     SETTING_LDAP_USERS_DIRECTORY,
@@ -48,6 +49,7 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Rlist *roles);
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email, const Rlist *roles);
 cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username);
+cfapi_errid CFDB_GetUser(const char *getting_username, const char *getting_password, const char *username, HubUser **user_out);
 HubQuery *CFDB_ListUsers(const char *listing_username, const char *listing_password, const char *username_rx);
 
 
@@ -64,6 +66,7 @@ HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 const char *HubSettingToString(HubSetting setting);
 HubSetting HubSettingFromString(const char *setting_key);
 JsonPrimitiveType HubSettingGetType(HubSetting setting);
+const char *HubSettingStringRange(HubSetting setting);
 
 bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size);
 bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value);

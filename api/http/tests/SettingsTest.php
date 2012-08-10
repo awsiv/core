@@ -21,18 +21,38 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testAddSetting()
+    public function testAddSettingValidLdapEncryption()
+    {
+        try
+        {
+            $this->pest->post('/settings', '{
+                "ldapEncryption": "ssl"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('ssl', $settings[0]['ldapEncryption']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testAddSettingInvalidLdapEncryption()
     {
         try
         {
             $this->pest->post('/settings', '{
                 "ldapEncryption": "turbo"
                 }');
-            $this->assertEquals(204, $this->pest->lastStatus());
-
-            $settings = $this->getResults('/settings');
-            $this->assertValidJson($settings);
-            $this->assertEquals('turbo', $settings[0]['ldapEncryption']);
+            $this->fail('Should not get here');
+        }
+        catch (Pest_NotAcceptable $e)
+        {
+            // pass
+            return;
         }
         catch (Pest_Exception $e)
         {
@@ -161,82 +181,5 @@ class SettingsTest extends APIBaseTest
             $this->fail($e);
         }
     }
-
-    public function testLdapBadLogin()
-    {
-        try
-        {
-            $this->pest->post('/settings', '{
-                "ldapHost":"yahoo.comxxx",
-                "ldapBaseDN":"dc=cfengine;dc=com",
-                "ldapLoginAttribute":"uid",
-                "ldapUsersDirectory":"ou=jersey",
-                "ldapEncryption":"ssl",
-                "authMode":"ldap"
-                }');
-            $this->assertEquals(204, $this->pest->lastStatus());
-
-            $this->pest->setupAuth("ronnie", "password");
-            $settings = $this->getResults('/');
-            $this->fail("Should not reach");
-        }
-        catch (Pest_Unauthorized $e)
-        {
-            // pass
-            return;
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
-    public function testLdapGoodLogin()
-    {
-        try
-        {
-            $this->pest->post('/settings', '{
-                "ldapHost":"10.0.0.145",
-                "ldapBaseDN":"dc=cf022osx;dc=cfengine;dc=com",
-                "ldapLoginAttribute":"uid",
-                "ldapUsersDirectory":"cn=users",
-                "ldapEncryption":"ssl",
-                "authMode":"ldap"
-                }');
-            $this->assertEquals(204, $this->pest->lastStatus());
-
-            $this->pest->setupAuth("sudhir", "q1w2e3r4t5");
-            $settings = $this->getResults('/');
-            $this->assertValidJson($settings);
-        }
-        catch (Pest_Unauthorized $e)
-        {
-            $this->fail($e);
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
-    /*
-    //For grabbing the details specially the role name of the the logged in ldap user.
-    public function testLdapUserDetails()
-    {
-        //since the database is filled with the required information by previous test we can just try to grab the details.
-        try
-        {
-            $detail = $this->getResults('/user/sudhir');
-            $this->assertValidJson($detail);
-            $this->assertTrue(is_array($detail[0]['roles']));
-        }
-        catch (Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
-     */
-
 
 }
