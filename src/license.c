@@ -246,7 +246,7 @@ int EnterpriseExpiry(void)
             time_t expiry = 0;
             {
                 struct tm t = { 0 };
-                strptime(EXPIRY, "%d %b %d", &t);
+                strptime(EXPIRY, "%d %b %Y", &t);
                 expiry = mktime(&t);
             }
 
