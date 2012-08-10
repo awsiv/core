@@ -141,6 +141,10 @@ PHP_FUNCTION(cfpr_bundle_arguments);
  */
 PHP_FUNCTION(cfpr_list_business_goals);
 
+/*! \brief Get the list of high level services
+ */
+PHP_FUNCTION(cfpr_list_services);
+
 /*! \brief Query reported software entries in a host
  * \param hostKey
  * \param softwareName
