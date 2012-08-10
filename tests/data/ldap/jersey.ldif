@@ -4,7 +4,11 @@ objectclass: organization
 objectClass: top
 o: Jersey
 
-dn: o=Jersey+ou=people+uid=snookie+userPassword=pass,dc=localhost
+dn: ou=people,dc=localhost
+objectClass: organizationalUnit
+ou: people
+
+dn: uid=snookie,ou=people,dc=localhost
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
