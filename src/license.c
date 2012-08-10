@@ -123,29 +123,21 @@ int EnterpriseExpiry(void)
         fscanf(fp, "\n%c", &edition);
         fclose(fp);
 
-        if (edition != 'C')
-        {
-            edition = 'N';
-        }
+        edition = 'N';
+
 
         // This is the simple password hash to obfuscate license fixing
         // Nothing top security here - this is a helper file to track licenses
 
-        if (edition == 'C')
+        if (strlen(company) > 0)
         {
-            snprintf(name, sizeof(name), "%s-%o.%s Constellation %s %s", f_month, number, f_day, f_year, company);
+            snprintf(name, sizeof(name), "%s-%o.%s Nova %s %s", f_month, number, f_day, f_year, company);
         }
         else
         {
-            if (strlen(company) > 0)
-            {
-                snprintf(name, sizeof(name), "%s-%o.%s Nova %s %s", f_month, number, f_day, f_year, company);
-            }
-            else
-            {
-                snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
-            }
+            snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
         }
+
 
         // This next step requires a pre-existing binding
 
@@ -278,18 +270,10 @@ int EnterpriseExpiry(void)
     }
     else
     {
-        if (edition == 'C')
-        {
-            CfOut(cf_verbose, "", " -> Found %d CFE Constellation licenses, expiring on %s %s %s for %s", LICENSES,
-                  u_day, u_month, u_year, company);
-            AM_CONSTELLATION = true;
-        }
-        else
-        {
-            CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
-                  u_month, u_year, company);
-            AM_NOVA = true;
-        }
+        CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
+              u_month, u_year, company);
+        AM_NOVA = true;
+        
         return false;
     }
 }

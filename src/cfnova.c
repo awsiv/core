@@ -92,21 +92,13 @@ void EnterpriseModuleTrick()
         CfLDAPAuthenticate(NULL, NULL, NULL, NULL, false);
     }
 #endif
-
-#if defined(HAVE_CONSTELLATION)
-    Constellation_EnterpriseModuleTrick();
-#endif
 }
 
 /*****************************************************************************/
 
 const char *GetConsolePrefix(void)
 {
-#if defined(HAVE_CONSTELLATION)
-    return "constellation";
-#else
     return "nova";
-#endif
 }
 
 /*****************************************************************************/

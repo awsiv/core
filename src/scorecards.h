@@ -44,7 +44,7 @@ int HostComplianceScore(double kept, double repaired);
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
 // legacy
-void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
+void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bufsize);
 void Nova_Meter(bson *query, char *db, char *buffer, int bufsize);
 
 #endif

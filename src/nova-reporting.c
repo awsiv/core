@@ -129,10 +129,6 @@ ReportInfo BASIC_REPORTS[] =
      "Aggregate compliance levels of promise bundles"},
     {CFRID_PROMISE_COMPLIANCE, "Policy", "Compliance by promise", "Compliance by promise",
      "Compliance of each individual promise"},
-#ifdef HAVE_CONSTELLATION
-    {CFRID_VIRTUAL_BUNDLES, "Constellation", "Virtual bundles", "Virtual bundles",
-     "Custom collections of promises and their compliance"},
-#endif
     {CFRID_COMPLIANCE_SUMMARY, "Accounting", "Compliance summary", "Compliance summary",
      "Total summary of host compliance"},
     {CFRID_PROMISES_REPAIRED_LOG, "Policy", "Promises repaired (log)", "Promises repaired log",

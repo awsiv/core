@@ -34,7 +34,6 @@ static bool CONTINUOUS = false;
 
 static bool LOGGING = false;
 static Item *SCHEDULE = NULL;
-static Item *FEDERATION = NULL;
 static Item *EXCLUDE_HOSTS = NULL;
 
 static bool CFH_ZENOSS = false;
@@ -306,23 +305,6 @@ void KeepPromises(Policy *policy, GenericAgentConfig config)
                 if (!IsItemIn(SCHEDULE, rp->item))
                 {
                     AppendItem(&SCHEDULE, rp->item, NULL);
-                }
-            }
-        }
-
-        if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_federation].lval) == 0)
-        {
-            Rlist *rp;
-
-            CfDebug("federation ...\n");
-            DeleteItemList(FEDERATION);
-            FEDERATION = NULL;
-
-            for (rp = (Rlist *) retval.item; rp != NULL; rp = rp->next)
-            {
-                if (!IsItemIn(FEDERATION, rp->item))
-                {
-                    AppendItem(&FEDERATION, rp->item, NULL);
                 }
             }
         }
@@ -715,17 +697,10 @@ static void StartHub(void)
             CfOut(cf_verbose, "", " -> Wake up");
 
             NewClass("am_policy_hub");
-            if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
+            if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();               
             }
-
-#ifdef HAVE_CONSTELLATION
-            if (FEDERATION)
-            {
-                Constellation_CollectFederatedReports(FEDERATION);
-            }
-#endif
         }
 
         CfOut(cf_verbose, "", "Sleeping...");

@@ -95,9 +95,7 @@ HostColour HostColourFromString(const char *colour)
 
 /*****************************************************************************/
 
-void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
-// Read the cached compliance summary (either from Hub or
-// Constellation DB)
+void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bufsize)
 {
     char work[CF_BUFSIZE];
     EnterpriseDB dbconn;
@@ -113,24 +111,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
         return;
     }
 
-    if (constellation)
-    {
-# ifdef HAVE_CONSTELLATION
-
-        hq = CFDBCon_QueryComp(&dbconn, hubKeyHash, policy, now - SECONDS_PER_WEEK);
-
-# else
-        CfOut(cf_error, "",
-              "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");
-        CFDB_Close(&dbconn);
-        return;
-# endif
-
-    }
-    else                        // Nova
-    {
-        hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - SECONDS_PER_WEEK);
-    }
+    hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - SECONDS_PER_WEEK);
 
     CFDB_Close(&dbconn);
 

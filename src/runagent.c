@@ -33,17 +33,6 @@ bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
     case cfd_menu_full:
         Nova_QueryClientForReports(&dbconn, conn, menu_str, time(0) - SECONDS_PER_WEEK);
         break;
-    case cfd_menu_relay:
-# ifdef HAVE_CONSTELLATION
-    {
-        Item *queries = Constellation_CreateAllQueries();
-
-        Constellation_QueryRelay(&dbconn, conn, queries);
-        DeleteItemList(queries);
-    }
-# endif
-        break;
-
     default:
         break;
     }

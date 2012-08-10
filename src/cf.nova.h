@@ -1490,7 +1490,6 @@ typedef struct
 #define CFRID_BUSINESS_VALUE "business-value"
 #define CFRID_BENCHMARKS "benchmarks"
 #define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
-#define CFRID_VIRTUAL_BUNDLES "virtual-bundles"
 
 #ifdef HAVE_CONSTELLATION
 # include <cf.constellation.h>

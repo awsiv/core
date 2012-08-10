@@ -36,7 +36,6 @@ static const char *ERRID_DESCRIPTION[] =
     [ERRID_ITEM_MULTIPLE] = "There are multiple items matching the request",
     [ERRID_RBAC_DISABLED] = "Role-based access control is disabled",
     [ERRID_RBAC_ACCESS_DENIED] = "The given user has no access to this data",
-    [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
     [ERRID_DATA_UNAVAILABLE] = "Insufficient data / Data unavailable",
     [ERRID_HOST_NOT_FOUND] = "Host not found",
     [ERRID_MAX] = "Unknown error - description out of bounds",
@@ -91,7 +90,7 @@ else
 
 void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize)
 {
-ComplianceSummaryGraph(hubKeyHash,policy,true,buffer,bufsize);
+ComplianceSummaryGraph(hubKeyHash,policy,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -3987,7 +3986,7 @@ int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int o
 
 void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer, int bufsize)
 {
-    ComplianceSummaryGraph(NULL, policy, false, buffer, bufsize);
+    ComplianceSummaryGraph(NULL, policy, buffer, bufsize);
 }
 
 /*****************************************************************************/

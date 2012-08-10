@@ -506,7 +506,6 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
 
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort)
-// NOTE: needs to return report from one host before next - not mixed (for Constellation)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh = NULL;
