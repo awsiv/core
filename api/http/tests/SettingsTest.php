@@ -173,10 +173,10 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
             $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);
             $this->assertEquals('ou=jersey', $settings[0]['ldapUsersDirectory']);
-            $this->assertEquals(1024, $settings[0]['ldapPort']);
-            $this->assertEquals(1025, $settings[0]['ldapPortSSL']);
+            $this->assertEquals(1025, $settings[0]['ldapPort']);
+            $this->assertEquals(1026, $settings[0]['ldapPortSSL']);
             $this->assertEquals('ssl', $settings[0]['ldapEncryption']);
-            $this->assertEquals('ronnie', $settings[0]['externalAdminUsername']);
+            $this->assertEquals('sitch', $settings[0]['externalAdminUsername']);
         }
         catch (Pest_Exception $e)
         {

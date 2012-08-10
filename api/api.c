@@ -507,6 +507,16 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_HOST), buffer);
     }
 
+    if (CFDB_GetSetting(conn, SETTING_LDAP_PORT, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendInteger(settings, HubSettingToString(SETTING_LDAP_PORT), StringToLong(buffer));
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_PORT_SSL, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendInteger(settings, HubSettingToString(SETTING_LDAP_PORT_SSL), StringToLong(buffer));
+    }
+
     if (CFDB_GetSetting(conn, SETTING_AD_DOMAIN, buffer, sizeof(buffer)))
     {
         JsonObjectAppendString(settings, HubSettingToString(SETTING_AD_DOMAIN), buffer);
