@@ -964,11 +964,11 @@ void Nova_DoTryCollectCall(void);
 /* stories.c */
 #ifdef HAVE_LIBMONGOC
 int PossibleInference(char *assoc,enum storytype type,enum cf_direction direction,Chapter *this,char *topic,char *context);
-void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused,Item **ldt);
-void Constellation_ListPossibleStoriesCmdLine(void);
-void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type);
-int Constellation_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char *buffer,int bufsize);
-int Constellation_GenerateStories_by_id_JSON(int topic_id,enum storytype type,char *buffer,int bufsize);
+void Nova_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused,Item **ldt);
+void Nova_ListPossibleStoriesCmdLine(void);
+void Nova_GenerateStoriesCmdLine(char *typed_topic,enum storytype type);
+int Nova_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char *buffer,int bufsize);
+int Nova_GenerateStories_by_id_JSON(int topic_id,enum storytype type,char *buffer,int bufsize);
 void GenerateStoriesAbout(Chapter **story_topic,enum storytype type,StoryLine **finished,int depth,enum cf_direction direction);
 
 Chapter *AppendToStory(Chapter **last,char *topic,char *context,char *assoc,int topic_id);
@@ -977,17 +977,17 @@ Chapter *NewChapter(char *topic,char *context,int topic_id);
 int SameStoryDifferentOutcome(Chapter *s1,Chapter *s2);
 void DeleteStoryLine(StoryLine *start);
 void DeleteStory(Chapter *start);
-void Constellation_ShowStoryLine(StoryLine *list,enum storytype x);
-void Constellation_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *buffer,int bufsize);
+void Nova_ShowStoryLine(StoryLine *list,enum storytype x);
+void Nova_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *buffer,int bufsize);
 
-void Constellation_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id);
-char *Constellation_Relevant3Inference(char *prev,char *this,char *table[CF_INFSIZE][3]);
-char *Constellation_Relevant2Inference(char *this,char *table[CF_INFSIZE][2]);
-char *Constellation_Possible3Inference(char *this,char *table[CF_INFSIZE][3]);
-double Constellation_Inference(Chapter *path[CF_MAX_STORY_DEPTH],enum storytype x,enum cf_direction y,int quiet);
-void Constellation_HostStory(const Policy *policy,char *hostkey,char *buffer, int bufsize);
+void Nova_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id);
+char *Nova_Relevant3Inference(char *prev,char *this,char *table[CF_INFSIZE][3]);
+char *Nova_Relevant2Inference(char *this,char *table[CF_INFSIZE][2]);
+char *Nova_Possible3Inference(char *this,char *table[CF_INFSIZE][3]);
+double Nova_Inference(Chapter *path[CF_MAX_STORY_DEPTH],enum storytype x,enum cf_direction y,int quiet);
+void Nova_HostStory(const Policy *policy,char *hostkey,char *buffer, int bufsize);
 int AlreadySaidThis(Chapter *history[CF_MAX_STORY_DEPTH],int topic_id);
-void Constellation_GetLocations(const Policy *policy,char *hostkey, Rlist **locations);
+void Nova_GetLocations(const Policy *policy,char *hostkey, Rlist **locations);
 #endif
 /* topicmap.c */
 

@@ -61,7 +61,7 @@ void Con2PHP_get_story_by_id(int id,char *buffer,int bufsize)
 { 
 buffer[0] = '\0';
 
-if (Constellation_GenerateStories_by_id_JSON(id,cfi_cause,buffer,bufsize))
+if (Nova_GenerateStories_by_id_JSON(id,cfi_cause,buffer,bufsize))
    {
    }
 else
@@ -77,7 +77,7 @@ void Con2PHP_get_story_by_name(char *typed_topic,char *buffer,int bufsize)
 { 
 buffer[0] = '\0';
 
-if (Constellation_GenerateStories_by_name_JSON(typed_topic,cfi_cause,buffer,bufsize))
+if (Nova_GenerateStories_by_name_JSON(typed_topic,cfi_cause,buffer,bufsize))
    {
    }
 else

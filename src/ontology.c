@@ -562,7 +562,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
 // Look for any networks mentioned
 
-    // Constellation_ScanAccessRelationships(fp, pp, promise_id);  FIXME: fp undefined
+    // Nova_ScanAccessRelationships(fp, pp, promise_id);  FIXME: fp undefined
 }
 
 /*****************************************************************************/

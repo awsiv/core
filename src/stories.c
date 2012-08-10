@@ -226,7 +226,7 @@ char *CF_3_ACCESS_INFERENCES_B[CF_INFSIZE][3] =
 /* Chapter discovery                                                           */
 /*****************************************************************************/
 
-void Constellation_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id)
+void Nova_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id)
 
 // Try to infer from the promises made what the network structure might be
     
@@ -388,7 +388,7 @@ if (strcmp(pp->agentsubtype,"access") == 0)
 /* Host StoryLine                                                              */
 /*****************************************************************************/
 
-void Constellation_HostStory(const Policy *policy, char *hostkey,char *buffer,int bufsize)
+void Nova_HostStory(const Policy *policy, char *hostkey,char *buffer,int bufsize)
 
 // e.g. cf-know -z SHA=e5a14c9705066357324895426566b558ebe5989b64f9df4505c457eef19d1407
     
@@ -507,12 +507,12 @@ printf("It has %s cpu cores running at about %s%% combined utilization.\n",cpus,
 
 // Try to infer a location - can we use Google maps somehow?
 
-Constellation_GetLocations(policy, hostkey,&locations);
+Nova_GetLocations(policy, hostkey,&locations);
 
 for (rp = locations; rp != NULL; rp = rp->next)
    {
    printf("This host seems to have been located in: %s\n",(char *)rp->item);
-   // Could tell a story about the location here Constellation_GenerateStoriesCmdLine(rp->item,cfi_connect);
+   // Could tell a story about the location here Nova_GenerateStoriesCmdLine(rp->item,cfi_connect);
    }
 
 // What flavour am I?
@@ -536,7 +536,7 @@ else
    printf("The load is negligeable for hardware of this capacity\n");
    }
 
-Constellation_GetWeatherReport(hostkey,&low,&high,&anomaly,&focused,&unfocused,&ldt);
+Nova_GetWeatherReport(hostkey,&low,&high,&anomaly,&focused,&unfocused,&ldt);
 
 if (low)
    {
@@ -564,7 +564,7 @@ if (anomaly)
    for (ip = anomaly; ip != NULL; ip=ip->next)
       {
       printf("%s ",ip->name);
-      Constellation_GenerateStoriesCmdLine(ip->name,cfi_cause);
+      Nova_GenerateStoriesCmdLine(ip->name,cfi_cause);
       }
    printf("\n");
    }
@@ -589,7 +589,7 @@ else
    if (high)
       {
       printf("There was an anomalous value, which could be %s\n",high->name);
-      Constellation_GenerateStoriesCmdLine(high->name,cfi_cause);
+      Nova_GenerateStoriesCmdLine(high->name,cfi_cause);
       }
    }
 
@@ -608,15 +608,15 @@ DeleteRlist(tcp6);
 
 // Try some stories
 
-//Constellation_GenerateStoryLineCmdLine(ipv4,cfi_cause);
+//Nova_GenerateStoryLineCmdLine(ipv4,cfi_cause);
 
-printf("CFEngine version Constellation %s is tending to this host.\n",version);
+printf("CFEngine version Nova %s is tending to this host.\n",version);
 
 }
 
 /*****************************************************************************/
 
-void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused, Item **ldt)
+void Nova_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused, Item **ldt)
 
 { HubClass *hc;
   HubQuery *hq;
@@ -683,7 +683,7 @@ CFDB_Close(&dbconn);
 
 /*****************************************************************************/
 
-void Constellation_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
+void Nova_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
 
 { HubClass *hc;
   HubQuery *hq;
@@ -740,7 +740,7 @@ CFDB_Close(&dbconn);
 /* Topic Stories                                                             */
 /*****************************************************************************/
 
-void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type)
+void Nova_GenerateStoriesCmdLine(char *typed_topic,enum storytype type)
 
 { int topic_id;
   char topic[CF_BUFSIZE],context[CF_BUFSIZE];
@@ -847,7 +847,7 @@ for (ip = list; ip != NULL; ip=ip->next)
       }
    }
 
-Constellation_ShowStoryLine(allstories,type);
+Nova_ShowStoryLine(allstories,type);
 
 if (list == NULL || ListLen(list) < 2)
    {
@@ -1148,12 +1148,12 @@ switch (type)
 switch (direction)
    {
    case cfi_forwards:
-       if (Constellation_Relevant2Inference(assoc,inf_2F))
+       if (Nova_Relevant2Inference(assoc,inf_2F))
           {
           return true;
           }
               
-       if (Constellation_Possible3Inference(assoc,inf_3F))
+       if (Nova_Possible3Inference(assoc,inf_3F))
           {
           return true;
           }
@@ -1165,7 +1165,7 @@ switch (direction)
           IdempPrependItem(&(this->indirect_inferences),assoc,topic);
           }
        
-       if (Constellation_Relevant2Inference(assoc,inf_2B))
+       if (Nova_Relevant2Inference(assoc,inf_2B))
           {
           IdempPrependItem(&(this->indirect_inferences),assoc,topic);
           }
@@ -1173,7 +1173,7 @@ switch (direction)
    break;
 
    default:
-       if (Constellation_Relevant2Inference(assoc,inf_2B))
+       if (Nova_Relevant2Inference(assoc,inf_2B))
           {
           return true;
           }              
@@ -1185,7 +1185,7 @@ return false;
 
 /*****************************************************************************/
 
-void Constellation_ShowStoryLine(StoryLine *list,enum storytype type)
+void Nova_ShowStoryLine(StoryLine *list,enum storytype type)
 
 { int pos,len = 0,i,count = 0;
   Chapter *tp;
@@ -1327,7 +1327,7 @@ return false;
 /* LEVEL                                                                     */
 /*****************************************************************************/
 
-char *Constellation_Relevant2Inference(char *this,char *table[CF_INFSIZE][2])
+char *Nova_Relevant2Inference(char *this,char *table[CF_INFSIZE][2])
 
 { int i;
 
@@ -1344,7 +1344,7 @@ return NULL;
 
 /*****************************************************************************/
 
-char *Constellation_Possible3Inference(char *this,char *table[CF_INFSIZE][3])
+char *Nova_Possible3Inference(char *this,char *table[CF_INFSIZE][3])
 
 { int i;
 
@@ -1361,7 +1361,7 @@ return NULL;
 
 /*****************************************************************************/
 
-char *Constellation_Relevant3Inference(char *prev,char *this,char *table[CF_INFSIZE][3])
+char *Nova_Relevant3Inference(char *prev,char *this,char *table[CF_INFSIZE][3])
     
 { int i;
 
@@ -1385,7 +1385,7 @@ return NULL;
 /* */
 /*****************************************************************************/
 
-int Constellation_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char *buffer,int bufsize)
+int Nova_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char *buffer,int bufsize)
 
 { char topic[CF_BUFSIZE],context[CF_BUFSIZE];
   int topic_id;
@@ -1412,7 +1412,7 @@ if ((episode = AppendToStory(&episode,topic,context,"begins",topic_id)))
    GenerateStoriesAbout(&episode,type,&allstories,0,cfi_backwards);
    }
 
-Constellation_ShowStoryLine_JSON(allstories,type,buffer,bufsize);
+Nova_ShowStoryLine_JSON(allstories,type,buffer,bufsize);
 
 //DeleteStoryLine(allstories);
 // Need to clean up memory here
@@ -1421,7 +1421,7 @@ return true;
 
 /*****************************************************************************/
 
-int Constellation_GenerateStories_by_id_JSON(int topic_id,enum storytype type,char *buffer,int bufsize)
+int Nova_GenerateStories_by_id_JSON(int topic_id,enum storytype type,char *buffer,int bufsize)
 
 { char topic[CF_BUFSIZE],context[CF_BUFSIZE],topid[CF_BUFSIZE];
   Chapter *episode;
@@ -1446,7 +1446,7 @@ if ((episode = AppendToStory(&episode,topic,context,"begins",topic_id)))
    GenerateStoriesAbout(&episode,type,&allstories,0,cfi_backwards);
    }
 
-Constellation_ShowStoryLine_JSON(allstories,type,buffer,bufsize);
+Nova_ShowStoryLine_JSON(allstories,type,buffer,bufsize);
 
 //DeleteStoryLine(allstories);
 // Need to clean up memory here
@@ -1455,7 +1455,7 @@ return true;
 
 /*****************************************************************************/
 
-void Constellation_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *buffer,int bufsize)
+void Nova_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *buffer,int bufsize)
 
 { int pos,len = 0,i,count = 0;
   Chapter *tp;
