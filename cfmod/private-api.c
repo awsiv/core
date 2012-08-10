@@ -4329,6 +4329,19 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_list_services)
+{
+    const int bufsize = 1000000;
+    char buffer[bufsize];
+
+    buffer[0] = '\0';
+
+    Nova2PHP_list_services(buffer, bufsize);
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_get_class_frequency)
 {
     char *userName, *hkey, *fhkey, *pattern, *fpattern;
@@ -4465,26 +4478,6 @@ PHP_FUNCTION(cfpr_network_speed)
     JsonElement *out = Nova2PHP_network_speed(hostKey);
 
     RETURN_JSON(out);
-}
-
-/******************************************************************************/
-PHP_FUNCTION(cfpr_report_description)
-{
-    char *reportName;
-    int reportNameSz;
-    const int bufSize = 5 * 1024;
-    char buf[bufSize];
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &reportName, &reportNameSz) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    buf[0] = '\0';
-    Nova2PHP_report_description(reportName, buf, sizeof(buf));
-
-    RETURN_STRING(buf, 1);
 }
 
 /******************************************************************************/

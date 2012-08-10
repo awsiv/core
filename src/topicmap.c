@@ -7,7 +7,6 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
-
 #include "files_names.h"
 #include "db_query.h"
 #include "bson_lib.h"
@@ -165,8 +164,8 @@ void Nova_ShowTopic(char *qualified_topic)
     }
 
     char buffer[1000000];
-    Nova_GetUniqueBusinessGoals(buffer, 1000000);
-    printf("GOALS: %s\n",buffer);
+    Nova_GetApplicationServices(buffer, 1000000);
+    printf("SERVICES: %s\n",buffer);
 
 }
 
@@ -711,10 +710,8 @@ JsonElement *Nova_ScanOccurrences(int this_id)
 
 /*************************************************************************/
 
-/* FIXME: returned false when !MONGO */
-int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
+int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, int bufsize)
 {
-    char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char searchstring[CF_BUFSIZE];
     bson_iterator it1;
     EnterpriseDB conn;
@@ -724,27 +721,28 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
         return false;
     }
 
-    Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
-
-    if (strcmp("system_reports", topic_context) == 0)
-    {
-        snprintf(searchstring, CF_BUFSIZE, "%s.%s", topic_context, topic_id);
-    }
+    if (topic_context)
+       {
+       snprintf(searchstring, CF_BUFSIZE, "%s::%s", topic_context, topic_name);
+       }
     else
-    {
-        CfOut(cf_verbose, "", "!! No description found for topic");
-        return false;
-    }
-
+       {
+       snprintf(searchstring, CF_BUFSIZE, "%s", topic_name);
+       }
+    
     bson query;
 
     bson_init(&query);
-    bson_append_regex(&query, cfk_occurcontext, searchstring, "");
+    bson_append_string(&query, cfk_occurtopic, searchstring);
+    bson_append_string(&query, cfk_occurrep, "Comment");
     bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-    BsonSelectReportFields(&fields, 1, cfk_occurlocator);
+    BsonSelectReportFields(&fields, 3,
+                           cfk_occurtopic,
+                           cfk_occurcontext,
+                           cfk_occurlocator);
 
 /* BEGIN SEARCH */
 
@@ -752,6 +750,8 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
 
     bson_destroy(&query);
     bson_destroy(&fields);
+
+    snprintf(buffer, bufsize, "No available comment");
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -761,9 +761,9 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
             {
-                strncpy(buffer, bson_iterator_string(&it1), bufsize - 1);
-                mongo_cursor_destroy(cursor);
-                return true;
+            strncpy(buffer, bson_iterator_string(&it1), bufsize - 1);
+            mongo_cursor_destroy(cursor);
+            return true;
             }
         }
     }
@@ -927,6 +927,104 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
+
+    return true;
+}
+
+
+/*************************************************************************/
+
+int Nova_GetApplicationServices(char *buffer, int bufsize)
+{
+    bson_iterator it1;
+    EnterpriseDB conn;
+    Item *list = NULL;
+    int topic_id;
+    char *topic;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+/* BEGIN query document */
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_topiccontext, "application_services", "");
+    bson_finish(&query);
+
+/* BEGIN RESULT DOCUMENT */
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        topic_id = 0;
+        topic = NULL;
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                topic = (char *)bson_iterator_string(&it1);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
+            {
+                topic_id = bson_iterator_int(&it1);
+            }
+        }
+
+        
+        if (topic && topic_id )
+        {
+            PrependFullItem(&list, topic, NULL, topic_id, 0);
+        }
+
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn); 
+
+    list = SortItemListNames(list);
+
+    JsonElement *json_array_out = JsonArrayCreate(100);
+
+    for (Item *ip = list; ip != NULL; ip=ip->next)
+       {
+       JsonElement *json_obj = JsonObjectCreate(3);
+       char comment[CF_BUFSIZE];
+       
+       Nova_GetTopicComment(ip->name,"promisers",comment,sizeof(comment));
+       JsonObjectAppendString(json_obj, "description", comment);
+       JsonObjectAppendString(json_obj, "name", ip->name);
+       JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+       JsonArrayAppendObject(json_array_out, json_obj); 
+       }
+    
+
+    Writer *writer = StringWriter();
+    JsonElementPrint(writer, json_array_out, 1);
+    JsonElementDestroy(json_array_out);
+    snprintf(buffer, bufsize,"%s", StringWriterData(writer));
+    WriterClose(writer);
 
     return true;
 }

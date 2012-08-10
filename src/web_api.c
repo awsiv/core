@@ -3019,6 +3019,20 @@ int Nova2PHP_list_all_goals(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
+int Nova2PHP_list_services(char *buffer, int bufsize)
+{
+    if (Nova_GetApplicationServices(buffer, bufsize))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/*****************************************************************************/
+
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize)
 {
     EnterpriseDB dbconn;
@@ -4022,31 +4036,6 @@ void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize)
     ReplaceTrailingChar(returnval, ',', '\0');
 
     EndJoin(returnval, "]\n", bufsize);
-}
-
-/*****************************************************************************/
-
-int Nova2PHP_report_description(char *reportName, char *returnval, int bufsize)
-{
-    int pid;
-    char topic_comment[CF_BUFSIZE] = { 0 };
-    int found = false;
-
-    pid = Nova_GetTopicIdForTopic(reportName);
-    if (pid > 0)
-    {
-        topic_comment[0] = '\0';
-        found = Nova_GetReportDescription(pid, topic_comment, sizeof(topic_comment));
-    }
-
-    if (found)
-    {
-        snprintf(returnval, bufsize, "%s", topic_comment);
-        return true;
-    }
-
-    snprintf(returnval, bufsize, "(no description for %s report found in topic map)", reportName);
-    return false;
 }
 
 /*****************************************************************************/

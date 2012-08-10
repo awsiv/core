@@ -1002,7 +1002,7 @@ JsonElement *Nova_ScanTheRest(int pid);
 Item *Nova_SearchTopicMap(char *typed_topic,int type,int merge);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
 JsonElement *Nova_ScanOccurrences(int this_id);
-int Nova_GetReportDescription(int this_id, char *buffer, int bufsize);
+int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, int bufsize);
 
 int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type);
 int Nova_AddTopicSearchBuffer(int pid, char *topic_name, char *topic_type, char *buffer, int bufsize);
@@ -1016,6 +1016,7 @@ Item *Nova_NearestNeighbours(int topic_id, char *assoc_mask);
 Item *Nova_GetTopicsInContext(char *context);
 Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
+int Nova_GetApplicationServices(char *buffer, int bufsize);
 
 JsonElement *Nova_PlotTopicCosmos(int topic, char *view);
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
