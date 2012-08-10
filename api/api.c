@@ -487,11 +487,6 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_ENCRYPTION), buffer);
     }
 
-    if (CFDB_GetSetting(conn, SETTING_LDAP_AUTHENTICATION_METHOD, buffer, sizeof(buffer)))
-    {
-        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_AUTHENTICATION_METHOD), buffer);
-    }
-
     if (CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, buffer, sizeof(buffer)))
     {
         JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), buffer);

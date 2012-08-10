@@ -56,7 +56,6 @@ static const char *settingLabels[SETTING_MAX] =
     [SETTING_RBAC] = "rbac",
     [SETTING_AUTH_MODE] = "authMode",
     [SETTING_LDAP_ENCRYPTION] = "ldapEncryption",
-    [SETTING_LDAP_AUTHENTICATION_METHOD] = "ldapAuthenticationMethod",
     [SETTING_LDAP_LOGIN_ATTRIBUTE] = "ldapLoginAttribute",
     [SETTING_LDAP_BASE_DN] = "ldapBaseDN",
     [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
@@ -75,7 +74,6 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
     [SETTING_RBAC] = JSON_PRIMITIVE_TYPE_BOOL,
     [SETTING_AUTH_MODE] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_ENCRYPTION] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_AUTHENTICATION_METHOD] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_LOGIN_ATTRIBUTE] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_BASE_DN] = JSON_PRIMITIVE_TYPE_STRING,
     [SETTING_LDAP_USERS_DIRECTORY] = JSON_PRIMITIVE_TYPE_STRING,
@@ -172,7 +170,6 @@ static bool VerifyPasswordInternal(const char *clear_password, const char *db_pa
 
 static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
                                      const char *ldap_url,
-                                     const char *authentication_method,
                                      bool start_tls,
                                      const char *username,
                                      const char *password)
@@ -208,7 +205,7 @@ static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
         strcat(bind_dn, base_dn);
 
         const char *errmsg = NULL;
-        if (CfLDAPAuthenticate(ldap_url, bind_dn, password, authentication_method, start_tls, &errmsg))
+        if (CfLDAPAuthenticate(ldap_url, bind_dn, password, "sasl", start_tls, &errmsg))
         {
             result = ERRID_SUCCESS;
             break;
@@ -221,7 +218,6 @@ static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
 
 static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
                                        const char *ldap_url,
-                                       const char *authentication_method,
                                        bool start_tls,
                                        const char *username,
                                        const char *password)
@@ -247,7 +243,7 @@ static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
     }
 
     const char *errmsg = NULL;
-    if (CfLDAPAuthenticate(ldap_url, bind_dn, password, authentication_method, start_tls, &errmsg))
+    if (CfLDAPAuthenticate(ldap_url, bind_dn, password, "sasl", start_tls, &errmsg))
     {
         return ERRID_SUCCESS;
     }
@@ -260,9 +256,6 @@ static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
 static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password, AuthenticationMode mode)
 {
     assert(mode == AUTHENTICATION_MODE_LDAP || mode == AUTHENTICATION_MODE_AD);
-
-    char auth_meth[1024] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_AUTHENTICATION_METHOD, auth_meth, sizeof(auth_meth));
 
     char encryption[1024] = { 0 };
     CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, encryption, sizeof(encryption));
@@ -299,11 +292,11 @@ static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *usernam
     switch (mode)
     {
     case AUTHENTICATION_MODE_AD:
-        return _LDAPAuthenticateAD(conn, ldap_url, auth_meth, start_tls, username, password);
+        return _LDAPAuthenticateAD(conn, ldap_url, start_tls, username, password);
 
     default:
     case AUTHENTICATION_MODE_LDAP:
-        return _LDAPAuthenticate(conn, ldap_url, auth_meth, start_tls, username, password);
+        return _LDAPAuthenticate(conn, ldap_url, start_tls, username, password);
     }
 }
 #else
@@ -1787,8 +1780,6 @@ const char *HubSettingStringRange(HubSetting setting)
         return "^(internal|ldap|activeDirectory)$";
     case SETTING_LDAP_ENCRYPTION:
         return "^(none|ssl|tls)$";
-    case SETTING_LDAP_AUTHENTICATION_METHOD:
-        return "^(plain|sasl)$";
 
     default:
         return ".*";
@@ -1807,9 +1798,6 @@ bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, si
 
     case SETTING_LDAP_ENCRYPTION:
         return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_ENCRYPTION), value_out, size, "none", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_AUTHENTICATION_METHOD:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_AUTHENTICATION_METHOD), value_out, size, "sasl", conn, MONGO_SETTINGS_COLLECTION);
 
     case SETTING_LDAP_LOGIN_ATTRIBUTE:
         return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), value_out, size, "uid", conn, MONGO_SETTINGS_COLLECTION);

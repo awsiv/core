@@ -260,7 +260,6 @@ class UserTest extends APIBaseTest
                 "ldapBaseDN": "dc=localhost",
                 "ldapLoginAttribute": "uid",
                 "ldapUsersDirectory": "ou=people",
-                "ldapAuthenticationMethod": "plain",
                 "ldapEncryption": "none"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());

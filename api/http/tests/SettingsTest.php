@@ -161,20 +161,22 @@ class SettingsTest extends APIBaseTest
                 "ldapLoginAttribute":"uid",
                 "ldapUsersDirectory":"ou=jersey",
                 "ldapEncryption":"ssl",
-                "authMode":"ldap"
+                "ldapPort": 1025,
+                "ldapPortSSL": 1026,
+                "externalAdminUsername": "sitch"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
-            $this->assertEquals('ldap', $settings[0]['authMode']);
             $this->assertEquals('yahoo.comxxx', $settings[0]['ldapHost']);
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
             $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);
             $this->assertEquals('ou=jersey', $settings[0]['ldapUsersDirectory']);
-//$this->assertEquals('shore', $settings[0]['ldapUsersDirectory'][1]);
+            $this->assertEquals(1024, $settings[0]['ldapPort']);
+            $this->assertEquals(1025, $settings[0]['ldapPortSSL']);
             $this->assertEquals('ssl', $settings[0]['ldapEncryption']);
-//$this->assertEquals('ronnie', $settings[0]['externalAdmin']);
+            $this->assertEquals('ronnie', $settings[0]['externalAdminUsername']);
         }
         catch (Pest_Exception $e)
         {
