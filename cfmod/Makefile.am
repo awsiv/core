@@ -5,7 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-AM_CFLAGS = $(GCC_CFLAG) -I$(top_srcdir)/src -I$(top_srcdir)/nova/src $(CONSTELLATION_CFLAGS) @CFLAGS@
+AM_CFLAGS = $(GCC_CFLAG) -I$(top_srcdir)/src -I$(top_srcdir)/nova/src @CFLAGS@
 AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO
@@ -16,7 +16,6 @@ phplib_LTLIBRARIES = cfmod.la
 cfmod_la_SOURCES = cfmod.c \
         common.c common.h \
         private-api.c private-api.h \
-        private-api-constellation.c private-api-constellation.h \
         public-api.c public-api.h
 
 cfmod_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib

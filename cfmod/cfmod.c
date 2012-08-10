@@ -7,7 +7,6 @@
 #include "php_cfmod.h"
 #include "public-api.h"
 #include "private-api.h"
-#include "private-api-constellation.h"
 #include "crypto.h"
 
 /* If you declare any globals in php_cfmod.h uncomment this:
@@ -182,46 +181,7 @@ static zend_function_entry cfmod_functions[] =
          * Mission Tree-Control (Astrolabe)
          */
     PHP_FE(cfpr_astrolabe_host_list, NULL)
-        /*
-         * Constellation
-         */
-#ifdef HAVE_CONSTELLATION
-    PHP_FE(cfcon_compliance_summary_graph, NULL)
-    PHP_FE(cfcon_compliance_virtualbundle_graph, NULL)
-    PHP_FE(cfcon_count_repaired, NULL)
-    PHP_FE(cfcon_count_notkept, NULL)
-    PHP_FE(cfcon_reasons_repaired, NULL)
-    PHP_FE(cfcon_reasons_notkept, NULL)
-    PHP_FE(cfcon_count_hubs, NULL)
-    PHP_FE(cfcon_show_hubs, NULL)
-    PHP_FE(cfcon_environments_list, NULL)
-    PHP_FE(cfcon_promise_popularity, NULL)
-    PHP_FE(cfcon_rank_promise_popularity, NULL)
-    PHP_FE(cfcon_list_subscriptions, NULL) PHP_FE(cfcon_local_show_subscription_virtualbundle, NULL)
-//    PHP_FE(cfcon_subscribe_software, NULL)
-    PHP_FE(cfcon_local_subscribe_virtualbundle, NULL) PHP_FE(cfcon_local_delete_subscription_virtualbundle, NULL)
-//    PHP_FE(cfcon_subscribe_repairlog, NULL)
-//    PHP_FE(cfcon_subscribe_notkeptlog, NULL)
-    PHP_FE(cfcon_report_software, NULL)
-    PHP_FE(cfcon_local_report_virtualbundle, NULL)
-    PHP_FE(cfcon_local_report_virtualbundle_promises, NULL)
-    PHP_FE(cfcon_aggr_filechange, NULL)
-    PHP_FE(cfcon_aggr_software, NULL)
-    PHP_FE(cfcon_aggr_classes, NULL)
-    PHP_FE(cfcon_aggr_repaired, NULL)
-    PHP_FE(cfcon_aggr_notkept, NULL)
-    PHP_FE(cfcon_hub_meter, NULL)
-    PHP_FE(cfcon_get_hub_colour, NULL)
-    PHP_FE(cfcon_count_hubs_colour, NULL)
-    PHP_FE(cfcon_count_hub_hosts, NULL)
-    PHP_FE(cfcon_list_hub_colour, NULL)
-    PHP_FE(cfcon_value_graph, NULL)
-    PHP_FE(cfcon_hub_details, NULL)
-    PHP_FE(cfcon_getlastupdate, NULL)
-    PHP_FE(cfcon_hubname, NULL)
-    PHP_FE(cfcon_ipaddr, NULL)
-    PHP_FE(cfcon_delete_hub, NULL) PHP_FE(cfcon_get_story_by_name, NULL) PHP_FE(cfcon_get_story_by_id, NULL)
-#endif /* HAVE_CONSTELLATION */
+
     {NULL, NULL, NULL}          /* Must be the last line in cfmod_functions[] */
 };
 
