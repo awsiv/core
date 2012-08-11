@@ -1697,3 +1697,5 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
 
     return true;
 }
+
+
