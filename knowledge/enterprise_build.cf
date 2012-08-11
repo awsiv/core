@@ -8,7 +8,7 @@ body common control
    
 {
 bundlesequence  => { 
-                   "CfengineEnterpriseFundamentals",
+                   "CFEngine_nomenclature",
                    "mission_portal",
                    "infrastructure_topics",
                    "manual_entries",
@@ -17,7 +17,7 @@ bundlesequence  => {
                    "code_usage",
                    "substrings",
                    "CFEngine",
-                   "CfengineSiteConfiguration",
+                   "policy_analysis",
 
                    #
 

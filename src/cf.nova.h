@@ -1004,7 +1004,7 @@ Item *Nova_ScanLeadsAssociations(int pid, char *view);
 JsonElement *Nova_ScanOccurrences(int this_id);
 int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, int bufsize);
 
-int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type);
+int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type, char *buffer);
 int Nova_AddTopicSearchBuffer(int pid, char *topic_name, char *topic_type, char *buffer, int bufsize);
 int Nova_AddAssocSearchBuffer(char *from_assoc, char *to_assoc, char *buffer, int bufsize);
 JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, enum representations locator_type, char *represents);

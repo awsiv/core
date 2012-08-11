@@ -1427,7 +1427,7 @@ int Constellation_GenerateStories_by_id_JSON(int topic_id,enum storytype type,ch
   Chapter *episode;
   StoryLine *allstories = NULL;
  
-Nova_GetTopicByTopicId(topic_id,topic,topid,context);
+Nova_GetTopicByTopicId(topic_id,topic,topid,context,NULL);
   
 if (strlen(topic) == 0)
    {
