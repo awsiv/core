@@ -3105,6 +3105,122 @@ JsonElement *Nova2PHP_search_topics(char *search, bool regex)
 
 /*****************************************************************************/
 
+JsonElement *Nova2PHP_list_knowledge_bundles(void)
+{
+    Item *ip,*results = NULL;
+    JsonElement *json_array_out = JsonArrayCreate(30);
+    bson_iterator it1;
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    bson query;
+    bson_empty(&query);
+
+    bson fields;
+
+    BsonSelectReportFields(&fields, 1, cfk_bundle);
+        
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_BUNDLES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_bundle) == 0)
+            {
+                IdempPrependItem(&results, bson_iterator_string(&it1), NULL);
+            }
+        }
+    }
+    mongo_cursor_destroy(cursor);
+
+    results = SortItemListNames(results);
+
+    for (ip = results; ip != NULL; ip = ip->next)
+    {
+        JsonArrayAppendString(json_array_out, ip->name);
+    }
+
+    return json_array_out;
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
+{
+    Item *ip,*results = NULL;
+    JsonElement *json_array_out = JsonArrayCreate(100);
+    bson_iterator it1;
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfk_bundle, name);
+    bson_finish(&query);
+
+    bson fields;
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topiccontext, cfk_topicid);
+        
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
+    {
+        char topic[CF_BUFSIZE] = {0}, context[CF_BUFSIZE] = {0};
+        int topic_id;
+    
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                strncpy(topic, bson_iterator_string(&it1),CF_BUFSIZE);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
+            {
+                strncpy(context, bson_iterator_string(&it1),CF_BUFSIZE);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
+            {
+                topic_id = bson_iterator_int(&it1);
+            }
+            
+        }
+
+        if (!IsItemIn(results, topic))
+           {
+           JsonElement *json_obj_subtopic = JsonObjectCreate(3);
+           JsonObjectAppendString(json_obj_subtopic, "context", context);
+           JsonObjectAppendString(json_obj_subtopic, "topic", topic);
+           JsonObjectAppendInteger(json_obj_subtopic, "topic_id", topic_id);
+           JsonArrayAppendObject(json_array_out, json_obj_subtopic);
+           PrependItem(&results, topic, NULL);
+           }
+    }
+
+    DeleteItemList(results);
+    mongo_cursor_destroy(cursor);
+    return json_array_out;
+}
+
+
+/*****************************************************************************/
+
 JsonElement *Nova2PHP_show_topic(int id)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];

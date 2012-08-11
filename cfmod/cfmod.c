@@ -77,6 +77,9 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_getlastupdate, NULL)
     PHP_FE(cfpr_list_business_goals, NULL)
     PHP_FE(cfpr_list_services, NULL)
+    PHP_FE(cfpr_list_knowledge_bundles, NULL)
+    PHP_FE(cfpr_list_topics_for_bundle, NULL)
+
     PHP_FE(cfpr_report_software_in, NULL)
     PHP_FE(cfpr_report_patch_in, NULL)
     PHP_FE(cfpr_report_patch_avail, NULL)

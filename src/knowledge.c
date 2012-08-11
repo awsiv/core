@@ -37,7 +37,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
     TopicAssociation *ta;
     Occurrence *op;
     Inference *ip;
-    Item *itp;
+    Item *itp, *bundles = NULL;
     char packNumStr[CF_MAXVARSIZE];
     EnterpriseDB dbconn = { 0 };
     int slot, assoc_id = 0;
@@ -67,6 +67,8 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_string(&insert_op, cfk_topiccontext, tp->topic_context);
             bson_append_string(&insert_op, cfk_bundle, tp->bundle);
             bson_append_int(&insert_op, cfk_topicid, tp->id);
+
+            IdempPrependItem(&bundles, tp->bundle, NULL);
 
             CfDebug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n", tp->topic_name,
                     tp->topic_context, tp->id);
@@ -113,6 +115,25 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
         }
     }
 
+// Knowledge bundle categories, quick lookup
+    
+    mongo_remove(&dbconn, MONGO_KM_BUNDLES, bson_empty(&b), NULL);
+    
+    for (itp = bundles; itp != NULL; itp = itp->next)
+       {
+       bson insert_op;
+       bson_init(&insert_op);
+       bson_append_new_oid(&insert_op, "_id");
+       bson_append_string(&insert_op, cfk_bundle, itp->name);
+       bson_append_string(&insert_op, cfk_topicid, "any");
+       bson_finish(&insert_op);
+       
+       mongo_insert(&dbconn, MONGO_KM_BUNDLES, &insert_op, NULL);
+       bson_destroy(&insert_op);
+       }
+    
+    DeleteItemList(bundles);
+
 // Occurrences
 
     mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b), NULL);
@@ -146,7 +167,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             }
         }
     }
-
+    
 // Inferences
 
     mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b), NULL);

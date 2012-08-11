@@ -141,8 +141,15 @@ PHP_FUNCTION(cfpr_bundle_arguments);
  */
 PHP_FUNCTION(cfpr_list_business_goals);
 
+/*! \brief List tree of knowledge
+ */
+
+PHP_FUNCTION(cfpr_list_knowledge_bundles);
+PHP_FUNCTION(cfpr_list_topics_for_bundle);
+
 /*! \brief Get the list of high level services
  */
+
 PHP_FUNCTION(cfpr_list_services);
 
 /*! \brief Query reported software entries in a host

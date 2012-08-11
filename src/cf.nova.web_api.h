@@ -195,7 +195,8 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
 JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter);
 JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter);
 
-
+JsonElement *Nova2PHP_list_topics_for_bundle(char *name);
+JsonElement *Nova2PHP_list_knowledge_bundles(void);
 JsonElement *Nova2PHP_search_topics(char *search, bool regex);
 JsonElement *Nova2PHP_show_topic(int id);
 JsonElement *Nova2PHP_show_topic_leads(int id);
