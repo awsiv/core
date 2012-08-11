@@ -3108,13 +3108,17 @@ JsonElement *Nova2PHP_search_topics(char *search, bool regex)
 JsonElement *Nova2PHP_show_topic(int id)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
+    char bundle[CF_BUFSIZE], description[CF_BUFSIZE];
     JsonElement *json_out = NULL;
 
-    if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context))
+    if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context, bundle))
     {
-        json_out = JsonObjectCreate(2);
+        Nova_GetTopicComment(topic_name, topic_context, description, CF_BUFSIZE);
+        json_out = JsonObjectCreate(4);
         JsonObjectAppendString(json_out, "topic", topic_name);
         JsonObjectAppendString(json_out, "context", topic_context);
+        JsonObjectAppendString(json_out, "description", description);
+        JsonObjectAppendString(json_out, "bundle", bundle);
     }
     else
     {

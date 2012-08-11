@@ -124,7 +124,7 @@ void Nova_DumpTopics()
 
 void Nova_ShowTopic(char *qualified_topic)
 {
-    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE];
+ char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE], bundle[CF_BUFSIZE];
     int id;
     Writer *writer = NULL;
     JsonElement *json = NULL;
@@ -140,8 +140,8 @@ void Nova_ShowTopic(char *qualified_topic)
        return;
        }
 
-    Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context);
-    printf("Found (%d): \"%s::%s = %s\" \n", id, topic_context, topic_name, topic_id);
+    Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context,bundle);
+    printf("Found (%d): \"%s::%s = %s\" in bundle %s \n", id, topic_context, topic_name, topic_id, bundle);
 
     writer = StringWriter();
     json = Nova2PHP_show_all_context_leads(topic_name);
@@ -165,8 +165,11 @@ void Nova_ShowTopic(char *qualified_topic)
 
     char buffer[1000000];
     Nova_GetApplicationServices(buffer, 1000000);
-    printf("SERVICES: %s\n",buffer);
+    printf("\nSERVICES:\n %s\n",buffer);
 
+    Nova_GetUniqueBusinessGoals(buffer, 1000000);
+    printf("\nGOALS:\n %s\n",buffer);
+    
 }
 
 
@@ -250,7 +253,7 @@ static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufs
 
 /*****************************************************************************/
 
-int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char *topic_context)
+int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char *topic_context, char *bundle)
 {
     bson_iterator it1;
     EnterpriseDB conn;
@@ -270,7 +273,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
+    BsonSelectReportFields(&fields, 4, cfk_topicname, cfk_topicid, cfk_topiccontext, cfk_bundle);
 
 /* BEGIN SEARCH */
 
@@ -298,6 +301,11 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
             if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
             {
                 strncpy(topic_context, bson_iterator_string(&it1), CF_BUFSIZE - 1);
+            }
+
+            if (bundle != NULL && strcmp(bson_iterator_key(&it1), cfk_bundle) == 0)
+            {
+                strncpy(bundle, bson_iterator_string(&it1), CF_BUFSIZE - 1);
             }
 
             if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
@@ -429,7 +437,7 @@ JsonElement *Nova_ScanTheRest(int pid)
     int id = 0;
     JsonElement *json_obj_out = JsonObjectCreate(2);
 
-    id = Nova_GetTopicByTopicId(pid, this_name, this_id, this_context);
+    id = Nova_GetTopicByTopicId(pid, this_name, this_id, this_context, NULL);
     if (!id)
     {
         return json_obj_out;
@@ -609,7 +617,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
         return JsonArrayCreate(1);
     }
 
-    Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
+    Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context, NULL);
 
     if (strlen(topic_name) == 0)
         {
@@ -1288,7 +1296,7 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
     if (nn == NULL)
     {
         Item *backup, *ip;
-        Nova_GetTopicByTopicId(pid, topic_name, topic_id, topic_context);
+        Nova_GetTopicByTopicId(pid, topic_name, topic_id, topic_context, NULL);
         backup = Nova_SearchTopicMap(topic_name,CF_SEARCH_EXACT,false);
 
         for (ip = backup; ip != NULL; ip=ip->next)
@@ -1559,7 +1567,7 @@ static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, ch
 
     if (strlen(topic_name) == 0)
     {
-        Nova_GetTopicByTopicId(real, topic_name, topic_id, topic_context);
+    Nova_GetTopicByTopicId(real, topic_name, topic_id, topic_context, NULL);
     }
 
     sscanf(topic_name, "%32[^\n]", sshort);
