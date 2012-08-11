@@ -1428,6 +1428,7 @@ typedef struct
 #define cfk_topicname "n"
 #define cfk_topiccontext "c"
 #define cfk_topicid "id"
+#define cfk_bundle "tb"
 
 #define cfk_associations "a"
 #define cfk_fwd "f"

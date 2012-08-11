@@ -65,7 +65,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_new_oid(&insert_op, "_id");
             bson_append_string(&insert_op, cfk_topicname, tp->topic_name);
             bson_append_string(&insert_op, cfk_topiccontext, tp->topic_context);
-            bson_append_string(&insert_op, cfk_topiccontext, tp->topic_context);
+            bson_append_string(&insert_op, cfk_bundle, tp->bundle);
             bson_append_int(&insert_op, cfk_topicid, tp->id);
 
             CfDebug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n", tp->topic_name,
@@ -136,6 +136,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_int(&insert_op, cfk_occurtype, op->rep_type);
             bson_append_string(&insert_op, cfk_occurrep, rp1->item);
             bson_append_string(&insert_op, cfk_occurtopic, rp2->item);
+            bson_append_string(&insert_op, cfk_bundle, op->bundle);
 
             bson_finish(&insert_op);
 
