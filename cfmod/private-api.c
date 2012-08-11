@@ -3113,6 +3113,36 @@ PHP_FUNCTION(cfpr_search_topics)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_list_topics_for_bundle)
+{
+    char *name;
+    int len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &name, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(len);
+
+    JsonElement *out = Nova2PHP_list_topics_for_bundle(name);
+    RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_list_knowledge_bundles)
+{
+    JsonElement *out = NULL;
+    out = Nova2PHP_list_knowledge_bundles();
+
+    RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_show_topic)
 {
     long id;
