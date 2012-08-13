@@ -1291,6 +1291,6 @@ commands:
  (Hr00|Hr06|Hr12|Hr18).Min00_05::
 
 "$(sys.cf_hub) -m"
-    handle => "cfengine_start_hub_start_maintenance",
+    handle => "cfengine_start_hub_maintenance",
     comment => "Perform hub database maintenance. This removes expired entries in the enterprise database and creates a total compliance cache for Mission Portal";
 }
