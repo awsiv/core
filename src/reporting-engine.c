@@ -166,6 +166,15 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
     for (Rlist *rp = hq->hosts; rp != NULL; rp = rp->next)
     {
@@ -185,6 +194,15 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, NULL);
@@ -227,6 +245,15 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -246,6 +273,13 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+    }
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubClass);
@@ -288,6 +322,15 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -318,6 +361,15 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubVariable);
@@ -357,6 +409,15 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -376,6 +437,15 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubFileChanges);
@@ -417,6 +487,15 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -436,6 +515,15 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
@@ -501,6 +589,15 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
         return;
     }
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -520,6 +617,15 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
@@ -560,8 +666,17 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
         sqlite3_free(err);
         return;
     }
-    /* Dump HubQuery into in-memory sqlite table */
 
+    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+
+    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromise *hp = (HubPromise *) rp->item;
@@ -580,6 +695,15 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
             sqlite3_free(err);
             return;
         }
+    }
+
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
     }
 
     DeleteHubQuery(hq, DeleteHubPromise);
