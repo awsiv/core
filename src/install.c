@@ -720,6 +720,7 @@ void DeleteHubFileChanges(HubFileChanges *hp)
 {
     free(hp->path);
     free(hp->handle);
+    free(hp->msg);
     free(hp);
 }
 
