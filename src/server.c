@@ -742,3 +742,44 @@ static int Nova_ParseHostname(char *name, char *hostname)
 
     return (port);
 }
+
+void TryCollectCall(void)
+{
+# if defined(HAVE_PTHREAD)
+    pthread_t tid;
+    pthread_attr_t threadattrs;
+
+    CfOut(cf_verbose, "", " -> Spawning new thread for the collect call...\n");
+
+    pthread_attr_init(&threadattrs);
+    pthread_attr_setdetachstate(&threadattrs, PTHREAD_CREATE_DETACHED);
+
+#  ifdef HAVE_PTHREAD_ATTR_SETSTACKSIZE
+    pthread_attr_setstacksize(&threadattrs, (size_t) 1024 * 1024);
+#  endif
+
+    // This thread will eventually be appropriated to run the ServerEntryPoint
+
+    pthread_create(&tid, &threadattrs, (void *) Nova_DoTryCollectCall, (void *) NULL);
+    pthread_attr_destroy(&threadattrs);
+    
+# endif
+}
+
+int ReceiveCollectCall(ServerConnectionState *conn, char *sendbuffer)
+{
+#if defined(HAVE_LIBMONGOC)
+    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(cf_verbose, "", "  Hub: Accepting Collect Call from %s ", conn->hostname);
+    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+    return Nova_AcceptCollectCall(conn);
+#else
+
+    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(cf_verbose, "", "  Collect Call is only supported on the hub ");
+    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+    return false;
+#endif
+}
