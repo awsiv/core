@@ -70,6 +70,9 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
     EnterpriseDBToSqlite3_PromiseStatusLast(db, context_filter);
     EnterpriseDBToSqlite3_PromiseDefinitions(db, promise_filter);
 
+    DeleteHostClassFilter(context_filter);
+    DeletePromiseFilter(promise_filter);
+
     /* Now query the in-memory database */
     JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op);
 
