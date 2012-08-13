@@ -25,6 +25,7 @@ TAGS
 tests/unit/*_test
 tests/unit/*.xml
 tests/test-db
+tests/unit/xml_tmp_*
 
 # emacs
 
