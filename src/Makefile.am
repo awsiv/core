@@ -132,6 +132,7 @@ endif
 noinst_LTLIBRARIES += libcfknow.la
 
 libcfknow_la_SOURCES = \
+        cf-know.c \
         knowledge.c
 
 #
