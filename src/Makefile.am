@@ -22,7 +22,6 @@ libcfnova_la_LDFLAGS = -no-undefined
 
 libcfnova_la_SOURCES = \
         cfnova.c \
-        logging.c logging.h \
         ldap_lib.c ldap_lib.h \
         license.c \
         registry.c \
