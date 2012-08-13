@@ -144,7 +144,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_show_topic_hits, NULL)
     PHP_FE(cfpr_show_topic_category, NULL)
     PHP_FE(cfpr_get_pid_for_topic, NULL)
-    PHP_FE(cfpr_report_description, NULL)
     PHP_FE(cfpr_list_documents, NULL)
     PHP_FE(cfpr_get_story_by_id, NULL)
     PHP_FE(cfpr_get_story_by_name, NULL)

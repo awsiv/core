@@ -592,11 +592,6 @@ PHP_FUNCTION(cfpr_summarize_notkept);
  */
 PHP_FUNCTION(cfpr_summarize_repaired);
 
-/*! \brief A description of a report
- * \param reportName
- */
-PHP_FUNCTION(cfpr_report_description);
-
 /*! \brief Get information about a host with the given key
  * \param hostKey
  */
