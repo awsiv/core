@@ -17,6 +17,8 @@
 #include "env_context.h"
 #include "vars.h"
 #include "expand.h"
+#include "sysinfo.h"
+#include "files_names.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -210,6 +212,13 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 
 void EnterpriseContext(void)
 {
+    /* FIXME: type conversion */
+    NewScalar("sys", "nova_version", (char *) Nova_Version(), cf_str);
+
+    char vbuff[CF_BUFSIZE];
+    snprintf(vbuff, sizeof(vbuff), "nova_%s", CanonifyName(Nova_Version()));
+    CreateClassesFromCanonification(vbuff);
+
     if (IsDefinedClass("am_policy_hub"))
     {
         Nova_DefineHubMaster();
