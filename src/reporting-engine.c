@@ -25,6 +25,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
+void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 
 char *SqliteEscapeSingleQuote(char *str, int strSz);
 
@@ -56,6 +57,10 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
 
     HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
 
+    PromiseFilter *promise_filter = NULL;
+    HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
+    promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
+
     /* Query MongoDB and dump the result into Sqlite */
     EnterpriseDBToSqlite3_Hosts(db, context_filter);
     EnterpriseDBToSqlite3_Contexts(db, context_filter);
@@ -63,6 +68,7 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
     EnterpriseDBToSqlite3_FileChanges(db, context_filter);
     EnterpriseDBToSqlite3_Software(db, context_filter);
     EnterpriseDBToSqlite3_PromiseStatusLast(db, context_filter);
+    EnterpriseDBToSqlite3_PromiseDefinitions(db, promise_filter);
 
     /* Now query the in-memory database */
     JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op);
@@ -514,6 +520,66 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
+}
+
+/******************************************************************/
+
+void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryPromises(&dbconn, filter);
+
+    CFDB_Close(&dbconn);
+
+    /* Table schema */
+
+    char table_schema[CF_BUFSIZE] = {0};
+    snprintf(table_schema, sizeof(table_schema),
+             "CREATE TABLE promisedefinitions("
+             "handle VARCHAR(50), "
+             "promiser VARCHAR(50), "
+             "bundle VARCHAR(50), "
+             "promisees VARCHAR(100), "
+             "FOREIGN key(handle) REFERENCES promisestatus(handle));");
+
+    char *err = 0;
+    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err);
+        sqlite3_free(err);
+        return;
+    }
+    /* Dump HubQuery into in-memory sqlite table */
+
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubPromise *hp = (HubPromise *) rp->item;
+
+        char insert_op[CF_BUFSIZE] = {0};
+
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO promisedefinitions VALUES('%s','%s','%s','%s');",
+                 hp->handle, hp->promiser, hp->bundleName, SqliteEscapeSingleQuote(hp->promisee, strlen(hp->promisee)));
+
+        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
+
+        if( rc != SQLITE_OK )
+        {
+            CfOut(cf_error, "", "SQL error: %s\n", err);
+            sqlite3_free(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromise);
 }
 
 /******************************************************************/
