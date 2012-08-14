@@ -48,7 +48,7 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
 void VerifyRegistryPromise(Attributes a, Promise *pp)
 {
     HKEY key_h;                 // a registry key handle
-    int rr, rw, create = false;
+    int create = false;
     CF_DB *dbp;
     CfLock thislock;
     char lockname[CF_BUFSIZE];
@@ -144,7 +144,6 @@ int Nova_CopyRegistryValue(char *key, char *value, char *buffer)
 {
     char reg_data_p[CF_BUFSIZE] = { 0 };
     unsigned long reg_data_sz = sizeof(reg_data_p);
-    int len;
     HKEY key_h;
 
     buffer[0] = '\0';
@@ -209,8 +208,6 @@ void Nova_RecursiveQueryKey(CF_DB *dbp, HKEY *key_h, char *keyname, Attributes a
     DWORD datasize = CF_MAXVARSIZE;
     DWORD type;
     int i, ret, changes = 0;
-    char root_key[CF_MAXVARSIZE], sub_key[CF_MAXVARSIZE];
-    char *sp;
     HKEY sub_key_h;
     char subkeyname[CF_BUFSIZE];
 
@@ -372,10 +369,8 @@ void Nova_DeleteRegistryKey(Attributes a, Promise *pp)
 int Nova_VerifyRegistryValueAssocs(HKEY key_h, Attributes a, Promise *pp)
 {
     int ret = ERROR_SUCCESS;
-    Rlist *rp, *rpr, *assign;
-    unsigned long reg_data_sz = CF_BUFSIZE;
+    Rlist *rp, *assign;
     DWORD reg_dtype;
-    int regCmpSize;
 
     for (rp = a.database.rows; rp != NULL; rp = rp->next)
     {
@@ -473,8 +468,6 @@ int Nova_GetRawRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long
 
 int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
 {
-    unsigned long reg_data_sz = CF_BUFSIZE;
-    int len;
     HKEY key_h;
 
     if (!Nova_OpenRegistryKey(key, &key_h, false))
@@ -686,9 +679,9 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
 
         if (is_a_value)
         {
-            char dbkey[CF_MAXVARSIZE], regkey[CF_MAXVARSIZE];
+            char dbkey[CF_MAXVARSIZE];
             char dbvalue[CF_MAXVARSIZE], reg_data[CF_BUFSIZE];
-            int dbtype = REG_SZ, regtype = REG_SZ;
+            int dbtype = REG_SZ;
             unsigned long data_size = CF_BUFSIZE;
 
             sscanf(key, "%255[^:]:%255[^:]:%u", dbkey, dbvalue, &dbtype);
@@ -800,7 +793,6 @@ int Nova_OpenRegistryKey(char *key, HKEY *key_h, int create)
 int Nova_RegistryKeyIntegrity(CF_DB *dbp, char *key, Attributes a, Promise *pp)
 {
     char dbkey[CF_BUFSIZE];
-    int size = 0, dummy;
 
     if (Nova_ReadCmpPseudoRegistry(dbp, dbkey, NULL, 0, NULL))
     {
