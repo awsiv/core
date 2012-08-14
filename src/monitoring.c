@@ -643,7 +643,9 @@ void LoadSlowlyVaryingObservations()
 
         strncpy(buf, key, CF_MAXVARSIZE - 1);
 
-        sscanf(buf, "%[^:]:%d", lval, (int *) &type);
+        int type_i;
+        sscanf(buf, "%[^:]:%d", lval, &type_i);
+        type = (enum cfdatatype)type_i;
 
         if (stored != NULL)
         {
@@ -724,7 +726,9 @@ static void Nova_DumpSlowlyVaryingObservations(void)
 
         strncpy(buf, key, CF_MAXVARSIZE - 1);
 
-        sscanf(buf, "%s:%d", lval, (int *) &type);
+        int type_i;
+        sscanf(buf, "%s:%d", lval, &type_i);
+        type = (enum cfdatatype)type_i;
 
         if (stored != NULL)
         {
