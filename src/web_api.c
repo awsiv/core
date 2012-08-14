@@ -3149,7 +3149,7 @@ JsonElement *Nova2PHP_list_knowledge_bundles(void)
 
 JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
 {
-    Item *ip,*results = NULL;
+    Item *results = NULL;
     JsonElement *json_array_out = JsonArrayCreate(100);
     bson_iterator it1;
     EnterpriseDB conn;
