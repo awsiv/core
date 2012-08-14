@@ -51,7 +51,7 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
     hash = Z_ARRVAL_P(php_array);
 
     for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
-         zend_hash_get_current_data_ex(hash, (void **) &data, &hashPos) == SUCCESS;
+         zend_hash_get_current_data_ex(hash, (void *)&data, &hashPos) == SUCCESS;
          zend_hash_move_forward_ex(hash, &hashPos))
     {
         if (Z_TYPE_PP(data) == IS_STRING)
