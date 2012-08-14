@@ -181,7 +181,12 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 
 // Promise: Get time0 fom stream, find time1 and compute transfer delta
 
-    sscanf(menu, "%255s %ld %ld", menu_name, &from, &time0);
+    intmax_t from_i, time0_i;
+
+    sscanf(menu, "%255s %jd %jd", menu_name, &from_i, &time0_i);
+    from = (time_t)from_i;
+    time0 = (time_t)time0_i;
+
     time1 = time(NULL);
     delta1 = time1 - time0;
 
