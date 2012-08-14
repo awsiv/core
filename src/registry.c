@@ -225,7 +225,7 @@ void Nova_RecursiveQueryKey(CF_DB *dbp, HKEY *key_h, char *keyname, Attributes a
 
     if (val_num)
     {
-        CfOut(cf_verbose, "", " -> %d values found in key", val_num);
+        CfOut(cf_verbose, "", " -> %lu values found in key", val_num);
 
         for (i = 0; i < val_num; i++)
         {
@@ -326,14 +326,14 @@ void Nova_DeleteRegistryKey(Attributes a, Promise *pp)
             switch (ret)
             {
             case ERROR_SUCCESS:
-                cfPS(cf_inform, CF_CHG, "", pp, a, " -> Deleted registry value \"%s\" in %s", rp->item, pp->promiser);
+                cfPS(cf_inform, CF_CHG, "", pp, a, " -> Deleted registry value \"%s\" in %s", ScalarValue(rp), pp->promiser);
                 break;
             case ERROR_FILE_NOT_FOUND:
                 cfPS(cf_inform, CF_NOP, "", pp, a, " -> Registry value \"%s\" in \"%s\" was not present, as promised",
-                     rp->item, pp->promiser);
+                     ScalarValue(rp), pp->promiser);
                 break;
             default:
-                CfOut(cf_error, "RegDeleteValue", " !! Unable to delete key value with name \"%s\" - code %d", rp->item,
+                CfOut(cf_error, "RegDeleteValue", " !! Unable to delete key value with name \"%s\" - code %d", ScalarValue(rp),
                       ret);
                 break;
             }
@@ -504,7 +504,7 @@ int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
         break;
 
     default:
-        CfOut(cf_error, "", "!! Nova_GetRegistryValueAsString: Unknown value type %d for %s", dType, name);
+        CfOut(cf_error, "", "!! Nova_GetRegistryValueAsString: Unknown value type %lu for %s", dType, name);
         return false;
     }
 
@@ -706,13 +706,13 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
             {
                 if (!DONTDO && a.transaction.action != cfa_warn)
                 {
-                    cfPS(cf_error, CF_CHG, "", pp, a, " !! Repairing registry value as (%s,%s)", dbvalue, value);
+                    cfPS(cf_error, CF_CHG, "", pp, a, " !! Repairing registry value as (%s,%s)", dbvalue, (const char*)value);
                     ret = RegSetValueEx(skey_h, dbvalue, 0, dbtype, value, vsize);
                 }
                 else
                 {
                     cfPS(cf_error, CF_NOP, "", pp, a, " !! Registry value incorrect, but only a warning was promised.");
-                    cfPS(cf_inform, CF_NOP, "", pp, a, " -> (%s,%s) incorrect for %s", dbvalue, value, pp->promiser);
+                    cfPS(cf_inform, CF_NOP, "", pp, a, " -> (%s,%s) incorrect for %s", dbvalue, (const char *)value, pp->promiser);
                 }
 
                 continue;
@@ -728,13 +728,13 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
             {
                 if (!DONTDO && a.transaction.action != cfa_warn)
                 {
-                    cfPS(cf_error, CF_CHG, "", pp, a, " !! Repairing registry value as (%s,%s)", dbvalue, value);
+                    cfPS(cf_error, CF_CHG, "", pp, a, " !! Repairing registry value as (%s,%s)", dbvalue, (const char *)value);
                     ret = RegSetValueEx(skey_h, dbvalue, 0, dbtype, value, vsize);
                 }
                 else
                 {
                     cfPS(cf_error, CF_NOP, "", pp, a, " !! Registry value incorrect, but only a warning was promised.");
-                    cfPS(cf_inform, CF_NOP, "", pp, a, " -> (%s,%s) incorrect for %s", dbvalue, value, pp->promiser);
+                    cfPS(cf_inform, CF_NOP, "", pp, a, " -> (%s,%s) incorrect for %s", dbvalue, (const char *)value, pp->promiser);
                 }
             }
 
@@ -942,7 +942,7 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
     case ERROR_FILE_NOT_FOUND:
         return true;
     default:
-        CfOut(cf_error, "RegQueryValueEx", "!! Nova_CompareRegistryValue: Could not read existing value (got %d)",
+        CfOut(cf_error, "RegQueryValueEx", "!! Nova_CompareRegistryValue: Could not read existing value (got %lu)",
               dwRet);
         return false;
     }
@@ -984,7 +984,7 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
         break;
 
     default:
-        CfOut(cf_error, "", "!! Nova_CompareRegistryValue: Unknown registry value type %d", dataType);
+        CfOut(cf_error, "", "!! Nova_CompareRegistryValue: Unknown registry value type %lu", dataType);
         return false;
     }
 
