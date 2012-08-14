@@ -66,7 +66,7 @@ HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHos
 
 HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rname)
 {
-    time_t rt;
+    time_t rt = (time_t)0;
     double rcomp = 0,
            ravg = 0,
            rdev = 0;

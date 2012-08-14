@@ -3173,7 +3173,7 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char topic[CF_BUFSIZE] = {0}, context[CF_BUFSIZE] = {0};
-        int topic_id;
+        int topic_id = 0;
     
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
