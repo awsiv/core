@@ -333,7 +333,7 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
 /*****************************************************************************/
 
-void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
+void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp, const ReportContext *report_context)
 {
     CfDebug("VerifyFileAttributes()\n");
 
@@ -349,7 +349,7 @@ void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promi
 
     if (NovaWin_FileExists(file) && !NovaWin_IsDir(file))
     {
-        VerifyFileIntegrity(file, attr, pp);
+        VerifyFileIntegrity(file, attr, pp, report_context);
     }
 
     if (attr.havechange)
