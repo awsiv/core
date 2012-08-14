@@ -275,6 +275,8 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         }
     }
 
+    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
+
     if( rc != SQLITE_OK )
     {
         CfOut(cf_error, "", "SQL error: %s\n", err);
