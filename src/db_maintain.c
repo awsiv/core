@@ -22,8 +22,8 @@
 #include <assert.h>
 
 static void CFDB_DropAllIndices(EnterpriseDB *conn);
-static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey);
-static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey);
+static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey);
+static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey);
 
 // WHAT: CFDB_PurgeSoftwareInvalidTimestamp
 //       removes software reports from all hosts with 0 timestamp
@@ -36,24 +36,40 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
 
 static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn);
 
+static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
+
 /*****************************************************************************/
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
-{    
+{
     CFDB_EnsureIndices(dbconn);
 
-    CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
+    Item *hosts = CFDB_GetAllHostKeys(dbconn);
 
-    CFDB_PurgeTimestampedReports(dbconn);
+    for(Item *ip = hosts; ip != NULL; ip = ip->next)
+    {
+        CFDB_PurgeHostReports(dbconn, ip->name);
+    }
+
+    DeleteItemList(hosts);
 
     // support for old DB PromiseLogs format
     CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
-    CFDB_PurgePromiseLogsFromMain(dbconn, MONGO_LOGS_NOTKEPT_COLL, CF_HUB_PURGESECS, time(NULL));
-    CFDB_PurgePromiseLogsFromMain(dbconn, MONGO_LOGS_REPAIRED_COLL, CF_HUB_PURGESECS, time(NULL));
-
-    CFDB_PurgeTimestampedLongtermReports(dbconn);
+    CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
     CFDB_PurgeDeprecatedVitals(dbconn);
+}
+
+/*****************************************************************************/
+
+static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey)
+{
+    CFDB_PurgeTimestampedReports(dbconn, hostkey);
+
+    CFDB_PurgePromiseLogsFromMain(dbconn, hostkey, MONGO_LOGS_NOTKEPT_COLL, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogsFromMain(dbconn, hostkey, MONGO_LOGS_REPAIRED_COLL, CF_HUB_PURGESECS, time(NULL));
+
+    CFDB_PurgeTimestampedLongtermReports(dbconn, hostkey);
 }
 
 /*****************************************************************************/
@@ -228,7 +244,7 @@ static void DeleteFromBsonArray(bson *bb, char *arrName, Item *elements)
     }
 }
 
-void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
+void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
 /**
  * Remove old data from reports with timestamp Usually "old" means one week.
  * For each host: collect keys to delete in a list, and call update once.
@@ -243,10 +259,11 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
     char keyHash[CF_MAXVARSIZE];
     time_t now;
 
-    CfOut(cf_verbose, "", " -> Purge timestamped reports");
+    CfOut(cf_verbose, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
 
-    // query all hosts
-    bson_empty(&query);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     // only retrieve the purgable reports
 
@@ -263,6 +280,8 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
                            cfr_valuereport);
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
     bson_destroy(&field);
 
     now = time(NULL);
@@ -339,7 +358,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
 /*****************************************************************************/
 
-void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
+void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostkey)
 /**
  * Remove old data from reports with timestamp Usually "old" means one week.
  * For each host: collect keys to delete in a list, and call update once.
@@ -356,16 +375,18 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 
     long threshold = 365 * 24 * 3600;
 
-    CfOut(cf_verbose, "", " -> Purge timestamped reports (longterm archive)");
+    CfOut(cf_verbose, "", " -> Purge longterm reports (keyhash = %s)", hostkey);
 
-    // query all hosts
-    bson_empty(&query);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     // only retrieve the purgable reports
     BsonSelectReportFields(&field, 3, cfr_keyhash, cfr_filechanges, cfr_filediffs);
 
     cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
+    bson_destroy(&query);
     bson_destroy(&field);
 
     now = time(NULL);
@@ -468,15 +489,20 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
 /*****************************************************************************/
 
-static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey)
+static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey)
 {
+    bson query;
+
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
+
     bson field;
-    BsonSelectReportFields(&field, 1, promiseLogKey);
+    BsonSelectReportFields(&field, 1, promiseLogKey);    
 
-    bson empty;
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
-
+    bson_destroy(&query);
     bson_destroy(&field);
 
     Item *uniquePromiseKeysList = NULL;
@@ -510,15 +536,19 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
     return uniquePromiseKeysList;
 }
 /*****************************************************************************/
-static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey)
+static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey)
 {
+    bson query;
+
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
+
     bson field;
     BsonSelectReportFields(&field, 2, cfr_keyhash, promiseLogKey);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson empty;
-
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
-
+    bson_destroy(&query);
     bson_destroy(&field);
 
     Item *promiseKeysList = NULL;
@@ -598,7 +628,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
 
 /*****************************************************************************/
 
-void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now)
+void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char *promiseLogReportKey, time_t oldThreshold, time_t now)
 /**
  * Deletes old repair and not kept log entries.
  **/
@@ -607,11 +637,15 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey
     bson cond;
     bson query;
 
-    CfOut(cf_verbose, "", " -> Purge promise logs from main collection ");
+    CfOut(cf_verbose, "", " -> Purge promise logs (%s) from main collection (keyhash = %s)", promiseLogReportKey, hostkey);
 
-    Item *promiseLogComplexKeysList = GetUniquePromiseLogEntryKeys(conn, promiseLogReportKey);
+    Item *promiseLogComplexKeysList = GetUniquePromiseLogEntryKeys(conn, hostkey, promiseLogReportKey);
 
     oldStamp = now - oldThreshold;
+
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     bson_init(&cond);
     {
@@ -636,15 +670,16 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey
     DeleteItemList(promiseLogComplexKeysList);
     promiseLogComplexKeysList = NULL;
 
-    mongo_update(conn, MONGO_DATABASE, bson_empty(&query), &cond, MONGO_UPDATE_MULTI, NULL);
+    mongo_update(conn, MONGO_DATABASE, &query, &cond, MONGO_UPDATE_MULTI, NULL);
 
+    bson_destroy(&query);
     bson_destroy(&cond);
 
     MongoCheckForError(conn, "Purge old entries in hosts collection", promiseLogReportKey, NULL);
 
     //now check for empty arrays and remove them
 
-    PurgePromiseLogWithEmptyTimestamps(conn, promiseLogReportKey);
+    PurgePromiseLogWithEmptyTimestamps(conn, hostkey, promiseLogReportKey);
 }
 
 /*****************************************************************************/
