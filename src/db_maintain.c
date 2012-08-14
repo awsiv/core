@@ -150,6 +150,20 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     bson_destroy(&b);
 
+    BsonSelectReportFields(&b, 1, cfr_time);
+
+    if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
+    {
+        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+    }
+
+    if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
+    {
+        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
+    }
+
+    bson_destroy(&b);
+
     // monitoring collections
 
     BsonSelectReportFields(&b, 2, cfr_keyhash, cfm_id);
