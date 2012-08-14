@@ -9,6 +9,6 @@
 
 #define LOCK_HAIL_PREFIX "last.internal_bundle.hail."
 
-void Nova_HubLog(const char *s, ...) FUNC_ATTR_FORMAT(printf, 1, 2);
+void Nova_HubLog(const char *s, ...) FUNC_ATTR_PRINTF(1, 2);
 
 #endif
