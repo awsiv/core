@@ -124,7 +124,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                            char *returnval, int bufsize);
+                            time_t from, time_t to, char *returnval, int bufsize);
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);
 int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, char *returnval,
                           int bufsize);
@@ -156,7 +156,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
                                      char *arch, bool regex, char *type,
                                      HostClassFilter *hostClassFilter, PageInfo *page);
 JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
-                                    HostClassFilter *hostClassFilter, PageInfo *page);
+                                    HostClassFilter *hostClassFilter, PageInfo *page, time_t from, time_t to);
 JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval,
                                  char *rval, char *type, bool regex,
                                  HostClassFilter *hostClassFilter, PageInfo *page);

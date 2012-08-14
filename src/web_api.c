@@ -1406,7 +1406,7 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
 /*****************************************************************************/
 
 int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                            char *returnval, int bufsize)
+                            time_t from, time_t to, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1430,8 +1430,7 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
         return false;
     }
 
-    time_t now = time(NULL);
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, hostClassFilter, true);
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to, hostClassFilter, true);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubClass);
@@ -2524,7 +2523,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
-                                    HostClassFilter *hostClassFilter, PageInfo *page)
+                                    HostClassFilter *hostClassFilter, PageInfo *page, time_t from, time_t to)
 {    
     EnterpriseDB dbconn;
 
@@ -2533,9 +2532,8 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
         return NULL;
     }
 
-    time_t now = time(NULL);
     HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex,
-                                     now - (time_t)SECONDS_PER_WEEK, now,
+                                     from, to,
                                      hostClassFilter, false);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);

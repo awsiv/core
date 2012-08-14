@@ -752,8 +752,9 @@ PHP_FUNCTION(cfpr_report_classes)
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
+    time_t from, to;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaasbllll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &name, &n_len,
@@ -761,6 +762,7 @@ PHP_FUNCTION(cfpr_report_classes)
                               &contextIncludes,
                               &contextExcludes,
                               &sortColumnName, &sc_len, &sortDescending,
+                              &from, &to,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -782,7 +784,7 @@ PHP_FUNCTION(cfpr_report_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, from, to, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2288,14 +2290,16 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
+    time_t from, to;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaallll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &name, &n_len,
                               &regex,
                               &context_includes,
                               &context_excludes,
+                              &from, &to,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -2316,7 +2320,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page);
+    json_out = Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page, from, to);
 
     if (!json_out)
     {
