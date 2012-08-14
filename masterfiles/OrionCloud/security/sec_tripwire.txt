@@ -1,6 +1,0 @@
-# List of files to be watching by CFEngine
-/etc/passwd
-/etc/shadow
-/etc/group
-/etc/gshadow
-/etc/services
