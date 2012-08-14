@@ -6093,3 +6093,45 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
 
     return true;
 }
+
+/*****************************************************************************/
+
+Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
+{
+    bson query;
+
+    bson_init(&query);
+    BsonAppendSortField(&query, cfr_time);
+    bson_finish(&query);
+
+    bson fields;
+
+    BsonSelectReportFields(&fields, 1, cfr_keyhash);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&fields);
+    bson_destroy(&query);
+
+    Item *list = NULL;
+    bson_iterator it1;
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if(strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
+            {
+                PrependItemList(&list, bson_iterator_string(&it1));
+            }
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return list;
+}
+
+/*****************************************************************************/

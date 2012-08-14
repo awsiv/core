@@ -97,6 +97,7 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query);
 Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection, char *dKey, char *qKey,
                             char *qVal);
 Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, char *dKey, bson *queryBson);
+Item *CFDB_GetAllHostKeys(EnterpriseDB *conn);
 
 //*****************************************************************************
 // Singleton Queries

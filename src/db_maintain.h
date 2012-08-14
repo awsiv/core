@@ -6,10 +6,10 @@ void CFDB_ReIndexAll(void);
 void CFDB_ConnectAndEnsureIndices(void);
 void CFDB_EnsureIndices(EnterpriseDB *conn);
 void CFDB_PurgeDropReports(EnterpriseDB *conn);
-void CFDB_PurgeTimestampedReports(EnterpriseDB *conn);
-void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn);
+void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey);
+void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostkey);
 void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now);
-void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now);
+void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char *promiseLogReportKey, time_t oldThreshold, time_t now);
 void CFDB_PurgeScan(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                     Item **purgeKeysPtr, Item **purgeNamesPtr);
 int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, Item **purgeKeysPtr,
