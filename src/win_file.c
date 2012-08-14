@@ -64,7 +64,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
         return NULL;
     }
 
-    crtHandle = _open_osfhandle((long) fHandle, flags);
+    crtHandle = _open_osfhandle((intptr_t) fHandle, flags);
 
     if (crtHandle == -1)
     {
