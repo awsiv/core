@@ -704,11 +704,9 @@ int Nova_PlaceCollectCall(AgentConnection *conn)
     char in[CF_BUFSIZE], out[CF_BUFSIZE], workbuf[CF_BUFSIZE] = { 0 };
     time_t now = time(NULL);
 
-    workbuf[0] = '\0';
-
     snprintf(in, CF_BUFSIZE - CF_PROTO_OFFSET, "CALL_ME_BACK collect_calls");
     cipherlen = EncryptString(conn->encryption_type, in, out, conn->session_key, strlen(in) + 1);
-    snprintf(workbuf, CF_BUFSIZE, "SCALLBACK %4d\0", cipherlen);
+    snprintf(workbuf, CF_BUFSIZE, "SCALLBACK %4d", cipherlen);
     memcpy(workbuf + CF_PROTO_OFFSET, out, cipherlen);
     tosend = cipherlen + CF_PROTO_OFFSET;
 
