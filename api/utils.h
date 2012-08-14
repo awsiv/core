@@ -59,6 +59,5 @@ bool EnterpriseDBRelease(EnterpriseDB *conn);
 
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
-const char *AuthenticationModeToString(AuthenticationMode mode);
 
 #endif

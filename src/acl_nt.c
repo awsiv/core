@@ -105,7 +105,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 
     retvAcl =
         GetNamedSecurityInfo(file_path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &existingAcl, NULL,
-                             &existingSecDesc);
+                             (void **)&existingSecDesc);
 
     if (retvAcl != ERROR_SUCCESS)
     {
@@ -213,7 +213,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 
     retvAcl =
         GetNamedSecurityInfo(file_path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &existingAcl, NULL,
-                             &existingSecDesc);
+                             (void **)&existingSecDesc);
 
     if (retvAcl != ERROR_SUCCESS)
     {
@@ -312,7 +312,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
 
     retvAcl =
         GetNamedSecurityInfo(file_path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &existingAcl, NULL,
-                             &existingSecDesc);
+                             (void **)&existingSecDesc);
 
     if (retvAcl != ERROR_SUCCESS)
     {

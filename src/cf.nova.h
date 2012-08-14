@@ -584,6 +584,7 @@ struct HubVital_
 
 typedef struct
 {
+    bool external;
     char *username;
     char *email;
 
@@ -795,10 +796,12 @@ void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(HubVital *hv);
-HubUser *NewHubUser(const char *username, const char *email, Rlist *roles);
+HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles);
 void DeleteHubUser(HubUser *user);
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude, const char *classRxExclude,
                             const char *bundleRxInclude, const char *bundleRxExclude);
+int HubUserHash(const HubUser *user);
+bool HubUserEqual(const HubUser *a, const HubUser *b);
 void DeleteHubUserRBAC(HubUserRBAC *userRbac);
 HubRole *NewHubRole(char *name, char *description,
                     char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude);

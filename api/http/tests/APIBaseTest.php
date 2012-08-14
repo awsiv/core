@@ -12,6 +12,18 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
     public $hostB = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
     public $hostB_ip = "10.0.0.153";
     var $mongoInstance = null;
+    public $ldapSettings = '{
+                "ldapEnabled": true,
+                "ldapMode": "standard",
+                "ldapHost": "localhost",
+                "ldapPort": 1025,
+                "ldapBaseDN": "dc=localhost",
+                "ldapLoginAttribute": "uid",
+                "ldapUsersDirectory": "ou=people",
+                "ldapEncryption": "none",
+                "ldapUsername": "root",
+                "ldapPassword": "secret"
+                }';
 
     public function __construct()
     {
@@ -97,7 +109,7 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
                 $c = json_decode($fileContent, true);
                 if (!is_array($c))
                 {
-                    echo ('Json decode failed for  ' . $collection .' ');
+                    echo ('Json decode failed for  ' . $collection . ' ');
                 }
                 $insertData = $c;
                 $mongoCollection->drop();

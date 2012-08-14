@@ -25,10 +25,6 @@
 #include "db_query.h"
 #endif
 
-#ifdef HAVE_ZONE_H
-# include <zone.h>
-#endif
-
 PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 
 PromiseIdent *PROMISER_REGEXES = NULL;

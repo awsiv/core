@@ -253,19 +253,33 @@ class UserTest extends APIBaseTest
     {
         try
         {
-            $this->pest->post('/settings', '{
-                "authMode": "ldap",
-                "ldapHost": "localhost",
-                "ldapPort": 1025,
-                "ldapBaseDN": "dc=localhost",
-                "ldapLoginAttribute": "uid",
-                "ldapUsersDirectory": "ou=people",
-                "ldapEncryption": "none"
-                }');
+            $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $this->pest->setupAuth("snookie", "pass");
             $this->getResults('');
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPEvilAuthenticate()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("wario", "pass");
+            $this->getResults('');
+            $this->fail('should not get here');
+        }
+        catch (Pest_Unauthorized $e)
+        {
+            // pass
+            return;
         }
         catch (Pest_Exception $e)
         {

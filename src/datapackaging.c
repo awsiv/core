@@ -1683,7 +1683,10 @@ void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_
         // Complex parsing/extraction
 
         version[0] = '\0';
-        sscanf(ip->name, "%ld,%ld", &start, &end);
+        intmax_t start_i, end_i;
+        sscanf(ip->name, "%jd,%jd", &start_i, &end_i);
+        start = (time_t)start_i;
+        end = (time_t)end_i;
         sscanf(strstr(ip->name, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", version);
         sscanf(strstr(ip->name, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &kept, &repaired,
                &notrepaired);
@@ -1714,7 +1717,9 @@ void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_
             char sversion[CF_MAXVARSIZE];
 
             sversion[0] = '\0';
-            sscanf(ip->classes, "%ld,%ld", &start, &end);
+            sscanf(ip->classes, "%jd,%jd", &start_i, &end_i);
+            start = (time_t)start_i;
+            end = (time_t)end_i;
             sscanf(strstr(ip->classes, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", sversion);
             sscanf(strstr(ip->classes, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &skept,
                    &srepaired, &snotrepaired);

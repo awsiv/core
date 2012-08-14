@@ -1060,10 +1060,11 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
-HubUser *NewHubUser(const char *username, const char *email, Rlist *roles)
+HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles)
 {
     HubUser *user = xmalloc(sizeof(HubUser));
 
+    user->external = external;
     user->username = SafeStringDuplicate(username);
     user->email = SafeStringDuplicate(email);
     user->roles = CopyRlist(roles);
@@ -1076,6 +1077,30 @@ void DeleteHubUser(HubUser *user)
     free(user->username);
 
     free(user);
+}
+
+int HubUserHash(const HubUser *user)
+{
+    assert(user);
+    assert(user->username);
+    return OatHash(user->username);
+}
+
+bool HubUserEqual(const HubUser *a, const HubUser *b)
+{
+    if (a == b)
+    {
+        return true;
+    }
+    else if (!a || !b)
+    {
+        return false;
+    }
+    else
+    {
+        return StringSafeEqual(a->username, b->username)
+                && a->external == b->external;
+    }
 }
 
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude,

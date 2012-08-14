@@ -230,14 +230,16 @@ int EnterpriseExpiry(void)
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
 #ifndef __CDT_PARSER__
-    time_t install_time = sb.st_mtime;
     snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", sb.st_mtime);
-#else
-    time_t install_time = 0;
 #endif
     NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
+#ifndef __CDT_PARSER__
+    time_t install_time = sb.st_mtime;
+#else
+    time_t install_time = 0;
+#endif
     if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
     {
         EnterpriseDB conn;
@@ -460,7 +462,7 @@ static void Nova_LogLicenseStatus(void)
     Rlist *counter = NULL;
     int min = 9999999, max = -1, lic1, lic2, i = 0;
     time_t now = time(NULL), dt, then;
-    double average, granted, sum_t = 0, ex_t = 0, lic_t = 0;
+    double sum_t = 0, ex_t = 0, lic_t = 0;
     int ksize, vsize;
     char *key;
     void *value;
@@ -600,8 +602,8 @@ static void Nova_LogLicenseStatus(void)
 
             if (sum_t > 0)
             {
-                average = ex_t / sum_t;
-                granted = lic_t / sum_t;
+                double average = ex_t / sum_t;
+                double granted = lic_t / sum_t;
 
                 CFDB_SaveLicenseUsage(&conn, now, i, min, max, average, average / granted * 100.0, count);
             }

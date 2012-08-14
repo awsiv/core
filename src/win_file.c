@@ -64,7 +64,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
         return NULL;
     }
 
-    crtHandle = _open_osfhandle((long) fHandle, flags);
+    crtHandle = _open_osfhandle((intptr_t) fHandle, flags);
 
     if (crtHandle == -1)
     {
@@ -161,7 +161,7 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
 
     getRes =
         GetNamedSecurityInfo(file, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID *) & ownerSid, NULL, NULL, NULL,
-                             &secDesc);
+                             (void **)&secDesc);
 
     if (getRes != ERROR_SUCCESS)
     {
@@ -311,7 +311,7 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
     getRes =
         GetNamedSecurityInfo(path, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID *) & ownerSid, NULL, NULL, NULL,
-                             &secDesc);
+                             (void **)&secDesc);
 
     if (getRes != ERROR_SUCCESS)
     {
@@ -333,7 +333,7 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
 /*****************************************************************************/
 
-void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
+void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp, const ReportContext *report_context)
 {
     CfDebug("VerifyFileAttributes()\n");
 
@@ -349,7 +349,7 @@ void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promi
 
     if (NovaWin_FileExists(file) && !NovaWin_IsDir(file))
     {
-        VerifyFileIntegrity(file, attr, pp);
+        VerifyFileIntegrity(file, attr, pp, report_context);
     }
 
     if (attr.havechange)

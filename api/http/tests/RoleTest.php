@@ -4,7 +4,7 @@ require_once "APIBaseTest.php";
 
 class RoleTest extends APIBaseTest
 {
-    public function testListToles()
+    public function testListRoles()
     {
         try
         {

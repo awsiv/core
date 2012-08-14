@@ -4879,7 +4879,7 @@ PHP_FUNCTION(cfpr_user_authenticate)
         RETURN_NULL();
     }
 
-    switch (CFDB_UserAuthenticate(username, password, password_len, NULL))
+    switch (CFDB_UserAuthenticate(username, password, NULL))
     {
     case ERRID_DBCONNECT:
         zend_throw_exception(cfmod_exception_db, "Error opening database", 0 TSRMLS_CC);
