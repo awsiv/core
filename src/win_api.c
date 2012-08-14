@@ -16,14 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-/* ------ BEGIN TEMP DEFINES ------ */
-
-typedef unsigned long uid_t;
-typedef unsigned long gid_t;
-typedef unsigned short mode_t;
-
-/* ------ END TEMP DEFINES ------ */
-
 // always returns 0 (assumes process is run by root/Administrator)
 uid_t getuid(void)
 {
