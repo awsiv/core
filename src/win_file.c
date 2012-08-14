@@ -161,7 +161,7 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
 
     getRes =
         GetNamedSecurityInfo(file, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID *) & ownerSid, NULL, NULL, NULL,
-                             &secDesc);
+                             (void **)&secDesc);
 
     if (getRes != ERROR_SUCCESS)
     {
@@ -311,7 +311,7 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
     getRes =
         GetNamedSecurityInfo(path, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID *) & ownerSid, NULL, NULL, NULL,
-                             &secDesc);
+                             (void **)&secDesc);
 
     if (getRes != ERROR_SUCCESS)
     {
