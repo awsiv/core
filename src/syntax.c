@@ -311,37 +311,6 @@ static void Nova_ShowRange(char *s, enum cfdatatype type)
 
 /*******************************************************************/
 
-static void Nova_ShowBuiltinFunctions(void)
-{
-    int i;
-
-    Nova_Indent(3);
-    printf("names: \"");
-
-    for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
-    {
-        printf("%s,", CF_FNCALL_TYPES[i].name);
-    }
-
-    printf("\";\n");
-
-    for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
-    {
-        Nova_Indent(3);
-        printf("%s: \n", CF_FNCALL_TYPES[i].name);
-        Nova_Indent(6);
-        printf("{\n");
-        Nova_Indent(6);
-        printf("args: %d,\n", FnNumArgs(&CF_FNCALL_TYPES[i]));
-        Nova_Indent(6);
-        printf("description: \"%s\"\n", CF_FNCALL_TYPES[i].description);
-        Nova_Indent(6);
-        printf("},\n");
-    }
-}
-
-/*******************************************************************/
-
 static void Nova_Indent(int i)
 {
     int j;
