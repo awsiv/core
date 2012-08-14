@@ -79,6 +79,10 @@ PHP_FUNCTION(cfpr_vitals_view_week);
 
 PHP_FUNCTION(cfpr_vitals_view_year);
 
+/*! \breif A histogram of open ports
+ */
+PHP_FUNCTION(cfpr_port_histogram);
+
 /*! \breif A histogram of a vital
  * \param hostKey
  * \param vitalId
