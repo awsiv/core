@@ -1292,7 +1292,7 @@ void SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *style
         if (xml)
         {
             fprintf(fout, "%s", NRX[cfx_entry][cfb]);
-            fprintf(fout, "%s %ld %s", NRX[cfx_date][cfb], date, NRX[cfx_date][cfe]);
+            fprintf(fout, "%s %jd %s", NRX[cfx_date][cfb], (intmax_t)date, NRX[cfx_date][cfe]);
             fprintf(fout, "%s %s %s", NRX[cfx_event][cfb], handle, NRX[cfx_event][cfe]);
             fprintf(fout, "%s", NRX[cfx_entry][cfe]);
         }
@@ -1420,7 +1420,7 @@ void SummarizePromiseNotKept(int xml, int html, int csv, int embed, char *styles
         if (xml)
         {
             fprintf(fout, "%s", NRX[cfx_entry][cfb]);
-            fprintf(fout, "%s %ld %s", NRX[cfx_date][cfb], date, NRX[cfx_date][cfe]);
+            fprintf(fout, "%s %jd %s", NRX[cfx_date][cfb], (intmax_t)date, NRX[cfx_date][cfe]);
             fprintf(fout, "%s %s %s", NRX[cfx_event][cfb], handle, NRX[cfx_event][cfe]);
             fprintf(fout, "%s", NRX[cfx_entry][cfe]);
         }
@@ -2703,5 +2703,5 @@ void Nova_TrackExecution()
 
     CloseDB(dbp);
 
-    CfDebug("TrackExecution: policy file: %s, last_exec: %ld, avr: %g PASSED\n", VINPUTFILE, last_exec, gavr);
+    CfDebug("TrackExecution: policy file: %s, last_exec: %jd, avr: %g PASSED\n", VINPUTFILE, (intmax_t)last_exec, gavr);
 }
