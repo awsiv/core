@@ -97,7 +97,7 @@ int NovaWin_chmod(const char *path, mode_t mode)
     }
     else
     {
-        CfOut(cf_error, "NovaWin_chmod", "File \"%s\" not found");
+        CfOut(cf_error, "NovaWin_chmod", "File \"%s\" not found", path);
         return -1;
     }
 }
