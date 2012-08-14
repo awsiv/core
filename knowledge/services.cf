@@ -7,18 +7,27 @@ vars:
   "mail_daemons" slist => { "sendmail", "postfix", "exim", "smtpd" };
   "used_by_mail_daemons" slist => { "sendmail", "postfix", "exim", "saslauthd", "freshclam", "clamd", "clamav-milter", "spamd", "amavisd" };
 
+
+
 things:
 
  application_services::
 
-  "mail"               comment => "Electronic mail service, as made famous by the Unix operating system.";
-  "configuration"      comment => "Cfengine desired-state automation and self-repair service";
-  "www"                comment => "The WWW web service",
-                      synonyms => { "web", "webserver" };
+  "mail services"      comment => "Electronic mail service, as made famous by the Unix operating system.";
+  "host configuration" comment => "CFEngine desired-state automation and self-repair service";
+  "web services"       comment => "The WWW web service",
+                      synonyms => { "www", "web", "webserver" };
+
+
   "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
   "storage"            comment => "Remotely accessible disk volumes.";
   "database"           comment => "Relational database services";
-  "login"              comment => "The ability to log onto systems with a username and password";
+
+  "login services"     comment => "The ability to log onto systems with a username and password";
+
+
+ technical_services::
+
   "pxe"   comment => "A composite network service based on the PXE protocol, allows systems to boot directly from the network.";
   "bootp" comment => "A simple broadcast protocol for booting a system directly from the network, e.g. for installation purposes.";
 
@@ -45,7 +54,6 @@ things:
   "nfs"      comment => "Network File System (storage)",
     is_determined_by => { "promise_types::storage" },
            certainty => "possible";
-
 
   "samba"    comment => "The Unix service for integrating with MS Windows";
 
@@ -186,8 +194,8 @@ things:
 
  "$(mail_daemons)" comment => "Email delivery software",
          affects => { "application_services::mail", "promise_types::processes" },
-         provides => { "application_services::mail", "smtp" },
-       is_part_of => { "application_services::mail" },
+         provides => { "application_services::mail services", "smtp" },
+       is_part_of => { "application_services::mail services" },
           generalizations => { "daemon" },
              uses => { "@(used_by_mail_daemons)" };
 

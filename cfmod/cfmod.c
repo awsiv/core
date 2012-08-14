@@ -53,6 +53,9 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_analyse_week, NULL)
     PHP_FE(cfpr_vitals_analyse_year, NULL)
     PHP_FE(cfpr_vitals_analyse_histogram, NULL)
+
+    PHP_FE(cfpr_port_histogram, NULL)
+    
         /* POLICY */
         // RBAC-IFIED
     PHP_FE(cfpr_promise_list_by_handle_rx, NULL)

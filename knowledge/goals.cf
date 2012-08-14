@@ -9,6 +9,10 @@ things:
 
  goals::
 
+ "uptime";
+
+ "application crash monitoring";
+
  "satisfied customers"
    handle => "goal_satisfied", 
    needs => { "available services", "compliance" },
@@ -16,17 +20,17 @@ things:
 
  "available services"
    handle => "goal_available", 
-    needs => { "network services", "mail","configuration","web","storage","database","login","iaas" },
+    needs => { "network services", "mail","host configuration","web","storage","database","login","iaas" },
    comment => "Keep online services running and available and at all times.";
 
  "profitable growth"
    handle => "goal_growth", 
-   needs => { "goals::scale" },
+   needs => { "product development", "goals::scale" },
    comment => "Capabilities to handle planned and unexpected growth of the organization";
 
  "productive individuals"
    handle => "goal_productive", 
-   needs => { "user management", "mail","web","storage","login", "directory services" },
+   needs => { "user management", "mail services","web","storage","login services", "directory services" },
    comment => "Keep employees productive in their work with a stable and usable infrastructure";
 
  "updated infrastructure"

@@ -4372,6 +4372,19 @@ PHP_FUNCTION(cfpr_list_services)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_port_histogram)
+{
+    const int bufsize = 1000000;
+    char buffer[bufsize];
+
+    buffer[0] = '\0';
+
+    JsonElement *out = Nova2PHP_get_open_port_histograms();
+    RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_get_class_frequency)
 {
     char *userName, *hkey, *fhkey, *pattern, *fpattern;
