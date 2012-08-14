@@ -117,45 +117,12 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testUpdateSettingExternalAdminUsername()
-    {
-        try
-        {
-            // default external admin is 'admin'
-            $settings = $this->getResults('/settings');
-            $this->assertEquals(200, $this->pest->lastStatus());
-            $this->assertValidJson($settings);
-            $this->assertEquals('admin', $settings[0]['externalAdminUsername']);
-
-            // try changing external admin to snookie
-            $this->pest->post('/settings', '{
-                "externalAdminUsername": "snookie"
-                }');
-            $this->assertEquals(204, $this->pest->lastStatus());
-            $settings = $this->getResults('/settings');
-            $this->assertValidJson($settings);
-            $this->assertEquals('snookie', $settings[0]['externalAdminUsername']);
-
-            // change back to not confuse other tests
-            $this->pest->post('/settings', '{
-                "externalAdminUsername": "admin"
-                }');
-            $this->assertEquals(204, $this->pest->lastStatus());
-            $settings = $this->getResults('/settings');
-            $this->assertValidJson($settings);
-            $this->assertEquals('admin', $settings[0]['externalAdminUsername']);
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
     public function testUpdateLdapSetting()
     {
         try
         {
             $this->pest->post('/settings', '{
+                "ldapMode": "standard",
                 "ldapHost": "yahoo.comxxx",
                 "ldapBaseDN":"dc=cfengine;dc=com",
                 "ldapLoginAttribute":"uid",
@@ -163,7 +130,8 @@ class SettingsTest extends APIBaseTest
                 "ldapEncryption":"ssl",
                 "ldapPort": 1025,
                 "ldapPortSSL": 1026,
-                "externalAdminUsername": "sitch"
+                "ldapUsername": "root",
+                "ldapPassword": "secret"
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
 
@@ -176,7 +144,8 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals(1025, $settings[0]['ldapPort']);
             $this->assertEquals(1026, $settings[0]['ldapPortSSL']);
             $this->assertEquals('ssl', $settings[0]['ldapEncryption']);
-            $this->assertEquals('sitch', $settings[0]['externalAdminUsername']);
+            $this->assertEquals('root', $settings[0]['ldapUsername']);
+            $this->assertEquals('secret', $settings[0]['ldapPassword']);
         }
         catch (Pest_Exception $e)
         {

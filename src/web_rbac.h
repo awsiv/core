@@ -16,7 +16,10 @@ typedef enum
     SETTING_UNKNOWN = 0,
 
     SETTING_RBAC,
-    SETTING_AUTH_MODE,
+    SETTING_LDAP_ENABLED,
+    SETTING_LDAP_MODE,
+    SETTING_LDAP_USERNAME,
+    SETTING_LDAP_PASSWORD,
     SETTING_LDAP_ENCRYPTION,
     SETTING_LDAP_LOGIN_ATTRIBUTE,
     SETTING_LDAP_BASE_DN,
@@ -24,22 +27,19 @@ typedef enum
     SETTING_LDAP_HOST,
     SETTING_LDAP_PORT,
     SETTING_LDAP_PORT_SSL,
-    SETTING_AD_DOMAIN,
+    SETTING_LDAP_AD_DOMAIN,
     SETTING_BLUEHOST_HORIZON,
-    SETTING_EXTERNAL_ADMIN_USERNAME,
 
     SETTING_MAX
 } HubSetting;
 
 typedef enum
 {
-    AUTHENTICATION_MODE_INTERNAL,
-    AUTHENTICATION_MODE_LDAP,
-    AUTHENTICATION_MODE_AD
-} AuthenticationMode;
+    LDAP_MODE_STANDARD,
+    LDAP_MODE_AD
+} LDAPMode;
 
-cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len,
-                                  AuthenticationMode *auth_mode_out);
+cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bool *authenticated_external);
 
 cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);
@@ -49,7 +49,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email, const Rlist *roles);
 cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username);
 cfapi_errid CFDB_GetUser(const char *getting_username, const char *getting_password, const char *username, HubUser **user_out);
-HubQuery *CFDB_ListUsers(const char *listing_username, const char *listing_password, const char *username_rx);
+HubQuery *CFDB_ListUsers(const char *listing_username, const char *username_rx);
 
 
 cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,

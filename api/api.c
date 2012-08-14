@@ -26,8 +26,8 @@ PHP_FUNCTION(cfapi)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    AuthenticationMode auth_mode;
-    if (CFDB_UserAuthenticate(username, password, password_len, &auth_mode) != ERRID_SUCCESS)
+    bool authenticated_external;
+    if (CFDB_UserAuthenticate(username, password, &authenticated_external) != ERRID_SUCCESS)
     {
         THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Forbidden");
     }
@@ -45,7 +45,7 @@ PHP_FUNCTION(cfapi)
     JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
     JsonObjectAppendString(info, "databaseHostname", DBHostname());
     JsonObjectAppendInteger(info, "databasePort", DBPort());
-    JsonObjectAppendString(info, "authMode", AuthenticationModeToString(auth_mode));
+    JsonObjectAppendString(info, "authenticated", authenticated_external ? "external" : "internal");
 
     if (conn)
     {
@@ -82,7 +82,7 @@ PHP_FUNCTION(cfapi_auth)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    cfapi_errid err = CFDB_UserAuthenticate(username, password, password_len, NULL);
+    cfapi_errid err = CFDB_UserAuthenticate(username, password, NULL);
     switch (err)
     {
     case ERRID_SUCCESS:
@@ -286,7 +286,7 @@ PHP_FUNCTION(cfapi_user_list)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    HubQuery *result = CFDB_ListUsers(username, password, NULL);
+    HubQuery *result = CFDB_ListUsers(username, NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");
@@ -477,9 +477,19 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendBool(settings, HubSettingToString(SETTING_RBAC), StringSafeEqual(buffer, "true"));
     }
 
-    if (CFDB_GetSetting(conn, SETTING_AUTH_MODE, buffer, sizeof(buffer)))
+    if (CFDB_GetSetting(conn, SETTING_LDAP_MODE, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, HubSettingToString(SETTING_AUTH_MODE), buffer);
+        JsonObjectAppendBool(settings, HubSettingToString(SETTING_LDAP_MODE), StringSafeEqual(buffer, "true"));
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_USERNAME, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_USERNAME), buffer);
+    }
+
+    if (CFDB_GetSetting(conn, SETTING_LDAP_PASSWORD, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_PASSWORD), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, buffer, sizeof(buffer)))
@@ -517,19 +527,14 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendInteger(settings, HubSettingToString(SETTING_LDAP_PORT_SSL), StringToLong(buffer));
     }
 
-    if (CFDB_GetSetting(conn, SETTING_AD_DOMAIN, buffer, sizeof(buffer)))
+    if (CFDB_GetSetting(conn, SETTING_LDAP_AD_DOMAIN, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendString(settings, HubSettingToString(SETTING_AD_DOMAIN), buffer);
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_AD_DOMAIN), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_BLUEHOST_HORIZON, buffer, sizeof(buffer)))
     {
         JsonObjectAppendInteger(settings, HubSettingToString(SETTING_BLUEHOST_HORIZON), StringToLong(buffer));
-    }
-
-    if (CFDB_GetSetting(conn, SETTING_EXTERNAL_ADMIN_USERNAME, buffer, sizeof(buffer)))
-    {
-        JsonObjectAppendString(settings, HubSettingToString(SETTING_EXTERNAL_ADMIN_USERNAME), buffer);
     }
 
     if (!EnterpriseDBRelease(conn))

@@ -13,13 +13,16 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
     public $hostB_ip = "10.0.0.153";
     var $mongoInstance = null;
     public $ldapSettings = '{
-                "authMode": "ldap",
+                "ldapEnabled": true,
+                "ldapMode": "standard",
                 "ldapHost": "localhost",
                 "ldapPort": 1025,
                 "ldapBaseDN": "dc=localhost",
                 "ldapLoginAttribute": "uid",
                 "ldapUsersDirectory": "ou=people",
-                "ldapEncryption": "none"
+                "ldapEncryption": "none",
+                "ldapUsername": "root",
+                "ldapPassword": "secret"
                 }';
 
     public function __construct()
