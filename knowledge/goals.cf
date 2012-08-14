@@ -9,6 +9,10 @@ things:
 
  goals::
 
+ "uptime";
+
+ "application crash monitoring";
+
  "satisfied customers"
    handle => "goal_satisfied", 
    needs => { "available services", "compliance" },
