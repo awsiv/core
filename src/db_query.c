@@ -684,15 +684,6 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort)
 {
-    mongo_cursor *cursor;
-    bson_iterator it1, it2, it3;
-    HubHost *hh;
-    Rlist *record_list = NULL, *host_list = NULL;
-    double rsigma, rex;
-    char rclass[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    int match_class, found = false;
-
     bson query;
     bson_init(&query);
 
@@ -713,26 +704,26 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
                            cfr_host_array,
                            cfr_class);
 
-/* BEGIN SEARCH */
-
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
 
+    Rlist *record_list = NULL,
+          *host_list = NULL;
+
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        bson_iterator it1;
+
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
-        rclass[0] = '\0';
-        found = false;
-        hh = NULL;
+        char keyhash[CF_MAXVARSIZE] = {0},
+             hostnames[CF_BUFSIZE] = {0},
+             addresses[CF_BUFSIZE] = {0};
+
+        bool found = false;
+        HubHost *hh = CreateEmptyHubHost();
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
@@ -740,16 +731,21 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
 
             if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
             {
+                bson_iterator it2;
                 bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
+                    bson_iterator it3;
                     bson_iterator_subiterator(&it2, &it3);
+
+                    char rclass[CF_MAXVARSIZE] = {0};
+
                     strncpy(rclass, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
-                    rex = 0;
-                    rsigma = 0;
                     time_t timestamp = 0;
+                    double rsigma = 0,
+                           rex = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -771,36 +767,14 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
                         }
                     }
 
-                    match_class = true;
+                    bool match_class = true;
 
-                    if (regex)
-                    {
-                        if (!NULL_OR_EMPTY(lclass) && !StringMatchFull(lclass, rclass))
-                        {
-                            match_class = false;
-                        }
-                    }
-                    else
-                    {
-                        if (!NULL_OR_EMPTY(lclass) && (strcmp(lclass, rclass) != 0))
-                        {
-                            match_class = false;
-                        }
-                    }
-
-                    if (timestamp < from || timestamp > to)
-                    {
-                        match_class = false;
-                    }
+                    match_class &= CompareStringOrRegex(rclass, lclass, regex);
+                    match_class &= IsTimeWithinRange(from, to, timestamp);
 
                     if (match_class)
                     {
                         found = true;
-
-                        if (!hh)
-                        {
-                            hh = CreateEmptyHubHost();
-                        }
 
                         PrependRlistAlienUnlocked(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
                     }
@@ -812,6 +786,11 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
             PrependRlistAlienUnlocked(&host_list, hh);
+        }
+        else
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
         }
     }
 

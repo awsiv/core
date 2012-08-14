@@ -1415,15 +1415,7 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
     }
 # endif
 
-    char buffer[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    HubClass *hc;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-
-/* BEGIN query document */
 
     if (!CFDB_Open(&dbconn))
     {
@@ -1432,24 +1424,28 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
 
     HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to, hostClassFilter, true);
 
-    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubClass);
 
+    int related_host_cnt = RlistLen(hq->hosts);
+    char header[CF_BUFSIZE] = { 0 };
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Class or Context\":1,\"in %% runs\":2,\"+/- %%\":3,\"Last occurred\":4"
              "}", page->totalResultCount, related_host_cnt);
 
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
+    int headerLen = strlen(header),
+        noticeLen = strlen(CF_NOTICE_TRUNCATED),
+        truncated = false;
+    char buffer[CF_BUFSIZE] = { 0 };
+
     StartJoin(returnval, "{\"data\":[", bufsize);
 
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
-        hc = (HubClass *) rp->item;
+        HubClass *hc = (HubClass *) rp->item;
 
         snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%lf,%lf,%ld],", hc->hh->hostname, hc->class, hc->prob*100.0, hc->dev*100.0, hc->t);
-        margin = headerLen + noticeLen + strlen(buffer);
+        int margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
             truncated = true;
