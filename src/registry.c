@@ -120,8 +120,8 @@ void VerifyRegistryPromise(Attributes a, Promise *pp)
         {
             Nova_VerifyRegistryValueAssocs(key_h, a, pp);
         }
-        else if (a.database.operation && (strcmp(a.database.operation, "verify") == 0)
-                 || (strcmp(a.database.operation, "cache") == 0))
+        else if (a.database.operation && ((strcmp(a.database.operation, "verify") == 0)
+                                          || (strcmp(a.database.operation, "cache") == 0)))
         {
             CfOut(cf_verbose, "", "Recursive cache of registry from here...\n");
             Nova_RecursiveQueryKey(dbp, &key_h, pp->promiser, a, pp, 0);
