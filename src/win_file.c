@@ -379,10 +379,10 @@ void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promi
 
 /*****************************************************************************/
 
-void VerifyCopiedFileAttributes(char *file, struct stat *dstat, struct stat *sstat, Attributes attr, Promise *pp)
+void VerifyCopiedFileAttributes(char *file, struct stat *dstat, struct stat *sstat, Attributes attr, Promise *pp, const ReportContext *report_context)
 {
     // TODO: Correct assumption?: if attr.owner.sid is invalid, it will not be changed - no need to backup like on Unix
-    VerifyFileAttributes(file, dstat, attr, pp);
+    VerifyFileAttributes(file, dstat, attr, pp, report_context);
 }
 
 /*****************************************************************************/
