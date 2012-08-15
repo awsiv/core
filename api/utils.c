@@ -9,13 +9,11 @@
 #include "db_common.h"
 #include "install.h"
 
+static JsonElement *PackageResultMeta(size_t page, size_t count, size_t total);
+
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
 {
-    JsonElement *meta = JsonObjectCreate(4);
-    JsonObjectAppendInteger(meta, "total", total);
-    JsonObjectAppendInteger(meta, "page", page);
-    JsonObjectAppendInteger(meta, "count", JsonElementLength(data_array));
-    JsonObjectAppendInteger(meta, "timestamp", time(NULL));
+    JsonElement *meta = PackageResultMeta(page, JsonElementLength(data_array), total);
 
     JsonElement *output = JsonObjectCreate(2);
     JsonObjectAppendObject(output, "meta", meta);
@@ -24,21 +22,35 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
     return output;
 }
 
-JsonElement *PackageResultWithHeader(JsonHeaderTable *table, size_t total)
+JsonElement *PackageResultSQL(JsonHeaderTable *table, size_t page, size_t total)
 {
-    JsonElement *meta = JsonObjectCreate(4);
-    JsonObjectAppendInteger(meta, "total", total);
-    JsonObjectAppendInteger(meta, "count", JsonElementLength(table->data));
-    JsonObjectAppendInteger(meta, "timestamp", time(NULL));
-    JsonObjectAppendArray(meta, "header", table->header);
+    JsonElement *meta = PackageResultMeta(page, JsonElementLength(table->rows), total);
+
+    JsonElement *data = JsonObjectCreate(3);
+    JsonObjectAppendString(data, "query", table->title);
+    JsonObjectAppendArray(data, "header", table->header);
+    JsonObjectAppendArray(data, "rows", table->rows);
 
     JsonElement *output = JsonObjectCreate(2);
     JsonObjectAppendObject(output, "meta", meta);
-    JsonObjectAppendArray(output, "data", table->data);
+    JsonObjectAppendObject(output, "data", data);
 
-    free(table);  // transfer of ownership
+// transfer of ownership
+    free(table->title);
+    free(table);
 
     return output;
+}
+
+static JsonElement *PackageResultMeta(size_t page, size_t count, size_t total)
+{
+    JsonElement *meta = JsonObjectCreate(4);
+    JsonObjectAppendInteger(meta, "page", page);
+    JsonObjectAppendInteger(meta, "count", count);
+    JsonObjectAppendInteger(meta, "total", total);
+    JsonObjectAppendInteger(meta, "timestamp", time(NULL));
+
+    return meta;
 }
 
 EnterpriseDB *EnterpriseDBAcquire(void)

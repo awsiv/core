@@ -1371,15 +1371,16 @@ void DeletePromiseFilter(PromiseFilter *filter)
 }
 
 
-JsonHeaderTable *NewJsonHeaderTable(JsonElement *header, JsonElement *data)
+JsonHeaderTable *NewJsonHeaderTable(char *title, JsonElement *header, JsonElement *rows)
 {
     assert(header);
-    assert(data);
+    assert(rows);
 
     JsonHeaderTable *table = xmalloc(sizeof(JsonHeaderTable));
 
+    table->title = SafeStringDuplicate(title);
     table->header = header;
-    table->data = data;
+    table->rows = rows;
 
     return table;
 }
@@ -1387,8 +1388,9 @@ JsonHeaderTable *NewJsonHeaderTable(JsonElement *header, JsonElement *data)
 
 void DeleteJsonHeaderTable(JsonHeaderTable *table)
 {
+    free(table->title);
     JsonElementDestroy(table->header);
-    JsonElementDestroy(table->data);
+    JsonElementDestroy(table->rows);
     free(table);
 }
 

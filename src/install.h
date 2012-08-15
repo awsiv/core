@@ -9,12 +9,13 @@
 
 typedef struct
 {
+    char *title;
     JsonElement *header;
-    JsonElement *data;
+    JsonElement *rows;
 } JsonHeaderTable;
 
 
-JsonHeaderTable *NewJsonHeaderTable(JsonElement *header, JsonElement *data);
+JsonHeaderTable *NewJsonHeaderTable(char *title, JsonElement *header, JsonElement *rows);
 void DeleteJsonHeaderTable(JsonHeaderTable *table);
 
 #endif  /* CFENGINE_ENTERPRISE_INSTALL_H */

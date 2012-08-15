@@ -686,15 +686,14 @@ PHP_FUNCTION(cfapi_query_post)
 
     assert(result);
 
-    if (table->header == NULL)
+    if (table->rows == NULL)
     {
-        table->header = JsonArrayCreate(0);
+        table->rows = JsonArrayCreate(0);
     }
 
-    if (table->data == NULL)
-    {
-        table->data = JsonArrayCreate(0);
-    }
+    // FIXME: pagination not implemented yet
+    int PAGE = 1;
+    int TOTAL = JsonElementLength(table->rows);
 
-    RETURN_JSON(PackageResultWithHeader(table, JsonElementLength(table->data)));
+    RETURN_JSON(PackageResultSQL(table, PAGE, TOTAL));
 }

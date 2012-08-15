@@ -37,7 +37,7 @@ static void test_json_header_table(void **state)
     JsonArrayAppendString(row1, "25");
     JsonArrayAppendArray(data, row2);
 
-    JsonHeaderTable *table = NewJsonHeaderTable(header, data);
+    JsonHeaderTable *table = NewJsonHeaderTable("Some title", header, data);
     DeleteJsonHeaderTable(table);
 }
 

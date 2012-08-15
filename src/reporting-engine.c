@@ -118,9 +118,9 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select
     /* Query sqlite and print table contents */
     char *err = 0;
 
-    JsonHeaderTable *result = NewJsonHeaderTable(JsonArrayCreate(5), JsonArrayCreate(5));
+    JsonHeaderTable *result = NewJsonHeaderTable(select_op, JsonArrayCreate(5), JsonArrayCreate(5));
 
-    int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result->data, &err);
+    int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result->rows, &err);
 
     if( rc != SQLITE_OK )
     {
