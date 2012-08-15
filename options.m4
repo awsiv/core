@@ -25,6 +25,8 @@ AC_SUBST([NOVA_SUBDIR])
 AC_SUBST([NOVA_CFLAGS])
 AC_SUBST([NOVA_LDADD])
 
+AM_CONDITIONAL(NEW_MP, test -d "../mission-portal")
+
 #
 # Report database driver - MongoDB C interface
 #
