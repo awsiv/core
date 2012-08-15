@@ -8,6 +8,7 @@
 #include "db_common.h"
 #include "db_query.h"
 #include "web_rbac.h"
+#include "install.h"
 
 #if defined(HAVE_LIBSQLITE3)
 #include "sqlite3.h"
@@ -15,7 +16,9 @@
 
 #if defined(HAVE_LIBSQLITE3)
 /******************************************************************/
-JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
+static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
+static JsonElement *GetColumnNames(sqlite3 *db, char *select_op);
+
 
 /* Conversion functions */
 void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
@@ -34,7 +37,7 @@ char *SqliteEscapeSingleQuote(char *str, int strSz);
 
 /******************************************************************/
 
-JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
                                   Rlist *context_include, Rlist *context_exclude)
 {
 #if defined(HAVE_LIBSQLITE3)
@@ -74,7 +77,7 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op,
     DeletePromiseFilter(promise_filter);
 
     /* Now query the in-memory database */
-    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op);
+    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
 
     sqlite3_close(db);
 
@@ -96,28 +99,28 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName)
 {
     JsonElement *result = (JsonElement *) out;
 
-    JsonElement *row = JsonObjectCreate(10);
+    JsonElement *row = JsonArrayCreate(10);
 
     for(int i=0; i<argc; i++)
     {
-        JsonObjectAppendString(row, azColName[i], argv[i] ? argv[i] : "NULL");
+        JsonArrayAppendString(row, argv[i] ? argv[i] : "NULL");
     }
 
-    JsonArrayAppendObject(result, row);
+    JsonArrayAppendArray(result, row);
 
     return 0;
 }
 
 /******************************************************************/
 
-JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
+static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
 {
     /* Query sqlite and print table contents */
     char *err = 0;
 
-    JsonElement *result = JsonArrayCreate(5);
+    JsonHeaderTable *result = NewJsonHeaderTable(JsonArrayCreate(5), JsonArrayCreate(5));
 
-    int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result, &err);
+    int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result->data, &err);
 
     if( rc != SQLITE_OK )
     {
@@ -126,7 +129,34 @@ JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
         return NULL; /* TODO: Empty object ? */
     }
 
+    result->header = GetColumnNames(db, select_op);
+
     return result;
+}
+
+static JsonElement *GetColumnNames(sqlite3 *db, char *select_op)
+{
+    sqlite3_stmt *statement;
+    JsonElement *columns = JsonArrayCreate(5);
+
+    int rc = sqlite3_prepare_v2(db, select_op, -1, &statement, 0);
+
+    if (rc == SQLITE_OK)
+    {
+        int column_count = sqlite3_column_count(statement);
+
+        if (column_count > 0)
+        {
+            for (int i = 0; i < column_count; i++)
+            {
+                JsonArrayAppendString(columns, sqlite3_column_name(statement, i));
+            }
+        }
+
+        sqlite3_finalize(statement);
+    }
+
+    return columns;
 }
 
 /******************************************************************/
