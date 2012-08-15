@@ -180,11 +180,11 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
     char table_schema[CF_BUFSIZE] = {0};
 
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE hosts("
-             "hostkey VARCHAR(100) PRIMARY KEY, "
-             "ip VARCHAR(50), "
-             "hostname VARCHAR(100), "
-             "hoststatus VARCHAR(20));");
+             "CREATE TABLE Hosts("
+             "HostKey VARCHAR(100) PRIMARY KEY, "
+             "HostName VARCHAR(100), "
+             "HostIPAddress VARCHAR(50), "
+             "HostColour VARCHAR(20));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -213,8 +213,8 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO hosts VALUES('%s','%s','%s','%s');",
-                 hh->keyhash, hh->ipaddr, hh->hostname, Nova_HostColourToString(hh->colour));
+                 "INSERT INTO Hosts VALUES('%s','%s','%s','%s');",
+                 hh->keyhash, hh->hostname, hh->ipaddr, Nova_HostColourToString(hh->colour));
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -260,10 +260,10 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
     char table_schema[CF_BUFSIZE] = {0};
 
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE contexts("
-             "hostkey VARCHAR(100), "
-             "name VARCHAR(50), "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
+             "CREATE TABLE Contexts("
+             "HostKey VARCHAR(100), "
+             "ContextName VARCHAR(50), "
+             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -292,7 +292,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO contexts VALUES('%s','%s');",
+                 "INSERT INTO Contexts VALUES('%s','%s');",
                  hc->hh->keyhash, hc->class);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -336,13 +336,13 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 
     char table_schema[CF_BUFSIZE] = {0};
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE variables("
-             "hostkey VARCHAR(100), "
-             "scope VARCHAR(50), "
-             "name VARCHAR(50), "
-             "value VARCHAR(100), "
-             "type VARCHAR(20), "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
+             "CREATE TABLE Variables("
+             "HostKey VARCHAR(100), "
+             "VariableScope VARCHAR(50), "
+             "VariableName VARCHAR(50), "
+             "VariableValue VARCHAR(100), "
+             "VariableType VARCHAR(20), "
+             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -382,7 +382,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO variables VALUES('%s','%s','%s','%s','%s');",
+                 "INSERT INTO Variables VALUES('%s','%s','%s','%s','%s');",
                  hc->hh->keyhash, hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, strlen(rval_scalar)), hc->dtype);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -425,11 +425,11 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
     /* Table schema in sqlite */
     char table_schema[CF_BUFSIZE] = {0};
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE filechanges("
-             "hostkey VARCHAR(100), "
-             "filename VARCHAR(400), "
-             "changetime BIGINT, "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
+             "CREATE TABLE FileChanges("
+             "HostKey VARCHAR(100), "
+             "FileName VARCHAR(400), "
+             "FileChangeTime BIGINT, "
+             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -458,7 +458,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO filechanges VALUES('%s','%s',%ld);",
+                 "INSERT INTO FileChanges VALUES('%s','%s',%ld);",
                  hC->hh->keyhash, hC->path, hC->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -502,12 +502,12 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 
     char table_schema[CF_BUFSIZE] = {0};
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE software("
-             "hostkey VARCHAR(100), "
-             "name VARCHAR(50), "
-             "version VARCHAR(50), "
-             "architecture VARCHAR(20), "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
+             "CREATE TABLE Software("
+             "HostKey VARCHAR(100), "
+             "SoftwareName VARCHAR(50), "
+             "SoftwareVersion VARCHAR(50), "
+             "SoftwareArchitecture VARCHAR(20), "
+             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -536,7 +536,7 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO software VALUES('%s','%s','%s','%s');",
+                 "INSERT INTO Software VALUES('%s','%s','%s','%s');",
                  hs->hh->keyhash, hs->name, hs->version, hs->arch);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -604,12 +604,13 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
 
     char table_schema[CF_BUFSIZE] = {0};
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE promisestatus("
-             "hostkey VARCHAR(100), "
-             "handle VARCHAR(50), "
-             "status VARCHAR(10), "
-             "time BIGINT, "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
+             "CREATE TABLE PromiseStatusLast("
+             "HostKey VARCHAR(100), "
+             "PromiseHandle VARCHAR(50), "
+             "PromiseStatus VARCHAR(10), "
+             "PromiseLastRun BIGINT, "
+             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey), "
+             "FOREIGN KEY(PromiseHandle) REFERENCES PromiseDefinitions(PromiseHandle));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -638,7 +639,7 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO promisestatus VALUES('%s','%s','%s',%ld);",
+                 "INSERT INTO PromiseStatusLast VALUES('%s','%s','%s',%ld);",
                  hc->hh->keyhash, hc->handle, PromiseStateToString(hc->status), hc->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
@@ -682,12 +683,12 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
 
     char table_schema[CF_BUFSIZE] = {0};
     snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE promisedefinitions("
-             "handle VARCHAR(50), "
-             "promiser VARCHAR(50), "
-             "bundle VARCHAR(50), "
-             "promisees VARCHAR(100), "
-             "FOREIGN key(handle) REFERENCES promisestatus(handle));");
+             "CREATE TABLE PromiseDefinitions("
+             "PromiseHandle VARCHAR(50), "
+             "Promiser VARCHAR(50), "
+             "Bundle VARCHAR(50), "
+             "Promisees VARCHAR(100));");
+
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -716,7 +717,7 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO promisedefinitions VALUES('%s','%s','%s','%s');",
+                 "INSERT INTO PromiseDefinitions VALUES('%s','%s','%s','%s');",
                  hp->handle, hp->promiser, hp->bundleName, SqliteEscapeSingleQuote(hp->promisee, strlen(hp->promisee)));
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
