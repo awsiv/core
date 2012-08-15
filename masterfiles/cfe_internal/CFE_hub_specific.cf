@@ -327,7 +327,7 @@ bundle agent cfengine_php_mod
       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.ini"),
           perms => mo("644","root");
 
-   "/etc/php5/conf.d/cfengine-enterpriese-api.ini"
+   "/etc/php5/conf.d/cfengine-enterprise-api.ini"
         comment => "Put cfengine-enterprise-api.ini to its place",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_ini_ubuntu10",
       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),

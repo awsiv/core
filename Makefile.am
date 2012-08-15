@@ -56,12 +56,13 @@ shprofile_SCRIPTS = $(abs_srcdir)/misc/profile.d/cfengine.sh
 install-data-local:
 if MONGO
 	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
-	if NEW_MP
-		rm -rf GUI2/*
-		cp -R ../mission-portal/* GUI2/
-		mkdir GUI2/api/
-		cp -R api/http/* GUI2/api/
-		cp api/mongo-initialize.js GUI2/api/
-		cp api/http/.htaccess GUI/api/
-	endif
+if NEW_MP
+	rm -rf GUI2/*
+	cp -R ../mission-portal/* GUI2/
+	mkdir GUI2/api/
+	cp -R api/http/* GUI2/api/
+	cp api/mongo-initialize.js GUI2/api/
+	cp api/http/.htaccess GUI2/api/
+endif
+
 endif
