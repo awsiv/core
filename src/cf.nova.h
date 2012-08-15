@@ -308,6 +308,7 @@ typedef struct
     char *hubkey;
     char *ipaddr;
     char *hostname;
+    time_t last_report;
     HostColour colour;
 } HubHost;
 
