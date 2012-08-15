@@ -22,18 +22,23 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
     return output;
 }
 
-JsonElement *PackageResultSQL(JsonHeaderTable *table, size_t page, size_t total)
+JsonElement *PackageResultSQL(JsonHeaderTable *table)
 {
-    JsonElement *meta = PackageResultMeta(page, JsonElementLength(table->rows), total);
+    // we only support one SQL-query at the time for now
+    JsonElement *meta = PackageResultMeta(1, 1, 1);
 
-    JsonElement *data = JsonObjectCreate(3);
-    JsonObjectAppendString(data, "query", table->title);
-    JsonObjectAppendArray(data, "header", table->header);
-    JsonObjectAppendArray(data, "rows", table->rows);
+    JsonElement *data1 = JsonObjectCreate(3);
+    JsonObjectAppendString(data1, "query", table->title);
+    JsonObjectAppendArray(data1, "header", table->header);
+    JsonObjectAppendInteger(data1, "row_count", JsonElementLength(table->rows));
+    JsonObjectAppendArray(data1, "rows", table->rows);
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, data1);
 
     JsonElement *output = JsonObjectCreate(2);
     JsonObjectAppendObject(output, "meta", meta);
-    JsonObjectAppendObject(output, "data", data);
+    JsonObjectAppendArray(output, "data", data);
 
 // transfer of ownership
     free(table->title);

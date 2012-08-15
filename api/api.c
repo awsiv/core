@@ -691,9 +691,5 @@ PHP_FUNCTION(cfapi_query_post)
         table->rows = JsonArrayCreate(0);
     }
 
-    // FIXME: pagination not implemented yet
-    int PAGE = 1;
-    int TOTAL = JsonElementLength(table->rows);
-
-    RETURN_JSON(PackageResultSQL(table, PAGE, TOTAL));
+    RETURN_JSON(PackageResultSQL(table));
 }

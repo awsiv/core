@@ -54,7 +54,7 @@
 }
 
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
-JsonElement *PackageResultSQL(JsonHeaderTable *table, size_t page, size_t total);
+JsonElement *PackageResultSQL(JsonHeaderTable *table);
 
 EnterpriseDB *EnterpriseDBAcquire(void);
 bool EnterpriseDBRelease(EnterpriseDB *conn);
