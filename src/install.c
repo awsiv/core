@@ -15,6 +15,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "install.h"
 
 #include "string_lib.h"
 #include "sort.h"
@@ -1367,6 +1368,28 @@ void DeletePromiseFilter(PromiseFilter *filter)
     DeleteRlist(filter->bundleRxExcludes);
 
     free(filter);
+}
+
+
+JsonHeaderTable *NewJsonHeaderTable(JsonElement *header, JsonElement *data)
+{
+    assert(header);
+    assert(data);
+
+    JsonHeaderTable *table = xmalloc(sizeof(JsonHeaderTable));
+
+    table->header = header;
+    table->data = data;
+
+    return table;
+}
+
+
+void DeleteJsonHeaderTable(JsonHeaderTable *table)
+{
+    JsonElementDestroy(table->header);
+    JsonElementDestroy(table->data);
+    free(table);
 }
 
 /*****************************************************************************/
