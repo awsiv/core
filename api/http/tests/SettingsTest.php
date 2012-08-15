@@ -137,6 +137,8 @@ class SettingsTest extends APIBaseTest
 
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
+            $this->assertEquals(false, $settings[0]['ldapEnabled']);
+            $this->assertEquals('standard', $settings[0]['ldapMode']);
             $this->assertEquals('yahoo.comxxx', $settings[0]['ldapHost']);
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
             $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);

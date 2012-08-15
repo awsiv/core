@@ -477,9 +477,14 @@ PHP_FUNCTION(cfapi_settings_get)
         JsonObjectAppendBool(settings, HubSettingToString(SETTING_RBAC), StringSafeEqual(buffer, "true"));
     }
 
+    if (CFDB_GetSetting(conn, SETTING_LDAP_ENABLED, buffer, sizeof(buffer)))
+    {
+        JsonObjectAppendBool(settings, HubSettingToString(SETTING_LDAP_ENABLED), StringSafeEqual(buffer, "true"));
+    }
+
     if (CFDB_GetSetting(conn, SETTING_LDAP_MODE, buffer, sizeof(buffer)))
     {
-        JsonObjectAppendBool(settings, HubSettingToString(SETTING_LDAP_MODE), StringSafeEqual(buffer, "true"));
+        JsonObjectAppendString(settings, HubSettingToString(SETTING_LDAP_MODE), buffer);
     }
 
     if (CFDB_GetSetting(conn, SETTING_LDAP_USERNAME, buffer, sizeof(buffer)))
