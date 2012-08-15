@@ -76,7 +76,7 @@ libcfnova_la_SOURCES += \
         db_query.c db_query.h \
         db_save.c db_save.h \
         histogram.c \
-        install.c \
+        install.c install.h \
         magnify.c \
         promise_db.c \
         runagent.c \

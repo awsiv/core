@@ -11,6 +11,7 @@
 #include "json.h"
 #include "db_common.h"
 #include "web_rbac.h"
+#include "install.h"
 
 #define THROW_GENERIC(code, msg, ...) \
     { \
@@ -53,6 +54,7 @@
 }
 
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
+JsonElement *PackageResultSQL(JsonHeaderTable *table);
 
 EnterpriseDB *EnterpriseDBAcquire(void);
 bool EnterpriseDBRelease(EnterpriseDB *conn);

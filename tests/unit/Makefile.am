@@ -15,7 +15,8 @@ check_PROGRAMS = \
         conversion_test \
         logging_test \
         license_test \
-        reporting_engine_test
+        reporting_engine_test \
+        structure_allocation_test
 
 if MONGO
 check_PROGRAMS += scorecards_test \
@@ -42,4 +43,7 @@ license_test_LDADD = $(top_builddir)/src/libpromises.la
 
 reporting_engine_test_SOURCES = $(MOCKERY_SOURCES) reporting_engine_test.c
 reporting_engine_test_LDADD = $(top_builddir)/src/libpromises.la
+
+structure_allocation_test_SOURCES = $(MOCKERY_SOURCES) structure_allocation_test.c
+structure_allocation_test_LDADD = $(top_builddir)/src/libpromises.la
 

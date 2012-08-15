@@ -683,7 +683,7 @@ PHP_FUNCTION(cfapi_query_post)
     Rlist *include_list = PHPStringArrayToRlist(context_includes, true);
     Rlist *exclude_list = PHPStringArrayToRlist(context_excludes, true);
 
-    JsonElement *data = EnterpriseExecuteSQL(username, query, include_list,
+    JsonHeaderTable *table = EnterpriseExecuteSQL(username, query, include_list,
                                              exclude_list);
 
     DeleteRlist(include_list);
@@ -691,10 +691,10 @@ PHP_FUNCTION(cfapi_query_post)
 
     assert(result);
 
-    if (data == NULL)
+    if (table->rows == NULL)
     {
-        data = JsonArrayCreate(0);
+        table->rows = JsonArrayCreate(0);
     }
 
-    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+    RETURN_JSON(PackageResultSQL(table));
 }
