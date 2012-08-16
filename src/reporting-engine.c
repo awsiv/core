@@ -369,32 +369,44 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     {
         HubVariable *hc = (HubVariable *) rp->item;
 
-        char rval_scalar[CF_MAXVARSIZE] = {0};
-
         if(hc->rval.rtype == CF_SCALAR)
         {
-            strcpy(rval_scalar, (char *) hc->rval.item);
+            char *rval_scalar_escaped = EscapeCharCopy((char*) hc->rval.item, '\'', '\'');
+
+            char insert_op[CF_BUFSIZE] = {0};
+
+            snprintf(insert_op, sizeof(insert_op),
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
+                     SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
+
+            if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+            {
+                Sqlite3_FreeString(err);
+                return;
+            }
+
+            free(rval_scalar_escaped);
         }
         else
         {
-            /* TODO: Split lists into separate rows */
-            continue;
-        }
+            for (Rlist *rpv = (Rlist*)hc->rval.item; rpv != NULL; rpv = rpv->next)
+            {
+                char *rval_scalar_escaped = EscapeCharCopy((char *) rpv->item, '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
+                char insert_op[CF_BUFSIZE] = {0};
 
-        char *rval_scalar_escaped = EscapeCharCopy(rval_scalar, '\'', '\'');
+                snprintf(insert_op, sizeof(insert_op),
+                         "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
+                         SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                 SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
+                if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+                {
+                    Sqlite3_FreeString(err);
+                    return;
+                }
 
-        free(rval_scalar_escaped);
-
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
-        {
-            Sqlite3_FreeString(err);
-            return;
+                free(rval_scalar_escaped);
+            }
         }
     }
 
