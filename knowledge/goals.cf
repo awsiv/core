@@ -13,48 +13,45 @@ things:
 
  "application crash monitoring";
 
- "satisfied customers"
-   handle => "goal_satisfied", 
+ "customer service"
+   handle => "goal_customers", 
    needs => { "available services", "compliance" },
    comment => "Ensure excellence of user experience for customers in services and support";
 
- "available services"
+ "services availability"
    handle => "goal_available", 
+ synonyms => { "downtime" },
     needs => { "network services", "mail","host configuration","web","storage","database","login","iaas" },
    comment => "Keep online services running and available and at all times.";
-
- "profitable growth"
-   handle => "goal_growth", 
-   needs => { "product development", "goals::scale" },
-   comment => "Capabilities to handle planned and unexpected growth of the organization";
 
  "productive individuals"
    handle => "goal_productive", 
    needs => { "user management", "mail services","web","storage","login services", "directory services" },
    comment => "Keep employees productive in their work with a stable and usable infrastructure";
 
- "updated infrastructure"
+ "up-to-date infrastructure"
    handle => "goal_updated",
    needs => { "software updates" },
    comment => "Make sure that the latest tools and software are available and that security patches are installed";
 
- "agility"
+ "support organizational agility"
    handle => "goal_agility", 
    needs => { "boot services", "iaas" },
    comment => "Keep infrastructure agile and adaptable";
 
- "scalability"
-   handle => "goal_scale", 
-   comment => "Avoid performance bottlenecks in business and IT";
+ "organizational growth"
+   handle => "goal_growth", 
+   needs => { "product development", "scalability", "avoid bottlenecks" },
+   comment => "Capabilities to handle planned and unexpected growth of the organization";
 
- "efficiency"
+ "IT efficiency"
    handle => "goal_efficiency", 
-   needs => { "CFEngine" },
+   needs => { "CFEngine", "power consumption", "virtualization" },
    comment => "Keep performance to cost ratio high";
 
  "regulatory compliance"
    handle => "goal_compliance", 
-   needs => { "compliance", "security" },
+   needs => { "compliance report", "information security" },
    comment => "Comply with audit requirements in finance/security";
 
  "information security"
@@ -63,7 +60,9 @@ things:
    comment => "Determine policy for necessary and sufficient information security measures";
 
 
+occurrences:
 
+  # What data support "service availability" etc
 
 
 }

@@ -16,14 +16,21 @@ things:
   "mail services"      comment => "Electronic mail service, as made famous by the Unix operating system.";
   "host configuration" comment => "CFEngine desired-state automation and self-repair service";
   "web services"       comment => "The WWW web service",
-                      synonyms => { "www", "web", "webserver" };
-
+                      synonyms => { "web", "webserver" },
+                         needs => { "www", "port 80"};
 
   "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
-  "storage"            comment => "Remotely accessible disk volumes.";
-  "database"           comment => "Relational database services";
 
-  "login services"     comment => "The ability to log onto systems with a username and password";
+  "storage"            comment => "Remotely accessible disk volumes",
+                         needs => {"nfs"};
+
+
+  "database"           comment => "Relational database services",
+                         needs => {"mysql", "postgres", "mongo", "oracle"};
+
+
+  "login services"     comment => "The ability to log onto systems with a username and password",
+                         needs => { "ssh" };
 
 
  technical_services::
