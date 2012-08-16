@@ -30,6 +30,7 @@ PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 PromiseIdent *PROMISER_REGEXES = NULL;
 
 static void Nova_DefineHubMaster(void);
+static int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2);
 
 /*****************************************************************************/
 
@@ -512,7 +513,7 @@ void LastSawBundle(const Bundle *bundle, double compliance)
 
 /********************************************************************/
 
-int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2)
+static int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2)
 {
     Rlist *rp1, *rp2;
 

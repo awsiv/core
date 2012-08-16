@@ -871,8 +871,6 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
-int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2);
-
 /* pscalar.c */
 
 int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout);
