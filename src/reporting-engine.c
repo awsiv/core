@@ -231,7 +231,7 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO Hosts VALUES('%s','%s','%s','%ld','%s');",
+                 "INSERT INTO %s VALUES('%s','%s','%s', '%ld','%s');", SQL_TABLE_HOSTS,
                  SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
@@ -261,7 +261,6 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubClass *hc = (HubClass *) rp->item;
@@ -269,7 +268,7 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO Contexts VALUES('%s','%s','%ld');",
+                 "INSERT INTO %s VALUES('%s','%s', '%ld');", SQL_TABLE_CONTEXTS,
                  SkipHashType(hc->hh->keyhash), hc->class, hc->t);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
@@ -298,7 +297,6 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubVariable *hc = (HubVariable *) rp->item;
@@ -320,7 +318,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
         char *rval_scalar_escaped = EscapeCharCopy(rval_scalar, '\'', '\'');
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO Variables VALUES('%s','%s','%s','%s','%s');",
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
                  SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
         free(rval_scalar_escaped);
@@ -351,7 +349,6 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubFileChanges *hC = (HubFileChanges *) rp->item;
@@ -359,8 +356,8 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO FileChanges VALUES('%s','%s',%ld);",
-                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
+                 "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
+                 hC->hh->keyhash, hC->path, hC->t);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
@@ -388,7 +385,6 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubSoftware *hs = (HubSoftware *) rp->item;
@@ -396,7 +392,7 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO Software VALUES('%s','%s','%s','%s');",
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_SOFTWARE,
                  SkipHashType(hs->hh->keyhash), hs->name, hs->version, hs->arch);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
@@ -449,7 +445,6 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromiseCompliance *hc = (HubPromiseCompliance *) rp->item;
@@ -457,7 +452,7 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO PromiseStatusLast VALUES('%s','%s','%s',%ld);",
+                 "INSERT INTO %s VALUES('%s','%s','%s',%ld);", SQL_TABLE_PROMISESTATUS,
                  SkipHashType(hc->hh->keyhash), hc->handle, PromiseStateToString(hc->status), hc->t);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
@@ -486,7 +481,6 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromise *hp = (HubPromise *) rp->item;
@@ -497,7 +491,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         char *promisee_escaped = EscapeCharCopy(hp->promisee, '\'', '\'');
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO PromiseDefinitions VALUES('%s','%s','%s','%s');",
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
                  hp->handle, promiser_escaped, hp->bundleName, promisee_escaped);
 
         free(promiser_escaped);
