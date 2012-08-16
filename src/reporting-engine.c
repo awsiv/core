@@ -720,7 +720,7 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO PromiseDefinitions VALUES('%s','%s','%s','%s');",
-                 hp->handle, hp->promiser, hp->bundleName, SqliteEscapeSingleQuote(hp->promisee, strlen(hp->promisee)));
+                 hp->handle, SqliteEscapeSingleQuote(hp->promiser, strlen(hp->promiser)), hp->bundleName, SqliteEscapeSingleQuote(hp->promisee, strlen(hp->promisee)));
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
