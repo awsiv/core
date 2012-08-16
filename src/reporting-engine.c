@@ -35,6 +35,20 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 
+/* Output generation */
+static int BuildOutput(void *out, int argc, char **argv, char **azColName);
+
+bool ValidateSQL (char *sql);
+static bool CreateSQLTable(sqlite3 *db, char *create_sql);
+static bool GenerateAllTables(sqlite3 *db);
+static void GetAllTableNames(Rlist **tables);
+static int GetColumnCountInResult(sqlite3_stmt *statement);
+static Rlist *GetTableNamesInQuery(const char *select_op);
+
+char *SqliteEscapeSingleQuote(char *str, int size);
+void Sqlite3_FreeString(char *str);
+
+/******************************************************************/
 /******************************************************************/
 static bool Sqlite3_DBOpen(sqlite3 **db)
 {
@@ -194,6 +208,7 @@ static JsonElement *GetColumnNames(sqlite3 *db, char *select_op)
 /******************************************************************/
 
 void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
+/******************************************************************/
 
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 {
@@ -502,47 +517,192 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
 /* CAUTION: THIS IS EXPERIMENTAL IMPLEMENTATION ONLY */
 
 void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
+static int GetColumnCountInResult(sqlite3_stmt *statement)
 {
     EnterpriseDB dbconn;
+    return sqlite3_column_count(statement);
+}
 
     if (!CFDB_Open(&dbconn))
+/******************************************************************/
+
+static Rlist *GetTableNamesInQuery(const char *select_op)
+{
+    sqlite3 *db;
+
+    if (!Sqlite3_DBOpen(&db))
     {
-        return;
+        return false;
     }
 
+    if(!GenerateAllTables(db))
+    {
+        return false;
+    }
 
+    sqlite3_stmt *statement;
+
+    sqlite3_prepare_v2 (db, select_op, strlen(select_op), &statement, 0);
+
+    int col_count = GetColumnCountInResult(statement);
+
+    if (col_count == 0)
+    {
+        return NULL;
+    }
+
+    Rlist *tables = NULL;
+
+    for(int i = 0; i < col_count; i++)
+    {
+        if(!sqlite3_column_table_name(statement, i))
+        {
+            break;
+        }
+
+        IdempPrependRScalar(&tables, (void *)sqlite3_column_table_name(statement, i), CF_SCALAR);
+    }
+
+    if (!tables)
+    {
+        /* This means that the query has an expression or
+            subquery and is not a column value.
+            eg. count(*)
+            sqlite3_column_table_name returns NULL in such cases.
+            Hence, load all tables.
+        */
+
+        GetAllTableNames(&tables);
+    }
+    Sqlite3_DBClose(db);
+
+    return tables;
+}
+
+/******************************************************************/
+
+static void GetAllTableNames(Rlist **tables)
+{
+    for (int i = 0; TABLES[i] != NULL; i++)
+    {
+        AppendRScalar(tables, (void*) TABLES[i], CF_SCALAR);
+    }
+}
+
+/******************************************************************/
+
+// unused currently
+bool ValidateSQL (char *sql)
+{
+    sqlite3 *db;
+
+    if (!Sqlite3_DBOpen(&db))
+    {
+        return;
+        return false;
+    }
+
+    if(!GenerateAllTables(db))
+    {
+        return false;
+    }
+
+    // TODO: Add error messaging
+    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, sql);
+
+    Sqlite3_DBClose(db);
+
+    return true;
+}
+
+/******************************************************************/
+
+static bool CreateSQLTable(sqlite3 *db, char *create_sql)
+{
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
+    if (!Sqlite3_Execute(db, create_sql, (void *) BuildOutput, 0, err))
+    {
+        //Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
+}
+
+/******************************************************************/
 
     if( rc != SQLITE_OK )
+static bool GenerateAllTables(sqlite3 *db)
+{
+    for (int i = 0; SQL_CREATE_TABLE_STATEMENTS[i] != NULL; i++)
     {
         CfOut(cf_error, "", "SQL error: %s\n", err);
         sqlite3_free(err);
         return;
+        assert(SQL_CREATE_TABLE_STATEMENTS[i]);
+        assert(TABLES[i]);
+
+        if (!CreateSQLTable(db, SQL_CREATE_TABLE_STATEMENTS[i]))
+        {
+            return false;
+        }
     }
 
     HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, NULL, PROMISE_LOG_STATE_REPAIRED/*PROMISE_LOG_STATE_NOTKEPT*/,
                                         NULL, false, NULL, 0, time(NULL), false, filter, NULL);
     CFDB_Close(&dbconn);
+    return true;
+}
 
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+/******************************************************************/
+
+void Sqlite3_FreeString(char *str)
+{
+    if(str)
     {
         HubPromiseLog *hp = (HubPromiseLog *) rp->item;
+        sqlite3_free(str);
+    }
+}
 
         char insert_op[CF_BUFSIZE] = {0};
+/******************************************************************/
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO promisenk VALUES('%s','%s', '%s',%ld);",
                  SkipHashType(hp->hh->keyhash), hp->handle, hp->cause, hp->t);
+char *SqliteEscapeSingleQuote(char *str, int size)
+/* Escapes characters in the string str of length size  */
+{
+    char str_dup[CF_BUFSIZE] = {0};
+    int str_pos, str_dup_pos;
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
+    if (size > CF_BUFSIZE)
+    {
+        FatalError("Too large string passed to SqliteEscapeSingleQuote()\n");
+    }
 
         if( rc != SQLITE_OK )
+    snprintf(str_dup, sizeof(str_dup), "%s", str);
+    memset(str, 0, size);
+
+    for (str_pos = 0, str_dup_pos = 0; str_pos < size - 2; str_pos++, str_dup_pos++)
+    {
+        if (str_dup[str_dup_pos] == '\'')
         {
             CfOut(cf_error, "", "SQL error: %s\n", err);
             sqlite3_free(err);
             return;
         }
+
+        str[str_pos] = str_dup[str_dup_pos];
+    }
+
+    return str;
+}
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db)
