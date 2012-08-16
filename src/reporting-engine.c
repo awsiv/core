@@ -514,16 +514,12 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
 }
 
 /******************************************************************/
-/* CAUTION: THIS IS EXPERIMENTAL IMPLEMENTATION ONLY */
 
-void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
 static int GetColumnCountInResult(sqlite3_stmt *statement)
 {
-    EnterpriseDB dbconn;
     return sqlite3_column_count(statement);
 }
 
-    if (!CFDB_Open(&dbconn))
 /******************************************************************/
 
 static Rlist *GetTableNamesInQuery(const char *select_op)
@@ -598,7 +594,6 @@ bool ValidateSQL (char *sql)
 
     if (!Sqlite3_DBOpen(&db))
     {
-        return;
         return false;
     }
 
@@ -620,7 +615,6 @@ bool ValidateSQL (char *sql)
 static bool CreateSQLTable(sqlite3 *db, char *create_sql)
 {
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
     if (!Sqlite3_Execute(db, create_sql, (void *) BuildOutput, 0, err))
     {
         //Sqlite3_FreeString(err);
@@ -632,14 +626,10 @@ static bool CreateSQLTable(sqlite3 *db, char *create_sql)
 
 /******************************************************************/
 
-    if( rc != SQLITE_OK )
 static bool GenerateAllTables(sqlite3 *db)
 {
     for (int i = 0; SQL_CREATE_TABLE_STATEMENTS[i] != NULL; i++)
     {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
         assert(SQL_CREATE_TABLE_STATEMENTS[i]);
         assert(TABLES[i]);
 
@@ -649,43 +639,32 @@ static bool GenerateAllTables(sqlite3 *db)
         }
     }
 
-    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, NULL, PROMISE_LOG_STATE_REPAIRED/*PROMISE_LOG_STATE_NOTKEPT*/,
-                                        NULL, false, NULL, 0, time(NULL), false, filter, NULL);
-    CFDB_Close(&dbconn);
     return true;
 }
 
-    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
 /******************************************************************/
 
 void Sqlite3_FreeString(char *str)
 {
     if(str)
     {
-        HubPromiseLog *hp = (HubPromiseLog *) rp->item;
         sqlite3_free(str);
     }
 }
 
-        char insert_op[CF_BUFSIZE] = {0};
 /******************************************************************/
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO promisenk VALUES('%s','%s', '%s',%ld);",
-                 SkipHashType(hp->hh->keyhash), hp->handle, hp->cause, hp->t);
 char *SqliteEscapeSingleQuote(char *str, int size)
 /* Escapes characters in the string str of length size  */
 {
     char str_dup[CF_BUFSIZE] = {0};
     int str_pos, str_dup_pos;
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
     if (size > CF_BUFSIZE)
     {
         FatalError("Too large string passed to SqliteEscapeSingleQuote()\n");
     }
 
-        if( rc != SQLITE_OK )
     snprintf(str_dup, sizeof(str_dup), "%s", str);
     memset(str, 0, size);
 
@@ -693,9 +672,8 @@ char *SqliteEscapeSingleQuote(char *str, int size)
     {
         if (str_dup[str_dup_pos] == '\'')
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
-            return;
+            str[str_pos] = '\'';
+            str_pos++;
         }
 
         str[str_pos] = str_dup[str_dup_pos];
