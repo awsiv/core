@@ -6,7 +6,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-SUBDIRS = src GUI2 tests/unit
+SUBDIRS = src tests/unit
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
@@ -56,8 +56,8 @@ shprofile_SCRIPTS = $(abs_srcdir)/misc/profile.d/cfengine.sh
 install-data-local:
 if MONGO
 	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
+	mkdir -p GUI2
 if NEW_MP
-	rm -rf GUI2/*
 	cp -R ../mission-portal/* GUI2/
 	mkdir GUI2/api/
 	cp -R api/http/* GUI2/api/
