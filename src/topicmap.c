@@ -1302,7 +1302,7 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
 
         for (ip = backup; ip != NULL; ip=ip->next)
         {
-            PrependFullItem(&nn, "see also", "any", ip->counter, 0);
+            PrependFullItem(&nn, ip->name, ip->classes, ip->counter, 0);
         }
         
         DeleteItemList(backup);
