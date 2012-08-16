@@ -487,6 +487,8 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
         time_t last_report = 0;
         BsonTimeGet(&cursor->current, cfr_day, &last_report);
 
+        host->last_report = last_report;
+
         int score = 0;
         if (BsonIntGet(&cursor->current, HostRankMethodToMongoCode(method), &score))
         {
