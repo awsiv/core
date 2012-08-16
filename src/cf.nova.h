@@ -809,8 +809,6 @@ void Nova_BundleNode(FILE *fp, char *bundle);
 void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
-void Nova_RegisterImg(Item **list, char *dir, char *pic);
-void Nova_RegisterDoc(Item **list, char *dir, char *doc);
 
 // generating test data
 void Nova_GenerateTestData(int count);
