@@ -114,7 +114,7 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select
     /* Query sqlite and print table contents */
     char *err = 0;
 
-    JsonHeaderTable *result = NewJsonHeaderTable(select_op, JsonArrayCreate(5), JsonArrayCreate(5));
+    JsonHeaderTable *result = NewJsonHeaderTable(select_op, GetColumnNames(db, select_op), JsonArrayCreate(5));
 
     int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result->rows, &err);
 
@@ -124,8 +124,6 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select
         sqlite3_free(err);
         return NULL; /* TODO: Empty object ? */
     }
-
-    result->header = GetColumnNames(db, select_op);
 
     return result;
 }
