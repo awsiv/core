@@ -215,7 +215,7 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO Hosts VALUES('%s','%s','%s','%ld','%s');",
-                 hh->keyhash, hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
+                 SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -294,7 +294,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO Contexts VALUES('%s','%s');",
-                 hc->hh->keyhash, hc->class);
+                 SkipHashType(hc->hh->keyhash), hc->class);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -384,7 +384,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO Variables VALUES('%s','%s','%s','%s','%s');",
-                 hc->hh->keyhash, hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, strlen(rval_scalar)), hc->dtype);
+                 SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, strlen(rval_scalar)), hc->dtype);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -460,7 +460,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO FileChanges VALUES('%s','%s',%ld);",
-                 hC->hh->keyhash, hC->path, hC->t);
+                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -538,7 +538,7 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO Software VALUES('%s','%s','%s','%s');",
-                 hs->hh->keyhash, hs->name, hs->version, hs->arch);
+                 SkipHashType(hs->hh->keyhash), hs->name, hs->version, hs->arch);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -641,7 +641,7 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO PromiseStatusLast VALUES('%s','%s','%s',%ld);",
-                 hc->hh->keyhash, hc->handle, PromiseStateToString(hc->status), hc->t);
+                 SkipHashType(hc->hh->keyhash), hc->handle, PromiseStateToString(hc->status), hc->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -787,7 +787,7 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO promisenk VALUES('%s','%s', '%s',%ld);",
-                 hp->hh->keyhash, hp->handle, hp->cause, hp->t);
+                 SkipHashType(hp->hh->keyhash), hp->handle, hp->cause, hp->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
