@@ -264,6 +264,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
              "CREATE TABLE Contexts("
              "HostKey VARCHAR(100), "
              "ContextName VARCHAR(50), "
+             "ContextLastDefined BIGINT, "
              "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
@@ -293,8 +294,8 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO Contexts VALUES('%s','%s');",
-                 SkipHashType(hc->hh->keyhash), hc->class);
+                 "INSERT INTO Contexts VALUES('%s','%s','%ld');",
+                 SkipHashType(hc->hh->keyhash), hc->class, hc->t);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
