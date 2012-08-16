@@ -36,53 +36,34 @@ void VerifyACL(char *file, Attributes a, Promise *pp)
 // decide which ACL API to use
     switch (a.acl.acl_type)
     {
-    case cfacl_notype:
-        // fallthrough: acl_type defaults to generic
-
+    case cfacl_notype: // fallthrough: acl_type defaults to generic
     case cfacl_generic:
 
-        switch (VSYSTEMHARDCLASS)
-        {
-        case linuxx:
-            Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
-            break;
-
-        case mingw:
-            Nova_CheckNtACL(file, a.acl, a, pp);
-            break;
-
-        default:
-            CfOut(cf_inform, "", "!! ACLs are not yet supported on this system.");
-            break;
-        }
+#if defined(__linux__)
+        Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
+#elif defined(__MINGW32__)
+        Nova_CheckNtACL(file, a.acl, a, pp);
+#else
+        CfOut(cf_inform, "", "!! ACLs are not yet supported on this system.");
+#endif
         break;
 
     case cfacl_posix:
 
-        switch (VSYSTEMHARDCLASS)
-        {
-        case linuxx:
-            Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
-            break;
-
-        default:
-            CfOut(cf_inform, "", "!! Posix ACLs are not supported on this system");
-            break;
-        }
+#if defined(__linux__)
+        Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
+#else
+        CfOut(cf_inform, "", "!! Posix ACLs are not supported on this system");
+#endif
         break;
 
     case cfacl_ntfs:
 
-        switch (VSYSTEMHARDCLASS)
-        {
-        case mingw:
-            Nova_CheckNtACL(file, a.acl, a, pp);
-            break;
-
-        default:
-            CfOut(cf_inform, "", "!! NTFS ACLs are not supported on this system");
-            break;
-        }
+#if defined(__MINGW32__)
+        Nova_CheckNtACL(file, a.acl, a, pp);
+#else
+        CfOut(cf_inform, "", "!! NTFS ACLs are not supported on this system");
+#endif
         break;
 
     default:
