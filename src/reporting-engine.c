@@ -30,9 +30,6 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 
-char *SqliteEscapeSingleQuote(char *str, int strSz);
-
-
 #endif
 
 /******************************************************************/
@@ -383,9 +380,14 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
         }
 
         char insert_op[CF_BUFSIZE] = {0};
+
+        char *rval_scalar_escaped = EscapeCharCopy(rval_scalar, '\'', '\'');
+
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO Variables VALUES('%s','%s','%s','%s','%s');",
-                 SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, SqliteEscapeSingleQuote(rval_scalar, strlen(rval_scalar)), hc->dtype);
+                 SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
+
+        free(rval_scalar_escaped);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -718,9 +720,15 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
 
         char insert_op[CF_BUFSIZE] = {0};
 
+        char *promiser_escaped = EscapeCharCopy(hp->promiser, '\'', '\'');
+        char *promisee_escaped = EscapeCharCopy(hp->promisee, '\'', '\'');
+
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO PromiseDefinitions VALUES('%s','%s','%s','%s');",
-                 hp->handle, SqliteEscapeSingleQuote(hp->promiser, strlen(hp->promiser)), hp->bundleName, SqliteEscapeSingleQuote(hp->promisee, strlen(hp->promisee)));
+                 hp->handle, promiser_escaped, hp->bundleName, promisee_escaped);
+
+        free(promiser_escaped);
+        free(promisee_escaped);
 
         rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
 
@@ -801,36 +809,6 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseLog);
-}
-
-/******************************************************************/
-
-char *SqliteEscapeSingleQuote(char *str, int strSz)
-/* Escapes characters esc in the string str of size strSz  */
-{
-    char strDup[CF_BUFSIZE];
-    int strPos, strDupPos;
-
-    if (sizeof(strDup) < strSz)
-    {
-        FatalError("Too large string passed to SqliteEscapeSingleQuote()\n");
-    }
-
-    snprintf(strDup, sizeof(strDup), "%s", str);
-    memset(str, 0, strSz);
-
-    for (strPos = 0, strDupPos = 0; strPos < strSz - 2; strPos++, strDupPos++)
-    {
-        if (strDup[strDupPos] == '\'')
-        {
-            str[strPos] = '\'';
-            strPos++;
-        }
-
-        str[strPos] = strDup[strDupPos];
-    }
-
-    return str;
 }
 
 #endif
