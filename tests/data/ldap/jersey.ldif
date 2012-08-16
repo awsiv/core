@@ -19,3 +19,16 @@ o: Jersey
 ou: people
 uid: snookie
 userPassword:: cGFzcw==
+
+dn: uid=vinne,ou=people,dc=localhost
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Vinne
+sn: Italy
+o: Jersey
+ou: people
+uid: vinne
+userPassword:: e2NyeXB0fSQxJHNhbHQkZXoydmxQR2RhTFlrSmFtNXBXcy9ZMQ==
+
