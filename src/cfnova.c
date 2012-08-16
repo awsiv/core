@@ -114,3 +114,17 @@ const char *MailSubject(void)
         return "NO LICENSE";
     }
 }
+
+/****************************************************************************/
+
+double BoundedValue(double value, double defval)
+{
+    if (value < 0 || value > CF_BIGNUMBER)
+    {
+        return defval;
+    }
+    else
+    {
+        return value;
+    }
+}

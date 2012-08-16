@@ -1533,20 +1533,6 @@ static void PutRecordForTime(CF_DB *db, time_t time, const Averages *values)
 
 /****************************************************************************/
 
-double BoundedValue(double value, double defval)
-{
-    if (value < 0 || value > CF_BIGNUMBER)
-    {
-        return defval;
-    }
-    else
-    {
-        return value;
-    }
-}
-
-/****************************************************************************/
-
 void HistoryUpdate(Averages newvals)
 {
     Promise *pp = NewPromise("history_db", "the long term memory");
