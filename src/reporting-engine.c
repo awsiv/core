@@ -50,16 +50,15 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     }
 
     /* Apply RBAC & Context filters */
-    HostClassFilter *context_filter = NULL;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
-    context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+    HostClassFilter *context_filter =  (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
     HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
 
-    PromiseFilter *promise_filter = NULL;
+
     HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
-    promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
+    PromiseFilter *promise_filter = HubQueryGetFirstRecord(hqPromiseFilter);
 
     /* Query MongoDB and dump the result into Sqlite */
     EnterpriseDBToSqlite3_Hosts(db, context_filter);
@@ -70,8 +69,8 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     EnterpriseDBToSqlite3_PromiseStatusLast(db, context_filter);
     EnterpriseDBToSqlite3_PromiseDefinitions(db, promise_filter);
 
-    DeleteHostClassFilter(context_filter);
-    DeletePromiseFilter(promise_filter);
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
     /* Now query the in-memory database */
     JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
