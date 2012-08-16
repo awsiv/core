@@ -604,21 +604,6 @@ typedef struct
 
 /* Valid ACL syntax values, from documentation */
 
-// Valid generic permissions
-#define CF_VALID_GPERMS "rwx"
-
-// Valid native permission characters
-#define CF_VALID_NPERMS_NTFS "drtxTwabBpcoD"
-#define CF_VALID_NPERMS_POSIX "rwx"
-
-// Valid operations (first char of mode)
-#define CF_VALID_OPS_METHOD_OVERWRITE "=+-"
-#define CF_VALID_OPS_METHOD_APPEND "=+-"
-
-// Native perms separators in mode
-#define CF_NATIVE_PERMS_SEP_START '('
-#define CF_NATIVE_PERMS_SEP_END ')'
-
 #ifdef MINGW
 # define CF_GENERIC_READ_NT (FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | READ_CONTROL)
 # define CF_GENERIC_WRITE_NT (FILE_WRITE_DATA | FILE_APPEND_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA)
@@ -629,38 +614,6 @@ typedef struct
 /************************************************************************************/
 /* Prototypes                                                                       */
 /************************************************************************************/
-
-/* acl.c */
-
-int CheckACLSyntax(char *file, Acl acl, Promise *pp);
-void SyntaxCompletion(char *s);
-
-void Nova_SetACLDefaults(char *path, Acl *acl);
-int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,
-                        Promise *pp);
-int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops, Promise *pp);
-int Nova_CheckPermTypeSyntax(char *permt, int deny_support, Promise *pp);
-int Nova_CheckDirectoryInherit(char *path, Acl *acl, Promise *pp);
-
-/* acl_linux.c */
-
-int Nova_CheckPosixLinuxACL(char *file_path, Acl acl, Attributes a, Promise *pp);
-
-#ifdef HAVE_LIBACL
-int Nova_CheckPosixLinuxAccessACEs(Rlist *aces, enum cf_acl_method method, char *file_path, Attributes a, Promise *pp);
-int Nova_CheckPosixLinuxInheritACEs(Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit,
-                                    char *file_path, Attributes a, Promise *pp);
-int Nova_CheckPosixLinuxACEs(Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, Attributes a,
-                             Promise *pp);
-int Nova_CheckDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp);
-int Nova_CheckDefaultClearACL(char *file_path, Attributes a, Promise *pp);
-int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
-int Nova_ParseModePosixLinux(char *mode, acl_permset_t old_perms);
-acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find);
-int Nova_ACLEquals(acl_t first, acl_t second);
-int Nova_ACECount(acl_t acl);
-int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
-#endif
 
 /* acl_nt.c */
 

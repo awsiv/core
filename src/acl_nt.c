@@ -22,8 +22,6 @@
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
 #ifdef MINGW
-    Nova_SetACLDefaults(file_path, &acl);
-
     if (!Nova_CheckNtACEs(file_path, acl.acl_entries, INHERIT_ACCESS_ONLY, acl.acl_method, a, pp))
     {
         cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking access ACL on \"%s\"", file_path);
