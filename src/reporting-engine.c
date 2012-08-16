@@ -9,12 +9,11 @@
 #include "db_query.h"
 #include "web_rbac.h"
 #include "install.h"
+#include "assert.h"
 
 #if defined(HAVE_LIBSQLITE3)
 #include "sqlite3.h"
-#endif
 
-#if defined(HAVE_LIBSQLITE3)
 /******************************************************************/
 
 static bool Sqlite3_DBOpen(sqlite3 **db);
@@ -25,8 +24,8 @@ static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *ar
 static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
 static JsonElement *GetColumnNames(sqlite3 *db, char *select_op);
 
-
 /* Conversion functions */
+static void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username, Rlist *context_include, Rlist *context_exclude);
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
@@ -49,6 +48,43 @@ char *SqliteEscapeSingleQuote(char *str, int size);
 void Sqlite3_FreeString(char *str);
 
 /******************************************************************/
+
+char *TABLES[SQL_TABLE_COUNT] =
+{
+    SQL_TABLE_HOSTS,
+    SQL_TABLE_CONTEXTS,
+    SQL_TABLE_FILECHANGES,
+    SQL_TABLE_VARIABLES,
+    SQL_TABLE_SOFTWARE,
+    SQL_TABLE_PROMISESTATUS,
+    SQL_TABLE_PROMISEDEFINITIONS,
+    NULL
+};
+
+void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
+{
+    EnterpriseDBToSqlite3_Hosts,
+    EnterpriseDBToSqlite3_Contexts,
+    EnterpriseDBToSqlite3_FileChanges,
+    EnterpriseDBToSqlite3_Variables,
+    EnterpriseDBToSqlite3_Software,
+    EnterpriseDBToSqlite3_PromiseStatusLast,
+    EnterpriseDBToSqlite3_PromiseDefinitions,
+    NULL
+};
+
+char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
+{
+    CREATE_SQL_HOSTS,
+    CREATE_SQL_CONTEXTS,
+    CREATE_SQL_FILECHANGES,
+    CREATE_SQL_VARIABLES,
+    CREATE_SQL_SOFTWARE,
+    CREATE_SQL_PROMISESTATUS,
+    CREATE_SQL_PROMISEDEFINITIONS,
+    NULL
+};
+
 /******************************************************************/
 static bool Sqlite3_DBOpen(sqlite3 **db)
 {
@@ -89,9 +125,7 @@ static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *ar
 /******************************************************************/
 #endif
 
-/******************************************************************/
-
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
                                   Rlist *context_include, Rlist *context_exclude)
 {
 #if defined(HAVE_LIBSQLITE3)
@@ -104,33 +138,20 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
         return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    /* Apply RBAC & Context filters */
+    if (!GenerateAllTables(db))
+    {
+        Sqlite3_DBClose(db);
+        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+    }
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
-    HostClassFilter *context_filter =  (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+    Rlist *tables = GetTableNamesInQuery(select_op);
 
-    HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
+    LoadSqlite3Tables(db, tables, username, context_include, context_exclude);
 
+    DeleteRlist(tables);
 
-    HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
-    PromiseFilter *promise_filter = HubQueryGetFirstRecord(hqPromiseFilter);
-
-    /* Query MongoDB and dump the result into Sqlite */
-    EnterpriseDBToSqlite3_Hosts(db, context_filter);
-    EnterpriseDBToSqlite3_Contexts(db, context_filter);
-    EnterpriseDBToSqlite3_Variables(db, context_filter);
-    EnterpriseDBToSqlite3_FileChanges(db, context_filter);
-    EnterpriseDBToSqlite3_Software(db, context_filter);
-    EnterpriseDBToSqlite3_PromiseStatusLast(db, context_filter);
-    EnterpriseDBToSqlite3_PromiseDefinitions(db, promise_filter);
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-
-    /* Now query the in-memory database */
     JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
 
-    sqlite3_close(db);
     Sqlite3_DBClose(db);
     return out;
 #else
@@ -207,7 +228,54 @@ static JsonElement *GetColumnNames(sqlite3 *db, char *select_op)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
+static void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
+                              Rlist *context_include, Rlist *context_exclude)
+{
+    /* Apply RBAC & Context filters */
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
+    HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
+
+    HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
+    PromiseFilter *promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
+
+    for(Rlist *rp = tables; rp != NULL; rp = rp->next)
+    {
+        for (int i = 0; TABLES[i] != NULL; i++)
+        {
+            if(strcmp(rp->item, TABLES[i]) == 0)
+            {
+                assert(SQL_CONVERSION_HANDLERS[i]);
+
+                void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
+
+                if (!Sqlite3_BeginTransaction(db))
+                {
+                    return;
+                }
+
+                if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
+                {
+                    (*fnptr) (db, promise_filter);
+                }
+                else
+                {
+                    (*fnptr) (db, context_filter);
+                }
+
+                if (!Sqlite3_CommitTransaction(db))
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+}
+
 /******************************************************************/
 
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)

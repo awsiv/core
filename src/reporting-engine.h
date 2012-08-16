@@ -10,7 +10,6 @@
 #include "cf.nova.h"
 #include "install.h"
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
 #define SQL_TABLE_COUNT 8
 
 #define SQL_TABLE_HOSTS "Hosts"
@@ -69,6 +68,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
                                       "Bundle VARCHAR(50), " \
                                       "Promisees VARCHAR(100));"
 
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
                                   Rlist *context_include, Rlist *context_exclude);
 
 #endif
