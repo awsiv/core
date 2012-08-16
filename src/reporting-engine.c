@@ -16,6 +16,12 @@
 
 #if defined(HAVE_LIBSQLITE3)
 /******************************************************************/
+
+static bool Sqlite3_DBOpen(sqlite3 **db);
+static void Sqlite3_DBClose(sqlite3 *db);
+static bool Sqlite3_BeginTransaction(sqlite3 *db);
+static bool Sqlite3_CommitTransaction(sqlite3 *db);
+static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
 static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
 static JsonElement *GetColumnNames(sqlite3 *db, char *select_op);
 
@@ -30,6 +36,44 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 
+/******************************************************************/
+static bool Sqlite3_DBOpen(sqlite3 **db)
+{
+    int rc = sqlite3_open(":memory:", db);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "","Can't open temporary database: %s\n", sqlite3_errmsg(*db));
+        return false;
+    }
+
+    return true;
+}
+
+/******************************************************************/
+
+static void Sqlite3_DBClose(sqlite3 *db)
+{
+    sqlite3_close(db);
+}
+
+/******************************************************************/
+
+static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg)
+{
+    int rc = sqlite3_exec(db, sql, fn_ptr, arg_to_callback, &err_msg);
+
+    if( rc != SQLITE_OK )
+    {
+        CfOut(cf_error, "", "SQL error: %s\n", err_msg);
+        //sqlite3_free(err_msg);
+        return false;
+    }
+
+    return true;
+}
+
+/******************************************************************/
 #endif
 
 /******************************************************************/
@@ -40,13 +84,11 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 #if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
 
-    /* Open an in-memory database */
-    int rc = sqlite3_open(":memory:", &db);
-    if( rc )
+    if (!Sqlite3_DBOpen(&db))
     {
-        CfOut(cf_error, "","Can't open temporary database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        return NULL; /* TODO: return empty object? */
+        /* TODO: better error handling */
+        Sqlite3_DBClose(db);
+        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
     /* Apply RBAC & Context filters */
@@ -76,7 +118,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
 
     sqlite3_close(db);
-
+    Sqlite3_DBClose(db);
     return out;
 #else
     return NULL; /* TODO: Return error - not configured with sqlite3 */
@@ -112,17 +154,14 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName)
 static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
 {
     /* Query sqlite and print table contents */
-    char *err = 0;
+    char *err_msg = 0;
 
     JsonHeaderTable *result = NewJsonHeaderTable(select_op, GetColumnNames(db, select_op), JsonArrayCreate(5));
 
-    int rc = sqlite3_exec(db, select_op, BuildOutput, (void *)result->rows, &err);
-
-    if( rc != SQLITE_OK )
+    if (!Sqlite3_Execute(db, select_op, (void *) BuildOutput, (void *)result->rows, err_msg))
     {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return NULL; /* TODO: Empty object ? */
+        Sqlite3_FreeString(err_msg);
+        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));;
     }
 
     return result;
@@ -169,25 +208,6 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
     for (Rlist *rp = hq->hosts; rp != NULL; rp = rp->next)
     {
         HubHost *hh = (HubHost *) rp->item;
@@ -198,23 +218,11 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO Hosts VALUES('%s','%s','%s','%ld','%s');",
                  SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
-            return;
+            Sqlite3_FreeString(err);
+            break;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, NULL);
@@ -237,24 +245,6 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Iterate through the HubQuery and dump data into in-memory sqlite tables */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -266,23 +256,11 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO Contexts VALUES('%s','%s','%ld');",
                  SkipHashType(hc->hh->keyhash), hc->class, hc->t);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err); // add the error message to the return string
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubClass);
@@ -304,24 +282,6 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -349,23 +309,11 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 
         free(rval_scalar_escaped);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err);
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubVariable);
@@ -387,24 +335,6 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -416,23 +346,11 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO FileChanges VALUES('%s','%s',%ld);",
                  SkipHashType(hC->hh->keyhash), hC->path, hC->t);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err);
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubFileChanges);
@@ -454,24 +372,6 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -483,23 +383,11 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO Software VALUES('%s','%s','%s','%s');",
                  SkipHashType(hs->hh->keyhash), hs->name, hs->version, hs->arch);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err);
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
@@ -545,24 +433,6 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -574,23 +444,11 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
                  "INSERT INTO PromiseStatusLast VALUES('%s','%s','%s',%ld);",
                  SkipHashType(hc->hh->keyhash), hc->handle, PromiseStateToString(hc->status), hc->t);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err);
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
@@ -612,24 +470,6 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
     CFDB_Close(&dbconn);
 
     char *err = 0;
-    int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
-    rc = sqlite3_exec(db, "BEGIN TRANSACTION;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
-    }
-
     /* Dump HubQuery into in-memory sqlite table */
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -647,23 +487,11 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
         free(promiser_escaped);
         free(promisee_escaped);
 
-        rc = sqlite3_exec(db, insert_op, BuildOutput, 0, &err);
-
-        if( rc != SQLITE_OK )
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
-            CfOut(cf_error, "", "SQL error: %s\n", err);
-            sqlite3_free(err);
+            Sqlite3_FreeString(err);
             return;
         }
-    }
-
-    rc = sqlite3_exec(db, "COMMIT;", BuildOutput, 0, &err);
-
-    if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err);
-        sqlite3_free(err);
-        return;
     }
 
     DeleteHubQuery(hq, DeleteHubPromise);
@@ -714,9 +542,36 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
             sqlite3_free(err);
             return;
         }
+/******************************************************************/
+
+static bool Sqlite3_BeginTransaction(sqlite3 *db)
+{
+    char *err = 0;
+    if (!Sqlite3_Execute(db, "BEGIN TRANSACTION;", (void *) BuildOutput, 0, err))
+    {
+        /* TODO: return error string */
+
+        Sqlite3_FreeString(err);
+        return false;
     }
 
-    DeleteHubQuery(hq, DeleteHubPromiseLog);
+    return true;
 }
 
+/******************************************************************/
+
+static bool Sqlite3_CommitTransaction(sqlite3 *db)
+{
+    char *err = 0;
+    if (!Sqlite3_Execute(db, "COMMIT;", (void *) BuildOutput, 0, err))
+    {
+        /* TODO: return error string */
+
+        Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
+}
+/******************************************************************/
 #endif
