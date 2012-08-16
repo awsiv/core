@@ -74,7 +74,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     DeletePromiseFilter(promise_filter);
 
     /* Now query the in-memory database */
-    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, (char *)select_op);
+    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
 
     sqlite3_close(db);
 
