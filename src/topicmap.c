@@ -163,26 +163,14 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
+    printf("***************************************************\n");
+    
     char buffer[1000000];
     Nova_GetApplicationServices(buffer, 1000000);
     printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
-
-    json = Nova2PHP_list_topics_for_bundle("CFEngine");
-    if (json)
-    {
-        writer = NULL;
-        writer = StringWriter();
-
-        JsonElementPrint(writer, json, 1);
-        JsonElementDestroy(json);
-        printf("\nOccurrences: %s\n\n", StringWriterData(writer));
-
-        WriterClose(writer);
-    }
-
     
 }
 
