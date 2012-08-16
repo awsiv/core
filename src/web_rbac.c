@@ -563,12 +563,14 @@ static HubQuery *CFDB_GetRBACForUser(char *username)
     CFDB_Close(&conn);
     if (err != ERRID_SUCCESS)
     {
+        DeleteHubUser(user);
         return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
     }
     assert(user);
 
     if (!user->roles)
     {
+        DeleteHubUser(user);
         return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
     }
 
@@ -1148,6 +1150,8 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
         Rlist *roles = BsonStringArrayAsRlist(&record, dbkey_user_roles);
 
         *user_out = NewHubUser(external, username, email, roles);
+
+        DeleteRlist(roles);
     }
     bson_destroy(&record);
     return ERRID_SUCCESS;
