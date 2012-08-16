@@ -168,19 +168,6 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    /* Table schema in sqlite */
-    /* TODO: define global constants for comumn sizes*/
-
-    char table_schema[CF_BUFSIZE] = {0};
-
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE Hosts("
-             "HostKey VARCHAR(100) PRIMARY KEY, "
-             "HostName VARCHAR(100), "
-             "HostIPAddress VARCHAR(50), "
-             "HostLastReport BIGINT, "
-             "HostColour VARCHAR(20));");
-
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
 
@@ -249,18 +236,6 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    /* Table schema in sqlite */
-    /* TODO: define global constants for comumn sizes*/
-
-    char table_schema[CF_BUFSIZE] = {0};
-
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE Contexts("
-             "HostKey VARCHAR(100), "
-             "ContextName VARCHAR(50), "
-             "ContextLastDefined BIGINT, "
-             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
-
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
 
@@ -327,18 +302,6 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
     HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL,
                                        false, 0, time(NULL), filter);
     CFDB_Close(&dbconn);
-
-    /* Table schema */
-
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE Variables("
-             "HostKey VARCHAR(100), "
-             "VariableScope VARCHAR(50), "
-             "VariableName VARCHAR(50), "
-             "VariableValue VARCHAR(100), "
-             "VariableType VARCHAR(20), "
-             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -423,15 +386,6 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    /* Table schema in sqlite */
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE FileChanges("
-             "HostKey VARCHAR(100), "
-             "FileName VARCHAR(400), "
-             "FileChangeTime BIGINT, "
-             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
-
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
 
@@ -498,17 +452,6 @@ void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, NULL, cfr_software, NULL,NULL,NULL, false, filter, false);
 
     CFDB_Close(&dbconn);
-
-    /* Table schema */
-
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE Software("
-             "HostKey VARCHAR(100), "
-             "SoftwareName VARCHAR(50), "
-             "SoftwareVersion VARCHAR(50), "
-             "SoftwareArchitecture VARCHAR(20), "
-             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -601,18 +544,6 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
 
     CFDB_Close(&dbconn);
 
-    /* Table schema */
-
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE PromiseStatusLast("
-             "HostKey VARCHAR(100), "
-             "PromiseHandle VARCHAR(50), "
-             "PromiseStatus VARCHAR(10), "
-             "PromiseLastRun BIGINT, "
-             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey), "
-             "FOREIGN KEY(PromiseHandle) REFERENCES PromiseDefinitions(PromiseHandle));");
-
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
 
@@ -679,17 +610,6 @@ void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter
     HubQuery *hq = CFDB_QueryPromises(&dbconn, filter);
 
     CFDB_Close(&dbconn);
-
-    /* Table schema */
-
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE PromiseDefinitions("
-             "PromiseHandle VARCHAR(50), "
-             "Promiser VARCHAR(50), "
-             "Bundle VARCHAR(50), "
-             "Promisees VARCHAR(100));");
-
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
@@ -761,15 +681,6 @@ void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
-    /* Table schema in sqlite */
-    char table_schema[CF_BUFSIZE] = {0};
-    snprintf(table_schema, sizeof(table_schema),
-             "CREATE TABLE promisenk("
-             "hostkey VARCHAR(100), "
-             "handle VARCHAR(100), "
-             "reason VARCHAR(500), "
-             "time BIGINT, "
-             "FOREIGN key(hostkey) REFERENCES hosts(hostkey));");
 
     char *err = 0;
     int rc = sqlite3_exec(db, table_schema, BuildOutput, 0, &err);
