@@ -27,14 +27,13 @@ static JsonElement *GetColumnNames(sqlite3 *db, char *select_op);
 
 
 /* Conversion functions */
-void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_PromiseLog_nk(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
-void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
+static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 
 /******************************************************************/
 static bool Sqlite3_DBOpen(sqlite3 **db)
@@ -195,6 +194,8 @@ static JsonElement *GetColumnNames(sqlite3 *db, char *select_op)
 /******************************************************************/
 
 void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
+
+static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -230,8 +231,8 @@ void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
-{
+static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
+{    
     EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -268,7 +269,7 @@ void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -321,7 +322,7 @@ void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -358,7 +359,7 @@ void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -419,7 +420,7 @@ static const char *PromiseStateToString(PromiseState state)
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -456,7 +457,7 @@ void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filte
 
 /******************************************************************/
 
-void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter)
+static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter)
 {
     EnterpriseDB dbconn;
 
