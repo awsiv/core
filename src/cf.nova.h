@@ -20,18 +20,6 @@
 # include <ldap.h>
 #endif
 
-#ifdef HAVE_ACL_H
-# include <acl.h>
-#endif
-
-#ifdef HAVE_SYS_ACL_H
-# include <sys/acl.h>
-#endif
-
-#ifdef HAVE_ACL_LIBACL_H
-# include <acl/libacl.h>
-#endif
-
 #ifdef HAVE_LIBMONGOC
 // WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT

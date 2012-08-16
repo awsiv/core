@@ -17,6 +17,18 @@
 #include "promises.h"
 #include "files_names.h"
 
+#ifdef HAVE_ACL_H
+# include <acl.h>
+#endif
+
+#ifdef HAVE_SYS_ACL_H
+# include <sys/acl.h>
+#endif
+
+#ifdef HAVE_ACL_LIBACL_H
+# include <acl/libacl.h>
+#endif
+
 /*****************************************************************************/
 
 int Nova_CheckPosixLinuxACL(char *file_path, Acl acl, Attributes a, Promise *pp)
