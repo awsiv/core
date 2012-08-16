@@ -249,6 +249,11 @@ class UserTest extends APIBaseTest
         }
     }
 
+/**
+ * Perl one liner to generate the password for new user to be added in ldif file
+ * perl -e 'use Crypt::PasswdMD5; use MIME::Base64; print("userPassword:: " . encode_base64("{crypt}" . unix_md5_crypt("newpassword", "salt")) . "\n");'
+ */
+
     public function testLDAPAuthenticate()
     {
         try
@@ -256,7 +261,8 @@ class UserTest extends APIBaseTest
             $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
-            $this->pest->setupAuth("snookie", "pass");
+            //$this->pest->setupAuth("snookie", "pass");
+            $this->pest->setupAuth("vinne", "secret");
             $this->getResults('');
         }
         catch (Pest_Exception $e)
@@ -280,6 +286,23 @@ class UserTest extends APIBaseTest
         {
             // pass
             return;
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPListUser()
+    {
+        try
+        {
+            $this->pest->post('/user', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("snookie", "pass");
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(2, sizeof($jsonArray));
         }
         catch (Pest_Exception $e)
         {
