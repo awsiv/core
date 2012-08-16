@@ -23,7 +23,6 @@ libcfnova_la_LDFLAGS = -no-undefined
 libcfnova_la_SOURCES = \
         cfnova.c \
         logging.c logging.h \
-        acl_nt.c \
         ldap_lib.c ldap_lib.h \
         license.c \
         registry.c \
@@ -42,6 +41,7 @@ libcfnova_la_SOURCES = \
 
 if NT
 libcfnova_la_SOURCES += \
+        acl_nt.c \
         win_api.c \
         win_disphelper.c \
         win_file.c \

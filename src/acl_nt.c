@@ -21,7 +21,6 @@
 
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
-#ifdef MINGW
     if (!Nova_CheckNtACEs(file_path, acl.acl_entries, INHERIT_ACCESS_ONLY, acl.acl_method, a, pp))
     {
         cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking access ACL on \"%s\"", file_path);
@@ -39,15 +38,9 @@ int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
             return false;
         }
     }
-#else /* NOT MINGW */
-    cfPS(cf_error, CF_FAIL, "", pp, a, "!! NT ACLs are only supported on Windows");
-    PromiseRef(cf_error, pp);
-#endif
 
     return true;
 }
-
-#ifdef MINGW
 
 int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method,
                             enum cf_acl_inherit directory_inherit, Attributes a, Promise *pp)
@@ -1117,5 +1110,3 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace)
         return GRANT_ACCESS;
     }
 }
-
-#endif /* MINGW */
