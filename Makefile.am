@@ -57,17 +57,7 @@ install-data-local:
 if MONGO
 	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
 if NEW_MP
-	rm -f GUI2/Apache-htaccess
-	rm -rf GUI2/application
-	rm -rf GUI2/images/
-	rm -rf GUI2/phpcfenginenova/
-	rm -rf GUI2/s*
-	rm -rf GUI2/t*
-	rm -f GUI2/disabled.html
-	rm -f GUI2/favicon.ico
-	rm -f GUI2/index.php
-	rm -f GUI2/README
-	rm -f GUI2/unit*
+	rm -rf GUI2/*
 	cp -R ../mission-portal/* GUI2/
 	mkdir GUI2/api/
 	cp -R api/http/* GUI2/api/
