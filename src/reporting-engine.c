@@ -10,6 +10,7 @@
 #include "web_rbac.h"
 #include "install.h"
 #include "assert.h"
+#include "conf.h"
 
 #if defined(HAVE_LIBSQLITE3)
 #include "sqlite3.h"
