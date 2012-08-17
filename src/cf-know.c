@@ -62,6 +62,8 @@ static Occurrence *OccurrenceExists(Occurrence *list, char *locator, enum repres
 static void KeepPromiseBundles(Policy *policy, const ReportContext *report_context);
 int GetTopicPid(char *classified_topic);
 
+static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *context);
+
 /*******************************************************************/
 /* GLOBAL VARIABLES                                                */
 /*******************************************************************/
@@ -767,8 +769,6 @@ static void VerifyThingsPromise(Promise *pp)
     Rlist *rp, *rps, *contexts;
     char *handle = (char *) GetConstraintValue("handle", pp, CF_SCALAR);
 
-    a = GetThingsAttributes(pp);
-
     CfOut(cf_verbose, "", " -> Attempting to install thing-topic %s::%s \n", pp->classes, pp->promiser);
 
 // Add a standard reserved word
@@ -782,16 +782,9 @@ static void VerifyThingsPromise(Promise *pp)
             return;
         }
 
+        a = SetThingsAttributes(pp,tp,rp->item);
+
         CfOut(cf_verbose, "", " -> New thing \"%s\" about context \"%s\"", pp->promiser, ScalarValue(rp));
-
-        if (a.fwd_name && a.bwd_name)
-        {
-            CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, a.fwd_name,
-                  a.bwd_name);
-
-            AddTopicAssociation(tp, &(tp->associations), a.fwd_name, a.bwd_name, a.associates, true, rp->item,
-                                pp->promiser);
-        }
 
         // Handle all synonyms as associations
 
@@ -853,7 +846,7 @@ static void VerifyThingsPromise(Promise *pp)
             
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
-                snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", rps->item);
+                snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
                 PrependRScalar(&topics, id, CF_SCALAR);
             }
 
@@ -974,7 +967,7 @@ static void VerifyTopicPromise(Promise *pp)
 
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
-                snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", rps->item);
+                snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
                 PrependRScalar(&topics, id, CF_SCALAR);
             }
             
@@ -1487,4 +1480,559 @@ static char *NormalizeTopic(char *s)
     {
         return ToLowerStr(s);
     }
+}
+
+/*******************************************************************/
+/* Things attributes have to go here due to linkage                */
+/*******************************************************************/
+
+static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *context)
+{
+    Attributes attr = { {0} };
+    Rlist *rp;
+    char *cert = GetConstraintValue("certainty", pp, CF_SCALAR);
+    enum knowledgecertainty certainty;
+
+    attr.synonyms = GetListConstraint("synonyms", pp);
+    attr.general = GetListConstraint("generalizations", pp);
+
+    if (cert && strcmp(cert, "possible") == 0)
+    {
+        certainty = cfk_possible;
+    }
+    else if (cert && strcmp(cert, "uncertain") == 0)
+    {
+        certainty = cfk_uncertain;
+    }
+    else
+    {
+        certainty = cfk_certain;
+    }
+
+// Select predefined physics
+
+    if ((rp = GetListConstraint("is_part_of", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_PARTOF_CERT_F;
+            attr.bwd_name = KM_PARTOF_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_PARTOF_UNCERT_F;
+            attr.bwd_name = KM_PARTOF_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_PARTOF_POSS_F;
+            attr.bwd_name = KM_PARTOF_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+        
+        if (attr.fwd_name && attr.bwd_name)
+        {
+            CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+        
+    }
+
+    if ((rp = GetListConstraint("determines", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_DETERMINES_CERT_F;
+            attr.bwd_name = KM_DETERMINES_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_DETERMINES_UNCERT_F;
+            attr.bwd_name = KM_DETERMINES_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_DETERMINES_POSS_F;
+            attr.bwd_name = KM_DETERMINES_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+
+        
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("is_determined_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_DETERMINES_CERT_B;
+            attr.bwd_name = KM_DETERMINES_CERT_F;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_DETERMINES_UNCERT_B;
+            attr.bwd_name = KM_DETERMINES_UNCERT_F;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_DETERMINES_POSS_B;
+            attr.bwd_name = KM_DETERMINES_POSS_F;
+            break;
+        }
+
+        attr.associates = rp;
+
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+           
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+        
+    }
+    
+    if ((rp = GetListConstraint("is_connected_to", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_CONNECTS_CERT_F;
+            attr.bwd_name = KM_CONNECTS_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_CONNECTS_UNCERT_F;
+            attr.bwd_name = KM_CONNECTS_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_CONNECTS_POSS_F;
+            attr.bwd_name = KM_CONNECTS_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("uses", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_USES_CERT_F;
+            attr.bwd_name = KM_USES_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_USES_UNCERT_F;
+            attr.bwd_name = KM_USES_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_USES_POSS_F;
+            attr.bwd_name = KM_USES_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("provides", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_PROVIDES_CERT_F;
+            attr.bwd_name = KM_PROVIDES_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_PROVIDES_UNCERT_F;
+            attr.bwd_name = KM_PROVIDES_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_PROVIDES_POSS_F;
+            attr.bwd_name = KM_PROVIDES_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("belongs_to", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_BELONGS_CERT_F;
+            attr.bwd_name = KM_BELONGS_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_BELONGS_UNCERT_F;
+            attr.bwd_name = KM_BELONGS_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_BELONGS_POSS_F;
+            attr.bwd_name = KM_BELONGS_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("affects", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_AFFECTS_CERT_F;
+            attr.bwd_name = KM_AFFECTS_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_AFFECTS_UNCERT_F;
+            attr.bwd_name = KM_AFFECTS_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_AFFECTS_POSS_F;
+            attr.bwd_name = KM_AFFECTS_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+    }
+    
+    if ((rp = GetListConstraint("causes", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_CAUSE_CERT_F;
+            attr.bwd_name = KM_CAUSE_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_CAUSE_UNCERT_F;
+            attr.bwd_name = KM_CAUSE_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_CAUSE_POSS_F;
+            attr.bwd_name = KM_CAUSE_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("is_caused_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.bwd_name = KM_CAUSE_CERT_F;
+            attr.fwd_name = KM_CAUSE_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.bwd_name = KM_CAUSE_UNCERT_F;
+            attr.fwd_name = KM_CAUSE_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.bwd_name = KM_CAUSE_POSS_F;
+            attr.fwd_name = KM_CAUSE_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("needs", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_NEEDS_CERT_F;
+            attr.bwd_name = KM_NEEDS_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_NEEDS_UNCERT_F;
+            attr.bwd_name = KM_NEEDS_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_NEEDS_POSS_F;
+            attr.bwd_name = KM_NEEDS_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("is_located_in", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_LOCATED_CERT_F;
+            attr.bwd_name = KM_LOCATED_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_LOCATED_UNCERT_F;
+            attr.bwd_name = KM_LOCATED_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_LOCATED_POSS_F;
+            attr.bwd_name = KM_LOCATED_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("is_preceded_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_FOLLOW_CERT_B;
+            attr.bwd_name = KM_FOLLOW_CERT_F;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_FOLLOW_UNCERT_B;
+            attr.bwd_name = KM_FOLLOW_UNCERT_F;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_FOLLOW_POSS_B;
+            attr.bwd_name = KM_FOLLOW_POSS_F;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+    
+    if ((rp = GetListConstraint("is_followed_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_FOLLOW_CERT_F;
+            attr.bwd_name = KM_FOLLOW_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_FOLLOW_UNCERT_F;
+            attr.bwd_name = KM_FOLLOW_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_FOLLOW_POSS_F;
+            attr.bwd_name = KM_FOLLOW_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("involves", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_INVOLVES_CERT_F;
+            attr.bwd_name = KM_INVOLVES_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_INVOLVES_UNCERT_F;
+            attr.bwd_name = KM_INVOLVES_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_INVOLVES_POSS_F;
+            attr.bwd_name = KM_INVOLVES_POSS_B;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    if ((rp = GetListConstraint("implements", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_IMPLEMENTS_CERT_F;
+            attr.bwd_name = KM_IMPLEMENTS_CERT_B;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_IMPLEMENTS_UNCERT_F;
+            attr.bwd_name = KM_IMPLEMENTS_UNCERT_B;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_IMPLEMENTS_POSS_F;
+            attr.bwd_name = KM_IMPLEMENTS_POSS_B;
+            break;
+        }
+        
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+
+    if ((rp = GetListConstraint("is_implemented_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_IMPLEMENTS_CERT_B;
+            attr.bwd_name = KM_IMPLEMENTS_CERT_F;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_IMPLEMENTS_UNCERT_B;
+            attr.bwd_name = KM_IMPLEMENTS_UNCERT_F;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_IMPLEMENTS_POSS_B;
+            attr.bwd_name = KM_IMPLEMENTS_POSS_F;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+    return attr;
 }
