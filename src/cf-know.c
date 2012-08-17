@@ -335,7 +335,10 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 #if defined(HAVE_LIBMONGOC)
                 Nova_GenerateTestData(atoi(optarg));
                 #else
-                CfOut(cf_error, "", "Option avaliable only in Enterprise edition");
+                CfOut(cf_error, "",
+                      "Option available only on builds with Enterprise db enabled.\n"
+                      "This appears to be a non-hub installation.\n"
+                      "Please contact CFEngine if that is not the case");
                 #endif
 
                 exit(0);
@@ -346,7 +349,10 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             #if defined(HAVE_LIBMONGOC)
             Nova_RemoveTestData();
             #else
-            CfOut(cf_error, "", "Option avaliable only in Enterprise edition");
+            CfOut(cf_error, "",
+                  "Option available only on builds with Enterprise db enabled.\n"
+                  "This appears to be a non-hub installation.\n"
+                  "Please contact CFEngine if that is not the case");
             #endif
             exit(0);
 
@@ -354,7 +360,10 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             #if defined(HAVE_LIBMONGOC)
             Nova_UpdateTestData();
             #else
-            CfOut(cf_error, "", "Option avaliable only in Enterprise edition");
+            CfOut(cf_error, "",
+                  "Option available only on builds with Enterprise db enabled.\n"
+                  "This appears to be a non-hub installation.\n"
+                  "Please contact CFEngine if that is not the case");
             #endif
             exit(0);
 
