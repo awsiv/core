@@ -147,6 +147,21 @@ vars:
 
 ######################################################
 
+things:
+
+   "capacity planning"              comment => "Sometimes called dimensioning or service provisioning. Determining whether sufficient resources will be available to deliver planned services";
+
+   "storage management"             comment => "Disk volumes, primary, redundant and secondary storage (backup)";
+
+
+   "identity management"             comment => "Managing user accounts",
+                                 involves => { "Changing a password"  };
+
+
+   "knowledge management"        comment => "Making sure your information is accessible, comprehensible and re-usable",
+                                    uses => { "cf-know" };
+
+
 topics:
 
 
@@ -469,14 +484,6 @@ topics:
    "team work"                      comment => "Focused group in a flat organization for efficient communication and decision-making";
    "compliance"                     association => a("is documented by","manual::Reporting","documents");
 
-   "capacity planning"              comment => "Sometimes called dimensioning or service provisioning. Determining whether sufficient resources will be available to deliver planned services";
-
-   "storage management"             comment => "Disk volumes, primary, redundant and secondary storage (backup)";
-
-   "identity management"            comment => "Managing user credentials";
-
-   "knowledge management"            association => a("$(impl[b])","cf-know","$(impl[f])");
-
    "management terminology";
 
    "compliance"                      comment => "Frameworks for standardizing and regulating systems";
@@ -488,10 +495,6 @@ topics:
 
    "incident management"             comment => "Repairing policy violations",
                                  association => a("see also","manual::Incident Management vs Maintenance","see also");
-
-
-   "identity management"             comment => "Managing user accounts",
-                                 association => a("$(impl[b])","manual::Changing a password","$(impl[f])");
 
 
    "release management"              comment => "The process of preparing for major changes to policy or enterprise activity.";

@@ -55,6 +55,8 @@ static bool IsEnvMissionPortalTesting(void);
 #endif
 
 /*****************************************************************************/
+/* Helper functions                                                          */
+/*****************************************************************************/
 
 /*****************************************************************************/
 
@@ -155,7 +157,46 @@ ComplianceSummaryGraph(hubKeyHash,policy,buffer,bufsize);
 }
 
 /*****************************************************************************/
-/* Helper functions                                                          */
+
+JsonElement *Nova2PHP_get_service_activity_for(char *hostkey)
+{
+/*    JsonElement *jsonRetval = JsonObjectCreate(6);
+    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
+    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
+    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
+    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
+    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
+    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
+
+    return jsonRetval;
+*/
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_active_services()
+{
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_histogram_for_service(char *service)
+{
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_promises_for_goal(char *goal)
+{
+}
+
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_compliance_for_goal(char *service)
+{
+}
+
 /*****************************************************************************/
 
 void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)

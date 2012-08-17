@@ -29,7 +29,7 @@ things:
         is_determined_by => { "comments", "body_constraints::comment" },
                certainty => "possible";
 
-  "who" comment => "Who made changes is a question for your revision control system",
+  "who" comment => "Who made changes to policy is a question for your revision control system",
         is_determined_by => { "promisee" },
                certainty => "possible";
 
