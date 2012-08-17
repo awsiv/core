@@ -555,7 +555,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         return;
     }
 
-    HubQuery *hq = CFDB_QueryPromises(&dbconn, filter);
+    HubQuery *hq = CFDB_QueryPromisesExpanded(&dbconn, filter);
 
     CFDB_Close(&dbconn);
 
