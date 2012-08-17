@@ -20,7 +20,8 @@
 
 #include <assert.h>
 
-static bool BsonAppendPromiseFilter(bson *query, PromiseFilter *filter);
+static bool BsonAppendPromiseFilterUnexpanded(bson *query, PromiseFilter *filter);
+static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter);
 static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter);
 static void GetOldClientVersions(Rlist **rp);
 
@@ -4371,7 +4372,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
     bson query;
 
     bson_init(&query);
-    BsonAppendPromiseFilter(&query, filter);
+    BsonAppendPromiseFilterUnexpanded(&query, filter);
     bson_finish(&query);
 
     bson fields;
@@ -4433,14 +4434,16 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn)
+HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
 /*
  * Expanded promises, applies when some attributes such as the promiser
  * or handle contains a variable. Returns all currently (no filtering).
  */
 {
     bson query;
-    bson_empty(&query);
+    bson_init(&query);
+    BsonAppendPromiseFilterExpanded(&query, filter);
+    bson_finish(&query);
 
     bson fields;
 
@@ -4459,6 +4462,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn)
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
+    bson_destroy(&query);
     bson_destroy(&fields);
 
     Rlist *recordList = NULL;
@@ -4506,7 +4510,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
     bson query;
 
     bson_init(&query);
-    BsonAppendPromiseFilter(&query, filter);
+    BsonAppendPromiseFilterUnexpanded(&query, filter);
     bson_finish(&query);
 
     bson fields;
@@ -4560,7 +4564,7 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
     // query
     bson query;
     bson_init(&query);
-    BsonAppendPromiseFilter(&query, filter);
+    BsonAppendPromiseFilterUnexpanded(&query, filter);
     bson_finish(&query);
 
     // returned attribute
@@ -4615,7 +4619,7 @@ Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, c
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfp_constraints, queryConstr);
-    BsonAppendPromiseFilter(&query, promiseFilter);
+    BsonAppendPromiseFilterUnexpanded(&query, promiseFilter);
     bson_finish(&query);
 
     // returned attribute
@@ -5765,7 +5769,7 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
 
 /*****************************************************************************/
 
-static bool BsonAppendPromiseFilter(bson *query, PromiseFilter *filter)
+static bool BsonAppendPromiseFilterUnexpanded(bson *query, PromiseFilter *filter)
 {
     if (filter == NULL)
     {
@@ -5779,6 +5783,37 @@ static bool BsonAppendPromiseFilter(bson *query, PromiseFilter *filter)
 
     modified |= BsonAppendStringSafe(query, cfp_promiser, filter->promiserInclude);
     modified |= BsonAppendRegexSafe(query, cfp_promiser, filter->promiserRxInclude);
+
+    modified |= BsonAppendStringSafe(query, cfp_promisetype, filter->promiseTypeInclude);
+
+    modified |= BsonAppendStringSafe(query, cfp_bundletype, filter->bundleTypeInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
+
+    modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
+    modified |= BsonAppendIncludeRxList(query, cfp_bundlename, filter->bundleRxIncludes);
+
+    modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
+    modified |= BsonAppendExcludeRxList(query, cfp_bundlename, filter->bundleRxExcludes);
+
+    return modified;
+}
+
+/*****************************************************************************/
+
+static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter)
+{
+    if (filter == NULL)
+    {
+        return false;
+    }
+
+    bool modified = false;
+
+    modified |= BsonAppendStringSafe(query, cfp_handle_exp, filter->handleInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_handle_exp, filter->handleRxInclude);
+
+    modified |= BsonAppendStringSafe(query, cfp_promiser_exp, filter->promiserInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_promiser_exp, filter->promiserRxInclude);
 
     modified |= BsonAppendStringSafe(query, cfp_promisetype, filter->promiseTypeInclude);
 
