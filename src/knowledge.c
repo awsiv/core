@@ -23,7 +23,9 @@ static void Nova_ListAgents(void);
 static void Nova_ListFunctions(void);
 static void Nova_ListFunction(const FnCallType *f, int full);
 static void Nova_ListPromiseTypes();
+#ifdef HAVE_LIBMONGOC
 static Rlist *Nova_GetTestMachines(void);
+#endif
 
 /*****************************************************************************/
 #define CF_TEST_HOSTNAME "cfengine_auto_test"
@@ -607,10 +609,10 @@ void Nova_GenerateTestData(int count)
 #endif
 }
 
+#ifdef HAVE_LIBMONGOC
 /*********************************************************************/
 static Rlist *Nova_GetTestMachines(void)
 {
-#ifdef HAVE_LIBMONGOC
     mongo_cursor *cursor;
     bson_iterator it;
     bson query;
@@ -673,10 +675,8 @@ static Rlist *Nova_GetTestMachines(void)
     }
 
     return testmachines;
-#else
-    return NULL;
-#endif
 }
+#endif
 
 /****************************************************************************************/
 void Nova_RemoveTestData(void)
