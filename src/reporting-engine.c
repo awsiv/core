@@ -568,7 +568,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         char insert_op[CF_BUFSIZE] = {0};
 
         char *promiser_escaped = EscapeCharCopy(hp->promiser, '\'', '\'');
-        char *promisee_escaped = EscapeCharCopy(hp->promisee, '\'', '\'');
+        char *promisee_escaped = EscapeCharCopy("FIXME", '\'', '\'');
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,

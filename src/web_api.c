@@ -3868,13 +3868,13 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
     snprintf(work, sizeof(work), "\"promiser\":\"%s\",", EscapeJson(hp->promiser, escaped, sizeof(escaped)));
     Join(returnval, work, bufsize);
 
-    if (NULL_OR_EMPTY(hp->promisee))
+    if (RlistLen(hp->promisees) == 0)
     {
         strcpy(promiseeText, "None mentioned");
     }
     else
     {
-        snprintf(promiseeText, sizeof(promiseeText), "%s", hp->promisee);
+        PrintRlist(promiseeText, sizeof(promiseeText), hp->promisees);
     }
 
     snprintf(work, sizeof(work), "\"promisee\":\"%s\",", promiseeText);

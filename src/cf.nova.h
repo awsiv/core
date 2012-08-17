@@ -487,7 +487,7 @@ typedef struct
     Rlist *bundleArgs;
     char *promiseType;
     char *promiser;
-    char *promisee;
+    Rlist *promisees;
     char *classContext;
     char *handle;
     char *comment;
@@ -723,7 +723,7 @@ HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle);
 void DeleteHubValue(HubValue *hp);
-HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, char *pe, char *cl, char *ha, char *co,
+HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons);
 HubPromiseBundle *NewHubPromiseBundle(char *bundleName, char *bundleType, Rlist *bundleArgs);
 void DeleteHubPromiseBundle(HubPromiseBundle * hb);
@@ -1446,7 +1446,6 @@ typedef struct
 #define cfp_promiser      "p"
 #define cfp_promiser_exp  "px"
 #define cfp_promisee      "e"
-#define cfp_promisee_exp  "ex"
 #define cfp_handle        "h"
 #define cfp_handle_exp    "hx"
 #define cfp_comment       "o"

@@ -801,7 +801,7 @@ void DeleteHubBundleSeen(HubBundleSeen *hp)
 
 /*****************************************************************************/
 
-HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, char *pe, char *cl, char *ha, char *co,
+HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons)
 {
     HubPromise *hp = xmalloc(sizeof(HubPromise));
@@ -810,7 +810,6 @@ HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, cha
     hp->bundleType = SafeStringDuplicate(bt);
     hp->promiseType = SafeStringDuplicate(pt);
     hp->promiser = SafeStringDuplicate(pr);
-    hp->promisee = SafeStringDuplicate(pe);
     hp->classContext = SafeStringDuplicate(cl);
     hp->handle = SafeStringDuplicate(ha);
     hp->comment = SafeStringDuplicate(co);
@@ -819,6 +818,7 @@ HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, cha
     hp->popularity = 0;
 
     // NOTE: these are allocated by caller - taking ownership
+    hp->promisees = pe;
     hp->bundleArgs = ba;
     hp->constraints = cons;
 
@@ -833,7 +833,6 @@ void DeleteHubPromise(HubPromise * hp)
     free(hp->bundleType);
     free(hp->promiseType);
     free(hp->promiser);
-    free(hp->promisee);
     free(hp->classContext);
     free(hp->handle);
     free(hp->comment);
@@ -842,6 +841,7 @@ void DeleteHubPromise(HubPromise * hp)
 
     DeleteRlist(hp->bundleArgs);
     DeleteRlist(hp->constraints);
+    DeleteRlist(hp->promisees);
 
     free(hp);
 }

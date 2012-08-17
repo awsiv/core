@@ -4129,7 +4129,7 @@ int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char 
 Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey)
 /*
  * For the promise with the given (expanded) handle, returns a list of
- * the given field (e.g. cfp_comment_exp, cfp_promisee_exp, etc.) expanded.  
+ * the given field (e.g. cfp_comment_exp, cfp_promisee, etc.) expanded.  
  * MEMORY NOTE: Caller must free returned val (!=NULL) with DeleteItemList()
  */
 {
@@ -4401,7 +4401,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
-        char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promisee[CF_MAXVARSIZE];
+        char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
         char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
         char file[CF_MAXVARSIZE];
 
@@ -4409,7 +4409,6 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
         BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle);
         BsonStringWrite(promiser, sizeof(promiser), &(cursor->current), cfp_promiser);
-        BsonStringWrite(promisee, sizeof(promisee), &(cursor->current), cfp_promisee);
         BsonStringWrite(promiseType, sizeof(promiseType), &(cursor->current), cfp_promisetype);
         BsonStringWrite(comment, sizeof(comment), &(cursor->current), cfp_comment);
         BsonStringWrite(classContext, sizeof(classContext), &(cursor->current), cfp_classcontext);
@@ -4420,9 +4419,11 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
         Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints);
+        Rlist *promisees = BsonStringArrayAsRlist(&(cursor->current), cfp_promisee);
+
 
         PrependRlistAlienUnlocked(&recordList, NewHubPromise(bundleName, bundleType, bundleArgs,
-                                                     promiseType, promiser, promisee,
+                                                     promiseType, promiser, promisees,
                                                      classContext, promiseHandle, comment,
                                                      file, lineNumber, constraints));
     }
@@ -4455,7 +4456,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
                            cfp_bundletype,
                            cfp_file,
                            cfp_lineno,
-                           cfp_promisee_exp,
+                           cfp_promisee,
                            cfp_comment_exp,
                            cfp_handle_exp,
                            cfp_constraints_exp);
@@ -4470,7 +4471,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
-        char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promisee[CF_MAXVARSIZE];
+        char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
         char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
         char file[CF_MAXVARSIZE];
 
@@ -4478,7 +4479,6 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
         BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle_exp);
         BsonStringWrite(promiser, sizeof(promiser), &(cursor->current), cfp_promiser_exp);
-        BsonStringWrite(promisee, sizeof(promisee), &(cursor->current), cfp_promisee_exp);
         BsonStringWrite(promiseType, sizeof(promiseType), &(cursor->current), cfp_promisetype);
         BsonStringWrite(comment, sizeof(comment), &(cursor->current), cfp_comment_exp);
         BsonStringWrite(classContext, sizeof(classContext), &(cursor->current), cfp_classcontext);
@@ -4488,9 +4488,10 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
         BsonIntGet(&(cursor->current), cfp_lineno, &lineNumber);
 
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints_exp);
+        Rlist *promisees = BsonStringArrayAsRlist(&(cursor->current), cfp_promisee);
 
         PrependRlistAlienUnlocked(&recordList, NewHubPromise(bundleName, bundleType, NULL,
-                                                     promiseType, promiser, promisee,
+                                                     promiseType, promiser, promisees,
                                                      classContext, promiseHandle, comment,
                                                      file, lineNumber, constraints));
     }

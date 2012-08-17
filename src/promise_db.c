@@ -12,8 +12,11 @@
 #include "constraints.h"
 #include "files_names.h"
 #include "db_common.h"
+#include "bson_lib.h"
 
+static void BsonAppendPromisee(bson *b, const Rval *promisee);
 static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body);
+
 
 /*****************************************************************************/
 
@@ -74,15 +77,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
         bson_append_int(&insert_op, cfp_lineno, pp->offset.line);
     }
 
-// The promise body
-
-    if (pp->promisee.item)
-    {
-        memset(rval_buffer, 0, sizeof(rval_buffer));
-        PrintRval(rval_buffer, CF_BUFSIZE, pp->promisee);
-        CfDebug(" -> %s\n", rval_buffer);
-        bson_append_string(&insert_op, cfp_promisee_exp, rval_buffer);
-    }
+    BsonAppendPromisee(&insert_op, &(pp->promisee));
 
     if (pp->ref)
     {
@@ -185,13 +180,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
                 bson_append_string(&insert_op, cfp_promisetype, pp->agentsubtype);
                 bson_append_string(&insert_op, cfp_classcontext, pp->classes);
 
-                if (pp->promisee.item)
-                {
-                    memset(rval_buffer, 0, sizeof(rval_buffer));
-                    PrintRval(rval_buffer, CF_BUFSIZE, pp->promisee);
-
-                    bson_append_string(&insert_op, cfp_promisee, rval_buffer);
-                }
+                BsonAppendPromisee(&insert_op, &(pp->promisee));
 
                 // NOTE: We also use audit info to update right expanded promise;
                 // can't use handle if there is a variable in it
@@ -253,6 +242,29 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
     }
 
     CFDB_Close(&dbconn);
+}
+
+/*****************************************************************************/
+
+static void BsonAppendPromisee(bson *b, const Rval *promisee)
+{
+    Rlist *promisee_list = NULL;
+
+    if (promisee->item)
+    {
+        switch(promisee->rtype)
+        {
+        case CF_SCALAR:
+            AppendRlist(&promisee_list, (char *)promisee->item, CF_SCALAR);
+            BsonAppendStringArrayRlist(b, cfp_promisee, promisee_list);
+            DeleteRlist(promisee_list);
+            break;
+
+        case CF_LIST:
+            BsonAppendStringArrayRlist(b, cfp_promisee, (Rlist *) promisee->item);
+            break;
+        } 
+    }
 }
 
 /*****************************************************************************/
