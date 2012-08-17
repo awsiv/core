@@ -16,6 +16,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "acl.h"
 #include "promises.h"
 #include "files_names.h"
 
