@@ -722,13 +722,10 @@ static void Nova_DumpSlowlyVaryingObservations(void)
     while (NextDB(dbp, dbcp, &key, &ksize, &stored, &vsize))
     {
         char buf[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], rval[CF_BUFSIZE];
-        enum cfdatatype type;
 
         strncpy(buf, key, CF_MAXVARSIZE - 1);
 
-        int type_i;
-        sscanf(buf, "%s:%d", lval, &type_i);
-        type = (enum cfdatatype)type_i;
+        sscanf(buf, "%s:", lval);
 
         if (stored != NULL)
         {
