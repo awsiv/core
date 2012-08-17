@@ -34,6 +34,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
+static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *handle, char *promiser, char *bundle_name, char *promisee);
 
 /* Output generation */
 static int BuildOutput(void *out, int argc, char **argv, char **azColName);
@@ -560,31 +561,58 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromise *hp = (HubPromise *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-
-        char *promiser_escaped = EscapeCharCopy(hp->promiser, '\'', '\'');
-        char *promisee_escaped = EscapeCharCopy("FIXME", '\'', '\'');
-
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
-                 hp->handle, promiser_escaped, hp->bundleName, promisee_escaped);
-
-        free(promiser_escaped);
-        free(promisee_escaped);
-
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if(hp->promisees)
         {
-            Sqlite3_FreeString(err);
-            return;
+            for(Rlist *promisees = hp->promisees; promisees != NULL; promisees = promisees->next)
+            {
+                if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->handle, hp->promiser, hp->bundleName, ScalarValue(promisees)))
+                {
+                    DeleteHubQuery(hq, DeleteHubPromise);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->handle, hp->promiser, hp->bundleName, ""))
+            {
+                DeleteHubQuery(hq, DeleteHubPromise);
+                return;
+            }
         }
     }
 
     DeleteHubQuery(hq, DeleteHubPromise);
+}
+
+
+static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *handle, char *promiser, char *bundle_name, char *promisee)
+{
+    char insert_op[CF_BUFSIZE] = {0};
+
+    char *promiser_escaped = EscapeCharCopy(promiser, '\'', '\'');
+    char *promisee_escaped = EscapeCharCopy(promisee, '\'', '\'');
+
+    snprintf(insert_op, sizeof(insert_op),
+             "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
+             handle, promiser_escaped, bundle_name, promisee_escaped);
+
+    free(promisee_escaped);
+    free(promiser_escaped);
+
+    char *err = 0;
+
+    if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+    {
+        Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
 }
 
 /******************************************************************/
