@@ -1,8 +1,0 @@
-# Nova trunk tracks Core 3.2.x
-#
-# Do not forget to change this item after branching!
-#
-core branch trunk
-
-autobuild branch trunk
-
