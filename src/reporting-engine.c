@@ -44,7 +44,6 @@ static void GetAllTableNames(Rlist **tables);
 static int GetColumnCountInResult(sqlite3_stmt *statement);
 static Rlist *GetTableNamesInQuery(const char *select_op);
 
-char *SqliteEscapeSingleQuote(char *str, int size);
 void Sqlite3_FreeString(char *str);
 
 /******************************************************************/
@@ -726,35 +725,6 @@ void Sqlite3_FreeString(char *str)
     }
 }
 
-/******************************************************************/
-
-char *SqliteEscapeSingleQuote(char *str, int size)
-/* Escapes characters in the string str of length size  */
-{
-    char str_dup[CF_BUFSIZE] = {0};
-    int str_pos, str_dup_pos;
-
-    if (size > CF_BUFSIZE)
-    {
-        FatalError("Too large string passed to SqliteEscapeSingleQuote()\n");
-    }
-
-    snprintf(str_dup, sizeof(str_dup), "%s", str);
-    memset(str, 0, size);
-
-    for (str_pos = 0, str_dup_pos = 0; str_pos < size - 2; str_pos++, str_dup_pos++)
-    {
-        if (str_dup[str_dup_pos] == '\'')
-        {
-            str[str_pos] = '\'';
-            str_pos++;
-        }
-
-        str[str_pos] = str_dup[str_dup_pos];
-    }
-
-    return str;
-}
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db)
