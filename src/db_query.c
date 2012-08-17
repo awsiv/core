@@ -4360,7 +4360,7 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
  * FIXME: If not found by handle: may want to do second lookup in expanded promise db
@@ -4500,7 +4500,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn)
 
 HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 /**
- * Differs from CFDB_QueryPromises() in that it only returns distinct bundles.
+ * Differs from CFDB_QueryPromisesUnexpanded() in that it only returns distinct bundles.
  */
 {
     bson query;

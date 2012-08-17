@@ -3843,7 +3843,7 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
         return false;
     }
 
-    HubQuery *hqPromise = CFDB_QueryPromises(&dbconn, filter);
+    HubQuery *hqPromise = CFDB_QueryPromisesUnexpanded(&dbconn, filter);
 
     if (CountRecords(hqPromise) == 0)
     {
@@ -4713,7 +4713,7 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int buf
         return false;
     }
 
-    hq = CFDB_QueryPromises(&dbconn, promiseFilter);
+    hq = CFDB_QueryPromisesUnexpanded(&dbconn, promiseFilter);
 
     CFDB_Close(&dbconn);
 
