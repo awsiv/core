@@ -29,7 +29,6 @@ libcfnova_la_SOURCES = \
         ontology.c \
         server.c \
         datapackaging.c datapack.h \
-        outputs.c \
         promises.c \
         processes.c \
         pscalar.c \
