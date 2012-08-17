@@ -949,7 +949,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     EnterpriseDB conn;
     Item *list = NULL;
     int topic_id;
-    char *topic;
+    char *topic, *context;
 
     if (!CFDB_Open(&conn))
     {
@@ -987,6 +987,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
 
         topic_id = 0;
         topic = NULL;
+        context = NULL;
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
@@ -995,6 +996,11 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
                 topic = (char *)bson_iterator_string(&it1);
             }
 
+            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
+            {
+                context = (char *)bson_iterator_string(&it1);
+            }
+            
             if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
             {
                 topic_id = bson_iterator_int(&it1);
@@ -1002,9 +1008,9 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
         }
 
         
-        if (topic && topic_id )
+        if (topic && topic_id && context)
         {
-            PrependFullItem(&list, topic, NULL, topic_id, 0);
+            PrependFullItem(&list, topic, context, topic_id, 0);
         }
 
     }
@@ -1025,8 +1031,36 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
        JsonObjectAppendString(json_obj, "description", comment);
        JsonObjectAppendString(json_obj, "name", ip->name);
        JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+
+       // Now get the technical port services that provide this, i.e. "is provided by"
+
+       Item *nn = Nova_NearestNeighbours(ip->counter, KM_IMPLEMENTS_CERT_B);
+       //Item *nn = Nova_NearestNeighbours(ip->counter, NULL);
+           
+       if (nn)
+       {
+          JsonElement *json_array = JsonArrayCreate(50);
+          
+          for (Item *ips = nn; ips != NULL; ips = ips->next)
+          {
+             if (ips->counter == ip->counter)
+             {
+                continue;
+             }
+             
+             JsonElement *json_service = JsonObjectCreate(3);
+             JsonObjectAppendString(json_service, "topic", ips->name);
+             JsonObjectAppendString(json_service, "context", ips->classes);
+             JsonObjectAppendInteger(json_service, "topic_id", ips->counter);
+             JsonArrayAppendObject(json_array, json_service);
+          }
+
+          JsonObjectAppendArray(json_obj, "providedby", json_array);
+          }
+       
+       
        JsonArrayAppendObject(json_array_out, json_obj); 
-       }
+    }
     
 
     Writer *writer = StringWriter();
@@ -1694,7 +1728,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
                         }
                     }
 
-                    CfDebug(" - NEIGH topic %d has association %s %s::%s (%d)\n", topic_id, afwd, assoc_context,
+                    CfDebug(" - NEIGH topic %d has association %s %s::%s (%d)\n", assoc_id, afwd, assoc_context,
                             assoc_name, assoc_id);
 
                     if (assoc_mask == NULL || StringMatch(assoc_mask, afwd))
