@@ -15,6 +15,7 @@
 #include "item_lib.h"
 #include "mod_files.h"
 #include "expand.h"
+#include "probes.h"
 
 #include <assert.h>
 
@@ -79,6 +80,11 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         return;
     }
 
+    if (strcmp(pp->bundletype,"knowledge") == 0)
+    {
+        return;
+    }
+    
     strcpy(promise_id, PromiseID(pp));
 
     WriterWriteF(writer, "\ntopics:\n\n");
@@ -338,10 +344,14 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     case CF_SCALAR:
         WriterWriteF(writer, "promisees::\n\n");
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
-                NOVA_GIVES_PR);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser), NOVA_GIVES_PR);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, NovaEscape(pp->promiser), NOVA_STAKEHOLDER);
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
+
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
                 KM_AFFECTS_CERT_F);
@@ -367,13 +377,18 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                     WriterWriteF(writer, "  \"%s\"\n", bundlename);
                     WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                             (const char *) pp->promisee.item, NOVA_ISIMPACTED);
-                    WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
-                            (const char *) pp->promisee.item, NOVA_GOAL_INV);
                 }
 
-                WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
+                if (strstr(pp->promisee.item,"::"))
+                {
+                    WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", promise_id, NOVA_GOAL,
                              (const char *) pp->promisee.item, NOVA_GOAL_INV);
-                
+                }
+                else
+                {
+                    WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", promise_id, NOVA_GOAL,
+                             (const char *) pp->promisee.item, NOVA_GOAL_INV);
+                }
             }
         }
         break;
@@ -401,22 +416,46 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                     WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                             (const char *) rp2->item, NOVA_ISIMPACTED);
 
-                    WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
-                                (const char *) rp->item, NOVA_GOAL_INV);
-                    
                     if (bundlename)
                     {
                         WriterWriteF(writer, "bundles::\n\n");
                         WriterWriteF(writer, "  \"%s\"\n", bundlename);
                         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                                 (const char *) rp->item, NOVA_ISIMPACTED);
-                        WriterWriteF(writer, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", bundlename, NOVA_GOAL,
-                                (const char *) rp->item, NOVA_GOAL_INV);
                     }
-                    
-                    WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
-                                 (const char *) pp->promisee.item, NOVA_GOAL_INV);
 
+
+                    if (strstr(rp->item,"::"))
+                       {
+                       WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", promise_id, NOVA_GOAL,
+                                (const char *) rp->item, NOVA_GOAL_INV);
+
+                       // If a goal is identified, other promisees are by implication stakeholders in those goals
+                       for (Rlist *rp3 = (Rlist *) pp->promisee.item; rp3 != NULL; rp3 = rp3->next)
+                       {
+                          if (strcmp(rp3->item, rp->item) != 0)
+                             {
+                                 char t[CF_BUFSIZE], c[CF_BUFSIZE];
+                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp3->item, NOVA_STAKEHOLDER);
+                             }
+                       }
+                    }
+                    else
+                    {
+                       WriterWriteF(writer, " handles:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", promise_id, NOVA_GOAL, (const char *) rp->item, NOVA_GOAL_INV);
+                       
+                       // If a goal is identified, other promisees are by implication stakeholders in those goals
+                       for (Rlist *rp3 = (Rlist *) pp->promisee.item; rp3 != NULL; rp3 = rp3->next)
+                       {
+                          if (strcmp(rp3->item, rp->item) != 0)
+                             {
+                                 char t[CF_BUFSIZE], c[CF_BUFSIZE];
+                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp3->item, NOVA_STAKEHOLDER);
+                             }
+                       }
+                    }
                 }
             }
         }
@@ -989,6 +1028,25 @@ void ShowTopicRepresentation(const ReportContext *report_context)
             }
         }
     }
+
+
+    static char *others[] = { MON_IO_READS, MON_IO_WRITES, MON_IO_READDATA, MON_IO_WRITTENDATA, MON_MEM_TOTAL, MON_MEM_FREE, MON_MEM_CACHED, MON_MEM_SWAP, MON_MEM_FREE_SWAP, NULL };
+        
+    for (i = 0; others[i] != NULL; i++)
+       {
+       for (j = 0; level[j] != NULL; j++)
+          {
+          for (k = 0; dev[k] != NULL; k++)
+             {
+             WriterWriteF(writer,
+                          " \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",
+                          others[i], level[j], dev[k], others[i], level[j]);
+             
+             }
+          }
+       }
+
+
 }
 
 /*****************************************************************************/

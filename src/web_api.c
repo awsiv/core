@@ -176,6 +176,8 @@ JsonElement *Nova2PHP_get_service_activity_for(char *hostkey)
 
 JsonElement *Nova2PHP_get_active_services()
 {
+// Scan for the ports in *._in (consumption) and *._out (provision)
+
 }
 
 /*****************************************************************************/
@@ -186,15 +188,33 @@ JsonElement *Nova2PHP_get_histogram_for_service(char *service)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_get_promises_for_goal(char *goal)
+JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
-}
+
+/* Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
+ int hosts = 0;
+ 
+ for (ip = handles; ip != NULL; ip = ip->next)
+    {
+    char class_expression[CF_BUFSIZE];
+    GetClassesExpressionForPromise(handle, class_expression);
+    hosts = GetNumberOfHostsInClass(class_expression);
+
+    printf("Hosts supporting the goal are in class: %s, consisting of %d hosts", class_expression, hosts);
+    }
 
 
-/*****************************************************************************/
+ // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
+ people = Nova_GetStakeHolders(goal_id);
 
-JsonElement *Nova2PHP_get_compliance_for_goal(char *service)
-{
+ // past week graph?
+ compliance = Nova_GetTotalPromiseComplianceByHandle(handle);
+ // how many machines could not be checked
+
+ // print details of hosts, promises, people, compliance
+
+ int goal_score = Any(hosts)*Any(promises)*compliance + Any(people);
+*/  
 }
 
 /*****************************************************************************/

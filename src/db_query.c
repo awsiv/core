@@ -1414,6 +1414,8 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
     return NewHubQuery(host_list, record_list);
 }
 
+/*********************************************************************************/
+
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
@@ -4967,7 +4969,7 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostCla
     return true;
 }
 
-
+/**********************************************************************************/
 
 HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime)
 {

@@ -164,13 +164,33 @@ void Nova_ShowTopic(char *qualified_topic)
     }
 
     printf("***************************************************\n");
-    
+
     char buffer[1000000];
     Nova_GetApplicationServices(buffer, 1000000);
     printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
+
+    printf("***************************************************\n");
+    
+    printf("INPUT: handles::goal_customers\n");
+    int tid = Nova_GetTopicIdForTopic("handles::goal_customers");
+    Nova2PHP_get_goal_progress(tid, "goal_customers");
+
+    printf("INPUT: handles::goal_availability\n");
+    tid = Nova_GetTopicIdForTopic("handles::goal_availability");
+  Nova2PHP_get_goal_progress(tid, "goal_availability");
+
+    printf("INPUT: handles::goal_productive\n");
+    tid = Nova_GetTopicIdForTopic("handles::goal_productive");
+    Nova2PHP_get_goal_progress(tid, "goal_productive");
+
+    printf("***************************************************\n");
+        
+//JsonElement *Nova2PHP_get_active_services()
+//JsonElement *Nova2PHP_get_histogram_for_service(char *service)
+
     
 }
 
@@ -224,13 +244,18 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
             if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
             {
                 topic_id = (int) bson_iterator_int(&it1);
+                break;
             }
         }
+
+        if (topic_id > 0)
+           {
+           break;
+           }
     }
 
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
-
     return topic_id;
 }
 
@@ -699,7 +724,9 @@ JsonElement *Nova_ScanOccurrences(int this_id)
             }
         }
 
-        snprintf(text,CF_BUFSIZE,"%s -- %s",represents,topic);
+        char topic_short[CF_BUFSIZE],tc[CF_BUFSIZE];
+        Nova_DeClassifyTopic(topic, topic_short, tc);
+        snprintf(text,CF_BUFSIZE,"%s -- about %s",represents,topic_short);
         NewHit(&hits,context, locator, locator_type, text);
     }
 
@@ -782,6 +809,13 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
 /*************************************************************************/
 
+Item *Nova_GetStakeholders(int topic_id)
+{
+ return Nova_NearestNeighbours(topic_id, NOVA_STAKEHOLDER_INV);
+}
+
+/*************************************************************************/
+
 Item *Nova_GetBusinessGoals(char *handle)
 {
     char querytopic[CF_BUFSIZE];
@@ -823,7 +857,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|", (char *) rp->item);
+        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|goals::.*|", (char *) rp->item);
         strcat(searchstring, work);
     }
 
@@ -833,7 +867,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
     }
 
     if (!CFDB_Open(&conn))
@@ -899,8 +933,8 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
            Nova_DeClassifyTopic(topic_name, topic, context);
            JsonObjectAppendString(json_obj, "handle", topic);
            JsonObjectAppendInteger(json_obj, "pid", referred);
-           
-           Item *nn = Nova_NearestNeighbours(referred, "need(s)");
+
+           Item *nn = Nova_NearestNeighbours(referred, KM_INVOLVES_CERT_F);
            
            if (nn)
               {
@@ -1055,7 +1089,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
              JsonArrayAppendObject(json_array, json_service);
           }
 
-          JsonObjectAppendArray(json_obj, "providedby", json_array);
+          JsonObjectAppendArray(json_obj, "provided_by", json_array);
           }
        
        
@@ -1070,6 +1104,14 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     WriterClose(writer);
 
     return true;
+}
+
+/*************************************************************************/
+
+Item *Nova_GetHandlesForGoal(int topic_id)
+
+{
+   return Nova_NearestNeighbours(topic_id,NOVA_GOAL_INV);
 }
 
 /*************************************************************************/

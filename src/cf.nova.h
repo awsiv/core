@@ -969,6 +969,7 @@ Item *Nova_GetTopicsInContext(char *context);
 Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
 int Nova_GetApplicationServices(char *buffer, int bufsize);
+Item *Nova_GetHandlesForGoal(int referred);
 
 JsonElement *Nova_PlotTopicCosmos(int topic, char *view);
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
@@ -1240,6 +1241,8 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define NOVA_GEN "is derived from"
 #define NOVA_REPORTED "are reported in"
 #define NOVA_SEEALSO "might also refer to"
+#define NOVA_STAKEHOLDER "is a stakeholder/promisee for"
+#define NOVA_STAKEHOLDER_INV "has stakeholder/promisee"
 
 
 enum knowledgecertainty
