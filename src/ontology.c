@@ -1031,9 +1031,29 @@ void ShowTopicRepresentation(const ReportContext *report_context)
 
 
     static char *others[] = { MON_IO_READS, MON_IO_WRITES, MON_IO_READDATA, MON_IO_WRITTENDATA, MON_MEM_TOTAL, MON_MEM_FREE, MON_MEM_CACHED, MON_MEM_SWAP, MON_MEM_FREE_SWAP, NULL };
-        
+
+    WriterWriteF(writer," \"%s\" comment => \"Disk I/O reads measured by the kernel, an indication of read activity\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_IO_READS);
+
+    WriterWriteF(writer," \"%s\" comment => \"Disk I/O writes measured by the kernel, an indication of write activity\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_IO_WRITES);
+
+    WriterWriteF(writer," \"%s\" comment => \"Disk I/O reads measured by the kernel, an indication of read activity\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_IO_READDATA);
+
+    WriterWriteF(writer," \"%s\" comment => \"Disk I/O writes measured by the kernel, an indication of write activity\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_IO_WRITTENDATA);
+
+    WriterWriteF(writer," \"%s\" comment => \"Total amount of available memory on the system\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_MEM_TOTAL);
+
+    WriterWriteF(writer," \"%s\" comment => \"Total amount of free memory on the system\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_MEM_FREE);
+
+    WriterWriteF(writer," \"%s\" comment => \"Total amount of memory cache on the system\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_MEM_CACHED);
+
+    WriterWriteF(writer," \"%s\" comment => \"Total amount of available swap memory on the system\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_MEM_SWAP);
+
+    WriterWriteF(writer," \"%s\" comment => \"Total amount of available free swap memory on the system\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",  MON_MEM_FREE_SWAP);
+
+    
+    
     for (i = 0; others[i] != NULL; i++)
-       {
+       {       
        for (j = 0; level[j] != NULL; j++)
           {
           for (k = 0; dev[k] != NULL; k++)
