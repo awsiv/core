@@ -81,6 +81,11 @@ PHP_FUNCTION(cfpr_vitals_view_year);
 
 /*! \breif A histogram of open ports
  */
+
+PHP_FUNCTION(cfpr_service_histogram);
+/*! \breif A histogram of open ports
+ */
+
 PHP_FUNCTION(cfpr_port_histogram);
 
 /*! \breif A histogram of a vital

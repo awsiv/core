@@ -859,17 +859,18 @@ static void VerifyThingsPromise(Promise *pp)
         {
         Rlist *list = NULL, *topics = NULL;
 
-            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-            PrependRScalar(&list, id, CF_SCALAR);
-            AddTopicAssociation(tp, &(tp->associations), "is a promise with handles", "is a handle for", list, true, rp->item,
+           snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
+           PrependRScalar(&list, id, CF_SCALAR);
+           AddTopicAssociation(tp, &(tp->associations), "is a promise with handle", "is a handle for", list, true, rp->item,
                                 pp->promiser);
-            DeleteRlist(list);
-            list = NULL;
-            PrependRScalar(&list, "promise handle", CF_SCALAR);
-            PrependRScalar(&topics, id, CF_SCALAR);
-            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal,  topics, pp->classes, pp->bundle);
-            DeleteRlist(list);
-            DeleteRlist(topics);
+           DeleteRlist(list);
+           list = NULL;
+           PrependRScalar(&list, "promise handle", CF_SCALAR);
+           PrependRScalar(&topics, id, CF_SCALAR);
+           AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal,  topics, pp->classes, pp->bundle);
+           DeleteRlist(list);
+           DeleteRlist(topics);                       
+
         }
     }
 
@@ -980,17 +981,18 @@ static void VerifyTopicPromise(Promise *pp)
         {
         Rlist *list = NULL, *topics = NULL;
 
-            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-            PrependRScalar(&list, id, CF_SCALAR);
-            AddTopicAssociation(tp, &(tp->associations), "is a promise with handles", "is a handle for", list, true, rp->item,
+           snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
+           PrependRScalar(&list, id, CF_SCALAR);
+           AddTopicAssociation(tp, &(tp->associations), "is a promise with handle", "is a handle for", list, true, rp->item,
                                 pp->promiser);
-            DeleteRlist(list);
-            list = NULL;
-            PrependRScalar(&list, "promise handle", CF_SCALAR);
-            PrependRScalar(&topics, id, CF_SCALAR);
-            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
-            DeleteRlist(list);
-            DeleteRlist(topics);
+           DeleteRlist(list);
+           list = NULL;
+           PrependRScalar(&list, "promise handle", CF_SCALAR);
+           PrependRScalar(&topics, id, CF_SCALAR);
+           AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
+           DeleteRlist(list);
+           DeleteRlist(topics);
+
         }
    }
 

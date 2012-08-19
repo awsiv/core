@@ -28,11 +28,24 @@ struct Hit_
     Hit *next;
 };
 
+enum { cftcp4, cftcp6, cfudp4, cfudp6, CFDIM} session;
+
+struct servhist
+{
+   char name[CF_SMALLBUF];
+   char port[CF_BUFSIZE];
+   int freq[CFDIM];
+   
+};
+
+#define CF_SERVICES_LIMIT 64
+
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
 static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
 static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
 static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize);
+static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist *services, const int type);
 
 /*****************************************************************************/
 /* The main panels                                                           */
@@ -164,14 +177,49 @@ void Nova_ShowTopic(char *qualified_topic)
     }
 
     printf("***************************************************\n");
-    
+
     char buffer[1000000];
     Nova_GetApplicationServices(buffer, 1000000);
     printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
+
+    printf("***************************************************\n");
     
+    printf("INPUT: handles::goal_customers\n");
+    int tid = Nova_GetTopicIdForTopic("handles::goal_customers");
+    Nova2PHP_get_goal_progress(tid, "goal_customers");
+
+    printf("INPUT: handles::goal_availability\n");
+    tid = Nova_GetTopicIdForTopic("handles::goal_availability");
+    Nova2PHP_get_goal_progress(tid, "goal_availability");
+
+    printf("INPUT: handles::goal_productive\n");
+    tid = Nova_GetTopicIdForTopic("handles::goal_productive");
+    Nova2PHP_get_goal_progress(tid, "goal_productive");
+
+    printf("***************************************************\n");
+        
+//JsonElement *Nova2PHP_get_active_services()
+//JsonElement *Nova2PHP_get_histogram_for_service(char *service)
+
+    printf("Service histogram (in units of services x hosts):\n");
+
+    json = Nova_GetServiceHistogram();
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\nService histo: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+
 }
 
 /*****************************************************************************/
@@ -224,13 +272,18 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
             if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
             {
                 topic_id = (int) bson_iterator_int(&it1);
+                break;
             }
         }
+
+        if (topic_id > 0)
+           {
+           break;
+           }
     }
 
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
-
     return topic_id;
 }
 
@@ -699,7 +752,9 @@ JsonElement *Nova_ScanOccurrences(int this_id)
             }
         }
 
-        snprintf(text,CF_BUFSIZE,"%s -- %s",represents,topic);
+        char topic_short[CF_BUFSIZE],tc[CF_BUFSIZE];
+        Nova_DeClassifyTopic(topic, topic_short, tc);
+        snprintf(text,CF_BUFSIZE,"%s -- about %s",represents,topic_short);
         NewHit(&hits,context, locator, locator_type, text);
     }
 
@@ -782,6 +837,13 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
 /*************************************************************************/
 
+Item *Nova_GetStakeholders(int topic_id)
+{
+ return Nova_NearestNeighbours(topic_id, NOVA_STAKEHOLDER_INV);
+}
+
+/*************************************************************************/
+
 Item *Nova_GetBusinessGoals(char *handle)
 {
     char querytopic[CF_BUFSIZE];
@@ -823,7 +885,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|", (char *) rp->item);
+        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|goals::.*|", (char *) rp->item);
         strcat(searchstring, work);
     }
 
@@ -833,7 +895,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
     }
 
     if (!CFDB_Open(&conn))
@@ -899,8 +961,8 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
            Nova_DeClassifyTopic(topic_name, topic, context);
            JsonObjectAppendString(json_obj, "handle", topic);
            JsonObjectAppendInteger(json_obj, "pid", referred);
-           
-           Item *nn = Nova_NearestNeighbours(referred, "need(s)");
+
+           Item *nn = Nova_NearestNeighbours(referred, KM_INVOLVES_CERT_F);
            
            if (nn)
               {
@@ -940,6 +1002,129 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     return true;
 }
 
+
+/*************************************************************************/
+
+JsonElement *Nova_GetServiceHistogram()
+{
+    EnterpriseDB dbconn;
+    int srv = 0;
+    struct servhist serv_array[CF_SERVICES_LIMIT] = {{{0}}};
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
+    GetPortFrequencies(&dbconn, "listening_tcp4_ports", serv_array, (int)cftcp4);
+    GetPortFrequencies(&dbconn, "listening_tcp6_ports", serv_array, (int)cftcp6);
+    GetPortFrequencies(&dbconn, "listening_udp4_ports", serv_array, (int)cfudp4);
+    GetPortFrequencies(&dbconn, "listening_udp6_ports", serv_array, (int)cfudp6);    
+    
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
+    {
+    printf("Port number: %s also called %s\n", serv_array[srv].port, serv_array[srv].name);
+    
+     printf("   has %d hosts running on tcp4\n",serv_array[srv].freq[cftcp4]);
+     printf("   has %d hosts running on tcp6\n",serv_array[srv].freq[cftcp6]);
+     printf("   has %d hosts running on udp4\n",serv_array[srv].freq[cfudp4]);
+     printf("   has %d hosts running on udp6\n",serv_array[srv].freq[cfudp6]);
+    }
+
+
+    JsonElement *json_array_out = JsonArrayCreate(100);
+    char comment[CF_BUFSIZE];
+    
+    for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
+       {
+       JsonElement *json_obj = JsonObjectCreate(6);
+       JsonObjectAppendString(json_obj, "port", serv_array[srv].port);
+       JsonObjectAppendString(json_obj, "name", serv_array[srv].name);
+       JsonObjectAppendInteger(json_obj, "tcp4", serv_array[srv].freq[cftcp4]);
+       JsonObjectAppendInteger(json_obj, "tcp6", serv_array[srv].freq[cftcp6]);
+       JsonObjectAppendInteger(json_obj, "udp4", serv_array[srv].freq[cfudp4]);
+       JsonObjectAppendInteger(json_obj, "udp6", serv_array[srv].freq[cfudp6]);
+       JsonArrayAppendObject(json_array_out, json_obj); 
+       }
+
+    return json_array_out;
+}
+
+/*************************************************************************/
+
+static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist serv_array[CF_SERVICES_LIMIT], const int type)
+{
+    HubVariable *hv;
+    HubQuery *hq;
+    Rlist *rp, *rp2;
+    char *portname;
+    int i;
+
+    hq = CFDB_QueryVariables(dbconn, NULL, NULL, variable, NULL, NULL, true, 0, time(NULL), NULL);
+
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+    hv = (HubVariable *) rp->item;
+
+    if (strlen(hv->dtype) > 1)      // list
+       {
+       for (rp2 = hv->rval.item; rp2 != NULL; rp2 = rp2->next)
+          {
+          int found = false;
+
+          if (atoi(rp2->item) == 0)
+             {
+             continue;
+             }
+
+          portname = "misc";
+
+          for (int j = 0; j < ATTR; j++)
+             {
+             if (strcmp(rp2->item, ECGSOCKS[j].portnr) == 0)
+                {
+                portname = ECGSOCKS[j].name;
+                }
+             }
+
+          
+          for (i = 0; (i < CF_SERVICES_LIMIT && serv_array[i].port > 0); i++)
+             {
+             if (strlen(serv_array[i].port) == 0)
+                {
+                break;
+                }
+             
+             if (strcmp(serv_array[i].name, portname) == 0)
+                {
+                serv_array[i].freq[type]++;
+                if (strcmp(serv_array[i].port, rp2->item) != 0)
+                   {
+                   Join(serv_array[i].port, ",", CF_BUFSIZE);
+                   Join(serv_array[i].port, rp2->item, CF_BUFSIZE);
+                   }
+                found = true;
+                break;
+                }
+             }
+          
+          if (!found)
+             {
+             serv_array[i].freq[type]++;
+             strncpy(serv_array[i].port, rp2->item, CF_BUFSIZE);
+             strncpy(serv_array[i].name,portname,CF_SMALLBUF-1);             
+             }
+          }
+       }
+    }
+
+    DeleteHubQuery(hq, DeleteHubVariable); 
+}
 
 /*************************************************************************/
 
@@ -1055,7 +1240,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
              JsonArrayAppendObject(json_array, json_service);
           }
 
-          JsonObjectAppendArray(json_obj, "providedby", json_array);
+          JsonObjectAppendArray(json_obj, "provided_by", json_array);
           }
        
        
@@ -1070,6 +1255,14 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     WriterClose(writer);
 
     return true;
+}
+
+/*************************************************************************/
+
+Item *Nova_GetHandlesForGoal(int topic_id)
+
+{
+   return Nova_NearestNeighbours(topic_id,NOVA_GOAL_INV);
 }
 
 /*************************************************************************/
