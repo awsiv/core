@@ -426,10 +426,10 @@ Nova_GetReportedScalar(hostkey,"sys","constellation_version",version,CF_SMALLBUF
 Nova_GetReportedList(hostkey,"sys","ip_addresses",&ip_addresses);
 Nova_GetReportedList(hostkey,"sys","interfaces",&interfaces);
 Nova_GetReportedList(hostkey,"sys","hardware_addresses",&mac_addresses);
-Nova_GetReportedList(hostkey,"sys","listening_udp4_ports",&udp4);
-Nova_GetReportedList(hostkey,"sys","listening_tcp4_ports",&tcp4);
-Nova_GetReportedList(hostkey,"sys","listening_udp6_ports",&udp6);
-Nova_GetReportedList(hostkey,"sys","listening_tcp6_ports",&tcp6);
+Nova_GetReportedList(hostkey,"mon","listening_udp4_ports",&udp4);
+Nova_GetReportedList(hostkey,"mon","listening_tcp4_ports",&tcp4);
+Nova_GetReportedList(hostkey,"mon","listening_udp6_ports",&udp6);
+Nova_GetReportedList(hostkey,"mon","listening_tcp6_ports",&tcp6);
 
 // Report who am I?
 
@@ -597,6 +597,11 @@ else
       }
    }
 
+for (rp = tcp4; rp != NULL; rp=rp->next)
+   {
+   printf("Open tcp4 port: %s\n",rp->item);
+   }
+
 DeleteItemList(low);
 DeleteItemList(high);
 DeleteItemList(ldt);
@@ -678,7 +683,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       PrependItem(low,hc->class,NULL);
       continue;
       }
-   
    }
  
 DeleteHubQuery(hq,DeleteHubClass);
@@ -855,7 +859,7 @@ Nova_ShowStoryLine(allstories,type);
 
 if (list == NULL || ListLen(list) < 2)
    {
-   printf("   Didn't find anything interesting here, I'm afraid\n");
+   printf("   Didn't find anything interesting about this.\n");
    }
   
 DeleteStoryLine(root);
