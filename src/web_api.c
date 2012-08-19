@@ -156,66 +156,6 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 ComplianceSummaryGraph(hubKeyHash,policy,buffer,bufsize);
 }
 
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_service_activity_for(char *hostkey)
-{
-/*    JsonElement *jsonRetval = JsonObjectCreate(6);
-    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
-    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
-    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
-    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
-    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
-    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
-
-    return jsonRetval;
-*/
-}
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_active_services()
-{
-// Scan for the ports in *._in (consumption) and *._out (provision)
-
-}
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_histogram_for_service(char *service)
-{
-}
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
-{
-
-/* Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
- int hosts = 0;
- 
- for (ip = handles; ip != NULL; ip = ip->next)
-    {
-    char class_expression[CF_BUFSIZE];
-    GetClassesExpressionForPromise(handle, class_expression);
-    hosts = GetNumberOfHostsInClass(class_expression);
-
-    printf("Hosts supporting the goal are in class: %s, consisting of %d hosts", class_expression, hosts);
-    }
-
-
- // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
- people = Nova_GetStakeHolders(goal_id);
-
- // past week graph?
- compliance = Nova_GetTotalPromiseComplianceByHandle(handle);
- // how many machines could not be checked
-
- // print details of hosts, promises, people, compliance
-
- int goal_score = Any(hosts)*Any(promises)*compliance + Any(people);
-*/  
-}
 
 /*****************************************************************************/
 
@@ -3121,34 +3061,6 @@ int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize
 
 /*****************************************************************************/
 
-int Nova2PHP_list_all_goals(char *buffer, int bufsize)
-{
-    if (Nova_GetUniqueBusinessGoals(buffer, bufsize))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*****************************************************************************/
-
-int Nova2PHP_list_services(char *buffer, int bufsize)
-{
-    if (Nova_GetApplicationServices(buffer, bufsize))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize)
 {
     EnterpriseDB dbconn;
@@ -4906,6 +4818,60 @@ bool IsEnvMissionPortalTesting()
 /* Service page                                                              */
 /*****************************************************************************/
 
+JsonElement *Nova2PHP_get_service_activity_for(char *hostkey)
+{
+/*    JsonElement *jsonRetval = JsonObjectCreate(6);
+    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
+    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
+    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
+    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
+    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
+    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
+
+    return jsonRetval;
+*/
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_service_histogram()
+{
+return Nova_GetServiceHistogram();
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
+{
+
+/* Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
+ int hosts = 0;
+ 
+ for (ip = handles; ip != NULL; ip = ip->next)
+    {
+    char class_expression[CF_BUFSIZE];
+    GetClassesExpressionForPromise(handle, class_expression);
+    hosts = GetNumberOfHostsInClass(class_expression);
+
+    printf("Hosts supporting the goal are in class: %s, consisting of %d hosts", class_expression, hosts);
+    }
+
+
+ // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
+ people = Nova_GetStakeHolders(goal_id);
+
+ // past week graph?
+ compliance = Nova_GetTotalPromiseComplianceByHandle(handle);
+ // how many machines could not be checked
+
+ // print details of hosts, promises, people, compliance
+
+ int goal_score = Any(hosts)*Any(promises)*compliance + Any(people);
+*/  
+}
+
+/*****************************************************************************/
+
 JsonElement *Nova2PHP_get_open_port_histograms(void)
 {
     EnterpriseDB dbconn;
@@ -5089,3 +5055,32 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
 
     return json;
 }
+
+/*****************************************************************************/
+
+int Nova2PHP_list_all_goals(char *buffer, int bufsize)
+{
+    if (Nova_GetUniqueBusinessGoals(buffer, bufsize))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_list_services(char *buffer, int bufsize)
+{
+    if (Nova_GetApplicationServices(buffer, bufsize))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
