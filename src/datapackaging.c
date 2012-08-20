@@ -5,6 +5,7 @@
 
 */
 
+#include "cf3.defs.h"
 #include "lastseen.h"
 #include "granules.h"
 #include "files_names.h"
