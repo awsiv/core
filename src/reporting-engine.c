@@ -17,8 +17,8 @@
 
 /******************************************************************/
 
-static bool Sqlite3_DBOpen(sqlite3 **db);
-static void Sqlite3_DBClose(sqlite3 *db);
+bool Sqlite3_DBOpen(sqlite3 **db);
+void Sqlite3_DBClose(sqlite3 *db);
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
@@ -41,7 +41,7 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName);
 
 bool ValidateSQL (char *sql);
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
-static bool GenerateAllTables(sqlite3 *db);
+bool GenerateAllTables(sqlite3 *db);
 static Rlist *GetTableNamesInQuery(const char *select_op);
 
 void Sqlite3_FreeString(char *str);
@@ -85,7 +85,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
 };
 
 /******************************************************************/
-static bool Sqlite3_DBOpen(sqlite3 **db)
+bool Sqlite3_DBOpen(sqlite3 **db)
 {
     int rc = sqlite3_open(":memory:", db);
 
@@ -100,7 +100,7 @@ static bool Sqlite3_DBOpen(sqlite3 **db)
 
 /******************************************************************/
 
-static void Sqlite3_DBClose(sqlite3 *db)
+void Sqlite3_DBClose(sqlite3 *db)
 {
     sqlite3_close(db);
 }
@@ -676,7 +676,7 @@ static bool CreateSQLTable(sqlite3 *db, char *create_sql)
 
 /******************************************************************/
 
-static bool GenerateAllTables(sqlite3 *db)
+bool GenerateAllTables(sqlite3 *db)
 {
     for (int i = 0; SQL_CREATE_TABLE_STATEMENTS[i] != NULL; i++)
     {
