@@ -883,9 +883,11 @@ void Nova_ImportReports(const char *input_file);
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
 
-/* server.c */
+/* datapackaging.c */
 
 void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type);
+
+/* server.c */
 
 pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);

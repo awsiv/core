@@ -10,33 +10,6 @@
 #include "cf.nova.h"
 #include "item_lib.h"
 
-void Nova_PackPerformance(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackClasses(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackSetuid(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackFileChanges(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackFileChangesOld(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackDiffs(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_FormatMonitoringReply(Item **datap, Item **reply, enum cfd_menu type);
-void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_PackCompliance(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackSoftware(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackAvailPatches(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackPatchStatus(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_Pack_promise_output_common(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackValueReport(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_PackLastSeen(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackTotalCompliance(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackRepairLog(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackNotKeptLog(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackMeter(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type);
-void Nova_PackBundles(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackExecutionStatus(Item **reply, char *header);
-
 #ifdef HAVE_LIBMONGOC
 void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data);
 void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data);
