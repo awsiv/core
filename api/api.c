@@ -388,8 +388,8 @@ PHP_FUNCTION(cfapi_user_post)
 {
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
-    const char *password = NULL; int password_len = 0;
-    const char *email = NULL; int email_len = 0;
+    char *password = NULL; int password_len = 0;
+    char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssa",
@@ -406,7 +406,10 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
     Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
-    cfapi_errid err = CFDB_UpdateUser(username, username_arg, password, email, roles);
+    cfapi_errid err = CFDB_UpdateUser(username, username_arg,
+                                      password_len > 0 ? password : NULL,
+                                      email_len > 0 ? email : NULL,
+                                      roles);
     DeleteRlist(roles);
 
     switch (err)

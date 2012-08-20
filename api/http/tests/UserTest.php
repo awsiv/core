@@ -36,6 +36,7 @@ class UserTest extends APIBaseTest
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
+            $this->assertEquals(false, $users[0]['external']);
 
             //test newly created user can log in or not
             $this->pest->setupAuth("snookie", "pass");
@@ -151,6 +152,7 @@ class UserTest extends APIBaseTest
             $users = $this->getResults('/user/snookie');
 
             $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals(false, $users[0]['external']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
         }
         catch (Exception $e)
@@ -305,6 +307,73 @@ class UserTest extends APIBaseTest
             return;
         }
         catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testUpdateEmailForLDAPUserAsUser()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("snookie", "pass");
+            $users = $this->getResults('/user/snookie');
+            $this->assertValidJson($response);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals(null, $users[0]['email']);
+            $this->assertEquals(true, $users[0]['external']);
+
+            $this->pest->post('/user/snookie', '{
+                    "email": "snookie2@cfengine.com"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            // check only email was updated and nothing other
+            $users = $this->getResults('/user/snookie');
+            $this->assertValidJson($response);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
+            $this->assertEquals(true, $users[0]['external']);
+
+            //test if only email was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $response = $this->getResults('');
+            $this->assertValidJson($response);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testUpdatePasswordFailsForLDAPUserAsUser()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $this->pest->setupAuth("snookie", "pass");
+            $users = $this->getResults('/user/snookie');
+            $this->assertValidJson($response);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals(null, $users[0]['email']);
+            $this->assertEquals(true, $users[0]['external']);
+
+            $this->pest->post('/user/snookie', '{
+                    "password": "wtf"
+                }');
+            $this->fail('Got return code: ' . $this->pest->lastStatus());
+        }
+        catch (Pest_Forbidden $e)
+        {
+            // pass
+            return;
+        }
+        catch (Exception $e)
         {
             $this->fail($e);
         }

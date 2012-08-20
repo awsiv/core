@@ -9,6 +9,8 @@ JsonElement *HubUserToJson(const HubUser *user)
     JsonElement *obj = JsonObjectCreate(5);
     JsonObjectAppendString(obj, "username", user->username);
 
+    JsonObjectAppendBool(obj, "external", user->external);
+
     if (user->email)
     {
         JsonObjectAppendString(obj, "email", user->email);
@@ -23,6 +25,7 @@ JsonElement *HubUserToJson(const HubUser *user)
         }
         JsonObjectAppendArray(obj, "roles", roles);
     }
+
 
     return obj;
 }

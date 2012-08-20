@@ -807,13 +807,27 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
     {
         result = _UpdateUser(conn, false, username, password, email, roles);
     }
-    else if (_IsLDAPEnabled(conn) && _GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
+    else if (_IsLDAPEnabled(conn))
     {
-        result = _UpdateUser(conn, true, username, password, email, roles);
-    }
-    else if (_IsLDAPEnabled(conn) && _UsernameExistsExternal(conn, username) == ERRID_SUCCESS)
-    {
-        result = _CreateUser(conn, true, username, password, email, roles);
+        if (password)
+        {
+            result = ERRID_ACCESS_DENIED_EXTERNAL;
+        }
+        else
+        {
+            if (_GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
+            {
+                result = _UpdateUser(conn, true, username, password, email, roles);
+            }
+            else if (_UsernameExistsExternal(conn, username) == ERRID_SUCCESS)
+            {
+                result = _CreateUser(conn, true, username, password, email, roles);
+            }
+            else
+            {
+                result = ERRID_ITEM_NONEXISTING;
+            }
+        }
     }
     else
     {
