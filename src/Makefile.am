@@ -24,7 +24,7 @@ libcfnova_la_SOURCES = \
         license.c \
         monitoring.c \
         ontology.c \
-        datapackaging.c datapack.h \
+        datapackaging.c \
         promises.c \
         processes.c \
         nova-reporting.c nova-reporting.h \
@@ -61,7 +61,7 @@ libcfnova_la_SOURCES += \
         client_code.c \
         cmd_api.c cf.nova.cmd_api.h \
         copernicus.c \
-        dataunpack.c \
+        dataunpack.c datapack.h \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \
         db_query.c db_query.h \
