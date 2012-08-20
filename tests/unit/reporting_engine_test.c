@@ -14,6 +14,7 @@ static void test_get_table_names(void **state)
                                 "SELECT * FROM PromiseStatusLast s, PromiseDefinitions d, Contexts c",
                                 "SELECT Name FROM FileChanges f, Contexts s",
                                 "SELECT f.FileName, COUNT(*) FROM FileChanges f, Contexts s WHERE f.HostKey=s.HostKey AND f.ChangeTimeStamp>0 AND s.Name='linux' GROUP BY f.FileName ORDER BY f.FileName",
+                                "SELECT * FROM Hosts, VARIABLES",
                                 NULL
                              };
 
@@ -27,6 +28,7 @@ static void test_get_table_names(void **state)
                             "{'PromiseDefinitions','PromiseStatusLast','Contexts'}",
                             "{'FileChanges','Contexts'}",
                             "{'FileChanges','Contexts'}",
+                            "{'Variables','Hosts'}",
                             NULL
                          };
 

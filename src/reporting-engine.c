@@ -624,13 +624,22 @@ static Rlist *GetTableNamesInQuery(const char *select_op)
 {
     Rlist *tables = NULL;
 
+    char *select_low = SafeStringDuplicate(select_op);
+    ToLowerStrInplace(select_low);
+
     for (int i = 0; TABLES[i] != NULL; i++)
     {
-        if (StringMatch(TABLES[i], select_op))
+        char table_name[CF_BUFSIZE] = { 0 };
+        strcpy(table_name, TABLES[i]);
+        ToLowerStrInplace(table_name);
+
+        if (StringMatch(table_name, select_low))
         {
             IdempPrependRScalar(&tables, TABLES[i], CF_SCALAR);
         }
     }
+
+    free(select_low);
 
     return tables;
 }
