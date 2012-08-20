@@ -383,13 +383,13 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
                      SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
+            free(rval_scalar_escaped);
+
             if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
             {
                 Sqlite3_FreeString(err);
                 return;
             }
-
-            free(rval_scalar_escaped);
         }
         else
         {
@@ -403,13 +403,13 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                          "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
                          SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
+                free(rval_scalar_escaped);
+
                 if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
                 {
                     Sqlite3_FreeString(err);
                     return;
                 }
-
-                free(rval_scalar_escaped);
             }
         }
     }
