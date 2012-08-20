@@ -157,8 +157,6 @@ int main()
         unit_test(test_get_table_names),
         unit_test(test_get_column_count),
         unit_test(test_validate_column_names)
-
-        unit_test(test_get_table_names)
 #endif
     };
 
