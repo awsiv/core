@@ -878,11 +878,6 @@ void Nova_SetPersistentScalar(char *lval, char *rval);
 
 /* registry.c */
 
-int Nova_ValidateRegistryPromiser(char *s, Attributes a, Promise *pp);
-
-int CheckRegistrySanity(Attributes a, Promise *pp);
-
-
 void Nova_TrackExecution();
 
 /* reporting.c */

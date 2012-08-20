@@ -24,7 +24,6 @@ libcfnova_la_SOURCES = \
         cfnova.c \
         ldap_lib.c ldap_lib.h \
         license.c \
-        registry.c \
         monitoring.c \
         ontology.c \
         server.c \
@@ -38,6 +37,7 @@ libcfnova_la_SOURCES = \
 if NT
 libcfnova_la_SOURCES += \
         acl_nt.c \
+        registry.c \
         win_api.c \
         win_disphelper.c \
         win_file.c \
