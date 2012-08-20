@@ -56,6 +56,7 @@ shprofile_SCRIPTS = $(abs_srcdir)/misc/profile.d/cfengine.sh
 install-data-local:
 if MONGO
 	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
+	rm -rf GUI2
 	mkdir -p GUI2
 if NEW_MP
 	cp -R ../mission-portal/* GUI2/
