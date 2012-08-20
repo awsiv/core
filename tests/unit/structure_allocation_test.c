@@ -52,5 +52,6 @@ int main()
 #endif
     };
 
+    PRINT_TEST_BANNER();
     return run_tests(tests);
 }

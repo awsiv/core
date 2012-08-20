@@ -1,5 +1,6 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
+#include "test.h"
 
 #include <setjmp.h>
 #include <cmockery.h>
@@ -69,6 +70,7 @@ int main()
         unit_test(test_wrong_hashing),
     };
 
+    PRINT_TEST_BANNER();
     int ret = run_tests(tests);
 
     teardown();

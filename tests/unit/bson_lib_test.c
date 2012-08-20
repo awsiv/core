@@ -7,7 +7,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
-static void test_conversion_beetwen_json_and_bson_simple(void **state)
+static void test_conversion_between_json_and_bson_simple(void **state)
 {
     JsonElement *json_in = JsonObjectCreate(1);
     JsonObjectAppendString(json_in, "string", "my_string");
@@ -45,7 +45,7 @@ static void test_conversion_beetwen_json_and_bson_simple(void **state)
     bson_destroy(&buffer);
 }
 
-static void test_conversion_beetwen_json_and_bson_object(void **state)
+static void test_conversion_between_json_and_bson_object(void **state)
 {
     JsonElement *json_subobj2 = JsonObjectCreate(3);
     JsonObjectAppendString(json_subobj2, "string2", "my_string2");
@@ -92,7 +92,7 @@ static void test_conversion_beetwen_json_and_bson_object(void **state)
     bson_destroy(&buffer);
 }
 
-static void test_conversion_beetwen_json_and_bson_array_complex(void **state)
+static void test_conversion_between_json_and_bson_array_complex(void **state)
 {
     JsonElement *json_in = JsonObjectCreate(1);
     JsonObjectAppendString(json_in, "string", "my_string");
@@ -142,7 +142,7 @@ static void test_conversion_beetwen_json_and_bson_array_complex(void **state)
     bson_destroy(&buffer);
 }
 
-static void test_conversion_beetwen_json_and_bson_array_simple(void **state)
+static void test_conversion_between_json_and_bson_array_simple(void **state)
 {
     JsonElement *json_in = JsonObjectCreate(1);
     JsonObjectAppendString(json_in, "string", "my_string");
@@ -189,13 +189,14 @@ int main()
     const UnitTest tests[] =
     {
 #ifdef HAVE_LIBMONGOC
-        unit_test(test_conversion_beetwen_json_and_bson_simple),
-        unit_test(test_conversion_beetwen_json_and_bson_object),
-        unit_test(test_conversion_beetwen_json_and_bson_array_complex),
-        unit_test(test_conversion_beetwen_json_and_bson_array_simple),
+        unit_test(test_conversion_between_json_and_bson_simple),
+        unit_test(test_conversion_between_json_and_bson_object),
+        unit_test(test_conversion_between_json_and_bson_array_complex),
+        unit_test(test_conversion_between_json_and_bson_array_simple),
 #endif
     };
 
+    PRINT_TEST_BANNER();
     return run_tests(tests);
 }
 
