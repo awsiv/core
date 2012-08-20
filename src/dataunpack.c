@@ -44,7 +44,7 @@ static char *CF_CODEBOOK[] =
     CFR_EXECUTION_STATUS,
 };
 
-static const size_t CF_CODEBOOK_SIZE = sizeof(CF_CODEBOOK)/sizeof(CF_CODEBOOK[0]);
+#define CF_CODEBOOK_SIZE (sizeof(CF_CODEBOOK)/sizeof(CF_CODEBOOK[0]))
 
 static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 {
