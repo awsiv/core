@@ -28,7 +28,6 @@ libcfnova_la_SOURCES = \
         datapackaging.c datapack.h \
         promises.c \
         processes.c \
-        pscalar.c \
         nova-reporting.c nova-reporting.h \
         conversion.c
 

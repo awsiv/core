@@ -129,6 +129,44 @@ const EVP_CIPHER *CfengineCipher(char type)
 
 /*****************************************************************************/
 
+static int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout)
+{
+    CF_DB *dbp;
+    PersistentScalar var;
+    time_t now = time(NULL);
+    *rval = '\0';
+
+    if (!OpenDB(&dbp, dbid_scalars))
+    {
+        CfOut(cf_verbose, "", " -> Unable to open db while looking for persistent scalar");
+        return false;
+    }
+
+    if (ReadDB(dbp, lval, &var, sizeof(PersistentScalar)))
+    {
+        if (now > var.time + timeout)
+        {
+            DeleteDB(dbp, lval);
+            CfOut(cf_verbose, "", " -> Persistent scalar timed out (%jd too late), so looking for default",
+                  (intmax_t) now - var.time);
+            CloseDB(dbp);
+            return false;
+        }
+        else
+        {
+            CloseDB(dbp);
+            strncpy(rval, var.rval, size - 1);
+            return true;
+        }
+    }
+    else
+    {
+        CloseDB(dbp);
+        CfOut(cf_verbose, "", " -> Persistent scalar was not found, so looking for default");
+        return false;
+    }
+}
+
 int ReturnLiteralData(char *handle, char *recv)
 {
     Rval retval;

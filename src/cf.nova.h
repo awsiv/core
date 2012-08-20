@@ -871,11 +871,6 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
-/* pscalar.c */
-
-int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout);
-void Nova_SetPersistentScalar(char *lval, char *rval);
-
 /* registry.c */
 
 void Nova_TrackExecution();
