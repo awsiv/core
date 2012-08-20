@@ -17,15 +17,16 @@ static void test_get_table_names(void **state)
                                 NULL
                              };
 
+    // Table names require to be in reverse order as in TABLES global list
     char *table_list[] = {
                             "{'Hosts'}",
                             "{'Variables','Hosts'}",
                             "{'Software','Variables','Hosts'}",
                             "{}",
                             "{'Variables','Hosts'}",
-                            "{'Contexts','PromiseDefinitions','PromiseStatusLast'}",
-                            "{'Contexts','FileChanges'}",
-                            "{'Contexts','FileChanges'}",
+                            "{'PromiseDefinitions','PromiseStatusLast','Contexts'}",
+                            "{'FileChanges','Contexts'}",
+                            "{'FileChanges','Contexts'}",
                             NULL
                          };
 
@@ -36,7 +37,7 @@ static void test_get_table_names(void **state)
 
         char buff[CF_MAXVARSIZE] = {0};
         PrintRlist(buff, CF_MAXVARSIZE, tables);
-printf("%s\n", buff);
+
         assert_string_equal(buff, table_list[i]);
 
         DeleteRlist(tables);
