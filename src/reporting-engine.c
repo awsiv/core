@@ -44,7 +44,7 @@ static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 static bool GenerateAllTables(sqlite3 *db);
 static void GetAllTableNames(Rlist **tables);
 static int GetColumnCountInResult(sqlite3_stmt *statement);
-static Rlist *GetTableNamesInQuery(const char *select_op);
+static Rlist *GetTableNamesInQuery(sqlite3 *db, const char *select_op);
 
 void Sqlite3_FreeString(char *str);
 
@@ -145,7 +145,12 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
         return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    Rlist *tables = GetTableNamesInQuery(select_op);
+    Rlist *tables = GetTableNamesInQuery(db, select_op);
+    if(!tables)
+    {
+        Sqlite3_DBClose(db);
+        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+    }
 
     LoadSqlite3Tables(db, tables, username, context_include, context_exclude);
 
@@ -624,21 +629,9 @@ static int GetColumnCountInResult(sqlite3_stmt *statement)
 
 /******************************************************************/
 
-static Rlist *GetTableNamesInQuery(const char *select_op)
-{
-    sqlite3 *db;
-
-    if (!Sqlite3_DBOpen(&db))
-    {
-        return false;
-    }
-
-    if(!GenerateAllTables(db))
-    {
-        return false;
-    }
-
-    sqlite3_stmt *statement;
+static Rlist *GetTableNamesInQuery(sqlite3 *db, const char *select_op)
+{    
+   sqlite3_stmt *statement;
 
     sqlite3_prepare_v2 (db, select_op, strlen(select_op), &statement, 0);
 
@@ -672,7 +665,6 @@ static Rlist *GetTableNamesInQuery(const char *select_op)
 
         GetAllTableNames(&tables);
     }
-    Sqlite3_DBClose(db);
 
     return tables;
 }
