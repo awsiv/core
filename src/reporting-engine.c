@@ -441,7 +441,7 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
-                 hC->hh->keyhash, hC->path, hC->t);
+                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
