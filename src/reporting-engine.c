@@ -42,9 +42,7 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName);
 bool ValidateSQL (char *sql);
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 static bool GenerateAllTables(sqlite3 *db);
-static void GetAllTableNames(Rlist **tables);
-static int GetColumnCountInResult(sqlite3_stmt *statement);
-static Rlist *GetTableNamesInQuery(sqlite3 *db, const char *select_op);
+static Rlist *GetTableNamesInQuery(const char *select_op);
 
 void Sqlite3_FreeString(char *str);
 
@@ -145,7 +143,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
         return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    Rlist *tables = GetTableNamesInQuery(db, select_op);
+    Rlist *tables = GetTableNamesInQuery(select_op);
     if(!tables)
     {
         Sqlite3_DBClose(db);
@@ -622,61 +620,19 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *h
 
 /******************************************************************/
 
-static int GetColumnCountInResult(sqlite3_stmt *statement)
+static Rlist *GetTableNamesInQuery(const char *select_op)
 {
-    return sqlite3_column_count(statement);
-}
-
-/******************************************************************/
-
-static Rlist *GetTableNamesInQuery(sqlite3 *db, const char *select_op)
-{    
-   sqlite3_stmt *statement;
-
-    sqlite3_prepare_v2 (db, select_op, strlen(select_op), &statement, 0);
-
-    int col_count = GetColumnCountInResult(statement);
-
-    if (col_count == 0)
-    {
-        return NULL;
-    }
-
     Rlist *tables = NULL;
 
-    for(int i = 0; i < col_count; i++)
+    for (int i = 0; TABLES[i] != NULL; i++)
     {
-        if(!sqlite3_column_table_name(statement, i))
+        if (StringMatch(TABLES[i], select_op))
         {
-            break;
+            IdempPrependRScalar(&tables, TABLES[i], CF_SCALAR);
         }
-
-        IdempPrependRScalar(&tables, (void *)sqlite3_column_table_name(statement, i), CF_SCALAR);
-    }
-
-    if (!tables)
-    {
-        /* This means that the query has an expression or
-            subquery and is not a column value.
-            eg. count(*)
-            sqlite3_column_table_name returns NULL in such cases.
-            Hence, load all tables.
-        */
-
-        GetAllTableNames(&tables);
     }
 
     return tables;
-}
-
-/******************************************************************/
-
-static void GetAllTableNames(Rlist **tables)
-{
-    for (int i = 0; TABLES[i] != NULL; i++)
-    {
-        AppendRScalar(tables, (void*) TABLES[i], CF_SCALAR);
-    }
 }
 
 /******************************************************************/
