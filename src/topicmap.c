@@ -1038,7 +1038,6 @@ JsonElement *Nova_GetServiceHistogram()
 
 
     JsonElement *json_array_out = JsonArrayCreate(100);
-    char comment[CF_BUFSIZE];
     
     for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
        {
