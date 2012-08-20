@@ -18,8 +18,6 @@ noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la
 
 libcfnova_la_LDFLAGS = -no-undefined
 
-# Separate out a library
-
 libcfnova_la_SOURCES = \
         cfnova.c \
         ldap_lib.c ldap_lib.h \
