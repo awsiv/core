@@ -975,8 +975,9 @@ void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE], double *v, int
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(GraphNode *tribe, int i);
 char *Nova_StripString(char *source, char *substring);
-void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 #endif
+
+void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 
 /* weekly.c */
 
