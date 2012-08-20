@@ -648,6 +648,8 @@ void Nova_Initialize(void);
 bool BootstrapAllowed(void);
 #endif
 
+int Nova_ParseHostname(char *name, char *hostname);
+
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
 int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since);

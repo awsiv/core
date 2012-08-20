@@ -14,7 +14,7 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/src
 
-noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la
+noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la
 
 libcfnova_la_LDFLAGS = -no-undefined
 
@@ -24,7 +24,6 @@ libcfnova_la_SOURCES = \
         license.c \
         monitoring.c \
         ontology.c \
-        server.c \
         datapackaging.c datapack.h \
         promises.c \
         processes.c \
@@ -113,6 +112,8 @@ endif
 endif
 
 libcfreport_la_SOURCES = syntax.c
+
+libcfserverd_la_SOURCES = server.c
 
 if MONGO
 noinst_LTLIBRARIES += libcfhub.la
