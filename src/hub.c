@@ -896,6 +896,24 @@ static pid_t Nova_ScanList(Item *list)
 
 /*********************************************************************/
 
+static void Nova_SetPersistentScalar(char *lval, char *rval)
+{
+    CF_DB *dbp;
+    PersistentScalar new;
+
+    strncpy(new.rval, rval, CF_MAXVARSIZE);
+    new.time = time(NULL);
+
+    if (!OpenDB(&dbp, dbid_scalars))
+    {
+        return;
+    }
+
+    CfOut(cf_verbose, "", " -> Setting persistent hub knowledge: %s =>\"%s\"", lval, rval);
+    WriteDB(dbp, lval, &new, sizeof(PersistentScalar));
+    CloseDB(dbp);
+}
+
 static void Nova_CountMonitoredClasses(void)
 {
     char work[CF_BUFSIZE];

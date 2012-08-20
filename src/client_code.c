@@ -17,79 +17,10 @@
 #include "bson_lib.h"
 #include "datapack.h"
 
-static bool ReportBookHasData(Item **reports);
+static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);
 
 /*****************************************************************************/
-
-char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
-{
-    CFR_PERF,
-    CFR_CLASS,
-    CFR_SETUID,
-    CFR_FCHANGE_OLD,
-    CFR_FCHANGE,
-    CFR_FDIFF,
-    CFR_MONITOR_MAG,
-    CFR_MONITOR_WEEK,
-    CFR_MONITOR_YEAR,
-    CFR_MONITOR_HIST,
-    CFR_MONITOR_MG,
-    CFR_MONITOR_WK,
-    CFR_MONITOR_YR,
-    CFR_MONITOR_HG,
-    CFR_PCOMPLIANCE,
-    CFR_TCOMPLIANCE,
-    CFR_SOFTWARE,
-    CFR_AVAILPATCH,
-    CFR_PATCHSTATUS,
-    CFR_PROMISEOUT,
-    CFR_VALUE,
-    CFR_VARD,
-    CFR_VARS,
-    CFR_LASTSEEN,
-    CFR_REPAIRLOG,
-    CFR_NOTKEPTLOG,
-    CFR_METER,
-    CFR_BUNDLES,
-    CFR_SWDATES,
-    CFR_EXECUTION_STATUS,
-    NULL
-};
-
-void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
-{
-    Nova_UnPackPerformance,     // DBOK
-    Nova_UnPackClasses,         // DBOK (nopurge)
-    Nova_UnPackSetuid,          // DBOK (nopurge)
-    Nova_UnPackFileChangesOld,     // DBOK
-    Nova_UnPackFileChanges,     // DBOK
-    Nova_UnPackDiffs,           // DBOK
-    Nova_UnPackMonitorMag,      // DBOK   - DEPRECATED
-    Nova_UnPackMonitorWeek,     // DBOK   - DEPRECATED
-    Nova_UnPackMonitorYear,     // nodata - DEPRECATED
-    Nova_UnPackMonitorHist,     // DEPRECATED
-    Nova_UnPackMonitorMg,
-    Nova_UnPackMonitorWk,
-    Nova_UnPackMonitorYr,
-    Nova_UnPackMonitorHg,       // DBOK
-    Nova_UnPackCompliance,      // DBOK
-    Nova_UnPackTotalCompliance, // DBOK
-    Nova_UnPackSoftware,        // DBOK
-    Nova_UnPackAvailPatches,    // nodata
-    Nova_UnPackPatchStatus,     // nodata
-    Nova_UnPack_promise_output_common,  // nodata
-    Nova_UnPackValueReport,     //  (append) LOG
-    Nova_UnPackVariables2,      // DBOK
-    Nova_UnPackVariables,       // DBOK  - DEPRECATED
-    Nova_UnPackLastSeen,        // DBOK
-    Nova_UnPackRepairLog,       // DBOK (nopurge)
-    Nova_UnPackNotKeptLog,      // DBOK (nopurge)
-    Nova_UnPackMeter,           // DBOK
-    Nova_UnPackBundles,
-    Nova_UnPackSoftwareDates,
-    Nova_UnPackExecutionStatus
-};
 
 /*********************************************************************/
 
@@ -103,11 +34,10 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
     long length = 0;
     int more = true, header = true, current_report = -1;
     time_t now, then, time2 = 0, delta1 = 0, delta2 = 0;
-    Item *reports[CF_CODEBOOK_SIZE] = { 0 };
     char keyHash[EVP_MAX_MD_SIZE * 4];
     double datarate;
 
-    NewReportBook(reports);
+    Item **reports = NewReportBook();
 
     snprintf(cfchangedstr, 255, "%s%s", CF_CHANGEDSTR1, CF_CHANGEDSTR2);
 
@@ -220,6 +150,13 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
     HashPrintSafe(CF_DEFAULT_DIGEST, conn->digest, keyHash);
 
     UnpackReportBook(dbconn, keyHash, reports);
+
+    /* nova agent < 2.2 - black status estimation */
+    if (dbconn)
+    {
+        BlackStatusFlagRefresh(dbconn, keyHash);
+    }
+
     DeleteReportBook(reports);
 
     CFDB_SaveLastHostUpdate(dbconn, keyHash);
@@ -228,59 +165,6 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
     CfOut(cf_verbose, "", "Received %d bytes of report data", total_plaintext_len);
 
     return total_plaintext_len;
-}
-
-/*********************************************************************/
-
-int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report)
-{
-    int report;
-
-    for (report = 0; CF_CODEBOOK[report] != NULL; report++)
-    {
-        if (strcmp(reply, CF_CODEBOOK[report]) == 0)
-        {
-            CfOut(cf_verbose, "", " -> New chapter ... %s", reply);
-            current_report = report;
-            return report;
-        }
-    }
-
-    if (current_report < 0)
-    {
-        CfOut(cf_error, "", " !! Report format is corrupted. Got \"%s\" before codebook", reply);
-        return -1;
-    }
-
-    AppendItem(&(reports[current_report]), reply, NULL);
-    return current_report;
-}
-
-/*********************************************************************/
-
-void NewReportBook(Item **reports)
-{
-    int i;
-
-    for (i = 0; CF_CODEBOOK[i] != NULL; i++)
-    {
-        reports[i] = NULL;
-    }
-}
-
-/*********************************************************************/
-
-static bool ReportBookHasData(Item **reports)
-{
-    for (int i = 0; i < CF_CODEBOOK_SIZE; i++)
-    {
-        if (reports[i] != NULL)
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 /*********************************************************************/
@@ -303,44 +187,6 @@ static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id)
 
         CfDebug("Execution status (pre-estimation): black %s, agent last run time: %ld",
                 (is_blackhost)? "true" : "false", agent_last_run_time);
-    }
-}
-
-/*********************************************************************/
-
-void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports)
-{
-    int i;
-
-    for (i = 0; CF_CODEBOOK[i] != NULL; i++)
-    {
-        if (reports[i] != NULL)
-        {
-            void (*fnptr) () = CF_CODEBOOK_HANDLER[i];
-
-            (*fnptr) (dbconn, id, reports[i]);
-        }
-    }
-
-    /* nova agent < 2.2 - black status estimation */
-    if (dbconn)
-    {
-        BlackStatusFlagRefresh(dbconn, id);
-    }
-}
-
-/*********************************************************************/
-
-void DeleteReportBook(Item **reports)
-{
-    int i;
-
-    for (i = 0; CF_CODEBOOK[i] != NULL; i++)
-    {
-        if (reports[i] != NULL)
-        {
-            DeleteItemList(reports[i]);
-        }
     }
 }
 

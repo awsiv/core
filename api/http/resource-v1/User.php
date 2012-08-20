@@ -11,7 +11,7 @@ class User extends Resource
         $pass = $_SERVER['PHP_AUTH_PW'];
 
         $response = new Response($request);
-        $payload = cfapi_user_get($user, $pass, $username);
+        $payload = cfapi_user_get($user, $username);
         if ($payload)
         {
             $response->code = Response::OK;

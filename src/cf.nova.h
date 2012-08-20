@@ -80,7 +80,6 @@ typedef void EnterpriseDB;
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 31
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 // for pdf reports
@@ -648,14 +647,13 @@ void Nova_Initialize(void);
 bool BootstrapAllowed(void);
 #endif
 
+int Nova_ParseHostname(char *name, char *hostname);
+
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
 int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since);
-void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports);
 
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
-void NewReportBook(Item **reports);
-void DeleteReportBook(Item **reports);
 #endif
 int Nova_PlaceCollectCall(AgentConnection *conn);
 
@@ -871,17 +869,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
-/* pscalar.c */
-
-int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout);
-void Nova_SetPersistentScalar(char *lval, char *rval);
-
 /* registry.c */
-
-int Nova_ValidateRegistryPromiser(char *s, Attributes a, Promise *pp);
-
-int CheckRegistrySanity(Attributes a, Promise *pp);
-
 
 void Nova_TrackExecution();
 
@@ -893,9 +881,11 @@ void Nova_ImportReports(const char *input_file);
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
 
-/* server.c */
+/* datapackaging.c */
 
 void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type);
+
+/* server.c */
 
 pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
@@ -980,8 +970,9 @@ void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE], double *v, int
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(GraphNode *tribe, int i);
 char *Nova_StripString(char *source, char *substring);
-void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 #endif
+
+void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 
 /* weekly.c */
 

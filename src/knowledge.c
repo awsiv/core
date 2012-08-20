@@ -9,6 +9,7 @@
 #include "cf.nova.h"
 #include "files_names.h"
 #include "item_lib.h"
+#include "datapack.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
@@ -508,7 +509,7 @@ void Nova_GenerateTestData(int count)
     int i = 0;
     int currReport = -1;
 
-    Item *reports[CF_CODEBOOK_SIZE] = { 0 }, *packedReports = NULL;
+    Item *packedReports = NULL;
     char buffer[1000000] = { 0 }, buf[CF_BUFSIZE] = { 0 };
     int bufsize = 1000000;
     int countLen = 0;
@@ -538,7 +539,8 @@ void Nova_GenerateTestData(int count)
 
     len = strlen(buffer);
     i = 0;
-    NewReportBook(reports);
+
+    Item **reports = NewReportBook();
     currReport = -1;
 
     while (countLen < len)

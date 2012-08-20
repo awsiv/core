@@ -17,8 +17,6 @@
 #include "files_names.h"
 #include "promises.h"
 
-#ifdef MINGW
-
 /*****************************************************************************/
 
 # define MAX_KEY_LENGTH 255
@@ -42,6 +40,7 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
 int Nova_CopyRegistryValue(char *key, char *value, char *buffer);
 void Nova_DeleteRegistryKey(Attributes a, Promise *pp);
 static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, char *valueStr, bool *outCmp);
+static int CheckRegistrySanity(Attributes a, Promise *pp);
 
 /*****************************************************************************/
 
@@ -536,34 +535,6 @@ DWORD Str2RegDtype(char *datatypeStr)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_ValidateRegistryPromiser(char *key, Attributes a, Promise *pp)
-{
-    static char *valid[] = { "HKEY_CLASSES_ROOT", "HKEY_CURRENT_CONFIG",
-        "HKEY_CURRENT_USER", "HKEY_LOCAL_MACHINE", "HKEY_USERS", NULL
-    };
-    char root_key[CF_MAXVARSIZE];
-    char *sp;
-    int i;
-
-    /* First remove the root key */
-
-    strncpy(root_key, key, CF_MAXVARSIZE - 1);
-    sp = strchr(root_key, '\\');
-    *sp = '\0';
-
-    for (i = 0; valid[i] != NULL; i++)
-    {
-        if (strcmp(root_key, valid[i]) == 0)
-        {
-            return true;
-        }
-    }
-
-    CfOut(cf_error, "", "Non-editable registry prefix \"%s\"", root_key);
-    PromiseRef(cf_error, pp);
-    return false;
-}
-
 /*****************************************************************************/
 
 HKEY Str2HKey(char *root_key)
@@ -990,74 +961,4 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
 
     *outMatch = true;           // match
     return true;
-}
-
-#else /* MINGW */
-
-void VerifyRegistryPromise(Attributes a, Promise *pp)
-{
-}
-
-int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
-{
-    return 0;
-}
-
-#endif /* MINGW */
-
-int CheckRegistrySanity(Attributes a, Promise *pp)
-{
-    bool retval = true;
-
-#ifdef NT
-    Nova_ValidateRegistryPromiser(pp->promiser, a, pp);
-#endif
-    if (a.database.operation && strcmp(a.database.operation, "create") == 0)
-    {
-        if (a.database.rows == NULL)
-        {
-            CfOut(cf_inform, "", "No row values promised for the MS registry database");
-        }
-
-        if (a.database.columns != NULL)
-        {
-            CfOut(cf_error, "", "Columns are only used to delete promised values for the MS registry database");
-            retval = false;
-        }
-    }
-
-    if (a.database.operation
-        && (strcmp(a.database.operation, "delete") == 0 || strcmp(a.database.operation, "drop") == 0))
-    {
-        if (a.database.columns == NULL)
-        {
-            CfOut(cf_inform, "", "No columns were promised deleted in the MS registry database");
-        }
-
-        if (a.database.rows != NULL)
-        {
-            CfOut(cf_error, "", "Rows cannot be deleted in the MS registry database, only entire columns");
-            retval = false;
-        }
-    }
-
-    for (Rlist *rp = a.database.rows; rp != NULL; rp = rp->next)
-    {
-        if (CountChar(ScalarValue(rp), ',') != 2)
-        {
-            CfOut(cf_error, "", "Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"", ScalarValue(rp));
-            retval = false;
-        }
-    }
-
-    for (Rlist *rp = a.database.columns; rp != NULL; rp = rp->next)
-    {
-        if (CountChar(rp->item, ',') > 0)
-        {
-            CfOut(cf_error, "", "MS registry column format should be NAME only in deletion");
-            retval = false;
-        }
-    }
-
-    return retval;
 }

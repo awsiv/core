@@ -1291,3 +1291,37 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     DeleteRlist(impacted);
 }
+
+void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
+{
+    context[0] = '\0';
+    topic[0] = '\0';
+
+    if (classified_topic == NULL)
+    {
+        return;
+    }
+
+    if (*classified_topic == ':')
+    {
+        sscanf(classified_topic, "::%255[^\n]", topic);
+    }
+    else if (strstr(classified_topic, "::"))
+    {
+        sscanf(classified_topic, "%255[^:]::%255[^\n]", context, topic);
+
+        if (strlen(topic) == 0)
+        {
+            sscanf(classified_topic, "::%255[^\n]", topic);
+        }
+    }
+    else
+    {
+        strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
+    }
+
+    if (strlen(context) == 0)
+    {
+        strcpy(context,"any");
+    }
+}

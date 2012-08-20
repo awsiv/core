@@ -14,30 +14,26 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/src
 
-noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la
+noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la
 
 libcfnova_la_LDFLAGS = -no-undefined
-
-# Separate out a library
 
 libcfnova_la_SOURCES = \
         cfnova.c \
         ldap_lib.c ldap_lib.h \
         license.c \
-        registry.c \
         monitoring.c \
         ontology.c \
-        server.c \
-        datapackaging.c datapack.h \
+        datapackaging.c \
         promises.c \
         processes.c \
-        pscalar.c \
         nova-reporting.c nova-reporting.h \
         conversion.c
 
 if NT
 libcfnova_la_SOURCES += \
         acl_nt.c \
+        registry.c \
         win_api.c \
         win_disphelper.c \
         win_file.c \
@@ -65,7 +61,7 @@ libcfnova_la_SOURCES += \
         client_code.c \
         cmd_api.c cf.nova.cmd_api.h \
         copernicus.c \
-        dataunpack.c \
+        dataunpack.c datapack.h \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \
         db_query.c db_query.h \
@@ -116,6 +112,8 @@ endif
 endif
 
 libcfreport_la_SOURCES = syntax.c
+
+libcfserverd_la_SOURCES = server.c
 
 if MONGO
 noinst_LTLIBRARIES += libcfhub.la

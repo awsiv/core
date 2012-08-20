@@ -383,13 +383,13 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
                      SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
+            free(rval_scalar_escaped);
+
             if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
             {
                 Sqlite3_FreeString(err);
                 return;
             }
-
-            free(rval_scalar_escaped);
         }
         else
         {
@@ -403,13 +403,13 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                          "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
                          SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
 
+                free(rval_scalar_escaped);
+
                 if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
                 {
                     Sqlite3_FreeString(err);
                     return;
                 }
-
-                free(rval_scalar_escaped);
             }
         }
     }
@@ -441,7 +441,7 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
-                 hC->hh->keyhash, hC->path, hC->t);
+                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
         {
@@ -624,13 +624,22 @@ static Rlist *GetTableNamesInQuery(const char *select_op)
 {
     Rlist *tables = NULL;
 
+    char *select_low = SafeStringDuplicate(select_op);
+    ToLowerStrInplace(select_low);
+
     for (int i = 0; TABLES[i] != NULL; i++)
     {
-        if (StringMatch(TABLES[i], select_op))
+        char table_name[CF_BUFSIZE] = { 0 };
+        strcpy(table_name, TABLES[i]);
+        ToLowerStrInplace(table_name);
+
+        if (StringMatch(table_name, select_low))
         {
             IdempPrependRScalar(&tables, TABLES[i], CF_SCALAR);
         }
     }
+
+    free(select_low);
 
     return tables;
 }

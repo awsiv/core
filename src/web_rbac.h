@@ -48,7 +48,7 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Rlist *roles);
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email, const Rlist *roles);
 cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username);
-cfapi_errid CFDB_GetUser(const char *getting_username, const char *getting_password, const char *username, HubUser **user_out);
+cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, HubUser **user_out);
 HubQuery *CFDB_ListUsers(const char *listing_username, const char *username_rx);
 
 

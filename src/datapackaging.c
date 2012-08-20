@@ -5,8 +5,7 @@
 
 */
 
-#include "datapack.h"
-
+#include "cf3.defs.h"
 #include "lastseen.h"
 #include "granules.h"
 #include "files_names.h"
@@ -28,7 +27,7 @@ typedef struct
 
 /*****************************************************************************/
 
-void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -165,7 +164,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
 
 /*****************************************************************************/
 
-void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -275,7 +274,7 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
 
 /*****************************************************************************/
 
-void Nova_PackSetuid(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackSetuid(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
@@ -335,7 +334,7 @@ void Nova_PackSetuid(Item **reply, char *header, time_t from, enum cfd_menu type
 // for versions < 2.3
 // Deprecate in favour of Nova_PackFileChanges
 /*****************************************************************************/
-void Nova_PackFileChangesOld(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackFileChangesOld(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
@@ -407,7 +406,7 @@ void Nova_PackFileChangesOld(Item **reply, char *header, time_t from, enum cfd_m
 }
 
 /*****************************************************************************/
-void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
@@ -481,7 +480,7 @@ void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum cfd_menu
 
 /*****************************************************************************/
 
-void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_BUFSIZE], size[CF_MAXVARSIZE];
@@ -598,7 +597,55 @@ void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_menu type)
 
 /*****************************************************************************/
 
-void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_FormatMonitoringReply(Item **datap, Item **reply, enum cfd_menu type)
+{
+    Item *ip;
+    int currId = -1;
+    char buffer[CF_MAXTRANSSIZE];
+
+    // sort by observable id
+    *datap = SortItemListCounters(*datap);
+
+    for (ip = *datap; ip != NULL; ip = ip->next)
+    {
+        int slot = ip->counter;
+
+        if (!NovaHasSlot(slot) && slot != 65)
+        {
+            continue;
+        }
+
+        if (currId != slot)
+        {
+            if (type == cfd_menu_full)  // include more meta-data in full query
+            {
+                bool consolidable = NovaIsSlotConsolidable(slot);
+                int exp_min = NovaGetSlotExpectedMinimum(slot);
+                int exp_max = NovaGetSlotExpectedMaximum(slot);
+                const char *name = NovaGetSlotName(slot);
+                const char *desc = NovaGetSlotDescription(slot);
+                const char *units = NovaGetSlotUnits(slot);
+
+                snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
+                         name, consolidable, exp_min, exp_max, units, desc);
+
+            }
+            else
+            {
+                snprintf(buffer, sizeof(buffer), "M:%s", NovaGetSlotName(slot));
+            }
+
+            AppendItem(reply, buffer, NULL);
+            currId = slot;
+        }
+
+        AppendItem(reply, ip->name, NULL);
+    }
+}
+
+/*****************************************************************************/
+
+static void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int i, slot;
     Averages entry, det;
@@ -681,7 +728,7 @@ void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu t
 
 /*****************************************************************************/
 
-void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int its, i, j, slot;
     double kept = 0, not_kept = 0, repaired = 0;
@@ -785,7 +832,7 @@ void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu t
 
 /*****************************************************************************/
 
-void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int i, j, k;
     CF_DB *dbp;
@@ -861,55 +908,7 @@ void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu t
 
 /*****************************************************************************/
 
-void Nova_FormatMonitoringReply(Item **datap, Item **reply, enum cfd_menu type)
-{
-    Item *ip;
-    int currId = -1;
-    char buffer[CF_MAXTRANSSIZE];
-
-    // sort by observable id
-    *datap = SortItemListCounters(*datap);
-
-    for (ip = *datap; ip != NULL; ip = ip->next)
-    {
-        int slot = ip->counter;
-
-        if (!NovaHasSlot(slot) && slot != 65)
-        {
-            continue;
-        }
-
-        if (currId != slot)
-        {
-            if (type == cfd_menu_full)  // include more meta-data in full query
-            {
-                bool consolidable = NovaIsSlotConsolidable(slot);
-                int exp_min = NovaGetSlotExpectedMinimum(slot);
-                int exp_max = NovaGetSlotExpectedMaximum(slot);
-                const char *name = NovaGetSlotName(slot);
-                const char *desc = NovaGetSlotDescription(slot);
-                const char *units = NovaGetSlotUnits(slot);
-
-                snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
-                         name, consolidable, exp_min, exp_max, units, desc);
-
-            }
-            else
-            {
-                snprintf(buffer, sizeof(buffer), "M:%s", NovaGetSlotName(slot));
-            }
-
-            AppendItem(reply, buffer, NULL);
-            currId = slot;
-        }
-
-        AppendItem(reply, ip->name, NULL);
-    }
-}
-
-/*****************************************************************************/
-
-void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int i, j, k, day, position;
     int ok[CF_OBSERVABLES];
@@ -1012,7 +1011,7 @@ void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum cfd_menu
 
 /*****************************************************************************/
 
-void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     double lsea = SECONDS_PER_WEEK;     /* expire after a week */
     Event entry;
@@ -1107,7 +1106,7 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
 
 /*****************************************************************************/
 
-void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE], arch[CF_MAXVARSIZE], mgr[CF_MAXVARSIZE], line[CF_BUFSIZE];
@@ -1188,7 +1187,7 @@ void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_menu ty
 
 /*****************************************************************************/
 
-void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int first = true;
     FILE *fin;
@@ -1270,7 +1269,7 @@ void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum cfd_men
 
 /*****************************************************************************/
 
-void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int first = true, count = 0;
     FILE *fin;
@@ -1354,7 +1353,7 @@ void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum cfd_menu
 
 /*****************************************************************************/
 
-void Nova_Pack_promise_output_common(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_Pack_promise_output_common(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     CfOut(cf_verbose, "", " -> Packing promise data (deprecated)");
 // Do we still want this?
@@ -1362,7 +1361,7 @@ void Nova_Pack_promise_output_common(Item **reply, char *header, time_t from, en
 
 /*****************************************************************************/
 
-void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -1424,7 +1423,7 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
 
 /*****************************************************************************/
 
-void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu type)
 /* Includes date-stamp of variable (but not avg and stddev). */
 {
     char buf[CF_MAXTRANSSIZE];
@@ -1506,7 +1505,7 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
 
 /*****************************************************************************/
 
-void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -1613,7 +1612,7 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
 
 /*****************************************************************************/
 
-void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_BUFSIZE], buffer[CF_MAXTRANSSIZE];
@@ -1792,7 +1791,7 @@ void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_
 
 /*****************************************************************************/
 
-void Nova_PackRepairLog(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackRepairLog(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
@@ -1856,7 +1855,7 @@ void Nova_PackRepairLog(Item **reply, char *header, time_t from, enum cfd_menu t
 
 /*****************************************************************************/
 
-void Nova_PackNotKeptLog(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackNotKeptLog(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
@@ -1920,7 +1919,7 @@ void Nova_PackNotKeptLog(Item **reply, char *header, time_t from, enum cfd_menu 
 
 /*****************************************************************************/
 
-void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_menu type)
 /**
  * NOTE: This function depends on the meters being computed correctly first,
  *       see e.g. Nova_PackTotalCompliance().
@@ -1984,7 +1983,7 @@ void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_menu type)
 
 /*****************************************************************************/
 
-void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type)
 /**
  * What time the list of installed packages got updated.
  * TODO: Inlcude time for NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
@@ -2029,7 +2028,7 @@ void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_me
 
 /*****************************************************************************/
 
-void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu type)
+static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     char line[CF_MAXTRANSSIZE];
     char bundle_fqname[CF_MAXVARSIZE];
@@ -2125,7 +2124,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
 /*****************************************************************************/
 
-void Nova_PackExecutionStatus(Item **reply, char *header)
+static void Nova_PackExecutionStatus(Item **reply, char *header)
 {
     CF_DB *dbp = NULL;
     double avr_interval = 0;
@@ -2171,5 +2170,84 @@ void Nova_PackExecutionStatus(Item **reply, char *header)
 
     AppendItem(reply, header, NULL);
     AppendItem (reply, buffer, NULL);
+}
+
+
+void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type)
+/**
+ * Creates the reply item list from all available reports on this host.
+ */
+{
+    time_t tReply;
+    char buffer[CF_MAXVARSIZE];
+
+    switch (type)
+    {
+    case cfd_menu_delta:
+        Nova_PackPerformance(reply, CFR_PERF, from, type);
+        Nova_PackClasses(reply, CFR_CLASS, from, type);
+        // read from the old filechange log during until all clients have been upgraded
+        Nova_PackFileChangesOld(reply, CFR_FCHANGE_OLD, from, type);
+        Nova_PackFileChanges(reply, CFR_FCHANGE, from, type);
+        Nova_PackDiffs(reply, CFR_FDIFF, from, type);
+        //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED
+        Nova_PackMonitorMg(reply, CFR_MONITOR_MG, from, type);
+        Nova_PackCompliance(reply, CFR_PCOMPLIANCE, from, type);
+        Nova_PackTotalCompliance(reply, CFR_TCOMPLIANCE, from, type);
+        Nova_PackLastSeen(reply, CFR_LASTSEEN, from, type);
+        Nova_PackRepairLog(reply, CFR_REPAIRLOG, from, type);
+        Nova_PackNotKeptLog(reply, CFR_NOTKEPTLOG, from, type);
+        Nova_PackMeter(reply, CFR_METER, from, type);
+        Nova_PackBundles(reply, CFR_BUNDLES, from, type);
+        Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
+        Nova_PackSoftware(reply, CFR_SOFTWARE, from, type);
+        Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
+        Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
+        Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
+        break;
+
+    case cfd_menu_full:
+
+        Nova_PackPerformance(reply, CFR_PERF, from, type);
+        Nova_PackClasses(reply, CFR_CLASS, from, type);
+        Nova_PackSetuid(reply, CFR_SETUID, from, type);
+        // read from the old filechange log during until all clients have been upgraded
+        Nova_PackFileChangesOld(reply, CFR_FCHANGE_OLD, from, type);
+        Nova_PackFileChanges(reply, CFR_FCHANGE, from, type);
+        Nova_PackDiffs(reply, CFR_FDIFF, from, type);
+        //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED
+        //Nova_PackMonitorWk(reply,CFR_MONITOR_WEEK,from,type); // DEPRECATED
+        //Nova_PackMonitorYr(reply,CFR_MONITOR_YEAR,from,type); // DEPRECATED
+        Nova_PackMonitorMg(reply, CFR_MONITOR_MG, from, type);
+        Nova_PackMonitorWk(reply, CFR_MONITOR_WK, from, type);
+        Nova_PackMonitorYr(reply, CFR_MONITOR_YR, from, type);
+        Nova_PackMonitorHist(reply, CFR_MONITOR_HG, from, type);
+        Nova_PackCompliance(reply, CFR_PCOMPLIANCE, from, type);
+        Nova_PackTotalCompliance(reply, CFR_TCOMPLIANCE, from, type);
+        Nova_PackSoftware(reply, CFR_SOFTWARE, from, type);
+        Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
+        Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
+        Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
+        Nova_Pack_promise_output_common(reply, CFR_PROMISEOUT, from, type);
+        Nova_PackValueReport(reply, CFR_VALUE, from, type);
+        Nova_PackVariables2(reply, CFR_VARD, from, type);
+        Nova_PackLastSeen(reply, CFR_LASTSEEN, from, type);
+        Nova_PackRepairLog(reply, CFR_REPAIRLOG, from, type);
+        Nova_PackNotKeptLog(reply, CFR_NOTKEPTLOG, from, type);
+        Nova_PackMeter(reply, CFR_METER, from, type);
+        Nova_PackBundles(reply, CFR_BUNDLES, from, type);
+        Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
+        break;
+
+    default:
+        FatalError("Unknown type '%d' in Nova_PackAllReports", type);
+    }
+
+    tReply = time(NULL);
+    CfOut(cf_verbose, "", " -> Assembled reply at %s", cf_ctime(&tReply));
+
+    snprintf(buffer, sizeof(buffer), "CFR: %ld %ld %d", delta1, tReply, ItemListSize(*reply));
+    PrependItem(reply, buffer, NULL);
+
 }
 

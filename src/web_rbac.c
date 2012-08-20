@@ -331,12 +331,12 @@ static bool _UserIsAdmin(EnterpriseDB *conn, const char *username)
         {
             if (_GetUserRecord(conn, false, username, &user) != ERRID_SUCCESS)
             {
-                return ERRID_ACCESS_DENIED;
+                return false;
             }
         }
         else
         {
-            return ERRID_ACCESS_DENIED;
+            return false;
         }
     }
 
@@ -807,13 +807,27 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
     {
         result = _UpdateUser(conn, false, username, password, email, roles);
     }
-    else if (_IsLDAPEnabled(conn) && _GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
+    else if (_IsLDAPEnabled(conn))
     {
-        result = _UpdateUser(conn, true, username, password, email, roles);
-    }
-    else if (_IsLDAPEnabled(conn) && _UsernameExistsExternal(conn, username) == ERRID_SUCCESS)
-    {
-        result = _CreateUser(conn, true, username, password, email, roles);
+        if (password)
+        {
+            result = ERRID_ACCESS_DENIED_EXTERNAL;
+        }
+        else
+        {
+            if (_GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
+            {
+                result = _UpdateUser(conn, true, username, password, email, roles);
+            }
+            else if (_UsernameExistsExternal(conn, username) == ERRID_SUCCESS)
+            {
+                result = _CreateUser(conn, true, username, password, email, roles);
+            }
+            else
+            {
+                result = ERRID_ITEM_NONEXISTING;
+            }
+        }
     }
     else
     {
@@ -1001,7 +1015,7 @@ static Rlist *_ListUsernamesExternal(EnterpriseDB *conn)
     Rlist *user_directories = NULL;
     {
         char user_dirs[1024] = { 0 };
-        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, host, sizeof(user_dirs)))
+        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, user_dirs, sizeof(user_dirs)))
         {
             assert(false && "Need host setting to use ldap");
             return NULL;
@@ -1020,7 +1034,7 @@ static Rlist *_ListUsernamesExternal(EnterpriseDB *conn)
             return NULL;
         }
 
-        uri = StringConcatenate(4, "https://", host, ":", port_ssl);
+        uri = StringConcatenate(4, "ldaps://", host, ":", port_ssl);
     }
     else
     {
@@ -1031,7 +1045,7 @@ static Rlist *_ListUsernamesExternal(EnterpriseDB *conn)
             return NULL;
         }
 
-        uri = StringConcatenate(4, "http://", host, ":", port);
+        uri = StringConcatenate(4, "ldap://", host, ":", port);
     }
 
     bool start_tls = StringSafeEqual("tls", encryption);
@@ -1157,7 +1171,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
     return ERRID_SUCCESS;
 }
 
-cfapi_errid CFDB_GetUser(const char *getting_username, const char *getting_password, const char *username, HubUser **user_out)
+cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, HubUser **user_out)
 {
     EnterpriseDB conn[1];
     if (!CFDB_Open(conn))
@@ -1170,7 +1184,7 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *getting_passw
     {
         capable = true;
     }
-    else if (_UserIsAdmin(conn, username))
+    else if (_UserIsAdmin(conn, getting_username))
     {
         capable = true;
     }
@@ -1245,7 +1259,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const char *username_rx)
                 for (const Rlist *rp2 = external_users; rp2; rp2 = rp2->next)
                 {
                     const HubUser *external_user = rp2->item;
-                    if (StringSafeCompare(external_user->username, external_username))
+                    if (StringSafeEqual(external_user->username, external_username))
                     {
                         have_record = true;
                         break;

@@ -16,6 +16,7 @@
 #include "sort.h"
 #include "conversion.h"
 #include "reporting.h"
+#include "datapack.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -2456,7 +2457,6 @@ int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *f
     char keyHash[CF_MAXVARSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 }, hostName[CF_MAXVARSIZE] = { 0 };
     char buf[CF_BUFSIZE];
     char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
-    Item *reports[CF_CODEBOOK_SIZE] = { 0 };
     char validate[5];
     time_t delta1, genTime;
     long length;
@@ -2486,17 +2486,12 @@ int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *f
 
     CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with UTC timestamp %s", reportType, keyHash, buf);
 
-    NewReportBook(reports);
+    Item **reports = NewReportBook();
 
     while (CfReadLine(buf, sizeof(buf), fin))
     {
         CfDebug("%s\n", buf);
         currReport = Nova_StoreIncomingReports(buf, reports, currReport);
-    }
-
-    if (reports == NULL)
-    {
-        return false;
     }
 
     CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, ipAddr, hostName);

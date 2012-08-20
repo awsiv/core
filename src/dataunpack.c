@@ -10,7 +10,43 @@
 #include "sysinfo.h"
 #include "db_save.h"
 
-void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
+static char *CF_CODEBOOK[] =
+{
+    CFR_PERF,
+    CFR_CLASS,
+    CFR_SETUID,
+    CFR_FCHANGE_OLD,
+    CFR_FCHANGE,
+    CFR_FDIFF,
+    CFR_MONITOR_MAG,
+    CFR_MONITOR_WEEK,
+    CFR_MONITOR_YEAR,
+    CFR_MONITOR_HIST,
+    CFR_MONITOR_MG,
+    CFR_MONITOR_WK,
+    CFR_MONITOR_YR,
+    CFR_MONITOR_HG,
+    CFR_PCOMPLIANCE,
+    CFR_TCOMPLIANCE,
+    CFR_SOFTWARE,
+    CFR_AVAILPATCH,
+    CFR_PATCHSTATUS,
+    CFR_PROMISEOUT,
+    CFR_VALUE,
+    CFR_VARD,
+    CFR_VARS,
+    CFR_LASTSEEN,
+    CFR_REPAIRLOG,
+    CFR_NOTKEPTLOG,
+    CFR_METER,
+    CFR_BUNDLES,
+    CFR_SWDATES,
+    CFR_EXECUTION_STATUS,
+};
+
+#define CF_CODEBOOK_SIZE (sizeof(CF_CODEBOOK)/sizeof(CF_CODEBOOK[0]))
+
+static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     time_t t;
@@ -35,7 +71,7 @@ void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
@@ -59,7 +95,7 @@ void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -78,7 +114,7 @@ void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
@@ -103,7 +139,7 @@ void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
@@ -128,7 +164,7 @@ void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], change[CF_BUFSIZE];
@@ -162,7 +198,7 @@ void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
@@ -201,7 +237,7 @@ void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
@@ -235,7 +271,7 @@ void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot = 0;
@@ -269,7 +305,7 @@ void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -291,7 +327,7 @@ void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -310,7 +346,7 @@ void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -329,7 +365,7 @@ void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -349,7 +385,7 @@ void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -368,7 +404,7 @@ void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     time_t then;
@@ -407,7 +443,7 @@ void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE], arch;
@@ -431,7 +467,7 @@ void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
@@ -455,7 +491,7 @@ void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
@@ -479,7 +515,7 @@ void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -493,7 +529,7 @@ void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *dat
 
 /*****************************************************************************/
 
-void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     double kept, notkept, repaired;
@@ -516,7 +552,7 @@ void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.4 */
 {
     Item *ip;
@@ -551,7 +587,7 @@ void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type[CF_SMALLBUF], name[CF_MAXVARSIZE], value[CF_BUFSIZE], scope[CF_MAXVARSIZE];
@@ -585,7 +621,7 @@ void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char inout, asserted[CF_MAXVARSIZE], dns[CF_MAXVARSIZE], hash[CF_MAXVARSIZE];
@@ -618,7 +654,7 @@ void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char version[CF_SMALLBUF];
@@ -662,7 +698,7 @@ void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char handle[CF_MAXVARSIZE];
@@ -687,7 +723,7 @@ void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char handle[CF_MAXVARSIZE];
@@ -712,7 +748,7 @@ void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type;
@@ -759,7 +795,7 @@ void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type;
@@ -788,7 +824,7 @@ void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     CfOut(cf_verbose, "", " -> Bundle data...........................");
@@ -814,7 +850,7 @@ void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
+static void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
     CfOut(cf_verbose, "", " -> Execution status...........................");
 
@@ -831,5 +867,107 @@ void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
 
     CfDebug("Execution status: black %s with agent schedule interval: %ld",
             (is_blackhost == 't')? "true" : "false", delta_schedule);
+}
+
+
+void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
+{
+    Nova_UnPackPerformance,     // DBOK
+    Nova_UnPackClasses,         // DBOK (nopurge)
+    Nova_UnPackSetuid,          // DBOK (nopurge)
+    Nova_UnPackFileChangesOld,     // DBOK
+    Nova_UnPackFileChanges,     // DBOK
+    Nova_UnPackDiffs,           // DBOK
+    Nova_UnPackMonitorMag,      // DBOK   - DEPRECATED
+    Nova_UnPackMonitorWeek,     // DBOK   - DEPRECATED
+    Nova_UnPackMonitorYear,     // nodata - DEPRECATED
+    Nova_UnPackMonitorHist,     // DEPRECATED
+    Nova_UnPackMonitorMg,
+    Nova_UnPackMonitorWk,
+    Nova_UnPackMonitorYr,
+    Nova_UnPackMonitorHg,       // DBOK
+    Nova_UnPackCompliance,      // DBOK
+    Nova_UnPackTotalCompliance, // DBOK
+    Nova_UnPackSoftware,        // DBOK
+    Nova_UnPackAvailPatches,    // nodata
+    Nova_UnPackPatchStatus,     // nodata
+    Nova_UnPack_promise_output_common,  // nodata
+    Nova_UnPackValueReport,     //  (append) LOG
+    Nova_UnPackVariables2,      // DBOK
+    Nova_UnPackVariables,       // DBOK  - DEPRECATED
+    Nova_UnPackLastSeen,        // DBOK
+    Nova_UnPackRepairLog,       // DBOK (nopurge)
+    Nova_UnPackNotKeptLog,      // DBOK (nopurge)
+    Nova_UnPackMeter,           // DBOK
+    Nova_UnPackBundles,
+    Nova_UnPackSoftwareDates,
+    Nova_UnPackExecutionStatus
+};
+
+void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports)
+{
+    int i;
+
+    for (i = 0; i < CF_CODEBOOK_SIZE; i++)
+    {
+        if (reports[i] != NULL)
+        {
+            void (*fnptr) () = CF_CODEBOOK_HANDLER[i];
+
+            (*fnptr) (dbconn, id, reports[i]);
+        }
+    }
+
+}
+
+Item **NewReportBook(void)
+{
+    return xcalloc(CF_CODEBOOK_SIZE, sizeof(Item *));
+}
+
+bool ReportBookHasData(Item **reports)
+{
+    for (int i = 0; i < CF_CODEBOOK_SIZE; i++)
+    {
+        if (reports[i] != NULL)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void DeleteReportBook(Item **reports)
+{
+    for (int i = 0; i < CF_CODEBOOK_SIZE; ++i)
+    {
+        DeleteItemList(reports[i]);
+    }
+    free(reports);
+}
+
+int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report)
+{
+    int report;
+
+    for (report = 0; report < CF_CODEBOOK_SIZE; report++)
+    {
+        if (strcmp(reply, CF_CODEBOOK[report]) == 0)
+        {
+            CfOut(cf_verbose, "", " -> New chapter ... %s", reply);
+            current_report = report;
+            return report;
+        }
+    }
+
+    if (current_report < 0)
+    {
+        CfOut(cf_error, "", " !! Report format is corrupted. Got \"%s\" before codebook", reply);
+        return -1;
+    }
+
+    AppendItem(&(reports[current_report]), reply, NULL);
+    return current_report;
 }
 
