@@ -249,28 +249,6 @@ class UserTest extends APIBaseTest
         }
     }
 
-/**
- * Perl one liner to generate the password for new user to be added in ldif file
- * perl -e 'use Crypt::PasswdMD5; use MIME::Base64; print("userPassword:: " . encode_base64("{crypt}" . unix_md5_crypt("newpassword", "salt")) . "\n");'
- */
-
-    public function testLDAPAuthenticate()
-    {
-        try
-        {
-            $this->pest->post('/settings', $this->ldapSettings);
-            $this->assertEquals(204, $this->pest->lastStatus());
-
-            //$this->pest->setupAuth("snookie", "pass");
-            $this->pest->setupAuth("vinne", "secret");
-            $this->getResults('');
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
     public function testLDAPEvilAuthenticate()
     {
         try
@@ -293,16 +271,38 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testLDAPListUser()
+    public function testLDAPListAsAdmin()
     {
         try
         {
-            $this->pest->post('/user', $this->ldapSettings);
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $jsonArray = $this->getResults('/user');
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(3, sizeof($jsonArray));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPListAsUser()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $this->pest->setupAuth("snookie", "pass");
-            $this->assertValidJson($jsonArray);
-            $this->assertEquals(2, sizeof($jsonArray));
+            $this->getResults('/user');
+            $this->fail('should not get here');
+        }
+        catch (Pest_Forbidden $e)
+        {
+            // pass
+            return;
         }
         catch (Pest_Exception $e)
         {

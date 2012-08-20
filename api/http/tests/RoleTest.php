@@ -79,21 +79,4 @@ class RoleTest extends APIBaseTest
         }
     }
 
-    public function testRoleListForLDAPUser()
-    {
-        try
-        {
-            $this->pest->post('/user', $this->ldapSettings);
-            $this->assertEquals(204, $this->pest->lastStatus());
-
-            $this->pest->setupAuth("snookie", "pass");
-            $this->assertValidJson($jsonArray);
-            $this->assertEquals(1, sizeof($jsonArray));
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
 }

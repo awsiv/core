@@ -21,8 +21,8 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
                 "ldapLoginAttribute": "uid",
                 "ldapUsersDirectory": "ou=people",
                 "ldapEncryption": "none",
-                "ldapUsername": "root",
-                "ldapPassword": "secret"
+                "ldapUsername": "snookie",
+                "ldapPassword": "pass"
                 }';
 
     public function __construct()

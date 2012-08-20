@@ -15,11 +15,10 @@ class Utils
     const ERRID_ITEM_MULTIPLE = 10;
     const ERRID_RBAC_DISABLED = 11;
     const ERRID_RBAC_ACCESS_DENIED = 12;
-    const ERRID_CONSTELLATION_LICENSE = 13;
-    const ERRID_DATA_UNAVAILABLE = 14;
-    const ERRID_HOST_NOT_FOUND = 15;
-    const ERRID_ACCESS_DENIED = 16;
-    const ERRID_ACCESS_DENIED_EXTERNAL = 17;
+    const ERRID_DATA_UNAVAILABLE = 13;
+    const ERRID_HOST_NOT_FOUND = 14;
+    const ERRID_ACCESS_DENIED = 15;
+    const ERRID_ACCESS_DENIED_EXTERNAL = 16;
 
     public static function queryParam($name, $defaultValue = NULL)
     {
