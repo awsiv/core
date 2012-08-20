@@ -80,7 +80,6 @@ typedef void EnterpriseDB;
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 31
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 // for pdf reports
@@ -653,11 +652,8 @@ int Nova_ParseHostname(char *name, char *hostname);
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
 int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since);
-void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports);
 
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
-void NewReportBook(Item **reports);
-void DeleteReportBook(Item **reports);
 #endif
 int Nova_PlaceCollectCall(AgentConnection *conn);
 
