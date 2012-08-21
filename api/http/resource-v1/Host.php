@@ -35,7 +35,8 @@ class HostList extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $response->body = cfapi_host_list($user);
+        $response->body = cfapi_host_list($user,
+                DefaultParameters::page(), DefaultParameters::count());
         $response->code = Response::OK;
 
         return $response;

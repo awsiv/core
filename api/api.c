@@ -664,9 +664,11 @@ PHP_FUNCTION(cfapi_settings_post)
 PHP_FUNCTION(cfapi_host_list)
 {
     const char *username = NULL; int username_len = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
-                              &username, &username_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
+                              &username, &username_len,
+                              &page.pageNum, &page.resultsPerPage) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -685,15 +687,19 @@ PHP_FUNCTION(cfapi_host_list)
         THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
     }
 
+    const size_t total = RlistLen(result->hosts);
+    PageRecords(&result->hosts, &page, DeleteHubHost);
+
     JsonElement *data = JsonArrayCreate(1);
     for (const Rlist *rp = result->hosts; rp; rp = rp->next)
     {
         const HubHost *host = rp->item;
         JsonArrayAppendObject(data, HubHostToJson(host));
     }
+
     DeleteHubQuery(result, NULL);
 
-    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+    RETURN_JSON(PackageResult(data, page.pageNum, total));
 }
 
 PHP_FUNCTION(cfapi_host_get)
@@ -703,7 +709,7 @@ PHP_FUNCTION(cfapi_host_get)
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
                               &username, &username_len,
-                              &hostkey, &hostkey_len == FAILURE)
+                              &hostkey, &hostkey_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
