@@ -109,13 +109,13 @@ static void test_validate_column_names(void **state)
                          };
 
     char *column_names[][5] = {
-      {"HostKey", "Name", "IPAddress", "ReportTimeStamp", "Colour"}    ,    // hosts
+      {"HostKey", "Name", "IPAddress", "ReportTimeStamp", "Colour"},        // hosts
       {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL},               // filechanges
-      {"HostKey", "Name", "DefineTimeStamp", NULL, NULL},                           // contexts
-      {"HostKey", "Scope", "Name", "Value", "Type"},                    // variables
+      {"HostKey", "Name", "DefineTimeStamp", NULL, NULL},                   // contexts
+      {"HostKey", "Scope", "Name", "Value", "Type"},                        // variables
       {"HostKey", "Name", "Version", "Architecture", NULL},                   // software
       {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL},  // promisestatuslast
-      {"PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },              // promisedefinitions
+      {"PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
       {NULL, NULL, NULL, NULL,NULL}
     };
 
@@ -126,22 +126,22 @@ static void test_validate_column_names(void **state)
     assert(GenerateAllTables(db));
 
     for (int i = 0; tables[i] != NULL; i++)
-    {        
+    {
         char select_op[CF_BUFSIZE] = {0};
         snprintf(select_op, CF_BUFSIZE - 1, "SELECT * from %s;", tables[i]);
 
-	sqlite3_stmt *statement;
+        sqlite3_stmt *statement;
 
-	assert(sqlite3_prepare_v2(db, select_op, -1, &statement, 0) == SQLITE_OK);
+        assert(sqlite3_prepare_v2(db, select_op, -1, &statement, 0) == SQLITE_OK);
 
-	int column_count = sqlite3_column_count(statement); 
-	assert(column_count > 0);
+        int column_count = sqlite3_column_count(statement);
+        assert(column_count > 0);
 
-	for (int j = 0; j < column_count; j++)
-	{
-	  // This means that the column names have been altered from what it was originally
-	    assert_string_equal(column_names[i][j], sqlite3_column_name(statement, j));
-	}
+        for (int j = 0; j < column_count; j++)
+        {
+            // This means that the column names have been altered from what it was originally
+            assert_string_equal(column_names[i][j], sqlite3_column_name(statement, j));
+        }
     }
 
     Sqlite3_DBClose(db);
