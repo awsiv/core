@@ -4378,7 +4378,12 @@ PHP_FUNCTION(cfpr_list_services)
 
 PHP_FUNCTION(cfpr_service_histogram)
 {
-    JsonElement *out = Nova2PHP_get_histogram_for_service();
+    const int bufsize = 1000000;
+    char buffer[bufsize];
+
+    buffer[0] = '\0';
+
+    JsonElement *out = Nova2PHP_get_service_histogram();
     RETURN_JSON(out);
 }
 
