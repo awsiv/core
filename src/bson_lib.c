@@ -1195,7 +1195,7 @@ JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, _Bool i
  *****************************************************************************/
 int BsonIsTypeValid(bson_type type)
 {
-    if(type < 0 || type > 18)
+    if(((unsigned)type) > 18)
     {
         return -1;
     }
