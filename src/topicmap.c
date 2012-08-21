@@ -1825,7 +1825,6 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     bson_iterator it1, it2, it3;
     EnterpriseDB conn;
     Item *list = NULL;
-    int topic_id;
     char assoc_name[CF_BUFSIZE];
     char afwd[CF_BUFSIZE], abwd[CF_BUFSIZE];
     char assoc_context[CF_BUFSIZE];
@@ -1864,8 +1863,6 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
-
-        topic_id = 0;
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {

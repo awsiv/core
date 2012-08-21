@@ -4378,11 +4378,6 @@ PHP_FUNCTION(cfpr_list_services)
 
 PHP_FUNCTION(cfpr_service_histogram)
 {
-    const int bufsize = 1000000;
-    char buffer[bufsize];
-
-    buffer[0] = '\0';
-
     JsonElement *out = Nova2PHP_get_histogram_for_service();
     RETURN_JSON(out);
 }
@@ -4391,11 +4386,6 @@ PHP_FUNCTION(cfpr_service_histogram)
 
 PHP_FUNCTION(cfpr_port_histogram)
 {
-    const int bufsize = 1000000;
-    char buffer[bufsize];
-
-    buffer[0] = '\0';
-
     JsonElement *out = Nova2PHP_get_open_port_histograms();
     RETURN_JSON(out);
 }

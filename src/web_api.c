@@ -4881,7 +4881,7 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     Item *udp6 = NULL;
     Item **this_ptr, *ip;
     bson_iterator it1, it2, it3, it4, it5;
-    char rscope[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], rtype;
+    char rscope[CF_MAXVARSIZE], lval[CF_MAXVARSIZE];
 
     if (!CFDB_Open(&dbconn))
     {        
@@ -4935,7 +4935,6 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
                     while (bson_iterator_next(&it3))
                     {
                         lval[0] = '\0';
-                        rtype = CF_SCALAR;
 
                         bson_iterator_subiterator(&it3, &it4);
 
@@ -4973,7 +4972,6 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
                                 case BSON_ARRAY:
                                 case BSON_OBJECT:
                                     bson_iterator_subiterator(&it4, &it5);
-                                    rtype = CF_LIST;
 
                                     while (bson_iterator_next(&it5))
                                        {
