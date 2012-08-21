@@ -4841,7 +4841,7 @@ return Nova_GetServiceHistogram();
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
+void Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
 
 /* Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
