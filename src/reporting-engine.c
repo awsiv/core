@@ -124,7 +124,7 @@ static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *ar
 /******************************************************************/
 #endif
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
                                   Rlist *context_include, Rlist *context_exclude)
 {
 #if defined(HAVE_LIBSQLITE3)

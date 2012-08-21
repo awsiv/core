@@ -68,7 +68,7 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, char *select_op,
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
                                   Rlist *context_include, Rlist *context_exclude);
 
 #endif
