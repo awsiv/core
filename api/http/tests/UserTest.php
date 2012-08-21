@@ -136,6 +136,39 @@ class UserTest extends APIBaseTest
         }
     }
 
+     public function testEmptyUserRoles()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            $this->pest->post('/user/snookie', '{
+                    "roles": []
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            // check roles was updated
+            $users = $this->getResults('/user');
+            $this->assertValidJson($users);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertTrue(empty($users[0]['roles']));
+
+            //test only roles was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $response = $this->getResults('');
+            $this->assertValidJson($response);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testBrowseOwnDetails()
     {
         try
@@ -378,4 +411,5 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
 }
