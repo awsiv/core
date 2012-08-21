@@ -27,7 +27,7 @@ bundlesequence  => {
                    "questions",
                    "services",
                    "persons",
-                   "compliance",
+                   "compliance_models",
                    "error_messages",
                    };
 

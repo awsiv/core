@@ -318,15 +318,17 @@ measurements::
 
 #######################################################################
 
-bundle knowledge compliance
+bundle knowledge compliance_models
 {
 topics:
 
 
-   "PCI-DSS" comment => "Credit cards...";
+   "PCI-DSS" comment => "Payment Card Industry Data Security Standards. ";
 
-   "STIGS" comment => "Credit cards...";
+   "STIGS" comment => "The Security Technical Implementation Guides (STIGs) and the NSA Guides are the configuration standards for DOD IA and IA-enabled devices/systems";
 
+
+   "HIPPA" comment => "Health Insurance Portability and Accountability Act compliance guidelines.";
 
    "ITIL" comment => "Stands for Information Technology Infrastructure Library. ITIL is a set of self-proclaimed best-practices originally developed by the British government. It can be viewed as mainly common-sense rules. Cfengine can be used as a component in becoming ITIL-compliant. By translating many of your best practices into policy rules, you can have Cfengine ensure parts of ITIL-compliance.";
 
@@ -352,9 +354,5 @@ topics:
 
       association => a("corresponds to","EUROSOX","corresponds to");
    
-   "CMDB" comment => "Configuration Management Database. A form of extended inventory system, championed by ITIL.";
-
-   "auditing" comment => "A process to verify that the datacenter operate according to the guidelines and legislations. A rapid growth in datacenter size and complexity, combined with government regulations, have called for a drastic increase in audits.  Cfengine comes with reporting and logging capabilities that make auditing straightforward.";
-
 
 }

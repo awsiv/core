@@ -221,6 +221,10 @@ topics:
 
   "goals"  comment => "Top level managment objectives for a company";
 
+   "CMDB" comment => "Configuration Management Database. A form of extended inventory system, championed by ITIL.";
+
+   "auditing" comment => "A process to verify that the datacenter operate according to the guidelines and legislations. A rapid growth in datacenter size and complexity, combined with government regulations, have called for a drastic increase in audits.  Cfengine comes with reporting and logging capabilities that make auditing straightforward.";
+
 
 
 
