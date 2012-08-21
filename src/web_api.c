@@ -4818,7 +4818,7 @@ bool IsEnvMissionPortalTesting()
 /* Service page                                                              */
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_get_service_activity_for(char *hostkey)
+void Nova2PHP_get_service_activity_for(char *hostkey)
 {
 /*    JsonElement *jsonRetval = JsonObjectCreate(6);
     JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
