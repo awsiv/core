@@ -181,41 +181,6 @@ topics:
   "insufficient permissions";
   "File system not mounted";
 
- ########################################################################
-
- compliance::
-
-
-   "ITIL" comment => "Stands for Information Technology Infrastructure Library. ITIL is a set of self-proclaimed best-practices originally developed by the British government. It can be viewed as mainly common-sense rules. Cfengine can be used as a component in becoming ITIL-compliant. By translating many of your best practices into policy rules, you can have Cfengine ensure parts of ITIL-compliance.";
-
-
-   "ISO/IEC 20000"   comment => "A standards document based on a subset of ITIL",
-                     association => a("standardizes a part of","ITIL","expands on standard");
-
-   "eTOM"  comment => "The Extended Telecom Operations Map";
-
-   "SOX"      comment => "The Sarbanes-Oxley Act",
-              association => A("involves",@(sox),"is a principal component of");
-
-   "EUROSOX"  comment => "The 8th EU data directive",
-              association => A("involves",@(sox),"is a principal component of");
-
-   "SAS-70"  comment => "Stands for Statement of Auditing Standards no. 70. SAS-70 is an auditing standard. SAS 70 defines the professional standards used by a service auditor to assess the internal controls of a service organization and issue a service auditor's report. Cfengine can be used to ensure SAS-70 compliance in the same way you can achieve other standardization compliance.",
-
-      association => a("is a framework for implementing","SOX","falls within the bounds of");
-
-   "SOX"  
-
-      comment => "Stands for Sarbanes-Oxley Act is a United States federal law in response to a number of major corporate and accounting scandals including those affecting Enron, Tyco International, Adelphia, Peregrine Systems and WorldCom. The intention behind the law is to ensure financial reporting. This law calls for standardization of datacenters under this law and the need to show compliance. Cfengine can be used as a tool for ensuring specific parts of the compliance.",
-
-      association => a("corresponds to","EUROSOX","corresponds to");
-   
-   "CMDB" comment => "Configuration Management Database. A form of extended inventory system, championed by ITIL.";
-
-   "auditing" comment => "A process to verify that the datacenter operate according to the guidelines and legislations. A rapid growth in datacenter size and complexity, combined with government regulations, have called for a drastic increase in audits.  Cfengine comes with reporting and logging capabilities that make auditing straightforward.";
-
-
- ########################################################################
 
 
  management_terminology::
@@ -255,6 +220,10 @@ topics:
    "provisioning" comment => "The ability to install and adopt new services, applications, OS and servers, e.g. using PXE-boot Cfengine can turn any server into anything kind of server with any kind of service running on it. Cfengine can easily deploy a service or new application throughout the datacenter, regardless of the number of servers.";
 
   "goals"  comment => "Top level managment objectives for a company";
+
+   "CMDB" comment => "Configuration Management Database. A form of extended inventory system, championed by ITIL.";
+
+   "auditing" comment => "A process to verify that the datacenter operate according to the guidelines and legislations. A rapid growth in datacenter size and complexity, combined with government regulations, have called for a drastic increase in audits.  Cfengine comes with reporting and logging capabilities that make auditing straightforward.";
 
 
 
