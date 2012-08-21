@@ -19,7 +19,6 @@ static void Nova_ShowControlBodies(void);
 static void Nova_ShowPromiseTypesFor(const char *s, const SubTypeSyntax *commonMerge);
 static void Nova_ShowBodyParts(const BodySyntax *bs, int i);
 static void Nova_ShowRange(char *s, enum cfdatatype type);
-static void Nova_ShowBuiltinFunctions(void);
 static void Nova_Indent(int i);
 
 
