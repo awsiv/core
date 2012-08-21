@@ -51,6 +51,8 @@ bundle agent cfengine_update_folders
                    "ubuntu_12_x86_64",
                    "centos_5_i686",
                    "centos_5_x86_64",
+                   "centos_6_i686",
+                   "centos_6_x86_64",
                    "redhat_5_i686",
                    "redhat_5_x86_64",
                    "redhat_6_i686",
@@ -99,58 +101,58 @@ bundle agent cfengine_php_mod
    "/etc/php.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
          handle => "cfengine_php_mod_files_cfmod_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/svn.ini"
         comment => "Put svn.ini to its place",
          handle => "cfengine_php_mod_files_svn_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/json.ini"
          comment => "Put json.ini to its place",
           handle => "cfengine_php_mod_files_json_ini_redhat5",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/json.ini"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/json.ini"),
            perms => mo("644","root"),
       ifvarclass => "redhat_5|centos_5";
 
    "/etc/php.d/mongo.ini"
         comment => "Put mongo.ini to its place",
          handle => "cfengine_php_mod_files_mongo_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/curl.ini"
         comment => "Put curl.ini to its place",
          handle => "cfengine_php_mod_files_curl_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/cfengine-enterprise-api.ini"
         comment => "Put cfengine-enterprise-api.ini to its place",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php/modules/json.so"
          comment => "Prepare cfmod.so for 32-bit system",
          handle => "cfengine_php_mod_files_json_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/json.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/json.so"),
            perms => mo("755","root"),
       ifvarclass => "(redhat_5|centos_5).i686";
 
    "/usr/lib64/php/modules/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
          handle => "cfengine_php_mod_files_json_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/json.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/json.so"),
            perms => mo("755","root"),
       ifvarclass => "(redhat_5|centos_5).x86_64";
 
    "/usr/lib/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
          handle => "cfengine_php_mod_files_cfmod_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -158,7 +160,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
          handle => "cfengine_php_mod_files_cfmod_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -166,7 +168,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php/modules/svn.so"
          comment => "Prepare svn.so for 32-bit system",
          handle => "cfengine_php_mod_files_svn_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -174,7 +176,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/svn.so"
          comment => "Prepare svn.so for 64-bit system",
          handle => "cfengine_php_mod_files_svn_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -182,7 +184,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php/modules/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
          handle => "cfengine_php_mod_files_mongo_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -190,7 +192,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
          handle => "cfengine_php_mod_files_mongo_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -198,7 +200,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php/modules/curl.so"
          comment => "Prepare curl.so for 32-bit system",
          handle => "cfengine_php_mod_files_curl_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -206,7 +208,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/curl.so"
          comment => "Prepare curl.so for 64-bit system",
          handle => "cfengine_php_mod_files_curl_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -214,7 +216,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php/modules/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -222,7 +224,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -232,13 +234,13 @@ bundle agent cfengine_php_mod
    "/etc/php.d/mcrypt.ini"
         comment => "Put mcrypt.ini to its place",
          handle => "cfengine_php_mod_files_mcrypt_ini_redhat5",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/mcrypt.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mcrypt.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php/modules/mcrypt.so"
          comment => "Prepare mcrypt.so for 32-bit system",
          handle => "cfengine_php_mod_files_mcrypt_so_redhat5_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mcrypt.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mcrypt.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
@@ -246,7 +248,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php/modules/mcrypt.so"
          comment => "Prepare mcrypt.so for 64-bit system",
          handle => "cfengine_php_mod_files_mcrypt_so_redhat5_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mcrypt.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mcrypt.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
@@ -256,32 +258,32 @@ bundle agent cfengine_php_mod
 #   "/etc/php.d/cfmod.ini"
 #        comment => "Put cfmod.ini to its place",
 #         handle => "cfengine_php_mod_files_cfmod_ini_redhat4",
-#      copy_from => no_backup_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
+#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
 #          perms => mo("644","root");
 #
 #   "/etc/php.d/json.ini"
 #        comment => "Put json.ini to its place",
 #         handle => "cfengine_php_mod_files_json_ini_redhat4",
-#      copy_from => no_backup_cp("$(sys.workdir)/software_updates/json/json.ini"),
+#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/json.ini"),
 #          perms => mo("644","root");
 #
 #   "/etc/php.d/mongo.ini"
 #        comment => "Put mongo.ini to its place",
 #         handle => "cfengine_php_mod_files_mongo_ini_redhat4",
-#      copy_from => no_backup_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
+#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
 #          perms => mo("644","root");
 #
 #   "/usr/lib/php4/json.so"
 #         comment => "Prepare cfmod.so for 32-bit system",
 #          handle => "cfengine_php_mod_files_json_so_redhat4_32",
-#       copy_from => no_backup_cp("$(sys.workdir)/software_updates/json/32/json.so"),
+#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/32/json.so"),
 #           perms => mo("755","root"),
 #      ifvarclass => "i686";
 #
 #   "/usr/lib/php4/cfmod.so"
 #         comment => "Prepare cfmod.so for 32-bit system",
 #          handle => "cfengine_php_mod_files_cfmod_so_redhat4_32",
-#       copy_from => no_backup_cp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
+#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
 #           perms => mo("755","root"),
 #      ifvarclass => "i686",
 #        classes => if_repaired("restart_webserver");
@@ -289,14 +291,14 @@ bundle agent cfengine_php_mod
 #   "/usr/lib64/php4/json.so"
 #         comment => "Prepare cfmod.so for 64-bit system",
 #          handle => "cfengine_php_mod_files_json_so_redhat4_64",
-#       copy_from => no_backup_cp("$(sys.workdir)/software_updates/json/64/json.so"),
+#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/64/json.so"),
 #           perms => mo("755","root"),
 #      ifvarclass => "x86_64";
 #
 #   "/usr/lib64/php4/cfmod.so"
 #         comment => "Prepare cfmod.so for 64-bit system",
 #          handle => "cfengine_php_mod_files_cfmod_so_redhat4_64",
-#       copy_from => no_backup_cp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
+#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
 #           perms => mo("755","root"),
 #      ifvarclass => "x86_64",
 #        classes => if_repaired("restart_webserver");
@@ -306,37 +308,37 @@ bundle agent cfengine_php_mod
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
          handle => "cfengine_php_mod_files_cfmod_ini_ubuntu10",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
         comment => "Put svn.ini to its place",
          handle => "cfengine_php_mod_files_svn_ini_ubuntu10",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
          handle => "cfengine_php_mod_files_mongo_ini_ubuntu10",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/curl.ini"
         comment => "Put curl.ini to its place",
          handle => "cfengine_php_mod_files_curl_ini_ubuntu10",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/cfengine-enterprise-api.ini"
         comment => "Put cfengine-enterprise-api.ini to its place",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_ini_ubuntu10",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/20090626+lfs/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_ubuntu10_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -344,7 +346,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_ubuntu10_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -352,7 +354,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626+lfs/svn.so"
          comment => "Prepare svn.so for 32-bit system",
           handle => "cfengine_php_mod_files_svn_so_ubuntu10_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -360,7 +362,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626/svn.so"
          comment => "Prepare svn.so for 64-bit system",
           handle => "cfengine_php_mod_files_svn_so_ubuntu10_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -368,7 +370,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626+lfs/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
           handle => "cfengine_php_mod_files_mongo_so_ubuntu10_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -376,7 +378,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
           handle => "cfengine_php_mod_files_mongo_so_ubuntu10_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -384,7 +386,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626+lfs/curl.so"
          comment => "Prepare curl.so for 32-bit system",
           handle => "cfengine_php_mod_files_curl_so_ubuntu10_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -392,7 +394,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626/curl.so"
          comment => "Prepare curl.so for 64-bit system",
           handle => "cfengine_php_mod_files_curl_so_ubuntu10_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -400,7 +402,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626+lfs/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
           handle => "cfengine_php_mod_file_cfengine_enterprise_api_so_ubuntu10_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -408,7 +410,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_ubuntu10_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -418,37 +420,37 @@ bundle agent cfengine_php_mod
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
          handle => "cfengine_php_mod_files_cfmod_ini_ubuntu8",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
         comment => "Put svn.ini to its place",
          handle => "cfengine_php_mod_files_svn_ini_ubuntu8",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
          handle => "cfengine_php_mod_files_mongo_ini_ubuntu8",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/curl.ini"
         comment => "Put curl.ini to its place",
          handle => "cfengine_php_mod_files_curl_ini_ubuntu8",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/cfengine-enterprise-api.ini"
         comment => "Put cfengine-enterprise-api.ini to its place",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_ini_ubuntu8",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/20060613+lfs/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_ubuntu8_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -456,7 +458,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_ubuntu8_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -464,7 +466,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613+lfs/svn.so"
          comment => "Prepare svn.so for 32-bit system",
           handle => "cfengine_php_mod_files_svn_so_ubuntu8_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -472,7 +474,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613/svn.so"
          comment => "Prepare svn.so for 64-bit system",
           handle => "cfengine_php_mod_files_svn_so_ubuntu8_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -480,7 +482,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613+lfs/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
           handle => "cfengine_php_mod_files_mongo_so_ubuntu8_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -488,7 +490,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
           handle => "cfengine_php_mod_files_mongo_so_ubuntu8_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -496,7 +498,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613+lfs/curl.so"
          comment => "Prepare curl.so for 32-bit system",
           handle => "cfengine_php_mod_files_curl_so_ubuntu8_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -504,7 +506,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613/curl.so"
          comment => "Prepare curl.so for 64-bit system",
           handle => "cfengine_php_mod_files_curl_so_ubuntu8_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -512,7 +514,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613+lfs/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
           handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_ubuntu8_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -520,7 +522,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20060613/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_ubuntu8_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -530,37 +532,37 @@ bundle agent cfengine_php_mod
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
          handle => "cfengine_php_mod_files_cfmod_ini_suse",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
         comment => "Put svn.ini to its place",
          handle => "cfengine_php_mod_files_svn_ini_suse",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
          handle => "cfengine_php_mod_files_mongo_ini_suse",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/curl.ini"
         comment => "Put curl.ini to its place",
          handle => "cfengine_php_mod_files_curl_ini_suse",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/cfengine-enterprise-api.ini"
         comment => "Put cfengine-enterprise-api.ini to its place",
          handle => "cfengine_php_mod_files_cfengine_enterprise_api_ini_suse",
-      copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
+      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/extensions/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_suse_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -568,7 +570,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php5/extensions/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfmod_so_suse_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfmod.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -576,7 +578,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/extensions/svn.so"
          comment => "Prepare svn.so for 32-bit system",
           handle => "cfengine_php_mod_files_svn_so_suse_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -584,7 +586,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php5/extensions/svn.so"
          comment => "Prepare svn.so for 64-bit system",
           handle => "cfengine_php_mod_files_svn_so_suse_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/svn.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -592,7 +594,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
           handle => "cfengine_php_mod_files_mongo_so_suse_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -600,7 +602,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
           handle => "cfengine_php_mod_files_mongo_so_suse_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/mongo.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -608,7 +610,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/extensions/curl.so"
          comment => "Prepare curl.so for 32-bit system",
           handle => "cfengine_php_mod_files_curl_so_suse_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -616,7 +618,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php5/extensions/curl.so"
          comment => "Prepare curl.so for 64-bit system",
           handle => "cfengine_php_mod_files_curl_so_suse_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -624,7 +626,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/extensions/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
           handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_suse_32",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
@@ -632,7 +634,7 @@ bundle agent cfengine_php_mod
    "/usr/lib64/php5/extensions/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
           handle => "cfengine_php_mod_files_cfengine_enterprise_api_so_suse_64",
-       copy_from => no_backup_cp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -881,7 +883,7 @@ bundle agent cfengine_policysrv
    "$(sys.workdir)/software_updates/apache2-default"
          comment => "Back up a apache2 default config before editing",
           handle => "cfengine_policysrv_files_backup_apache2_default",
-       copy_from => no_backup_cp("/etc/apache2/sites-available/default"),
+       copy_from => no_backup_dcp("/etc/apache2/sites-available/default"),
       ifvarclass => "no_backup_apache2_default.have_apache2_default";
 
    "/etc/apache2/sites-available/default"
@@ -895,7 +897,7 @@ bundle agent cfengine_policysrv
 #   "/etc/apache2/sites-available/ssl"
 #        comment => "Prepare SSL config for available sites",
 #         handle => "cfengine_policysrv_files_ssl",
-#      copy_from => no_backup_cp("/etc/apache2/sites-available/default-ssl"),
+#      copy_from => no_backup_dcp("/etc/apache2/sites-available/default-ssl"),
 #         action => immediate,
 #        classes => if_repaired("a2ensite_ssl");
 
@@ -904,7 +906,7 @@ bundle agent cfengine_policysrv
    "/etc/apache2/vhosts.d/vhost-ssl.conf"
         comment => "Prepare SSL template for virtual hosts",
          handle => "cfengine_policysrv_files_vhost_ssl",
-      copy_from => no_backup_cp("/etc/apache2/vhosts.d/vhost-ssl.template"),
+      copy_from => no_backup_dcp("/etc/apache2/vhosts.d/vhost-ssl.template"),
          action => immediate;
 
    "/etc/apache2/conf.d/nova.conf"
