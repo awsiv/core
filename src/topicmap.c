@@ -201,13 +201,13 @@ void Nova_ShowTopic(char *qualified_topic)
 
     printf("***************************************************\n");
         
-//JsonElement *Nova2PHP_get_active_services()
-//JsonElement *Nova2PHP_get_histogram_for_service(char *service)
 
     printf("Service histogram (in units of services x hosts):\n");
 
-    json = Nova_GetServiceHistogram();
+     json = Nova_GetServiceHistogram();
 
+    //json = Nova2PHP_list_topics_for_bundle("infrastructure_topics");//Nova2PHP_list_knowledge_bundles();
+    
     if (json)
     {
         writer = NULL;
@@ -220,6 +220,8 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
+  
+    
 }
 
 /*****************************************************************************/
@@ -1025,17 +1027,6 @@ JsonElement *Nova_GetServiceHistogram()
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
-
-    for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
-    {
-    printf("Port number: %s also called %s\n", serv_array[srv].port, serv_array[srv].name);
-    
-     printf("   has %d hosts running on tcp4\n",serv_array[srv].freq[cftcp4]);
-     printf("   has %d hosts running on tcp6\n",serv_array[srv].freq[cftcp6]);
-     printf("   has %d hosts running on udp4\n",serv_array[srv].freq[cfudp4]);
-     printf("   has %d hosts running on udp6\n",serv_array[srv].freq[cfudp6]);
-    }
-
 
     JsonElement *json_array_out = JsonArrayCreate(100);
     

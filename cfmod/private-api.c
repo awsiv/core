@@ -4408,7 +4408,7 @@ PHP_FUNCTION(cfpr_get_class_frequency)
     int user_len, p_len, h_len, count;
     char buffer[1000000];
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+   if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
                               &userName, &user_len, &hkey, &h_len, &pattern, &p_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
