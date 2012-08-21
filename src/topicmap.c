@@ -202,13 +202,11 @@ void Nova_ShowTopic(char *qualified_topic)
 
     printf("***************************************************\n");
         
-
+/*
     printf("Service histogram (in units of services x hosts):\n");
 
-     json = Nova_GetServiceHistogram();
-
-    //json = Nova2PHP_list_topics_for_bundle("infrastructure_topics");//Nova2PHP_list_knowledge_bundles();
-    
+    json = Nova_GetServiceHistogram();
+     
     if (json)
     {
         writer = NULL;
@@ -220,15 +218,7 @@ void Nova_ShowTopic(char *qualified_topic)
 
         WriterClose(writer);
     }
-
-    PageInfo page = { 0 };
-
-
-    Nova2PHP_compliance_promises(NULL, "dragon", NULL, false, NULL, NULL, false, &page, buffer, sizeof(buffer));
-
-//    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
-
-    printf("Compliance of dragon: %s\n", buffer);
+*/
 }
 
 /*****************************************************************************/
@@ -846,9 +836,9 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
 /*************************************************************************/
 
-Item *Nova_GetStakeholders(int topic_id)
+Item *Nova_GetStakeHolders(int topic_id)
 {
- return Nova_NearestNeighbours(topic_id, NOVA_STAKEHOLDER_INV);
+ return Nova_NearestNeighbours(topic_id, NOVA_STAKEHOLDER);
 }
 
 /*************************************************************************/

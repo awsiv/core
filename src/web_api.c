@@ -4848,30 +4848,41 @@ return Nova_GetServiceHistogram();
 void Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
 
-/* Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
+ Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
  int hosts = 0;
- 
- for (ip = handles; ip != NULL; ip = ip->next)
-    {
-    char class_expression[CF_BUFSIZE];
-    GetClassesExpressionForPromise(handle, class_expression);
-    hosts = GetNumberOfHostsInClass(class_expression);
-
-    printf("Hosts supporting the goal are in class: %s, consisting of %d hosts", class_expression, hosts);
-    }
-
+ int have_people = false, have_promises = false; 
 
  // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
- people = Nova_GetStakeHolders(goal_id);
+ Item *people = Nova_GetStakeHolders(goal_id);
 
- // past week graph?
- compliance = Nova_GetTotalPromiseComplianceByHandle(handle);
- // how many machines could not be checked
+  for (ip = handles; ip != NULL; ip = ip->next)
+     {
+         PageInfo page = { 0 };
+         char buffer[CF_BUFSIZE];
 
- // print details of hosts, promises, people, compliance
+         have_promises = true;
+         Nova2PHP_compliance_promises(NULL, ip->name, NULL, false, NULL, NULL, false, &page, buffer, sizeof(buffer));
+         
+         printf(" Involves promise %s : %s\n", ip->name, buffer);
+     }
 
- int goal_score = Any(hosts)*Any(promises)*compliance + Any(people);
-*/  
+  for (ip = people; ip != NULL; ip = ip->next)
+     {
+        if (strstr(ip->name, "@") || strcmp(ip->classes, "users") == 0)
+        {
+            printf(" Person responsible %s::%s \n", ip->classes,ip->name);
+            have_people = true;
+        }
+        else
+        {
+            printf(" Other stakeholders %s::%s \n", ip->classes,ip->name);
+        }
+     }
+  
+  int average_compliance = 0;
+  double goal_score = (have_promises*average_compliance + 100*have_people)/2;
+
+  printf("Progress score for goal %s = %lf (out of 100)\n", handle, goal_score);
 }
 
 /*****************************************************************************/
