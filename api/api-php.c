@@ -32,6 +32,9 @@ static zend_function_entry cfapi_functions[] =
     PHP_FE(cfapi_settings_get, NULL)
     PHP_FE(cfapi_settings_post, NULL)
 
+    PHP_FE(cfapi_host_list, NULL)
+    PHP_FE(cfapi_host_get, NULL)
+
     PHP_FE(cfapi_query_post, NULL)
 
     {NULL, NULL, NULL}          /* Must be the last line in cfapi_functions[] */

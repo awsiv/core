@@ -64,3 +64,23 @@ JsonElement *HubRoleToJson(const HubRole *role)
 
     return obj;
 }
+
+JsonElement *HubHostToJson(const HubHost *host)
+{
+    assert(host);
+
+    JsonElement *obj = JsonObjectCreate(5);
+    JsonObjectAppendString(obj, "id", host->keyhash);
+
+    if (host->hostname)
+    {
+        JsonObjectAppendString(obj, "hostname", host->hostname);
+    }
+
+    if (host->ipaddr)
+    {
+        JsonObjectAppendString(obj, "ip", host->ipaddr);
+    }
+
+    return obj;
+}

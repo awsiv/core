@@ -376,7 +376,7 @@ HubQuery *CFDB_QueryHostsByHostClassFilter(mongo *conn, HostClassFilter *hostCla
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, char *hostKey)
+HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, const char *hostKey)
 {
     assert(SafeStringLength(hostKey) > 0);
 

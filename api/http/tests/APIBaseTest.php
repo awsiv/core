@@ -7,9 +7,9 @@ require_once __DIR__ . "/../lib/PestNova.php";
 abstract class APIBaseTest extends PHPUnit_Framework_TestCase
 {
 
-    public $hostA = "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283";
+    public $hostA_id = "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283";
     public $hostA_ip = "10.0.0.150";
-    public $hostB = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
+    public $hostB_id = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
     public $hostB_ip = "10.0.0.153";
     var $mongoInstance = null;
     public $ldapSettings = '{

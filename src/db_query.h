@@ -15,7 +15,7 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query);
 HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char *ipRegex,
                                    HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryHostsByHostClassFilter(EnterpriseDB *conn, HostClassFilter *hostClassFilter);
-HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, char *hostKey);
+HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, const char *hostKey);
 HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                 HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,

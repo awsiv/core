@@ -45,6 +45,10 @@ PHP_FUNCTION(cfapi_user_delete);
 PHP_FUNCTION(cfapi_settings_get);
 PHP_FUNCTION(cfapi_settings_post);
 
+// host
+PHP_FUNCTION(cfapi_host_list);
+PHP_FUNCTION(cfapi_host_get);
+
 /**
   Reporting engine
   */
