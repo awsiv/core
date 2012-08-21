@@ -5,6 +5,7 @@ require_once 'lib/Utils.php';
 require_once 'lib/DefaultParameters.php';
 
 // load resources
+require_once 'resource-v1/Host.php';
 require_once 'resource-v1/Query.php';
 require_once 'resource-v1/Settings.php';
 require_once 'resource-v1/Status.php';

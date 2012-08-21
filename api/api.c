@@ -659,6 +659,92 @@ PHP_FUNCTION(cfapi_settings_post)
     RETURN_BOOL(true);
 }
 
+//******************************************************************************
+
+PHP_FUNCTION(cfapi_host_list)
+{
+    const char *username = NULL; int username_len = 0;
+    PageInfo page = { 0 };
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
+                              &username, &username_len,
+                              &page.pageNum, &page.resultsPerPage) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    HubQuery *result = CFDB_QueryHostsByHostClassFilter(conn, NULL);
+
+    if (!EnterpriseDBRelease(conn))
+    {
+        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+    }
+
+    const size_t total = RlistLen(result->hosts);
+    PageRecords(&result->hosts, &page, DeleteHubHost);
+
+    JsonElement *data = JsonArrayCreate(1);
+    for (const Rlist *rp = result->hosts; rp; rp = rp->next)
+    {
+        const HubHost *host = rp->item;
+        JsonArrayAppendObject(data, HubHostToJson(host));
+    }
+
+    DeleteHubQuery(result, NULL);
+
+    RETURN_JSON(PackageResult(data, page.pageNum, total));
+}
+
+PHP_FUNCTION(cfapi_host_get)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *hostkey = NULL; int hostkey_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &hostkey, &hostkey_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(hostkey_len, "hostkey");
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    HubQuery *result = CFDB_QueryHostByHostKey(conn, hostkey);
+
+    if (!EnterpriseDBRelease(conn))
+    {
+        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+    }
+
+    JsonElement *data = JsonArrayCreate(1);
+    if (result->hosts && result->hosts->item)
+    {
+        const HubHost *host = result->hosts->item;
+        JsonArrayAppendObject(data, HubHostToJson(host));
+    }
+    else
+    {
+        THROW_GENERIC(ERRID_ITEM_NONEXISTING, "Could not find host");
+    }
+    DeleteHubQuery(result, NULL);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+}
+
+
 
 //******************************************************************************
 
