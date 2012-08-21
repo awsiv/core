@@ -3036,8 +3036,12 @@ int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize
             snprintf(colour, CF_SMALLBUF, "yellow");
         }
 
+        char bundlename_lower[CF_BUFSIZE];
+        strlcpy(bundlename_lower, bundle->bundleName, CF_BUFSIZE);
+        ToLowerStrInplace(bundlename_lower);
+
         snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",
-                 bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(ToLowerStr(bundle->bundleName)), goals,
+                 bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(bundlename_lower), goals,
                  colour);
 
         if (!Join(buffer, work, bufsize))
