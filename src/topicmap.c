@@ -39,6 +39,7 @@ struct servhist
 };
 
 #define CF_SERVICES_LIMIT 64
+#include "cf.nova.web_api.h"
 
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
@@ -220,8 +221,14 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-  
-    
+    PageInfo page = { 0 };
+
+
+    Nova2PHP_compliance_promises(NULL, "dragon", NULL, false, NULL, NULL, false, &page, buffer, sizeof(buffer));
+
+//    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+
+    printf("Compliance of dragon: %s\n", buffer);
 }
 
 /*****************************************************************************/

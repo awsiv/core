@@ -4383,7 +4383,7 @@ PHP_FUNCTION(cfpr_service_histogram)
 
     buffer[0] = '\0';
 
-    JsonElement *out = Nova2PHP_get_histogram_for_service();
+    JsonElement *out = Nova2PHP_get_service_histogram();
     RETURN_JSON(out);
 }
 
