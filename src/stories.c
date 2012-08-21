@@ -599,7 +599,7 @@ else
 
 for (rp = tcp4; rp != NULL; rp=rp->next)
    {
-   printf("Open tcp4 port: %s\n",rp->item);
+       printf("Open tcp4 port: %s\n", ScalarValue(rp));
    }
 
 DeleteItemList(low);
