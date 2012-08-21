@@ -437,7 +437,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
                                  Nova_DeClassifyTopic((char *)rp3->item, t, c);
-                                 WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp3->item, NOVA_STAKEHOLDER);
+                                 if (strcmp(t, rp->item) != 0)
+                                 {
+                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
+                                 }
                              }
                        }
                     }
@@ -452,7 +455,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
                                  Nova_DeClassifyTopic((char *)rp3->item, t, c);
-                                 WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp3->item, NOVA_STAKEHOLDER);
+                                 if (strcmp(t, rp->item) != 0)
+                                 {
+                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
+                                 }
                              }
                        }
                     }

@@ -931,6 +931,7 @@ void Nova_HostStory(const Policy *policy,char *hostkey,char *buffer, int bufsize
 int AlreadySaidThis(Chapter *history[CF_MAX_STORY_DEPTH],int topic_id);
 void Nova_GetLocations(const Policy *policy,char *hostkey, Rlist **locations);
 #endif
+
 /* topicmap.c */
 
 #ifdef HAVE_LIBMONGOC
@@ -938,7 +939,6 @@ void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(Item *ip);
 const char *Nova_GetBundleComment(char *bundle);
 void Nova_ShowTopic(char *qualified_topic);
-
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 JsonElement *Nova_ScanTheRest(int pid);
 Item *Nova_SearchTopicMap(char *typed_topic,int type,int merge);
@@ -961,7 +961,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
 int Nova_GetApplicationServices(char *buffer, int bufsize);
 JsonElement *Nova_GetServiceHistogram(void);
 Item *Nova_GetHandlesForGoal(int referred);
-
+Item *Nova_GetStakeHolders(int topic_id);
 JsonElement *Nova_PlotTopicCosmos(int topic, char *view);
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
                   char *v);
