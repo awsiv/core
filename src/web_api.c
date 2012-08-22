@@ -122,15 +122,15 @@ static void Nova_RegisterDoc(Item **list, char *dir, char *doc)
 void Con2PHP_get_story_by_id(int id,char *buffer,int bufsize)
 
 { 
-buffer[0] = '\0';
+    buffer[0] = '\0';
 
-if (Nova_GenerateStories_by_id_JSON(id,cfi_cause,buffer,bufsize))
-   {
-   }
-else
-   {
-   snprintf(buffer,bufsize,"No stories about this topic\n");
-   }
+    if (Nova_GenerateStories_by_id_JSON(id,cfi_cause,buffer,bufsize))
+    {
+    }
+    else
+    {
+        snprintf(buffer,bufsize,"No stories about this topic\n");
+    }
 }
 
 /*****************************************************************************/
@@ -138,22 +138,22 @@ else
 void Con2PHP_get_story_by_name(char *typed_topic,char *buffer,int bufsize)
 
 { 
-buffer[0] = '\0';
+    buffer[0] = '\0';
 
-if (Nova_GenerateStories_by_name_JSON(typed_topic,cfi_cause,buffer,bufsize))
-   {
-   }
-else
-   {
-   snprintf(buffer,bufsize,"No stories about %s\n",typed_topic);
-   }
+    if (Nova_GenerateStories_by_name_JSON(typed_topic,cfi_cause,buffer,bufsize))
+    {
+    }
+    else
+    {
+        snprintf(buffer,bufsize,"No stories about %s\n",typed_topic);
+    }
 }
 
 /*****************************************************************************/
 
 void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize)
 {
-ComplianceSummaryGraph(hubKeyHash,policy,buffer,bufsize);
+    ComplianceSummaryGraph(hubKeyHash,policy,buffer,bufsize);
 }
 
 
@@ -4889,7 +4889,7 @@ void Nova2PHP_get_service_activity_for(char *hostkey)
 
 JsonElement *Nova2PHP_get_service_histogram()
 {
-return Nova_GetServiceHistogram();
+    return Nova_GetServiceHistogram();
 }
 
 /*****************************************************************************/
@@ -4897,121 +4897,121 @@ return Nova_GetServiceHistogram();
 JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
 
- Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
- int hosts = 0;
- double have_people = false;
- EnterpriseDB dbconn;
- double average_compliance = 0, total_compliance = 0;
+    Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
+    int hosts = 0;
+    double have_people = false;
+    EnterpriseDB dbconn;
+    double average_compliance = 0, total_compliance = 0;
          
- // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
- Item *people = Nova_GetStakeHolders(goal_id);
+    // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
+    Item *people = Nova_GetStakeHolders(goal_id);
 
- if (!CFDB_Open(&dbconn))
+    if (!CFDB_Open(&dbconn))
     {
-    return JSONErrorFromId(ERRID_DBCONNECT);
+        return JSONErrorFromId(ERRID_DBCONNECT);
     }
 
- handles = SortItemListNames(handles);
+    handles = SortItemListNames(handles);
 
- JsonElement *json = JsonObjectCreate(4);
- JsonElement *array_promises = JsonArrayCreate(100);
- JsonElement *array_users = JsonArrayCreate(10);
- JsonElement *array_stakeholders = JsonArrayCreate(10);
+    JsonElement *json = JsonObjectCreate(4);
+    JsonElement *array_promises = JsonArrayCreate(100);
+    JsonElement *array_users = JsonArrayCreate(10);
+    JsonElement *array_stakeholders = JsonArrayCreate(10);
  
-  for (ip = handles; ip != NULL; ip = ip->next)
-     {
-         HubPromiseCompliance *hp;
-         HubQuery *hq;
-         Rlist *rp;
-         time_t now = time(NULL);
-         char status[CF_MAXVARSIZE];
+    for (ip = handles; ip != NULL; ip = ip->next)
+    {
+        HubPromiseCompliance *hp;
+        HubQuery *hq;
+        Rlist *rp;
+        time_t now = time(NULL);
+        char status[CF_MAXVARSIZE];
          
-         //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
+        //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
          
-         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL);
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL);
 
-         hosts = RlistLen(hq->hosts);
+        hosts = RlistLen(hq->hosts);
 
-         if (hosts == 0)
-            {
+        if (hosts == 0)
+        {
             snprintf(status, CF_MAXVARSIZE, "No hosts have kept this promise yet");
-            }
-         else
-            {
+        }
+        else
+        {
             average_compliance = 0;
             
             for (rp = hq->records; rp != NULL; rp = rp->next)
-               {
-               hp = (HubPromiseCompliance *) rp->item;
+            {
+                hp = (HubPromiseCompliance *) rp->item;
                
-               //printf("Host %s has tried to keep this promise\n", hp->hh->hostname);
+                //printf("Host %s has tried to keep this promise\n", hp->hh->hostname);
 
-               average_compliance += hp->e;
-               }
-
-            total_compliance += average_compliance;
+                average_compliance += hp->e;
             }
 
-         JsonElement *promise = JsonObjectCreate(3);
-         JsonObjectAppendString(promise, "name", ip->name);
-         JsonObjectAppendString(promise, "context", ip->classes);
-         JsonObjectAppendInteger(promise, "topic_id", ip->counter);
-         JsonObjectAppendInteger(promise, "compliance", average_compliance);
-         JsonArrayAppendObject(array_promises, promise);         
-     }
+            total_compliance += average_compliance;
+        }
 
-  CFDB_Close(&dbconn);
+        JsonElement *promise = JsonObjectCreate(3);
+        JsonObjectAppendString(promise, "name", ip->name);
+        JsonObjectAppendString(promise, "context", ip->classes);
+        JsonObjectAppendInteger(promise, "topic_id", ip->counter);
+        JsonObjectAppendInteger(promise, "compliance", average_compliance);
+        JsonArrayAppendObject(array_promises, promise);         
+    }
 
-  Item *users = NULL, *stake = NULL;
-  
-  for (ip = people; ip != NULL; ip = ip->next)
-     {
+    CFDB_Close(&dbconn);
+
+    Item *users = NULL, *stake = NULL;
+   
+    for (ip = people; ip != NULL; ip = ip->next)
+    {
         if (strstr(ip->name, "@") || strcmp(ip->classes, "users") == 0)
         {
-        //printf(" Person responsible %s::%s %d\n", ip->classes,ip->name, ip->counter);
-        have_people = true;
-        PrependFullItem(&users, ip->name, ip->classes, ip->counter, 0);
+            //printf(" Person responsible %s::%s %d\n", ip->classes,ip->name, ip->counter);
+            have_people = true;
+            PrependFullItem(&users, ip->name, ip->classes, ip->counter, 0);
         }
         else
-           {
-           //printf(" Other stakeholders %s::%s \n", ip->classes,ip->name);
-           PrependFullItem(&stake, ip->name, ip->classes, ip->counter, 0);
-           }
-     }
+        {
+            //printf(" Other stakeholders %s::%s \n", ip->classes,ip->name);
+            PrependFullItem(&stake, ip->name, ip->classes, ip->counter, 0);
+        }
+    }
 
-  DeleteItemList(people);
-  users = SortItemListNames(users);
-  stake = SortItemListNames(stake);
+    DeleteItemList(people);
+    users = SortItemListNames(users);
+    stake = SortItemListNames(stake);
 
-  for (ip = users; ip != NULL; ip=ip->next)
-     {
-     JsonElement *user = JsonObjectCreate(3);
-     JsonObjectAppendString(user, "name", ip->name);
-     JsonObjectAppendString(user, "context", ip->classes);
-     JsonObjectAppendInteger(user, "topic_id", ip->counter);
-     JsonArrayAppendObject(array_users, user);         
-     }
+    for (ip = users; ip != NULL; ip=ip->next)
+    {
+        JsonElement *user = JsonObjectCreate(3);
+        JsonObjectAppendString(user, "name", ip->name);
+        JsonObjectAppendString(user, "context", ip->classes);
+        JsonObjectAppendInteger(user, "topic_id", ip->counter);
+        JsonArrayAppendObject(array_users, user);         
+    }
   
-  for (ip = stake; ip != NULL; ip=ip->next)
-     {
-     JsonElement *stake = JsonObjectCreate(3);
-     JsonObjectAppendString(stake, "name", ip->name);
-     JsonObjectAppendString(stake, "context", ip->classes);
-     JsonObjectAppendInteger(stake, "topic_id", ip->counter);
-     JsonArrayAppendObject(array_stakeholders, stake);
-     }
+    for (ip = stake; ip != NULL; ip=ip->next)
+    {
+        JsonElement *stake = JsonObjectCreate(3);
+        JsonObjectAppendString(stake, "name", ip->name);
+        JsonObjectAppendString(stake, "context", ip->classes);
+        JsonObjectAppendInteger(stake, "topic_id", ip->counter);
+        JsonArrayAppendObject(array_stakeholders, stake);
+    }
 
-  DeleteItemList(users);
-  DeleteItemList(stake);
+    DeleteItemList(users);
+    DeleteItemList(stake);
   
-  double goal_score = (total_compliance + 100.0*have_people)/2.0;
-
-  JsonObjectAppendArray(json, "promises", array_promises);
-  JsonObjectAppendArray(json, "users", array_users);
-  JsonObjectAppendArray(json, "stakeholders", array_stakeholders);
-  JsonObjectAppendInteger(json, "score", (int)goal_score);
-
-  return json;
+    double goal_score = (total_compliance + 100.0*have_people)/2.0;
+    
+    JsonObjectAppendArray(json, "promises", array_promises);
+    JsonObjectAppendArray(json, "users", array_users);
+    JsonObjectAppendArray(json, "stakeholders", array_stakeholders);
+    JsonObjectAppendInteger(json, "score", (int)goal_score);
+    
+    return json;
 }
 
 /*****************************************************************************/
@@ -5085,26 +5085,26 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
                         strncpy(lval, bson_iterator_key(&it3), CF_MAXVARSIZE - 1);
 
                         if (strncmp(lval,"listening_",strlen("listening_")) != 0)
-                           {
-                           continue;
-                           }
+                        {
+                            continue;
+                        }
 
                         if (strcmp(lval,"listening_tcp4_ports") == 0)
-                           {
-                           this_ptr = &tcp4;
-                           }
+                        {
+                            this_ptr = &tcp4;
+                        }
                         else if (strcmp(lval,"listening_tcp6_ports") == 0)
-                           {
-                           this_ptr = &tcp6;
-                           }
+                        {
+                            this_ptr = &tcp6;
+                        }
                         else if (strcmp(lval,"listening_udp4_ports") == 0)
-                           {
-                           this_ptr = &udp4;
-                           }
+                        {
+                            this_ptr = &udp4;
+                        }
                         else
-                           {
-                           this_ptr = &udp6;
-                           }
+                        {
+                            this_ptr = &udp6;
+                        }
                         
                         while (bson_iterator_next(&it4))
                         {
@@ -5118,20 +5118,20 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
                                     bson_iterator_subiterator(&it4, &it5);
 
                                     while (bson_iterator_next(&it5))
-                                       {
-                                       //AppendRScalar(&newlist, (char *) bson_iterator_string(&it5), CF_SCALAR);
-                                       char rval[CF_SMALLBUF];
-                                       snprintf(rval,CF_SMALLBUF-1,"%s",bson_iterator_string(&it5));
+                                    {
+                                        //AppendRScalar(&newlist, (char *) bson_iterator_string(&it5), CF_SCALAR);
+                                        char rval[CF_SMALLBUF];
+                                        snprintf(rval,CF_SMALLBUF-1,"%s",bson_iterator_string(&it5));
 
-                                       if (IsItemIn(*this_ptr,rval))
-                                          {
-                                          IncrementItemListCounter(*this_ptr, rval);
-                                          }
-                                       else
-                                          {
-                                          PrependFullItem(this_ptr, rval, NULL, 1, 0);
-                                          }
-                                       }
+                                        if (IsItemIn(*this_ptr,rval))
+                                        {
+                                            IncrementItemListCounter(*this_ptr, rval);
+                                        }
+                                        else
+                                        {
+                                            PrependFullItem(this_ptr, rval, NULL, 1, 0);
+                                        }
+                                    }
 
                                     break;
 
@@ -5159,9 +5159,9 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     {
         JsonElement *jsonhistogram = JsonObjectCreate(128);
         for (ip = tcp4; ip != NULL; ip=ip->next)
-           {
-           JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
-           }
+        {
+            JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
+        }
         JsonObjectAppendObject(json, "tcp4", jsonhistogram);
     }
 
@@ -5169,9 +5169,9 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     {
         JsonElement *jsonhistogram = JsonObjectCreate(128);
         for (ip = tcp6; ip != NULL; ip=ip->next)
-           {
-           JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
-           }
+        {
+            JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
+        }
         JsonObjectAppendObject(json, "tcp6", jsonhistogram);
     }
 
@@ -5179,9 +5179,9 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     {
         JsonElement *jsonhistogram = JsonObjectCreate(128);
         for (ip = udp4; ip != NULL; ip=ip->next)
-           {
-           JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
-           }
+        {
+            JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
+        }
         JsonObjectAppendObject(json, "udp4", jsonhistogram);
     }
 
@@ -5189,9 +5189,9 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     {
         JsonElement *jsonhistogram = JsonObjectCreate(128);
         for (ip = udp6; ip != NULL; ip=ip->next)
-           {
-           JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
-           }
+        {
+            JsonObjectAppendInteger(jsonhistogram, ip->name, ip->counter);
+        }
         JsonObjectAppendObject(json, "udp6", jsonhistogram);
     }
 

@@ -1225,8 +1225,9 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define NOVA_BUNDLE_DATA "uses variables defined in"
 #define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
-#define NOVA_HANDLE "is the promise handle affecting"
-#define NOVA_HANDLE_INV "makes a promise with handle"
+#define NOVA_HANDLE "is a handle for"
+#define NOVA_HANDLE_INV "is a promise with handle"
+
 #define NOVA_SYNONYM KM_SYNONYM
 #define NOVA_GOAL "contributes to goal"
 #define NOVA_GOAL_INV "is a goal supported by"
