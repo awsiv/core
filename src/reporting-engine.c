@@ -39,7 +39,6 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *h
 /* Output generation */
 static int BuildOutput(void *out, int argc, char **argv, char **azColName);
 
-bool ValidateSQL (char *sql);
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
 static Rlist *GetTableNamesInQuery(const char *select_op);
@@ -642,31 +641,6 @@ static Rlist *GetTableNamesInQuery(const char *select_op)
     free(select_low);
 
     return tables;
-}
-
-/******************************************************************/
-
-// unused currently
-bool ValidateSQL (char *sql)
-{
-    sqlite3 *db;
-
-    if (!Sqlite3_DBOpen(&db))
-    {
-        return false;
-    }
-
-    if(!GenerateAllTables(db))
-    {
-        return false;
-    }
-
-    // TODO: Add error messaging
-    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, sql);
-
-    Sqlite3_DBClose(db);
-
-    return true;
 }
 
 /******************************************************************/
