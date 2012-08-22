@@ -3246,9 +3246,59 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
 
     DeleteItemList(results);
     mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);    
     return json_array_out;
 }
 
+
+/*****************************************************************************/
+
+void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
+{
+    Item *results = NULL;
+    JsonElement *json_array_out = JsonArrayCreate(100);
+    bson_iterator it1;
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return;
+    }
+
+    bson query;
+    bson_init(&query);
+    bson_append_int(&query, cfk_topicid, topic_id);
+    bson_finish(&query);
+
+    bson fields;
+    BsonSelectReportFields(&fields, 1, cfk_bundle);
+        
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
+
+    buffer[0] = '\0';
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
+    {
+        char topic[CF_BUFSIZE] = {0}, context[CF_BUFSIZE] = {0};
+        int topic_id = 0;
+    
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                strncpy(buffer, (char *)bson_iterator_string(&it1), bufsize);
+            }            
+        }
+
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    CFDB_Close(&conn);
+}
 
 /*****************************************************************************/
 
@@ -3271,6 +3321,7 @@ JsonElement *Nova2PHP_show_topic(int id)
     {
         json_out = JsonArrayCreate(1);
     }
+
     return json_out;
 }
 

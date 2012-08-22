@@ -146,6 +146,10 @@ PHP_FUNCTION(cfpr_bundle_classes_used);
  */
 PHP_FUNCTION(cfpr_bundle_arguments);
 
+/*! \brief Get the text about a goal
+ */
+PHP_FUNCTION(cfpr_goal_progress);
+
 /*! \brief Get the list of business goals
  */
 PHP_FUNCTION(cfpr_list_business_goals);
