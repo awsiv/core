@@ -1373,7 +1373,7 @@ void DeletePromiseFilter(PromiseFilter *filter)
 }
 
 
-JsonHeaderTable *NewJsonHeaderTable(char *title, JsonElement *header, JsonElement *rows)
+JsonHeaderTable *NewJsonHeaderTable(const char *title, JsonElement *header, JsonElement *rows)
 {
     assert(header);
     assert(rows);
