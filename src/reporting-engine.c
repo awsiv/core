@@ -90,6 +90,7 @@ bool Sqlite3_DBOpen(sqlite3 **db)
 
 void Sqlite3_DBClose(sqlite3 *db)
 {
+    assert(db);
     sqlite3_close(db);
 }
 
