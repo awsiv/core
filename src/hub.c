@@ -22,6 +22,8 @@
 #include "item_lib.h"
 #include "conversion.h"
 #include "nova-reporting.h"
+#include "reporting-engine.h"
+#include "install.h"
 
 /*******************************************************************/
 
@@ -58,6 +60,10 @@ static void Nova_UpdateMongoHostList(Item **list);
 static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
 
+#if defined(HAVE_LIBSQLITE3)
+#include "sqlite3.h"
+static void RunScheduledEnterpriseReports(void);
+#endif
 /*******************************************************************/
 /* Command line options                                            */
 /*******************************************************************/
@@ -65,7 +71,7 @@ static void Nova_CountMonitoredClasses(void);
 static const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
     "repository. It automatically schedules updates from clients\n" "that have registered by previous connection.";
 
-static const struct option OPTIONS[17] =
+static const struct option OPTIONS[18] =
 {
     {"cache", no_argument, 0, 'a'},
     {"continuous", no_argument, 0, 'c'},
@@ -78,13 +84,14 @@ static const struct option OPTIONS[17] =
     {"logging", no_argument, 0, 'l'},
     {"maintain", no_argument, 0, 'm'},
     {"dry-run", no_argument, 0, 'n'},
+    {"run-scheduled-reports", no_argument, 0, 'r'},
     {"splay_updates", no_argument, 0, 's'},
     {"version", no_argument, 0, 'V'},
     {"verbose", no_argument, 0, 'v'},
     {NULL, 0, 0, '\0'}
 };
 
-static const char *HINTS[17] =
+static const char *HINTS[18] =
 {    
     "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
     "Continuous update mode of operation",
@@ -97,6 +104,7 @@ static const char *HINTS[17] =
     "Enable logging of report collection and maintenance to hub_log in the working directory",
     "Start database maintenance process. By default, entries older than 7 days (1 year for longterm reports) are purged.",
     "All talk and no action mode - make no changes, only inform of promises not kept",
+    "Run scheduled reports",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
     "Output the version of the software",
     "Output verbose information about the behaviour of the agent",
@@ -132,7 +140,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
 
     EnterpriseDB dbconn;
 
-    while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnsVv", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnrsVv", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -208,6 +216,12 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             IGNORELOCK = true;
             NewClass("opt_dry_run");
             break;
+
+        case 'r':
+#if defined(HAVE_LIBSQLITE3)
+            RunScheduledEnterpriseReports();
+#endif
+            exit(0);
 
         case 's':
             {
@@ -699,7 +713,7 @@ static void StartHub(void)
             NewClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
             {
-                Nova_CollectReports();               
+                Nova_CollectReports();
             }
         }
 
@@ -710,8 +724,6 @@ static void StartHub(void)
     YieldCurrentLock(thislock); // Never get here
 }
 
-/********************************************************************/
-/* level                                                            */
 /********************************************************************/
 
 static void Nova_CollectReports(void)
@@ -1076,3 +1088,67 @@ void Nova_HubLog(const char *fmt, ...)
     fprintf(fout, "\n");
     fclose(fout);
 }
+
+/********************************************************************/
+
+#if defined(HAVE_LIBSQLITE3)
+static void RunScheduledEnterpriseReports(void)
+{
+    Rlist *context_include = NULL,
+          *context_exclude = NULL;
+
+    char *username = "admin";
+    char *select_op = "SELECT * FROM variables LIMIT 100;";
+
+    while(true)
+    {
+       /* GetScheduledReportQueries();
+        check for schedule and proceed */
+
+        sqlite3 *db;
+
+        if(ShiftChange())
+        {
+            if (Sqlite3_DBOpen(&db))
+            {
+                if (GenerateAllTables(db))
+                {
+                    Rlist *tables = GetTableNamesInQuery(select_op);
+
+                    if(tables)
+                    {
+                        LoadSqlite3Tables(db, tables, username, context_include, context_exclude);
+                        DeleteRlist(tables);
+
+                        char *err_msg = 0;
+
+                        char path[CF_MAXVARSIZE] = {0};
+                        snprintf(path, CF_MAXVARSIZE - 1, "%s/reports/%s-%ld.csv", CFWORKDIR, username, time(NULL));
+
+                        Writer *writer = FileWriter(fopen(path, "w"));
+                        HubScheduledReport *report  = NewScheduledReports(username, "", select_op, writer);
+
+                        if (!Sqlite3_Execute(db, select_op, (void *) BuildCSVOutput, (void *)report->writer, err_msg))
+                        {
+                            Sqlite3_DBClose(db);
+                            Sqlite3_FreeString(err_msg);
+
+                            // send error message instead of break
+                            break;
+                        }
+
+                        Sqlite3_DBClose(db);
+                        DeleteScheduledReport(report);
+                        Sqlite3_FreeString(err_msg);
+                    }
+                }
+            }
+
+            Sqlite3_DBClose(db);
+        }
+
+        sleep(CFPULSETIME);
+    }
+}
+#endif
+/********************************************************************/
