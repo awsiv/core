@@ -56,7 +56,7 @@ static void AddTopicAssociation(Topic *tp, TopicAssociation **list, char *fwd_na
                                 char *from_context, char *from_topic);
 static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents, enum representations rtype,
                           Rlist *add_topics, char *context, char *bundle);
-static Topic *TopicExists(char *bundle, char *topic_name, char *topic_type);
+static Topic *TopicExists(char *topic_name, char *topic_type);
 static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, char *bwd);
 static Occurrence *OccurrenceExists(Occurrence *list, char *locator, enum representations repy_type, char *s);
 static void KeepPromiseBundles(Policy *policy, const ReportContext *report_context);
@@ -861,7 +861,7 @@ static void VerifyThingsPromise(Promise *pp)
 
            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
            PrependRScalar(&list, id, CF_SCALAR);
-           AddTopicAssociation(tp, &(tp->associations), "is a promise with handle", "is a handle for", list, true, rp->item,
+           AddTopicAssociation(tp, &(tp->associations), NOVA_HANDLE_INV, NOVA_HANDLE, list, true, rp->item,
                                 pp->promiser);
            DeleteRlist(list);
            list = NULL;
@@ -1092,7 +1092,7 @@ static Topic *AddTopic(Topic **list, char *bundle, char *name, char *context)
 {
     Topic *tp;
 
-    if ((tp = TopicExists(bundle, name, context)))
+    if ((tp = TopicExists(name, context)))
     {
         CfOut(cf_verbose, "", " -> Topic %s already defined, ok\n", name);
     }
@@ -1300,7 +1300,7 @@ void AddInference(Inference **list, char *result, char *pre, char *qual)
 /* Level                                                                     */
 /*****************************************************************************/
 
-static Topic *TopicExists(char *bundle, char *topic_name, char *topic_context)
+static Topic *TopicExists(char *topic_name, char *topic_context)
 {
     Topic *tp;
     int slot;
@@ -1311,17 +1311,14 @@ static Topic *TopicExists(char *bundle, char *topic_name, char *topic_context)
     {
         if (strcmp(tp->topic_name, NormalizeTopic(topic_name)) == 0)
         {        
-            if (topic_context && (strcmp(tp->bundle, bundle) == 0))
+            if (strlen(topic_context) > 0 && strcmp(tp->topic_context, NormalizeTopic(topic_context)) == 0)
             {
-                if (strlen(topic_context) > 0 && strcmp(tp->topic_context, NormalizeTopic(topic_context)) == 0)
-                {
-                    return tp;
-                }
-
-                if (strlen(topic_context) == 0 && strcmp(tp->topic_context, "any") == 0)
-                {
-                    return tp;
-                }
+                return tp;
+            }
+         
+            if (strlen(topic_context) == 0 && strcmp(tp->topic_context, "any") == 0)
+            {
+                return tp;
             }
         }
     }

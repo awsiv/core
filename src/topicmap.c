@@ -180,12 +180,13 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("***************************************************\n");
 
     char buffer[1000000];
-    Nova_GetApplicationServices(buffer, 1000000);
-    printf("\nSERVICES:\n %s\n",buffer);
+    //Nova_GetApplicationServices(buffer, 1000000);
+    //printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
 
+    /*
     printf("***************************************************\n");
     
     printf("INPUT: handles::goal_customers\n");
@@ -222,7 +223,37 @@ void Nova_ShowTopic(char *qualified_topic)
 
         WriterClose(writer);
     }
+    */
 
+
+    Rlist *rp;
+    bson_iterator it1;
+    EnterpriseDB conn;
+    char work[CF_BUFSIZE] = { 0 };
+    char searchstring[CF_BUFSIZE] = { 0 };
+    Rlist *goal_patterns = NULL;
+    char db_goal_patterns[CF_BUFSIZE] = { 0 };
+
+    if (CFDB_GetValue("goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH))
+    {
+        goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
+    }
+
+    for (rp = goal_patterns; rp != NULL; rp = rp->next)
+    {
+        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|goals::.*|", (char *) rp->item);
+        strcat(searchstring, work);
+    }
+
+    if (strlen(searchstring) > 1)
+    {
+        searchstring[strlen(searchstring) - 1] = '\0';
+    }
+    else
+    {
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
+    }
+    
 }
 
 /*****************************************************************************/
@@ -295,8 +326,11 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
 
 static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize)
 {
-    Item *ip, *nn = Nova_ScanLeadsAssociations(handle_id, "is a handle for");
+    Item *ip, *nn = Nova_ScanLeadsAssociations(handle_id, NOVA_HANDLE);
 
+    char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE], bundle[CF_BUFSIZE];
+    Nova_GetTopicByTopicId(handle_id, topic_name, topic_id, topic_context, bundle);
+    
     for (ip = nn; ip != NULL; ip = ip->next)
        {
        char declass[CF_BUFSIZE];
@@ -901,6 +935,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
         snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
     }
 
+    
     if (!CFDB_Open(&conn))
     {
         return false;
@@ -940,56 +975,58 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
         JsonElement *json_obj = JsonObjectCreate(4);
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
+        topic_id = 0;
+        
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
-        {
-        
-            /* Query specific search/marshalling */
-        if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
-           {
-           snprintf(description,CF_BUFSIZE-1,"%s", bson_iterator_string(&it1));
-           }
-        else if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
-           {
-           snprintf(topic_name, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
-           topic_id = Nova_GetTopicIdForTopic(topic_name);
-           referred = Nova_GetTopicIdForPromiseHandle(topic_id,refer,CF_BUFSIZE);
-           }
+        {   
+            if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
+            {
+                snprintf(description,CF_BUFSIZE-1,"%s", bson_iterator_string(&it1));
+            }
+            else if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
+            {
+                snprintf(topic_name, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
+                topic_id = Nova_GetTopicIdForTopic(topic_name);
+                referred = Nova_GetTopicIdForPromiseHandle(topic_id,refer,CF_BUFSIZE);
+            }
         }
+
+        char topic[CF_BUFSIZE],context[CF_BUFSIZE];
+        Nova_DeClassifyTopic(topic_name, topic, context);
         
-        if (!IsItemIn(check,refer))
-           {
-           JsonObjectAppendString(json_obj, "description", description);
-           JsonObjectAppendString(json_obj, "name", refer);
-           char topic[CF_BUFSIZE],context[CF_BUFSIZE];
-           Nova_DeClassifyTopic(topic_name, topic, context);
-           JsonObjectAppendString(json_obj, "handle", topic);
-           JsonObjectAppendInteger(json_obj, "pid", referred);
+        if (referred != 0 && !IsItemIn(check,topic))
+        {
+            JsonObjectAppendString(json_obj, "description", description);
+            JsonObjectAppendString(json_obj, "name", refer);
+            JsonObjectAppendString(json_obj, "handle", topic);
+            JsonObjectAppendInteger(json_obj, "pid", referred);
 
-           Item *nn = Nova_NearestNeighbours(referred, KM_INVOLVES_CERT_F);
+            Item *nn = Nova_NearestNeighbours(referred, KM_INVOLVES_CERT_F);
            
-           if (nn)
-              {
-               JsonElement *json_array = JsonArrayCreate(50);
+            if (nn)
+            {
+                JsonElement *json_array = JsonArrayCreate(50);
                
-               for (Item *ip = nn; ip != NULL; ip = ip->next)
-                  {
-                  if (ip->counter == referred || ip->counter == topic_id)
-                     {
-                     continue;
-                     }
+                for (Item *ip = nn; ip != NULL; ip = ip->next)
+                {
+                    if (ip->counter == referred || ip->counter == topic_id)
+                    {
+                        continue;
+                    }
                   
-                  JsonElement *json_service = JsonObjectCreate(3);
-                  JsonObjectAppendString(json_service, "topic", ip->name);
-                  JsonObjectAppendString(json_service, "context", ip->classes);
-                  JsonObjectAppendInteger(json_service, "topic_id", ip->counter);
-                  JsonArrayAppendObject(json_array, json_service);
-                  }
-               PrependItem(&check, refer,NULL);
-               JsonObjectAppendArray(json_obj, "comprises", json_array);
-              }
+                JsonElement *json_service = JsonObjectCreate(3);
+                JsonObjectAppendString(json_service, "topic", ip->name);
+                JsonObjectAppendString(json_service, "context", ip->classes);
+                JsonObjectAppendInteger(json_service, "topic_id", ip->counter);
+                JsonArrayAppendObject(json_array, json_service);
+                }
 
-           JsonArrayAppendObject(json_array_out, json_obj);
-           }           
+                PrependItem(&check, topic, NULL);
+                JsonObjectAppendArray(json_obj, "comprises", json_array);
+            }
+
+            JsonArrayAppendObject(json_array_out, json_obj);
+        }           
     }
     
     DeleteItemList(check);
@@ -1063,52 +1100,54 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
     hv = (HubVariable *) rp->item;
 
     if (strlen(hv->dtype) > 1)      // list
-       {
-       for (rp2 = hv->rval.item; rp2 != NULL; rp2 = rp2->next)
-          {
-          int found = false;
+    {
+        for (rp2 = hv->rval.item; rp2 != NULL; rp2 = rp2->next)
+        {
+            int found = false;
 
-          if (atoi(rp2->item) == 0)
-             {
-             continue;
-             }
+            if (atoi(rp2->item) == 0)
+            {
+                continue;
+            }
 
-          portname = "misc";
+            portname = "misc";
 
-          for (int j = 0; j < ATTR; j++)
-             {
-             if (strcmp(rp2->item, ECGSOCKS[j].portnr) == 0)
+            for (int j = 0; j < ATTR; j++)
+            {
+                if (strcmp(rp2->item, ECGSOCKS[j].portnr) == 0)
                 {
-                portname = ECGSOCKS[j].name;
+                    portname = ECGSOCKS[j].name;
                 }
-             }
+            }
 
           
-          for (i = 0; (i < CF_SERVICES_LIMIT && serv_array[i].port > 0); i++)
-             {
-             if (strlen(serv_array[i].port) == 0)
+            for (i = 0; (i < CF_SERVICES_LIMIT && serv_array[i].port > 0); i++)
+            {
+                if (strlen(serv_array[i].port) == 0)
                 {
-                break;
+                    break;
                 }
              
-             if (strcmp(serv_array[i].name, portname) == 0)
+                if (strcmp(serv_array[i].name, portname) == 0)
                 {
-                serv_array[i].freq[type]++;
-                if (strcmp(serv_array[i].port, rp2->item) != 0)
-                   {
-                   Join(serv_array[i].port, ",", CF_BUFSIZE);
-                   Join(serv_array[i].port, rp2->item, CF_BUFSIZE);
-                   }
+                    serv_array[i].freq[type]++;
+                    
+                    if (strcmp(serv_array[i].port, rp2->item) != 0)
+                    {
+                        Join(serv_array[i].port, ",", CF_BUFSIZE);
+                        Join(serv_array[i].port, rp2->item, CF_BUFSIZE);
+                    }
+                    
                 found = true;
                 break;
                 }
              }
           
-          if (!found)
+             if (!found)
              {
-             serv_array[i].freq[type]++;
-             strncpy(serv_array[i].port, rp2->item, CF_BUFSIZE);
-             strncpy(serv_array[i].name,portname,CF_SMALLBUF-1);             
+                 serv_array[i].freq[type]++;
+                 strncpy(serv_array[i].port, rp2->item, CF_BUFSIZE);
+                 strncpy(serv_array[i].name,portname,CF_SMALLBUF-1);             
              }
           }
        }
@@ -1199,43 +1238,42 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     JsonElement *json_array_out = JsonArrayCreate(100);
 
     for (Item *ip = list; ip != NULL; ip=ip->next)
-       {
-       JsonElement *json_obj = JsonObjectCreate(3);
-       char comment[CF_BUFSIZE];
+    {
+        JsonElement *json_obj = JsonObjectCreate(3);
+        char comment[CF_BUFSIZE];
        
-       Nova_GetTopicComment(ip->name,"promisers",comment,sizeof(comment));
-       JsonObjectAppendString(json_obj, "description", comment);
-       JsonObjectAppendString(json_obj, "name", ip->name);
-       JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+        Nova_GetTopicComment(ip->name,"promisers",comment,sizeof(comment));
+        JsonObjectAppendString(json_obj, "description", comment);
+        JsonObjectAppendString(json_obj, "name", ip->name);
+        JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
 
-       // Now get the technical port services that provide this, i.e. "is provided by"
+        // Now get the technical port services that provide this, i.e. "is provided by"
 
-       Item *nn = Nova_NearestNeighbours(ip->counter, KM_IMPLEMENTS_CERT_B);
-       //Item *nn = Nova_NearestNeighbours(ip->counter, NULL);
+        Item *nn = Nova_NearestNeighbours(ip->counter, KM_IMPLEMENTS_CERT_B);
+        //Item *nn = Nova_NearestNeighbours(ip->counter, NULL);
            
-       if (nn)
-       {
-          JsonElement *json_array = JsonArrayCreate(50);
+        if (nn)
+        {
+            JsonElement *json_array = JsonArrayCreate(50);
           
-          for (Item *ips = nn; ips != NULL; ips = ips->next)
-          {
-             if (ips->counter == ip->counter)
-             {
-                continue;
-             }
+            for (Item *ips = nn; ips != NULL; ips = ips->next)
+            {
+                if (ips->counter == ip->counter)
+                {
+                    continue;
+                }
              
-             JsonElement *json_service = JsonObjectCreate(3);
-             JsonObjectAppendString(json_service, "topic", ips->name);
-             JsonObjectAppendString(json_service, "context", ips->classes);
-             JsonObjectAppendInteger(json_service, "topic_id", ips->counter);
-             JsonArrayAppendObject(json_array, json_service);
-          }
+                JsonElement *json_service = JsonObjectCreate(3);
+                JsonObjectAppendString(json_service, "topic", ips->name);
+                JsonObjectAppendString(json_service, "context", ips->classes);
+                JsonObjectAppendInteger(json_service, "topic_id", ips->counter);
+                JsonArrayAppendObject(json_array, json_service);
+            }
 
-          JsonObjectAppendArray(json_obj, "provided_by", json_array);
-          }
-       
-       
-       JsonArrayAppendObject(json_array_out, json_obj); 
+            JsonObjectAppendArray(json_obj, "provided_by", json_array);
+        }
+              
+        JsonArrayAppendObject(json_array_out, json_obj); 
     }
     
 
