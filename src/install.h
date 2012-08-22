@@ -15,7 +15,7 @@ typedef struct
 } JsonHeaderTable;
 
 
-JsonHeaderTable *NewJsonHeaderTable(char *title, JsonElement *header, JsonElement *rows);
+JsonHeaderTable *NewJsonHeaderTable(const char *title, JsonElement *header, JsonElement *rows);
 void DeleteJsonHeaderTable(JsonHeaderTable *table);
 
 #endif  /* CFENGINE_ENTERPRISE_INSTALL_H */

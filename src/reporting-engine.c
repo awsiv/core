@@ -22,8 +22,8 @@ void Sqlite3_DBClose(sqlite3 *db);
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
-static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op);
-static JsonElement *GetColumnNames(sqlite3 *db, char *select_op);
+static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
+static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op);
 
 /* Conversion functions */
 static void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username, Rlist *context_include, Rlist *context_exclude);
@@ -189,7 +189,7 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName)
 
 /******************************************************************/
 
-static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select_op)
+static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op)
 {
     /* Query sqlite and print table contents */
     char *err_msg = 0;
@@ -205,7 +205,7 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, char *select
     return result;
 }
 
-static JsonElement *GetColumnNames(sqlite3 *db, char *select_op)
+static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
 {
     sqlite3_stmt *statement;
     JsonElement *columns = JsonArrayCreate(5);
