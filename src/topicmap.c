@@ -223,8 +223,6 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    Nova2PHP_bundle_for_topic(tid, buffer, CF_BUFSIZE);
-    printf("GOT %s for %d\n",buffer,tid);
 }
 
 /*****************************************************************************/
