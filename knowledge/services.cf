@@ -322,6 +322,7 @@ bundle knowledge compliance_models
 {
 topics:
 
+   "Total Desired State Model" comment => "This default compliance model refers to the total managed state in your CFEngine policy. This may or may not overlap with other specific compliance models.";
 
    "PCI-DSS" comment => "Payment Card Industry Data Security Standards. ";
 
