@@ -31,9 +31,6 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
 static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *handle, char *promiser, char *bundle_name, char *promisee);
 
-/* Output generation */
-static int BuildOutput(void *out, int argc, char **argv, char **azColName);
-
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
 
@@ -162,7 +159,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 /* from sqlite                                                    */
 /******************************************************************/
 
-static int BuildOutput(void *out, int argc, char **argv, char **azColName)
+int BuildJsonOutput(void *out, int argc, char **argv, char **azColName)
 {
     JsonElement *result = (JsonElement *) out;
 
@@ -187,7 +184,7 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *
 
     JsonHeaderTable *result = NewJsonHeaderTable(select_op, GetColumnNames(db, select_op), JsonArrayCreate(5));
 
-    if (!Sqlite3_Execute(db, select_op, (void *) BuildOutput, (void *)result->rows, err_msg))
+    if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, (void *)result->rows, err_msg))
     {
         Sqlite3_FreeString(err_msg);
         return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));;
@@ -297,7 +294,7 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO %s VALUES('%s','%s','%s', '%ld','%s');", SQL_TABLE_HOSTS,
                  SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
             break;
@@ -334,7 +331,7 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO %s VALUES('%s','%s', '%ld');", SQL_TABLE_CONTEXTS,
                  SkipHashType(hc->hh->keyhash), hc->class, hc->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err); // add the error message to the return string
             return;
@@ -376,7 +373,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
             free(rval_scalar_escaped);
 
-            if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
             {
                 Sqlite3_FreeString(err);
                 return;
@@ -396,7 +393,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
                 free(rval_scalar_escaped);
 
-                if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+                if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
                 {
                     Sqlite3_FreeString(err);
                     return;
@@ -434,7 +431,7 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
                  "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
                  SkipHashType(hC->hh->keyhash), hC->path, hC->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
             return;
@@ -470,7 +467,7 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
                  "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_SOFTWARE,
                  SkipHashType(hs->hh->keyhash), hs->name, hs->version, hs->arch);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
             return;
@@ -530,7 +527,7 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
                  "INSERT INTO %s VALUES('%s','%s','%s',%ld);", SQL_TABLE_PROMISESTATUS,
                  SkipHashType(hc->hh->keyhash), hc->handle, PromiseStateToString(hc->status), hc->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
             return;
@@ -600,7 +597,7 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *h
 
     char *err = 0;
 
-    if (!Sqlite3_Execute(db, insert_op, (void *) BuildOutput, 0, err))
+    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
     {
         Sqlite3_FreeString(err);
         return false;
@@ -640,7 +637,7 @@ Rlist *GetTableNamesInQuery(const char *select_op)
 static bool CreateSQLTable(sqlite3 *db, char *create_sql)
 {
     char *err = 0;
-    if (!Sqlite3_Execute(db, create_sql, (void *) BuildOutput, 0, err))
+    if (!Sqlite3_Execute(db, create_sql, (void *) BuildJsonOutput, 0, err))
     {
         //Sqlite3_FreeString(err);
         return false;
@@ -682,7 +679,7 @@ void Sqlite3_FreeString(char *str)
 static bool Sqlite3_BeginTransaction(sqlite3 *db)
 {
     char *err = 0;
-    if (!Sqlite3_Execute(db, "BEGIN TRANSACTION;", (void *) BuildOutput, 0, err))
+    if (!Sqlite3_Execute(db, "BEGIN TRANSACTION;", (void *) BuildJsonOutput, 0, err))
     {
         /* TODO: return error string */
 
@@ -698,7 +695,7 @@ static bool Sqlite3_BeginTransaction(sqlite3 *db)
 static bool Sqlite3_CommitTransaction(sqlite3 *db)
 {
     char *err = 0;
-    if (!Sqlite3_Execute(db, "COMMIT;", (void *) BuildOutput, 0, err))
+    if (!Sqlite3_Execute(db, "COMMIT;", (void *) BuildJsonOutput, 0, err))
     {
         /* TODO: return error string */
 
@@ -709,4 +706,25 @@ static bool Sqlite3_CommitTransaction(sqlite3 *db)
     return true;
 }
 /******************************************************************/
+
+int BuildCSVOutput(void *out, int argc, char **argv, char **azColName)
+{
+    char csv_row[CF_BUFSIZE] = "";
+
+    for(int i=0; i<argc; i++)
+    {        
+        strncat(csv_row, argv[i] ? argv[i] : "NULL", CF_BUFSIZE - 2);
+        strcat(csv_row, ",");
+    }
+
+    ReplaceTrailingChar(csv_row, ',', '\n');
+
+    Writer *writer = (Writer *) out;
+    WriterWriteF(writer, "%s", csv_row);
+
+    return 0;
+}
+
+/******************************************************************/
+
 #endif
