@@ -102,7 +102,7 @@ int Nova2PHP_list_services(char *buffer, int bufsize);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_service_histogram(void);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
-void Nova2PHP_get_goal_progress(int goal_id, char *handle);
+JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle);
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
 void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
 JsonElement *Nova2PHP_network_speed(char *hostkey);

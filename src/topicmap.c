@@ -190,15 +190,19 @@ void Nova_ShowTopic(char *qualified_topic)
     
     printf("INPUT: handles::goal_customers\n");
     int tid = Nova_GetTopicIdForTopic("handles::goal_customers");
-    Nova2PHP_get_goal_progress(tid, "goal_customers");
+    json =  Nova2PHP_get_goal_progress(tid, "goal_customers");
 
-    printf("INPUT: handles::goal_availability\n");
-    tid = Nova_GetTopicIdForTopic("handles::goal_availability");
-    Nova2PHP_get_goal_progress(tid, "goal_availability");
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
 
-    printf("INPUT: handles::goal_productive\n");
-    tid = Nova_GetTopicIdForTopic("handles::goal_productive");
-    Nova2PHP_get_goal_progress(tid, "goal_productive");
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\n: GOAL_PROGRESS %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
 
     printf("***************************************************\n");
         
