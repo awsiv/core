@@ -68,6 +68,7 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_promise_details, NULL)
     PHP_FE(cfpr_bundle_list_all, NULL)
     PHP_FE(cfpr_bundle_agent_goals, NULL)
+    PHP_FE(cfpr_goal_progress, NULL)
     PHP_FE(cfpr_bundle_arguments, NULL)
     PHP_FE(cfpr_bundle_by_promise_handle, NULL)
     PHP_FE(cfpr_bundle_classes_used, NULL)
