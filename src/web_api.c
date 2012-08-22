@@ -3256,7 +3256,6 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
 void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 {
     Item *results = NULL;
-    JsonElement *json_array_out = JsonArrayCreate(100);
     bson_iterator it1;
     EnterpriseDB conn;
 
@@ -3287,7 +3286,7 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            if (strcmp(bson_iterator_key(&it1), cfk_bundle) == 0)
             {
                 strncpy(buffer, (char *)bson_iterator_string(&it1), bufsize);
             }            
