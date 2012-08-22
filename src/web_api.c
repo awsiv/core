@@ -580,8 +580,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, c
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
-                            HostClassFilter *hostClassFilter)
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -4845,44 +4844,124 @@ return Nova_GetServiceHistogram();
 
 /*****************************************************************************/
 
-void Nova2PHP_get_goal_progress(int goal_id, char *handle)
+JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
 
  Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
  int hosts = 0;
- int have_people = false, have_promises = false; 
-
+ double have_people = false;
+ EnterpriseDB dbconn;
+ double average_compliance = 0, total_compliance = 0;
+         
  // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
  Item *people = Nova_GetStakeHolders(goal_id);
 
+ if (!CFDB_Open(&dbconn))
+    {
+    return JSONErrorFromId(ERRID_DBCONNECT);
+    }
+
+ handles = SortItemListNames(handles);
+
+ JsonElement *json = JsonObjectCreate(4);
+ JsonElement *array_promises = JsonArrayCreate(100);
+ JsonElement *array_users = JsonArrayCreate(10);
+ JsonElement *array_stakeholders = JsonArrayCreate(10);
+ 
   for (ip = handles; ip != NULL; ip = ip->next)
      {
-         PageInfo page = { 0 };
-         char buffer[CF_BUFSIZE];
-
-         have_promises = true;
-         Nova2PHP_compliance_promises(NULL, ip->name, NULL, false, NULL, NULL, false, &page, buffer, sizeof(buffer));
+         HubPromiseCompliance *hp;
+         HubQuery *hq;
+         Rlist *rp;
+         time_t now = time(NULL);
+         char status[CF_MAXVARSIZE];
          
-         printf(" Involves promise %s : %s\n", ip->name, buffer);
+         //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
+         
+         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL);
+
+         hosts = RlistLen(hq->hosts);
+
+         if (hosts == 0)
+            {
+            snprintf(status, CF_MAXVARSIZE, "No hosts have kept this promise yet");
+            }
+         else
+            {
+            average_compliance = 0;
+            
+            for (rp = hq->records; rp != NULL; rp = rp->next)
+               {
+               hp = (HubPromiseCompliance *) rp->item;
+               
+               //printf("Host %s has tried to keep this promise\n", hp->hh->hostname);
+
+               average_compliance += hp->e;
+               }
+
+            total_compliance += average_compliance;
+            }
+
+         JsonElement *promise = JsonObjectCreate(3);
+         JsonObjectAppendString(promise, "name", ip->name);
+         JsonObjectAppendString(promise, "context", ip->classes);
+         JsonObjectAppendInteger(promise, "topic_id", ip->counter);
+         JsonObjectAppendInteger(promise, "compliance", average_compliance);
+         JsonArrayAppendObject(array_promises, promise);         
      }
 
+  CFDB_Close(&dbconn);
+
+  Item *users = NULL, *stake = NULL;
+  
   for (ip = people; ip != NULL; ip = ip->next)
      {
         if (strstr(ip->name, "@") || strcmp(ip->classes, "users") == 0)
         {
-            printf(" Person responsible %s::%s \n", ip->classes,ip->name);
-            have_people = true;
+        //printf(" Person responsible %s::%s %d\n", ip->classes,ip->name, ip->counter);
+        have_people = true;
+        PrependFullItem(&users, ip->name, ip->classes, ip->counter, 0);
         }
         else
-        {
-            printf(" Other stakeholders %s::%s \n", ip->classes,ip->name);
-        }
+           {
+           //printf(" Other stakeholders %s::%s \n", ip->classes,ip->name);
+           PrependFullItem(&stake, ip->name, ip->classes, ip->counter, 0);
+           }
+     }
+
+  DeleteItemList(people);
+  users = SortItemListNames(users);
+  stake = SortItemListNames(stake);
+
+  for (ip = users; ip != NULL; ip=ip->next)
+     {
+     JsonElement *user = JsonObjectCreate(3);
+     JsonObjectAppendString(user, "name", ip->name);
+     JsonObjectAppendString(user, "context", ip->classes);
+     JsonObjectAppendInteger(user, "topic_id", ip->counter);
+     JsonArrayAppendObject(array_users, user);         
      }
   
-  int average_compliance = 0;
-  double goal_score = (have_promises*average_compliance + 100*have_people)/2;
+  for (ip = stake; ip != NULL; ip=ip->next)
+     {
+     JsonElement *stake = JsonObjectCreate(3);
+     JsonObjectAppendString(stake, "name", ip->name);
+     JsonObjectAppendString(stake, "context", ip->classes);
+     JsonObjectAppendInteger(stake, "topic_id", ip->counter);
+     JsonArrayAppendObject(array_stakeholders, stake);
+     }
 
-  printf("Progress score for goal %s = %lf (out of 100)\n", handle, goal_score);
+  DeleteItemList(users);
+  DeleteItemList(stake);
+  
+  double goal_score = (total_compliance + 100.0*have_people)/2.0;
+
+  JsonObjectAppendArray(json, "promises", array_promises);
+  JsonObjectAppendArray(json, "users", array_users);
+  JsonObjectAppendArray(json, "stakeholders", array_stakeholders);
+  JsonObjectAppendInteger(json, "score", (int)goal_score);
+
+  return json;
 }
 
 /*****************************************************************************/
