@@ -1968,3 +1968,48 @@ static void DateStrToTime(const char *inStr, time_t *t)
         *t = tTime;
     }
 }
+
+/*****************************************************************************/
+
+HubScheduledReport *NewScheduledReports(const char *user, const char *email, const char *sql, Writer *w)
+{
+    HubScheduledReport *sr;
+    sr = xmalloc(sizeof(HubScheduledReport));
+
+    sr->username = SafeStringDuplicate(user);
+    sr->email = SafeStringDuplicate(email);
+    sr->sql_query = SafeStringDuplicate(sql);
+    sr->started_on = (time_t) 0;
+    sr->completed_on = (time_t) 0;
+    sr->total_secs = 0;
+    sr->writer = w;
+    return sr;
+}
+
+/*****************************************************************************/
+
+void DeleteScheduledReport(HubScheduledReport *sr)
+{
+    if(sr)
+    {
+        if(sr->username)
+        {
+            free(sr->username);
+        }
+
+        if(sr->email)
+        {
+            free(sr->email);
+        }
+
+        if(sr->sql_query)
+        {
+            free(sr->sql_query);
+        }
+
+        if(sr->writer)
+        {
+            WriterClose(sr->writer);
+        }
+    }
+}
