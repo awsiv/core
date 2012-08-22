@@ -9,6 +9,9 @@
 
 #include "cf.nova.h"
 #include "install.h"
+#if defined(HAVE_LIBSQLITE3)
+#include "sqlite3.h"
+#endif
 
 #define SQL_TABLE_COUNT 8
 
@@ -70,5 +73,17 @@
 
 JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
                                   Rlist *context_include, Rlist *context_exclude);
+
+
+bool Sqlite3_DBOpen(sqlite3 **db);
+void Sqlite3_DBClose(sqlite3 *db);
+void Sqlite3_FreeString(char *str);
+bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
+
+bool GenerateAllTables(sqlite3 *db);
+Rlist *GetTableNamesInQuery(const char *select_op);
+void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
+                       Rlist *context_include, Rlist *context_exclude);
+
 
 #endif

@@ -13,20 +13,15 @@
 #include "conf.h"
 
 #if defined(HAVE_LIBSQLITE3)
-#include "sqlite3.h"
 
 /******************************************************************/
 
-bool Sqlite3_DBOpen(sqlite3 **db);
-void Sqlite3_DBClose(sqlite3 *db);
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
-static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
 static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
 static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op);
 
 /* Conversion functions */
-static void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username, Rlist *context_include, Rlist *context_exclude);
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
@@ -41,9 +36,6 @@ static int BuildOutput(void *out, int argc, char **argv, char **azColName);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
-static Rlist *GetTableNamesInQuery(const char *select_op);
-
-void Sqlite3_FreeString(char *str);
 
 /******************************************************************/
 
@@ -106,7 +98,7 @@ void Sqlite3_DBClose(sqlite3 *db)
 
 /******************************************************************/
 
-static bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg)
+bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg)
 {
     int rc = sqlite3_exec(db, sql, fn_ptr, arg_to_callback, &err_msg);
 
@@ -231,7 +223,7 @@ static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
 
 /******************************************************************/
 
-static void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
+void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
                               Rlist *context_include, Rlist *context_exclude)
 {
     /* Apply RBAC & Context filters */
@@ -619,7 +611,7 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *h
 
 /******************************************************************/
 
-static Rlist *GetTableNamesInQuery(const char *select_op)
+Rlist *GetTableNamesInQuery(const char *select_op)
 {
     Rlist *tables = NULL;
 
