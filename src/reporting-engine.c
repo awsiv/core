@@ -188,7 +188,7 @@ static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *
     if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, (void *)result->rows, err_msg))
     {
         Sqlite3_FreeString(err_msg);
-        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));;
+        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
     return result;
