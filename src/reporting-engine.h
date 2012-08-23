@@ -74,11 +74,14 @@
 JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
                                   Rlist *context_include, Rlist *context_exclude);
 
-
+#if defined(HAVE_LIBSQLITE3)
 bool Sqlite3_DBOpen(sqlite3 **db);
 void Sqlite3_DBClose(sqlite3 *db);
-void Sqlite3_FreeString(char *str);
 bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
+void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
+                       Rlist *context_include, Rlist *context_exclude);
+
+void Sqlite3_FreeString(char *str);
 
 /* Output generation */
 int BuildJsonOutput(void *out, int argc, char **argv, char **azColName);
@@ -86,8 +89,6 @@ int BuildCSVOutput(void *out, int argc, char **argv, char **azColName);
 
 bool GenerateAllTables(sqlite3 *db);
 Rlist *GetTableNamesInQuery(const char *select_op);
-void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
-                       Rlist *context_include, Rlist *context_exclude);
-
+#endif
 
 #endif
