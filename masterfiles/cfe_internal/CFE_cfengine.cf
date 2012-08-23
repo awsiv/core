@@ -164,6 +164,15 @@ bundle agent cfengine_correct_cftwin
 {
  files:
 
+  windows::
+
+   "$(sys.workdir)\bin-twin"
+                comment => "Correct bin-twin directory, making it up-to-date syncing up with bin directory",
+                 handle => "cfengine_correct_cftwin_file_bintwin",
+      move_obstructions => "true",
+              copy_from => local_dcp("$(sys.workdir)\bin"); 
+           depth_search => recurse("inf");
+
   !windows::
 
    "/var/cfengine/lib-twin"
