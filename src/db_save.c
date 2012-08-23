@@ -16,7 +16,7 @@
 /* Cache / scratch space                                                     */
 /*****************************************************************************/
 
-int CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name)
+bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name)
 {
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
     {

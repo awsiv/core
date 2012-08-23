@@ -6,7 +6,7 @@
 
 #include <mongo.h>
 
-int CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name);
+bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name);
 
 void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *kH, Item *data);
 
