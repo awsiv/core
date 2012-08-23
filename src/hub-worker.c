@@ -140,14 +140,29 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
                               char *buffer, int bufsize)
 {
-    if(CFDB_HandleGetValue("host_identifier", buffer, bufsize, "sys.fqhost", dbconn, MONGO_SCRATCH))
-    {
-        char **split_scope = String2StringArray(buffer, '.');
+    const char *hostname = NULL;
+    char identifier[CF_MAXVARSIZE] = {0};
 
-        CFDB_QueryVariableValueStr(dbconn, keyhash, "s", split_scope[0], split_scope[1]);
+    buffer[0] = '\0';
+
+    bool ret = CFDB_HandleGetValue(cfr_host_identifier, identifier, CF_MAXVARSIZE - 1,
+                                   "sys.fqhost", dbconn, MONGO_SCRATCH);
+
+    if(ret)
+    {
+        char **split_scope = String2StringArray(identifier, '.');
+
+        hostname = CFDB_QueryVariableValueStr(dbconn, keyhash, "s", split_scope[0], split_scope[1]);
+
+        if(hostname)
+        {
+            snprintf(buffer, bufsize, "%s", hostname);
+        }
+
         FreeStringArray(split_scope);
     }
-    else
+
+    if(strlen(buffer) < 1)
     {
         buffer[0] = '\0';
         snprintf(buffer, bufsize, "%s", IPString2Hostname(ip));
