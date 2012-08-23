@@ -33,7 +33,11 @@ bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const
     bson_finish(&set_op);
 
     bson empty;
-    mongo_update(conn, db_name, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+    if (mongo_update(conn, db_name, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL) != MONGO_OK)
+    {
+        bson_destroy(&set_op);
+        return false;
+    }
 
     bson_destroy(&set_op);
 
