@@ -787,6 +787,13 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type);
  */
 PHP_FUNCTION(cfpr_delete_host);
 
+/*! \brief Update the host identifier variable
+ * \param username
+ * \param scope
+ * \param variable name
+ */
+PHP_FUNCTION(cfpr_update_host_identifier);
+
 /*! \brief A list of all environments
  */
 PHP_FUNCTION(cfpr_environment_list);

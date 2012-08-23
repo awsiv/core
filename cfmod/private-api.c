@@ -5130,6 +5130,47 @@ PHP_FUNCTION(cfpr_get_bluehost_threshold)
     RETURN_STRING(buffer, 1);
 }
 
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_update_host_identifier)
+{
+    char *username, *scope, *variable;
+    int user_len, s_len, v_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+                              &username, &user_len,
+                              &scope, &s_len,
+                              &variable, &v_len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len && s_len && v_len);
+
+    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
+        RETURN_BOOL(false);
+    }
+
+    EnterpriseDB conn[1];
+    DATABASE_OPEN(conn);
+
+    char full_var_name[CF_MAXVARSIZE] = {0};
+    snprintf(full_var_name, CF_MAXVARSIZE, "%s.%s", scope, variable);
+
+    if (!CFDB_PutValue(conn, cfr_host_identifier, full_var_name, MONGO_SCRATCH))
+    {
+        DATABASE_CLOSE(conn);
+        zend_throw_exception(cfmod_exception_db, "Unable to update host identifier", 0 TSRMLS_CC);
+        RETURN_BOOL(false);
+    }
+
+    DATABASE_CLOSE(conn);
+    RETURN_BOOL(true);
+}
 /******************************************************************************/
 /* Mission Tree-Control (Astrolabe)                                           */
 /******************************************************************************/

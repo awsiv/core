@@ -79,6 +79,7 @@ extern int AM_PHP_MODULE;
  */
 #ifdef HAVE_LIBMONGOC
 int CFDB_GetValue(char *lval, char *rval, int size, char *db_name);
+bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name);
 int Nova_GetTopicIdForTopic(char *typed_topic);
 #endif
 

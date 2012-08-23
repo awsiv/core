@@ -1391,6 +1391,7 @@ typedef struct
 
 #define cfr_lastseen_hosts "lastseen_hosts"
 #define cfr_deleted_hosts  "deleted_hosts"
+#define cfr_host_identifier "host_identifier"
 
 /* Promise DB */
 #define cfp_bundlename    "bn"
