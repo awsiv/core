@@ -1472,6 +1472,12 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cf
 
             sscanf(key, "%255[^.].%s255", scope, lval);
 
+            /* Only return "sys" variables in the delta report */
+            if(type == cfd_menu_delta && strcmp(scope, "sys") != 0)
+            {
+                continue;
+            }
+
             if (strcmp(scope, "const") == 0)
             {
                 // skip const scope (newline, etc.)
@@ -2205,6 +2211,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
         Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
         Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
+        Nova_PackVariables2(reply, CFR_VARD, from, type);
         break;
 
     case cfd_menu_full:
