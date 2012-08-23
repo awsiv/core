@@ -112,6 +112,8 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
 HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey);
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result);
 int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash, HostClassFilter *host_class_filter);
+const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
+                                       const char *ltype, char *lscope, char *lval);
 
 //*****************************************************************************
 // Utility Queries

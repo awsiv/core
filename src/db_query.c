@@ -1416,6 +1416,82 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 }
 
 /*********************************************************************************/
+const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
+                                       const char *ltype, char *lscope, char *lval)
+{
+    assert(keyHash);
+    assert(ltype);
+    assert(lscope);
+    assert(lval);
+
+    char var_key[CF_MAXVARSIZE] = {0};
+    snprintf(var_key, CF_MAXVARSIZE - 1, "%s.%s.%s.%s", cfr_vars, lscope, lval, cfr_type);
+
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyHash);
+    bson_append_string(&query, var_key, ltype);
+    bson_finish(&query);
+
+    snprintf(var_key, CF_MAXVARSIZE - 1, "%s.%s.%s.%s", cfr_vars, lscope, lval, cfr_rval);
+
+    bson fields;
+    BsonSelectReportFields(&fields, 1, var_key);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    const void *rrval = NULL;
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
+    {
+        bson_iterator it1;
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfr_vars) == 0)
+            {
+                bson_iterator it2;
+                bson_iterator_subiterator(&it1, &it2);
+
+                while (bson_iterator_next(&it2))
+                {
+                    bson_iterator it3;
+                    bson_iterator_subiterator(&it2, &it3);
+
+                    while (bson_iterator_next(&it3))
+                    {
+                        bson_iterator it4;
+                        bson_iterator_subiterator(&it3, &it4);
+
+                        while (bson_iterator_next(&it4))
+                        {
+                            if (strcmp(bson_iterator_key(&it4), cfr_rval) == 0)
+                            {
+                                switch (bson_iterator_type(&it4))
+                                {
+                                case BSON_STRING:
+                                    rrval = xstrdup(bson_iterator_string(&it4));
+                                    break;
+
+                                default:
+                                    break;
+                                }
+                            }                            
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    return rrval;
+}
+/*********************************************************************************/
 
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
