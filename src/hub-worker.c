@@ -16,6 +16,8 @@
 
 static void Nova_CreateHostID(EnterpriseDB *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);
+static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
+                              char *buffer, int bufsize);
 
 /*******************************************************************/
 
@@ -135,10 +137,31 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 
 /*******************************************************************/
 
+static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
+                              char *buffer, int bufsize)
+{
+    if(CFDB_HandleGetValue("host_identifier", buffer, bufsize, "sys.fqhost", dbconn, MONGO_SCRATCH))
+    {
+        char **split_scope = String2StringArray(buffer, '.');
+
+        CFDB_QueryVariableValueStr(dbconn, keyhash, "s", split_scope[0], split_scope[1]);
+        FreeStringArray(split_scope);
+    }
+    else
+    {
+        buffer[0] = '\0';
+        snprintf(buffer, bufsize, "%s", IPString2Hostname(ip));
+    }
+}
+/*******************************************************************/
 /* Make sure an entry for the given keyhash,ip exists */
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostID, char *ipaddr)
 {
-    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, NULL);
-    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, NULL);
+    char hostname[CF_MAXVARSIZE] = {0};
+
+    GetHostIdentifier(dbconn, hostID, ipaddr, hostname, CF_MAXVARSIZE - 1);
+
+    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, hostname);
+    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, hostname);
 }

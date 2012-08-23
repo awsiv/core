@@ -140,17 +140,6 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
  *  hostname is optional, reverse lookup if not specified
  **/
 {
-    char foundHostName[CF_MAXVARSIZE];
-
-    if (!NULL_OR_EMPTY(hostname))
-    {
-        snprintf(foundHostName, sizeof(foundHostName), "%s", hostname);
-    }
-    else
-    {
-        snprintf(foundHostName, sizeof(foundHostName), "%s", IPString2Hostname(ipaddr));
-    }
-
 // locate right host key
 
     bson host_key;              // host description
@@ -187,7 +176,7 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
         bson_append_start_object(&set_op, "$set");
         {
             bson_append_start_array(&set_op, cfr_host_array);
-            bson_append_string(&set_op, "0", foundHostName);
+            bson_append_string(&set_op, "0", hostname);
             bson_append_finish_object(&set_op);
         }
         bson_append_finish_object(&set_op);
