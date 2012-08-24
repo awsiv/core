@@ -1443,7 +1443,7 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    const void *rrval = NULL;
+    const char *rrval = NULL;
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
