@@ -1,3 +1,7 @@
+3.0.0	New classes enterprise, enterprise_X, enterprise_X_Y, enterprise_X_Y_Z
+	on CFEngine Enterprise, to reflect the version running. This complements
+	the Nova classes, which will eventually be deprecated.
+
 2.2.0
 	More diagnostics on report collection from cf-hub. Logging more
 	useful information in cf-hub -l, measuring total collection time
