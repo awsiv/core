@@ -134,6 +134,11 @@ PHP_FUNCTION(cfpr_body_details);
  */
 PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
+/*! \brief Get the name of a knowledge bundle
+ * for a given topic
+ */
+PHP_FUNCTION(cfpr_bundle_for_topic);
+
 /*! \brief A list of classes in a bundle
  * \param bundleName
  * \param bundleType
