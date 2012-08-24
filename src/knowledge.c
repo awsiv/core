@@ -62,7 +62,6 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_new_oid(&bbuf, "_id");
             bson_append_string(&bbuf, cfk_topicname, tp->topic_name);
             bson_append_string(&bbuf, cfk_topiccontext, tp->topic_context);
-            bson_append_string(&bbuf, cfk_topiccontext, tp->topic_context);
             bson_append_int(&bbuf, cfk_topicid, tp->id);
 
             CfDebug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n", tp->topic_name,
