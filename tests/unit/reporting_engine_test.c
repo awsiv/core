@@ -7,7 +7,7 @@
 
 static void test_get_table_names(void **state)
 {
-    char *select_op_list[] = {
+    const char *select_op_list[] = {
                                 "SELECT * FROM Hosts",
                                 "SELECT * FROM Hosts, Variables",
                                 "SELECT * FROM Hosts, Variables, Software",
@@ -21,7 +21,7 @@ static void test_get_table_names(void **state)
                              };
 
     // Table names require to be in reverse order as in TABLES global list
-    char *table_list[] = {
+    const char *table_list[] = {
                             "{'Hosts'}",
                             "{'Variables','Hosts'}",
                             "{'Software','Variables','Hosts'}",
@@ -52,7 +52,7 @@ static void test_get_table_names(void **state)
 
 static void test_get_column_count(void **state)
 {
-    char *tables[] = {
+    const char *tables[] = {
                             SQL_TABLE_HOSTS,
                             SQL_TABLE_FILECHANGES,
                             SQL_TABLE_CONTEXTS,
@@ -90,6 +90,8 @@ static void test_get_column_count(void **state)
         assert( sqlite3_prepare_v2(db, select_op, -1, &statement, 0) == SQLITE_OK);
 
         assert((sqlite3_column_count(statement) == column_count[i]) && "This means that the table columns have been altered from what it was originally");
+
+        assert(sqlite3_finalize(statement) == SQLITE_OK);
     }
 
     Sqlite3_DBClose(db);
@@ -97,7 +99,7 @@ static void test_get_column_count(void **state)
 
 static void test_validate_column_names(void **state)
 {
-    char *tables[] = {
+    const char *tables[] = {
                             SQL_TABLE_HOSTS,
                             SQL_TABLE_FILECHANGES,
                             SQL_TABLE_CONTEXTS,
@@ -108,7 +110,7 @@ static void test_validate_column_names(void **state)
                             NULL
                          };
 
-    char *column_names[][5] = {
+    const char *column_names[][5] = {
       {"HostKey", "Name", "IPAddress", "ReportTimeStamp", "Colour"},        // hosts
       {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL},               // filechanges
       {"HostKey", "Name", "DefineTimeStamp", NULL, NULL},                   // contexts
@@ -142,6 +144,8 @@ static void test_validate_column_names(void **state)
             // This means that the column names have been altered from what it was originally
             assert_string_equal(column_names[i][j], sqlite3_column_name(statement, j));
         }
+
+        assert(sqlite3_finalize(statement) == SQLITE_OK);
     }
 
     Sqlite3_DBClose(db);
