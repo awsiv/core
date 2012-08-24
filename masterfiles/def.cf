@@ -47,6 +47,9 @@ bundle common def
    "dir_bin"         string => translatepath("$(sys.workdir)/bin"),
                     comment => "Define binary path",
                      handle => "common_def_vars_dir_bin";
+   "dir_modules"     string => translatepath("$(sys.workdir)/modules"),
+                    comment => "Define modules path",
+                     handle => "common_def_vars_dir_modules";
 
  classes:
 
