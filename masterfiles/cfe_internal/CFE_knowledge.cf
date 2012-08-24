@@ -211,8 +211,9 @@ bundle agent cfengine_setup_knowledge
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 
    "$(cfengine_hub_vars.docroot)/application/logs/."
-           comment => "Make sure font folder has right permision",
+           comment => "Make sure log folder has been created and has right permisions",
             handle => "cfengine_setup_knowledge_files_doc_root_application_logs",
+            create => "true",
       depth_search => recurse_basedir("inf"),
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 

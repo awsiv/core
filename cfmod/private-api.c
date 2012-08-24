@@ -4393,6 +4393,23 @@ PHP_FUNCTION(cfpr_goal_progress)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_bundle_for_topic)
+{
+ long id;
+ char buffer[1000];
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "l", &id) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+ Nova2PHP_bundle_for_topic((int) id, buffer, sizeof(buffer));
+ RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_service_histogram)
 {
     JsonElement *out = Nova2PHP_get_service_histogram();
