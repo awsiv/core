@@ -9,10 +9,6 @@ things:
 
  goals::
 
- "uptime";
-
- "application crash monitoring";
-
  "customer service"
    handle => "goal_customers", 
    involves => { "available services", "compliance" },
