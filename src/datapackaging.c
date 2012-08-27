@@ -1620,25 +1620,14 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
 /*****************************************************************************/
 
 static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
-{
-    FILE *fin;
-    char name[CF_BUFSIZE], line[CF_BUFSIZE], buffer[CF_MAXTRANSSIZE];
-    Item *ip, *file = NULL;
-    time_t start, end;
-    char version[CF_MAXVARSIZE];
-    int kept, repaired, notrepaired;
-    int i = 0, first = true;
-    double av_day_kept = 100, av_day_repaired = 0;
-    double av_week_kept = 100, av_week_repaired = 0;
-    double av_hour_kept = 100, av_hour_repaired = 0;
-    char key[CF_SMALLBUF], ref[CF_SMALLBUF];
-    time_t then, now = time(NULL);
-    long t;
-
+{     
     CfOut(cf_verbose, "", " -> Packing total compliance data");
+
+    char name[CF_BUFSIZE] = "";
     snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_PROMISE_LOG);
     MapName(name);
 
+    FILE *fin;
     if ((fin = fopen(name, "r")) == NULL)
     {
         CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
@@ -1647,17 +1636,22 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
 
 /* Max 2016 entries - at least a week */
 
-    ref[0] = '\0';
+    Item *file = NULL;
+    int line_num = 0;
+    char ref[CF_SMALLBUF] = "";
 
     while (!feof(fin))
     {
-        line[0] = '\0';
+        line_num++;
+        char line[CF_BUFSIZE] = "";
         fgets(line, CF_BUFSIZE - 1, fin);
 
         sscanf(line, "%ld", &t);
         then = (time_t) t;
 
         strncpy(key, GenTimeKey(then), CF_SMALLBUF);
+
+        char key[CF_SMALLBUF] = "";
 
         if (strcmp(ref, key) == 0)
         {
@@ -1676,11 +1670,19 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
 
     fclose(fin);
 
-    for (ip = file; ip != NULL; ip = ip->next)
-    {
-        kept = repaired = notrepaired = 0;
-        memset(version, 0, 255);
+    double av_day_kept = 100,
+           av_day_repaired = 0,
+           av_week_kept = 100,
+           av_week_repaired = 0,
+           av_hour_kept = 100,
+           av_hour_repaired = 0;
 
+    int i = 0;
+    bool first = true;
+    time_t now = time(NULL);
+
+    for (Item *ip = file; ip != NULL; ip = ip->next)
+    {        
         if (strlen(ip->name) == 0)
         {
             continue;
@@ -1688,12 +1690,19 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
 
         // Complex parsing/extraction
 
-        version[0] = '\0';
         intmax_t start_i, end_i;
         sscanf(ip->name, "%jd,%jd", &start_i, &end_i);
-        start = (time_t)start_i;
-        end = (time_t)end_i;
+
+        time_t start = (time_t)start_i;
+        time_t end = (time_t)end_i;
+
+        char version[CF_MAXVARSIZE] = "";
         sscanf(strstr(ip->name, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", version);
+
+        int kept = 0,
+            repaired = 0,
+            notrepaired = 0;
+
         sscanf(strstr(ip->name, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &kept, &repaired,
                &notrepaired);
 
@@ -1770,6 +1779,7 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
             continue;
         }
 
+        char buffer[CF_MAXTRANSSIZE] = "";
         snprintf(buffer, sizeof(buffer), "%ld,%s,%d,%d,%d\n", start, version, kept, repaired, notrepaired);
 
         if (first)
