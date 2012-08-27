@@ -1646,12 +1646,20 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
         char line[CF_BUFSIZE] = "";
         fgets(line, CF_BUFSIZE - 1, fin);
 
-        sscanf(line, "%ld", &t);
-        then = (time_t) t;
+        intmax_t start_i, end_i;
+        sscanf(line, "%jd,%jd", &start_i, &end_i);
 
-        strncpy(key, GenTimeKey(then), CF_SMALLBUF);
+        if(start_i > end_i)
+        {
+            CfOut(cf_verbose, "",
+                  "Start time is greater than end time. Excluding entry from calculation."
+                  "(File %s/%s, Line: %d)", CFWORKDIR, CF_PROMISE_LOG, line_num);
+
+            continue;
+        }
 
         char key[CF_SMALLBUF] = "";
+        strncpy(key, GenTimeKey((time_t) start_i), CF_SMALLBUF - 1);
 
         if (strcmp(ref, key) == 0)
         {
