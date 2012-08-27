@@ -3263,6 +3263,8 @@ static void GetNewClientVersions(Rlist **rp)
 {
     PrependRScalar(rp, (void *) "nova_2_2_.*", CF_SCALAR);
     PrependRScalar(rp, (void *) "nova_2_3_.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "enterprise_2.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "enterprise_3.*", CF_SCALAR);
 }
 
 /*****************************************************************************/
