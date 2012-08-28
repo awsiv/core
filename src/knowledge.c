@@ -113,7 +113,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             }
             bson_finish(&insert_op);
 
-            mongo_insert(&dbconn, MONGO_KM_TOPICS, &insert_op, NULL);
+            MongoInsert(&dbconn, MONGO_KM_TOPICS, &insert_op, NULL);
             bson_destroy(&insert_op);
         }
     }
@@ -131,7 +131,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
        bson_append_string(&insert_op, cfk_topicid, "any");
        bson_finish(&insert_op);
        
-       mongo_insert(&dbconn, MONGO_KM_BUNDLES, &insert_op, NULL);
+       MongoInsert(&dbconn, MONGO_KM_BUNDLES, &insert_op, NULL);
        bson_destroy(&insert_op);
        }
     
@@ -164,7 +164,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
             bson_finish(&insert_op);
 
-            mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
+            MongoInsert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
 
             bson_destroy(&insert_op);
             }
@@ -189,7 +189,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
         bson_finish(&insert_op);
 
-        mongo_insert(&dbconn, MONGO_KM_INFERENCES, &insert_op, NULL);
+        MongoInsert(&dbconn, MONGO_KM_INFERENCES, &insert_op, NULL);
         bson_destroy(&insert_op);
     }
 
@@ -776,7 +776,7 @@ void Nova_UpdateTestData(void)
             }
             bson_finish(&set_op);
 
-            mongo_update(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+            MongoUpdate(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
             MongoCheckForError(&conn, "UpdateTestData", keyhash, NULL);
 
             bson_destroy(&set_op);

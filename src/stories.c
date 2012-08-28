@@ -792,7 +792,7 @@ BsonSelectReportFields(&field, 3,
 
 /* BEGIN SEARCH for matching topics */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+cursor = MongoFind(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 bson_destroy(&query);
 bson_destroy(&field);

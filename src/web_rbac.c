@@ -356,7 +356,7 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
                            dbkey_user_salt);
 
     bson record;
-    bson_bool_t found = mongo_find_one(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &field, &record) == MONGO_OK;
+    bson_bool_t found = MongoFindOne( conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &field, &record ) == MONGO_OK;
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -762,7 +762,7 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
     bson_append_finish_object(&set_op);
     bson_finish(&set_op);
 
-    mongo_update(conn, users_collection, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    MongoUpdate(conn, users_collection, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
@@ -847,7 +847,7 @@ cfapi_errid _DeleteUser(EnterpriseDB *conn, bool external, const char *username)
     bson_append_string(&query, dbkey_user_name, username);
     bson_finish(&query);
 
-    mongo_remove(conn, users_collection, &query, NULL);
+    MongoRemove(conn, users_collection, &query, NULL);
 
     bson_destroy(&query);
 
@@ -1090,7 +1090,7 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
                            dbkey_user_email,
                            dbkey_user_roles);
 
-    mongo_cursor *cursor = mongo_find(conn, users_collection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, users_collection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -1146,7 +1146,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
                            dbkey_user_roles);
 
     bson record;
-    if (mongo_find_one(conn, users_collection, &query, &field, &record) != MONGO_OK)
+    if( MongoFindOne( conn, users_collection, &query, &field, &record ) != MONGO_OK )
     {
         bson_destroy(&query);
         bson_destroy(&field);
@@ -1368,7 +1368,7 @@ cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, cons
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    MongoUpdate(conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
@@ -1413,7 +1413,7 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
     bson_append_string(&query, dbkey_role_name, roleName);
     bson_finish(&query);
 
-    mongo_remove(conn, MONGO_ROLES_COLLECTION, &query, NULL);
+    MongoRemove(conn, MONGO_ROLES_COLLECTION, &query, NULL);
     bson_destroy(&query);
 
     if (deassociateUsers)
@@ -1510,8 +1510,8 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
     }
     bson_finish(&pull_op);
 
-    mongo_update(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
-    mongo_update(conn, MONGO_COLLECTION_USERS_EXTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_COLLECTION_USERS_EXTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&pull_op);
 }
 
@@ -1702,7 +1702,7 @@ HubQuery *CFDB_GetRoles(bson *query)
         return hq;
     }
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_ROLES_COLLECTION, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_ROLES_COLLECTION, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 

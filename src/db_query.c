@@ -46,9 +46,11 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     bson field;
     BsonSelectReportFields(&field, 1, "_id");
 
-    if(mongo_find_one(conn,fullCollectionName,&query,&field,NULL) == MONGO_OK)
+    bson empty;
+
+    if( MongoFindOne( conn, fullCollectionName, &query, &field, bson_empty( &empty ) ) == MONGO_OK )
     {
-        bson_destroy(&field);
+        bson_destroy( &field );
         return true;
     }
 
@@ -138,7 +140,7 @@ Item *CFDB_GetLastseenCache(void)
 
     bson query;
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
 
@@ -208,7 +210,7 @@ Item *CFDB_GetDeletedHosts(void)
 
     bson query;
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
 
@@ -239,13 +241,14 @@ Item *CFDB_GetDeletedHosts(void)
 
 bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name)
 {
-    bson query;
+    bson empty;
     bson_iterator it1;
     mongo_cursor *cursor;
 
     rval[0] = '\0';
 
-    cursor = mongo_find(conn, db_name, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_empty( &empty );
+    cursor = MongoFind(conn, db_name, &empty, &empty, 0, 0, CF_MONGO_SLAVE_OK);
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -298,7 +301,7 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 
@@ -442,7 +445,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
                            HostRankMethodToMongoCode(method),
                            cfr_is_black);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -553,7 +556,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -707,7 +710,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
                            cfr_host_array,
                            cfr_class);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -855,7 +858,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 
     BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
     // query freed below
 
@@ -962,7 +965,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1098,7 +1101,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
     time_t to = GetShiftSlotStart(time(NULL));
     time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1193,7 +1196,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1438,7 +1441,7 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
     bson fields;
     BsonSelectReportFields(&fields, 1, var_key);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1530,7 +1533,7 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1609,7 +1612,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1769,7 +1772,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1946,7 +1949,7 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 
@@ -2055,7 +2058,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2205,7 +2208,7 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2305,7 +2308,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2432,7 +2435,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                            cfr_host_array,
                            cfr_filediffs);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2548,7 +2551,7 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
     // use empty query for now - filter result manually
     bson query;
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 
@@ -2623,7 +2626,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
                            cfr_host_array,
                            promiseLogKey);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2865,7 +2868,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
                            cfr_promisehandle,
                            cfr_time);
 
-    mongo_cursor *cursor = mongo_find(conn,collName,&query,&fields,0,0,CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn,collName,&query,&fields,0,0,CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -2975,7 +2978,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3133,7 +3136,7 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3388,7 +3391,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
 
     /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3476,7 +3479,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
     /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3658,7 +3661,7 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
     BsonSelectReportFields(&fields, 3, cfm_id, cfm_units, cfm_description);
 
     // use mag collection since it is updated most frequently
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3755,7 +3758,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -3879,7 +3882,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
 
     BsonSelectReportFields(&fields, 4, cfm_q_arr, cfm_expect_arr, cfm_deviance_arr, cfm_grad_arr);
 
-    mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4005,7 +4008,7 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
 
     BsonSelectReportFields(&fields, 1, cfr_host_array);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&fields);
 
@@ -4063,7 +4066,7 @@ bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyha
 
     BsonSelectReportFields(&fields, 3, dbkey, cfr_day, cfr_last_update_size);
 
-    mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&fields);
 
@@ -4119,7 +4122,7 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&fields);
 
@@ -4180,7 +4183,7 @@ int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char 
 
     BsonSelectReportFields(&fields, 1, attrKey);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&fields);
 
@@ -4227,7 +4230,7 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
 
     BsonSelectReportFields(&fields, 1, attrKey);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&fields);
 
@@ -4290,7 +4293,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bTyp
 
     BsonSelectReportFields(&fields, 2, cfp_handle, cfp_comment);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4414,7 +4417,7 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
 
     BsonSelectReportFields(&fields, 1, cfp_handle);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4471,7 +4474,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
                            cfp_bundleargs,
                            cfp_constraints);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4541,7 +4544,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
                            cfp_handle_exp,
                            cfp_constraints_exp);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4598,7 +4601,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 
     BsonSelectReportFields(&fields, 3, cfp_bundlename, cfp_bundletype, cfp_bundleargs);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4653,7 +4656,7 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
 
     BsonSelectReportFields(&fields, 1, cfp_classcontext);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4708,7 +4711,7 @@ Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, c
 
     BsonSelectReportFields(&fields, 1, cfp_bundlename);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4752,7 +4755,7 @@ int CFDB_QueryBundleCount(EnterpriseDB *conn)
 
     bson query;
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 
@@ -4811,7 +4814,9 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
     bson_finish(&query);
 
 /* BEGIN SEARCH */
-    mongo_cursor *cursor = mongo_find(conn, MONGO_BODIES, &query, NULL, 0, 0, CF_MONGO_SLAVE_OK);
+    bson empty;
+
+    mongo_cursor *cursor = MongoFind(conn, MONGO_BODIES, &query, bson_empty( &empty ), 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
 
     if (mongo_cursor_next(cursor) == MONGO_OK)
@@ -4910,7 +4915,7 @@ Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex
 
     BsonSelectReportFields(&fields, 2, cfb_bodytype, cfb_bodyname);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_BODIES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_BODIES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4973,7 +4978,7 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
 
     BsonSelectReportFields(&fields, 1, reportType);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -5068,7 +5073,7 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostCla
 
     BsonSelectReportFields(&field, 1, cfr_keyhash);
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -5134,7 +5139,7 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
     bson_append_string(&query, cfc_cachetype, cfc_cachecompliance);
     bson_finish(&query);
 
-    cursor = mongo_find(conn, MONGO_CACHE, &query, bson_empty(&field), 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_CACHE, &query, bson_empty(&field), 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
 
@@ -5277,7 +5282,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                            cfn_note,
                            cfn_reporttype);
 
-    cursor = mongo_find(conn, MONGO_NOTEBOOK, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_NOTEBOOK, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
     bson_destroy(&query);
 
@@ -5430,7 +5435,7 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_NOTEBOOK, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_NOTEBOOK, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 
@@ -5826,7 +5831,7 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
     BsonSelectReportFields(&fields, 2, cfr_license, cfr_license_usage);
     bson record;
 
-    bool found = mongo_find_one(conn, MONGO_SCRATCH, bson_empty(&query), &fields, &record) == MONGO_OK;
+    bool found = MongoFindOne(conn, MONGO_SCRATCH, bson_empty(&query), &fields, &record) == MONGO_OK;
     if (found)
     {
         bson license_object;
@@ -5934,7 +5939,7 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
 
     BsonSelectReportFields(&fields, 2, cfr_keyhash, cfr_day);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -5981,7 +5986,7 @@ HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
     bson out;
     HubHost *host = NULL;
 
-    if (mongo_find_one(conn, MONGO_DATABASE, &query, &fields, &out) == MONGO_OK)
+    if (MongoFindOne(conn, MONGO_DATABASE, &query, &fields, &out) == MONGO_OK)
     {
         Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
@@ -6032,7 +6037,7 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
                            HostRankMethodToMongoCode(method));
 
     mongo_cursor *cursor = NULL;
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
     bson_destroy(&query);
@@ -6098,7 +6103,7 @@ long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
     bson out;
 
-    if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
+    if (MongoFindOne(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
         agent_last_exec = BsonLongGet(&out, cfr_last_execution);
         bson_destroy(&out);
@@ -6128,7 +6133,7 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
     BsonSelectReportFields(&field, 1, cfr_schedule);
 
     bson out;
-    if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
+    if (MongoFindOne(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
         delta = BsonLongGet(&out, cfr_schedule);
         bson_destroy(&out);
@@ -6177,7 +6182,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     bson out;
 
     /* if no records are found it's seen are host with unknown state (blue) */
-    if (mongo_find_one(&conn, MONGO_DATABASE, &query, &fields, &out) != MONGO_OK)
+    if (MongoFindOne(&conn, MONGO_DATABASE, &query, &fields, &out) != MONGO_OK)
     {
         *result = HOST_COLOUR_BLUE;
     }
@@ -6291,7 +6296,7 @@ Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
 
     BsonSelectReportFields(&fields, 1, cfr_keyhash);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
     bson_destroy(&query);

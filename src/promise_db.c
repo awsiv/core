@@ -115,7 +115,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
 
     bson_finish(&insert_op);
 
-    mongo_insert(&dbconn, MONGO_PROMISES_EXP, &insert_op, NULL);
+    MongoInsert(&dbconn, MONGO_PROMISES_EXP, &insert_op, NULL);
     bson_destroy(&insert_op);
 
     CFDB_Close(&dbconn);
@@ -225,7 +225,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
 
                 bson_finish(&insert_op);
 
-                mongo_insert(&dbconn, MONGO_PROMISES_UNEXP, &insert_op, NULL);
+                MongoInsert(&dbconn, MONGO_PROMISES_UNEXP, &insert_op, NULL);
                 bson_destroy(&insert_op);
             }
         }
@@ -302,7 +302,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
     }
     bson_finish(&insert_op);
 
-    mongo_insert(dbconn, MONGO_BODIES, &insert_op, NULL);
+    MongoInsert(dbconn, MONGO_BODIES, &insert_op, NULL);
     bson_destroy(&insert_op);
 
 // do update with the lval - rval attribs
@@ -343,7 +343,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
     }
     bson_finish(&set_op);
 
-    mongo_update(dbconn, MONGO_BODIES, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    MongoUpdate(dbconn, MONGO_BODIES, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
