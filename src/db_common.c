@@ -3,12 +3,18 @@
 #include "db_common.h"
 #include "bson_lib.h"
 
+#include <assert.h>
+
+/********************************************************************/
+
 const char *DBHostname()
 {
     const char *hostname = getenv("CFENGINE_TEST_OVERRIDE_MONGO_HOSTNAME");
 
     return hostname ? hostname : "127.0.0.1";
 }
+
+/********************************************************************/
 
 int DBPort()
 {
@@ -23,6 +29,8 @@ int DBPort()
         return 27017;
     }
 }
+
+/********************************************************************/
 
 bool CFDB_Open(EnterpriseDB *conn)
 {
@@ -52,6 +60,7 @@ bool CFDB_Open(EnterpriseDB *conn)
     return true;
 }
 
+/********************************************************************/
 
 bool CFDB_Close(EnterpriseDB *conn)
 {
@@ -65,6 +74,7 @@ bool CFDB_Close(EnterpriseDB *conn)
     return true;
 }
 
+/********************************************************************/
 
 bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *extra, bool *checkUpdate)
 /**
@@ -104,3 +114,31 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
 
     return true;
 }
+
+/********************************************************************/
+
+mongo_cursor *MongoFind( EnterpriseDB *conn, const char *ns, const bson *query,
+                          const bson *fields, int limit, int skip, int options )
+{
+    assert( conn && ns);
+    assert( query && query->finished);
+    assert( fields && fields->finished );
+
+    return mongo_find( conn, ns, query, fields, limit, skip, options );
+}
+
+/********************************************************************/
+
+int MongoFindOne( EnterpriseDB *conn, const char *ns, const bson *query,
+                    const bson *fields, bson *out )
+{
+    assert( conn && ns);
+    assert( query && query->finished);
+    assert( fields && fields->finished );
+
+    assert( out && !out->finished );
+
+    return mongo_find_one( conn, ns, query, fields, out );
+}
+
+/********************************************************************/

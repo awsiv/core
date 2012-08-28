@@ -85,7 +85,7 @@ void Nova_DumpTopics()
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
@@ -292,7 +292,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -368,7 +368,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -473,7 +473,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -616,7 +616,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -744,7 +744,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -847,7 +847,7 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -959,7 +959,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1191,7 +1191,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1356,7 +1356,7 @@ void Nova_FillInGoalComment(Item *ip)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1410,7 +1410,7 @@ const char *Nova_GetBundleComment(char *bundle)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1894,7 +1894,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -1993,7 +1993,7 @@ Item *Nova_GetTopicsInContext(char *context)
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);

@@ -293,7 +293,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
                            cfr_bundles,
                            cfr_valuereport);
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -398,7 +398,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
     // only retrieve the purgable reports
     BsonSelectReportFields(&field, 3, cfr_keyhash, cfr_filechanges, cfr_filediffs);
 
-    cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = MongoFind(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -514,7 +514,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostke
     bson field;
     BsonSelectReportFields(&field, 1, promiseLogKey);    
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -560,7 +560,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *h
 
     bson field;
     BsonSelectReportFields(&field, 2, cfr_keyhash, promiseLogKey);
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);

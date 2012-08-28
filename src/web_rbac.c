@@ -356,7 +356,7 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
                            dbkey_user_salt);
 
     bson record;
-    bson_bool_t found = mongo_find_one(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &field, &record) == MONGO_OK;
+    bson_bool_t found = MongoFindOne( conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &field, &record ) == MONGO_OK;
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -1090,7 +1090,7 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
                            dbkey_user_email,
                            dbkey_user_roles);
 
-    mongo_cursor *cursor = mongo_find(conn, users_collection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, users_collection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -1146,7 +1146,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
                            dbkey_user_roles);
 
     bson record;
-    if (mongo_find_one(conn, users_collection, &query, &field, &record) != MONGO_OK)
+    if( MongoFindOne( conn, users_collection, &query, &field, &record ) != MONGO_OK )
     {
         bson_destroy(&query);
         bson_destroy(&field);
@@ -1702,7 +1702,7 @@ HubQuery *CFDB_GetRoles(bson *query)
         return hq;
     }
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_ROLES_COLLECTION, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_ROLES_COLLECTION, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&fields);
 

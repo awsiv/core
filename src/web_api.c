@@ -3155,7 +3155,7 @@ JsonElement *Nova2PHP_list_knowledge_bundles(void)
 
     BsonSelectReportFields(&fields, 1, cfk_bundle);
         
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_BUNDLES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_BUNDLES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
@@ -3204,7 +3204,7 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
     bson fields;
     BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topiccontext, cfk_topicid);
         
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
@@ -3272,7 +3272,7 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
     bson fields;
     BsonSelectReportFields(&fields, 1, cfk_bundle);
         
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
     buffer[0] = '\0';
@@ -4021,7 +4021,7 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
     bson_append_int(&field, cfr_netmeasure, 1);
     bson_finish(&field);
 
-    mongo_cursor *cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&field);
 
@@ -4373,7 +4373,7 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
     bson_append_int(&fields, cfr_keyhash, 1);
     bson_finish(&fields);
 
-    mongo_cursor *cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4431,7 +4431,7 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
 
     bson result;
 
-    if (mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result) == MONGO_OK)
+    if( MongoFindOne( &dbconn, MONGO_DATABASE, &query, &fields, &result ) == MONGO_OK )
     {
         if (bson_find(&i, &result, cfr_environment))
         {
@@ -5042,7 +5042,7 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
     BsonSelectReportFields(&field, 1, cfr_vars);
     bson_finish(&field);
 
-    mongo_cursor *cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
