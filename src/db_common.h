@@ -19,4 +19,9 @@ mongo_cursor *MongoFind( EnterpriseDB *conn, const char *ns, const bson *query,
 int MongoFindOne( EnterpriseDB *conn, const char *ns, const bson *query,
                     const bson *fields, bson *out );
 
+/* write/modify */
+int MongoUpdate( EnterpriseDB *conn, const char *ns, const bson *cond,
+                 const bson *op, int flags, mongo_write_concern *custom_write_concern );
+int MongoInsert( EnterpriseDB *conn, const char *ns,
+                 const bson *bson, mongo_write_concern *custom_write_concern );
 #endif

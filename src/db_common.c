@@ -142,3 +142,26 @@ int MongoFindOne( EnterpriseDB *conn, const char *ns, const bson *query,
 }
 
 /********************************************************************/
+
+int MongoUpdate( EnterpriseDB *conn, const char *ns, const bson *cond,
+    const bson *op, int flags, mongo_write_concern *custom_write_concern )
+{
+    assert( conn && ns );
+    assert( cond && cond->finished );
+    assert( op && op->finished );
+
+    return mongo_update( conn, ns, cond, op, flags, custom_write_concern );
+}
+
+/********************************************************************/
+
+int MongoInsert( EnterpriseDB *conn, const char *ns,
+                 const bson *bson, mongo_write_concern *custom_write_concern )
+{
+    assert( conn && ns );
+    assert( bson && bson->finished );
+
+    return mongo_insert( conn, ns, bson, custom_write_concern );
+}
+
+/********************************************************************/

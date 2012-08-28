@@ -350,7 +350,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
 
         bson_finish(&op);
 
-        mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL); /*TODO: Use mongo write concern instead of MongoGetLastError*/
+        MongoUpdate(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL); /*TODO: Use mongo write concern instead of MongoGetLastError*/
 
         DeleteItemList(purgeClassNames);
         purgeClassNames = NULL;
@@ -444,7 +444,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
 
         bson_finish(&op);
 
-        mongo_update(conn, MONGO_ARCHIVE, &hostQuery, &op, 0, NULL);
+        MongoUpdate(conn, MONGO_ARCHIVE, &hostQuery, &op, 0, NULL);
 
         DeleteItemList(purgeClassNames);
         purgeClassNames = NULL;
@@ -628,7 +628,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *h
             DeleteItemList(promiseKeysList);
             promiseKeysList = NULL;            
 
-            mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL);
+            MongoUpdate(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL);
 
             bson_destroy(&op);
             bson_destroy(&hostQuery);
@@ -684,7 +684,7 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char
     DeleteItemList(promiseLogComplexKeysList);
     promiseLogComplexKeysList = NULL;
 
-    mongo_update(conn, MONGO_DATABASE, &query, &cond, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_DATABASE, &query, &cond, MONGO_UPDATE_MULTI, NULL);
 
     bson_destroy(&query);
     bson_destroy(&cond);
@@ -727,7 +727,7 @@ void CFDB_PurgeDropReports(EnterpriseDB *conn)
     bson_finish(&op);
 
     // run update
-    mongo_update(conn, MONGO_DATABASE, &empty, &op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_DATABASE, &empty, &op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&op);
 
     MongoCheckForError(conn, "PurgeDropReports", NULL, NULL);
@@ -981,7 +981,7 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
     bson_finish(&unset_op);
 
     bson empty;
-    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unset_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_DATABASE, bson_empty(&empty), &unset_op, MONGO_UPDATE_MULTI, NULL);
 
     bson_destroy(&unset_op);
 
@@ -1034,7 +1034,7 @@ int CFDB_PurgeDeletedHosts(void)
     }
     bson_finish(&op);
 
-    mongo_update(&conn, MONGO_SCRATCH, bson_empty(&empty), &op, 0, NULL);
+    MongoUpdate(&conn, MONGO_SCRATCH, bson_empty(&empty), &op, 0, NULL);
 
     bson_destroy(&op);
 
@@ -1108,7 +1108,7 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn)
     }
     bson_finish(&unset_op);
 
-    mongo_update(conn, MONGO_DATABASE, &query, &unset_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_DATABASE, &query, &unset_op, MONGO_UPDATE_MULTI, NULL);
 
     bson_destroy(&unset_op);
     bson_destroy(&query);

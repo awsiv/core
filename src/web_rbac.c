@@ -762,7 +762,7 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
     bson_append_finish_object(&set_op);
     bson_finish(&set_op);
 
-    mongo_update(conn, users_collection, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    MongoUpdate(conn, users_collection, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
@@ -1368,7 +1368,7 @@ cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, cons
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    MongoUpdate(conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
@@ -1510,8 +1510,8 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
     }
     bson_finish(&pull_op);
 
-    mongo_update(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
-    mongo_update(conn, MONGO_COLLECTION_USERS_EXTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
+    MongoUpdate(conn, MONGO_COLLECTION_USERS_EXTERNAL, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&pull_op);
 }
 
