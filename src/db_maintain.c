@@ -488,13 +488,13 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
     if(CFDB_CollectionHasData(conn, MONGO_LOGS_REPAIRED))
     {
-        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
+        MongoRemove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
         MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
     }
 
     if(CFDB_CollectionHasData(conn, MONGO_LOGS_NOTKEPT))
     {
-        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
+        MongoRemove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
         MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
     }
 
@@ -913,31 +913,31 @@ void CFDB_PurgeHost(EnterpriseDB *conn, char *keyHash)
         bson_append_string(&cond, cfr_keyhash, ScalarValue(rp));
         bson_finish(&cond);
 
-        mongo_remove(conn, MONGO_DATABASE, &cond, NULL);
+        MongoRemove(conn, MONGO_DATABASE, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from main collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_ARCHIVE, &cond, NULL);
+        MongoRemove(conn, MONGO_ARCHIVE, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from archive collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond, NULL);
+        MongoRemove(conn, MONGO_DATABASE_MON_MG, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from mag monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond, NULL);
+        MongoRemove(conn, MONGO_DATABASE_MON_WK, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from week monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond, NULL);
+        MongoRemove(conn, MONGO_DATABASE_MON_YR, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from year monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
+        MongoRemove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from repair logs collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
+        MongoRemove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from not kept logs collection", ScalarValue(rp), NULL);
 
@@ -1005,7 +1005,7 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
     bson_append_string(&query, cfr_keyhash, keyhash);
     bson_finish(&query);
 
-    mongo_remove(&conn, db, &query, NULL);
+    MongoRemove(&conn, db, &query, NULL);
 
     bson_destroy(&query);
 

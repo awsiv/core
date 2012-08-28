@@ -847,7 +847,7 @@ cfapi_errid _DeleteUser(EnterpriseDB *conn, bool external, const char *username)
     bson_append_string(&query, dbkey_user_name, username);
     bson_finish(&query);
 
-    mongo_remove(conn, users_collection, &query, NULL);
+    MongoRemove(conn, users_collection, &query, NULL);
 
     bson_destroy(&query);
 
@@ -1413,7 +1413,7 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
     bson_append_string(&query, dbkey_role_name, roleName);
     bson_finish(&query);
 
-    mongo_remove(conn, MONGO_ROLES_COLLECTION, &query, NULL);
+    MongoRemove(conn, MONGO_ROLES_COLLECTION, &query, NULL);
     bson_destroy(&query);
 
     if (deassociateUsers)

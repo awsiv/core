@@ -165,3 +165,14 @@ int MongoInsert( EnterpriseDB *conn, const char *ns,
 }
 
 /********************************************************************/
+
+int MongoRemove( EnterpriseDB *conn, const char *ns, const bson *cond,
+                 mongo_write_concern *custom_write_concern )
+{
+    assert( conn && ns );
+    assert( cond && cond->finished );
+
+    return mongo_remove( conn, ns, cond, custom_write_concern );
+}
+
+/********************************************************************/
