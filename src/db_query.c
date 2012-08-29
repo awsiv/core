@@ -46,9 +46,8 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     bson field;
     BsonSelectReportFields(&field, 1, "_id");
 
-    bson empty;
-
-    if( MongoFindOne( conn, fullCollectionName, &query, &field, bson_empty( &empty ) ) == MONGO_OK )
+    bson empty = { 0 };
+    if( MongoFindOne( conn, fullCollectionName, &query, &field, &empty) == MONGO_OK )
     {
         bson_destroy( &field );
         return true;
@@ -5829,7 +5828,7 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
     bson query;
     bson fields;
     BsonSelectReportFields(&fields, 2, cfr_license, cfr_license_usage);
-    bson record;
+    bson record = { 0 };
 
     bool found = MongoFindOne(conn, MONGO_SCRATCH, bson_empty(&query), &fields, &record) == MONGO_OK;
     if (found)
@@ -5983,7 +5982,7 @@ HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
 
     BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_host_array, cfr_ip_array);
 
-    bson out;
+    bson out = { 0 };
     HubHost *host = NULL;
 
     if (MongoFindOne(conn, MONGO_DATABASE, &query, &fields, &out) == MONGO_OK)
@@ -6101,7 +6100,7 @@ long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
     BsonSelectReportFields(&field, 1, cfr_last_execution);
 
-    bson out;
+    bson out = { 0 };
 
     if (MongoFindOne(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
@@ -6132,7 +6131,7 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
     BsonSelectReportFields(&field, 1, cfr_schedule);
 
-    bson out;
+    bson out = { 0 };
     if (MongoFindOne(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
         delta = BsonLongGet(&out, cfr_schedule);
@@ -6179,7 +6178,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
                            HostRankMethodToMongoCode(method),
                            cfr_is_black);
 
-    bson out;
+    bson out = { 0 };
 
     /* if no records are found it's seen are host with unknown state (blue) */
     if (MongoFindOne(&conn, MONGO_DATABASE, &query, &fields, &out) != MONGO_OK)

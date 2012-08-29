@@ -355,7 +355,7 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
                            dbkey_user_password,
                            dbkey_user_salt);
 
-    bson record;
+    bson record = { 0 };
     bson_bool_t found = MongoFindOne( conn, MONGO_COLLECTION_USERS_INTERNAL, &query, &field, &record ) == MONGO_OK;
 
     bson_destroy(&query);
@@ -1145,7 +1145,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
                            dbkey_user_email,
                            dbkey_user_roles);
 
-    bson record;
+    bson record = { 0 };
     if( MongoFindOne( conn, users_collection, &query, &field, &record ) != MONGO_OK )
     {
         bson_destroy(&query);

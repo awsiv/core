@@ -4429,7 +4429,7 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
     bson_append_int(&fields, cfr_environment, 1);
     bson_finish(&fields);
 
-    bson result;
+    bson result = { 0 };
 
     if( MongoFindOne( &dbconn, MONGO_DATABASE, &query, &fields, &result ) == MONGO_OK )
     {
