@@ -26,4 +26,6 @@ int MongoInsert( EnterpriseDB *conn, const char *ns,
                  const bson *bson, mongo_write_concern *custom_write_concern );
 int MongoRemove( EnterpriseDB *conn, const char *ns, const bson *cond,
                  mongo_write_concern *custom_write_concern );
+int MongoCount( EnterpriseDB *conn, const char *db, const char *coll,
+                 const bson *query );
 #endif

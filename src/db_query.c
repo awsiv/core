@@ -887,7 +887,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
     mongo_cursor_destroy(cursor);
 
     // 2: find all distinct classes in these hosts
-    classList = CFDB_QueryDistinct(conn, MONGO_BASE, "hosts", cfr_class_keys, &query);
+    classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, &query);
 
     bson_destroy(&query);
 
@@ -916,7 +916,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 
         bson_finish(&query);
 
-        classFrequency = (int) mongo_count(conn, MONGO_BASE, "hosts", &query);
+        classFrequency = MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query );
 
         bson_destroy(&query);
 
@@ -3336,7 +3336,7 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 
     bson_finish(&query);
 
-    result = mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query);
+    result = MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query );
 
     bson_destroy(&query);
 
@@ -3983,7 +3983,7 @@ int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query)
  * Counts number of hosts matching the given query.
  **/
 {
-    return (int) mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, query);
+    return MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, query );
 }
 
 /*****************************************************************************/
@@ -4787,7 +4787,7 @@ int CFDB_QueryPromiseCount(EnterpriseDB *conn)
 {
     int promiseCount = 0;
 
-    promiseCount = (int) mongo_count(conn, MONGO_BASE, MONGO_PROMISES_UNEXP_COLLECTION, NULL);
+    promiseCount = MongoCount(conn, MONGO_BASE, MONGO_PROMISES_UNEXP_COLLECTION, NULL);
 
     return promiseCount;
 }

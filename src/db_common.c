@@ -176,3 +176,15 @@ int MongoRemove( EnterpriseDB *conn, const char *ns, const bson *cond,
 }
 
 /********************************************************************/
+
+int MongoCount( EnterpriseDB *conn, const char *db, const char *coll,
+                 const bson *query )
+{
+    assert( conn && db && coll);
+    assert( query && query->finished );
+
+    return ( int ) mongo_count( conn, db, coll, query );
+}
+
+/********************************************************************/
+
