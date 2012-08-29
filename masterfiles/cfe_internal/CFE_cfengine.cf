@@ -26,54 +26,54 @@ bundle agent cfengine_management
   am_policy_hub.commercial_customer::
 
    "hub" usebundle => cfengine_update_folders,
-            handle => "cfengine_management_update_folders",
+            handle => "cfe_internal_cfengine_management_update_folders",
            comment => "Create empty directories for CFE self-upgrade";
 
 #   "hub" usebundle => cfengine_disable_selinux,
-#            handle => "cfengine_management_disable_selinux",
+#            handle => "cfe_internal_cfengine_management_disable_selinux",
 #           comment => "Disable SELinux for now";
 
   # cfengine_selinux() can be "fix" or "disable"
    "hub" usebundle => cfengine_selinux("fix"),
-            handle => "cfengine_management_fix_selinux",
+            handle => "cfe_internal_cfengine_management_fix_selinux",
            comment => "Fix SELinux to be able to run Mission Portal and Mongo DB";
 
    "hub" usebundle => cfengine_policysrv,
-            handle => "cfengine_management_policysrv",
+            handle => "cfe_internal_cfengine_management_policysrv",
            comment => "Prepare the policy hub";
 
    "hub" usebundle => cfengine_php_mod,
-            handle => "cfengine_management_php_mod",
+            handle => "cfe_internal_cfengine_management_php_mod",
            comment => "Setup CFE PHP modules";
 
    "hub" usebundle => cfengine_web_server("on"),
-            handle => "cfengine_management_web_server",
+            handle => "cfe_internal_cfengine_management_web_server",
            comment => "Manage Apache Web server (on/off)";
 
    "hub" usebundle => cfengine_setup_knowledge,
-            handle => "cfengine_management_setup_knowledge",
+            handle => "cfe_internal_cfengine_management_setup_knowledge",
            comment => "Manage CFE Knowledge Map";
 
    "hub" usebundle => cfengine_editor,
-            handle => "cfengine_management_online_editor",
+            handle => "cfe_internal_cfengine_management_online_editor",
            comment => "Prepare CFE online editing tool";
 
    "hub" usebundle => cfengine_rotate_mongod_log,
-            handle => "cfengine_management_rotate_mongod_log",
+            handle => "cfe_internal_cfengine_management_rotate_mongod_log",
            comment => "Rotate the mongod log";
 
    "hub" usebundle => cfengine_hub_maintain,
-            handle => "cfengine_management_hub_maintain",
+            handle => "cfe_internal_cfengine_management_hub_maintain",
             comment => "Start the hub maintenance process";
 
   any::
 
    "any" usebundle => cfengine_correct_cftwin,
-            handle => "cfengine_management_correct_cftwin",
+            handle => "cfe_internal_cfengine_management_correct_cftwin",
            comment => "Ensure cf-twin in good shape";
 
    "any" usebundle => cfengine_limit_robot_agents,
-            handle => "cfengine_management_limit_cfe_agents",
+            handle => "cfe_internal_cfengine_management_limit_cfe_agents",
            comment => "Manage CFE processes";
 
 }
@@ -94,12 +94,12 @@ bundle agent cfengine_limit_robot_agents
    "cf-execd"
       process_count => check_execd("2"),
             comment => "Check cf-execd process if exceed the number",
-             handle => "cfengine_limit_robot_agents_processes_check_cf_execd";
+             handle => "cfe_internal_cfengine_limit_robot_agents_processes_check_cf_execd";
 
    "cf-monitord"
       process_count => check_monitord("1"),
             comment => "Check cf-monitord process if exceed the number",
-             handle => "cfengine_limit_robot_agents_processes_check_cf_monitord";
+             handle => "cfe_internal_cfengine_limit_robot_agents_processes_check_cf_monitord";
    
    #
    # Do not do this for cf-hub because cf-hub may have unlimited processes
@@ -111,7 +111,7 @@ bundle agent cfengine_limit_robot_agents
             signals => { "term", "kill" },
       restart_class => "restart_execd",
             comment => "When cf-execd comes undone then kill all and restart the process",
-             handle => "cfengine_limit_robot_agents_processes_kill_cf_execd";
+             handle => "cfe_internal_cfengine_limit_robot_agents_processes_kill_cf_execd";
 
   something_wrong_monitord::
 
@@ -119,7 +119,7 @@ bundle agent cfengine_limit_robot_agents
             signals => { "term", "kill" },
       restart_class => "restart_monitord",
             comment => "When cf-monitord comes undone then kill all and restart the process",
-             handle => "cfengine_limit_robot_agents_processes_kill_cf_monitord";
+             handle => "cfe_internal_cfengine_limit_robot_agents_processes_kill_cf_monitord";
 
 #
 
@@ -129,13 +129,13 @@ bundle agent cfengine_limit_robot_agents
 
    "$(sys.cf_execd)"
       comment => "Restart cf-execd process",
-       handle => "cfengine_limit_robot_agents_commands_restart_cf_execd";
+       handle => "cfe_internal_cfengine_limit_robot_agents_commands_restart_cf_execd";
 
   restart_monitord::
 
    "$(sys.cf_monitord)"
       comment => "Restart cf-monitord process",
-       handle => "cfengine_limit_robot_agents_commands_restart_cf_monitord";
+       handle => "cfe_internal_cfengine_limit_robot_agents_commands_restart_cf_monitord";
 
 }
 
@@ -168,7 +168,7 @@ bundle agent cfengine_correct_cftwin
 
    "$(sys.workdir)\bin-twin"
                 comment => "Correct bin-twin directory, making it up-to-date syncing up with bin directory",
-                 handle => "cfengine_correct_cftwin_file_bintwin",
+                 handle => "cfe_internal_cfengine_correct_cftwin_file_bintwin",
       move_obstructions => "true",
               copy_from => local_dcp("$(sys.workdir)\bin"),
            depth_search => recurse("inf");
@@ -177,7 +177,7 @@ bundle agent cfengine_correct_cftwin
 
    "/var/cfengine/lib-twin"
                 comment => "Correct lib-twin to be the same as lib, in case of dependency upgrade. This effect cf-twin's behaviour",
-                 handle => "cfengine_correct_cftwin_files_libtwin",
+                 handle => "cfe_internal_cfengine_correct_cftwin_files_libtwin",
                   perms => m("644"),
       move_obstructions => "true",
               copy_from => local_cp_libtwin("/var/cfengine/lib"),
@@ -185,7 +185,7 @@ bundle agent cfengine_correct_cftwin
 
    "/var/cfengine/bin/cf-twin"
         comment => "Correct cf-twin to be the same as cf-agent, in case of dependency upgrade",
-         handle => "cfengine_correct_cftwin_files_cftwin",
+         handle => "cfe_internal_cfengine_correct_cftwin_files_cftwin",
           perms => m("755"),
       copy_from => local_cp("/var/cfengine/bin/cf-agent");
 
@@ -214,25 +214,25 @@ bundle agent garbage_collection
 
    "$(sys.workdir)/cf_repair.log" 
       comment => "Rotate the promises repaired logs each week",
-       handle => "garbage_collection_files_cf_repair_log",
+       handle => "cfe_internal_garbage_collection_files_cf_repair_log",
        rename => rotate("7"),
        action => if_elapsed("10000");
 
    "$(sys.workdir)/cf_notkept.log" 
       comment => "Rotate the promises not kept logs each week",
-       handle => "garbage_collection_files_cf_notkept_log",
+       handle => "cfe_internal_garbage_collection_files_cf_notkept_log",
        rename => rotate("7"),
        action => if_elapsed("10000");
 
    "$(sys.workdir)/promise_summary.log" 
       comment => "Rotate the promises not kept logs each week",
-       handle => "garbage_collection_files_promise_log",
+       handle => "cfe_internal_garbage_collection_files_promise_log",
        rename => rotate("7"),
        action => if_elapsed("10000");
 
    "$(sys.workdir)/state/cf_value.log" 
       comment => "Rotate the promises not kept logs each week",
-       handle => "garbage_collection_files_cf_value_log",
+       handle => "cfe_internal_garbage_collection_files_cf_value_log",
        rename => rotate("7"),
        action => if_elapsed("10000");
 
@@ -240,7 +240,7 @@ bundle agent garbage_collection
 
    "$(sys.workdir)/outputs" 
            comment => "Garbage collection of any output files",
-            handle => "garbage_collection_files_tidy_outputs",
+            handle => "cfe_internal_garbage_collection_files_tidy_outputs",
             delete => tidy,
        file_select => days_old("7"),
       depth_search => recurse("inf");
@@ -249,21 +249,21 @@ bundle agent garbage_collection
 !(darwin|windows)::
 #   "/tmp"  # this is a symlink on Macs 
 #           comment => "Garbage collection of any temporary files",
-#            handle => "garbage_collection_files_tidy_tmp",
+#            handle => "cfe_internal_garbage_collection_files_tidy_tmp",
 #            delete => tidy,
 #       file_select => days_old("3"),
 #      depth_search => recurse("inf");
   
    "/var/log/apache2/.*bz" 
           comment => "Garbage collection of rotated log files",
-           handle => "garbage_collection_files_tidy_bz",
+           handle => "cfe_internal_garbage_collection_files_tidy_bz",
            delete => tidy,
       file_select => days_old("30");
 
 
    "/var/log/apache2/.*gz" 
           comment => "Garbage collection of rotated log files",
-           handle => "garbage_collection_files_tidy_gz",
+           handle => "cfe_internal_garbage_collection_files_tidy_gz",
            delete => tidy,
       file_select => days_old("30");
 
@@ -271,7 +271,7 @@ bundle agent garbage_collection
 
    "/var/log/zypper.log"
       comment => "Prevent the zypper log from choking the disk",
-       handle => "garbage_collection_files_zypper_log",
+       handle => "cfe_internal_garbage_collection_files_zypper_log",
        rename => rotate("0"),
        action => if_elapsed("10000");
 

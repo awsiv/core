@@ -20,19 +20,19 @@ bundle agent cfengine_processes
                                "cf-hub" 
                               },
                    comment => "Define all cfengine robot agents",
-                    handle => "cfengine_processes_vars_cf_components";
+                    handle => "cfe_internal_cfengine_processes_vars_cf_components";
 
   windows::
 
    "stop_signal"  string => "kill",
                  comment => "Define a stop signal for Windows",
-                  handle => "cfengine_processes_vars_stop_signal_windows";
+                  handle => "cfe_internal_cfengine_processes_vars_stop_signal_windows";
 
   !windows::
 
    "stop_signal"  string => "term",
                  comment => "Define a stop signal for *NIX",
-                  handle => "cfengine_processes_vars_stop_signal_unix";
+                  handle => "cfe_internal_cfengine_processes_vars_stop_signal_unix";
 
 #
 
@@ -40,7 +40,7 @@ bundle agent cfengine_processes
 #  NOTE: We do not restart by default, can be added if desired
 #  "restart_cf" expression => "Monday.Hr05.Min00_05",
 #                  comment => "Define a class to restart cfengine processes",
-#                   handle => "cfengine_processes_classes_restart_cf";
+#                   handle => "cfe_internal_cfengine_processes_classes_restart_cf";
 
 #
 
@@ -52,14 +52,14 @@ bundle agent cfengine_processes
 
       signals => { "$(stop_signal)" },
       comment => "Kill cfengine processes",
-       handle => "cfengine_processes_stop_cf_components";
+       handle => "cfe_internal_cfengine_processes_stop_cf_components";
 
   restart_cf.!windows::
 
     "cf-execd"  
        signals => { "$(stop_signal)" },
        comment => "Kill cf-execd process on *NIX",
-        handle => "cfengine_processes_stop_cf_execd";
+        handle => "cfe_internal_cfengine_processes_stop_cf_execd";
 
 #
 
@@ -69,7 +69,7 @@ bundle agent cfengine_processes
 
    "$(sys.cf_execd)"
       comment => "Restart cf-execd process",
-       handle => "cfengine_processes_commands_cf_execd";
+       handle => "cfe_internal_cfengine_processes_commands_cf_execd";
 
 #
 
@@ -80,12 +80,12 @@ bundle agent cfengine_processes
    "CfengineNovaExec"
       service_policy => "stop",
              comment => "Stop the executor service, part of scheduled restart",
-              handle => "cfengine_processes_services_stop_cf_execd_windows";
+              handle => "cfe_internal_cfengine_processes_services_stop_cf_execd_windows";
 
    "CfengineNovaExec"
       service_policy => "start",
              comment => "Start the executor service, part of scheduled restart",
-              handle => "cfengine_processes_services_start_cf_execd_windows";
+              handle => "cfe_internal_cfengine_processes_services_start_cf_execd_windows";
 
 #
 
@@ -95,7 +95,7 @@ bundle agent cfengine_processes
     
    "Reloaded configuration of all Cfengine components",
       comment => "Alert restarting message",
-       handle => "cfengine_processes_reports";
+       handle => "cfe_internal_cfengine_processes_reports";
 
 }
 
@@ -114,13 +114,13 @@ bundle agent cfengine_enable
 
    "rc_conf[cfengine_enable]"   string => "\"YES\"",
                                comment => "Define a variable to start cfengine at boot time",
-                                handle => "cfengine_enable_vars_rc_conf_freebsd";
+                                handle => "cfe_internal_cfengine_enable_vars_rc_conf_freebsd";
 
   netbsd::
 
    "rc_conf[cfengine_enable]"  string => "\"YES\"",
                               comment => "Define a variable to start cfengine at boot time",
-                               handle => "cfengine_enable_vars_rc_conf_netbsd";
+                               handle => "cfe_internal_cfengine_enable_vars_rc_conf_netbsd";
  
   linux::
 
@@ -133,7 +133,7 @@ bundle agent cfengine_enable
                           "/etc/rc6.d/K11cfengine3"
                          },
               comment => "Define a list of rc files on Linux",
-               handle => "cfengine_enable_vars_rc_files";
+               handle => "cfe_internal_cfengine_enable_vars_rc_files";
 
 #
  
@@ -143,41 +143,41 @@ bundle agent cfengine_enable
 
    "/usr/local/etc/rc.d/cfengine3.sh"
       comment => "Ensure that the cfengine rc.d script is executable",
-       handle => "cfengine_enable_files_cfengine3_sh_freebsd",
+       handle => "cfe_internal_cfengine_enable_files_cfengine3_sh_freebsd",
         perms => mog("755", "root", "wheel");
  
    "/etc/rc.conf"
         comment => "cfengine libraries should be enabled in rc.conf if appropriate",
-         handle => "cfengine_enable_files_rc_conf_freebsd_1",
+         handle => "cfe_internal_cfengine_enable_files_rc_conf_freebsd_1",
       edit_line => append_if_no_line("[ -e /var/cfengine/lib ] && /sbin/ldconfig -m /var/cfengine/lib");
 
    "/etc/rc.conf"
         comment => "cfengine should be enabled in rc.conf",
-         handle => "cfengine_enable_files_rc_conf_freebsd_2",
+         handle => "cfe_internal_cfengine_enable_files_rc_conf_freebsd_2",
       edit_line => set_variable_values("cfengine_enable.rc_conf");
 
   netbsd::
 
    "/usr/local/etc/rc.d/cfengine3.sh"
       comment => "Ensure that the cfengine rc.d script is executable",
-       handle => "cfengine_enable_files_cfengine3_sh_netbsd",
+       handle => "cfe_internal_cfengine_enable_files_cfengine3_sh_netbsd",
         perms => mog("755", "root", "wheel");
 
    "/etc/rc.d/cfengine"
         comment => "Move cfengine rc.d script to the correct location",
-         handle => "cfengine_enable_files_rc_d_netbsd",
+         handle => "cfe_internal_cfengine_enable_files_rc_d_netbsd",
       copy_from => local_cp("/usr/local/etc/rc.d/cfengine3.sh");
 
    "/etc/rc.conf"
        comment => "cfengine should be enabled in rc.conf",
-        handle => "cfengine_enable_files_rc_conf_netbsd",
+        handle => "cfe_internal_cfengine_enable_files_rc_conf_netbsd",
      edit_line => set_variable_values("cfengine_enable.rc_conf");
 
   linux::
 
    "$(rc_files)"
         comment => "Ensure that startup scripts are properly linked",
-         handle => "cfengine_enable_files_rc_files_linux",
+         handle => "cfe_internal_cfengine_enable_files_rc_files_linux",
       link_from => ln_s("/etc/init.d/cfengine3");
 }
 
@@ -197,7 +197,7 @@ bundle agent cfengine_build_software_report
 
    "wget"
              comment => "Install packages from the list",
-              handle => "build_software_report_redhat",
+              handle => "cfe_internal_cfengine_build_software_report_redhat",
       package_policy => "add",
       package_method => yum;
 
@@ -205,7 +205,7 @@ bundle agent cfengine_build_software_report
 
    "wget"
              comment => "Install packages from the list",
-              handle => "build_software_report_debian",
+              handle => "cfe_internal_cfengine_build_software_report_debian",
       package_policy => "add",
       package_method => apt;
 
@@ -213,7 +213,7 @@ bundle agent cfengine_build_software_report
 
    "wget"
              comment => "Install packages from the list",
-              handle => "build_software_report_suse",
+              handle => "cfe_internal_cfengine_build_software_report_suse",
       package_policy => "add",
       package_method => zypper;
 
