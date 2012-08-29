@@ -46,7 +46,7 @@ int BsonIsTypeValid(bson_type type);
 bool BsonInitFromJsonString(bson *bson_ret, const char *json_string);
 bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...);
 
-/*
+/**
  * WARNING:
  *   1. Allocates memory for the bson * passed to it which must be freed in the calling function
  *   2. Only use this function to create new bson objects.
@@ -54,5 +54,18 @@ bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...);
  *   3. The fieldCount must match the number of parameters passed
 */
 int BsonSelectReportFields( bson *fields, int fieldCount, ... );
+
+/**
+ * Allocates bson object in the heap
+ * and initializes the allocated object
+ *
+ * IMPORTANT: Use BsonObjectDelete to cleanup memory
+ */
+bson *BsonObjectCreate(void);
+
+/**
+ * Must be used for objects created with BsonObjectCreate
+ */
+void BsonObjectDelete(bson *b);
 
 #endif

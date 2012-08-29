@@ -1206,3 +1206,27 @@ int BsonIsTypeValid(bson_type type)
 
     return 1;
 }
+
+/*****************************************************************************/
+
+bson *BsonObjectCreate(void)
+{
+    bson *b = bson_create();
+    bson_init(b);
+
+    return b;
+}
+
+/*****************************************************************************/
+
+void BsonObjectDelete(bson *b)
+{
+    bson_destroy(b);
+
+    if(b)
+    {
+        bson_dispose(b);
+    }
+}
+
+/*****************************************************************************/
