@@ -116,7 +116,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_host_compliance_list_all, NULL)
     PHP_FE(cfpr_select_reports, NULL)
     PHP_FE(cfpr_host_compliance_list, NULL)
-    PHP_FE(cfpr_get_bluehost_threshold, NULL)
     PHP_FE(cfpr_host_list_by_ip_rx, NULL)
     PHP_FE(cfpr_host_list_by_name_rx, NULL)
     PHP_FE(cfpr_host_compliance_colour, NULL)
@@ -178,19 +177,16 @@ static zend_function_entry cfmod_functions[] =
          * Environments
          */
     PHP_FE(cfpr_environment_list, NULL)
-    PHP_FE(cfpr_host_list_by_environment, NULL)
-    PHP_FE(cfpr_environment_by_hostkey, NULL)
+
+        /*
+         * Hub replication
+         */
     PHP_FE(cfpr_hub_key, NULL)
     PHP_FE(cfpr_get_hub_master, NULL)
         /*
          * Role-Based Access Control
          */
     PHP_FE(cfpr_user_authenticate, NULL)
-    PHP_FE(cfpr_role_create, NULL)
-    PHP_FE(cfpr_role_delete, NULL)
-    PHP_FE(cfpr_role_update, NULL)
-    PHP_FE(cfpr_role_list_all, NULL)
-    PHP_FE(cfpr_role_list_by_name, NULL)
         /*
          * Mission Tree-Control (Astrolabe)
          */
