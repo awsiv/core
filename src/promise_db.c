@@ -43,7 +43,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     {
         // clear existing data first
         bson b;
-        mongo_remove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b), NULL);
+        MongoRemove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b), NULL);
         firstCall = false;
     }
 
@@ -142,7 +142,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
 
 // remove existing data first
     bson b;
-    mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
 
     for (const Bundle *bp = bundles; bp != NULL; bp = bp->next)
     {
@@ -234,7 +234,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
     /* Now summarize all bodies */
     // clear existing bodies first
 
-    mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_BODIES, bson_empty(&b), NULL);
 
     for (const Body *bdp = bodies; bdp != NULL; bdp = bdp->next)
     {

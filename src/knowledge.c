@@ -54,7 +54,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
     bson b;
 
-    mongo_remove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b), NULL);
 
     /* Class types and topics */
 
@@ -120,7 +120,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
 // Knowledge bundle categories, quick lookup
     
-    mongo_remove(&dbconn, MONGO_KM_BUNDLES, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_KM_BUNDLES, bson_empty(&b), NULL);
     
     for (itp = bundles; itp != NULL; itp = itp->next)
        {
@@ -139,7 +139,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
 // Occurrences
 
-    mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b), NULL);
 
     for (op = occurrences; op != NULL; op = op->next)
     {
@@ -173,7 +173,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
     
 // Inferences
 
-    mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b), NULL);
+    MongoRemove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b), NULL);
 
     for (ip = inferences; ip != NULL; ip = ip->next)
     {
