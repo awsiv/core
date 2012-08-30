@@ -4,6 +4,9 @@
 	This complements the Nova classes and the sys.nova_version variable,
 	which will eventually be deprecated.
 
+	Created a variable update_policy.mongodb_dir, for cases where MongoDB
+	should not run out of /var/cfengine/state (could grow to tens of gigabytes).
+
 2.2.0
 	More diagnostics on report collection from cf-hub. Logging more
 	useful information in cf-hub -l, measuring total collection time

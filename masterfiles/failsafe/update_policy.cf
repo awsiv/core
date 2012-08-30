@@ -34,6 +34,10 @@ bundle agent update_policy
                        comment => "The master CFEngine policy directory on the policy host",
                         handle => "cfe_internal_update_policy_vars_master_location";
 
+   "mongodb_dir"        string => "$(sys.workdir)/state",
+                       comment => "Directory where MongoDB files will be stored on hub - if changed: requires DB shutdown and move of files",
+                        handle => "cfe_internal_update_policy_mongodb_dir";
+
 #
 
  classes:
@@ -127,7 +131,7 @@ bundle agent update_policy
 
   !windows.am_policy_hub.start_mongod::
 
-   "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --logappend --dbpath $(sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal > /dev/null < /dev/null 2>&1"
+   "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --logappend --dbpath $(update_policy.mongodb_dir) --bind_ip 127.0.0.1 --nohttpinterface --nojournal > /dev/null < /dev/null 2>&1"
       contain => u_in_shell,
        action => u_mongod_bg,
       comment => "Start mongod process",
@@ -161,6 +165,12 @@ bundle agent update_policy
 #
 
  files:
+
+  am_policy_hub::
+   "$(update_policy.mongodb_dir)/."
+        comment => "Ensure MongoDB database directory is created",
+         handle => "cfe_internal_update_policy_mongodb_dir_create",
+         create => "true";
 
   !am_policy_hub::  # policy hub should not alter inputs/ uneccessary
 

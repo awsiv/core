@@ -941,7 +941,7 @@ bundle agent cfengine_policysrv
 
   remove_mongod_lock::
 
-   "$(sys.workdir)/state/mongod.lock"
+   "$(update_policy.mongodb_dir)/mongod.lock"
         comment => "Remove stale mongod lock file",
          handle => "cfe_internal_cfengine_policysrv_files_remove_mongod_lock",
          delete => tidy;
