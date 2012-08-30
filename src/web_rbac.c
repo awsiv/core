@@ -107,7 +107,7 @@ static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
 static bool _UserIsAdmin(EnterpriseDB *conn, const char *username);
 static HubQuery *CFDB_GetRBACForUser(char *userName);
-cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Rlist *roles);
+cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles);
 static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password);
 
 /*****************************************************************************/
@@ -671,7 +671,7 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
     return start;
 }
 
-cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Rlist *roles)
+cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles)
 {
     const char *collection = external ? MONGO_COLLECTION_USERS_EXTERNAL : MONGO_COLLECTION_USERS_INTERNAL;
 
@@ -693,7 +693,7 @@ cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username,
     return _UpdateUser(conn, external, username, password, email, roles);
 }
 
-cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Rlist *roles)
+cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Sequence *roles)
 {    
     EnterpriseDB conn[1];
     if (!CFDB_Open(conn))
@@ -717,7 +717,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
 }
 
 cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email,
-                        const Rlist *roles)
+                        const Sequence *roles)
 {
     const char *users_collection = external ? MONGO_COLLECTION_USERS_EXTERNAL : MONGO_COLLECTION_USERS_INTERNAL;
 
@@ -751,7 +751,7 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
 
         if (roles)
         {
-            BsonAppendStringArrayRlist(&set_op, dbkey_user_roles, roles);
+            BsonAppendStringArraySequence(&set_op, dbkey_user_roles, roles);
         }
 
         if (!NULL_OR_EMPTY(email))
@@ -778,7 +778,7 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
 }
 
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email,
-                            const Rlist *roles)
+                            const Sequence *roles)
 {
     EnterpriseDB conn[1];
     if (!CFDB_Open(conn))

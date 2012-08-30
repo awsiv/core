@@ -12,6 +12,7 @@
 #include "db_common.h"
 #include "web_rbac.h"
 #include "install.h"
+#include "sequence.h"
 
 #define THROW_GENERIC(code, msg, ...) \
     { \
@@ -60,6 +61,8 @@ EnterpriseDB *EnterpriseDBAcquire(void);
 bool EnterpriseDBRelease(EnterpriseDB *conn);
 
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
+Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty);
+Rlist *StringSequenceToRlist(Sequence *seq);
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
 
 #endif

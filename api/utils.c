@@ -81,8 +81,19 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
     zval **data;
     HashTable *hash;
     HashPosition hashPos;
-    Rlist *rp = NULL;
 
+    switch (Z_TYPE_P(php_array))
+    {
+    case IS_NULL:
+    case IS_ARRAY:
+        break;
+
+    default:
+        assert(false && "Not an array or null");
+        return NULL;
+    }
+
+    Rlist *rp = NULL;
     hash = Z_ARRVAL_P(php_array);
 
     for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
@@ -99,6 +110,55 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
     }
 
     return rp;
+}
+
+Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
+{
+    zval **data;
+    HashTable *hash;
+    HashPosition hashPos;
+
+    switch (Z_TYPE_P(php_array))
+    {
+    case IS_NULL:
+        return NULL;
+
+    case IS_ARRAY:
+        break;
+
+    default:
+        assert(false && "Not an array or null");
+        return NULL;
+    }
+
+    Sequence *result = SequenceCreate(100, free);
+    hash = Z_ARRVAL_P(php_array);
+
+    for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
+         zend_hash_get_current_data_ex(hash, (void *)&data, &hashPos) == SUCCESS;
+         zend_hash_move_forward_ex(hash, &hashPos))
+    {
+        if (Z_TYPE_PP(data) == IS_STRING)
+        {
+            if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
+            {
+                SequenceAppend(result, SafeStringDuplicate(Z_STRVAL_PP(data)));
+            }
+        }
+    }
+
+    return result;
+}
+
+Rlist *StringSequenceToRlist(Sequence *seq)
+{
+    assert(seq);
+    Rlist *list = NULL;
+    for (size_t i = 0; i < seq->length; i++)
+    {
+        AppendRlist(&list, seq->data[i], CF_SCALAR);
+    }
+    return list;
 }
 
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type)

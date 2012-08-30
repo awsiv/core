@@ -30,12 +30,11 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $data = json_decode($request->data);
-        $roles = $data->roles ? $data->roles : array();
 
         $response = new Response($request);
 
         if (cfapi_user_put($user, $username, $data->password,
-                $data->email, $roles))
+                $data->email, $data->roles))
         {
             $response->code = Response::CREATED;
         }
@@ -52,12 +51,11 @@ class User extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $data = json_decode($request->data);
-        $roles = $data->roles ? $data->roles : array();
 
         $response = new Response($request);
 
         if (cfapi_user_post($user, $username, $data->password,
-                $data->email, $roles))
+                $data->email, $data->roles))
         {
             $response->code = Response::NOCONTENT;
         }

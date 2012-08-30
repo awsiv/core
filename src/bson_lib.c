@@ -310,6 +310,23 @@ void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rl
     }
 }
 
+void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq)
+{
+    assert(string_seq);
+    {
+        bson_append_start_array(b, key);
+
+        for (int i = 0; i < string_seq->length; i++)
+        {
+            char index_str[32] = { 0 };
+            snprintf(index_str, sizeof(index_str), "%d", i);
+            bson_append_string(b, index_str, string_seq->data[i]);
+        }
+
+        bson_append_finish_object(b);
+    }
+}
+
 /*****************************************************************************/
 
 bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter)

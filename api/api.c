@@ -341,7 +341,7 @@ PHP_FUNCTION(cfapi_user_put)
     const char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssz",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
@@ -371,16 +371,16 @@ PHP_FUNCTION(cfapi_user_put)
         }
     }
 
-    Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+    Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
 
     cfapi_errid err = ERRID_UNKNOWN;
     if ((err = CFDB_CreateUser(username, username_arg, password, email, roles)) != ERRID_SUCCESS)
     {
-        DeleteRlist(roles);
+        SequenceDestroy(roles);
         THROW_GENERIC(err, "Unable to create user");
     }
 
-    DeleteRlist(roles);
+    SequenceDestroy(roles);
     RETURN_BOOL(true);
 }
 
@@ -392,7 +392,7 @@ PHP_FUNCTION(cfapi_user_post)
     char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssz",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
@@ -405,12 +405,12 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    Rlist *roles = PHPStringArrayToRlist(roles_arg, true);
+    Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
     cfapi_errid err = CFDB_UpdateUser(username, username_arg,
                                       password_len > 0 ? password : NULL,
                                       email_len > 0 ? email : NULL,
                                       roles);
-    DeleteRlist(roles);
+    SequenceDestroy(roles);
 
     switch (err)
     {
@@ -766,8 +766,8 @@ PHP_FUNCTION(cfapi_query_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
-    Rlist *include_list = PHPStringArrayToRlist(context_includes, true);
-    Rlist *exclude_list = PHPStringArrayToRlist(context_excludes, true);
+    Rlist *include_list = PHPStringArrayToSequence(context_includes, true);
+    Rlist *exclude_list = PHPStringArrayToSequence(context_excludes, true);
 
     JsonHeaderTable *table = EnterpriseExecuteSQL(username, query, include_list,
                                              exclude_list);

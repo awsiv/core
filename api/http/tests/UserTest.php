@@ -156,7 +156,7 @@ class UserTest extends APIBaseTest
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
-            $this->assertTrue(empty($users[0]['roles']));
+            $this->assertEquals(0, sizeof($users[0]['roles']));
 
             //test only roles was edited
             $this->pest->setupAuth("snookie", "pass");

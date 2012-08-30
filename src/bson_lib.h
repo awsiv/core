@@ -10,6 +10,8 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 
+#include "sequence.h"
+
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
 bool BsonStringGet(const bson *b, const char *key, const char **out);
@@ -24,6 +26,7 @@ bool BsonAppendStringSafe(bson *b, const char *key, char *value);
 bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue);
 void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
+void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq);
 void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values);
 bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter);
 bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeValues);
