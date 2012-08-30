@@ -63,6 +63,7 @@ bool EnterpriseDBRelease(EnterpriseDB *conn);
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
 Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty);
 Rlist *StringSequenceToRlist(Sequence *seq);
+void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes);
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
 
 #endif

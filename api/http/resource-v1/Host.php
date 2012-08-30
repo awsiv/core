@@ -34,8 +34,22 @@ class HostList extends Resource
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
+        $context_include = array();
+        if (Utils::queryParam('context-include'))
+        {
+            $context_include = explode(',', Utils::queryParam('context-include'));
+        }
+
+        $context_exclude = array();
+        if (Utils::queryParam('context-exclude'))
+        {
+            $context_exclude = explode(',', Utils::queryParam('context-exclude'));
+        }
+
         $response = new Response($request);
         $response->body = cfapi_host_list($user,
+                $context_include,
+                $context_exclude,
                 DefaultParameters::page(), DefaultParameters::count());
         $response->code = Response::OK;
 

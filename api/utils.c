@@ -161,6 +161,19 @@ Rlist *StringSequenceToRlist(Sequence *seq)
     return list;
 }
 
+void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes)
+{
+    assert(filter);
+
+    Rlist *includeRlist = PHPStringArrayToRlist(includes, true);
+    Rlist *excludeRlist = PHPStringArrayToRlist(excludes, true);
+
+    HostClassFilterAddClassLists(filter, includeRlist, excludeRlist);
+
+    DeleteRlist(includeRlist);
+    DeleteRlist(excludeRlist);
+}
+
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type)
 {
     switch (type)

@@ -664,23 +664,39 @@ PHP_FUNCTION(cfapi_settings_post)
 PHP_FUNCTION(cfapi_host_list)
 {
     const char *username = NULL; int username_len = 0;
+    zval *context_include = NULL, *context_exclude = NULL;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
                               &username, &username_len,
+                              &context_include,
+                              &context_exclude,
                               &page.pageNum, &page.resultsPerPage) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
+
+    HostClassFilter *context_filter = NULL;
+    {
+        HubQuery *result = CFDB_HostClassFilterFromUserRBAC(username);
+        if (result->errid != ERRID_RBAC_DISABLED && result->errid != ERRID_SUCCESS)
+        {
+            THROW_GENERIC(result->errid, "Access denied");
+        }
+
+        context_filter = (HostClassFilter *)HubQueryGetFirstRecord(result);
+        HostClassFilterAddIncludeExcludeLists(context_filter, context_include, context_exclude);
+    }
+
     EnterpriseDB *conn = EnterpriseDBAcquire();
     if (!conn)
     {
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubQuery *result = CFDB_QueryHostsByHostClassFilter(conn, NULL);
+    HubQuery *result = CFDB_QueryHostsByHostClassFilter(conn, context_filter);
 
     if (!EnterpriseDBRelease(conn))
     {
@@ -766,11 +782,12 @@ PHP_FUNCTION(cfapi_query_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
-    Rlist *include_list = PHPStringArrayToSequence(context_includes, true);
-    Rlist *exclude_list = PHPStringArrayToSequence(context_excludes, true);
+    Rlist *include_list = PHPStringArrayToRlist(context_includes, true);
+    Rlist *exclude_list = PHPStringArrayToRlist(context_excludes, true);
 
-    JsonHeaderTable *table = EnterpriseExecuteSQL(username, query, include_list,
-                                             exclude_list);
+    JsonHeaderTable *table = EnterpriseExecuteSQL(username, query,
+                                                  include_list,
+                                                  exclude_list);
 
     DeleteRlist(include_list);
     DeleteRlist(exclude_list);

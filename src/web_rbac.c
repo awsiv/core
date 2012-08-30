@@ -92,7 +92,7 @@ static const JsonPrimitiveType setting_types[SETTING_MAX] =
 static const char *_EXTERNAL_FILTER_LDAP = "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson)(mail=*))";
 static const char *_EXTERNAL_FILTER_AD = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
 
-static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
+static HubQuery *CombineAccessOfRoles(const char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 static bool _UsernameExistsExternal(EnterpriseDB *conn, const char *username);
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
@@ -106,7 +106,7 @@ static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
 static bool _UserIsAdmin(EnterpriseDB *conn, const char *username);
-static HubQuery *CFDB_GetRBACForUser(char *userName);
+static HubQuery *CFDB_GetRBACForUser(const char *userName);
 cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles);
 static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password);
 
@@ -422,7 +422,7 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bo
 
 /*****************************************************************************/
 
-HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName)
+HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName)
 {
     Rlist *recordList = NULL;
 
@@ -534,7 +534,7 @@ cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey)
 
 /*****************************************************************************/
 
-static HubQuery *CFDB_GetRBACForUser(char *username)
+static HubQuery *CFDB_GetRBACForUser(const char *username)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.
@@ -604,7 +604,7 @@ static HubQuery *CFDB_GetRBACForUser(char *username)
 
 /*****************************************************************************/
 
-static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
+static HubQuery *CombineAccessOfRoles(const char *userName, HubQuery *hqRoles)
 {
     char *combinedClassRxInclude = NULL;
     char *combinedClassRxExclude = NULL;
