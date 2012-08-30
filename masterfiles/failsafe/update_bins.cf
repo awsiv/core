@@ -33,6 +33,10 @@ bundle agent update_bins
                               comment => "Local directory containing binary updates for this host",
                                handle => "cfe_internal_update_bins_vars_local_software_dir";
 
+   "local_update_log_dir"      string => translatepath("$(sys.workdir)/software_updates/update_log"),
+                              comment => "Local directory to store update log for this host",
+                               handle => "cfe_internal_update_bins_vars_local_update_log_dir";
+
   windows::
 
    "stop_signal"              string => "kill",
@@ -152,20 +156,60 @@ bundle agent update_bins
                  ifvarclass => "nova_edition",
                     classes => u_if_else("bin_update_success", "bin_update_fail");
 
+  !am_policy_hub.!windows::
+
+   "$(novapkg)"
+                    comment => "Update Nova package to a newer version (package is there)",
+                     handle => "cfe_internal_update_bins_packages_nova_update_not_windows_pkg_there",
+             package_policy => "update",
+             package_select => ">=",            # picks the newest Nova available
+      package_architectures => { "$(pkgarch)" },
+            package_version => "9.9.9",         # Install new Nova anyway
+             package_method => u_generic( "$(local_software_dir)" ),
+                 ifvarclass => "nova_edition",
+                    classes => u_if_else("bin_update_success", "bin_update_fail");
+
+  !am_policy_hub.windows::
+
+   "$(novapkg)" 
+                    comment => "Update Nova package to a newer version (package is there)",
+                     handle => "cfe_internal_update_bins_packages_nova_update_windows_only_pkg_there",
+             package_policy => "update",
+             package_select => ">=",            # picks the newest Nova available
+      package_architectures => { "$(pkgarch)" },
+            package_version => "9.9.9.9",       # Install new Nova anyway
+             package_method => u_generic( "$(local_software_dir)" ),
+                 ifvarclass => "nova_edition",
+                    classes => u_if_else("bin_update_success", "bin_update_fail");
+
 #
 
  files:
 
+  any::
+
+   "$(local_update_log_dir)/$(sys.nova_version)_is_running"
+      comment => "Create an empty file about a version that is running",
+       handle => "cfe_internal_update_bins_files_version_is_running",
+       create => "true";
+
   !am_policy_hub::
 
-  "$(local_software_dir)"
-          comment => "Copy binary updates from master source on policy server",
-           handle => "cfe_internal_update_bins_files_pkg_copy",
-        copy_from => u_rcp("$(master_software_location)/$(sys.flavour)_$(sys.arch)","$(sys.policy_hub)"),
-     depth_search => u_recurse("1"),  # Nova updates should be in root dir
-       depends_on => { "grant_access_datafiles" },
-           action => u_immediate,
-          classes => u_if_repaired("bin_newpkg");
+   "$(local_software_dir)"
+           comment => "Copy binary updates from master source on policy server",
+            handle => "cfe_internal_update_bins_files_pkg_copy",
+         copy_from => u_rcp("$(master_software_location)/$(sys.flavour)_$(sys.arch)","$(sys.policy_hub)"),
+      depth_search => u_recurse("1"),  # Nova updates should be in root dir
+        depends_on => { "grant_access_datafiles" },
+            action => u_immediate,
+           classes => u_if_repaired("bin_newpkg");
+
+  bin_update_success::
+
+   "$(local_update_log_dir)/upgraded_binary_from_$(sys.nova_version)"
+      comment => "Create an empty file after successfully upgrade the binary",
+       handle => "cfe_internal_update_bins_files_update_from_log",
+       create => "true";
 
 #
 
