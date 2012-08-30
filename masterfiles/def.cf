@@ -51,12 +51,4 @@ bundle common def
                     comment => "Define modules path",
                      handle => "common_def_vars_dir_modules";
 
- classes:
-
-  any::
-
-   "commercial_customer" or => { "nova_edition", "constellation_edition" },
-                    comment => "Define a global class for CFE Nova and Constellation",
-                     handle => "common_def_classes_commercial_customer";
-
 }
