@@ -23,7 +23,7 @@ bundle agent cfengine_management
   # CFEngine internals
   #
 
-  am_policy_hub.commercial_customer::
+  am_policy_hub::
 
    "hub" usebundle => cfengine_update_folders,
             handle => "cfe_internal_cfengine_management_update_folders",

@@ -59,8 +59,6 @@ bundle server access_rules()
       comment => "Grant access to modules directory",
       admit   => { ".*$(def.domain)", @(def.acl) };
 
-  commercial_customer::
-  
    "delta"
              handle => "server_access_grant_delta",
             comment => "Grant delta reporting query for the hub",
@@ -86,8 +84,6 @@ bundle server access_rules()
 
 # Use roles to allow specific remote cf-runagent users to
 # define certain soft-classes when running cf-agent on this host
-
-  commercial_customer::	
 
    ".*" authorize => { "root" };
 	
