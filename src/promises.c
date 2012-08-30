@@ -210,10 +210,11 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 void EnterpriseContext(void)
 {
     /* FIXME: type conversion */
-    NewScalar("sys", "nova_version", (char *) Nova_Version(), cf_str);
+    NewScalar("sys", "nova_version", (char *) Nova_Version(), cf_str);  // DEPRECATED
+    NewScalar("sys", "enterprise_version", (char *) Nova_Version(), cf_str);
 
     char vbuff[CF_BUFSIZE];
-    snprintf(vbuff, sizeof(vbuff), "nova_%s", CanonifyName(Nova_Version()));
+    snprintf(vbuff, sizeof(vbuff), "nova_%s", CanonifyName(Nova_Version()));  // DEPRECATED
     CreateClassesFromCanonification(vbuff);
 
     snprintf(vbuff, sizeof(vbuff), "enterprise_%s", CanonifyName(Nova_Version()));
