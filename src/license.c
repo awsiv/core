@@ -454,12 +454,9 @@ static void Nova_LogLicenseStatus(void)
     CF_DBC *dbcp;
     char datestr[CF_MAXVARSIZE], data[CF_MAXVARSIZE];
     Rval retval;
-    int licenses = 0, count = 0;
     Promise *pp = NewPromise("track_license", "License tracker");
     Attributes dummyattr = { {0} };
     CfLock thislock;
-    QPoint entry;
-    Rlist *counter = NULL;
     int min = 9999999, max = -1, lic1, lic2, i = 0;
     time_t now = time(NULL), dt, then;
     double sum_t = 0, ex_t = 0, lic_t = 0;
@@ -484,42 +481,21 @@ static void Nova_LogLicenseStatus(void)
         return;
     }
 
+    int licenses_policy = 0;
+
     if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
     {
-        licenses = Str2Int(retval.item);
+        licenses_policy = Str2Int(retval.item);
     }
 
-    if (OpenDB(&dbp, dbid_lastseen))
+    int lastseen_count = LastSeenHostKeyCount();
+
+    if (lastseen_count == 0)
     {
-        memset(&entry, 0, sizeof(entry));
-
-        if (NewDBCursor(dbp, &dbcp))
-        {
-            while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
-            {
-                if (value == NULL)
-                {
-                    continue;
-                }
-
-                IdempPrependRScalar(&counter, key + 1, CF_SCALAR);
-            }
-
-            DeleteDBCursor(dbp, dbcp);
-        }
-
-        CloseDB(dbp);
+        lastseen_count = 1;
     }
 
-    count = RlistLen(counter);
-    DeleteRlist(counter);
-
-    if (count == 0)
-    {
-        count = 1;
-    }
-
-    CfOut(cf_verbose, "", " -> Detected current number of used licenses at approximately %d/%d\n", count, LICENSES);
+    CfOut(cf_verbose, "", " -> Detected current number of used licenses at approximately %d/%d\n", lastseen_count, LICENSES);
 
     if (!OpenDB(&dbp, dbid_license))
     {
@@ -529,7 +505,7 @@ static void Nova_LogLicenseStatus(void)
     }
 
     snprintf(datestr, CF_MAXVARSIZE - 1, "%s", cf_ctime(&now));
-    snprintf(data, CF_MAXVARSIZE - 1, "%d,%d,%d,%ld", count, LICENSES, licenses, (long) now);
+    snprintf(data, CF_MAXVARSIZE - 1, "%d,%d,%d,%ld", lastseen_count, LICENSES, licenses_policy, (long) now);
 
     Chop(datestr);
     WriteDB(dbp, datestr, data, sizeof(data));
@@ -539,6 +515,7 @@ static void Nova_LogLicenseStatus(void)
 // Calculate utilization in each dt of the record
 
     then = time(NULL);          // Set this to now for first round
+    int count;
 
     if (NewDBCursor(dbp, &dbcp))
     {
