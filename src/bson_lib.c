@@ -182,9 +182,10 @@ bool BsonStringGet(const bson *b, const char *key, const char **out)
 
     return false;
 }
+
 /*****************************************************************************/
 
-bool BsonBoolGet(const bson *b, const char *key, bool *out)
+bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out)
 {
     bson_iterator it;
 
@@ -195,6 +196,20 @@ bool BsonBoolGet(const bson *b, const char *key, bool *out)
     }
 
     CfOut(cf_verbose, "", "BsonBoolGet: No match for \"%s\"", key);
+
+    return false;
+}
+
+/*****************************************************************************/
+
+bool BsonBoolGet( const bson *b, const char *key )
+{
+    bson_iterator it;
+
+    if (bson_find(&it, b, key) == BSON_BOOL)
+    {
+        return (bool) bson_iterator_bool(&it);
+    }
 
     return false;
 }

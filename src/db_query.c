@@ -484,8 +484,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
         }
         assert(host);
 
-        bool is_black = false;
-        BsonBoolGet(&cursor->current, cfr_is_black, &is_black);
+        bool is_black = BsonBoolGet( &cursor->current, cfr_is_black );
 
         time_t last_report = 0;
         BsonTimeGet(&cursor->current, cfr_day, &last_report);
@@ -6190,8 +6189,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
         time_t then = 0;
         BsonTimeGet(&out, cfr_day, &then);
 
-        bool is_black;
-        BsonBoolGet(&out, cfr_is_black, &is_black);
+        bool is_black = BsonBoolGet( &out, cfr_is_black );
 
         int score = 0;
         if (BsonIntGet(&out, HostRankMethodToMongoCode(method), &score))

@@ -15,7 +15,23 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
 bool BsonStringGet(const bson *b, const char *key, const char **out);
-bool BsonBoolGet(const bson *b, const char *key, bool *out);
+/**
+  * BsonBoolGetCheckExists *
+  * Returns false if key doens't exist
+  * If the key exists, returns true and writes the value into *out
+  * Use this when the existence of key matters
+  */
+bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out);
+/**
+  * BsonBoolGet *
+  * Returns:
+  * - true if the key exists and the value is true
+  * - false otherwise
+  *
+  * Use this for cases where the absence of key
+  * can be considered as having a false value.
+  */
+bool BsonBoolGet(const bson *b, const char *key);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);
 bool BsonArrayGet(const bson *b, const char *key, const char **out);

@@ -102,7 +102,7 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
 
     if (checkUpdate)
     {
-        if (!BsonBoolGet(&b, "updatedExisting", checkUpdate))
+        if ( !BsonBoolGetCheckExists( &b, "updatedExisting", checkUpdate ) )
         {
             CfOut(cf_error, "", "!! Unable to determine if update happened on %s (%s)", operation, extra);
             bson_destroy(&b);
