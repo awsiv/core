@@ -5420,59 +5420,34 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
 
 Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 {
-    bson_iterator it1;
     Rlist *host_list = NULL;
-    char noteId[CF_MAXVARSIZE] = { 0 };
-    char keyhash[CF_MAXVARSIZE] = { 0 };
-
-/* BEGIN RESULT DOCUMENT */
 
     bson fields;
+    BsonSelectReportFields(&fields, 1, "_id");
 
-    BsonSelectReportFields(&fields, 2, cfn_keyhash, "_id");
-
-/* BEGIN SEARCH */
-
-    mongo_cursor *cursor = MongoFind(conn, MONGO_NOTEBOOK, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
-
-    bson_destroy(&fields);
-
-    if (!cursor)
+    bson out = { 0 };
+    if (MongoFindOne(conn, MONGO_NOTEBOOK, query, &fields, &out) == MONGO_OK)
     {
-        return NULL;
-    }
-    while (mongo_cursor_next(cursor) == MONGO_OK)
-    {
-        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+        bson_iterator it1;
+        bson_iterator_init(&it1, &out);
 
-        keyhash[0] = '\0';
+        char noteId[CF_MAXVARSIZE] = { 0 };
         noteId[0] = '\0';
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            switch (bson_iterator_type(&it1))
+            if (bson_iterator_type(&it1) == BSON_OID)
             {
-            case BSON_OID:
                 bson_oid_to_string(bson_iterator_oid(&it1), noteId);
-                break;
-            case BSON_STRING:
-                if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
-                {
-                    strncpy(keyhash, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
-                }
-                break;
-            default:
-                break;
             }
 
-        }
-        if (strlen(noteId) > 15)
-        {
             PrependRlistAlienUnlocked(&host_list, noteId);
         }
     }
 
-    mongo_cursor_destroy(cursor);
+    bson_destroy(&out);
+    bson_destroy(&fields);
+
     return host_list;
 }
 
