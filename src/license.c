@@ -22,6 +22,7 @@
 #include "files_names.h"
 #include "vars.h"
 #include "conversion.h"
+#include "files_lib.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -35,6 +36,7 @@
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
+static char *LicenseFileRead(void);
 int Nova_HashKey(char *filename, char *buffer, const char *hash);
 static void Nova_LogLicenseStatus(void);
 
@@ -62,7 +64,6 @@ int EnterpriseExpiry(void)
     char u_day[16], u_month[16], u_year[16];
     char edition = 'N';
     char serverdig[CF_MAXVARSIZE] = "";
-    FILE *fp;
     RSA *serverrsa;
 
     if (THIS_AGENT_TYPE == cf_keygen)
@@ -85,6 +86,8 @@ int EnterpriseExpiry(void)
 
     snprintf(name, sizeof(name), "%s%cpolicy_server.dat", CFWORKDIR, FILE_SEPARATOR);
 
+    FILE *fp;
+
     if ((fp = fopen(name, "r")) != NULL)
     {
         fscanf(fp, "%s", policy_server);
@@ -104,24 +107,13 @@ int EnterpriseExpiry(void)
         return false;
     }
 
-// if license file exists, set the date from that, else use the source coded one
+    char *license_file_contents = LicenseFileRead();
 
-    snprintf(name, sizeof(name), "%s/inputs/license.dat", CFWORKDIR);
-    MapName(name);
-
-    if (stat(name, &sb) == -1)
+    if (license_file_contents != NULL)
     {
-        CfOut(cf_verbose, "", " -> Looking to see if we can bootstrap from the master");
-        snprintf(name, CF_MAXVARSIZE - 1, "%s/masterfiles/license.dat", CFWORKDIR);
-        MapName(name);
-    }
-
-    if ((fp = fopen(name, "r")) != NULL)
-    {
-        CfOut(cf_verbose, "", " -> Reading license expiry from %s", name);
-        fscanf(fp, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
-        fscanf(fp, "\n%c", &edition);
-        fclose(fp);
+        sscanf(license_file_contents, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
+        sscanf(license_file_contents, "\n%c", &edition);
+        free(license_file_contents);
 
         edition = 'N';
 
@@ -296,6 +288,33 @@ static bool RecentlyCheckedLicense(void)
     LAST_LICENSE_CHECK_TIMESTAMP = now;
 
     return false;
+}
+
+/*****************************************************************************/
+
+static char *LicenseFileRead(void)
+{
+#define MAX_LICENSE_FILE_SIZE 256
+
+    struct stat sb;
+    char filename[CF_MAXVARSIZE];
+
+    snprintf(filename, sizeof(filename), "%s/inputs/license.dat", CFWORKDIR);
+    MapName(filename);
+
+    if (cfstat(filename, &sb) == -1)
+    {
+        snprintf(filename, sizeof(filename), "%s/masterfiles/license.dat", CFWORKDIR);
+        MapName(filename);
+    }
+
+    CfOut(cf_verbose, "", "Reading license information from %s", filename);
+
+    char *contents;
+
+    FileReadMax(&contents, filename, MAX_LICENSE_FILE_SIZE);
+
+    return contents;
 }
 
 /*****************************************************************************/
