@@ -7,6 +7,9 @@
 	Created a variable update_policy.mongodb_dir, for cases where MongoDB
 	should not run out of /var/cfengine/state (could grow to tens of gigabytes).
 
+	Removed commercial_customer class, as it was unused in internal policies.
+	Please use enterprise_edition instead if you used this in your policies.
+
 2.2.0
 	More diagnostics on report collection from cf-hub. Logging more
 	useful information in cf-hub -l, measuring total collection time
