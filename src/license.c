@@ -58,7 +58,6 @@ int EnterpriseExpiry(void)
 #endif
     char f_day[16], f_month[16], f_year[16];
     char u_day[16], u_month[16], u_year[16];
-    char edition = 'N';
     char serverdig[CF_MAXVARSIZE] = "";
     RSA *serverrsa;
 
@@ -108,32 +107,19 @@ int EnterpriseExpiry(void)
     if (license_file_contents != NULL)
     {
         sscanf(license_file_contents, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
-        sscanf(license_file_contents, "\n%c", &edition);
         free(license_file_contents);
-
-        if (edition != 'C')
-        {
-            edition = 'N';
-        }
 
         // This is the simple password hash to obfuscate license fixing
         // Nothing top security here - this is a helper file to track licenses
-
-        if (edition == 'C')
+        if (strlen(company) > 0)
         {
-            snprintf(name, sizeof(name), "%s-%o.%s Constellation %s %s", f_month, number, f_day, f_year, company);
+            snprintf(name, sizeof(name), "%s-%o.%s Nova %s %s", f_month, number, f_day, f_year, company);
         }
         else
         {
-            if (strlen(company) > 0)
-            {
-                snprintf(name, sizeof(name), "%s-%o.%s Nova %s %s", f_month, number, f_day, f_year, company);
-            }
-            else
-            {
-                snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
-            }
+            snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
         }
+
 
         // This next step requires a pre-existing binding
 
@@ -235,7 +221,7 @@ int EnterpriseExpiry(void)
     {
         char editionStr[8];
 
-        snprintf(editionStr, sizeof(editionStr), "%c", edition);
+        snprintf(editionStr, sizeof(editionStr), "%c", 'N');
 
         CFDB_PutValue("license_owner", company, MONGO_SCRATCH);
         CFDB_PutValue("licenses_granted", snumber, MONGO_SCRATCH);
@@ -259,18 +245,10 @@ int EnterpriseExpiry(void)
     }
     else
     {
-        if (edition == 'C')
-        {
-            CfOut(cf_verbose, "", " -> Found %d CFE Constellation licenses, expiring on %s %s %s for %s", LICENSES,
-                  u_day, u_month, u_year, company);
-            AM_CONSTELLATION = true;
-        }
-        else
-        {
-            CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
-                  u_month, u_year, company);
-            AM_NOVA = true;
-        }
+        CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
+              u_month, u_year, company);
+        AM_NOVA = true;
+
         return false;
     }
 }
