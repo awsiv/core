@@ -1094,9 +1094,6 @@ void Nova_HubLog(const char *fmt, ...)
 #if defined(HAVE_LIBSQLITE3)
 static void RunScheduledEnterpriseReports(void)
 {
-    Rlist *context_include = NULL,
-          *context_exclude = NULL;
-
     char *username = "admin";
     char *select_op = "SELECT * FROM variables LIMIT 100;";
 
@@ -1117,7 +1114,7 @@ static void RunScheduledEnterpriseReports(void)
 
                     if(tables)
                     {
-                        LoadSqlite3Tables(db, tables, username, context_include, context_exclude);
+                        LoadSqlite3Tables(db, tables, username);
                         DeleteRlist(tables);
 
                         char *err_msg = 0;

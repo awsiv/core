@@ -71,15 +71,13 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
-                                  Rlist *context_include, Rlist *context_exclude);
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op);
 
 #if defined(HAVE_LIBSQLITE3)
 bool Sqlite3_DBOpen(sqlite3 **db);
 void Sqlite3_DBClose(sqlite3 *db);
 bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
-void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
-                       Rlist *context_include, Rlist *context_exclude);
+void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username);
 
 void Sqlite3_FreeString(char *str);
 

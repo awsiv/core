@@ -113,8 +113,7 @@ bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_ca
 /******************************************************************/
 #endif
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op,
-                                  Rlist *context_include, Rlist *context_exclude)
+JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op)
 {
 #if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
@@ -139,7 +138,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
         return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    LoadSqlite3Tables(db, tables, username, context_include, context_exclude);
+    LoadSqlite3Tables(db, tables, username);
 
     DeleteRlist(tables);
 
@@ -221,14 +220,11 @@ static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
 
 /******************************************************************/
 
-void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username,
-                              Rlist *context_include, Rlist *context_exclude)
+void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 {
     /* Apply RBAC & Context filters */
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
     HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    HostClassFilterAddClassLists(context_filter, context_include, context_exclude);
 
     HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
     PromiseFilter *promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
