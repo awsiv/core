@@ -29,6 +29,7 @@ bundlesequence  => {
                    "persons",
                    "compliance_models",
                    "error_messages",
+                   "mission_apps"
                    };
 
 

@@ -46,9 +46,6 @@ vars:
   "wrote[f]" string => "is the author of";
   "wrote[b]" string => "was written by";
 
-  "edited[f]" string => "edited";
-  "edited[b]" string => "was edited by";
-
   "about[f]" string => "deals with concept of";
   "about[b]" string => "concept explained in";
 

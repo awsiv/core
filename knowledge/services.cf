@@ -357,3 +357,39 @@ topics:
    
 
 }
+
+#######################################################################
+
+bundle knowledge mission_apps
+{
+things:
+
+  "mission portal appliccations" comment => "Specialized interfaces to CFEngine's knowledge center";
+
+ mission_portal_applications::
+
+  "goals"         comment => "Displays IT goals and the activities and resources that support them";
+  "services"      comment => "Displays IT services, active ports, and their actual and desired states";
+  "hosts"         comment => "Displays the hosts attached to hubs and all their vital statistics";
+  "topics"        comment => "Displays how arbitrary topics are interrelated and what is known about them",
+                 synonyms => { "knowledge" };
+  "promises"      comment => "Displays the intended state described by a promise",
+                 synonyms => { "policy" };
+  "notes"         comment => "Browses the hand written annotations about the system";
+  "poeple"        comment => "Browses the users who have accounts on the current portal";
+  "logs"          comment => "Displays and searches system logs collected by CFEngine";
+  "reports"       comment => "A tool for generating reports about hosts starting from the report types";
+  "documents"     comment => "A tool for browsing the documents and manuals about CFEngine and its usage";
+  "get started"   comment => "A checklist wizard/tool to assist users in performing basic tasks";
+  "compliance"    comment => "Displays compliance of the system with respect to different compliance models";
+  "cost-value"    comment => "Displays estimates of the cost of running IT services";
+  "locations"     comment => "Displays the locations of IT resources, according to different models";
+  "storage"       comment => "Displays the availability of storage around the system";
+  "consistency"   comment => "Displays the average consistency of hosts and data around the system";
+  "performance"   comment => "Displays performance and usage statistics for hosts and services";
+  "energy"        comment => "Displays estimated energy usage of hosts in different locations";
+  "correlations"  comment => "Search for correlated behaviours and changes around the system";
+  "risk analysis" comment => "A tool for estimating risks associated with system policy and state";
+
+}
+

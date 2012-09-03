@@ -2,6 +2,12 @@
 
 bundle knowledge persons
 {
+vars:
+
+  "edited[f]" string => "edited";
+  "edited[b]" string => "was edited by";
+
+
 topics:
 
  ########################################################################
