@@ -700,6 +700,7 @@ PHP_FUNCTION(cfapi_host_list)
 
     if (!EnterpriseDBRelease(conn))
     {
+        DeleteHubQuery(result, NULL);
         THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
     }
 
@@ -716,6 +717,46 @@ PHP_FUNCTION(cfapi_host_list)
     DeleteHubQuery(result, NULL);
 
     RETURN_JSON(PackageResult(data, page.pageNum, total));
+}
+
+PHP_FUNCTION(cfapi_host_context_list)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *hostkey = NULL; int hostkey_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &hostkey, &hostkey_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(hostkey_len, "hostkey");
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    HubQuery *result = CFDB_QueryClasses(conn, hostkey, NULL, false, 0, time(NULL), NULL, false);
+
+    if (!EnterpriseDBRelease(conn))
+    {
+        DeleteHubQuery(result, DeleteHubClass);
+        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+    }
+
+    JsonElement *data = JsonArrayCreate(1000);
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        const HubClass *context = rp->item;
+        JsonArrayAppendObject(data, HubClassToJson(context));
+    }
+
+    DeleteHubQuery(result, DeleteHubClass);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
 
 PHP_FUNCTION(cfapi_host_get)
@@ -742,6 +783,7 @@ PHP_FUNCTION(cfapi_host_get)
 
     if (!EnterpriseDBRelease(conn))
     {
+        DeleteHubQuery(result, NULL);
         THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
     }
 
@@ -759,8 +801,6 @@ PHP_FUNCTION(cfapi_host_get)
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
-
-
 
 //******************************************************************************
 

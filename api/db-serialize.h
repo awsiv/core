@@ -13,5 +13,6 @@
 JsonElement *HubUserToJson(const HubUser *user);
 JsonElement *HubRoleToJson(const HubRole *role);
 JsonElement *HubHostToJson(const HubHost *host);
+JsonElement *HubClassToJson(const HubClass *context);
 
 #endif

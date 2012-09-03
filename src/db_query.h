@@ -34,7 +34,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, P
 HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort);
-HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
+HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes);
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,

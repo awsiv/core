@@ -84,3 +84,17 @@ JsonElement *HubHostToJson(const HubHost *host)
 
     return obj;
 }
+
+JsonElement *HubClassToJson(const HubClass *context)
+{
+    assert(context);
+
+    JsonElement *obj = JsonObjectCreate(5);
+
+    JsonObjectAppendString(obj, "id", context->class);
+    JsonObjectAppendReal(obj, "mean", context->prob);
+    JsonObjectAppendReal(obj, "stdv", context->dev);
+    JsonObjectAppendInteger(obj, "timestamp", context->t);
+
+    return obj;
+}

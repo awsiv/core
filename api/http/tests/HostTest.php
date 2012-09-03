@@ -19,24 +19,6 @@ class HostTest extends APIBaseTest
         }
     }
 
-    public function testListHostsByContextIncludeSingle()
-    {
-        try
-        {
-            $response = $this->pest->get('/host?context-include=PK_SHA_305.*');
-            $this->assertEquals(200, $this->pest->lastStatus());
-            $this->assertValidJson($response);
-            $this->assertEquals(1, sizeof($response['data']));
-            $this->assertEquals(1, $response['meta']['total']);
-            $this->assertEquals(1, $response['meta']['count']);
-            $this->assertEquals($this->hostA_id, $response['data'][0]['id']);
-        }
-        catch (Pest_Exception $e)
-        {
-            $this->fail($e);
-        }
-    }
-
     public function testListAllHostsPagination()
     {
         try
@@ -70,6 +52,60 @@ class HostTest extends APIBaseTest
             $this->assertEquals($this->hostA_id, $hosts[0]['id']);
             $this->assertEquals('hostA', $hosts[0]['hostname']);
             $this->assertEquals($this->hostA_ip, $hosts[0]['ip']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testListAllContextsForHost()
+    {
+        try
+        {
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/context');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(111, sizeof($response['data']));
+            $this->assertEquals(111, $response['meta']['total']);
+            $this->assertEquals(111, $response['meta']['count']);
+            $this->assertEquals('x86_64', $response['data'][0]['id']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testListHostsByContextIncludeSingle()
+    {
+        try
+        {
+            $response = $this->pest->get('/host?context-include=PK_SHA_305.*');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals(1, $response['meta']['count']);
+            $this->assertEquals($this->hostA_id, $response['data'][0]['id']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testListHostsByContextExcludeSingle()
+    {
+        try
+        {
+            $response = $this->pest->get('/host?context-exclude=PK_SHA_305.*');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals(1, $response['meta']['count']);
+            $this->assertEquals($this->hostB_id, $response['data'][0]['id']);
         }
         catch (Pest_Exception $e)
         {

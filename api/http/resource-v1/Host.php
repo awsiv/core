@@ -1,7 +1,32 @@
 <?php
 
 /**
- * @uri /host/:id 0
+ * @uri /host/(.+)/context 2
+ */
+class HostContextList extends Resource
+{
+    function get($request, $hostid)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+        $payload = cfapi_host_context_list($user, $hostid);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /host/:id 1
  */
 class Host extends Resource
 {
@@ -26,7 +51,7 @@ class Host extends Resource
 }
 
 /**
- * @uri /host 1
+ * @uri /host 0
  */
 class HostList extends Resource
 {
