@@ -3279,9 +3279,6 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        char topic[CF_BUFSIZE] = {0}, context[CF_BUFSIZE] = {0};
-        int topic_id = 0;
-    
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
