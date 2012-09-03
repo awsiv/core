@@ -173,10 +173,10 @@ static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostID, char *ipaddr)
 {
-    char hostname[CF_MAXVARSIZE] = {0};
+    char custom_identifier[CF_MAXVARSIZE] = {0};
 
-    GetHostIdentifier(dbconn, hostID, ipaddr, hostname, CF_MAXVARSIZE - 1);
+    GetHostIdentifier(dbconn, hostID, ipaddr, custom_identifier, CF_MAXVARSIZE - 1);
 
-    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, hostname);
-    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, hostname);
+    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, NULL, custom_identifier);
+    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, NULL, custom_identifier);
 }

@@ -588,8 +588,8 @@ void Nova_GenerateTestData(int count)
 
         if (CFDB_Open(&conn))
         {
-            CFDB_SaveHostID(&conn, MONGO_DATABASE, cfr_keyhash, newkeyhash, newaddresses, newhostnames);
-            CFDB_SaveHostID(&conn, MONGO_ARCHIVE, cfr_keyhash, newkeyhash, newaddresses, newhostnames);
+            CFDB_SaveHostID(&conn, MONGO_DATABASE, cfr_keyhash, newkeyhash, newaddresses, newhostnames, NULL);
+            CFDB_SaveHostID(&conn, MONGO_ARCHIVE, cfr_keyhash, newkeyhash, newaddresses, newhostnames, NULL);
             CFDB_Close(&conn);
         }
 

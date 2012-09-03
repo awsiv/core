@@ -32,7 +32,7 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveBundles(EnterpriseDB *conn, char *kH, const Item *data);
 void CFDB_SaveValueReport(EnterpriseDB *conn, char *kH, Item *data);
 void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *keyhash, char *ipaddr,
-                     char *hostname);
+                     char *hostname, char *custom_identifier);
 void Nova_CheckGlobalKnowledgeClass(char *name, char *key);
 void CFDB_SaveLastHostUpdate(EnterpriseDB *conn, char *hostKey);
 void CFDB_SaveLastUpdate(EnterpriseDB *conn, char *database, char *keyField, char *keyhash);
