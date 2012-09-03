@@ -16,7 +16,6 @@
 
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
-static JsonElement *ParseRolesToJson(HubQuery *hq);
 
 
 /******************************************************************************/
@@ -4854,36 +4853,6 @@ PHP_FUNCTION(cfpr_user_authenticate)
     }
 }
 
-/******************************************************************************/
-
-static JsonElement *ParseRolesToJson(HubQuery *hq)
-{
-#define LABEL_ROLE_NAME "name"
-#define LABEL_ROLE_DESCRIPTION "description"
-#define LABEL_ROLE_CLASSRX_INCLUDE "classrxinclude"
-#define LABEL_ROLE_CLASSRX_EXCLUDE "classrxexclude"
-#define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
-#define LABEL_ROLE_BUNDLERX_EXCLUDE "bundlerxexclude"
-
-    JsonElement *roles = JsonArrayCreate(100);
-
-    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
-    {
-        HubRole *record = (HubRole *) rp->item;
-        JsonElement *role_entry = JsonObjectCreate(10);
-
-        JsonObjectAppendString(role_entry, LABEL_ROLE_NAME, record->name);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_DESCRIPTION, NULLStringToEmpty(record->description));
-        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_INCLUDE, NULLStringToEmpty(record->classRxInclude));
-        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, NULLStringToEmpty(record->classRxExclude));
-        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, NULLStringToEmpty(record->bundleRxInclude));
-        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, NULLStringToEmpty(record->bundleRxExclude));
-
-        JsonArrayAppendObject(roles, role_entry);
-    }
-
-    return roles;
-}
 
 /******************************************************************************/
 
