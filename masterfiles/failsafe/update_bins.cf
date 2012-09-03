@@ -257,6 +257,7 @@ debian::
  package_changes => "individual";
  package_list_command => "/usr/bin/dpkg -l";
 
+ package_list_update_command => "/usr/bin/apt-get update";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
 
  package_list_name_regex    => "ii\s+([^\s]+).*";
@@ -302,6 +303,10 @@ redhat|SuSE::
  package_update_command     => "/bin/rpm -Uvh ";
  package_noverify_regex     => ".*[^\s].*";
 
+ redhat::
+  package_list_update_command => "/usr/bin/yum check-update";
+ SuSE::
+  package_list_update_command => "/usr/bin/zypper list-updates";
 
 windows::
 
@@ -323,6 +328,8 @@ freebsd::
  package_changes => "individual";
 
  package_list_command => "/usr/sbin/pkg_info";
+ 
+ package_list_update_command => "/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
 
 
@@ -344,6 +351,8 @@ netbsd::
  package_changes => "individual";
 
  package_list_command => "/usr/sbin/pkg_info";
+
+ package_list_update_command => "/bin/true";
  package_list_update_ifelapsed => "0"; # avoid caching of list during upgrade
 
 
@@ -364,6 +373,7 @@ solarisx86|solaris::
  
  package_changes => "individual";
  package_list_command => "/usr/bin/pkginfo -l";
+ package_list_update_command => "/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
  package_multiline_start    => "\s*PKGINST:\s+[^\s]+";
  package_list_name_regex    => "\s*PKGINST:\s+([^\s]+)";
@@ -384,6 +394,7 @@ aix::
 
  package_changes => "individual";
 
+ package_list_update_command => "/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
 
  package_list_command       => "/usr/bin/lslpp -lc";
