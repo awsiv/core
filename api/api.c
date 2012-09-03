@@ -449,6 +449,144 @@ PHP_FUNCTION(cfapi_user_delete)
     RETURN_BOOL(true);
 }
 
+PHP_FUNCTION(cfapi_user_subscription_query_list)
+{
+    const char *username = NULL, *username_arg;
+    int username_len = 0, username_arg_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &username, &username_arg_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+
+    // TODO: hook up DBAPI
+    /*
+    HubQuery *result = CFDB_ListUsers(username, NULL);
+    if (result->errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result->errid, "Error listing users");
+    }
+    */
+
+    JsonElement *data = JsonArrayCreate(500);
+    /*
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        JsonArrayAppendObject(data, HubUserToJson((HubUser *)rp->item));
+    }
+    DeleteHubQuery(result, DeleteHubUser);
+    */
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+}
+
+PHP_FUNCTION(cfapi_user_subscription_query_get)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *username_arg = NULL; int username_arg_len = 0;
+    const char *sub_id = NULL; int sub_id_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+                              &username, &username_len,
+                              &username_arg, &username_arg_len,
+                              &sub_id, &sub_id_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+    ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
+
+    // TODO: hook up DBAPI
+    /*
+    HubUser *user = NULL;
+    cfapi_errid err = CFDB_GetUser(username, username_arg, &user);
+    if (err != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(err, "Error looking up user");
+    }
+    assert(user);
+    */
+
+    JsonElement *data = JsonArrayCreate(1);
+    /*
+    JsonArrayAppendObject(data, HubUserToJson(user));
+
+    DeleteHubUser(user);
+    */
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
+PHP_FUNCTION(cfapi_user_subscription_query_put)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *username_arg = NULL; int username_arg_len = 0;
+    const char *sub_id = NULL; int sub_id_len = 0;
+
+    const char *to = NULL; int to_len = 0;
+    const char *query = NULL; int query_len = 0;
+    const char *schedule = NULL; int schedule_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssss",
+                              &username, &username_len,
+                              &username_arg, &username_arg_len,
+                              &sub_id, &sub_id_len,
+                              &to, &to_len,
+                              &query, &query_len,
+                              &schedule, &schedule_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+    ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
+    ARGUMENT_CHECK_CONTENTS(to_len, "to");
+    ARGUMENT_CHECK_CONTENTS(query_len, "query");
+    ARGUMENT_CHECK_CONTENTS(schedule, "schedule");
+
+    // TODO: hook up DBAPI
+
+    RETURN_BOOL(true);
+}
+
+PHP_FUNCTION(cfapi_user_subscription_query_delete)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *username_arg = NULL; int username_arg_len = 0;
+    const char *sub_id = NULL; int sub_id_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &username_arg, &username_arg_len,
+                              &sub_id, &sub_id_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
+    ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
+
+    // TODO: hook up DBAPI
+    /*
+    cfapi_errid result = CFDB_DeleteUser(username, username_arg);
+    if (result != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result, "Unable to delete user");
+    }
+    */
+
+    RETURN_BOOL(true);
+}
+
 //******************************************************************************
 
 PHP_FUNCTION(cfapi_settings_get)

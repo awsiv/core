@@ -29,6 +29,10 @@ static zend_function_entry cfapi_functions[] =
     PHP_FE(cfapi_user_put, NULL)
     PHP_FE(cfapi_user_post, NULL)
     PHP_FE(cfapi_user_delete, NULL)
+    PHP_FE(cfapi_user_subscription_query_list, NULL)
+    PHP_FE(cfapi_user_subscription_query_get, NULL)
+    PHP_FE(cfapi_user_subscription_query_put, NULL)
+    PHP_FE(cfapi_user_subscription_query_delete, NULL)
     PHP_FE(cfapi_settings_get, NULL)
     PHP_FE(cfapi_settings_post, NULL)
 
