@@ -62,7 +62,6 @@ int EnterpriseExpiry(void)
 #endif
     char f_day[16], f_month[16], f_year[16];
     char u_day[16], u_month[16], u_year[16];
-    char edition = 'N';
     char serverdig[CF_MAXVARSIZE] = "";
     RSA *serverrsa;
 
@@ -112,11 +111,7 @@ int EnterpriseExpiry(void)
     if (license_file_contents != NULL)
     {
         sscanf(license_file_contents, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
-        sscanf(license_file_contents, "\n%c", &edition);
         free(license_file_contents);
-
-        edition = 'N';
-
 
         // This is the simple password hash to obfuscate license fixing
         // Nothing top security here - this is a helper file to track licenses
