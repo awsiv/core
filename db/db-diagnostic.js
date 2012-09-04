@@ -19,25 +19,25 @@ missing_t = db["hosts"].count({t: { $exists: false }});
 print("MISSING TIMESTAMP: " + missing_t);
 
 // list duplicates
-groups = db["hosts"].group({
-    key: { kH: true },
-    initial: { count: 0 },
-    reduce: function(record, state) {
-	state.count++;
+db["hosts"].mapReduce(
+    function() {
+	emit(this.kH, { count: 1 });
+    },
+    function(key, values) {
+	var result = { count: 0 };
+
+	values.forEach(function(value) {
+	    result.count += value.count
+	});
+
+	return result;
+    },
+    { 
+	out: "dups"
     }
+);
+
+print("Duplicate keys");
+db["dups"].find({"value.count": { $gt: 1 }}).forEach(function(obj) {
+    print(obj._id + " count: " + obj.value.count);
 });
-
-duplicates = [];
-for (i = 0; i < groups.length; i++) {
-    record = groups[i];
-    if (record.count > 1) {
-	duplicates.push(record);
-    }
-}
-
-print("Duplicate record groups: " + duplicates.length); 
-
-for (i = 0; i < duplicates.length; i++)
-{
-    print(duplicates[i].kH + " : " + duplicates[i].count + " times");
-}
