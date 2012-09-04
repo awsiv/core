@@ -22,6 +22,7 @@
 #include "item_lib.h"
 #include "conversion.h"
 #include "nova-reporting.h"
+#include "hub-scheduled-reports.h"
 
 /*******************************************************************/
 
@@ -699,7 +700,10 @@ static void StartHub(void)
             NewClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
             {
-                Nova_CollectReports();               
+                Nova_CollectReports();
+                #if defined( HAVE_SQLITE3 )
+                RunScheduledEnterpriseReports();
+                #endif
             }
         }
 

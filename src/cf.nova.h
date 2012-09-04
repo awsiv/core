@@ -51,6 +51,7 @@
 # define MONGO_MP_SETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
 # define MONGO_ARCHIVE_COLLECTION "archive"
 # define MONGO_ARCHIVE MONGO_BASE ".archive"
+# define MONGO_SCHEDULED_REPORTS MONGO_BASE ".scheduled_reports"
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
 
