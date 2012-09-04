@@ -34,6 +34,7 @@ static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
 int Nova_HashKey(char *filename, char *buffer, char *hash);
 static char *LicenseFileRead(void);
+static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_ip_address);
 static void Nova_LogLicenseStatus(void);
 
 /*****************************************************************************/
@@ -48,7 +49,7 @@ int IsEnterprise(void)
 int EnterpriseExpiry(void)
 {
     struct stat sb;
-    char name[CF_MAXVARSIZE], hash[CF_MAXVARSIZE], serverkey[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
+    char name[CF_MAXVARSIZE], hash[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
         installed_time[CF_MAXVARSIZE];
     char company[CF_BUFSIZE], snumber[CF_SMALLBUF];
     int m_now, m_expire, d_now, d_expire, number = 1;
@@ -58,8 +59,6 @@ int EnterpriseExpiry(void)
 #endif
     char f_day[16], f_month[16], f_year[16];
     char u_day[16], u_month[16], u_year[16];
-    char serverdig[CF_MAXVARSIZE] = "";
-    RSA *serverrsa;
 
     if (THIS_AGENT_TYPE == cf_keygen)
     {
@@ -106,7 +105,10 @@ int EnterpriseExpiry(void)
 
     if (license_file_contents != NULL)
     {
+        char hub_key_digest[256] = {0};
+
         sscanf(license_file_contents, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
+        sscanf(license_file_contents, "%*[^\n]%255s[^\n]", hub_key_digest);
         free(license_file_contents);
 
         // This is the simple password hash to obfuscate license fixing
@@ -120,26 +122,16 @@ int EnterpriseExpiry(void)
             snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
         }
 
+        char hub_key_path[MAX_FILENAME];
 
-        // This next step requires a pre-existing binding
-
-        Address2Hostkey(policy_server, serverdig);
-
-        snprintf(serverkey, sizeof(name), "%s/ppkeys/%s-%s.pub", CFWORKDIR, "root", serverdig);
-        CfOut(cf_verbose, "", " -> Look for server %s's key file\n", policy_server);
-
-        if ((serverrsa = HavePublicKey("root", policy_server, serverdig)))
+        if(!HubKeyPath(hub_key_path, hub_key_digest, policy_server))
         {
-            RSA_free(serverrsa);
-        }
-        else
-        {
-            CfOut(cf_verbose, "",
-                  "Failed to verify license file for this host (%s) as we don't know the policy hub's public ID\n",
-                  hash);
+            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s) as we don't know the hub's public key", hash);
             LICENSES = 0;
             return false;
         }
+
+        CfOut(cf_verbose, "", "Using public key %s for license verification", hub_key_path);
 
         if (Nova_HashKey(CFPUBKEYFILE, name, hash))
         {
@@ -153,7 +145,7 @@ int EnterpriseExpiry(void)
 #endif
             NewClass("am_policy_hub");
         }
-        else if (Nova_HashKey(serverkey, name, hash))
+        else if (Nova_HashKey(hub_key_path, name, hash))
         {
             strcpy(u_day, f_day);
             strcpy(u_month, f_month);
@@ -296,6 +288,41 @@ static char *LicenseFileRead(void)
     FileReadMax(&contents, filename, MAX_LICENSE_FILE_SIZE);
 
     return contents;
+}
+
+/*****************************************************************************/
+
+static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_ip_address)
+{
+    snprintf(path, MAX_FILENAME, "%s/ppkeys/root-SHA=%s.pub", CFWORKDIR, hub_key_digest);
+    MapName(path);
+
+    struct stat sb;
+
+    if(cfstat(path, &sb) == 0)
+    {
+        return true;
+    }
+
+    // fallback to lookup of ip address -> hub key in lastseen
+
+    char hub_key_digest_lookup[CF_MAXVARSIZE] = {0};
+
+    Address2Hostkey(hub_ip_address, hub_key_digest_lookup);
+
+    snprintf(path, MAX_FILENAME, "%s/ppkeys/%s-%s.pub", CFWORKDIR, "root", hub_key_digest_lookup);
+
+    RSA *serverrsa;
+
+    if ((serverrsa = HavePublicKey("root", hub_ip_address, hub_key_digest_lookup)))
+    {
+        RSA_free(serverrsa);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /*****************************************************************************/
