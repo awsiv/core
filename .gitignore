@@ -8,10 +8,8 @@ Makefile.in
 *.pid
 *.log
 src/make_license_file
-
 *.DS_Store
-# Tags
-
+*.pyc
 TAGS
 
 # gcov/lcov
