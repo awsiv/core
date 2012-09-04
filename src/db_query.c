@@ -6295,3 +6295,27 @@ Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
 }
 
 /*****************************************************************************/
+JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *scheduled_query_id,
+                               const char *scheduled_query, const char *schedule )
+{
+    assert( conn );
+
+    bson query[1];
+    bson_init( query );
+    BsonAppendStringSafe( query, cfr_user_id, user );
+    BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id );
+    BsonAppendStringSafe( query, cfr_query, scheduled_query );
+    BsonAppendStringSafe( query, cfr_schedule, schedule );
+    BsonFinish( query );
+
+    bson empty[1];
+    bson_empty( empty );
+
+    mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS, query, empty, 0, 0, CF_MONGO_SLAVE_OK );
+
+    bson_destroy( query );
+    mongo_cursor_destroy( cursor );
+
+    return NULL;
+
+}
