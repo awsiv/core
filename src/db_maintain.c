@@ -147,6 +147,22 @@ void CFDB_EnsureIndices(mongo_connection *conn)
 
     bson_destroy(&b);
 
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_time, 1);
+    bson_from_buffer(&b, &bb);
+
+    if (!mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL))
+    {
+        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+    }
+
+    if (!mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL))
+    {
+        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
+    }
+
+    bson_destroy(&b);
+
     // monitoring collections
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_keyhash, 1);
