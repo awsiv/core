@@ -2494,8 +2494,8 @@ int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *f
         currReport = Nova_StoreIncomingReports(buf, reports, currReport);
     }
 
-    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, ipAddr, hostName, NULL);
-    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, keyHash, ipAddr, hostName, NULL);
+    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, ipAddr, hostName);
+    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, keyHash, ipAddr, hostName);
 
     UnpackReportBook(dbconn, keyHash, reports);
     DeleteReportBook(reports);

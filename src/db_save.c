@@ -9,7 +9,6 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"
-#include "bson_lib.h"
 
 #include <assert.h>
 
@@ -136,7 +135,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
 /*****************************************************************************/
 
 void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *keyhash, char *ipaddr,
-                     char *hostname, char *custom_identifier)
+                     char *hostname)
 /**
  *  hostname is optional, reverse lookup if not specified
  **/
@@ -172,23 +171,12 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
 
     // host name
 
-    char foundHostName[CF_MAXVARSIZE];
-
-    if (!NULL_OR_EMPTY(hostname))
-    {
-        snprintf(foundHostName, sizeof(foundHostName), "%s", hostname);
-    }
-    else
-    {
-        snprintf(foundHostName, sizeof(foundHostName), "%s", IPString2Hostname(ipaddr));
-    }
-
     bson_init(&set_op);
     {
         bson_append_start_object(&set_op, "$set");
         {
             bson_append_start_array(&set_op, cfr_host_array);
-            bson_append_string(&set_op, "0", foundHostName);
+            bson_append_string(&set_op, "0", hostname);
             bson_append_finish_object(&set_op);
         }
         bson_append_finish_object(&set_op);
@@ -196,17 +184,6 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
     bson_finish(&set_op);
 
     MongoUpdate(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-
-    // custom host identifier
-
-    if( custom_identifier )
-    {
-        bson_init(&set_op);
-        BsonAppendStringSafe( &set_op, cfr_host_identifier, custom_identifier );
-        bson_finish(&set_op);
-
-        MongoUpdate(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    }
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
