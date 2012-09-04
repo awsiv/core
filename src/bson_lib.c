@@ -250,7 +250,7 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
 
 /*****************************************************************************/
 
-bool BsonAppendStringSafe(bson *b, const char *key, char *value)
+bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
 {
     if (value == NULL || value[0] == '\0')
     {

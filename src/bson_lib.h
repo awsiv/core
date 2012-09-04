@@ -38,7 +38,7 @@ bool BsonArrayGet(const bson *b, const char *key, const char **out);
 bool BsonObjectGet(const bson *b, const char *key, bson *out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
-bool BsonAppendStringSafe(bson *b, const char *key, char *value);
+bool BsonAppendStringSafe(bson *b, const char *key, const char *value);
 bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue);
 void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
