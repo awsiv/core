@@ -99,13 +99,13 @@ bool BsonTimeGet(const bson *b, const char *key, time_t *out)
     }
 }
 
-bool BsonArrayGet(const bson *b, const char *key, const char **out)
+bool BsonArrayGet(const bson *b, const char *key, bson *out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == BSON_ARRAY)
     {
-        *out = bson_iterator_value(&it);
+        bson_iterator_subobject(&it, out);
         return true;
     }
     else
@@ -191,7 +191,7 @@ bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out)
 
     if (bson_find(&it, b, key) == BSON_BOOL)
     {
-        *out = (int)bson_iterator_bool(&it);
+        *out = (bool)bson_iterator_bool(&it);
         return true;
     }
 
@@ -250,7 +250,20 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
 
 /*****************************************************************************/
 
-bool BsonAppendStringSafe(bson *b, const char *key, char *value)
+bool BsonAppendBool( bson *b, const char *key, const bool value )
+{
+    assert( b );
+    assert( key );
+
+    int retval = bson_append_bool( b, key, value );
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
 {
     if (value == NULL || value[0] == '\0')
     {
@@ -826,7 +839,7 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
     }
 
     va_end ( arguments );
-    bson_finish(fields);
+    BsonFinish(fields);
 
     assert(count == fieldCount);
 
@@ -990,7 +1003,7 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
         bson_destroy(bson_ret);
         return false;
     }
-    bson_finish(bson_ret);
+    BsonFinish(bson_ret);
 
     return true;
 }
@@ -1259,6 +1272,17 @@ void BsonObjectDelete(bson *b)
     {
         bson_dispose(b);
     }
+}
+
+/*****************************************************************************/
+
+void BsonFinish( bson *b )
+{
+    assert( b && !b->finished );
+
+    int ret = bson_finish( b );
+
+    assert( ret == BSON_OK );
 }
 
 /*****************************************************************************/

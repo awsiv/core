@@ -47,6 +47,11 @@ void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_
                            size_t max_observed_level, double mean_usage, double mean_utilization_cumulative,
                            size_t num_used_today);
 
+void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *email,
+                              const char *scheduled_query_id, const char *scheduled_query,
+                              const char *schedule, const bool enabled );
+void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char *scheduled_query_id);
+
 
 // TODO: deprecate
 void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, double kept, double repaired,

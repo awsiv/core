@@ -15,6 +15,7 @@
 #include "db_save.h"
 #include "db_query.h"
 #include "db_maintain.h"
+#include "bson_lib.h"
 #endif
 
 /* From cfknow.c */ // FIX
@@ -111,7 +112,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
                 }
                 bson_append_finish_object(&insert_op);
             }
-            bson_finish(&insert_op);
+            BsonFinish(&insert_op);
 
             MongoInsert(&dbconn, MONGO_KM_TOPICS, &insert_op, NULL);
             bson_destroy(&insert_op);
@@ -129,7 +130,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
        bson_append_new_oid(&insert_op, "_id");
        bson_append_string(&insert_op, cfk_bundle, itp->name);
        bson_append_string(&insert_op, cfk_topicid, "any");
-       bson_finish(&insert_op);
+       BsonFinish(&insert_op);
        
        MongoInsert(&dbconn, MONGO_KM_BUNDLES, &insert_op, NULL);
        bson_destroy(&insert_op);
@@ -162,7 +163,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_string(&insert_op, cfk_occurtopic, rp2->item);
             bson_append_string(&insert_op, cfk_bundle, op->bundle);
 
-            bson_finish(&insert_op);
+            BsonFinish(&insert_op);
 
             MongoInsert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
 
@@ -187,7 +188,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
         bson_append_string(&insert_op, cfk_qualifier, ip->qualifier);
         bson_append_string(&insert_op, cfk_inference, ip->inference);
 
-        bson_finish(&insert_op);
+        BsonFinish(&insert_op);
 
         MongoInsert(&dbconn, MONGO_KM_INFERENCES, &insert_op, NULL);
         bson_destroy(&insert_op);
@@ -764,7 +765,7 @@ void Nova_UpdateTestData(void)
         {                        
             bson_init(&query);
             bson_append_string(&query, cfr_keyhash, keyhash);
-            bson_finish(&query);
+            BsonFinish(&query);
 
             bson set_op;
 
@@ -774,7 +775,7 @@ void Nova_UpdateTestData(void)
                 bson_append_int(&set_op, cfr_day, (long) time(NULL));
                 bson_append_finish_object(&set_op);
             }
-            bson_finish(&set_op);
+            BsonFinish(&set_op);
 
             MongoUpdate(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
             MongoCheckForError(&conn, "UpdateTestData", keyhash, NULL);

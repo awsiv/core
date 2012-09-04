@@ -665,7 +665,7 @@ void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize)
         bson_append_string(&query, cfr_keyhash, hostkey);
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     Nova_Meter(&query, MONGO_DATABASE, buffer, bufsize);
 
@@ -2471,7 +2471,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     {
         bson_init(&query);
         bson_append_string(&query, cfr_keyhash, hostkey);
-        bson_finish(&query);
+        BsonFinish(&query);
     }
     else
     {
@@ -3199,7 +3199,7 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfk_bundle, name);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
     BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topiccontext, cfk_topicid);
@@ -3267,7 +3267,7 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
     bson query;
     bson_init(&query);
     bson_append_int(&query, cfk_topicid, topic_id);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
     BsonSelectReportFields(&fields, 1, cfk_bundle);
@@ -4013,13 +4013,13 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson field;
 
     bson_init(&field);
     bson_append_int(&field, cfr_netmeasure, 1);
-    bson_finish(&field);
+    BsonFinish(&field);
 
     mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
@@ -4324,7 +4324,7 @@ bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClas
 
     bson_init(&query);
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     Item *item_envs = CFDB_QueryDistinct(&dbconn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_environment, &query);
 
@@ -4365,13 +4365,13 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
     bson_init(&query);
     BsonAppendHostClassFilter(&query, hostClassFilter);
     bson_append_string(&query, cfr_environment, environment);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* { kH: 1 } */
     bson fields;
     bson_init(&fields);
     bson_append_int(&fields, cfr_keyhash, 1);
-    bson_finish(&fields);
+    BsonFinish(&fields);
 
     mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4420,14 +4420,14 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
 
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* { env: 1 } */
     bson fields;
 
     bson_init(&fields);
     bson_append_int(&fields, cfr_environment, 1);
-    bson_finish(&fields);
+    BsonFinish(&fields);
 
     bson result = { 0 };
 
@@ -4641,7 +4641,7 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     bson_init(&query);
     bson_append_string(&query, cfn_keyhash, hostkey);
     bson_append_int(&query, cfn_reporttype, CFREPORT_HOSTS);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     if (!CFDB_Open(&dbconn))
     {
@@ -5040,7 +5040,7 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
 
     bson_init(&field);
     BsonSelectReportFields(&field, 1, cfr_vars);
-    bson_finish(&field);
+    BsonFinish(&field);
 
     mongo_cursor *cursor = MongoFind(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 

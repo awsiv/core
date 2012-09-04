@@ -350,7 +350,7 @@ HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
@@ -367,7 +367,7 @@ HubQuery *CFDB_QueryHostsByHostClassFilter(mongo *conn, HostClassFilter *hostCla
 
     bson_init(&query);
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     HubQuery *hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
@@ -385,7 +385,7 @@ HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, const char *hostKey)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostKey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     HubQuery *hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
@@ -432,7 +432,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
     bson query;
     bson_init(&query);
     BsonAppendHostClassFilter(&query, host_class_filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -534,7 +534,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -698,7 +698,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char 
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -850,7 +850,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
         }
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -912,7 +912,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
             bson_append_finish_object(&query);
         }
 
-        bson_finish(&query);
+        BsonFinish(&query);
 
         classFrequency = MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query );
 
@@ -951,7 +951,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
     BsonSelectReportFields(&fields, 4,
@@ -1090,7 +1090,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
     bson query;
     bson_init(&query);
     BsonAppendHostClassFilter(&query, host_class_filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -1181,7 +1181,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -1432,7 +1432,7 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyHash);
     bson_append_string(&query, var_key, ltype);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     snprintf(var_key, CF_MAXVARSIZE - 1, "%s.%s.%s.%s", cfr_vars, lscope, lval, cfr_rval);
 
@@ -1515,7 +1515,7 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -1593,7 +1593,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -1756,7 +1756,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
     BsonSelectReportFields(&fields, 4,
@@ -2043,7 +2043,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -2189,7 +2189,7 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -2292,7 +2292,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -2423,7 +2423,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -2614,7 +2614,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -2856,7 +2856,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 
     AppendHostKeys(conn, &query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -2957,7 +2957,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // Turn start_time into Day Month Year
 
@@ -3115,7 +3115,7 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
         bson_append_regex(&query, cfr_class_keys, classRegexAnch, "");
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // Turn start_time into Day Month Year
 
@@ -3289,7 +3289,7 @@ static void SkipOldClientVersionsFilter(bson *b)
 
     DeleteRlist(new_client_versions);
 
-    bson_finish(b);
+    BsonFinish(b);
 }
 
 /*****************************************************************************/
@@ -3332,7 +3332,7 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 
     DeleteRlist(new_client_versions);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     result = MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query );
 
@@ -3373,7 +3373,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
 
     SkipOldClientVersionsFilter(&query);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     /* BEGIN RESULT DOCUMENT */
 
@@ -3461,7 +3461,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
     SkipOldClientVersionsFilter(&query);
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     /* BEGIN RESULT DOCUMENT */
 
@@ -3619,7 +3619,7 @@ Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
     if (keyHash != NULL)
     {
         bson_append_string(&query, cfr_keyhash, keyHash);
-        bson_finish(&query);
+        BsonFinish(&query);
     }
     else
     {
@@ -3651,7 +3651,7 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyHash);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // field
     bson fields;
@@ -3725,7 +3725,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyhash);
     bson_append_string(&query, cfm_id, monId);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // result
     bson fields;
@@ -3872,7 +3872,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyhash);
     bson_append_string(&query, cfm_id, monId);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // result
 
@@ -3944,7 +3944,7 @@ int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, Host
 
     BsonAppendHostClassFilter(&query, host_class_filter);
     BsonAppendHostColourFilter(&query, host_colour_filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     int count = CFDB_CountHostsGeneric(conn, &query);
 
@@ -3963,7 +3963,7 @@ bool CFDB_HasMatchingHost(EnterpriseDB *conn, char *hostKey, HostClassFilter *ho
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostKey);
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     int count = CFDB_CountHostsGeneric(conn, &query);
 
@@ -3999,7 +3999,7 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_ip_array, ipAddr);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // result
     bson fields;
@@ -4056,7 +4056,7 @@ bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyha
     bson query;
     bson_init(&query);
     bson_append_string(&query, dbkey, keyhash);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -4110,7 +4110,7 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyhash);
     bson_append_string(&query, cfm_id, monId);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -4174,7 +4174,7 @@ int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char 
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfp_handle, handle);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // returned attribute
     bson fields;
@@ -4221,7 +4221,7 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfp_handle_exp, handle);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 // returned attribute
     bson fields;
@@ -4284,7 +4284,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bTyp
         bson_append_string(&query, cfp_bundlename, bName);
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 // returned attribute
     bson fields;
@@ -4409,7 +4409,7 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
         }
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -4454,7 +4454,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
     bson_init(&query);
     BsonAppendPromiseFilterUnexpanded(&query, filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -4525,7 +4525,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
     bson query;
     bson_init(&query);
     BsonAppendPromiseFilterExpanded(&query, filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -4593,7 +4593,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 
     bson_init(&query);
     BsonAppendPromiseFilterUnexpanded(&query, filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -4647,7 +4647,7 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
     bson query;
     bson_init(&query);
     BsonAppendPromiseFilterUnexpanded(&query, filter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // returned attribute
     bson fields;
@@ -4702,7 +4702,7 @@ Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, c
     bson_init(&query);
     bson_append_string(&query, cfp_constraints, queryConstr);
     BsonAppendPromiseFilterUnexpanded(&query, promiseFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // returned attribute
     bson fields;
@@ -4809,7 +4809,7 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
     bson_init(&query);
     bson_append_string(&query, cfb_bodytype, type);
     bson_append_string(&query, cfb_bodyname, name);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN SEARCH */
     bson empty;
@@ -4907,7 +4907,7 @@ Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex
         bson_append_regex(&query, cfb_bodyname, bNameRegex, "");
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -4969,7 +4969,7 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, keyHash);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // returned attribute
     bson fields;
@@ -5065,7 +5065,7 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostCla
         bson_destroy(&query);
         return false;
     }
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson field;
 
@@ -5135,7 +5135,7 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
 
     bson_init(&query);
     bson_append_string(&query, cfc_cachetype, cfc_cachecompliance);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     cursor = MongoFind(conn, MONGO_CACHE, &query, bson_empty(&field), 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5269,7 +5269,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
         }
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -5464,7 +5464,7 @@ Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection
     bson query;
     bson_init(&query);
     bson_append_string(&query, qKey, qVal);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     retVal = CFDB_QueryDistinct(conn, database, collection, dKey, &query);
 
@@ -5489,7 +5489,7 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
     {
         bson_append_bson(&cmd, "query", queryBson);
     }
-    bson_finish(&cmd);
+    BsonFinish(&cmd);
 
     bson result;
 
@@ -5543,7 +5543,7 @@ HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_
     bson query;
     bson_init(&query);
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, &query);
 
@@ -5583,7 +5583,7 @@ int CFDB_QueryIsMaster(void)
     bson cmd;
     bson_init(&cmd);
     bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
-    bson_finish(&cmd);
+    BsonFinish(&cmd);
 
     bson result;
 
@@ -5635,7 +5635,7 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
     bson cmd;
     bson_init(&cmd);
     bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
-    bson_finish(&cmd);
+    BsonFinish(&cmd);
 
     bson result;
 
@@ -5678,7 +5678,7 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
     bson cmd;
     bson_init(&cmd);
     bson_append_string(&cmd, "replSetGetStatus", MONGO_HOSTS_COLLECTION);
-    bson_finish(&cmd);
+    BsonFinish(&cmd);
 
     bson result;
 
@@ -5905,7 +5905,7 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
         bson_append_regex(&query, cfr_ip_array, ip, "");
     }
     BsonAppendHostClassFilter(&query, hostClassFilter);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // projection
     bson fields;
@@ -5949,7 +5949,7 @@ HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 // projection
     bson fields;
@@ -5999,7 +5999,7 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
         bson_append_finish_object(&query);
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -6067,7 +6067,7 @@ long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // projection
     bson field;
@@ -6098,7 +6098,7 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     // projection
     bson field;
@@ -6142,7 +6142,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, lkeyhash);
-    bson_finish(&query);
+    BsonFinish(&query);
 
    /* result document */
     bson fields;
@@ -6262,7 +6262,7 @@ Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
 
     bson_init(&query);
     BsonAppendSortField(&query, cfr_time);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson fields;
 
@@ -6295,3 +6295,27 @@ Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
 }
 
 /*****************************************************************************/
+JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *scheduled_query_id,
+                               const char *scheduled_query, const char *schedule )
+{
+    assert( conn );
+
+    bson query[1];
+    bson_init( query );
+    BsonAppendStringSafe( query, cfr_user_id, user );
+    BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id );
+    BsonAppendStringSafe( query, cfr_query, scheduled_query );
+    BsonAppendStringSafe( query, cfr_schedule, schedule );
+    BsonFinish( query );
+
+    bson empty[1];
+    bson_empty( empty );
+
+    mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS, query, empty, 0, 0, CF_MONGO_SLAVE_OK );
+
+    bson_destroy( query );
+    mongo_cursor_destroy( cursor );
+
+    return NULL;
+
+}

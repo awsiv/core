@@ -204,7 +204,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
     bson query;
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-    bson_finish(&query);
+    BsonFinish(&query);
 
 // returned value
 
@@ -285,7 +285,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
         }
         bson_append_finish_object(&update);
     }
-    bson_finish(&update);
+    BsonFinish(&update);
 
     MongoUpdate(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT, NULL);
 

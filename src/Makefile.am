@@ -121,7 +121,8 @@ noinst_LTLIBRARIES += libcfhub.la
 libcfhub_la_SOURCES = \
         hub.c \
         hub-maintenance.c \
-        hub-worker.c
+        hub-worker.c \
+        hub-scheduled-reports.c
 endif
 
 noinst_LTLIBRARIES += libcfknow.la

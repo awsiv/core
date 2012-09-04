@@ -113,7 +113,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
         bson_append_finish_object(&insert_op);
     }
 
-    bson_finish(&insert_op);
+    BsonFinish(&insert_op);
 
     MongoInsert(&dbconn, MONGO_PROMISES_EXP, &insert_op, NULL);
     bson_destroy(&insert_op);
@@ -223,7 +223,7 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
                     bson_append_finish_object(&insert_op);
                 }
 
-                bson_finish(&insert_op);
+                BsonFinish(&insert_op);
 
                 MongoInsert(&dbconn, MONGO_PROMISES_UNEXP, &insert_op, NULL);
                 bson_destroy(&insert_op);
@@ -300,7 +300,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
 
         bson_append_finish_object(&insert_op);
     }
-    bson_finish(&insert_op);
+    BsonFinish(&insert_op);
 
     MongoInsert(dbconn, MONGO_BODIES, &insert_op, NULL);
     bson_destroy(&insert_op);
@@ -310,7 +310,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
     bson_init(&query);
     bson_append_string(&query, cfb_bodyname, body->name);
     bson_append_string(&query, cfb_bodytype, body->type);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     bson set_op;
     bson_init(&set_op);
@@ -341,7 +341,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
 
         bson_append_finish_object(&set_op); // $set
     }
-    bson_finish(&set_op);
+    BsonFinish(&set_op);
 
     MongoUpdate(dbconn, MONGO_BODIES, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 

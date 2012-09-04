@@ -13,6 +13,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scorecards.h"
 #include "db_query.h"
 #include "conversion.h"
+#include "bson_lib.h"
 
 /*****************************************************************************/
 
@@ -733,7 +734,7 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 
     bson_init(&query);
     bson_append_string(&query, cfr_keyhash, hostkey);
-    bson_finish(&query);
+    BsonFinish(&query);
 
     hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, &query);
     bson_destroy(&query);

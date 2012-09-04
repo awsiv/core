@@ -51,6 +51,7 @@
 # define MONGO_MP_SETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
 # define MONGO_ARCHIVE_COLLECTION "archive"
 # define MONGO_ARCHIVE MONGO_BASE ".archive"
+# define MONGO_SCHEDULED_REPORTS MONGO_BASE ".scheduled_reports"
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
 
@@ -1486,6 +1487,23 @@ typedef struct
 #define cfk_precedent "p"
 #define cfk_qualifier "q"
 #define cfk_inference "i"
+
+// Scheduled reports
+
+/* top level: Level 0 */
+#define cfr_user_id "user" /* Must be unique */
+#define cfr_user_fullname "fullname"
+#define cfr_user_email "email"
+
+#define cfr_query_id "query_id" /* must be unique */
+#define cfr_query "query"
+#define cfr_created "created"
+#define cfr_last_modified "last_modified"
+#define cfr_last_run "last_executed"
+#define cfr_run_history "run_history" /* Array */
+#define cfr_run_classes "run_classes"
+#define cfr_enabled "enabled"
+#define cfr_already_run "already_run"
 
 // Report types
 
