@@ -54,8 +54,13 @@ bundle agent cfengine_management
            comment => "Prepare CFE online editing tool";
 
    "hub" usebundle => cfengine_rotate_mongod_log,
-	          handle => "cfengine_management_rotate_mongod_log",
-						        comment => "Rotate the mongod log";
+   	   handle => "cfengine_management_rotate_mongod_log",
+	   comment => "Rotate the mongod log";
+
+    "hub" usebundle => cfengine_hub_maintain,
+            handle => "cfe_internal_cfengine_management_hub_maintain",
+            comment => "Start the hub maintenance process";
+
   any::
 
    "any" usebundle => cfengine_correct_cftwin,
