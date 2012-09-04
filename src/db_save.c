@@ -2212,6 +2212,8 @@ void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_
     bson_destroy(&host_key);
 }
 
+/*****************************************************************************/
+
 void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted)
 {
     bson set_op;
@@ -2237,6 +2239,8 @@ void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, c
     bson_destroy(&set_op);
 }
 
+/*****************************************************************************/
+
 void CFDB_SaveLicenseNumberPromised(EnterpriseDB *conn, size_t num_promised)
 {
     bson set_op;
@@ -2256,6 +2260,8 @@ void CFDB_SaveLicenseNumberPromised(EnterpriseDB *conn, size_t num_promised)
 
     bson_destroy(&set_op);
 }
+
+/*****************************************************************************/
 
 void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_samples, size_t min_observed_level,
                            size_t max_observed_level, double mean_usage, double mean_utilization_cumulative,
@@ -2287,4 +2293,64 @@ void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_
     MongoUpdate(conn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *email,
+                              const char *scheduled_query_id, const char *scheduled_query,
+                              const char *schedule, const bool enabled )
+{
+    assert( conn );
+    assert( user );
+    assert( email );
+    assert( scheduled_query_id );
+    assert( scheduled_query );
+    assert( schedule );
+
+    bson query[1];
+    bson_init( query );
+    bson_append_string( query, cfr_user_id, user );
+    bson_append_string( query, cfr_query_id, scheduled_query_id );
+    BsonFinish( query );
+
+    bson set_op[1];
+    bson_init( set_op );
+    bson_append_string( set_op, cfr_user_email, email );
+    bson_append_string( set_op, cfr_query, scheduled_query );
+    bson_append_string( set_op, cfr_run_classes, schedule );
+    bson_append_int( set_op, cfr_last_run, ( int ) time( NULL ) );
+    bson_append_bool( set_op, cfr_already_run, false );
+    bson_append_bool( set_op, cfr_enabled, enabled );
+    BsonFinish( set_op );
+
+    MongoUpdate( conn, MONGO_SCHEDULED_REPORTS, query, set_op, MONGO_UPDATE_UPSERT, NULL );
+
+    bson_destroy( query );
+    bson_destroy( set_op );
+
+    MongoCheckForError( conn, "Save scheduled report", scheduled_query_id, NULL );
+}
+
+/*****************************************************************************/
+
+void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char *scheduled_query_id)
+{
+    /* Important: NULL value is  allowed for scheduled_query_id  */
+    /* This will remove all data scheduled for that user (eg. when the user is deleted) */
+
+    assert( conn );
+    assert( user );
+
+    bson query[1];
+    bson_init( query );
+    bson_append_string( query, cfr_user_id, user );
+    BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id);
+    BsonFinish( query );
+
+    MongoRemove( conn, MONGO_SCHEDULED_REPORTS, query, NULL );
+
+    bson_destroy( query );
+
+    MongoCheckForError( conn, "Remove scheduled report", scheduled_query_id, NULL );
 }
