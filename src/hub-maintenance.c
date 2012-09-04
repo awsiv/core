@@ -25,13 +25,24 @@ static void ScheduleRunMaintenanceJobs(void)
     time_t now = time(NULL);
 
     CfOut(cf_verbose, "", " -> Scanning total compliance cache and doing db maintenance");
-    Nova_CacheTotalCompliance(true);
-    CFDB_Maintenance();
+
+    mongo_connection dbconn;
+
+    if ( !CFDB_Open( &dbconn )  )
+    {
+        CfOut(cf_error, "", "Unable to connect to enterprise database");
+        return;
+    }
+
+    Nova_CacheTotalCompliance( &dbconn, true );
+    CFDB_Maintenance( &dbconn );
+
+    CFDB_Close(&dbconn);
 
     Nova_HubLog("Last maintenance took %ld seconds", time(NULL) - now);
 }
 
-void Nova_CacheTotalCompliance(bool allSlots)
+void Nova_CacheTotalCompliance(mongo_connection *dbconn, bool allSlots)
 /*
  * Caches the current slot of total compliance.
  * WARNING: Must be run every 6 hrs (otherwise no data is show in the
@@ -39,7 +50,6 @@ void Nova_CacheTotalCompliance(bool allSlots)
  */
 {
     time_t curr, now = time(NULL);
-    mongo_connection dbconn;
     EnvironmentsList *env, *ep;
     int slot;
     char envName[CF_SMALLBUF];
@@ -60,15 +70,9 @@ void Nova_CacheTotalCompliance(bool allSlots)
         curr = GetShiftSlotStart(now - SECONDS_PER_SHIFT);
     }
 
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
-
     if (!Nova2PHP_environment_list(&env, NULL))
     {
         CfOut(cf_error, "", "!! Unable to query list of environments");
-        CFDB_Close(&dbconn);
         return;
     }
 
@@ -78,27 +82,25 @@ void Nova_CacheTotalCompliance(bool allSlots)
 
         // first any environment, then environment-specific
 
-        Nova_CacheTotalComplianceEnv(&dbconn, "any", NULL, slot, curr, now);
+        Nova_CacheTotalComplianceEnv( dbconn, "any", NULL, slot, curr, now );
 
         for (ep = env; ep != NULL; ep = ep->next)
         {
             snprintf(envName, sizeof(envName), "%s", ep->name);
             snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
 
-            Nova_CacheTotalComplianceEnv(&dbconn, envName, envClass, slot, curr, now);
+            Nova_CacheTotalComplianceEnv( dbconn, envName, envClass, slot, curr, now );
         }
     }
 
     FreeEnvironmentsList(env);
 
-    Rlist *hostkeys = CFDB_QueryHostKeys(&dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL);
+    Rlist *hostkeys = CFDB_QueryHostKeys( dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL );
     for (const Rlist *rp = hostkeys; rp; rp = rp->next)
     {
-        CFDB_RefreshLastHostComplianceShift(&dbconn, ScalarValue(rp));
+        CFDB_RefreshLastHostComplianceShift( dbconn, ScalarValue( rp ) );
     }
     DeleteRlist(hostkeys);
-
-    CFDB_Close(&dbconn);
 }
 
 

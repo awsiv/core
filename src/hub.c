@@ -121,6 +121,8 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
+    mongo_connection dbconn;
+
     while ((c = getopt_long(argc, argv, "cdvKf:VhFlMmaisn", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
@@ -173,7 +175,16 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             break;
 
         case 'a':
-            Nova_CacheTotalCompliance(true);
+            if (!CFDB_Open(&dbconn))
+            {
+                CfOut(cf_error, "", "Unable to connect to enterprise database");
+                exit(0);
+            }
+
+            Nova_CacheTotalCompliance(&dbconn, true);
+
+            CFDB_Close(&dbconn);
+
             exit(0);
             break;
 

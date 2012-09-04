@@ -37,33 +37,26 @@ static void CFDB_PurgeHostReports( mongo_connection *dbconn, const char *hostkey
 
 /*****************************************************************************/
 
-void CFDB_Maintenance(void)
+void CFDB_Maintenance( mongo_connection *dbconn )
 {
-    mongo_connection dbconn;
+    CFDB_EnsureIndices( dbconn );
 
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
-
-    CFDB_EnsureIndices(&dbconn);
-
-    Item *hosts = CFDB_GetAllHostKeys( &dbconn );
+    Item *hosts = CFDB_GetAllHostKeys( dbconn );
 
     for(Item *ip = hosts; ip != NULL; ip = ip->next)
     {
-        CFDB_PurgeHostReports( &dbconn, ip->name );
+        CFDB_PurgeHostReports( dbconn, ip->name );
     }
 
     DeleteItemList(hosts);
 
     // support for old DB PromiseLogs format
-    CFDB_PurgePromiseLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogs( dbconn, CF_HUB_PURGESECS, time( NULL ) );
 
-    CFDB_PurgeSoftwareInvalidTimestamp( &dbconn );
-    CFDB_PurgeDeprecatedVitals(&dbconn);
+    CFDB_PurgeSoftwareInvalidTimestamp( dbconn );
+    CFDB_PurgeDeprecatedVitals( dbconn );
 
-    CFDB_Close(&dbconn);
+    CFDB_Close( dbconn );
 }
 
 /*****************************************************************************/

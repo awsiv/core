@@ -1,7 +1,7 @@
 #ifndef CFENGINE_NOVA_DB_MAINTAIN_H
 #define CFENGINE_NOVA_DB_MAINTAIN_H
 
-void CFDB_Maintenance(void);
+void CFDB_Maintenance(mongo_connection *dbconn);
 void CFDB_ReIndexAll(void);
 void CFDB_ConnectAndEnsureIndices(void);
 void CFDB_EnsureIndices(mongo_connection *conn);
