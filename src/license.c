@@ -325,6 +325,7 @@ static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_
     Address2Hostkey(hub_ip_address, hub_key_digest_lookup);
 
     snprintf(path, MAX_FILENAME, "%s/ppkeys/%s-%s.pub", CFWORKDIR, "root", hub_key_digest_lookup);
+    MapName(path);
 
     RSA *serverrsa;
 
