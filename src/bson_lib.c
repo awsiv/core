@@ -191,7 +191,7 @@ bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out)
 
     if (bson_find(&it, b, key) == BSON_BOOL)
     {
-        *out = (int)bson_iterator_bool(&it);
+        *out = (bool)bson_iterator_bool(&it);
         return true;
     }
 
