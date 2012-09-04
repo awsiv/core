@@ -87,4 +87,12 @@ bson *BsonObjectCreate(void);
  */
 void BsonObjectDelete(bson *b);
 
+/**
+ * usage:
+ *  - NULL bson objects not allowed
+ *  - Finished bson objects not allowed
+ *  - Makes sure that return value from bson_finish is BSON_OK
+ */
+void BsonFinish(bson *b);
+
 #endif

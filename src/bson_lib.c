@@ -826,7 +826,7 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
     }
 
     va_end ( arguments );
-    bson_finish(fields);
+    BsonFinish(fields);
 
     assert(count == fieldCount);
 
@@ -990,7 +990,7 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
         bson_destroy(bson_ret);
         return false;
     }
-    bson_finish(bson_ret);
+    BsonFinish(bson_ret);
 
     return true;
 }
@@ -1259,6 +1259,17 @@ void BsonObjectDelete(bson *b)
     {
         bson_dispose(b);
     }
+}
+
+/*****************************************************************************/
+
+void BsonFinish( bson *b )
+{
+    assert( b && !b->finished );
+
+    int ret = bson_finish( b );
+
+    assert( ret == BSON_OK );
 }
 
 /*****************************************************************************/

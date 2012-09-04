@@ -776,7 +776,7 @@ if (!NULL_OR_EMPTY(typed_topic))
    bson_init(&query);
    bson_append_regex(&query,cfk_topicname,topic,"");
    bson_append_regex(&query,cfk_topiccontext,context,"");
-   bson_finish(&query);
+   BsonFinish(&query);
    }
 else
    {

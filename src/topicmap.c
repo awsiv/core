@@ -283,7 +283,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
         bson_append_string(&query, cfk_topiccontext, type);
     }
 
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -360,7 +360,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
     bson_init(&query);
     bson_append_int(&query, cfk_topicid, search_id);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -458,7 +458,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
           }       
        }
     
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -608,7 +608,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
     bson_init(&query);
     bson_append_int(&query, cfk_topicid, search_id);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -731,7 +731,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
        // bson_append_string(&bb, cfk_occurtopic, topic_context);
        }
     
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -836,7 +836,7 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
     bson_init(&query);
     bson_append_string(&query, cfk_occurtopic, searchstring);
     bson_append_string(&query, cfk_occurrep, "Comment");
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -946,7 +946,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     bson_init(&query);
     bson_append_regex(&query, cfk_occurtopic, searchstring, "");
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -1176,7 +1176,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
 
     bson_init(&query);
     bson_append_regex(&query, cfk_topiccontext, "application_services", "");
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -1343,7 +1343,7 @@ void Nova_FillInGoalComment(Item *ip)
     bson_init(&query);
     bson_append_regex(&query, cfk_occurcontext, searchstring, "");
     bson_append_regex(&query, cfk_occurtopic, searchstring, "");
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -1402,7 +1402,7 @@ const char *Nova_GetBundleComment(char *bundle)
     bson_init(&query);
     bson_append_string(&query, cfk_occurrep, "description");
     bson_append_string(&query, cfk_occurcontext, bundle);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -1879,7 +1879,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 
     bson_init(&query);
     bson_append_int(&query, cfk_topicid, search_id);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
@@ -1985,7 +1985,7 @@ Item *Nova_GetTopicsInContext(char *context)
 
     bson_init(&query);
     bson_append_string(&query, cfk_topiccontext, context);
-    bson_finish(&query);
+    BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
