@@ -6667,3 +6667,49 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     return 0;
 }
 
+/*****************************************************************************/
+
+Item *CFDB_GetAllHostKeys( mongo_connection *conn )
+{
+    bson_buffer bb;
+
+    bson_buffer_init( &bb );
+    BsonAppendSortField( &bb, cfr_time );
+    bson query[1];
+    bson_from_buffer( query, &bb );
+
+    bson_buffer_init( &bb );
+    bson_append_int( &bb, cfr_keyhash, 1);
+    bson field[1];
+    bson_from_buffer( field, &bb );
+
+    mongo_cursor *cursor = mongo_find( conn, MONGO_DATABASE, query, field, 0, 0, CF_MONGO_SLAVE_OK );
+
+    bson_destroy( field );
+    bson_destroy( query );
+
+    Item *list = NULL;
+    bson_iterator it1[1];
+
+    while ( mongo_cursor_next( cursor ) )
+    {
+        bson_iterator_init( it1, cursor->current.data );
+
+        while ( bson_iterator_next( it1 ) )
+        {
+            if( strcmp( bson_iterator_key( it1 ), cfr_keyhash ) == 0 )
+            {
+                char hostkey[ CF_MAXVARSIZE ] = { 0 };
+                snprintf( hostkey, CF_MAXVARSIZE - 1, "%s", bson_iterator_string( it1 ) );
+                PrependItemList( &list, hostkey );
+            }
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return list;
+}
+
+/*****************************************************************************/
+

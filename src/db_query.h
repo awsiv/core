@@ -103,6 +103,7 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query);
 Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
                             char *qVal);
 Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
+Item *CFDB_GetAllHostKeys(mongo_connection *conn);
 
 //*****************************************************************************
 // Singleton Queries
