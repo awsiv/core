@@ -12,53 +12,12 @@
 #include "db_query.h"
 #include "granules.h"
 
-static pid_t MAINTAINER_CHILD_PID = -1;
-
 static void ScheduleRunMaintenanceJobs(void);
-static bool IsProcRunning(pid_t pid);
 
 void Nova_Maintain(void)
 {
-    if (MAINTAINER_CHILD_PID != -1)
-    {
-        if (IsProcRunning(MAINTAINER_CHILD_PID))
-        {
-            return;
-        }
-        else
-        {
-            MAINTAINER_CHILD_PID = -1;
-        }
-    }
-
-    if (!ShiftChange())
-    {
-        return;
-    }
-
-    pid_t pid = fork();
-
-    if (pid == -1)
-    {
-        CfOut(cf_error, "fork", "Unable to start database maintenance process");
-        return;
-    }
-
-    if (pid == 0)
-    {
-        NewClass("am_policy_hub");
-        ALARM_PID = -1;
-
-        ScheduleRunMaintenanceJobs();
-        _exit(0);
-    }
-    else
-    {
-        MAINTAINER_CHILD_PID = pid;
-
-        CfOut(cf_verbose, "", " -> Started new Maintainer process (pid = %d)", pid);
-        Nova_HubLog("-> Started new Maintainer process (pid = %d)\n", pid);
-    }
+    NewClass("am_policy_hub");
+    ScheduleRunMaintenanceJobs();
 }
 
 static void ScheduleRunMaintenanceJobs(void)
@@ -71,17 +30,6 @@ static void ScheduleRunMaintenanceJobs(void)
 
     Nova_HubLog("Last maintenance took %ld seconds", time(NULL) - now);
 }
-
-static bool IsProcRunning(pid_t pid)
-{
-    bool running = waitpid(pid, NULL, WNOHANG) == 0;
-
-    Nova_HubLog("Checking if maintainer process %d is running: %s\n", pid,
-                running ? "yes" : "no");
-
-    return running;
-}
-
 
 void Nova_CacheTotalCompliance(bool allSlots)
 /*

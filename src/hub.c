@@ -678,7 +678,6 @@ static void StartHub(void)
             if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
             {
                 Nova_CollectReports();
-                Nova_Maintain();
             }
 
 #ifdef HAVE_CONSTELLATION
