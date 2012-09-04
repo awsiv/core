@@ -59,7 +59,7 @@ static void Nova_CountMonitoredClasses(void);
 static const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
     "repository. It automatically schedules updates from clients\n" "that have registered by previous connection.";
 
-static const struct option OPTIONS[16] =
+static const struct option OPTIONS[17] =
 {
     {"help", no_argument, 0, 'h'},
     {"debug", optional_argument, 0, 'd'},
@@ -72,12 +72,13 @@ static const struct option OPTIONS[16] =
     {"continuous", no_argument, 0, 'c'},
     {"cache", no_argument, 0, 'a'},
     {"logging", no_argument, 0, 'l'},
+    {"maintain", no_argument, 0, 'm'},
     {"index", no_argument, 0, 'i'},
     {"splay_updates", no_argument, 0, 's'},
     {NULL, 0, 0, '\0'}
 };
 
-static const char *HINTS[16] =
+static const char *HINTS[17] =
 {
     "Print the help message",
     "Set debugging level 0,1,2,3",
@@ -90,6 +91,7 @@ static const char *HINTS[16] =
     "Continuous update mode of operation",
     "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
     "Enable logging of report collection and maintenance to hub_log in the working directory",
+    "Start database maintenance process. By default, entries older than 7 days (1 year for longterm reports) are purged.",
     "Reindex all collections in the CFEngine report database",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
     NULL
@@ -119,7 +121,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
-    while ((c = getopt_long(argc, argv, "cdvKf:VhFlMaisn", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "cdvKf:VhFlMmaisn", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -155,6 +157,10 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             VERBOSE = true;
             NO_FORK = true;
             break;
+
+        case 'm':
+            Nova_Maintain();
+            exit(0);
 
         case 'n':
             DONTDO = true;
