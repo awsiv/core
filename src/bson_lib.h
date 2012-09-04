@@ -34,7 +34,7 @@ bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out);
 bool BsonBoolGet(const bson *b, const char *key);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);
-bool BsonArrayGet(const bson *b, const char *key, const char **out);
+bool BsonArrayGet(const bson *b, const char *key, bson *out);
 bool BsonObjectGet(const bson *b, const char *key, bson *out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);

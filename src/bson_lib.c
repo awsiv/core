@@ -99,13 +99,13 @@ bool BsonTimeGet(const bson *b, const char *key, time_t *out)
     }
 }
 
-bool BsonArrayGet(const bson *b, const char *key, const char **out)
+bool BsonArrayGet(const bson *b, const char *key, bson *out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == BSON_ARRAY)
     {
-        *out = bson_iterator_value(&it);
+        bson_iterator_subobject(&it, out);
         return true;
     }
     else
