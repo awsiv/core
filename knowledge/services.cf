@@ -11,6 +11,10 @@ vars:
 
 things:
 
+
+  "daemon"            comment => "Unix parlance for a running background process that handles an application service";
+
+
  application_services::
 
   "compute services"    comment => "CPU intensive cluster computation, usually batch driven and scheduled.";
@@ -32,8 +36,6 @@ things:
 
   "iaas"               comment => "Infrastructure as a service, also called cloud or utility computing)",
                           involves => { "virtualization", "aws" };
-
-  "daemon"            comment => "Unix parlance for a running background process that handles an application service";
 
   "software updates"     comment => "Software patches and updates for operating platforms";
   "user management"      comment => "Identity services for login and accessability";
