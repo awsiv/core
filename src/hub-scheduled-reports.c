@@ -67,6 +67,24 @@ void RunScheduledEnterpriseReports(void)
 
 /*******************************************************************/
 
+bool CheckPendingScheduledReports( void )
+{
+    EnterpriseDB conn[1];
+
+    if( !CFDB_Open( conn ) )
+    {
+        return;
+    }
+
+    bool reports_pending = CFDB_QueryHasPendingSchedules( conn );
+
+    CFDB_Close( conn );
+
+    return reports_pending;
+}
+
+/*******************************************************************/
+
 static void ScheduleRunScheduledReports(void)
 {
     time_t now = time( NULL );
@@ -78,9 +96,9 @@ static void ScheduleRunScheduledReports(void)
         return;
     }
 
-    if( CFDB_QueryHasPendingSchedules( conn ) )
+    /* This picks up the pending schedules since the last report generation */
+    if( !CFDB_QueryHasPendingSchedules( conn ) )
     {
-        /* no pending schedules */
         CFDB_Close( conn );
         return;
     }
@@ -148,8 +166,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
 
         bool is_class_defined = IsDefinedClass( run_class );
 
-        bool already_run = false;
-        BsonBoolGet( mongo_cursor_bson( cursor ), cfr_already_run, &already_run );
+        bool already_run = BsonBoolGet( mongo_cursor_bson( cursor ), cfr_already_run );
 
         if( is_class_defined && !already_run )
         {

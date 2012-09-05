@@ -3,7 +3,8 @@
 #ifndef CFENGINE_SCHEDULED_REPORTS_H
 #define CFENGINE_SCHEDULED_REPORTS_H
 
-void RunScheduledEnterpriseReports(void);
+void RunScheduledEnterpriseReports( void );
+bool CheckPendingScheduledReports( void );
 
 #endif
 

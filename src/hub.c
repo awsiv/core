@@ -691,6 +691,10 @@ static void StartHub(void)
 // before Nova_Maintain() gets run
     CFDB_ConnectAndEnsureIndices();
 
+#if defined( HAVE_SQLITE3 )
+    bool scheduled_reports_pending = false;
+#endif
+
     while (true)
     {
         if (ScheduleRun())
@@ -702,10 +706,17 @@ static void StartHub(void)
             {
                 Nova_CollectReports();
                 #if defined( HAVE_SQLITE3 )
-                RunScheduledEnterpriseReports();
+                if( scheduled_reports_pending )
+                {
+                    RunScheduledEnterpriseReports();
+                }
                 #endif
             }
         }
+
+    #if defined( HAVE_SQLITE3 )
+        scheduled_reports_pending = CheckPendingScheduledReports();
+    #endif
 
         CfOut(cf_verbose, "", "Sleeping...");
         sleep(CFPULSETIME);
