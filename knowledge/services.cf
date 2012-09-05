@@ -390,6 +390,7 @@ things:
   "energy"        comment => "Displays estimated energy usage of hosts in different locations";
   "correlations"  comment => "Search for correlated behaviours and changes around the system";
   "risk analysis" comment => "A tool for estimating risks associated with system policy and state";
+  "jobs"          comment => "Displays the number of hosts running specially monitored jobs";
 
 }
 
