@@ -11,7 +11,7 @@ class Query extends Resource
         $query = file_get_contents("php://input");
 
         $response = new Response($request);
-        $response->body = cfapi_query_post($username, $query, array(), array());
+        $response->body = cfapi_query_post($username, $query);
         $response->code = Response::OK;
 
         return $response;
