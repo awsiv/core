@@ -208,7 +208,7 @@ things:
           generalizations => { "daemon" };
 
   "smtpd"         comment => "SMTP server used by postfix",
-               implements => { "application_services::main services"},
+               implements => { "application_services::mail services"},
                  provides => { "ports::smtp_in" },
           generalizations => { "daemon" };
 
