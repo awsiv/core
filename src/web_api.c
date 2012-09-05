@@ -4891,6 +4891,14 @@ JsonElement *Nova2PHP_get_service_histogram()
 
 /*****************************************************************************/
 
+JsonElement *Nova2PHP_get_service_level_histogram(char *srv)
+{
+    return Nova_GetServiceLevels(srv);
+}
+
+
+/*****************************************************************************/
+
 JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
 {
 
