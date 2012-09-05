@@ -55,8 +55,6 @@ void CFDB_Maintenance( mongo_connection *dbconn )
 
     CFDB_PurgeSoftwareInvalidTimestamp( dbconn );
     CFDB_PurgeDeprecatedVitals( dbconn );
-
-    CFDB_Close( dbconn );
 }
 
 /*****************************************************************************/
