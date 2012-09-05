@@ -1135,7 +1135,7 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
              {
                  serv_array[i].freq[type]++;
                  strncpy(serv_array[i].port, rp2->item, CF_BUFSIZE);
-                 strncpy(serv_array[i].name,portname,CF_SMALLBUF-1);             
+                 snprintf(serv_array[i].name,CF_SMALLBUF-1,"%s_in", portname);
              }
           }
        }
