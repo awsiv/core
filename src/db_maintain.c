@@ -126,12 +126,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -140,12 +140,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -154,12 +154,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -170,17 +170,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_MG, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_MG);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_MG);
     }
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_WK, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_WK);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_WK);
     }
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_YR, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_YR);
+        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_YR);
     }
 
     bson_destroy(&b);
