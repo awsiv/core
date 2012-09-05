@@ -218,9 +218,12 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
         {
             CfOut(cf_error, "", "mongo_run_command: Could not drop index on collection %s", collection);
         }
+        else
+        {
+            bson_destroy(&result);
+        }
 
         bson_destroy(&dropAllCommand);
-        bson_destroy(&result);
     }
 
 }
