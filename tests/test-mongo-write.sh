@@ -35,8 +35,6 @@ while ! mongo --port 27777 --eval 'db.ping'; do
   sleep 0.01
 done
 
-cf-hub -i
-
 mkdir -p $WORKDIR
 
 generate_report_files()
