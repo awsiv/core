@@ -42,14 +42,20 @@ static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
 {
+    struct timespec maintenance_start = BeginMeasure();
+
     CFDB_EnsureIndices(dbconn);
 
     Item *hosts = CFDB_GetAllHostKeys(dbconn);
+
+    struct timespec purge_hosts_start = BeginMeasure();
 
     for(Item *ip = hosts; ip != NULL; ip = ip->next)
     {
         CFDB_PurgeHostReports(dbconn, ip->name);
     }
+
+    EndMeasure("DBPurgeHostsAll", purge_hosts_start);
 
     DeleteItemList(hosts);
 
@@ -58,6 +64,8 @@ void CFDB_Maintenance(EnterpriseDB *dbconn)
 
     CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
     CFDB_PurgeDeprecatedVitals(dbconn);
+
+    EndMeasure("DBMaintenance", maintenance_start);
 }
 
 /*****************************************************************************/

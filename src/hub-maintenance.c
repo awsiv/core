@@ -65,6 +65,8 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
     char envName[CF_SMALLBUF];
     char envClass[CF_SMALLBUF];
 
+    struct timespec compliance_cache_start = BeginMeasure();
+
 // Query all hosts in one time slot
 // ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;
 // Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
@@ -112,6 +114,8 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
         CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp));
     }
     DeleteRlist(hostkeys);
+
+    EndMeasure("DBCacheCompliance", compliance_cache_start);
 }
 
 /*******************************************************************/
