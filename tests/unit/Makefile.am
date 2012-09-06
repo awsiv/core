@@ -19,7 +19,8 @@ check_PROGRAMS = \
 if MONGO
 check_PROGRAMS += scorecards_test \
                   reporting_engine_test \
-                  bson_lib_test
+                  bson_lib_test \
+		  scheduled_reports_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
@@ -29,6 +30,9 @@ bson_lib_test_LDADD = $(top_builddir)/src/libpromises.la
 
 reporting_engine_test_SOURCES = $(MOCKERY_SOURCES) reporting_engine_test.c
 reporting_engine_test_LDADD = $(top_builddir)/src/libpromises.la
+
+scheduled_reports_test_SOURCES = $(MOCKERY_SOURCES) scheduled_reports_test.c
+scheduled_reports_test_LDADD = $(top_builddir)/src/libpromises.la
 endif
 
 TESTS = $(check_PROGRAMS)
