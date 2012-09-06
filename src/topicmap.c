@@ -181,8 +181,8 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("***************************************************\n");
 
     char buffer[1000000];
-    //Nova_GetApplicationServices(buffer, 1000000);
-    //printf("\nSERVICES:\n %s\n",buffer);
+    Nova_GetApplicationServices(buffer, 1000000);
+    printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
