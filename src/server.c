@@ -212,7 +212,7 @@ int Nova_AcceptCollectCall(ServerConnectionState *conn)
     EnterpriseDB dbconn;
     AgentConnection *aconn;
     
-    snprintf(lock_id, sizeof(lock_id), "%s%s", LOCK_HAIL_PREFIX, CanonifyName(conn->ipaddr));
+    snprintf(lock_id, sizeof(lock_id), "collect%s%s", LOCK_HAIL_PREFIX, CanonifyName(conn->ipaddr));
 
     if (LICENSES <= 0)
     {

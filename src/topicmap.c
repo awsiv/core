@@ -47,6 +47,7 @@ static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, c
 static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
 static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize);
 static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist *services, const int type);
+static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l1, int *l2, int *l3, int *normal);
 
 /*****************************************************************************/
 /* The main panels                                                           */
@@ -180,17 +181,18 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("***************************************************\n");
 
     char buffer[1000000];
-    //Nova_GetApplicationServices(buffer, 1000000);
-    //printf("\nSERVICES:\n %s\n",buffer);
+    Nova_GetApplicationServices(buffer, 1000000);
+    printf("\nSERVICES:\n %s\n",buffer);
 
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
 
-    /*
+
     printf("***************************************************\n");
     
     printf("INPUT: handles::goal_customers\n");
     int tid = Nova_GetTopicIdForTopic("handles::goal_customers");
+
     json =  Nova2PHP_get_goal_progress(tid, "goal_customers");
 
     if (json)
@@ -207,7 +209,6 @@ void Nova_ShowTopic(char *qualified_topic)
 
     printf("***************************************************\n");
         
-
     printf("Service histogram (in units of services x hosts):\n");
 
     json = Nova_GetServiceHistogram();
@@ -223,36 +224,23 @@ void Nova_ShowTopic(char *qualified_topic)
 
         WriterClose(writer);
     }
-    */
 
+    printf("***************************************************\n");
 
-    Rlist *rp;
-    bson_iterator it1;
-    EnterpriseDB conn;
-    char work[CF_BUFSIZE] = { 0 };
-    char searchstring[CF_BUFSIZE] = { 0 };
-    Rlist *goal_patterns = NULL;
-    char db_goal_patterns[CF_BUFSIZE] = { 0 };
+    json = Nova_GetServiceLevels("cpu3");
 
-    if (CFDB_GetValue("goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH))
+    if (json)
     {
-        goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\nService levels for www_out: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
     }
 
-    for (rp = goal_patterns; rp != NULL; rp = rp->next)
-    {
-        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|goals::.*|", (char *) rp->item);
-        strcat(searchstring, work);
-    }
-
-    if (strlen(searchstring) > 1)
-    {
-        searchstring[strlen(searchstring) - 1] = '\0';
-    }
-    else
-    {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
-    }
     
 }
 
@@ -1147,13 +1135,130 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
              {
                  serv_array[i].freq[type]++;
                  strncpy(serv_array[i].port, rp2->item, CF_BUFSIZE);
-                 strncpy(serv_array[i].name,portname,CF_SMALLBUF-1);             
+                 snprintf(serv_array[i].name,CF_SMALLBUF-1,"%s_in", portname);
              }
           }
        }
     }
 
     DeleteHubQuery(hq, DeleteHubVariable); 
+}
+
+/*************************************************************************/
+
+JsonElement *Nova_GetServiceLevels(char *service)
+{
+    int high1 = 0, low1 = 0, high2 = 0, low2 = 0, high3 = 0, low3 = 0, normal = 0;
+
+    GetClassHostFrequencies(service, &high1, &high2, &high3, &low1, &low2, &low3, &normal);
+
+    JsonElement *json_obj = JsonObjectCreate(7);
+    JsonObjectAppendInteger(json_obj, "low3", low3);
+    JsonObjectAppendInteger(json_obj, "low2", low2);
+    JsonObjectAppendInteger(json_obj, "low1", low1);
+    JsonObjectAppendInteger(json_obj, "normal", normal);
+    JsonObjectAppendInteger(json_obj, "high1", high1);
+    JsonObjectAppendInteger(json_obj, "high2", high2);
+    JsonObjectAppendInteger(json_obj, "high3", high3);       
+    
+    return json_obj;
+}
+
+
+/*************************************************************************/
+
+static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l1, int *l2, int *l3, int *normal)
+{
+    HubQuery *hq;
+    Rlist *rp;
+    EnterpriseDB dbconn;
+    unsigned long bluehost_threshold;
+    time_t now = time(NULL);
+
+    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+    {
+        return;
+    }
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    // Classifiers of service level
+
+    char classname[CF_MAXVARSIZE];
+    const char *h1n = "_high_dev1";
+    const char *h2n = "_high_dev2";
+    const char *h3n = "_high_anomaly";
+    const char *n = "_normal";
+    const char *h = "_high";
+    const char *l = "_low";
+    const char *hn = "_low_normal";
+    const char *ln = "_low_normal";
+    const char *l1n = "_low_dev1";
+    const char *l2n = "_low_dev2";
+    const char *l3n = "_low_anomaly";
+    int offset = strlen(srv);
+
+    snprintf(classname, CF_MAXVARSIZE-1, "%s_.*", srv);
+
+    hq = CFDB_QueryClasses(&dbconn, NULL, classname, true, now - (time_t)bluehost_threshold, now, NULL, false);
+
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubClass *hc = (HubClass *) rp->item;
+        
+        printf("CL: %s (%s)\n", hc->class, hc->hh->hostname);
+
+        if (strcmp(hc->class+offset, h1n) == 0)
+        {
+            (*h1)++;
+        }
+        else if (strcmp(hc->class+offset, h2n) == 0)
+        {
+            (*h2)++;
+        }
+        else if (strcmp(hc->class+offset, h3n) == 0)
+        {
+            (*h3)++;
+        }
+        else if (strcmp(hc->class+offset, n) == 0 ||
+                 strcmp(hc->class+offset, h) == 0 ||
+                 strcmp(hc->class+offset, hn) == 0 ||
+                 strcmp(hc->class+offset, ln) == 0 ||
+                 strcmp(hc->class+offset, l) == 0)
+        {
+            (*normal)++;
+        }
+        else if (strcmp(hc->class+offset, l1n) == 0)
+        {
+            (*l1)++;
+        }
+        else if (strcmp(hc->class+offset, l2n) == 0)
+        {
+            (*l2)++;
+        }
+        else if (strcmp(hc->class+offset, l3n) == 0)
+        {
+            (*l3)++;
+        }
+
+    }
+
+    // Since dev1 is defined if dev2 etc, we have to correct the counts
+    // One of these groups will do nothing
+
+    *normal = *normal - *h1;
+    *h1 = *h1 - *h2;
+    *h2 = *h2 - *h3;
+
+    *normal = *normal - *l1;
+    *l1 = *l1 - *l2;
+    *l2 = *l2 - *l3;
+
+    
+    CFDB_Close(&dbconn);
 }
 
 /*************************************************************************/

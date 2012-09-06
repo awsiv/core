@@ -99,10 +99,15 @@ PHP_FUNCTION(cfpr_vitals_view_week);
 // port plan: /host/vitals
 PHP_FUNCTION(cfpr_vitals_view_year);
 
-/*! \breif A histogram of open ports
+/*! \brief A histogram of open ports
  */
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_service_histogram);
+
+/*! \brief A histogram of levels on a given port
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(cfpr_service_level_histogram);
 
 /*! \breif A histogram of open ports
  */
