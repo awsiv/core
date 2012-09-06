@@ -1148,7 +1148,6 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
             }
 
             SequenceAppend(records, record);
-            bson_destroy(&compliance_shifts);
         }
     }
 
