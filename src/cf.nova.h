@@ -598,6 +598,18 @@ typedef struct
     char *bundleRxInclude;
     char *bundleRxExclude;
 } HubRole;
+
+typedef struct
+{
+    bool enabled;
+    intmax_t last_run;
+    char *username;
+    char *email;
+    char *query_id;
+    char *query;
+    char *schedule;
+} HubScheduledReport;
+
 #endif
 
 /*****************************************************************************/
@@ -769,6 +781,9 @@ void DeletePromiseFilter(PromiseFilter *filter);
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,
                                                     double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
+
+HubScheduledReport *NewScheduledReports( const char *user, const char *email, const char *query_id, const char *query, const char *schedule );
+void DeleteScheduledReport( HubScheduledReport *sr );
 
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles);
 

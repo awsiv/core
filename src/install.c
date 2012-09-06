@@ -1971,18 +1971,19 @@ static void DateStrToTime(const char *inStr, time_t *t)
 
 /*****************************************************************************/
 
-HubScheduledReport *NewScheduledReports(const char *user, const char *email, const char *sql, Writer *w)
+HubScheduledReport *NewScheduledReports(const char *user, const char *email, const char *query_id, const char *query, const char *schedule )
 {
     HubScheduledReport *sr;
-    sr = xmalloc(sizeof(HubScheduledReport));
+    sr = xmalloc( sizeof( HubScheduledReport ) );
 
-    sr->username = SafeStringDuplicate(user);
-    sr->email = SafeStringDuplicate(email);
-    sr->sql_query = SafeStringDuplicate(sql);
-    sr->started_on = (time_t) 0;
-    sr->completed_on = (time_t) 0;
-    sr->total_secs = 0;
-    sr->writer = w;
+    sr->username = SafeStringDuplicate( user );
+    sr->email = SafeStringDuplicate( email );
+    sr->query = SafeStringDuplicate( query );
+    sr->query_id = SafeStringDuplicate( query_id );
+    sr->schedule = SafeStringDuplicate( schedule );
+    sr->enabled = false;
+    sr->last_run = 0;
+
     return sr;
 }
 
@@ -1990,26 +1991,16 @@ HubScheduledReport *NewScheduledReports(const char *user, const char *email, con
 
 void DeleteScheduledReport(HubScheduledReport *sr)
 {
-    if(sr)
+    if( sr )
     {
-        if(sr->username)
-        {
-            free(sr->username);
-        }
-
-        if(sr->email)
-        {
-            free(sr->email);
-        }
-
-        if(sr->sql_query)
-        {
-            free(sr->sql_query);
-        }
-
-        if(sr->writer)
-        {
-            WriterClose(sr->writer);
-        }
+        free( sr->username );
+        free( sr->email );
+        free( sr->query_id );
+        free( sr->query );
+        free( sr->schedule );
     }
+
+    free( sr );
 }
+
+/*****************************************************************************/
