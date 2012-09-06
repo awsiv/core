@@ -4,6 +4,8 @@ WORKDIR=$1
 START=$2
 END=$3
 
+export CFENGINE_TEST=""
+
 i=$START
 
 TIME_START=$(date +%s)

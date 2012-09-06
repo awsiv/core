@@ -2604,7 +2604,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
 void Nova_ImportReports(const char *input_file)
 {
 #ifdef HAVE_LIBMONGOC
-    if (IsDefinedClass("am_policy_hub"))
+    if (IsDefinedClass("am_policy_hub") || getenv("CFENGINE_TEST"))
     {
         EnterpriseDB dbconn;
 
