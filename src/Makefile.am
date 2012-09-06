@@ -55,7 +55,6 @@ endif
 
 if MONGO
 libcfnova_la_SOURCES += \
-        benchmark.c benchmark.h \
         bson_hub_conversion.c bson_hub_conversion.h \
         bson_lib.c bson_lib.h \
         client_code.c \
