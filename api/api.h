@@ -29,23 +29,25 @@ PHP_FUNCTION(cfapi);
   */
 PHP_FUNCTION(cfapi_auth);
 
-/**
-  User management
-  */
+// user
+PHP_FUNCTION(cfapi_user_list);
+PHP_FUNCTION(cfapi_user_get);
+PHP_FUNCTION(cfapi_user_put);
+PHP_FUNCTION(cfapi_user_post);
+PHP_FUNCTION(cfapi_user_delete);
+PHP_FUNCTION(cfapi_user_subscription_query_list);
+PHP_FUNCTION(cfapi_user_subscription_query_get);
+PHP_FUNCTION(cfapi_user_subscription_query_put);
+PHP_FUNCTION(cfapi_user_subscription_query_delete);
+
+// role
 PHP_FUNCTION(cfapi_role_list);
 PHP_FUNCTION(cfapi_role_get);
 PHP_FUNCTION(cfapi_role_put);
 PHP_FUNCTION(cfapi_role_post);
 PHP_FUNCTION(cfapi_role_delete);
-PHP_FUNCTION(cfapi_user_list);
-PHP_FUNCTION(cfapi_user_get);
-PHP_FUNCTION(cfapi_user_put);
-PHP_FUNCTION(cfapi_user_post);
-PHP_FUNCTION(cfapi_user_subscription_query_list);
-PHP_FUNCTION(cfapi_user_subscription_query_get);
-PHP_FUNCTION(cfapi_user_subscription_query_put);
-PHP_FUNCTION(cfapi_user_subscription_query_delete);
-PHP_FUNCTION(cfapi_user_delete);
+
+// settings
 PHP_FUNCTION(cfapi_settings_get);
 PHP_FUNCTION(cfapi_settings_post);
 
@@ -53,6 +55,8 @@ PHP_FUNCTION(cfapi_settings_post);
 PHP_FUNCTION(cfapi_host_list);
 PHP_FUNCTION(cfapi_host_get);
 PHP_FUNCTION(cfapi_host_context_list);
+PHP_FUNCTION(cfapi_host_vital_list);
+PHP_FUNCTION(cfapi_host_vital_get);
 
 /**
   Reporting engine

@@ -32,5 +32,6 @@ load_data cfreport archive
 load_data cfreport users
 load_data cfreport roles
 load_data cfreport settings
+load_data cfreport monitoring_mg
 
 echo "Importing data complete"

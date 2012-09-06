@@ -17,6 +17,7 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"
+#include "granules.h"
 
 #include <assert.h>
 
@@ -3635,7 +3636,7 @@ Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
 
 /*****************************************************************************/
 
-HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
+HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
@@ -3713,7 +3714,82 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
     }
 }
 
-int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)
+cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t last_update, time_t from, time_t to, HubVital **vital_out)
+{
+    assert(hostkey);
+    assert(vital_id);
+    assert(vital_out);
+
+    if (!hostkey || !vital_id || !vital_out)
+    {
+        return ERRID_ARGUMENT_MISSING;
+    }
+
+    from = MAX(from, 0);
+    to = MIN(to, last_update);
+
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_append_string(&query, cfm_id, vital_id);
+    BsonFinish(&query);
+
+    // result
+    bson fields;
+
+    BsonSelectReportFields(&fields, 3,
+                           cfm_units,
+                           cfm_description,
+                           cfm_q_arr);
+
+    bson record = { 0 };
+
+    bool found = MongoFindOne(conn, MONGO_DATABASE_MON_MG, &query, &fields, &record) == MONGO_OK;
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    if (found)
+    {
+        const char *units = NULL;
+        BsonStringGet(&record, cfm_units, &units);
+
+        const char *description = NULL;
+        BsonStringGet(&record, cfm_description, &description);
+
+        HubVital *vital = NewHubVital(hostkey, vital_id, units, description);
+        vital->q = SequenceCreate(CF_MAX_SLOTS, DeleteHubVitalPoint);
+
+        bson q_arr = { 0 };
+        if (BsonArrayGet(&record, cfm_q_arr, &q_arr))
+        {
+            bson_iterator q_iter[1];
+            bson_iterator_init(q_iter, &q_arr);
+
+            for (size_t slot = 0; bson_iterator_next(q_iter); slot++)
+            {
+                time_t t = MeasurementSlotTime(slot, CF_MAX_SLOTS, last_update);
+                if (t >= from && t <= to)
+                {
+                    double value = bson_iterator_double(q_iter);
+                    SequenceAppend(vital->q, NewHubVitalPoint(t, value));
+                }
+            }
+        }
+
+        *vital_out = vital;
+        bson_destroy(&record);
+    }
+    else
+    {
+        *vital_out = NULL;
+    }
+
+
+    return found ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
+}
+
+int CFDB_QueryMagView2(EnterpriseDB *conn, const char *keyhash, const char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)
 {
     bson_iterator it1, it2;
     int ok = false, i, start_slot, wrap_around, windowSlot;
@@ -3954,7 +4030,7 @@ int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, Host
 
 /*****************************************************************************/
 
-bool CFDB_HasMatchingHost(EnterpriseDB *conn, char *hostKey, HostClassFilter *hostClassFilter)
+bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey, const HostClassFilter *hostClassFilter)
 {
     assert(SafeStringLength(hostKey) > 0);
 
@@ -4045,7 +4121,12 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
 
 /*****************************************************************************/
 
-bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
+cfapi_errid CFDB_QueryLastHostUpdate(EnterpriseDB *conn, const char *hostkey, time_t *last_update)
+{
+    return CFDB_QueryLastUpdate(conn, MONGO_DATABASE, cfr_keyhash, hostkey, last_update, NULL) ? ERRID_SUCCESS : ERRID_DATA_UNAVAILABLE;
+}
+
+bool CFDB_QueryLastUpdate(EnterpriseDB *conn, const char *db, const char *dbkey, const char *keyhash, time_t *date, int *size)
 {
     bson_iterator it1;
     bool ok = false;
@@ -4079,9 +4160,12 @@ bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyha
                 ok = true;
             }
 
-            if (strcmp(bson_iterator_key(&it1), cfr_last_update_size) == 0)
+            if (size)
             {
-                *size = bson_iterator_int(&it1);
+                if (strcmp(bson_iterator_key(&it1), cfr_last_update_size) == 0)
+                {
+                    *size = bson_iterator_int(&it1);
+                }
             }
             
         }

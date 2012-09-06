@@ -19,11 +19,7 @@ static zend_function_entry cfapi_functions[] =
     PHP_FE(cfapi, NULL)
     PHP_FE(cfapi_auth, NULL)
 
-    PHP_FE(cfapi_role_list, NULL)
-    PHP_FE(cfapi_role_get, NULL)
-    PHP_FE(cfapi_role_put, NULL)
-    PHP_FE(cfapi_role_post, NULL)
-    PHP_FE(cfapi_role_delete, NULL)
+    // user
     PHP_FE(cfapi_user_list, NULL)
     PHP_FE(cfapi_user_get, NULL)
     PHP_FE(cfapi_user_put, NULL)
@@ -33,13 +29,26 @@ static zend_function_entry cfapi_functions[] =
     PHP_FE(cfapi_user_subscription_query_get, NULL)
     PHP_FE(cfapi_user_subscription_query_put, NULL)
     PHP_FE(cfapi_user_subscription_query_delete, NULL)
+
+    // role
+    PHP_FE(cfapi_role_list, NULL)
+    PHP_FE(cfapi_role_get, NULL)
+    PHP_FE(cfapi_role_put, NULL)
+    PHP_FE(cfapi_role_post, NULL)
+    PHP_FE(cfapi_role_delete, NULL)
+
+    // settings
     PHP_FE(cfapi_settings_get, NULL)
     PHP_FE(cfapi_settings_post, NULL)
 
+    // host
     PHP_FE(cfapi_host_list, NULL)
     PHP_FE(cfapi_host_get, NULL)
     PHP_FE(cfapi_host_context_list, NULL)
+    PHP_FE(cfapi_host_vital_list, NULL)
+    PHP_FE(cfapi_host_vital_get, NULL)
 
+    // query
     PHP_FE(cfapi_query_post, NULL)
 
     {NULL, NULL, NULL}          /* Must be the last line in cfapi_functions[] */

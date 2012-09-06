@@ -21,7 +21,7 @@
 /* Magdata                                                            */
 /**********************************************************************/
 
-bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *vitalId)
+bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, const char *hostkey, const char *vitalId)
 {
  double rq, rs;
     double q[CF_MAGDATA], e[CF_MAGDATA], d[CF_MAGDATA], g[CF_MAGDATA];

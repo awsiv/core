@@ -45,7 +45,7 @@ void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
 void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq);
 void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values);
-bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter);
+bool BsonAppendHostClassFilter(bson *queryBuffer, const HostClassFilter *filter);
 bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeValues);
 bool BsonAppendIncludeRxList(bson *query, char *includeKey, Rlist *includeRxValues);
 bool BsonAppendExcludeList(bson *query, char *excludeKey, Rlist *excludeValues);

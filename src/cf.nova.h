@@ -563,11 +563,21 @@ typedef struct
 
 typedef struct HubVital_ HubVital;
 
+typedef struct
+{
+    time_t t;
+    double value;
+} HubVitalPoint;
+
+#include "sequence.h"
+
 struct HubVital_
 {
+    char *hostkey;
     char *id;
     char *units;
     char *description;
+    Sequence *q; // HubVitalPoint
     HubVital *next;
 };
 
@@ -748,7 +758,10 @@ HubNoteInfo *NewHubNoteInfo(HubHost *hh, char *nid, char *user, char *msg, time_
 void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
+HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description);
 void DeleteHubVital(HubVital *hv);
+HubVitalPoint *NewHubVitalPoint(time_t t, double value);
+void DeleteHubVitalPoint(HubVitalPoint *point);
 HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles);
 void DeleteHubUser(HubUser *user);
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude, const char *classRxExclude,
@@ -839,7 +852,7 @@ char *Nova_LicenseOwner(void);
 /* magnify.c */
 
 #ifdef HAVE_LIBMONGOC
-bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *vitalId);
+bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, const char *hostkey, const char *vitalId);
 #endif
 
 /* monitoring.c */

@@ -41,7 +41,7 @@ typedef enum
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bool *authenticated_external);
 
-cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
+cfapi_errid CFDB_HasHostAccessFromUserRBAC(const char *userName, const char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName);
 HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 

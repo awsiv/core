@@ -68,13 +68,15 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter);
 
 Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash);
-HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash);
-int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga);
+HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash);
+cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t last_update, time_t from, time_t to, HubVital **vital_out);
+int CFDB_QueryMagView2(EnterpriseDB *conn, const char *keyhash, const char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga);
 
 int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa, double *ea, double *da, double *ga);
 
 bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double *histo);
-bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size);
+cfapi_errid CFDB_QueryLastHostUpdate(EnterpriseDB *conn, const char *hostkey, time_t *last_update);
+bool CFDB_QueryLastUpdate(EnterpriseDB *conn, const char *db, const char *dbkey, const char *keyhash, time_t *date, int *size);
 
 HubPromise *CFDB_QueryPromise(EnterpriseDB *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
@@ -109,7 +111,7 @@ HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const
 int CFDB_QueryBundleCount(EnterpriseDB *conn);
 int CFDB_QueryPromiseCount(EnterpriseDB *conn);
 int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
-bool CFDB_HasMatchingHost(EnterpriseDB *conn, char *hostKey, HostClassFilter *hostClassFilter);
+bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey, const HostClassFilter *hostClassFilter);
 int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query);
 int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hostNameSz);
 HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey);

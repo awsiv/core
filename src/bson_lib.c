@@ -357,7 +357,7 @@ void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *str
 
 /*****************************************************************************/
 
-bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter)
+bool BsonAppendHostClassFilter(bson *queryBuffer, const HostClassFilter *filter)
 {
     if (filter == NULL)
     {

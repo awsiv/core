@@ -20,6 +20,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "string_lib.h"
 #include "sort.h"
 #include "conversion.h"
+#include "sequence.h"
 
 #include <assert.h>
 
@@ -1028,13 +1029,7 @@ void DeleteHubNoteInfo(HubNoteInfo *hci)
 
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description)
 {
-    HubVital *hv;
-
-    hv = xmalloc(sizeof(HubVital));
-
-    hv->id = xstrdup(id);
-    hv->units = xstrdup(units);
-    hv->description = xstrdup(description);
+    HubVital *hv = NewHubVital(NULL, id, units, description);
 
     hv->next = *first;
     *first = hv;
@@ -1044,19 +1039,49 @@ HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *descrip
 
 /*****************************************************************************/
 
+HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description)
+{
+    HubVital *v = xmalloc(sizeof(HubVital));
+
+    v->hostkey = SafeStringDuplicate(hostkey);
+    v->id = SafeStringDuplicate(id);
+    v->units = SafeStringDuplicate(units);
+    v->description = SafeStringDuplicate(description);
+    v->q = NULL;
+
+    return v;
+}
+
 void DeleteHubVital(HubVital *hv)
 {
     HubVital *curr, *next;
 
     for (curr = hv; curr != NULL; curr = next)
     {
+        free(curr->hostkey);
         free(curr->id);
         free(curr->units);
         free(curr->description);
+        SequenceDestroy(curr->q);
 
         next = curr->next;
         free(curr);
     }
+}
+
+HubVitalPoint *NewHubVitalPoint(time_t t, double value)
+{
+    HubVitalPoint *point = xmalloc(sizeof(HubVitalPoint));
+
+    point->t = t;
+    point->value = value;
+
+    return point;
+}
+
+void DeleteHubVitalPoint(HubVitalPoint *point)
+{
+    free(point);
 }
 
 /*****************************************************************************/

@@ -477,7 +477,7 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey)
+cfapi_errid CFDB_HasHostAccessFromUserRBAC(const char *userName, const char *hostKey)
 /**
  * Convenience function in cases where we are checking for user access
  * to a specific host, as opposed to creating a filter to query reports from

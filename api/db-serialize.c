@@ -98,3 +98,45 @@ JsonElement *HubClassToJson(const HubClass *context)
 
     return obj;
 }
+
+JsonElement *HubVitalPointToJson(const HubVitalPoint *point)
+{
+    JsonElement *p = JsonArrayCreate(2);
+
+    JsonArrayAppendInteger(p, point->t);
+    JsonArrayAppendReal(p, point->value);
+
+    return p;
+}
+
+JsonElement *HubVitalToJson(const HubVital *vital)
+{
+    assert(vital);
+
+    JsonElement *obj = JsonObjectCreate(5);
+
+    JsonObjectAppendString(obj, "id", vital->id);
+
+    if (vital->description)
+    {
+        JsonObjectAppendString(obj, "description", vital->description);
+    }
+    if (vital->description)
+    {
+        JsonObjectAppendString(obj, "units", vital->units);
+    }
+
+    if (vital->q)
+    {
+        JsonElement *values = JsonArrayCreate(CF_MAX_SLOTS);
+        for (size_t i = 0; i < vital->q->length; i++)
+        {
+            const HubVitalPoint *point = vital->q->data[i];
+            JsonArrayAppendArray(values, HubVitalPointToJson(point));
+        }
+
+        JsonObjectAppendArray(obj, "values", values);
+    }
+
+    return obj;
+}

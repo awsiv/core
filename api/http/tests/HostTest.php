@@ -113,4 +113,42 @@ class HostTest extends APIBaseTest
         }
     }
 
+    public function testListVitals()
+    {
+        try
+        {
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(2, sizeof($response['data']));
+            $this->assertEquals(2, $response['meta']['total']);
+            $this->assertEquals(2, $response['meta']['count']);
+            $this->assertEquals('io_reads', $response['data'][0]['id']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testGetVital()
+    {
+        try
+        {
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/io_reads?from=1388534400&to=1388534400');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals(1, $response['meta']['count']);
+
+            $vital = $response['data'][0];
+            $this->assertEquals('io_reads', $vital['id']);
+            $this->assertEquals(288, sizeof($vital['values']));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

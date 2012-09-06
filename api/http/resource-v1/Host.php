@@ -1,7 +1,33 @@
 <?php
 
 /**
- * @uri /host/(.+)/context 2
+ * @uri /host/([^\/]+)/vital/([^\/]+) 4
+ */
+class HostVital extends Resource
+{
+    function get($request, $username, $vital_id)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+        $payload = cfapi_host_vital_get($user, $username, $vital_id,
+            DefaultParameters::from(), DefaultParameters::to());
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /host/(.+)/context 3
  */
 class HostContextList extends Resource
 {
@@ -11,6 +37,31 @@ class HostContextList extends Resource
 
         $response = new Response($request);
         $payload = cfapi_host_context_list($user, $hostid);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /host/(.+)/vital 2
+ */
+class HostVitalList extends Resource
+{
+    function get($request, $hostid)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+        $payload = cfapi_host_vital_list($user, $hostid);
         if ($payload)
         {
             $response->code = Response::OK;
