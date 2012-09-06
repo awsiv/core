@@ -6295,7 +6295,8 @@ Item *CFDB_GetAllHostKeys(EnterpriseDB *conn)
 }
 
 /*****************************************************************************/
-JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *scheduled_query_id,
+/* NOTE: currently doesn't support regex in queries */
+HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *email, const char *scheduled_query_id,
                                const char *scheduled_query, const char *schedule )
 {
     assert( conn );
@@ -6303,9 +6304,10 @@ JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, co
     bson query[1];
     bson_init( query );
     BsonAppendStringSafe( query, cfr_user_id, user );
+    BsonAppendStringSafe( query, cfr_user_email, email );
     BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id );
     BsonAppendStringSafe( query, cfr_query, scheduled_query );
-    BsonAppendStringSafe( query, cfr_schedule, schedule );
+    BsonAppendStringSafe( query, cfr_run_classes, schedule );
     BsonFinish( query );
 
     bson empty[1];
@@ -6314,8 +6316,39 @@ JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, co
     mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS, query, empty, 0, 0, CF_MONGO_SLAVE_OK );
 
     bson_destroy( query );
+
+    Rlist *schedules = NULL;
+
+    while( mongo_cursor_next( cursor ) == MONGO_OK )
+    {
+        const char *username_db;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_id, &username_db );
+
+        const char *email_db;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_email, &email_db );
+
+        const char *query_id_db;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_query_id, &query_id_db );
+
+        const char *query_db;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_query, &query_db );
+
+        const char *schedule_db;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_run_classes, &schedule_db );
+
+        bool enabled_db = BsonBoolGet( mongo_cursor_bson( cursor ), cfr_enabled );
+
+        time_t last_run_db;
+        BsonTimeGet( mongo_cursor_bson( cursor ), cfr_last_run, &last_run_db );
+
+        HubScheduledReport *sr = NewScheduledReports( username_db, email_db, query_id_db, query_db, schedule_db );
+        sr->enabled = enabled_db;
+        sr->last_run = last_run_db;
+
+        PrependRlistAlienUnlocked( &schedules, sr);
+    }
+
     mongo_cursor_destroy( cursor );
 
-    return NULL;
-
+    return NewHubQuery( NULL, schedules );
 }

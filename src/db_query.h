@@ -100,8 +100,8 @@ Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection
 Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, char *dKey, bson *queryBson);
 Item *CFDB_GetAllHostKeys(EnterpriseDB *conn);
 
-JsonElement *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *scheduled_query_id,
-                               const char *scheduled_query, const char *schedule );
+HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
+                                  const char *scheduled_query_id, const char *scheduled_query, const char *schedule );
 
 //*****************************************************************************
 // Singleton Queries
