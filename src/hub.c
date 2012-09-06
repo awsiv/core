@@ -692,7 +692,7 @@ static void StartHub(void)
     CFDB_ConnectAndEnsureIndices();
 
 #if defined( HAVE_SQLITE3 )
-    bool scheduled_reports_pending = false;
+    bool scheduled_reports_pending = true;
 #endif
 
     while (true)
