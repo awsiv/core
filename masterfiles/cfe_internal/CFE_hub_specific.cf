@@ -402,7 +402,7 @@ bundle agent cfengine_php_mod
    "/usr/lib/php5/20090626+lfs/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
           handle => "cfe_internal_cfengine_php_mod_file_cfengine_enterprise_api_so_ubuntu10_32",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
+       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
