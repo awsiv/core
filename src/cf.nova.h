@@ -1334,6 +1334,7 @@ typedef struct
 #define cfr_keyhash      "kH"
 #define cfr_ip_array     "IP"
 #define cfr_host_array   "ha"
+#define cfr_reverse_lookup_name "rn"
 #define cfr_histo        "hs"
 #define cfr_perf_event    "P"
 #define cfr_software     "sw"

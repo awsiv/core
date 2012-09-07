@@ -171,6 +171,10 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
     // host_key destroyed after updating host names
 
     // host name
+    /* If the host identifier is configured from the mission portal,
+     * this will be the variable value (eg. sys.fqhost)
+     * By default, this holds the reverse IP lookup
+     */
 
     bson_init(&set_op);
     {
@@ -183,6 +187,25 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
         bson_append_finish_object(&set_op);
     }
     BsonFinish(&set_op);
+
+    MongoUpdate(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    bson_destroy( &set_op );
+
+    /* reverse IP lookup name
+     * Needed for cases when user has
+     * configured the custom host identifier
+     * This value is used in the assets page
+     */
+
+    bson_init( &set_op );
+    {
+        bson_append_start_object( &set_op, "$set" );
+        {
+            BsonAppendStringSafe( &set_op, cfr_reverse_lookup_name, IPString2Hostname( ipaddr ) );
+        }
+        bson_append_finish_object( &set_op );
+    }
+    BsonFinish( &set_op );
 
     MongoUpdate(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 

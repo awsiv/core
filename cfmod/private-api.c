@@ -4911,6 +4911,44 @@ PHP_FUNCTION(cfpr_update_host_identifier)
     DATABASE_CLOSE(conn);
     RETURN_BOOL(true);
 }
+
+/******************************************************************************/
+
+PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name )
+{
+    char *user, *hostkey;
+    int user_len, hk_len;
+
+    if ( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC,
+                                "ss",
+                                &user, &user_len,
+                                &hostkey, &hk_len) == FAILURE)
+    {
+        zend_throw_exception( cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC );
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS( user_len && hk_len );
+
+    cfapi_errid err = CFDB_HasHostAccessFromUserRBAC( user, hostkey );
+
+    if ( err != ERRID_SUCCESS )
+    {
+        zend_throw_exception( cfmod_exception_rbac, (char *) GetErrorDescription( err ), 0 TSRMLS_CC );
+        RETURN_NULL();
+    }
+
+    EnterpriseDB conn[1];
+    DATABASE_OPEN( conn );
+
+    char domain_name[CF_MAXVARSIZE] = {0};
+    CFDB_HandleGetValue( cfr_reverse_lookup_name, domain_name, CF_MAXVARSIZE - 1, "", conn, MONGO_DATABASE );
+
+    DATABASE_CLOSE( conn );
+
+    RETURN_STRING( domain_name, 1 );
+}
+
 /******************************************************************************/
 /* Mission Tree-Control (Astrolabe)                                           */
 /******************************************************************************/

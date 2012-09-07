@@ -153,6 +153,7 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_documents, NULL)
     PHP_FE(cfpr_get_story_by_id, NULL)
     PHP_FE(cfpr_get_story_by_name, NULL)
+    PHP_FE(cfpr_get_reverse_ip_lookup_name, NULL)
 
         /*
          * SVN helper
