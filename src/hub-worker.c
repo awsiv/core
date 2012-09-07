@@ -146,7 +146,7 @@ static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
     buffer[0] = '\0';
 
     bool ret = CFDB_HandleGetValue(cfr_host_identifier, identifier, CF_MAXVARSIZE - 1,
-                                   "sys.fqhost", dbconn, MONGO_SCRATCH);
+                                   NULL, dbconn, MONGO_SCRATCH);
 
     if(ret)
     {
