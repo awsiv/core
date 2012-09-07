@@ -14,7 +14,7 @@
 #include "db_save.h"
 
 
-static void Nova_CreateHostID(EnterpriseDB *dbconnp, char *hostID, char *ipaddr);
+static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostkey, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);
 static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
                               char *buffer, int bufsize);
@@ -171,12 +171,12 @@ static void GetHostIdentifier(EnterpriseDB *dbconn, char *keyhash, char *ip,
 /*******************************************************************/
 /* Make sure an entry for the given keyhash,ip exists */
 
-static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostID, char *ipaddr)
+static void Nova_CreateHostID( EnterpriseDB *dbconn, char *hostkey, char *ipaddr )
 {
-    char hostname[CF_MAXVARSIZE] = {0};
+    char custom_identifier[CF_MAXVARSIZE] = {0};
 
-    GetHostIdentifier(dbconn, hostID, ipaddr, hostname, CF_MAXVARSIZE - 1);
+    GetHostIdentifier( dbconn, hostkey, ipaddr, custom_identifier, CF_MAXVARSIZE - 1 );
 
-    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, hostname);
-    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, hostname);
+    CFDB_SaveHostID( dbconn, MONGO_DATABASE, cfr_keyhash, hostkey, ipaddr, custom_identifier );
+    CFDB_SaveHostID( dbconn, MONGO_ARCHIVE, cfr_keyhash, hostkey, ipaddr, custom_identifier );
 }
