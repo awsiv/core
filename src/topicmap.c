@@ -221,7 +221,7 @@ void Nova_ShowTopic(char *qualified_topic)
     }
 
     printf("***************************************************\n");
-        
+    
     printf("Service histogram (in units of services x hosts):\n");
 
     json = Nova_GetServiceHistogram();
@@ -1069,7 +1069,7 @@ JsonElement *Nova_GetServiceHistogram()
 
     JsonElement *json_array_out = JsonArrayCreate(100);
     
-    for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
+    for (srv = 0; serv_array[srv].port != NULL && strlen(serv_array[srv].port) > 0; srv++)
        {
        JsonElement *json_obj = JsonObjectCreate(6);
        JsonObjectAppendString(json_obj, "port", serv_array[srv].port);
