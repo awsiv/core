@@ -2322,7 +2322,7 @@ void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_
 
 void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *email,
                               const char *scheduled_query_id, const char *scheduled_query,
-                              const char *schedule, const bool enabled )
+                              const char *schedule, const bool enabled, const int report_output_type )
 {
     assert( conn );
     assert( user );
@@ -2330,6 +2330,7 @@ void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *
     assert( scheduled_query_id );
     assert( scheduled_query );
     assert( schedule );
+    assert( report_output_type && "Must have at least one report type enabled" );
 
     bson query[1];
     bson_init( query );
@@ -2343,8 +2344,9 @@ void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *
     bson_append_string( set_op, cfr_query, scheduled_query );
     bson_append_string( set_op, cfr_run_classes, schedule );
     bson_append_int( set_op, cfr_last_run, ( int ) time( NULL ) );
-    bson_append_bool( set_op, cfr_already_run, false );
-    bson_append_bool( set_op, cfr_enabled, enabled );
+    BsonAppendBool( set_op, cfr_already_run, false );
+    BsonAppendBool( set_op, cfr_enabled, enabled );
+    bson_append_int( set_op, cfr_report_output_type, report_output_type );
     BsonFinish( set_op );
 
     MongoUpdate( conn, MONGO_SCHEDULED_REPORTS, query, set_op, MONGO_UPDATE_UPSERT, NULL );

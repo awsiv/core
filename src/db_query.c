@@ -6424,9 +6424,13 @@ HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const
         time_t last_run_db;
         BsonTimeGet( mongo_cursor_bson( cursor ), cfr_last_run, &last_run_db );
 
+        int output_type_db = 0;
+        BsonIntGet( mongo_cursor_bson( cursor ), cfr_report_output_type, &output_type_db );
+
         HubScheduledReport *sr = NewScheduledReports( username_db, email_db, query_id_db, query_db, schedule_db );
         sr->enabled = enabled_db;
         sr->last_run = last_run_db;
+        sr->output_type = output_type_db;
 
         PrependRlistAlienUnlocked( &schedules, sr);
     }

@@ -2008,6 +2008,7 @@ HubScheduledReport *NewScheduledReports(const char *user, const char *email, con
     sr->schedule = SafeStringDuplicate( schedule );
     sr->enabled = false;
     sr->last_run = 0;
+    sr->output_type = 0;
 
     return sr;
 }
