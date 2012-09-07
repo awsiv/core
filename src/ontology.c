@@ -932,8 +932,10 @@ void ShowTopicRepresentation(const ReportContext *report_context)
     WriterWriteF(writer, "things:\n");
 
     WriterWriteF(writer,
-            "  \"monitoring classes\" comment => \"Classes set by cf-monitord based on the observed system state.\"; \n");
+            "  \"measurements\" comment => \"Classes set by cf-monitord based on the observed system state.\"; \n");
 
+    WriterWriteF(writer, "measurements::\n");
+    
     for (i = 0; i < CF_OBSERVABLES; i++)
     {
         if (strcmp(OBS[i][0], "spare") == 0)
@@ -943,7 +945,7 @@ void ShowTopicRepresentation(const ReportContext *report_context)
 
         WriterWriteF(writer, " \"%s\" comment => \"%s\",", OBS[i][0], OBS[i][1]);
         WriterWriteF(writer, "      generalizations => { \"vital signs\", \"observables\" },");
-        WriterWriteF(writer, "      determines => { \"actual state\" , \"monitoring classes\" };\n");
+        WriterWriteF(writer, "      determines => { \"actual state\" , \"measurements\", \"application services\" };\n");
     }
 
 // Operating system classes
@@ -986,7 +988,7 @@ void ShowTopicRepresentation(const ReportContext *report_context)
     }
 
     WriterWriteF(writer,
-            "measurements:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
+            "any:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
 
     WriterWriteF(writer, "anomalies::");
 
