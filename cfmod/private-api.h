@@ -929,6 +929,12 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type);
 // port plan: /host
 PHP_FUNCTION(cfpr_delete_host);
 
+/*! \brief Return reverse lookup host name
+ * \param user
+ * \param hostkey
+ */
+PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name );
+
 /*! \brief Update the host identifier variable
  * \param username
  * \param scope
