@@ -15,9 +15,15 @@
 
 #include <assert.h>
 
+/*****************************************************************************/
+
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *name, char *context);
 
+/*****************************************************************************/
+
 typedef struct Hit_ Hit;
+
+/*****************************************************************************/
 
 struct Hit_
 {
@@ -27,6 +33,8 @@ struct Hit_
     char *represents;
     Hit *next;
 };
+
+/*****************************************************************************/
 
 enum { cftcp4, cftcp6, cfudp4, cfudp6, CFDIM} session;
 
@@ -38,8 +46,12 @@ struct servhist
    
 };
 
+/*****************************************************************************/
+
 #define CF_SERVICES_LIMIT 64
 #include "cf.nova.web_api.h"
+
+/*****************************************************************************/
 
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
@@ -184,6 +196,7 @@ void Nova_ShowTopic(char *qualified_topic)
     Nova_GetApplicationServices(buffer, 1000000);
     printf("\nSERVICES:\n %s\n",buffer);
 
+    /*
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
 
@@ -241,7 +254,7 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    
+    */
 }
 
 /*****************************************************************************/
