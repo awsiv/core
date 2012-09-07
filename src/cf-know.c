@@ -2033,5 +2033,38 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
+
+    if ((rp = GetListConstraint("is_measured_by", pp)))
+    {
+        switch (certainty)
+        {
+        case cfk_certain:
+            attr.fwd_name = KM_IMPLEMENTS_CERT_B;
+            attr.bwd_name = KM_IMPLEMENTS_CERT_F;
+            break;
+        case cfk_uncertain:
+            attr.fwd_name = KM_IMPLEMENTS_UNCERT_B;
+            attr.bwd_name = KM_IMPLEMENTS_UNCERT_F;
+            break;
+        case cfk_possible:
+            attr.fwd_name = KM_IMPLEMENTS_POSS_B;
+            attr.bwd_name = KM_IMPLEMENTS_POSS_F;
+            break;
+        }
+
+        attr.associates = rp;
+                
+        if (attr.fwd_name && attr.bwd_name)
+        {
+           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+                 attr.bwd_name);
+
+           AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
+                               pp->promiser);
+        }
+
+    }
+
+
     return attr;
 }
