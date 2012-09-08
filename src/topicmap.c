@@ -192,10 +192,22 @@ void Nova_ShowTopic(char *qualified_topic)
 
     printf("***************************************************\n");
 
-    char buffer[1000000];
-    Nova_GetApplicationServices(buffer, 1000000);
-    printf("\nSERVICES:\n %s\n",buffer);
+    json = Nova_GetApplicationServices();
+    printf("\nSERVICES:\n");
 
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\n%s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+
+    
     /*
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
@@ -1276,7 +1288,7 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 
 /*************************************************************************/
 
-int Nova_GetApplicationServices(char *buffer, int bufsize)
+int Nova_GetApplicationServices()
 {
     bson_iterator it1;
     EnterpriseDB conn;
@@ -1393,14 +1405,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
         JsonArrayAppendObject(json_array_out, json_obj); 
     }
     
-
-    Writer *writer = StringWriter();
-    JsonElementPrint(writer, json_array_out, 1);
-    JsonElementDestroy(json_array_out);
-    snprintf(buffer, bufsize,"%s", StringWriterData(writer));
-    WriterClose(writer);
-
-    return true;
+    return json_array_out;
 }
 
 /*************************************************************************/
