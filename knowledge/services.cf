@@ -8,41 +8,91 @@ vars:
   "used_by_mail_daemons" slist => { "sendmail", "postfix", "exim", "saslauthd", "freshclam", "clamd", "clamav-milter", "spamd", "amavisd" };
 
 
-
 things:
 
+  "daemon"     comment => "Unix parlance for a running background process that handles an application service";
 
-  "daemon"            comment => "Unix parlance for a running background process that handles an application service";
+ measurements::
 
+  "ssh_in"     measures => { "login services" },
+               measures => { "ssh" };
+
+"users"        measures => { "login services", "user management" };
+
+"rootprocs"    measures => { "provisioning" };
+"otherprocs"   measures => { "web services" };
+"cpu"          measures => { "compute services" };
+"cpu0"         measures => { "compute services" };
+"cpu1"         measures => { "compute services" };
+"cpu2"         measures => { "compute services" };
+"cpu3"         measures => { "compute services" };
+
+"loadavg"      measures => { "compute services", "web services" };
+
+"nfsd_in"      measures => { "storage" };
+"diskfree"     measures => { "storage" };
+
+"netbiosssn_in" measures => { "name services" };
+
+"imap_in"       measures => { "mail services" };
+"imaps_in"      measures => { "mail services" };
+"smtp_in"       measures => { "mail services" };
+
+"cfengine_in"   measures => { "provisioning", "bdma" };
+
+"www_in"        measures => { "web services" };
+"wwws_in"       measures => { "web services" };
+"www_alt_in"    measures => { "web services" };
+
+"ldap_in"       measures => { "directory services", "user management" };
+"ldaps_in"      measures => { "directory services", "user management" };
+
+"mongo_in"      measures => { "database" };
+"mysql_in"      measures => { "database" };
+"postgres_in"   measures => { "database" };
+
+
+"icmp_in"       measures => { "network services" };
+"udp_in"        measures => { "network services" };
+"dns_in"        measures => { "name services" };
+"tcpsyn_in"     measures => { "network services" };
+"tcpack_in"     measures => { "network services" };
+"tcpfin_in"     measures => { "network services" };
+"tcpmisc_in"    measures => { "network services" };
+
+"syslog"        measures => { "system logging" };
+
+"microsoft_ds_in" measures => { "storage" };
 
  application_services::
 
   "compute services"    comment => "CPU intensive cluster computation, usually batch driven and scheduled.";
 
-  "mail services"      comment => "Electronic mail service, as made famous by the Unix operating system.";
-  "host configuration" comment => "CFEngine desired-state automation and self-repair service";
-  "web services"       comment => "The WWW service, also used as a general transport mechanim for many other specialized services, including internet commerce applications.";
+  "mail services"       comment => "Electronic mail service, as made famous by the Unix operating system.";
+  "host configuration"  comment => "CFEngine desired-state automation and self-repair service";
+  "web services"        comment => "The WWW service, also used as a general transport mechanim for many other specialized services, including internet commerce applications.";
 
-  "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
+  "directory services"  comment => "Directory services are look-up services, typically with identity or host information.";
 
-  "storage"            comment => "Remotely accessible disk volumes";
+  "name services" comment => "Name services are look-up services, typically with identity or host information.";
+
+  "storage"             comment => "Remotely accessible disk volumes";
 
 
-  "database"           comment => "Key-based data storage. Databases come in a variety of types and forms.";
+  "database"            comment => "Key-based data storage. Databases come in a variety of types and forms.";
 
 
-  "login services"     comment => "The ability to log onto systems with a username and password",
+  "login services"      comment => "The ability to log onto systems with a username and password",
                          involves => { "ssh", "rbac" };
 
-  "iaas"               comment => "Infrastructure as a service, also called cloud or utility computing)",
+  "iaas"                comment => "Infrastructure as a service, also called cloud or utility computing)",
                           involves => { "virtualization", "aws" };
 
-  "software updates"     comment => "Software patches and updates for operating platforms";
-  "user management"      comment => "Identity services for login and accessability";
-  "dev"                  comment => "Product development";
-  "ops"                  comment => "Operations -- another term for system administration";
+  "software updates"    comment => "Software patches and updates for operating platforms";
+  "user management"     comment => "Identity services for login and accessability";
+  "DevOps"              comment => "Continuous delivery of product releases in collaboration with IT operations";
 
-  "provisioning"         comment => "Installing computer hosts ready for use",
+  "provisioning"        comment => "Installing computer hosts ready for use",
                         involves => { "iaas", "boot services", "configuration management" },
                        certainty => "possible";
 
@@ -63,6 +113,7 @@ things:
                        involves => { "log rotation" },
             affects => { "promise_types::processes", "promise_types::files" };
 
+    "printing"         comment => "Company printer availability and configuration";
 
  ################
 
@@ -135,6 +186,7 @@ things:
   "time services"        comment => "Clock synchronization and timezones";
   "logging"              comment => "Archiving system messages and events";
   "monitoring"           comment => "Data sampling and collection";
+  "help desk"            comment => "Customer help desk services";        
 
  monitoring::
 
@@ -185,7 +237,7 @@ things:
    "httpd" comment => "The apache web daemon",
            implements => { "application_services::web services"},
               affects => { "promise_types::processes" },
-          provides => { "ports::www_in", "ports::www_alt_in", "ports::wwws_in" },
+          provides => { "www_in", "www_alt_in", "wwws_in" },
    generalizations => { "daemon" };
 
   "saslauthd"     comment => "Authentication module for the mail delivery service",
@@ -209,18 +261,18 @@ things:
 
   "smtpd"         comment => "SMTP server used by postfix",
                implements => { "application_services::mail services"},
-                 provides => { "ports::smtp_in" },
+                 provides => { "smtp_in" },
           generalizations => { "daemon" };
 
 
   "nfsd"         comment => "NFS server for the Network File System",
               implements => { "storage" },
-                provides => { "ports::nfs_in" },
+                provides => { "nfs_in" },
          generalizations => { "daemon" };
 
   "smbd"         comment => "The Samba server for the Microsoft/CIFS storage sharing",
               implements => { "storage" },
-                provides => { "ports::microsoft_ds_in","ports::netbios_ssn_in" },
+                provides => { "microsoft_ds_in","netbios_ssn_in" },
          generalizations => { "daemon" };
 
 
@@ -236,24 +288,24 @@ things:
  "$(mail_daemons)" comment => "Email delivery software",      
          implements => { "application_services::mail services" },
             affects => { "promise_types::processes" },
-           provides => { "ports::smtp_in" },
+           provides => { "smtp_in" },
          is_part_of => { "application_services::mail services" },
           generalizations => { "daemon" };
 
   "sshd"           comment => "The Secure Shell software",
                 implements => { "application_services::login services" },
-                  provides => { "ports::ssh_in" },
+                  provides => { "ssh_in" },
            generalizations => { "daemon" };
 
   "ldapd"           comment => "The Lightweight Directory Access Protocol",
                 implements => { "application_services::directory services" },
-                  provides => { "ports::ldap_in","ports::ldaps_in" },
+                  provides => { "ldap_in","ldaps_in" },
            generalizations => { "daemon" };
 
 
   "cf-serverd"     comment => "The CFEngine management service",
                 implements => { "application_services::host configuration" },
-                  provides => { "ports::cfengine_in" },
+                  provides => { "cfengine_in" },
            generalizations => { "daemon" };
 
 
@@ -378,7 +430,7 @@ things:
   "promises"      comment => "Displays the intended state described by a promise",
                  synonyms => { "policy" };
   "notes"         comment => "Browses the hand written annotations about the system";
-  "poeple"        comment => "Browses the users who have accounts on the current portal";
+  "people"        comment => "Browses the users who have accounts on the current portal";
   "logs"          comment => "Displays and searches system logs collected by CFEngine";
   "reports"       comment => "A tool for generating reports about hosts starting from the report types";
   "documents"     comment => "A tool for browsing the documents and manuals about CFEngine and its usage";
@@ -394,5 +446,8 @@ things:
   "risk analysis" comment => "A tool for estimating risks associated with system policy and state";
   "jobs"          comment => "Displays the number of hosts running specially monitored jobs";
 
+  "syntax tree"   comment => "Displays the CFEngine syntax tree, linked to the knowledge map";
+  "examples"      comment => "A browser for the CFEngine code examples";
+  "what's new"    comment => "A quick overview of what is new in the current release";
 }
 
