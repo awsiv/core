@@ -5224,3 +5224,10 @@ JsonElement *Nova2PHP_list_services()
  return Nova_GetApplicationServices();
 }
 
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_list_service_ports()
+{
+ return Nova_GetMeasuredServices();
+}
+

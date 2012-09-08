@@ -4364,7 +4364,15 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
 PHP_FUNCTION(cfpr_list_services)
 {
- JsonElement *out =    Nova2PHP_list_services();
+ JsonElement *out = Nova2PHP_list_services();
+ RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_list_service_ports)
+{
+ JsonElement *out = Nova2PHP_list_service_ports();
  RETURN_JSON(out);
 }
 

@@ -210,6 +210,11 @@ PHP_FUNCTION(cfpr_list_topics_for_bundle);
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_list_services);
 
+/*! \brief Get the list of monitored service ports
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(cfpr_list_service_ports);
+
 /*! \brief Query reported software entries in a host
  * \param hostKey
  * \param softwareName

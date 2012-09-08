@@ -193,7 +193,7 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("***************************************************\n");
 
     json = Nova_GetApplicationServices();
-    printf("\nSERVICES:\n");
+    printf("\nSERVICE CATALOGUE:\n");
 
     if (json)
     {
@@ -207,6 +207,21 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
+    json = Nova_GetMeasuredServices();
+    printf("\nMONITORED SERVICES:\n");
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\n%s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+    
     
     /*
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
@@ -1400,6 +1415,128 @@ int Nova_GetApplicationServices()
             }
 
             JsonObjectAppendArray(json_obj, "measured_by", json_array);
+        }
+              
+        JsonArrayAppendObject(json_array_out, json_obj); 
+    }
+    
+    return json_array_out;
+}
+
+/*************************************************************************/
+
+int Nova_GetMeasuredServices()
+{
+    bson_iterator it1;
+    EnterpriseDB conn;
+    Item *list = NULL;
+    int topic_id;
+    char *topic, *context;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+/* BEGIN query document */
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_topiccontext, "service_measurements", "");
+    BsonFinish(&query);
+
+/* BEGIN RESULT DOCUMENT */
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        topic_id = 0;
+        topic = NULL;
+        context = NULL;
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                topic = (char *)bson_iterator_string(&it1);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
+            {
+                context = (char *)bson_iterator_string(&it1);
+            }
+            
+            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
+            {
+                topic_id = bson_iterator_int(&it1);
+            }
+        }
+
+        
+        if (topic && topic_id && context)
+        {
+            PrependFullItem(&list, topic, context, topic_id, 0);
+        }
+
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn); 
+
+    list = SortItemListNames(list);
+
+    JsonElement *json_array_out = JsonArrayCreate(100);
+
+    for (Item *ip = list; ip != NULL; ip=ip->next)
+    {
+        JsonElement *json_obj = JsonObjectCreate(3);
+        char comment[CF_BUFSIZE];
+       
+        Nova_GetTopicComment(ip->name,"promisers",comment,sizeof(comment));
+        JsonObjectAppendString(json_obj, "description", comment);
+        JsonObjectAppendString(json_obj, "name", ip->name);
+        JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+
+        // Now get the technical port services that provide this, i.e. "is provided by"
+
+        Item *nn = Nova_NearestNeighbours(ip->counter, KM_MEASURES_CERT_F);
+           
+        if (nn)
+        {
+            JsonElement *json_array = JsonArrayCreate(50);
+          
+            for (Item *ips = nn; ips != NULL; ips = ips->next)
+            {
+                if (ips->counter == ip->counter)
+                {
+                    continue;
+                }
+             
+                JsonElement *json_service = JsonObjectCreate(3);
+                JsonObjectAppendString(json_service, "topic", ips->name);
+                JsonObjectAppendString(json_service, "context", ips->classes);
+                JsonObjectAppendInteger(json_service, "topic_id", ips->counter);
+                JsonArrayAppendObject(json_array, json_service);
+            }
+
+            JsonObjectAppendArray(json_obj, "measures", json_array);
         }
               
         JsonArrayAppendObject(json_array_out, json_obj); 
