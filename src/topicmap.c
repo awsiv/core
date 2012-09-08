@@ -1293,7 +1293,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     bson query;
 
     bson_init(&query);
-    bson_append_regex(&query, cfk_topiccontext, "application_services", "");
+    bson_append_regex(&query, cfk_topiccontext, "^services$", "");
     BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
@@ -1367,8 +1367,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
 
         // Now get the technical port services that provide this, i.e. "is provided by"
 
-        Item *nn = Nova_NearestNeighbours(ip->counter, KM_IMPLEMENTS_CERT_B);
-        //Item *nn = Nova_NearestNeighbours(ip->counter, NULL);
+        Item *nn = Nova_NearestNeighbours(ip->counter, KM_MEASURES_CERT_B);
            
         if (nn)
         {
@@ -1388,7 +1387,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
                 JsonArrayAppendObject(json_array, json_service);
             }
 
-            JsonObjectAppendArray(json_obj, "provided_by", json_array);
+            JsonObjectAppendArray(json_obj, "measured_by", json_array);
         }
               
         JsonArrayAppendObject(json_array_out, json_obj); 

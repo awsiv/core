@@ -2039,16 +2039,16 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         switch (certainty)
         {
         case cfk_certain:
-            attr.fwd_name = KM_IMPLEMENTS_CERT_B;
-            attr.bwd_name = KM_IMPLEMENTS_CERT_F;
+            attr.fwd_name = KM_MEASURES_CERT_B;
+            attr.bwd_name = KM_MEASURES_CERT_F;
             break;
         case cfk_uncertain:
-            attr.fwd_name = KM_IMPLEMENTS_UNCERT_B;
-            attr.bwd_name = KM_IMPLEMENTS_UNCERT_F;
+            attr.fwd_name = KM_MEASURES_UNCERT_B;
+            attr.bwd_name = KM_MEASURES_UNCERT_F;
             break;
         case cfk_possible:
-            attr.fwd_name = KM_IMPLEMENTS_POSS_B;
-            attr.bwd_name = KM_IMPLEMENTS_POSS_F;
+            attr.fwd_name = KM_MEASURES_POSS_B;
+            attr.bwd_name = KM_MEASURES_POSS_F;
             break;
         }
 
@@ -2070,16 +2070,16 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         switch (certainty)
         {
         case cfk_certain:
-            attr.fwd_name = KM_IMPLEMENTS_CERT_F;
-            attr.bwd_name = KM_IMPLEMENTS_CERT_B;
+            attr.fwd_name = KM_MEASURES_CERT_F;
+            attr.bwd_name = KM_MEASURES_CERT_B;
             break;
         case cfk_uncertain:
-            attr.fwd_name = KM_IMPLEMENTS_UNCERT_F;
-            attr.bwd_name = KM_IMPLEMENTS_UNCERT_B;
+            attr.fwd_name = KM_MEASURES_UNCERT_F;
+            attr.bwd_name = KM_MEASURES_UNCERT_B;
             break;
         case cfk_possible:
-            attr.fwd_name = KM_IMPLEMENTS_POSS_F;
-            attr.bwd_name = KM_IMPLEMENTS_POSS_B;
+            attr.fwd_name = KM_MEASURES_POSS_F;
+            attr.bwd_name = KM_MEASURES_POSS_B;
             break;
         }
 
