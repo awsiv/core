@@ -4364,13 +4364,16 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
 PHP_FUNCTION(cfpr_list_services)
 {
-    const int bufsize = 1000000;
-    char buffer[bufsize];
+ JsonElement *out = Nova2PHP_list_services();
+ RETURN_JSON(out);
+}
 
-    buffer[0] = '\0';
+/******************************************************************************/
 
-    Nova2PHP_list_services(buffer, bufsize);
-    RETURN_STRING(buffer, 1);
+PHP_FUNCTION(cfpr_list_service_ports)
+{
+ JsonElement *out = Nova2PHP_list_service_ports();
+ RETURN_JSON(out);
 }
 
 /******************************************************************************/

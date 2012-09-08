@@ -5219,15 +5219,15 @@ int Nova2PHP_list_all_goals(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_list_services(char *buffer, int bufsize)
+JsonElement *Nova2PHP_list_services()
 {
-    if (Nova_GetApplicationServices(buffer, bufsize))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+ return Nova_GetApplicationServices();
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_list_service_ports()
+{
+ return Nova_GetMeasuredServices();
 }
 

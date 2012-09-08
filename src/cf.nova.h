@@ -984,7 +984,8 @@ Item *Nova_NearestNeighbours(int topic_id, char *assoc_mask);
 Item *Nova_GetTopicsInContext(char *context);
 Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
-int Nova_GetApplicationServices(char *buffer, int bufsize);
+int Nova_GetApplicationServices(void);
+int Nova_GetMeasuredServices(void);
 JsonElement *Nova_GetServiceHistogram(void);
 JsonElement *Nova_GetServiceLevels(char *service);
 Item *Nova_GetHandlesForGoal(int referred);
@@ -1156,6 +1157,9 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define KM_INVOLVES_CERT_B "is involved in"
 #define KM_IMPLEMENTS_CERT_F "implements"
 #define KM_IMPLEMENTS_CERT_B "is implemented by"
+#define KM_MEASURES_CERT_F "measures"
+#define KM_MEASURES_CERT_B "is measured by"
+
 
 #define KM_MENTIONS_F "is mentioned in"
 #define KM_MENTIONS_B "mentions"
@@ -1196,6 +1200,8 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define KM_INVOLVES_POSS_B "can be involved in"
 #define KM_IMPLEMENTS_POSS_F "can implement"
 #define KM_IMPLEMENTS_POSS_B "can be implemented by"
+#define KM_MEASURES_POSS_F "can measure"
+#define KM_MEASURES_POSS_B "can be measured by"
 
 #define KM_CAUSE_UNCERT_F "might cause"
 #define KM_CAUSE_UNCERT_B "might be caused by"
@@ -1235,6 +1241,8 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define KM_INVOLVES_UNCERT_B "might be involved in"
 #define KM_IMPLEMENTS_UNCERT_F "might implement"
 #define KM_IMPLEMENTS_UNCERT_B "might be implemented by"
+#define KM_MEASURES_UNCERT_F "might measure"
+#define KM_MEASURES_UNCERT_B "might be measured by"
 
 
 #define KM_GENERALIZES_F "is a generalization of"

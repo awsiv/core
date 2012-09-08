@@ -15,9 +15,15 @@
 
 #include <assert.h>
 
+/*****************************************************************************/
+
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *name, char *context);
 
+/*****************************************************************************/
+
 typedef struct Hit_ Hit;
+
+/*****************************************************************************/
 
 struct Hit_
 {
@@ -27,6 +33,8 @@ struct Hit_
     char *represents;
     Hit *next;
 };
+
+/*****************************************************************************/
 
 enum { cftcp4, cftcp6, cfudp4, cfudp6, CFDIM} session;
 
@@ -38,8 +46,12 @@ struct servhist
    
 };
 
+/*****************************************************************************/
+
 #define CF_SERVICES_LIMIT 64
 #include "cf.nova.web_api.h"
+
+/*****************************************************************************/
 
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
@@ -180,10 +192,38 @@ void Nova_ShowTopic(char *qualified_topic)
 
     printf("***************************************************\n");
 
-    char buffer[1000000];
-    Nova_GetApplicationServices(buffer, 1000000);
-    printf("\nSERVICES:\n %s\n",buffer);
+    json = Nova_GetApplicationServices();
+    printf("\nSERVICE CATALOGUE:\n");
 
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\n%s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+
+    json = Nova_GetMeasuredServices();
+    printf("\nMONITORED SERVICES:\n");
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\n%s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+    
+    
+    /*
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
 
@@ -208,7 +248,7 @@ void Nova_ShowTopic(char *qualified_topic)
     }
 
     printf("***************************************************\n");
-        
+    
     printf("Service histogram (in units of services x hosts):\n");
 
     json = Nova_GetServiceHistogram();
@@ -241,7 +281,7 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    
+    */
 }
 
 /*****************************************************************************/
@@ -1056,7 +1096,7 @@ JsonElement *Nova_GetServiceHistogram()
 
     JsonElement *json_array_out = JsonArrayCreate(100);
     
-    for (srv = 0; strlen(serv_array[srv].port) > 0; srv++)
+    for (srv = 0; serv_array[srv].port != NULL && strlen(serv_array[srv].port) > 0; srv++)
        {
        JsonElement *json_obj = JsonObjectCreate(6);
        JsonObjectAppendString(json_obj, "port", serv_array[srv].port);
@@ -1263,7 +1303,7 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 
 /*************************************************************************/
 
-int Nova_GetApplicationServices(char *buffer, int bufsize)
+int Nova_GetApplicationServices()
 {
     bson_iterator it1;
     EnterpriseDB conn;
@@ -1280,7 +1320,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
     bson query;
 
     bson_init(&query);
-    bson_append_regex(&query, cfk_topiccontext, "application_services", "");
+    bson_append_regex(&query, cfk_topiccontext, "^services$", "");
     BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
@@ -1354,8 +1394,7 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
 
         // Now get the technical port services that provide this, i.e. "is provided by"
 
-        Item *nn = Nova_NearestNeighbours(ip->counter, KM_IMPLEMENTS_CERT_B);
-        //Item *nn = Nova_NearestNeighbours(ip->counter, NULL);
+        Item *nn = Nova_NearestNeighbours(ip->counter, KM_MEASURES_CERT_B);
            
         if (nn)
         {
@@ -1375,20 +1414,135 @@ int Nova_GetApplicationServices(char *buffer, int bufsize)
                 JsonArrayAppendObject(json_array, json_service);
             }
 
-            JsonObjectAppendArray(json_obj, "provided_by", json_array);
+            JsonObjectAppendArray(json_obj, "measured_by", json_array);
         }
               
         JsonArrayAppendObject(json_array_out, json_obj); 
     }
     
+    return json_array_out;
+}
 
-    Writer *writer = StringWriter();
-    JsonElementPrint(writer, json_array_out, 1);
-    JsonElementDestroy(json_array_out);
-    snprintf(buffer, bufsize,"%s", StringWriterData(writer));
-    WriterClose(writer);
+/*************************************************************************/
 
-    return true;
+int Nova_GetMeasuredServices()
+{
+    bson_iterator it1;
+    EnterpriseDB conn;
+    Item *list = NULL;
+    int topic_id;
+    char *topic, *context;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+/* BEGIN query document */
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_topiccontext, "service_measurements", "");
+    BsonFinish(&query);
+
+/* BEGIN RESULT DOCUMENT */
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        topic_id = 0;
+        topic = NULL;
+        context = NULL;
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                topic = (char *)bson_iterator_string(&it1);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
+            {
+                context = (char *)bson_iterator_string(&it1);
+            }
+            
+            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
+            {
+                topic_id = bson_iterator_int(&it1);
+            }
+        }
+
+        
+        if (topic && topic_id && context)
+        {
+            PrependFullItem(&list, topic, context, topic_id, 0);
+        }
+
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn); 
+
+    list = SortItemListNames(list);
+
+    JsonElement *json_array_out = JsonArrayCreate(100);
+
+    for (Item *ip = list; ip != NULL; ip=ip->next)
+    {
+        JsonElement *json_obj = JsonObjectCreate(3);
+        char comment[CF_BUFSIZE];
+       
+        Nova_GetTopicComment(ip->name,"promisers",comment,sizeof(comment));
+        JsonObjectAppendString(json_obj, "description", comment);
+        JsonObjectAppendString(json_obj, "name", ip->name);
+        JsonObjectAppendInteger(json_obj, "topic_id", ip->counter);
+
+        // Now get the technical port services that provide this, i.e. "is provided by"
+
+        Item *nn = Nova_NearestNeighbours(ip->counter, KM_MEASURES_CERT_F);
+           
+        if (nn)
+        {
+            JsonElement *json_array = JsonArrayCreate(50);
+          
+            for (Item *ips = nn; ips != NULL; ips = ips->next)
+            {
+                if (ips->counter == ip->counter)
+                {
+                    continue;
+                }
+             
+                JsonElement *json_service = JsonObjectCreate(3);
+                JsonObjectAppendString(json_service, "topic", ips->name);
+                JsonObjectAppendString(json_service, "context", ips->classes);
+                JsonObjectAppendInteger(json_service, "topic_id", ips->counter);
+                JsonArrayAppendObject(json_array, json_service);
+            }
+
+            JsonObjectAppendArray(json_obj, "measures", json_array);
+        }
+              
+        JsonArrayAppendObject(json_array_out, json_obj); 
+    }
+    
+    return json_array_out;
 }
 
 /*************************************************************************/
