@@ -346,21 +346,21 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser), NOVA_GIVES_PR);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, NovaEscape(pp->promiser), NOVA_STAKEHOLDER);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
+        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
 
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
+        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
                 KM_AFFECTS_CERT_F);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, NovaEscape(pp->promiser),
-                KM_AFFECTS_CERT_F);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, NovaEscape(pp->promiser), KM_AFFECTS_CERT_F);
 
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
+
 
         for (rp = GOALS; rp != NULL; rp = rp->next)
         {
@@ -402,11 +402,15 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
             WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
                     NOVA_GIVES_PR);
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
-            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+            WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
 
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
             WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
 
+            // Make goals knowledge explicit is promisee mentioned a goal
+
+            WriterWriteF(writer, "topics:\n\n");
+                    
             for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
             {
                 if (FullTextMatch(rp2->item, rp->item))
