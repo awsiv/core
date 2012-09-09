@@ -4378,6 +4378,39 @@ PHP_FUNCTION(cfpr_list_service_ports)
 
 /******************************************************************************/
 
+PHP_FUNCTION(list_promises_with_promisee)
+{
+    char *name;
+    int n_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &name, &n_len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    JsonElement *out = Nova2PHP_list_promises_with_promisee(name);
+    RETURN_JSON(out);
+}
+/******************************************************************************/
+
+PHP_FUNCTION(agent_bundle_type_histogram)
+{
+    char *name;
+    int n_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &name, &n_len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    JsonElement *out = Nova2PHP_list_types_in_bundle(name);
+    RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_goal_progress)
 {
  long id, hlen;

@@ -99,6 +99,17 @@ PHP_FUNCTION(cfpr_vitals_view_week);
 // port plan: /host/vitals
 PHP_FUNCTION(cfpr_vitals_view_year);
 
+/*! \brief A histogram of bundle types
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(agent_bundle_type_histogram);
+
+/*! \brief A list of handles with a named promisee
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(list_promises_with_promisee);
+
+
 /*! \brief A histogram of open ports
  */
 // port plan: (further investigate)
