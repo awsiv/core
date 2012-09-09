@@ -5231,3 +5231,81 @@ JsonElement *Nova2PHP_list_service_ports()
  return Nova_GetMeasuredServices();
 }
 
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_list_promises_with_promisee(char *name)
+{
+ JsonElement *array_promises = JsonArrayCreate(20);
+ int id = Nova_GetTopicIdForTopic(name);
+ Item *list = Nova_NearestNeighbours(id, NOVA_USES_PR);
+ 
+ list = SortItemListNames(list);
+
+  for (Item *ip = list; ip != NULL; ip = ip->next)
+    {
+    if (strcmp(ip->classes, "promises") == 0)
+       {
+       JsonElement *user = JsonObjectCreate(3);
+       JsonObjectAppendString(user, "handle", ip->name);
+       JsonObjectAppendString(user, "context", ip->classes);
+       JsonObjectAppendInteger(user, "topic_id", ip->counter);
+       JsonArrayAppendObject(array_promises, user);         
+       }
+    }
+
+ DeleteItemList(list);
+
+ return array_promises;
+}
+
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_list_types_in_bundle(char *name)
+{
+     EnterpriseDB conn;
+     PromiseFilter *filter = NewPromiseFilter();
+     PromiseFilterAddBundles(filter, name, NULL);
+     
+     enum typesequence type;
+     int total = 0, type_counter[kp_none] = {0};
+     
+     if (!CFDB_Open(&conn))
+     {
+         return false;
+     }
+  
+     HubQuery *hq = CFDB_QueryPromisesExpanded(&conn, filter);
+
+     CFDB_Close(&conn);
+ 
+     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+     {
+         HubPromise *hp = (HubPromise *) rp->item;
+        
+         for (type = 0; type != kp_none; type++)
+         {
+             if (strcmp(hp->promiseType, AGENT_TYPESEQUENCE[type]) == 0)
+             {
+                 type_counter[type]++;
+                 total++;
+             }
+         }
+     }
+     
+     DeleteHubQuery(hq, DeleteHubPromise);
+     
+     JsonElement *types = JsonObjectCreate(kp_none);
+     
+     for (type = 0; type != kp_none; type++)
+     {
+         if (type_counter[type] > 0)
+         {
+             JsonObjectAppendInteger(types, AGENT_TYPESEQUENCE[type], type_counter[type]);
+         }
+     }
+     
+     JsonObjectAppendInteger(types, "total", total);     
+     return types;
+}
+
