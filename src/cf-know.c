@@ -75,14 +75,14 @@ static int BGOALS = false;
 
 extern const BodySyntax CFK_CONTROLBODY[];
 
-enum typesequence
+enum know_typesequence
 {
-    kp_classes,
-    kp_things,
-    kp_topics,
-    kp_occur,
-    kp_reports,
-    kp_none
+    kkp_classes,
+    kkp_things,
+    kkp_topics,
+    kkp_occur,
+    kkp_reports,
+    kkp_none
 };
 
 char *TYPESEQUENCE[] =
@@ -538,7 +538,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
     char *name;
     Rval retval;
     int ok = true;
-    enum typesequence type;
+    enum know_typesequence type;
 
     if (GetVariable("control_common", "bundlesequence", &retval) == cf_notype)
     {
