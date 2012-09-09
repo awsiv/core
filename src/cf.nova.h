@@ -1272,7 +1272,6 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define NOVA_STAKEHOLDER "is a stakeholder/promisee for"
 #define NOVA_STAKEHOLDER_INV "has stakeholder/promisee"
 
-
 enum knowledgecertainty
 {
     cfk_certain,
