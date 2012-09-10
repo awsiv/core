@@ -10,6 +10,9 @@
 	Removed commercial_customer class, as it was unused in internal policies.
 	Please use enterprise_edition instead if you used this in your policies.
 
+	New performance report events: DBPurgeHostsAll, DBMaintenance,
+	DBMaintenanceTimestampsSingleHost, DBCacheCompliance, DBReportCollectAll.
+
 2.2.0
 	More diagnostics on report collection from cf-hub. Logging more
 	useful information in cf-hub -l, measuring total collection time
