@@ -13,6 +13,10 @@
 	New performance report events: DBPurgeHostsAll, DBMaintenance,
 	DBMaintenanceTimestampsSingleHost, DBCacheCompliance, DBReportCollectAll.
 
+	License verification is made more robust by not relying on the last-seen
+	database anymore. This means you do not need to bootstrap a client to
+	verify the license. See the cf-key --install-license option.
+
 2.2.0
 	More diagnostics on report collection from cf-hub. Logging more
 	useful information in cf-hub -l, measuring total collection time
