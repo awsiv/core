@@ -1100,11 +1100,14 @@ HubUser *NewHubUser(bool external, const char *username, const char *email, cons
 
 void DeleteHubUser(HubUser *user)
 {
-    free(user->username);
-    free(user->email);
-    DeleteRlist(user->roles);
+    if (user)
+    {
+        free(user->username);
+        free(user->email);
+        DeleteRlist(user->roles);
 
-    free(user);
+        free(user);
+    }
 }
 
 int HubUserHash(const HubUser *user)
