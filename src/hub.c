@@ -761,7 +761,7 @@ static void Nova_Scan(Item *masterlist)
         Nova_ParallelizeScan(masterlist);
     }
 
-    EndMeasure("ReportCollectAll", measure_start);
+    EndMeasure("DBReportCollectAll", measure_start);
 
     Nova_HubLog("Finished report collection -- tried %d hosts", ListLen(masterlist));
 }
