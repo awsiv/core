@@ -315,6 +315,13 @@ static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_
 
     // fallback to lookup of ip address -> hub key in lastseen
 
+    /*
+       DEPRECATED:
+       license.dat's produced after September 10 2012 (commit b933e0bbf52f9ada224dfd998e68ba53cb14932a)
+       will include the hub's public key digest and thus be independent of lastseen lookups.
+       The code below can be removed when we don't want it to be backwards-compatible with old license files.
+    */
+
     char hub_key_digest_lookup[CF_MAXVARSIZE] = {0};
 
     Address2Hostkey(hub_ip_address, hub_key_digest_lookup);
