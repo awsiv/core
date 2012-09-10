@@ -92,19 +92,6 @@ int EnterpriseExpiry(void)
         fclose(fp);
     }
 
-    if (strlen(policy_server) == 0)
-    {
-        if (!BOOTSTRAP)
-        {
-            CfOut(cf_inform, "",
-                  " !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)",
-                  name);
-        }
-
-        LICENSES = 500;
-        return false;
-    }
-
     char *license_file_contents = LicenseFileRead();
 
     if (license_file_contents != NULL)
@@ -316,6 +303,14 @@ static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_
     if(cfstat(path, &sb) == 0)
     {
         return true;
+    }
+
+    CfOut(cf_verbose, "", "No public key found at %s", path);
+
+    if(strlen(hub_ip_address) == 0)
+    {
+        CfOut(cf_verbose, "", "Hub ip address is empty");
+        return false;
     }
 
     // fallback to lookup of ip address -> hub key in lastseen
