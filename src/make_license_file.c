@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rsa.h>
+#include <openssl/err.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <stdlib.h>
@@ -65,9 +68,11 @@ typedef struct
 /* license generation */
 static char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE + 1]);
 static void ThisHashString(char *fna, char *buffer, int len, unsigned char digest[EVP_MAX_MD_SIZE + 1]);
-static void MakeLicense(const char *public_key, enum cf_product_id product_id,
-                        const char *day_str, const char *month_str, const char *year_str,
-                        const char *company_str, int license_count);
+static char *PublicKeyDigestString(char *public_key_digest_str, const char *public_key_file);
+static void MakeLicense(const char *public_key_file, enum cf_product_id product_id, const char *day_str,
+                        const char *month_str, const char *year_str, const char *company_str, int license_count);
+static void ThisHashPubKey(unsigned char digest[EVP_MAX_MD_SIZE + 1], RSA *key);
+static RSA *ReadPublicKey(const char *filename);
 
 /* input validation */
 static int IsLeapYear(int year);
@@ -351,7 +356,7 @@ static void PrintSettings(const LicenceSettings * settings)
 
 /*******************************************************************/
 
-static void MakeLicense(const char *public_key, enum cf_product_id product_id, const char *day_str,
+static void MakeLicense(const char *public_key_file, enum cf_product_id product_id, const char *day_str,
                         const char *month_str, const char *year_str, const char *company_str, int license_count)
 {
     char buffer[CF_MAXVARSIZE];
@@ -369,7 +374,7 @@ static void MakeLicense(const char *public_key, enum cf_product_id product_id, c
     case cf_constellation:
         snprintf(buffer, CF_MAXVARSIZE - 1, "%s-%o.%s Constellation %s %s",
                  month_str, license_count, day_str, year_str, company_str);
-        ThisHashString((char *) public_key, buffer, strlen(buffer), digest);
+        ThisHashString((char *) public_key_file, buffer, strlen(buffer), digest);
         fprintf(fp, "%2s %x %2s %4s %s %s\n", day_str, license_count, month_str, year_str,
                 ThisHashPrint(digest), company_str);
         fprintf(fp, "CN");
@@ -378,7 +383,7 @@ static void MakeLicense(const char *public_key, enum cf_product_id product_id, c
     case cf_nova:              // nova
         snprintf(buffer, CF_MAXVARSIZE - 1, "%s-%o.%s Nova %s %s",
                  month_str, license_count, day_str, year_str, company_str);
-        ThisHashString((char *) public_key, buffer, strlen(buffer), digest);
+        ThisHashString((char *) public_key_file, buffer, strlen(buffer), digest);
         fprintf(fp, "%2s %x %2s %4s %s %s", day_str, license_count, month_str, year_str,
                 ThisHashPrint(digest), company_str);
         break;
@@ -387,6 +392,10 @@ static void MakeLicense(const char *public_key, enum cf_product_id product_id, c
         printf("Error: Unknown product version\n");
         exit(1);
     }
+
+    char public_key_digest_str[512];
+    PublicKeyDigestString(public_key_digest_str, public_key_file);
+    fprintf(fp, "\n%s", public_key_digest_str);
 
     fclose(fp);
 
@@ -432,6 +441,106 @@ static void ThisHashString(char *filename, char *buffer, int len, unsigned char 
     fclose(fp);
 
     EVP_DigestFinal(&context, digest, &md_len);
+}
+
+/*********************************************************************/
+
+static char *PublicKeyDigestString(char *public_key_digest_str, const char *public_key_file)
+{
+    unsigned char public_key_digest[EVP_MAX_MD_SIZE + 1];
+
+    RSA *public_key = ReadPublicKey(public_key_file);
+
+    if(public_key == NULL)
+    {
+        printf("Could not read public key");
+        exit(1);
+    }
+
+    ThisHashPubKey(public_key_digest, public_key);
+    RSA_free(public_key);
+
+    strcpy(public_key_digest_str, ThisHashPrint(public_key_digest) + 4);
+
+    return public_key_digest_str;
+}
+
+/*********************************************************************/
+
+static void ThisHashPubKey(unsigned char digest[EVP_MAX_MD_SIZE + 1], RSA *key)
+{
+    EVP_MD_CTX context;
+    const EVP_MD *md = NULL;
+    int md_len, i, buf_len, actlen;
+    unsigned char *buffer;
+
+    OpenSSL_add_all_algorithms();
+    OpenSSL_add_all_digests();
+    ERR_load_crypto_strings();
+
+    if (key->n)
+    {
+        buf_len = (size_t) BN_num_bytes(key->n);
+    }
+    else
+    {
+        buf_len = 0;
+    }
+
+    if (key->e)
+    {
+        if (buf_len < (i = (size_t) BN_num_bytes(key->e)))
+        {
+            buf_len = i;
+        }
+    }
+
+    buffer = malloc(buf_len + 10);
+
+    md = EVP_get_digestbyname("sha256");
+
+    if (md == NULL)
+    {
+        printf("!! Digest type sha256 not supported by OpenSSL library");
+        exit(1);
+    }
+
+    EVP_DigestInit(&context, md);
+
+    actlen = BN_bn2bin(key->n, buffer);
+    EVP_DigestUpdate(&context, buffer, actlen);
+    actlen = BN_bn2bin(key->e, buffer);
+    EVP_DigestUpdate(&context, buffer, actlen);
+    EVP_DigestFinal(&context, digest, &md_len);
+
+    free(buffer);
+}
+
+/*********************************************************************/
+
+static RSA *ReadPublicKey(const char *filename)
+{
+    char *passphrase = "Cfengine passphrase";
+
+    FILE *fp;
+
+    if ((fp = fopen(filename, "r")) == NULL)
+    {
+        printf("!! Could not read public key %s\n", filename);
+        return NULL;
+    }
+
+    RSA *key = PEM_read_RSAPublicKey(fp, NULL, NULL, passphrase);
+    unsigned long err;
+
+    if (key == NULL)
+    {
+        err = ERR_get_error();
+        printf("Error reading public key: %s\n", ERR_reason_error_string(err));
+    }
+
+    fclose(fp);
+    return key;
 }
 
 /*********************************************************************/
