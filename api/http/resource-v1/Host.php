@@ -5,12 +5,12 @@
  */
 class HostVital extends Resource
 {
-    function get($request, $username, $vital_id)
+    function get($request, $host_id, $vital_id)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfapi_host_vital_get($user, $username, $vital_id,
+        $payload = cfapi_host_vital_get($user, $host_id, $vital_id,
             DefaultParameters::from(), DefaultParameters::to());
         if ($payload)
         {

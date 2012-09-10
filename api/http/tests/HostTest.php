@@ -135,7 +135,7 @@ class HostTest extends APIBaseTest
     {
         try
         {
-            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/io_reads?from=1388534400&to=1388534400');
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/io_reads?from=1327493194&to=1327579594');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
             $this->assertEquals(1, sizeof($response['data']));
