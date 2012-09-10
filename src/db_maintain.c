@@ -284,6 +284,8 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     char keyHash[CF_MAXVARSIZE];
     time_t now;
 
+    struct timespec maintenance_timestamp_start = BeginMeasure();
+
     CfOut(cf_verbose, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
@@ -379,6 +381,8 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     }
 
     mongo_cursor_destroy(cursor);
+
+    EndMeasure("DBMaintenanceTimestampsSingleHost", maintenance_timestamp_start);
 }
 
 /*****************************************************************************/
