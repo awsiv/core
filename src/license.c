@@ -14,6 +14,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include <assert.h>
 
 #include "env_context.h"
 #include "promises.h"
@@ -23,6 +24,7 @@
 #include "vars.h"
 #include "conversion.h"
 #include "files_lib.h"
+#include "license.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -262,6 +264,50 @@ static bool RecentlyCheckedLicense(void)
     LAST_LICENSE_CHECK_TIMESTAMP = now;
 
     return false;
+}
+
+/*****************************************************************************/
+
+bool LicenseFileParse(EnterpriseLicense *license, char *license_file_path)
+{
+#define MAX_LICENSE_FILE_SIZE 256
+
+    assert(SafeStringLength(license_file_path) > 0);
+
+    char *license_file_contents;
+    FileReadMax(&license_file_contents, license_file_path, MAX_LICENSE_FILE_SIZE);
+
+    if(!license_file_contents)
+    {
+        return false;
+    }
+
+    char format[256];
+
+    snprintf(format, sizeof(format), "%%d %%x %%%ds %%d %%%ds %%%d[^\n]",
+             MAX_MONTH_NAME + 1, MAX_DIGEST_HEX + 5, MAX_COMPANY_NAME + 1);
+
+    sscanf(license_file_contents, format,
+           &(license->expiry_day), &(license->count), license->expiry_month,
+           &(license->expiry_year), license->digest, license->company_name);
+
+
+    snprintf(format, sizeof(format), "%%*[^\n]%%%ds[^\n]", MAX_DIGEST_HEX + 1);
+
+    sscanf(license_file_contents, format, license->public_key_digest);
+
+    free(license_file_contents);
+
+    struct stat sb;
+
+    if(cfstat(license_file_path, &sb) != 0)
+    {
+        return false;
+    }
+
+    license->install_timestamp = sb.st_mtime;
+
+    return true;
 }
 
 /*****************************************************************************/

@@ -21,7 +21,7 @@ libcfnova_la_LDFLAGS = -no-undefined
 libcfnova_la_SOURCES = \
         cfnova.c \
         ldap_lib.c ldap_lib.h \
-        license.c \
+        license.c license.h \
         monitoring.c \
         ontology.c \
         datapackaging.c \
