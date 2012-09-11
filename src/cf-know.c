@@ -604,7 +604,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
             if ((bp = GetBundle(policy, name, "knowledge")) || (bp = GetBundle(policy, name, "common")))
             {
                 BannerBundle(bp, params);
-                AugmentScope(bp->name, bp->args, params);
+                AugmentScope(bp->name, bp->namespace, bp->args, params);
                 DeletePrivateClassContext();    // Each time we change bundle      
             }
 
