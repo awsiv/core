@@ -135,7 +135,10 @@ class HostTest extends APIBaseTest
     {
         try
         {
-            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/io_reads?from=1327493194&to=1327579594');
+            $from = 1327493194;
+            $to = 1327579594;
+
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/io_reads?from=' . $from . '&to=' . $to);
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
             $this->assertEquals(1, sizeof($response['data']));
@@ -145,6 +148,12 @@ class HostTest extends APIBaseTest
             $vital = $response['data'][0];
             $this->assertEquals('io_reads', $vital['id']);
             $this->assertEquals(288, sizeof($vital['values']));
+
+            foreach ($vital['values'] as $point)
+            {
+                $this->assertLessThanOrEqual($to, $point[0]);
+                $this->assertGreaterThanOrEqual($from, $point[0]);
+            }
         }
         catch (Pest_Exception $e)
         {
