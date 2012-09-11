@@ -20,7 +20,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scopes, char *sec);
 void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes, char *regex, char *sec);
 
-static LDAP *NovaLDAPConnect(const char *uri, bool starttls, const char **errstr);
+static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seconds, const char **errstr);
 static int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 static int NovaStr2Scope(const char *scope);
 
@@ -47,7 +47,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
         return NULL;
     }
 
-    if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+    if ((ld = NovaLDAPConnect(uri, false, 0, NULL)) == NULL)
     {
         return NULL;
     }
@@ -233,7 +233,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
         return NULL;
     }
 
-    if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+    if ((ld = NovaLDAPConnect(uri, false, 0, NULL)) == NULL)
     {
         return NULL;
     }
@@ -412,7 +412,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
         return NULL;
     }
 
-    if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+    if ((ld = NovaLDAPConnect(uri, false, 0, NULL)) == NULL)
     {
         return NULL;
     }
@@ -608,7 +608,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
         return NULL;
     }
 
-    if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+    if ((ld = NovaLDAPConnect(uri, false, 0, NULL)) == NULL)
     {
         return NULL;
     }
@@ -780,9 +780,10 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
 #ifdef HAVE_LIBLDAP
 
-bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, const char *authentication_method, bool starttls, const char **const errstr)
+bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, const char *authentication_method, bool starttls,
+                        time_t timeout_seconds, const char **const errstr)
 {
-    LDAP *ld = NovaLDAPConnect(uri, starttls, errstr);
+    LDAP *ld = NovaLDAPConnect(uri, starttls, timeout_seconds, errstr);
 
     if (ld == NULL)
     {
@@ -837,7 +838,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
         results_per_page = 1000;
     }
 
-    if ((ld = NovaLDAPConnect(uri, start_tls, errstr)) == NULL)
+    if ((ld = NovaLDAPConnect(uri, start_tls, 0, errstr)) == NULL)
     {
         return NULL;
     }
@@ -1016,10 +1017,26 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
 
 #ifdef HAVE_LIBLDAP
 
-static LDAP *NovaLDAPConnect(const char *uri, bool starttls, const char **const errstr)
+static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seconds, const char **const errstr)
 {
     LDAP *ld;
     int ret, version;
+
+    // set timeout for synchronous calls
+    if (timeout_seconds > 0)
+    {
+        struct timeval t = { 0 };
+        t.tv_sec = timeout_seconds;
+        if ((ret = ldap_set_option(NULL, LDAP_OPT_NETWORK_TIMEOUT, &t)) != LDAP_SUCCESS)
+        {
+            if (errstr)
+            {
+                *errstr = ldap_err2string(ret);
+            }
+            CfOut(cf_error, "", "Unable to set global LDAP_OPT_TIMEOUT option: %s", ldap_err2string(ret));
+            return NULL;
+        }
+    }
 
 /* TLS options need to be set up before opening a connection */
 

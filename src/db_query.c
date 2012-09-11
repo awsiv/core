@@ -83,40 +83,34 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 
 /*****************************************************************************/
 
-int CFDB_GetBlueHostThreshold(unsigned long *threshold)
+bool CFDB_GetBlueHostThreshold(unsigned long *threshold)
 {
-    unsigned long retval = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    char threshold_str[CF_SMALLBUF];
-
-    threshold_str[0] = '\0';
-
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return false;
     }
 
-    CFDB_GetSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str, CF_SMALLBUF);
-
-    if (strlen(threshold_str) == 0)     // no key in db then insert hardcoded default
+    HubSettings *settings = NULL;
+    cfapi_errid err = CFDB_QuerySettings(&conn, &settings);
+    if (err != ERRID_SUCCESS)
     {
-        snprintf(threshold_str, CF_SMALLBUF, "%lu", retval);
+        // return the default, if any.
+        settings = NewHubSettingsDefaults();
+        *threshold = settings->bluehost_horizon;
+        DeleteHubSettings(settings);
 
-        if (!CFDB_UpdateSetting(&conn, SETTING_BLUEHOST_HORIZON, threshold_str))
-        {
-            CFDB_Close(&conn);
-            return false;
-        }
+        CFDB_Close(&conn);
+        return false;
     }
     else
     {
-        sscanf(threshold_str, "%lu", &retval);
+        *threshold = settings->bluehost_horizon;
+        DeleteHubSettings(settings);
+
+        CFDB_Close(&conn);
+        return true;
     }
-
-    *threshold = retval;
-
-    CFDB_Close(&conn);
-    return true;
 }
 
 /*****************************************************************************/
@@ -6438,4 +6432,161 @@ HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const
     mongo_cursor_destroy( cursor );
 
     return NewHubQuery( NULL, schedules );
+}
+
+cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out)
+{
+    assert(conn);
+    assert(settings_out);
+
+    bson query[1];
+    bson_init(query);
+    BsonFinish(query);
+
+    bson empty[1];
+    bson_empty(empty);
+
+    bson record = { 0 };
+
+    bool found = MongoFindOne(conn, MONGO_SETTINGS, query, empty, &record) == MONGO_OK;
+
+    bson_destroy(query);
+
+    if (found)
+    {
+        HubSettings *settings = NewHubSettingsDefaults();
+
+        {
+            bool rbac_enabled = false;
+            if (BsonBoolGetCheckExists(&record, "rbacEnabled", &rbac_enabled))
+            {
+                settings->rbac_enabled = rbac_enabled ? TRINARY_TRUE : TRINARY_FALSE;
+            }
+        }
+
+        {
+            bool ldap_enabled = false;
+            if (BsonBoolGetCheckExists(&record, "ldapEnabled", &ldap_enabled))
+            {
+                settings->ldap.enabled = ldap_enabled ? TRINARY_TRUE: TRINARY_FALSE;
+            }
+        }
+
+        {
+            const char *ldap_mode = NULL;
+            if (BsonStringGet(&record, "ldapMode", &ldap_mode))
+            {
+                settings->ldap.mode = HubSettingsLDAPModeFromString(ldap_mode);
+            }
+        }
+
+        {
+            const char *ldap_username = NULL;
+            if (BsonStringGet(&record, "ldapUsername", &ldap_username))
+            {
+                free(settings->ldap.username);
+                settings->ldap.username = SafeStringDuplicate(ldap_username);
+            }
+        }
+
+        {
+            const char *ldap_password = NULL;
+            if (BsonStringGet(&record, "ldapPassword", &ldap_password))
+            {
+                free(settings->ldap.password);
+                settings->ldap.password = SafeStringDuplicate(ldap_password);
+            }
+        }
+
+        {
+            const char *ldap_encryption = NULL;
+            if (BsonStringGet(&record, "ldapEncryption", &ldap_encryption))
+            {
+                free(settings->ldap.encryption);
+                settings->ldap.encryption = SafeStringDuplicate(ldap_encryption);
+            }
+        }
+
+        {
+            const char *ldap_login_attribute = NULL;
+            if (BsonStringGet(&record, "ldapLoginAttribute", &ldap_login_attribute))
+            {
+                free(settings->ldap.login_attribute);
+                settings->ldap.login_attribute = SafeStringDuplicate(ldap_login_attribute);
+            }
+        }
+
+        {
+            const char *ldap_base_dn = NULL;
+            if (BsonStringGet(&record, "ldapBaseDN", &ldap_base_dn))
+            {
+                free(settings->ldap.base_dn);
+                settings->ldap.base_dn = SafeStringDuplicate(ldap_base_dn);
+            }
+        }
+
+        {
+            const char *ldap_users_directory = NULL;
+            if (BsonStringGet(&record, "ldapUsersDirectory", &ldap_users_directory))
+            {
+                free(settings->ldap.users_directory);
+                settings->ldap.users_directory = SafeStringDuplicate(ldap_users_directory);
+            }
+        }
+
+
+        {
+            const char *ldap_host = NULL;
+            if (BsonStringGet(&record, "ldapHost", &ldap_host))
+            {
+                free(settings->ldap.host);
+                settings->ldap.host = SafeStringDuplicate(ldap_host);
+            }
+        }
+
+        {
+            int port = 0;
+            if (BsonIntGet(&record, "ldapPort", &port))
+            {
+                settings->ldap.port = port;
+            }
+        }
+
+        {
+            int port_ssl = 0;
+            if (BsonIntGet(&record, "ldapPortSSL", &port_ssl))
+            {
+                settings->ldap.port_ssl = port_ssl;
+            }
+        }
+
+        {
+            const char *ldap_ad_domain = NULL;
+            if (BsonStringGet(&record, "ldapActiveDirectoryDomain", &ldap_ad_domain))
+            {
+                free(settings->ldap.ad_domain);
+                settings->ldap.ad_domain = SafeStringDuplicate(ldap_ad_domain);
+            }
+        }
+
+        {
+            int bluehost_horizon = 0;
+            if (BsonIntGet(&record, "blueHostHorizon", &bluehost_horizon))
+            {
+                settings->bluehost_horizon = bluehost_horizon;
+            }
+        }
+
+        bson_destroy(&record);
+
+        *settings_out = settings;
+        return ERRID_SUCCESS;
+    }
+    else
+    {
+        *settings_out = NewHubSettingsDefaults();
+        return ERRID_ITEM_NONEXISTING;
+    }
+
+
 }

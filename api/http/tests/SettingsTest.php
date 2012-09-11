@@ -103,13 +103,13 @@ class SettingsTest extends APIBaseTest
         try
         {
             $this->pest->post('/settings', '{
-                "rbac": false
+                "rbacEnabled": false
                 }');
             $this->assertEquals(204, $this->pest->lastStatus());
 
             $settings = $this->getResults('/settings');
             $this->assertValidJson($settings);
-            $this->assertFalse($settings[0]['rbac']);
+            $this->assertFalse($settings[0]['rbacEnabled']);
         }
         catch (Pest_Exception $e)
         {
@@ -117,7 +117,7 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testUpdateLdapSetting()
+    public function testUpdateLdapSettings()
     {
         try
         {
@@ -155,4 +155,32 @@ class SettingsTest extends APIBaseTest
         }
     }
 
+    public function testUpdateLdapSettingNoPassword()
+    {
+        try
+        {
+            $this->pest->post('/settings', '{
+                "ldapEnabled": true,
+                "ldapMode": "standard",
+                "ldapHost": "yahoo.comxxx",
+                "ldapBaseDN":"dc=cfengine;dc=com",
+                "ldapLoginAttribute":"uid",
+                "ldapUsersDirectory":"ou=jersey",
+                "ldapEncryption":"ssl",
+                "ldapPort": 1025,
+                "ldapPortSSL": 1026,
+                "ldapUsername": "root",
+                }');
+
+            $this->fail('Should not get here');
+        }
+        catch (Pest_NotAcceptable $e)
+        {
+            //pass
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail('Invalid reply: ' . $this->pest->lastStatus());
+        }
+    }
 }

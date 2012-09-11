@@ -32,7 +32,6 @@
 # define MONGO_ROLES_COLLECTION MONGO_BASE ".roles"
 # define MONGO_COLLECTION_USERS_INTERNAL MONGO_BASE ".users"
 # define MONGO_COLLECTION_USERS_EXTERNAL MONGO_BASE ".users.external"
-# define MONGO_SETTINGS_COLLECTION MONGO_BASE ".settings"
 
 # define dbkey_user_name "username"
 # define dbkey_user_password "password"
@@ -49,66 +48,26 @@
 
 # define SALT_SIZE 10
 
-static const char *settingLabels[SETTING_MAX] =
-{
-    [SETTING_UNKNOWN] = "unknown",
-
-    [SETTING_RBAC] = "rbac",
-    [SETTING_LDAP_ENABLED] = "ldapEnabled",
-    [SETTING_LDAP_MODE] = "ldapMode",
-    [SETTING_LDAP_USERNAME] = "ldapUsername",
-    [SETTING_LDAP_PASSWORD] = "ldapPassword",
-    [SETTING_LDAP_ENCRYPTION] = "ldapEncryption",
-    [SETTING_LDAP_LOGIN_ATTRIBUTE] = "ldapLoginAttribute",
-    [SETTING_LDAP_BASE_DN] = "ldapBaseDN",
-    [SETTING_LDAP_USERS_DIRECTORY] = "ldapUsersDirectory",
-    [SETTING_LDAP_HOST] = "ldapHost",
-    [SETTING_LDAP_PORT] = "ldapPort",
-    [SETTING_LDAP_PORT_SSL] = "ldapPortSSL",
-    [SETTING_LDAP_AD_DOMAIN] = "ldapActiveDirectoryDomain",
-    [SETTING_BLUEHOST_HORIZON] = "blueHostHorizon",
-};
-
-static const JsonPrimitiveType setting_types[SETTING_MAX] =
-{
-    [SETTING_UNKNOWN] = JSON_PRIMITIVE_TYPE_NULL,
-
-    [SETTING_RBAC] = JSON_PRIMITIVE_TYPE_BOOL,
-    [SETTING_LDAP_ENABLED] = JSON_PRIMITIVE_TYPE_BOOL,
-    [SETTING_LDAP_MODE] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_USERNAME] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_PASSWORD] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_ENCRYPTION] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_LOGIN_ATTRIBUTE] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_BASE_DN] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_USERS_DIRECTORY] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_HOST] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_LDAP_PORT] = JSON_PRIMITIVE_TYPE_INTEGER,
-    [SETTING_LDAP_PORT_SSL] = JSON_PRIMITIVE_TYPE_INTEGER,
-    [SETTING_LDAP_AD_DOMAIN] = JSON_PRIMITIVE_TYPE_STRING,
-    [SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER
-};
-
 static const char *_EXTERNAL_FILTER_LDAP = "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson)(mail=*))";
 static const char *_EXTERNAL_FILTER_AD = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
 
+static time_t _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS = 5;
+
 static HubQuery *CombineAccessOfRoles(const char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
-static bool _UsernameExistsExternal(EnterpriseDB *conn, const char *username);
+static bool _UsernameExistsExternal(const HubSettingsLDAP *ldap_settings, const char *username);
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
 static bool RoleExists(const char *name);
 static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char *username, HubUser **user_out);
 static HubQuery *CFDB_GetRolesByMultipleNames(const Rlist *names);
 static HubQuery *CFDB_GetRoles(bson *query);
-static bool _IsLDAPEnabled(EnterpriseDB *conn);
-static LDAPMode _LDAPMode(EnterpriseDB *conn);
-static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
-static bool _UserIsAdmin(EnterpriseDB *conn, const char *username);
+static bool _UserIsAdmin(EnterpriseDB *conn, bool ldap_enabled, const char *username);
 static HubQuery *CFDB_GetRBACForUser(const char *userName);
 cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles);
-static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password);
+static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password);
+static char *_LDAPUri(const HubSettingsLDAP *ldap_settings);
 
 /*****************************************************************************/
 
@@ -169,26 +128,14 @@ static bool VerifyPasswordInternal(const char *clear_password, const char *db_pa
 
 #ifdef HAVE_LIBLDAP
 
-static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
-                                     const char *ldap_url,
+static cfapi_errid _LDAPAuthenticate(const char *url,
+                                     const char *login_attribute,
+                                     const char *base_dn,
+                                     const char *user_directories,
                                      bool start_tls,
                                      const char *username,
                                      const char *password)
 {
-    char login_attribute[1024] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, login_attribute, sizeof(login_attribute));
-
-    char base_dn[1024] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_BASE_DN, base_dn, sizeof(base_dn)))
-    {
-        return ERRID_RBAC_ACCESS_DENIED;
-    }
-
-    char user_directories[1024] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, user_directories, sizeof(user_directories)))
-    {
-        return ERRID_RBAC_ACCESS_DENIED;
-    }
 
     cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
     Rlist *user_directory_values = SplitStringAsRList(user_directories, ';');
@@ -206,7 +153,8 @@ static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
         strcat(bind_dn, base_dn);
 
         const char *errmsg = NULL;
-        if (CfLDAPAuthenticate(ldap_url, bind_dn, password, "sasl", start_tls, &errmsg))
+        if (CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls,
+                               _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS,  &errmsg))
         {
             result = ERRID_SUCCESS;
             break;
@@ -217,18 +165,12 @@ static cfapi_errid _LDAPAuthenticate(EnterpriseDB *conn,
     return result;
 }
 
-static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
-                                       const char *ldap_url,
+static cfapi_errid _LDAPAuthenticateAD(const char *url,
+                                       const char *ad_domain,
                                        bool start_tls,
                                        const char *username,
                                        const char *password)
 {
-    char ad_domain[1024] = { 0 };
-    if (!CFDB_HandleGetValue(settingLabels[SETTING_LDAP_AD_DOMAIN], ad_domain, sizeof(ad_domain), NULL, conn, MONGO_SETTINGS_COLLECTION))
-    {
-        return ERRID_RBAC_ACCESS_DENIED;
-    }
-
     char bind_dn[4096] = { 0 };
     if (StringMatch("/^(\\w+\\.)+\\w{2,5}$/", ad_domain))
     {
@@ -244,7 +186,8 @@ static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
     }
 
     const char *errmsg = NULL;
-    if (CfLDAPAuthenticate(ldap_url, bind_dn, password, "sasl", start_tls, &errmsg))
+    if (CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls,
+                           _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS, &errmsg))
     {
         return ERRID_SUCCESS;
     }
@@ -254,52 +197,37 @@ static cfapi_errid _LDAPAuthenticateAD(EnterpriseDB *conn,
     }
 }
 
-static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password)
+static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password)
 {
-    char encryption[1024] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, encryption, sizeof(encryption));
 
-    char ldap_host[1024] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_HOST, ldap_host, sizeof(ldap_host));
-    if (NULL_OR_EMPTY(ldap_host))
+    char url[2048] = { 0 };
+    if (StringSafeEqual(ldap_settings->encryption, "ssl"))
     {
-        return ERRID_HOST_NOT_FOUND;
-    }
-
-    char ldap_url[2048] = { 0 };
-    if (StringSafeEqual(encryption, "ssl"))
-    {
-        char ldap_port_ssl[1024] = { 0 };
-        CFDB_GetSetting(conn, SETTING_LDAP_PORT_SSL, ldap_port_ssl, sizeof(ldap_port_ssl));
-
-        snprintf(ldap_url, 2048, "ldaps://%s:%s", ldap_host, ldap_port_ssl);
+        snprintf(url, 2048, "ldaps://%s:%d", ldap_settings->host, ldap_settings->port_ssl);
     }
     else
     {
-        char ldap_port[1024] = { 0 };
-        CFDB_GetSetting(conn, SETTING_LDAP_PORT, ldap_port, sizeof(ldap_port));
-
-        snprintf(ldap_url, 2048, "ldap://%s:%s", ldap_host, ldap_port);
+        snprintf(url, 2048, "ldap://%s:%d", ldap_settings->host, ldap_settings->port);
     }
 
     bool start_tls = false;
-    if (StringSafeEqual(encryption, "tls"))
+    if (StringSafeEqual(ldap_settings->encryption, "tls"))
     {
         start_tls = true;
     }
 
-    switch (_LDAPMode(conn))
+    switch (ldap_settings->mode)
     {
     case LDAP_MODE_AD:
-        return _LDAPAuthenticateAD(conn, ldap_url, start_tls, username, password);
+        return _LDAPAuthenticateAD(url, ldap_settings->ad_domain, start_tls, username, password);
 
     default:
     case LDAP_MODE_STANDARD:
-        return _LDAPAuthenticate(conn, ldap_url, start_tls, username, password);
+        return _LDAPAuthenticate(url, ldap_settings->login_attribute, ldap_settings->base_dn, ldap_settings->users_directory, start_tls, username, password);
     }
 }
 #else
-static cfapi_errid _AuthenticateExternal(EnterpriseDB *conn, const char *username, const char *password)
+static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password)
 {
     assert(false && "Tried to authenticate using LDAP on a non-LDAP build");
     return ERRID_RBAC_ACCESS_DENIED;
@@ -320,14 +248,14 @@ static bool _UserIsInRole(const HubUser *user, const char *rolename)
     return false;
 }
 
-static bool _UserIsAdmin(EnterpriseDB *conn, const char *username)
+static bool _UserIsAdmin(EnterpriseDB *conn, bool ldap_enabled, const char *username)
 {
     static const char *_ROLE_ADMIN = "admin";
 
     HubUser *user = NULL;
     if (_GetUserRecord(conn, false, username, &user) != ERRID_SUCCESS)
     {
-        if (_IsLDAPEnabled(conn))
+        if (ldap_enabled)
         {
             if (_GetUserRecord(conn, false, username, &user) != ERRID_SUCCESS)
             {
@@ -405,14 +333,28 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bo
     }
 
     cfapi_errid result = _AuthenticateInternal(conn, username, password);
-    if (result != ERRID_SUCCESS && _IsLDAPEnabled(conn))
+    if (result != ERRID_SUCCESS)
     {
-        if (authenticated_external)
+        HubSettings *settings = NULL;
+        cfapi_errid err = CFDB_QuerySettings(conn, &settings);
+        if (err != ERRID_SUCCESS)
         {
-            *authenticated_external = true;
+            CFDB_Close(conn);
+            return ERRID_ACCESS_DENIED;
         }
 
-        result = _AuthenticateExternal(conn, username, password);
+        if (settings->ldap.enabled)
+        {
+            if (authenticated_external)
+            {
+                *authenticated_external = true;
+            }
+
+
+            result = _AuthenticateExternal(&settings->ldap, username, password);
+        }
+
+        DeleteHubSettings(settings);
     }
 
     CFDB_Close(conn);
@@ -547,18 +489,24 @@ static HubQuery *CFDB_GetRBACForUser(const char *username)
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    if (!IsRBACOn(&conn))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(&conn, &settings);
+
+    if (settings->rbac_enabled)
     {
         CFDB_Close(&conn);
+        DeleteHubSettings(settings);
         return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_DISABLED);
     }
 
     HubUser *user = NULL;
     cfapi_errid err = _GetUserRecord(&conn, false, username, &user);
-    if (err != ERRID_SUCCESS && _IsLDAPEnabled(&conn))
+    if (err != ERRID_SUCCESS && settings->ldap.enabled)
     {
         err = _GetUserRecord(&conn, true, username, &user);
     }
+
+    DeleteHubSettings(settings);
 
     CFDB_Close(&conn);
     if (err != ERRID_SUCCESS)
@@ -701,7 +649,10 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
         return ERRID_DBCONNECT;
     }
 
-    if (!_UserIsAdmin(conn, creating_username))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
+    if (!_UserIsAdmin(conn, settings, creating_username))
     {
         return ERRID_ACCESS_DENIED;
     }
@@ -786,8 +737,11 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
         return ERRID_DBCONNECT;
     }
 
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
     bool capable = false;
-    if (_UserIsAdmin(conn, updating_username))
+    if (_UserIsAdmin(conn, settings, updating_username))
     {
         capable = true;
     }
@@ -798,6 +752,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
 
     if (!capable)
     {
+        DeleteHubSettings(settings);
         CFDB_Close(conn);
         return ERRID_ACCESS_DENIED;
     }
@@ -807,7 +762,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
     {
         result = _UpdateUser(conn, false, username, password, email, roles);
     }
-    else if (_IsLDAPEnabled(conn))
+    else if (settings->ldap.enabled)
     {
         if (password)
         {
@@ -819,7 +774,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
             {
                 result = _UpdateUser(conn, true, username, password, email, roles);
             }
-            else if (_UsernameExistsExternal(conn, username) == ERRID_SUCCESS)
+            else if (_UsernameExistsExternal(&settings->ldap, username) == ERRID_SUCCESS)
             {
                 result = _CreateUser(conn, true, username, password, email, roles);
             }
@@ -834,6 +789,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
         result = ERRID_ITEM_NONEXISTING;
     }
 
+    DeleteHubSettings(settings);
     CFDB_Close(conn);
     return result;
 }
@@ -867,7 +823,10 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username)
         return ERRID_DBCONNECT;
     }
 
-    if (!_UserIsAdmin(conn, deleting_username))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
+    if (!_UserIsAdmin(conn, settings, deleting_username))
     {
         return ERRID_ACCESS_DENIED;
     }
@@ -890,18 +849,22 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username)
     return result;
 }
 
-static Rlist *_GetExternalUsernamesLdap(EnterpriseDB *conn, const char *username, const char *password, const char *uri, const char *base_dn,
-                                        const char *login_attribute, bool start_tls, const Rlist *user_directories)
+static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
 {
+    Rlist *user_directories = SplitStringAsRList(ldap_settings->users_directory, ';');
+    char *uri = _LDAPUri(ldap_settings);
+    bool start_tls = StringSafeEqual("tls", ldap_settings->encryption);
+
     Rlist *result = NULL;
     for (const Rlist *rp = user_directories; rp; rp = rp->next)
     {
         const char *user_dir = ScalarValue(rp);
-        char *dn = StringConcatenate(3, user_dir, ",", base_dn);
-        char *bind_dn = StringConcatenate(7, login_attribute, "=", username, ",", user_dir, ",", base_dn);
+        char *dn = StringConcatenate(3, user_dir, ",", ldap_settings->base_dn);
+        char *bind_dn = StringConcatenate(7, ldap_settings->login_attribute, "=", ldap_settings->username, ",", user_dir, ",", ldap_settings->base_dn);
 
         const char *errstr = NULL;
-        Rlist *partial_result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_LDAP, login_attribute, "subtree", "sasl",
+        Rlist *partial_result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_LDAP,
+                                                              ldap_settings->login_attribute, "subtree", "sasl",
                                                               start_tls, 0, 0, &errstr);
 
         free(dn);
@@ -918,46 +881,42 @@ static Rlist *_GetExternalUsernamesLdap(EnterpriseDB *conn, const char *username
     return result;
 }
 
-static Rlist *_GetExternalUsernamesAD(EnterpriseDB *conn, const char *username, const char *password, const char *uri, const char *base_dn,
-                                      const char *login_attribute, bool start_tls, const char *user_directory)
+static Rlist *_GetExternalUsernamesAD(const HubSettingsLDAP *ldap_settings)
 {
     char *dn = NULL;
-    if (!user_directory)
+    if (!ldap_settings->users_directory)
     {
-        dn = SafeStringDuplicate(base_dn);
+        dn = SafeStringDuplicate(ldap_settings->base_dn);
     }
     else
     {
-        dn = StringConcatenate(3, user_directory, ",", base_dn);
+        dn = StringConcatenate(3, ldap_settings->users_directory, ",", ldap_settings->base_dn);
     }
     assert(dn);
 
     char *bind_dn = NULL;
     {
-        char ad_domain[1024] = { 0 };
-        if (CFDB_GetSetting(conn, SETTING_LDAP_AD_DOMAIN, ad_domain, sizeof(ad_domain)))
+        if (StringMatchFull("(\\w+\\.)+\\w{2,5}", ldap_settings->ad_domain))
         {
-            assert(false && "Must have AD-domain set to use AD");
-            return NULL;
-        }
-
-        if (StringMatchFull("(\\w+\\.)+\\w{2,5}", ad_domain))
-        {
-            bind_dn = StringConcatenate(3, username, "@", ad_domain);
+            bind_dn = StringConcatenate(3, ldap_settings->username, "@", ldap_settings->ad_domain);
         }
         else
         {
-            bind_dn = StringConcatenate(3, ad_domain, "\\", username);
+            bind_dn = StringConcatenate(3, ldap_settings->ad_domain, "\\", ldap_settings->username);
         }
     }
     assert(bind_dn);
 
+    char *uri = _LDAPUri(ldap_settings);
+    bool start_tls = StringSafeEqual("tls", ldap_settings->encryption);
+
     const char *errstr = NULL;
-    Rlist *result = CfLDAP_GetSingleAttributeList(username, password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, login_attribute, "subtree", "sasl",
+    Rlist *result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, ldap_settings->login_attribute, "subtree", "sasl",
                                          start_tls, 0, 0, &errstr);
 
     free(dn);
     free(bind_dn);
+    free(uri);
 
     if (!result)
     {
@@ -968,108 +927,40 @@ static Rlist *_GetExternalUsernamesAD(EnterpriseDB *conn, const char *username, 
     return result;
 }
 
-static Rlist *_ListUsernamesExternal(EnterpriseDB *conn)
-{
-    char username[CF_SMALLBUF] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_USERNAME, username, sizeof(username)))
+static char *_LDAPUri(const HubSettingsLDAP *ldap_settings)
+{    
+    if (StringSafeEqual("ssl", ldap_settings->encryption))
     {
-        assert(false && "Must have LDAP username setting");
-        return NULL;
-    }
-
-    char password[CF_SMALLBUF] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_PASSWORD, password, sizeof(password)))
-    {
-        assert(false && "Must have LDAP password setting");
-        return NULL;
-    }
-
-    char login_attribute[CF_SMALLBUF] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_LOGIN_ATTRIBUTE, login_attribute, sizeof(login_attribute)))
-    {
-        assert(false && "Should have login attribute by default");
-        return NULL;
-    }
-
-    char base_dn[1024] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_BASE_DN, base_dn, sizeof(base_dn)))
-    {
-        assert(false && "Need base domain name to use ldap");
-        return NULL;
-    }
-
-    char encryption[1024] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_ENCRYPTION, encryption, sizeof(encryption)))
-    {
-        assert(false && "Encryption should have a default setting");
-        return NULL;
-    }
-
-    char host[1024] = { 0 };
-    if (!CFDB_GetSetting(conn, SETTING_LDAP_HOST, host, sizeof(host)))
-    {
-        assert(false && "Need host setting to use ldap");
-        return NULL;
-    }
-
-    Rlist *user_directories = NULL;
-    {
-        char user_dirs[1024] = { 0 };
-        if (!CFDB_GetSetting(conn, SETTING_LDAP_USERS_DIRECTORY, user_dirs, sizeof(user_dirs)))
-        {
-            assert(false && "Need host setting to use ldap");
-            return NULL;
-        }
-        user_directories = SplitStringAsRList(user_dirs, ';');
-    }
-
-
-    char *uri = NULL;
-    if (StringSafeEqual("ssl", encryption))
-    {
-        char port_ssl[1024] = { 0 };
-        if (!CFDB_GetSetting(conn, SETTING_LDAP_PORT_SSL, port_ssl, sizeof(port_ssl)))
-        {
-            assert(false && "LDAP port for SSL should have a default");
-            return NULL;
-        }
-
-        uri = StringConcatenate(4, "ldaps://", host, ":", port_ssl);
+        char *port_str = StringFromLong(ldap_settings->port_ssl);
+        char *ret = StringConcatenate(4, "ldaps://", ldap_settings->host, ":", port_str);
+        free(port_str);
+        return ret;
     }
     else
     {
-        char port[1024] = { 0 };
-        if (!CFDB_GetSetting(conn, SETTING_LDAP_PORT, port, sizeof(port)))
-        {
-            assert(false && "LDAP port should have a default");
-            return NULL;
-        }
-
-        uri = StringConcatenate(4, "ldap://", host, ":", port);
+        char *port_str = StringFromLong(ldap_settings->port);
+        char *ret = StringConcatenate(4, "ldap://", ldap_settings->host, ":", port_str);
+        free(port_str);
+        return ret;
     }
+}
 
-    bool start_tls = StringSafeEqual("tls", encryption);
-
-    Rlist *external_usernames = NULL;
-    switch (_LDAPMode(conn))
+static Rlist *_ListUsernamesExternal(const HubSettingsLDAP *ldap_settings)
+{
+    switch (ldap_settings->mode)
     {
     case LDAP_MODE_STANDARD:
-        external_usernames = _GetExternalUsernamesLdap(conn, username, password, uri, base_dn, login_attribute, start_tls, user_directories);
+        return _GetExternalUsernamesLdap(ldap_settings);
         break;
 
     case LDAP_MODE_AD:
-        external_usernames = _GetExternalUsernamesAD(conn, username, password, uri, base_dn, login_attribute, start_tls, ScalarValue(user_directories));
+        return _GetExternalUsernamesAD(ldap_settings);
         break;
 
     default:
         assert(false && "External authentication mode not supported");
-        break;
+        return NULL;
     }
-
-    free(uri);
-    DeleteRlist(user_directories);
-
-    return external_usernames;
 }
 
 cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *username_rx, Rlist **users_out)
@@ -1113,9 +1004,9 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
     return ERRID_SUCCESS;
 }
 
-static bool _UsernameExistsExternal(EnterpriseDB *conn, const char *username)
+static bool _UsernameExistsExternal(const HubSettingsLDAP *ldap_settings, const char *username)
 {
-    Rlist *external_usernames = _ListUsernamesExternal(conn);
+    Rlist *external_usernames = _ListUsernamesExternal(ldap_settings);
     bool found = false;
     for (const Rlist *rp = external_usernames; rp; rp = rp->next)
     {
@@ -1179,12 +1070,15 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
         return ERRID_DBCONNECT;
     }
 
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
     bool capable = false;
     if (StringSafeEqual(getting_username, username))
     {
         capable = true;
     }
-    else if (_UserIsAdmin(conn, getting_username))
+    else if (_UserIsAdmin(conn, settings, getting_username))
     {
         capable = true;
     }
@@ -1209,7 +1103,7 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
         }
         result = ERRID_SUCCESS;
     }
-    else if (_IsLDAPEnabled(conn) && _UsernameExistsExternal(conn, username))
+    else if (settings->ldap.enabled && _UsernameExistsExternal(&settings->ldap, username))
     {
         if (user_out)
         {
@@ -1226,7 +1120,7 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
     return result;
 }
 
-HubQuery *_ListUsers(EnterpriseDB *conn, const char *username_rx)
+HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char *username_rx)
 {
     Rlist *internal_users = NULL;
     {
@@ -1238,7 +1132,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const char *username_rx)
     }
 
     Rlist *external_users = NULL;
-    if (_IsLDAPEnabled(conn))
+    if (settings->ldap.enabled)
     {
         {
             cfapi_errid err = _ListUserRecords(conn, true, username_rx, &external_users);
@@ -1251,7 +1145,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const char *username_rx)
 
         // make empty records for all the external users we don't have on file
         {
-            Rlist *external_usernames = _ListUsernamesExternal(conn);
+            Rlist *external_usernames = _ListUsernamesExternal(&settings->ldap);
             for (const Rlist *rp = external_usernames; rp; rp = rp->next)
             {
                 const char *external_username = ScalarValue(rp);
@@ -1296,14 +1190,18 @@ HubQuery *CFDB_ListUsers(const char *listing_username, const char *username_rx)
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    if (!_UserIsAdmin(conn, listing_username))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
+    if (!_UserIsAdmin(conn, settings->ldap.enabled, listing_username))
     {
         CFDB_Close(conn);
         return NewHubQueryErrid(NULL, NULL, ERRID_ACCESS_DENIED);
     }
 
-    HubQuery *result = _ListUsers(conn, username_rx);
+    HubQuery *result = _ListUsers(conn, settings, username_rx);
 
+    DeleteHubSettings(settings);
     CFDB_Close(conn);
     return result;
 }
@@ -1321,7 +1219,10 @@ cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, cons
         return ERRID_DBCONNECT;
     }
 
-    if (!_UserIsAdmin(conn, creatingUser))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
+    if (!_UserIsAdmin(conn, settings->ldap.enabled, creatingUser))
     {
         CFDB_Close(conn);
         return ERRID_ACCESS_DENIED;
@@ -1395,7 +1296,10 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
         return ERRID_DBCONNECT;
     }
 
-    if (!_UserIsAdmin(conn, deletingUser))
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
+    if (!_UserIsAdmin(conn, settings, deletingUser))
     {
         CFDB_Close(conn);
         return ERRID_ACCESS_DENIED;
@@ -1460,11 +1364,14 @@ cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username)
         return ERRID_DBCONNECT;
     }
 
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
+
     cfapi_errid errid;
 
-    if (IsRBACOn(conn))
+    if (settings->rbac_enabled)
     {
-        errid = _UserIsAdmin(conn, username) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
+        errid = _UserIsAdmin(conn, settings->ldap.enabled, username) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
     }
     else
     {
@@ -1476,6 +1383,7 @@ cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username)
         errid = ERRID_DBCLOSE;
     }
 
+    DeleteHubSettings(settings);
     return errid;
 }
 
@@ -1517,65 +1425,28 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
 
 /*****************************************************************************/
 
-static bool _IsLDAPEnabled(EnterpriseDB *conn)
-{
-    char value[32] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_ENABLED, value, sizeof(value));
-
-    return StringSafeEqual("true", value);
-}
-
-static LDAPMode _LDAPMode(EnterpriseDB *conn)
-{
-    char value[32] = { 0 };
-    CFDB_GetSetting(conn, SETTING_LDAP_MODE, value, sizeof(value));
-
-    if (StringSafeEqual("activeDirectory", value))
-    {
-        return LDAP_MODE_AD;
-    }
-    else
-    {
-        return LDAP_MODE_STANDARD;
-    }
-}
-
-/*****************************************************************************/
-
-static bool IsRBACOn(EnterpriseDB *conn)
-{
-    char result[8] = { 0 };
-
-    CFDB_HandleGetValue(settingLabels[SETTING_RBAC], result, sizeof(result), "true", conn, MONGO_SETTINGS_COLLECTION);
-
-    if (strcmp(result, "false") == 0)
-    {
-        return false;
-    }
-
-    return true;                // safe default
-}
-
-/*****************************************************************************/
-
 HubQuery *CFDB_ListRoles(const char *listing_user)
 {
-    EnterpriseDB conn;
+    EnterpriseDB conn[1];
 
-    if (!CFDB_Open(&conn))
+    if (!CFDB_Open(conn))
     {
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    cfapi_errid errid = _UserIsAdmin(&conn, listing_user) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
 
-    CFDB_Close(&conn);
+    cfapi_errid errid = _UserIsAdmin(conn, settings->ldap.enabled, listing_user) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
+
+    CFDB_Close(conn);
 
     if (errid != ERRID_SUCCESS)
     {
         return NewHubQueryErrid(NULL, NULL, errid);
     }
 
+    DeleteHubSettings(settings);
     return CFDB_GetAllRoles();
 }
 
@@ -1600,16 +1471,20 @@ static HubQuery *CFDB_GetAllRoles(void)
 
 HubQuery *CFDB_GetRoleByNameAuth(const char *username, const char *role_name)
 {
-    EnterpriseDB conn;
+    EnterpriseDB conn[1];
 
-    if (!CFDB_Open(&conn))
+    if (!CFDB_Open(conn))
     {
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    cfapi_errid errid = _UserIsAdmin(&conn, username) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
+    HubSettings *settings = NULL;
+    CFDB_QuerySettings(conn, &settings);
 
-    CFDB_Close(&conn);
+    cfapi_errid errid = _UserIsAdmin(conn, settings->ldap.enabled, username) ? ERRID_SUCCESS : ERRID_ACCESS_DENIED;
+
+    CFDB_Close(conn);
+    DeleteHubSettings(settings);
 
     if (errid != ERRID_SUCCESS)
     {
@@ -1728,114 +1603,16 @@ HubQuery *CFDB_GetRoles(bson *query)
     return hq;
 }
 
-//*****************************************************************************
-
-const char *HubSettingToString(HubSetting setting)
+bool HubSettingsValidate(const HubSettings *settings, char error_out[CF_BUFSIZE])
 {
-    return settingLabels[setting];
-}
-
-HubSetting HubSettingFromString(const char *setting_key)
-{
-    for (size_t i = 0; i < SETTING_MAX; i++)
+    if (settings->ldap.enabled)
     {
-        if (StringSafeEqual(settingLabels[i], setting_key))
+        if (_AuthenticateExternal(&settings->ldap, settings->ldap.username, settings->ldap.password) != ERRID_SUCCESS)
         {
-            return (HubSetting)i;
+            snprintf(error_out, CF_BUFSIZE, "Unable to authenticate with LDAP settings");
+            return false;
         }
     }
-
-    return SETTING_UNKNOWN;
-}
-
-JsonPrimitiveType HubSettingGetType(HubSetting setting)
-{
-    return setting_types[setting];
-}
-
-const char *HubSettingStringRange(HubSetting setting)
-{
-    assert(HubSettingGetType(setting) == JSON_PRIMITIVE_TYPE_STRING);
-
-    switch (setting)
-    {
-    case SETTING_LDAP_MODE:
-        return "^(standard|activeDirectory)$";
-    case SETTING_LDAP_ENCRYPTION:
-        return "^(none|ssl|tls)$";
-
-    default:
-        return ".*";
-    }
-}
-
-bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size)
-{
-    switch (setting)
-    {
-    case SETTING_RBAC:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_RBAC), value_out, size, "true", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_ENABLED:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_ENABLED), value_out, size, "false", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_MODE:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_MODE), value_out, size, "standard", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_USERNAME:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_USERNAME), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_PASSWORD:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_PASSWORD), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_ENCRYPTION:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_ENCRYPTION), value_out, size, "none", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_LOGIN_ATTRIBUTE:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_LOGIN_ATTRIBUTE), value_out, size, "uid", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_BASE_DN:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_BASE_DN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_USERS_DIRECTORY:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_USERS_DIRECTORY), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_HOST:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_HOST), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_PORT:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_PORT), value_out, size, "389", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_PORT_SSL:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_PORT_SSL), value_out, size, "636", conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_LDAP_AD_DOMAIN:
-        return CFDB_HandleGetValue(HubSettingToString(SETTING_LDAP_AD_DOMAIN), value_out, size, NULL, conn, MONGO_SETTINGS_COLLECTION);
-
-    case SETTING_BLUEHOST_HORIZON:
-    {
-        char *default_str = StringFromLong(CF_BLUEHOST_THRESHOLD_DEFAULT);
-        bool found = CFDB_HandleGetValue(HubSettingToString(SETTING_BLUEHOST_HORIZON), value_out, size, default_str, conn, MONGO_SETTINGS_COLLECTION);
-        free(default_str);
-        return found;
-    }
-
-    default:
-        assert(false && "Attempted to get unknown setting");
-        return false;
-    }
-}
-
-bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value)
-{
-    assert(setting > 0 && setting < SETTING_MAX);
-    if (setting <= 0 || setting >= SETTING_MAX)
-    {
-        return false;
-    }
-
-    const char *setting_key = HubSettingToString(setting);
-
-    return CFDB_PutValue(conn, setting_key, value, MONGO_SETTINGS_COLLECTION);
+    return true;
 }
 

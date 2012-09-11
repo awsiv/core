@@ -103,7 +103,9 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
 Item *CFDB_GetAllHostKeys(EnterpriseDB *conn);
 
 HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
-                                  const char *scheduled_query_id, const char *scheduled_query, const char *schedule );
+                                  const char *scheduled_query_id, const char *scheduled_query, const char *schedule);
+
+cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out);
 
 //*****************************************************************************
 // Singleton Queries
@@ -125,7 +127,7 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
 //*****************************************************************************
 long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey);
 long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey);
-int CFDB_GetBlueHostThreshold(unsigned long *threshold);
+bool CFDB_GetBlueHostThreshold(unsigned long *threshold);
 bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);

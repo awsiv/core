@@ -2379,3 +2379,93 @@ void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char
 
     MongoCheckForError( conn, "Remove scheduled report", scheduled_query_id, NULL );
 }
+
+cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings)
+{
+    assert(conn);
+    assert(settings);
+
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        {
+            if (settings->rbac_enabled != TRINARY_UNDEFINED)
+            {
+                bson_append_bool(&set_op, "rbacEnabled", settings->rbac_enabled == TRINARY_TRUE);
+            }
+
+            if (settings->ldap.enabled != TRINARY_UNDEFINED)
+            {
+                bson_append_bool(&set_op, "ldapEnabled", settings->ldap.enabled == TRINARY_TRUE);
+            }
+
+            if (settings->ldap.mode)
+            {
+                bson_append_string(&set_op, "ldapMode", HubSettingsLDAPModeToString(settings->ldap.mode));
+            }
+
+            if (settings->ldap.username)
+            {
+                bson_append_string(&set_op, "ldapUsername", settings->ldap.username);
+            }
+
+            if (settings->ldap.password)
+            {
+                bson_append_string(&set_op, "ldapPassword", settings->ldap.password);
+            }
+
+            if (settings->ldap.encryption)
+            {
+                bson_append_string(&set_op, "ldapEncryption", settings->ldap.encryption);
+            }
+
+            if (settings->ldap.base_dn)
+            {
+                bson_append_string(&set_op, "ldapBaseDN", settings->ldap.base_dn);
+            }
+
+            if (settings->ldap.users_directory)
+            {
+                bson_append_string(&set_op, "ldapUsersDirectory", settings->ldap.users_directory);
+            }
+
+            if (settings->ldap.host)
+            {
+                bson_append_string(&set_op, "ldapHost", settings->ldap.host);
+            }
+
+            if (settings->ldap.port > 0)
+            {
+                bson_append_int(&set_op, "ldapPort", settings->ldap.port);
+            }
+
+            if (settings->ldap.port_ssl > 0)
+            {
+                bson_append_int(&set_op, "ldapPortSSL", settings->ldap.port_ssl);
+            }
+
+            if (settings->ldap.ad_domain)
+            {
+                bson_append_string(&set_op, "ldapActiveDirectoryDomain", settings->ldap.ad_domain);
+            }
+
+            if (settings->bluehost_horizon > 0)
+            {
+                bson_append_int(&set_op, "blueHostHorizon", settings->bluehost_horizon);
+            }
+        }
+        bson_append_finish_object(&set_op);
+    }
+    BsonFinish(&set_op);
+
+    bson empty;
+    if (MongoUpdate(conn, MONGO_SETTINGS, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL) != MONGO_OK)
+    {
+        bson_destroy(&set_op);
+        return ERRID_DB_OPERATION;
+    }
+
+    bson_destroy(&set_op);
+    return ERRID_SUCCESS;
+}

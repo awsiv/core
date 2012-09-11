@@ -65,6 +65,11 @@ void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black);
 void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_agent_exec);
 void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta);
 
+/**
+  * Pre-condition: settings are validated for integrity
+  */
+cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings);
+
 int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
                  char *reportData, char *username, long datetime, char *msg);
 #endif

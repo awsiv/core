@@ -52,6 +52,7 @@
 # define MONGO_ARCHIVE_COLLECTION "archive"
 # define MONGO_ARCHIVE MONGO_BASE ".archive"
 # define MONGO_SCHEDULED_REPORTS MONGO_BASE ".scheduled_reports"
+# define MONGO_SETTINGS MONGO_BASE ".settings"
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
 
@@ -621,6 +622,43 @@ typedef struct
     char *schedule;
 } HubScheduledReport;
 
+typedef enum
+{
+    TRINARY_FALSE = 0,
+    TRINARY_TRUE = 1,
+    TRINARY_UNDEFINED = 2,
+} Trinary;
+
+typedef enum
+{
+    LDAP_MODE_STANDARD,
+    LDAP_MODE_AD,
+    LDAP_MODE_UNDEFINED,
+} HubSettingsLDAPMode;
+
+typedef struct
+{
+    Trinary enabled;
+    HubSettingsLDAPMode mode;
+    char *username;
+    char *password;
+    char *encryption;
+    char *login_attribute;
+    char *base_dn;
+    char *users_directory;
+    char *host;
+    char *ad_domain;
+    int port;
+    int port_ssl;
+} HubSettingsLDAP;
+
+typedef struct
+{
+    Trinary rbac_enabled;
+    time_t bluehost_horizon;
+    HubSettingsLDAP ldap;
+} HubSettings;
+
 #endif
 
 /*****************************************************************************/
@@ -773,7 +811,13 @@ void DeleteHubUserRBAC(HubUserRBAC *userRbac);
 HubRole *NewHubRole(char *name, char *description,
                     char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude);
 void DeleteHubRole(HubRole *role);
-
+HubSettings *NewHubSettings(void);
+HubSettings *NewHubSettingsDefaults(void);
+void DeleteHubSettings(HubSettings *settings);
+HubSettings *HubSettingsCopy(const HubSettings *settings);
+HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSettings *new_settings);
+HubSettingsLDAPMode HubSettingsLDAPModeFromString(const char *ldap_mode);
+const char *HubSettingsLDAPModeToString(HubSettingsLDAPMode mode);
 
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
