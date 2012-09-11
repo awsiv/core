@@ -284,7 +284,7 @@ static char *LicenseFileRead(void)
 
     CfOut(cf_verbose, "", "Reading license information from %s", filename);
 
-    char *contents;
+    char *contents = NULL;
 
     FileReadMax(&contents, filename, MAX_LICENSE_FILE_SIZE);
 
