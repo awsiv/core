@@ -11,34 +11,6 @@
 #include "cf.nova.web_api.h"
 #include "bson_lib.h"
 
-typedef enum
-{
-    SETTING_UNKNOWN = 0,
-
-    SETTING_RBAC,
-    SETTING_LDAP_ENABLED,
-    SETTING_LDAP_MODE,
-    SETTING_LDAP_USERNAME,
-    SETTING_LDAP_PASSWORD,
-    SETTING_LDAP_ENCRYPTION,
-    SETTING_LDAP_LOGIN_ATTRIBUTE,
-    SETTING_LDAP_BASE_DN,
-    SETTING_LDAP_USERS_DIRECTORY,
-    SETTING_LDAP_HOST,
-    SETTING_LDAP_PORT,
-    SETTING_LDAP_PORT_SSL,
-    SETTING_LDAP_AD_DOMAIN,
-    SETTING_BLUEHOST_HORIZON,
-
-    SETTING_MAX
-} HubSetting;
-
-typedef enum
-{
-    LDAP_MODE_STANDARD,
-    LDAP_MODE_AD
-} LDAPMode;
-
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bool *authenticated_external);
 
 cfapi_errid CFDB_HasHostAccessFromUserRBAC(const char *userName, const char *hostKey);
@@ -62,12 +34,6 @@ HubQuery *CFDB_ListRoles(const char *listing_user);
 cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username);
 HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 
-const char *HubSettingToString(HubSetting setting);
-HubSetting HubSettingFromString(const char *setting_key);
-JsonPrimitiveType HubSettingGetType(HubSetting setting);
-const char *HubSettingStringRange(HubSetting setting);
-
-bool CFDB_GetSetting(EnterpriseDB *conn, HubSetting setting, char *value_out, size_t size);
-bool CFDB_UpdateSetting(EnterpriseDB *conn, HubSetting setting, const char *value);
+bool HubSettingsValidate(const HubSettings *settings, char error_out[CF_BUFSIZE]);
 
 #endif

@@ -15,4 +15,8 @@ JsonElement *HubRoleToJson(const HubRole *role);
 JsonElement *HubHostToJson(const HubHost *host);
 JsonElement *HubClassToJson(const HubClass *context);
 JsonElement *HubVitalToJson(const HubVital *vital);
+JsonElement *HubSettingsToJson(const HubSettings *settings);
+
+HubSettings *HubSettingsFromJson(const JsonElement *json, char error_out[CF_BUFSIZE]);
+
 #endif

@@ -1151,6 +1151,196 @@ HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude,
 
 /*****************************************************************************/
 
+HubSettings *NewHubSettings(void)
+{
+    HubSettings *settings = xcalloc(1, sizeof(HubSettings));
+
+    settings->rbac_enabled = TRINARY_UNDEFINED;
+    settings->bluehost_horizon = -1;
+
+    settings->ldap.ad_domain = NULL;
+    settings->ldap.base_dn = NULL;
+    settings->ldap.enabled = TRINARY_UNDEFINED;
+    settings->ldap.encryption = NULL;
+    settings->ldap.host = NULL;
+    settings->ldap.login_attribute = NULL;
+    settings->ldap.mode = LDAP_MODE_UNDEFINED;
+    settings->ldap.password = NULL;
+    settings->ldap.port = -1;
+    settings->ldap.port_ssl = -1;
+    settings->ldap.username = NULL;
+    settings->ldap.users_directory = NULL;
+
+    return settings;
+}
+
+HubSettings *NewHubSettingsDefaults(void)
+{
+    HubSettings *settings = NewHubSettings();
+
+    settings->rbac_enabled = TRINARY_TRUE;
+    settings->bluehost_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+
+    settings->ldap.enabled = TRINARY_FALSE;
+    settings->ldap.encryption = SafeStringDuplicate("plain");
+    settings->ldap.login_attribute = SafeStringDuplicate("uid");
+    settings->ldap.mode = LDAP_MODE_STANDARD;
+    settings->ldap.port = 389;
+    settings->ldap.port_ssl = 636;
+
+    return settings;
+}
+
+void DeleteHubSettings(HubSettings *settings)
+{
+    if (settings)
+    {
+        free(settings->ldap.ad_domain);
+        free(settings->ldap.base_dn);
+        free(settings->ldap.encryption);
+        free(settings->ldap.host);
+        free(settings->ldap.login_attribute);
+        free(settings->ldap.password);
+        free(settings->ldap.username);
+        free(settings->ldap.users_directory);
+
+        free(settings);
+    }
+}
+
+HubSettings *HubSettingsCopy(const HubSettings *settings)
+{
+    HubSettings *copy = NewHubSettings();
+
+    copy->rbac_enabled = settings->rbac_enabled;
+    copy->bluehost_horizon = settings->bluehost_horizon;
+
+    copy->ldap.ad_domain = SafeStringDuplicate(settings->ldap.ad_domain);
+    copy->ldap.base_dn = SafeStringDuplicate(settings->ldap.base_dn);
+    copy->ldap.enabled = settings->ldap.enabled;
+    copy->ldap.encryption = SafeStringDuplicate(settings->ldap.encryption);
+    copy->ldap.host = SafeStringDuplicate(settings->ldap.host);
+    copy->ldap.login_attribute = SafeStringDuplicate(settings->ldap.login_attribute);
+    copy->ldap.mode = settings->ldap.mode;
+    copy->ldap.password = SafeStringDuplicate(settings->ldap.password);
+    copy->ldap.port = settings->ldap.port;
+    copy->ldap.port_ssl = settings->ldap.port_ssl;
+    copy->ldap.username = SafeStringDuplicate(settings->ldap.username);
+    copy->ldap.users_directory = SafeStringDuplicate(settings->ldap.users_directory);
+
+    return copy;
+}
+
+HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSettings *new_settings)
+{
+    HubSettings *updated = HubSettingsCopy(existing_settings);
+
+    if (new_settings->rbac_enabled != TRINARY_UNDEFINED)
+    {
+        updated->rbac_enabled = new_settings->rbac_enabled;
+    }
+
+    if (new_settings->bluehost_horizon != -1)
+    {
+        updated->bluehost_horizon = new_settings->bluehost_horizon;
+    }
+
+    if (new_settings->ldap.ad_domain)
+    {
+        updated->ldap.ad_domain = SafeStringDuplicate(new_settings->ldap.ad_domain);
+    }
+
+    if (new_settings->ldap.base_dn)
+    {
+        updated->ldap.base_dn = SafeStringDuplicate(new_settings->ldap.base_dn);
+    }
+
+    if (new_settings->ldap.enabled != TRINARY_UNDEFINED)
+    {
+        updated->ldap.enabled = new_settings->ldap.enabled;
+    }
+
+    if (new_settings->ldap.encryption)
+    {
+        updated->ldap.encryption = SafeStringDuplicate(new_settings->ldap.encryption);
+    }
+
+    if (new_settings->ldap.host)
+    {
+        updated->ldap.host = SafeStringDuplicate(new_settings->ldap.host);
+    }
+
+    if (new_settings->ldap.login_attribute)
+    {
+        updated->ldap.login_attribute = SafeStringDuplicate(new_settings->ldap.login_attribute);
+    }
+
+    if (new_settings->ldap.mode != LDAP_MODE_UNDEFINED)
+    {
+        updated->ldap.mode = new_settings->ldap.mode;
+    }
+
+    if (new_settings->ldap.password)
+    {
+        updated->ldap.password = SafeStringDuplicate(new_settings->ldap.password);
+    }
+
+    if (new_settings->ldap.port != -1)
+    {
+        updated->ldap.port = new_settings->ldap.port;
+    }
+
+    if (new_settings->ldap.port_ssl != -1)
+    {
+        updated->ldap.port_ssl = new_settings->ldap.port_ssl;
+    }
+
+    if (new_settings->ldap.username)
+    {
+        updated->ldap.username = SafeStringDuplicate(new_settings->ldap.username);
+    }
+
+    if (new_settings->ldap.users_directory)
+    {
+        updated->ldap.users_directory = SafeStringDuplicate(new_settings->ldap.users_directory);
+    }
+
+    return updated;
+}
+
+HubSettingsLDAPMode HubSettingsLDAPModeFromString(const char *ldap_mode)
+{
+    if (!ldap_mode)
+    {
+        return LDAP_MODE_UNDEFINED;
+    }
+    else if (StringSafeEqual("activeDirectory", ldap_mode))
+    {
+        return LDAP_MODE_AD;
+    }
+    else
+    {
+        return LDAP_MODE_STANDARD;
+    }
+}
+
+const char *HubSettingsLDAPModeToString(HubSettingsLDAPMode mode)
+{
+    switch (mode)
+    {
+    case LDAP_MODE_UNDEFINED:
+        return NULL;
+
+    case LDAP_MODE_AD:
+        return "activeDirectory";
+
+    default:
+        return "standard";
+    }
+}
+
+/*****************************************************************************/
+
 void DeleteHubUserRBAC(HubUserRBAC *userRbac)
 {
     free(userRbac->userName);
