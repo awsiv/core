@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "db-serialize.h"
 #include "db_query.h"
+#include "db_save.h"
+#include "db_maintain.h"
 #include "granules.h"
 
 
@@ -107,6 +109,42 @@ PHP_FUNCTION(cfapi_host_get)
     DeleteHubQuery(result, NULL);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+}
+
+PHP_FUNCTION(cfapi_host_delete)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *hostkey = NULL; int hostkey_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &hostkey, &hostkey_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(hostkey_len, "hostkey");
+
+    {
+        cfapi_errid err = CFDB_HasHostAccessFromUserRBAC(username, hostkey);
+        if (err != ERRID_SUCCESS)
+        {
+            THROW_GENERIC(err, "Access denied");
+        }
+    }
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    CFDB_MarkAsDeleted(conn, hostkey);
+    CFDB_PurgeHost(conn, hostkey);
+
+    EnterpriseDBRelease(conn);
+
+    RETURN_BOOL(true);
 }
 
 PHP_FUNCTION(cfapi_host_context_list)

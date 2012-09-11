@@ -99,6 +99,24 @@ class Host extends Resource
 
         return $response;
     }
+
+    function delete($request, $id)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+
+        if (cfapi_host_delete($user, $id))
+        {
+            $response->code = Response::NOCONTENT;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
 }
 
 /**

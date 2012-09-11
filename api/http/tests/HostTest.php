@@ -160,4 +160,28 @@ class HostTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
+    public function testDeleteHost()
+    {
+        try
+        {
+            $hosts = $this->getResults('/host');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($hosts);
+            $this->assertEquals(2, sizeof($hosts));
+
+            $this->pest->delete('/host/' . $this->hostA_id);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $hosts = $this->getResults('/host');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($hosts);
+            $this->assertEquals(1, sizeof($hosts));
+            $this->assertEquals($this->hostB_id, $hosts[0]['id']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

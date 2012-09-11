@@ -16,7 +16,7 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
                   Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                            Item **purgeKeysPtr);
-void CFDB_PurgeHost(EnterpriseDB *conn, char *keyHash);
+void CFDB_PurgeHost(EnterpriseDB *conn, const char *keyHash);
 void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn);
 
 void CFDB_RemoveTestData(char *db, char *keyhash);

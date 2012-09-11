@@ -2119,7 +2119,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
 /*****************************************************************************/
 
-int CFDB_MarkAsDeleted(mongo *dbconn, char *keyHash)
+int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
 {    
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
     {

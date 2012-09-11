@@ -60,7 +60,7 @@ void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, 
 
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns);
-int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, char *keyHash);
+int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, const char *keyHash);
 void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black);
 void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_agent_exec);
 void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta);

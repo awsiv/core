@@ -916,7 +916,7 @@ void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportK
 
 /*****************************************************************************/
 
-void CFDB_PurgeHost(EnterpriseDB *conn, char *keyHash)
+void CFDB_PurgeHost(EnterpriseDB *conn, const char *keyHash)
 {
     Rlist *hostKeyList = SplitStringAsRList(keyHash, ',');
 

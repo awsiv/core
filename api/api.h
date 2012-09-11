@@ -54,6 +54,7 @@ PHP_FUNCTION(cfapi_settings_post);
 // host
 PHP_FUNCTION(cfapi_host_list);
 PHP_FUNCTION(cfapi_host_get);
+PHP_FUNCTION(cfapi_host_delete);
 PHP_FUNCTION(cfapi_host_context_list);
 PHP_FUNCTION(cfapi_host_vital_list);
 PHP_FUNCTION(cfapi_host_vital_get);
