@@ -120,9 +120,9 @@ class HostTest extends APIBaseTest
             $response = $this->pest->get('/host/' . $this->hostA_id . '/vital');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
-            $this->assertEquals(2, sizeof($response['data']));
-            $this->assertEquals(2, $response['meta']['total']);
-            $this->assertEquals(2, $response['meta']['count']);
+            $this->assertEquals(3, sizeof($response['data']));
+            $this->assertEquals(3, $response['meta']['total']);
+            $this->assertEquals(3, $response['meta']['count']);
             $this->assertEquals('io_reads', $response['data'][0]['id']);
         }
         catch (Pest_Exception $e)
@@ -154,6 +154,28 @@ class HostTest extends APIBaseTest
                 $this->assertLessThanOrEqual($to, $point[0]);
                 $this->assertGreaterThanOrEqual($from, $point[0]);
             }
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testGetVitalCorrectTimestamp()
+    {
+        try
+        {
+            $response = $this->pest->get('/host/' . $this->hostA_id . '/vital/test');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals(1, $response['meta']['count']);
+
+            $vital = $response['data'][0];
+            $this->assertEquals('test', $vital['id']);
+            $this->assertEquals(1, sizeof($vital['values']));
+            $this->assertEquals(1327276800, $vital['values'][0][0]);
         }
         catch (Pest_Exception $e)
         {
