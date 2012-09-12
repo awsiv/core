@@ -345,14 +345,14 @@ PHP_FUNCTION(cfapi_user_subscription_query_delete)
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
     ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
 
-    // TODO: hook up DBAPI
-    /*
-    cfapi_errid result = CFDB_DeleteUser(username, username_arg);
-    if (result != ERRID_SUCCESS)
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
     {
-        THROW_GENERIC(result, "Unable to delete user");
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
-    */
+
+    CFDB_RemoveScheduledReport(conn, username_arg, sub_id);
+    EnterpriseDBRelease(conn);
 
     RETURN_BOOL(true);
 }
