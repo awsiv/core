@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "db-serialize.h"
 #include "db_query.h"
+#include "db_save.h"
+#include "conversion.h"
 
 PHP_FUNCTION(cfapi_user_list)
 {
@@ -190,7 +192,7 @@ PHP_FUNCTION(cfapi_user_subscription_query_list)
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
                               &username, &username_len,
-                              &username, &username_arg_len) == FAILURE)
+                              &username_arg, &username_arg_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -265,14 +267,18 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     const char *sub_id = NULL; int sub_id_len = 0;
 
     const char *to = NULL; int to_len = 0;
+    char *enabled = NULL; int enabled_len = 0;
     const char *query = NULL; int query_len = 0;
     const char *schedule = NULL; int schedule_len = 0;
+    const char *report_output_type = NULL; int report_output_type_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssss",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &sub_id, &sub_id_len,
                               &to, &to_len,
+                              &enabled, &enabled_len,
+                              &report_output_type, &report_output_type_len,
                               &query, &query_len,
                               &schedule, &schedule_len) == FAILURE)
     {
@@ -283,10 +289,40 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
     ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
     ARGUMENT_CHECK_CONTENTS(to_len, "to");
+    ARGUMENT_CHECK_CONTENTS(enabled_len, "enabled");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
     ARGUMENT_CHECK_CONTENTS(schedule, "schedule");
+    ARGUMENT_CHECK_CONTENTS(report_output_type_len, "report_output_type");
 
-    // TODO: hook up DBAPI
+    /* check params */
+    bool enabled_b = false;
+    ToLowerStrInplace(enabled);
+
+    if (StringSafeCompare(enabled, "true") == 0)
+    {
+        enabled_b = true;
+    }
+    else if (StringSafeCompare(enabled, "false") != 0)
+    {
+        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Incorrect value of argument: enabled");
+    }
+
+    int report_output = Str2Int(report_output_type);
+    if (report_output == CF_NOINT)
+    {
+        THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Incorrect value of argument: report_output_type");
+    }
+
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    CFDB_SaveScheduledReport(conn, username_arg, to, sub_id, query, schedule,
+                             enabled_b, report_output);
+
+    EnterpriseDBRelease(conn);
 
     RETURN_BOOL(true);
 }
