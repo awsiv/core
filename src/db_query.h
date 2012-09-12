@@ -68,7 +68,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter);
 
 Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash);
-HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash);
+HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t last_host_update);
 cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t last_update, time_t from, time_t to, HubVital **vital_out);
 int CFDB_QueryMagView2(EnterpriseDB *conn, const char *keyhash, const char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga);
 

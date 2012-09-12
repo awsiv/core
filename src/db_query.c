@@ -3630,7 +3630,7 @@ Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
 
 /*****************************************************************************/
 
-HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash)
+HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t last_host_update)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
@@ -3682,7 +3682,7 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash)
             }
         }
 
-        hv = PrependHubVital(&hv, id, units, description);
+        hv = PrependHubVital(&hv, id, units, description, MeasurementSlotStart(last_host_update));
     }
 
     mongo_cursor_destroy(cursor);
@@ -3751,7 +3751,7 @@ cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char 
         const char *description = NULL;
         BsonStringGet(&record, cfm_description, &description);
 
-        HubVital *vital = NewHubVital(hostkey, vital_id, units, description);
+        HubVital *vital = NewHubVital(hostkey, vital_id, units, description, MeasurementSlotStart(last_update));
         vital->q = SequenceCreate(CF_MAX_SLOTS, DeleteHubVitalPoint);
 
         bson q_arr = { 0 };

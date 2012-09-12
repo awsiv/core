@@ -690,7 +690,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
         return false;
     }
 
-    res = CFDB_QueryVitalsMeta(&dbconn, keyHash);
+    res = CFDB_QueryVitalsMeta(&dbconn, keyHash, 0);
 
     strcpy(buffer, "{");
 

@@ -214,7 +214,10 @@ PHP_FUNCTION(cfapi_host_vital_list)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubVital *results = CFDB_QueryVitalsMeta(conn, hostkey);
+    time_t last_host_update = 0;
+    CFDB_QueryLastHostUpdate(conn, hostkey, &last_host_update);
+
+    HubVital *results = CFDB_QueryVitalsMeta(conn, hostkey, last_host_update);
 
     EnterpriseDBRelease(conn);
 

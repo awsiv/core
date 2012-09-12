@@ -126,6 +126,11 @@ JsonElement *HubVitalToJson(const HubVital *vital)
         JsonObjectAppendString(obj, "units", vital->units);
     }
 
+    if (vital->last_update > 0)
+    {
+        JsonObjectAppendInteger(obj, "timestamp", vital->last_update);
+    }
+
     if (vital->q)
     {
         JsonElement *values = JsonArrayCreate(CF_MAX_SLOTS);

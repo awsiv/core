@@ -124,6 +124,7 @@ class HostTest extends APIBaseTest
             $this->assertEquals(3, $response['meta']['total']);
             $this->assertEquals(3, $response['meta']['count']);
             $this->assertEquals('io_reads', $response['data'][0]['id']);
+            $this->assertEquals(1327651800, $response['data'][0]['timestamp']);
         }
         catch (Pest_Exception $e)
         {
@@ -147,6 +148,7 @@ class HostTest extends APIBaseTest
 
             $vital = $response['data'][0];
             $this->assertEquals('io_reads', $vital['id']);
+            $this->assertEquals(1327651800, $response['data'][0]['timestamp']);
             $this->assertEquals(288, sizeof($vital['values']));
 
             foreach ($vital['values'] as $point)
@@ -174,6 +176,7 @@ class HostTest extends APIBaseTest
 
             $vital = $response['data'][0];
             $this->assertEquals('test', $vital['id']);
+            $this->assertEquals(1327651800, $response['data'][0]['timestamp']);
             $this->assertEquals(1, sizeof($vital['values']));
             $this->assertEquals(1327276800, $vital['values'][0][0]);
         }

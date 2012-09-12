@@ -1027,9 +1027,9 @@ void DeleteHubNoteInfo(HubNoteInfo *hci)
 
 /*****************************************************************************/
 
-HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description)
+HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description, time_t last_update)
 {
-    HubVital *hv = NewHubVital(NULL, id, units, description);
+    HubVital *hv = NewHubVital(NULL, id, units, description, last_update);
 
     hv->next = *first;
     *first = hv;
@@ -1039,7 +1039,7 @@ HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *descrip
 
 /*****************************************************************************/
 
-HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description)
+HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description, time_t last_update)
 {
     HubVital *v = xmalloc(sizeof(HubVital));
 
@@ -1047,6 +1047,7 @@ HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, co
     v->id = SafeStringDuplicate(id);
     v->units = SafeStringDuplicate(units);
     v->description = SafeStringDuplicate(description);
+    v->last_update = last_update;
     v->q = NULL;
 
     return v;

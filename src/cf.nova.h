@@ -578,6 +578,7 @@ struct HubVital_
     char *id;
     char *units;
     char *description;
+    time_t last_update;
     Sequence *q; // HubVitalPoint
     HubVital *next;
 };
@@ -796,8 +797,8 @@ HubNote *NewHubNote(char *user, char *msg, time_t t);
 HubNoteInfo *NewHubNoteInfo(HubHost *hh, char *nid, char *user, char *msg, time_t t, char *reportData, int reportType);
 void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
-HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
-HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description);
+HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description, time_t last_update);
+HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, const char *description, time_t last_update);
 void DeleteHubVital(HubVital *hv);
 HubVitalPoint *NewHubVitalPoint(time_t t, double value);
 void DeleteHubVitalPoint(HubVitalPoint *point);
