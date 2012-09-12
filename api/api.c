@@ -42,7 +42,8 @@ PHP_FUNCTION(cfapi)
 
     JsonObjectAppendString(info, "apiName", API_NAME);
     JsonObjectAppendString(info, "apiVersion", API_VERSION);
-    JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
+    JsonObjectAppendString(info, "enterpriseVersion", NOVA_VERSION);
+    JsonObjectAppendString(info, "coreVersion", VERSION);
     JsonObjectAppendString(info, "databaseHostname", DBHostname());
     JsonObjectAppendInteger(info, "databasePort", DBPort());
     JsonObjectAppendString(info, "authenticated", authenticated_external ? "external" : "internal");
