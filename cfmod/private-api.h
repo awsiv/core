@@ -939,12 +939,6 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx);
 // port plan: /policy
 PHP_FUNCTION(cfpr_promise_list_by_promise_type);
 
-/*! \brief Delete a host from the database
- * \param hostKey
- */
-// port plan: /host
-PHP_FUNCTION(cfpr_delete_host);
-
 /*! \brief Return reverse lookup host name
  * \param user
  * \param hostkey

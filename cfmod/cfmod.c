@@ -173,7 +173,6 @@ static zend_function_entry cfmod_functions[] =
     /*
      *  DB write functions
      */
-    PHP_FE(cfpr_delete_host, NULL)
     PHP_FE(cfpr_update_host_identifier, NULL)
         /*
          * Replica sets
