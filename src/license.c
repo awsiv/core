@@ -31,10 +31,10 @@
 #include "db_query.h"
 #endif
 
-#define LIC_DAY "25"
-#define LIC_MONTH "December"
-#define LIC_YEAR "2222"
-#define LIC_COMPANY "FREE ENTERPRISE – http://cfengine.com/25free for terms"
+#define INTERNAL_EXPIRY_DAY "25"
+#define INTERNAL_EXPIRY_MONTH "December"
+#define INTERNAL_EXPIRY_YEAR "2222"
+#define INTERNAL_EXPIRY_COMPANY "FREE ENTERPRISE – http://cfengine.com/25free for terms"
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
@@ -74,9 +74,9 @@ int EnterpriseExpiry(void)
         return false;
     }
 
-    strcpy(u_day, LIC_DAY);
-    strcpy(u_month, LIC_MONTH);
-    strcpy(u_year, LIC_YEAR);
+    strcpy(u_day, INTERNAL_EXPIRY_DAY);
+    strcpy(u_month, INTERNAL_EXPIRY_MONTH);
+    strcpy(u_year, INTERNAL_EXPIRY_YEAR);
     policy_server[0] = '\0';
     company[0] = '\0';
 
@@ -159,7 +159,7 @@ int EnterpriseExpiry(void)
     {
         CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
         LICENSES = MAX_FREE_LICENSES;
-        snprintf(company, sizeof(company), "%s", LIC_COMPANY);
+        snprintf(company, sizeof(company), "%s", INTERNAL_EXPIRY_COMPANY);
         snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
         MapName(name);
 
@@ -188,8 +188,8 @@ int EnterpriseExpiry(void)
     m_expire = Month2Int(u_month);
     d_expire = Str2Int(u_day);
 
-    CfDebug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n", VYEAR, LIC_YEAR, VMONTH, LIC_MONTH, VDAY, LIC_DAY);
-    CfDebug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n", VYEAR, LIC_YEAR, m_now, m_expire, d_now, d_expire);
+    CfDebug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n", VYEAR, INTERNAL_EXPIRY_YEAR, VMONTH, INTERNAL_EXPIRY_MONTH, VDAY, INTERNAL_EXPIRY_DAY);
+    CfDebug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n", VYEAR, INTERNAL_EXPIRY_YEAR, m_now, m_expire, d_now, d_expire);
 
     snprintf(EXPIRY, sizeof(EXPIRY), "%s %s %s", u_day, u_month, u_year);
     strncpy(LICENSE_COMPANY, company, CF_SMALLBUF - 1);
