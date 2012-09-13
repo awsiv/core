@@ -10,6 +10,7 @@
 #include "cf.nova.h"
 #include "json.h"
 
+JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report);
 JsonElement *HubUserToJson(const HubUser *user);
 JsonElement *HubRoleToJson(const HubRole *role);
 JsonElement *HubHostToJson(const HubHost *host);

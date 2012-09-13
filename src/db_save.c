@@ -2340,8 +2340,10 @@ void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *
 
     bson set_op[1];
     bson_init( set_op );
+    bson_append_string( set_op, cfr_user_id, user );
     bson_append_string( set_op, cfr_user_email, email );
     bson_append_string( set_op, cfr_query, scheduled_query );
+    bson_append_string( set_op, cfr_query_id, scheduled_query_id );
     bson_append_string( set_op, cfr_run_classes, schedule );
     bson_append_int( set_op, cfr_last_run, ( int ) time( NULL ) );
     BsonAppendBool( set_op, cfr_already_run, false );

@@ -200,23 +200,26 @@ PHP_FUNCTION(cfapi_user_subscription_query_list)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    // TODO: hook up DBAPI
-    /*
-    HubQuery *result = CFDB_ListUsers(username, NULL);
+    EnterpriseDB *conn = EnterpriseDBAcquire();
+    if (!conn)
+    {
+        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+    }
+
+    HubQuery *result = CFDB_QueryScheduledReport(conn, username_arg, NULL, NULL,
+                                                 NULL, NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");
     }
-    */
 
-    JsonElement *data = JsonArrayCreate(500);
-    /*
+    EnterpriseDBRelease(conn);
+    JsonElement *data = JsonArrayCreate(50);
     for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
-        JsonArrayAppendObject(data, HubUserToJson((HubUser *)rp->item));
+        JsonArrayAppendObject(data, HubScheduledReportToJson((HubScheduledReport *)rp->item));
     }
-    DeleteHubQuery(result, DeleteHubUser);
-    */
+    DeleteHubQuery(result, DeleteScheduledReport);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }

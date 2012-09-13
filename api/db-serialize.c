@@ -2,6 +2,23 @@
 
 #include <assert.h>
 
+JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report)
+{
+    assert(scheduled_report);
+
+    JsonElement *obj = JsonObjectCreate(8);
+    JsonObjectAppendString(obj, "username", scheduled_report->username);
+    JsonObjectAppendString(obj, "email", scheduled_report->email);
+    JsonObjectAppendString(obj, "query_id", scheduled_report->query_id);
+    JsonObjectAppendString(obj, "query", scheduled_report->query);
+    JsonObjectAppendString(obj, "schedule", scheduled_report->schedule);
+    JsonObjectAppendBool(obj, "enabled", scheduled_report->enabled);
+    JsonObjectAppendInteger(obj, "output_type", scheduled_report->output_type);
+    JsonObjectAppendInteger(obj, "last_run", scheduled_report->last_run);
+
+    return obj;
+}
+
 JsonElement *HubUserToJson(const HubUser *user)
 {
     assert(user);

@@ -6378,21 +6378,36 @@ HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const
 {
     assert( conn );
 
-    bson query[1];
-    bson_init( query );
-    BsonAppendStringSafe( query, cfr_user_id, user );
-    BsonAppendStringSafe( query, cfr_user_email, email );
-    BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id );
-    BsonAppendStringSafe( query, cfr_query, scheduled_query );
-    BsonAppendStringSafe( query, cfr_run_classes, schedule );
-    BsonFinish( query );
+    bson query;
+    bson_init( &query );
+    if (user)
+    {
+        BsonAppendStringSafe( &query, cfr_user_id, user );
+    }
+    if (email)
+    {
+        BsonAppendStringSafe( &query, cfr_user_email, email );
+    }
+    if (scheduled_query_id)
+    {
+        BsonAppendStringSafe( &query, cfr_query_id, scheduled_query_id );
+    }
+    if (scheduled_query)
+    {
+        BsonAppendStringSafe( &query, cfr_query, scheduled_query );
+    }
+    if (schedule)
+    {
+        BsonAppendStringSafe( &query, cfr_run_classes, schedule );
+    }
+    BsonFinish( &query );
 
-    bson empty[1];
-    bson_empty( empty );
+    bson empty;
+    bson_empty( &empty );
 
-    mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS, query, empty, 0, 0, CF_MONGO_SLAVE_OK );
+    mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS, &query, &empty, 0, 0, CF_MONGO_SLAVE_OK );
 
-    bson_destroy( query );
+    bson_destroy( &query );
 
     Rlist *schedules = NULL;
 
