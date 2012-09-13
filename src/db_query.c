@@ -2618,6 +2618,10 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
                            cfr_host_array,
                            promiseLogKey);
 
+    //note: to the unexplained mongo-bug returning more records that are in db -- HACK-FIX
+    int failsafe_object_counter = 0;
+    int total_obj_count = MongoCount(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query);
+
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
@@ -2627,6 +2631,12 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        // temp. hack-fix
+        failsafe_object_counter++;
+        if (failsafe_object_counter > total_obj_count)
+        {
+            continue;
+        }
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ));
 
