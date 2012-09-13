@@ -11,8 +11,12 @@ class PromiseList extends Resource
 
         $response = new Response($request);
 
+        $type = Utils::queryParam('type');
+
         $response->body = cfapi_promise_list($username,
-            DefaultParameters::page(), DefaultParameters::count());
+                $type,
+                DefaultParameters::page(),
+                DefaultParameters::count());
         $response->code = Response::OK;
 
         return $response;

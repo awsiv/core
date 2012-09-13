@@ -9,10 +9,12 @@
 PHP_FUNCTION(cfapi_promise_list)
 {
     const char *username = NULL; int username_len = 0;
+    const char *type = NULL; int type_len = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
                               &username, &username_len,
+                              &type, &type_len,
                               &page.pageNum, &page.resultsPerPage) == FAILURE)
     {
         THROW_ARGS_MISSING();
@@ -32,6 +34,11 @@ PHP_FUNCTION(cfapi_promise_list)
         DeleteHubQuery(result, NULL);
     }
     assert(filter);
+
+    if (type_len > 0)
+    {
+        PromiseFilterAddPromiseType(filter, type);
+    }
 
     EnterpriseDB *conn = EnterpriseDBAcquire();
     if (!conn)

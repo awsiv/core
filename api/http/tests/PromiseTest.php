@@ -11,7 +11,22 @@ class PromiseTest extends APIBaseTest
             $promises = $this->getResults('/promise');
             $this->assertEquals(200, $this->pest->lastStatus());
 
-            $this->assertEquals(5, sizeof($promises));
+            $this->assertEquals(7, sizeof($promises));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testListByType()
+    {
+        try
+        {
+            $promises = $this->getResults('/promise?type=classes');
+            $this->assertEquals(200, $this->pest->lastStatus());
+
+            $this->assertEquals(3, sizeof($promises));
         }
         catch (Pest_Exception $e)
         {

@@ -58,5 +58,29 @@
         "l" : 122,
         "h" : "promise_promises_cf_122",
         "n" : [ "or => {'hostname1_example_com','ipv4_256_256_256_256'}" ]
+    },
+    {
+        "bn" : "environments",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "environment_testing",
+        "pt" : "classes",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 128,
+        "h" : "promise_promises_cf_128",
+        "n" : [ "or => {'hostname2_example_com','ipv4_256_256_257'}" ]
+    },
+    {
+        "bn" : "environments",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "environment_production",
+        "pt" : "classes",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 134,
+        "h" : "promise_promises_cf_134",
+        "n" : [ "or => {'hostname3_example_com','ipv4_256_256_258'}" ]
     }
 ]
