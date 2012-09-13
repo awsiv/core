@@ -492,7 +492,7 @@ static HubQuery *CFDB_GetRBACForUser(const char *username)
     HubSettings *settings = NULL;
     CFDB_QuerySettings(&conn, &settings);
 
-    if (settings->rbac_enabled)
+    if (settings->rbac_enabled == false)
     {
         CFDB_Close(&conn);
         DeleteHubSettings(settings);
