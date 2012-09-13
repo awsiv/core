@@ -459,3 +459,48 @@ HubSettings *HubSettingsFromJson(const JsonElement *json, char error_out[CF_BUFS
 
     return settings;
 }
+
+JsonElement *HubPromiseToJson(const HubPromise *promise)
+{
+    assert(promise);
+
+    JsonElement *obj = JsonObjectCreate(20);
+
+    if (promise->handle)
+    {
+        JsonObjectAppendString(obj, "id", promise->handle);
+    }
+
+    if (promise->promiseType)
+    {
+        JsonObjectAppendString(obj, "type", promise->promiseType);
+    }
+
+    if (promise->promiser)
+    {
+        JsonObjectAppendString(obj, "promiser", promise->promiser);
+    }
+
+    if (promise->promisees)
+    {
+        JsonElement *promisees_arr = JsonArrayCreate(20);
+        for (const Rlist *rp = promise->promisees; rp; rp = rp->next)
+        {
+            const char *promisee = ScalarValue(rp);
+            JsonArrayAppendString(promisees_arr, promisee);
+        }
+        JsonObjectAppendObject(obj, "promisees", promisees_arr);
+    }
+
+    if (promise->bundleName)
+    {
+        JsonObjectAppendString(obj, "bundle", promise->bundleName);
+    }
+
+    if (promise->comment)
+    {
+        JsonObjectAppendString(obj, "comment", promise->comment);
+    }
+
+    return obj;
+}

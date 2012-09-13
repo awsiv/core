@@ -391,7 +391,7 @@ HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName)
+HubQuery *CFDB_PromiseFilterFromUserRBAC(const char *userName)
 {
     Rlist *recordList = NULL;
 

@@ -96,7 +96,8 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
                 'logs_rep' => 'cfreport',
                 'logs_nk' => 'cfreport',
                 'archive' => 'cfreport',
-                'monitoring_mg' => 'cfreport'
+                'monitoring_mg' => 'cfreport',
+                'promises_unexp' => 'cfreport'
             );
 
             foreach ($fixtures as $collection => $db)
