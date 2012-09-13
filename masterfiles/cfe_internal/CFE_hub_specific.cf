@@ -1335,12 +1335,18 @@ bundle agent cfengine_disable_selinux
  classes:
 
 # we only care about selinux for redhat for now, can add more
- 
-  redhat::
 
+  redhat::
+ 
+   "selinux_exists" expression => fileexists("/usr/sbin/selinuxenabled"),
+                       comment => "Make sure the binary exists",
+                        handle => "cfe_internal_cfengine_disable_selinux_classes_selinux_exits";
+ 
+  redhat.selinux_exists::
+ 
    "disable_selinux" expression => returnszero("/usr/sbin/selinuxenabled", "noshell"),
                         comment => "Check if selinux is enabled",
-                         handle => "cfe_internal_cfengine_disable_selinux_classes_disable_selinux";
+                         handle => "cfe_internal_cfengine_disable_selinux_classes_disable_selinux"; 
 
 #
 
