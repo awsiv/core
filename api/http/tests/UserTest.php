@@ -439,13 +439,13 @@ class UserTest extends APIBaseTest
             $subs = $this->getResults('/user/snookie/subscription/query');
             $this->assertValidJson($subs);
             $this->assertEquals(1, sizeof($subs));
-            $this->assertEquals('stuff', $subs[0].id);
+            $this->assertEquals('stuff', $subs[0]['id']);
 
             // check by getting specific
             $subs = $this->getResults('/user/snookie/subscription/query/stuff');
             $this->assertValidJson($subs);
             $this->assertEquals(1, sizeof($subs));
-            $this->assertEquals('stuff', $subs[0].id);
+            $this->assertEquals('stuff', $subs[0]['id']);
 
             $this->pest->delete('/user/snookie/subscription/query/stuff');
             $this->assertEquals(204, $this->pest->lastStatus());
