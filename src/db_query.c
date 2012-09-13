@@ -4868,17 +4868,6 @@ int CFDB_QueryBundleCount(EnterpriseDB *conn)
 
 /*****************************************************************************/
 
-int CFDB_QueryPromiseCount(EnterpriseDB *conn)
-{
-    int promiseCount = 0;
-
-    promiseCount = MongoCount(conn, MONGO_BASE, MONGO_PROMISES_UNEXP_COLLECTION, NULL);
-
-    return promiseCount;
-}
-
-/*****************************************************************************/
-
 HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
 /*
  * Returns all attribs of one body by its type and name.

@@ -111,7 +111,6 @@ cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out);
 // Singleton Queries
 //*****************************************************************************
 int CFDB_QueryBundleCount(EnterpriseDB *conn);
-int CFDB_QueryPromiseCount(EnterpriseDB *conn);
 int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
 bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey, const HostClassFilter *hostClassFilter);
 int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query);
