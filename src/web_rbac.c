@@ -1616,3 +1616,7 @@ bool HubSettingsValidate(const HubSettings *settings, char error_out[CF_BUFSIZE]
     return true;
 }
 
+bool RBACFilterSuccess(cfapi_errid errid)
+{
+    return (errid == ERRID_RBAC_DISABLED || errid == ERRID_SUCCESS);
+}

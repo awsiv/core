@@ -222,11 +222,28 @@ static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
 
 void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 {
-    /* Apply RBAC & Context filters */
+    cfapi_errid errid;
+
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
-    HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    if(!RBACFilterSuccess(hqHostClassFilter->errid))
+    {
+        errid = hqHostClassFilter->errid;
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+        return;
+    }
 
     HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
+
+    if(!RBACFilterSuccess(hqPromiseFilter->errid))
+    {
+        errid = hqPromiseFilter->errid;
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+        DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+        return;
+    }
+
+    HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     PromiseFilter *promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
 
     for(Rlist *rp = tables; rp != NULL; rp = rp->next)

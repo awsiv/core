@@ -35,5 +35,5 @@ cfapi_errid CFDB_UserIsAdminWhenRBAC(const char *username);
 HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 
 bool HubSettingsValidate(const HubSettings *settings, char error_out[CF_BUFSIZE]);
-
+bool RBACFilterSuccess(cfapi_errid errid);
 #endif
