@@ -39,6 +39,7 @@ static const char *LABEL_DATA = "data";
 static const char *LABEL_GREEN = "green";
 static const char *LABEL_RED = "red";
 static const char *LABEL_YELLOW = "yellow";
+static const char *LABEL_HOST_IDENTIFIER = "hostIdentifier";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -4920,6 +4921,38 @@ PHP_FUNCTION(cfpr_update_host_identifier)
 
     DATABASE_CLOSE(conn);
     RETURN_BOOL(true);
+}
+
+/**************************************************/
+
+PHP_FUNCTION(cfpr_get_host_identifier)
+{
+    const char *user = NULL;
+    int user_len;
+
+    if ( zend_parse_parameters( ZEND_NUM_ARGS() TSRMLS_CC,
+                                "s",
+                                &user, &user_len
+                                ) == FAILURE)
+    {
+        zend_throw_exception( cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC );
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    EnterpriseDB conn[1];
+    DATABASE_OPEN( conn );
+
+    char host_identifier[CF_MAXVARSIZE] = {0};
+    CFDB_HandleGetValue( cfr_host_identifier, host_identifier, CF_MAXVARSIZE - 1, "", conn, MONGO_SCRATCH );
+
+    DATABASE_CLOSE( conn );
+
+    JsonElement *output = JsonObjectCreate(1);
+    JsonObjectAppendString(output, LABEL_HOST_IDENTIFIER, host_identifier);
+
+    RETURN_JSON(output);
 }
 
 /******************************************************************************/
