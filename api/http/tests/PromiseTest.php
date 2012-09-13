@@ -33,4 +33,20 @@ class PromiseTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
+    public function testGet()
+    {
+        try
+        {
+            $promises = $this->getResults('/promise/promise_promises_cf_122');
+            $this->assertEquals(200, $this->pest->lastStatus());
+
+            $this->assertEquals(1, sizeof($promises));
+            $this->assertEquals('promise_promises_cf_122', $promises[0]['id']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

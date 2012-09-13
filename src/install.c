@@ -78,9 +78,9 @@ void DeleteHubQuery(HubQuery *hq, void (*fnptr) ())
             (*fnptr) (rp->item);
             rp->item = NULL;
         }
-    }
 
-    DeleteRlist(hq->records);
+        DeleteRlist(hq->records);
+    }
     free(hq);
 }
 

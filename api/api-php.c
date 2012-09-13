@@ -51,6 +51,7 @@ static zend_function_entry cfapi_functions[] =
 
     // promise
     PHP_FE(cfapi_promise_list, NULL)
+    PHP_FE(cfapi_promise_get, NULL)
 
     // query
     PHP_FE(cfapi_query_post, NULL)

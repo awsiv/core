@@ -2512,7 +2512,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
         }
     }
 
-    DeleteHubQuery(hq, NULL);
+    DeleteHubQuery(hq, free);
 
     ReplaceTrailingChar(hostnameOut, ' ', '\0');
     ReplaceTrailingChar(ipaddrOut, ' ', '\0');
@@ -3544,7 +3544,7 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
         }
     }
 
-    DeleteHubQuery(hq, NULL);
+    DeleteHubQuery(hq, free);
 
     ReplaceTrailingChar(buf, ',', '\0');
 
