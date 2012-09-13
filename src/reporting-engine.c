@@ -220,7 +220,7 @@ static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
 
 /******************************************************************/
 
-void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
+cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 {
     cfapi_errid errid;
 
@@ -230,7 +230,7 @@ void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
     {
         errid = hqHostClassFilter->errid;
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-        return;
+        return errid;
     }
 
     HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC((char*)username);
@@ -240,7 +240,7 @@ void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
         errid = hqPromiseFilter->errid;
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-        return;
+        return errid;
     }
 
     HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
@@ -258,7 +258,7 @@ void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
                 if (!Sqlite3_BeginTransaction(db))
                 {
-                    return;
+                    return ERRID_DB_OPERATION;
                 }
 
                 if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
@@ -272,7 +272,7 @@ void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
                 if (!Sqlite3_CommitTransaction(db))
                 {
-                    return;
+                    return ERRID_DB_OPERATION;
                 }
             }
         }
@@ -280,6 +280,8 @@ void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+
+    return ERRID_SUCCESS;
 }
 
 /******************************************************************/

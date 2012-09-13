@@ -77,7 +77,7 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 bool Sqlite3_DBOpen(sqlite3 **db);
 void Sqlite3_DBClose(sqlite3 *db);
 bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
-void LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username);
+cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username);
 
 void Sqlite3_FreeString(char *str);
 
