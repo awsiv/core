@@ -146,7 +146,7 @@ int EnterpriseExpiry(void)
             strcpy(u_month, license.expiry_month);
             snprintf(u_year, sizeof(u_year), "%d", license.expiry_year);
             LICENSES = license.count;
-            CfOut(cf_verbose, "", " -> Verified license file %s - as a satellite of %s (%s)", license.digest, policy_server,
+            CfOut(cf_verbose, "", " -> Verified license %s (%s)", license.digest,
                   license.company_name);
         }
         else
