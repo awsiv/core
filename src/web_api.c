@@ -1648,7 +1648,6 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         found = true;
-        char typestr[CF_SMALLBUF];
 
         hv = (HubVariable *) rp->item;
         if (strcmp(lscope, hv->scope) != 0)
@@ -1671,27 +1670,6 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
         }
 
-        switch (*hv->dtype)
-        {
-        case 's':
-            snprintf(typestr, CF_SMALLBUF, "string");
-            break;
-        case 'i':
-            snprintf(typestr, CF_SMALLBUF, "int");
-            break;
-        case 'r':
-            snprintf(typestr, CF_SMALLBUF, "real");
-            break;
-        case 'm':
-            snprintf(typestr, CF_SMALLBUF, "menu");
-            break;
-        }
-
-        if (strlen(hv->dtype) == 2)
-        {
-            strcat(typestr, " list");
-        }
-
         if (strlen(hv->dtype) > 1)      // list
         {
             PrintRlist(rvalBuf, sizeof(rvalBuf), hv->rval.item);
@@ -1704,7 +1682,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
         EscapeJson(rvalBuf, jsonEscapedStr, sizeof(jsonEscapedStr));
 
         snprintf(buffer, CF_BUFSIZE,
-                 "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],", hv->hh->hostname, typestr, hv->lval, jsonEscapedStr, hv->t);
+                 "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],", hv->hh->hostname, DataTypeShortToType(hv->dtype), hv->lval, jsonEscapedStr, hv->t);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
