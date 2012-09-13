@@ -9,6 +9,7 @@
 #include "db_query.h"
 #include "web_rbac.h"
 #include "install.h"
+#include "conversion.h"
 #include "assert.h"
 #include "conf.h"
 
@@ -389,7 +390,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
             snprintf(insert_op, sizeof(insert_op),
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                     SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
+                     SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, DataTypeShortToType(hc->dtype));
 
             free(rval_scalar_escaped);
 
@@ -409,7 +410,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
                 snprintf(insert_op, sizeof(insert_op),
                          "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                         SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, hc->dtype);
+                         SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, DataTypeShortToType(hc->dtype));
 
                 free(rval_scalar_escaped);
 
