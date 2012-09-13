@@ -56,7 +56,7 @@ int EnterpriseExpiry(void)
 {
     char name[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
         installed_time_str[CF_MAXVARSIZE];
-    char company[CF_BUFSIZE], snumber[CF_SMALLBUF];
+    char snumber[CF_SMALLBUF];
     int m_now, m_expire, d_now, d_expire;
 
 #ifdef HAVE_LIBMONGOC
@@ -78,7 +78,6 @@ int EnterpriseExpiry(void)
     strcpy(u_month, INTERNAL_EXPIRY_MONTH);
     strcpy(u_year, INTERNAL_EXPIRY_YEAR);
     policy_server[0] = '\0';
-    company[0] = '\0';
 
 // Verify first whether this host has been bootstrapped
 
@@ -159,7 +158,8 @@ int EnterpriseExpiry(void)
     {
         CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
         LICENSES = MAX_FREE_LICENSES;
-        snprintf(company, sizeof(company), "%s", INTERNAL_EXPIRY_COMPANY);
+        snprintf(license.company_name, MAX_COMPANY_NAME + 1, "%s", INTERNAL_EXPIRY_COMPANY);
+
         snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
         MapName(name);
 
@@ -167,7 +167,7 @@ int EnterpriseExpiry(void)
 
         if (stat(name, &sb) != -1)
         {
-            CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, company);
+            CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, license.company_name);
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
@@ -175,7 +175,7 @@ int EnterpriseExpiry(void)
         }
         else
         {
-            CfOut(cf_verbose, "", " -> This system is a satellite of (%s)", POLICY_SERVER);
+            CfOut(cf_verbose, "", " -> This system is a satellite");
 #ifdef HAVE_LIBMONGOC
             am_policy_server = false;
 #endif
@@ -192,11 +192,11 @@ int EnterpriseExpiry(void)
     CfDebug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n", VYEAR, INTERNAL_EXPIRY_YEAR, m_now, m_expire, d_now, d_expire);
 
     snprintf(EXPIRY, sizeof(EXPIRY), "%s %s %s", u_day, u_month, u_year);
-    strncpy(LICENSE_COMPANY, company, CF_SMALLBUF - 1);
+    strncpy(LICENSE_COMPANY, license.company_name, CF_SMALLBUF - 1);
 
     Nova_LogLicenseStatus();
 
-    NewScalar("sys", "license_owner", company, cf_str);
+    NewScalar("sys", "license_owner", license.company_name, cf_str);
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
 
@@ -216,7 +216,7 @@ int EnterpriseExpiry(void)
                 expiry = mktime(&t);
             }
 
-            CFDB_SaveLicense(&conn, expiry, license.install_timestamp, company, LICENSES);
+            CFDB_SaveLicense(&conn, expiry, license.install_timestamp, license.company_name, LICENSES);
             CFDB_Close(&conn);
         }
     }
@@ -237,7 +237,7 @@ int EnterpriseExpiry(void)
     else
     {
         CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
-              u_month, u_year, company);
+              u_month, u_year, license.company_name);
         AM_NOVA = true;
         
         return false;
