@@ -258,6 +258,8 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
                 if (!Sqlite3_BeginTransaction(db))
                 {
+                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
                     return ERRID_DB_OPERATION;
                 }
 
@@ -272,6 +274,8 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
                 if (!Sqlite3_CommitTransaction(db))
                 {
+                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
                     return ERRID_DB_OPERATION;
                 }
             }
