@@ -54,7 +54,6 @@ int IsEnterprise(void)
 
 int EnterpriseExpiry(void)
 {
-    struct stat sb;
     char name[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
         installed_time_str[CF_MAXVARSIZE];
     char company[CF_BUFSIZE], snumber[CF_SMALLBUF];
@@ -164,6 +163,8 @@ int EnterpriseExpiry(void)
         snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
         MapName(name);
 
+        struct stat sb;
+
         if (stat(name, &sb) != -1)
         {
             CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, company);
@@ -198,17 +199,11 @@ int EnterpriseExpiry(void)
     NewScalar("sys", "license_owner", company, cf_str);
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
-#ifndef __CDT_PARSER__
-    snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", sb.st_mtime);
-#endif
+
+    snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
     NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
-#ifndef __CDT_PARSER__
-    time_t install_time = sb.st_mtime;
-#else
-    time_t install_time = 0;
-#endif
     if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
     {
         EnterpriseDB conn;
@@ -221,7 +216,7 @@ int EnterpriseExpiry(void)
                 expiry = mktime(&t);
             }
 
-            CFDB_SaveLicense(&conn, expiry, install_time, company, LICENSES);
+            CFDB_SaveLicense(&conn, expiry, license.install_timestamp, company, LICENSES);
             CFDB_Close(&conn);
         }
     }
