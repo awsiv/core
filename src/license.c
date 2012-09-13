@@ -38,7 +38,7 @@
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
-static char *LicenseFileRead(void);
+static char *LicenseFilePath(void);
 static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_ip_address);
 int Nova_HashKey(char *filename, char *buffer, const char *hash);
 static void Nova_LogLicenseStatus(void);
@@ -55,15 +55,14 @@ int IsEnterprise(void)
 int EnterpriseExpiry(void)
 {
     struct stat sb;
-    char name[CF_MAXVARSIZE], hash[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
+    char name[CF_MAXVARSIZE], policy_server[CF_MAXVARSIZE],
         installed_time_str[CF_MAXVARSIZE];
     char company[CF_BUFSIZE], snumber[CF_SMALLBUF];
-    int m_now, m_expire, d_now, d_expire, number = 1;
+    int m_now, m_expire, d_now, d_expire;
 
 #ifdef HAVE_LIBMONGOC
     bool am_policy_server = false;
 #endif
-    char f_day[16], f_month[16], f_year[16];
     char u_day[16], u_month[16], u_year[16];
 
     if (THIS_AGENT_TYPE == cf_keygen)
@@ -94,63 +93,65 @@ int EnterpriseExpiry(void)
         fclose(fp);
     }
 
-    char *license_file_contents = LicenseFileRead();
+    char *license_file_path = LicenseFilePath();
+    EnterpriseLicense license;
+    bool license_found = false;
 
-    if (license_file_contents != NULL)
+    if(license_file_path)
     {
-        char hub_key_digest[256] = {0};
+        license_found = LicenseFileParse(&license, license_file_path);
+        free(license_file_path);
+    }
 
-        sscanf(license_file_contents, "%15s %x %15s %15s %100s %[^\n]", f_day, &number, f_month, f_year, hash, company);
-        sscanf(license_file_contents, "%*[^\n]%255s[^\n]", hub_key_digest);
-        free(license_file_contents);
-
+    if (license_found)
+    {
         // This is the simple password hash to obfuscate license fixing
         // Nothing top security here - this is a helper file to track licenses
 
-        if (strlen(company) > 0)
+        if (strlen(license.company_name) > 0)
         {
-            snprintf(name, sizeof(name), "%s-%o.%s Nova %s %s", f_month, number, f_day, f_year, company);
+            snprintf(name, sizeof(name), "%s-%o.%d Nova %d %s", license.expiry_month, license.count, license.expiry_day, license.expiry_year, license.company_name);
         }
         else
         {
-            snprintf(name, sizeof(name), "%s-%o.%s Nova %s", f_month, number, f_day, f_year);
+            snprintf(name, sizeof(name), "%s-%o.%d Nova %d", license.expiry_month, license.count, license.expiry_day, license.expiry_year);
         }
 
         char hub_key_path[MAX_FILENAME];
 
-        if(!HubKeyPath(hub_key_path, hub_key_digest, policy_server))
+        if(!HubKeyPath(hub_key_path, license.public_key_digest, policy_server))
         {
-            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s) as we don't know the hub's public key", hash);
+            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s) as we don't know the hub's public key", license.digest);
             LICENSES = 0;
             return false;
         }
 
         CfOut(cf_verbose, "", "Using public key %s for license verification", hub_key_path);
 
-        if (Nova_HashKey(CFPUBKEYFILE, name, hash))
+        if (Nova_HashKey(CFPUBKEYFILE, name, license.digest))
         {
-            strcpy(u_day, f_day);
-            strcpy(u_month, f_month);
-            strcpy(u_year, f_year);
-            LICENSES = number;
-            CfOut(cf_verbose, "", " -> Verified license file %s - this is a policy server (%s)", hash, company);
+            snprintf(u_day, sizeof(u_day), "%d", license.expiry_day);
+            strcpy(u_month, license.expiry_month);
+            snprintf(u_year, sizeof(u_year), "%d", license.expiry_year);
+            LICENSES = license.count;
+            CfOut(cf_verbose, "", " -> Verified license file %s - this is a policy server (%s)", license.digest, license.company_name);
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
             NewClass("am_policy_hub");
         }
-        else if (Nova_HashKey(hub_key_path, name, hash))
+        else if (Nova_HashKey(hub_key_path, name, license.digest))
         {
-            strcpy(u_day, f_day);
-            strcpy(u_month, f_month);
-            strcpy(u_year, f_year);
-            LICENSES = number;
-            CfOut(cf_verbose, "", " -> Verified license file %s - as a satellite of %s (%s)", hash, policy_server,
-                  company);
+            snprintf(u_day, sizeof(u_day), "%d", license.expiry_day);
+            strcpy(u_month, license.expiry_month);
+            snprintf(u_year, sizeof(u_year), "%d", license.expiry_year);
+            LICENSES = license.count;
+            CfOut(cf_verbose, "", " -> Verified license file %s - as a satellite of %s (%s)", license.digest, policy_server,
+                  license.company_name);
         }
         else
         {
-            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s)\n", hash);
+            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s)\n", license.digest);
             LICENSES = 0;
             return false;       // Want to be able to bootstrap
         }
@@ -274,6 +275,8 @@ bool LicenseFileParse(EnterpriseLicense *license, char *license_file_path)
 
     assert(SafeStringLength(license_file_path) > 0);
 
+    license->company_name[0] = '\0';
+
     char *license_file_contents;
     FileReadMax(&license_file_contents, license_file_path, MAX_LICENSE_FILE_SIZE);
 
@@ -312,12 +315,10 @@ bool LicenseFileParse(EnterpriseLicense *license, char *license_file_path)
 
 /*****************************************************************************/
 
-static char *LicenseFileRead(void)
+static char *LicenseFilePath(void)
 {
-#define MAX_LICENSE_FILE_SIZE 256
-
     struct stat sb;
-    char filename[CF_MAXVARSIZE];
+    char filename[MAX_FILENAME];
 
     snprintf(filename, sizeof(filename), "%s/inputs/license.dat", CFWORKDIR);
     MapName(filename);
@@ -328,13 +329,12 @@ static char *LicenseFileRead(void)
         MapName(filename);
     }
 
-    CfOut(cf_verbose, "", "Reading license information from %s", filename);
+    if (cfstat(filename, &sb) == -1)
+    {
+        return NULL;
+    }
 
-    char *contents = NULL;
-
-    FileReadMax(&contents, filename, MAX_LICENSE_FILE_SIZE);
-
-    return contents;
+    return xstrdup(filename);
 }
 
 /*****************************************************************************/
