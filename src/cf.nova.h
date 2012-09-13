@@ -1589,15 +1589,10 @@ typedef struct
 #define cfr_already_run "already_run"
 #define cfr_report_output_type "report_type"
 
-/* Assuming csv, pdf, email, and (sqlite3 and JSON - for future)
- * are the only report formats we support,
- * these values are stored ( turned on / off) in bits:
+/* Output format for reports.
+ * These values are stored ( turned on / off) in bits:
  * - csv = 0001 (1)
  * - pdf = 0010 (2)
- * - json = 0100 (4)
- * - sqlite3 = 1000 (8)
- * - email = 10000 (16) - not a real report format but, this info can also be embedded here
- *                       if only this bit is set, CSV is the default type for the email
  *
  * We will perform bit manipulations on these
  * as its faster and much less code,
@@ -1606,9 +1601,6 @@ typedef struct
 
 #define REPORT_FORMAT_CSV 1
 #define REPORT_FORMAT_PDF 2
-#define REPORT_FORMAT_JSON 4
-#define REPORT_FORMAT_SQLITE3 8
-#define REPORT_SEND_EMAIL 16
 
 // Report types
 
