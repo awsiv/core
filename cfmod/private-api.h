@@ -952,6 +952,7 @@ PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name );
  */
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_update_host_identifier);
+PHP_FUNCTION(cfpr_get_host_identifier);
 
 /*! \brief A list of all environments
  */
