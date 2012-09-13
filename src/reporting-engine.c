@@ -321,7 +321,7 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         }
     }
 
-    DeleteHubQuery(hq, NULL);
+    DeleteHubQuery(hq, free);
 }
 
 /******************************************************************/

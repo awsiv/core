@@ -765,7 +765,7 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
         }
     }
 
-    DeleteHubQuery(hq, NULL);
+    DeleteHubQuery(hq, free);
 
     ReplaceTrailingChar(hostnameOut, ' ', '\0');
     ReplaceTrailingChar(ipaddrOut, ' ', '\0');

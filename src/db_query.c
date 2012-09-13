@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-static bool BsonAppendPromiseFilterUnexpanded(bson *query, PromiseFilter *filter);
+static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *filter);
 static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter);
 static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter);
 static void GetOldClientVersions(Rlist **rp);
@@ -5904,7 +5904,7 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
 
 /*****************************************************************************/
 
-static bool BsonAppendPromiseFilterUnexpanded(bson *query, PromiseFilter *filter)
+static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *filter)
 {
     if (filter == NULL)
     {
@@ -6325,7 +6325,7 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
 
     *return_list = HubHostListToRlist(hq->hosts, return_format);
 
-    DeleteHubQuery(hq, NULL);
+    DeleteHubQuery(hq, free);
 
     return true;
 }

@@ -15,7 +15,7 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, bo
 
 cfapi_errid CFDB_HasHostAccessFromUserRBAC(const char *userName, const char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName);
-HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
+HubQuery *CFDB_PromiseFilterFromUserRBAC(const char *userName);
 
 cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Sequence *roles);
 cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email, const Sequence *roles);

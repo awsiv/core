@@ -1,0 +1,86 @@
+[
+    {
+        "bn" : "pilot",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "bundlesequence",
+        "pt" : "vars",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 10, "h" : "promise_promises_cf_10",
+        "n" : [ "slist => {'pilot_simple_edit_policy','pilot_simple_custom_install'}" ]
+    },
+    {
+        "bn" : "pilot",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "inputs",
+        "pt" : "vars",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 15,
+        "h" : "promise_promises_cf_15",
+        "n" : [ "slist => {'pilot_simple_edit_policy.cf','pilot_simple_custom_install.cf'}" ]
+    },
+    {
+        "bn" : "generators",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "bundlesequence",
+        "pt" : "vars",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 33,
+        "h" : "promise_promises_cf_33",
+        "n" : [
+            "slist => {'internal_generator_files','internal_generator_files2','internal_generator_processes','internal_generator_config_ntp','internal_generator_solaris','internal_generator_windows','internal_generator_setuid'}" ]
+    },
+    {
+        "bn" : "generators",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "inputs",
+        "pt" : "vars",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 42,
+        "h" : "promise_promises_cf_42",
+        "n" : [ "slist => {'system/generators/files.cf','system/generators/processes.cf','system/generators/process_conf_restart.cf','system/generators/solaris.cf','system/generators/windows.cf','system/generators/setuid.cf'}" ]
+    },
+    {
+        "bn" : "environments",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "environment_development",
+        "pt" : "classes",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 122,
+        "h" : "promise_promises_cf_122",
+        "n" : [ "or => {'hostname1_example_com','ipv4_256_256_256_256'}" ]
+    },
+    {
+        "bn" : "environments",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "environment_testing",
+        "pt" : "classes",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 128,
+        "h" : "promise_promises_cf_128",
+        "n" : [ "or => {'hostname2_example_com','ipv4_256_256_257'}" ]
+    },
+    {
+        "bn" : "environments",
+        "bt" : "common",
+        "ba" : [ ],
+        "p" : "environment_production",
+        "pt" : "classes",
+        "c" : "any",
+        "f" : "/var/cfengine/inputs/promises.cf",
+        "l" : 134,
+        "h" : "promise_promises_cf_134",
+        "n" : [ "or => {'hostname3_example_com','ipv4_256_256_258'}" ]
+    }
+]

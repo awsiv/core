@@ -59,6 +59,10 @@ PHP_FUNCTION(cfapi_host_context_list);
 PHP_FUNCTION(cfapi_host_vital_list);
 PHP_FUNCTION(cfapi_host_vital_get);
 
+// promise
+PHP_FUNCTION(cfapi_promise_list);
+PHP_FUNCTION(cfapi_promise_get);
+
 /**
   Reporting engine
   */
