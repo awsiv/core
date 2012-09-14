@@ -183,4 +183,43 @@ class SettingsTest extends APIBaseTest
             $this->fail('Invalid reply: ' . $this->pest->lastStatus());
         }
     }
+
+    public function testUpdateSwitchLDAPMode()
+    {
+        try
+        {
+            // here
+            $this->pest->post('/settings', '{
+                "ldapMode": "standard",
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('standard', $settings[0]['ldapMode']);
+
+            // there
+            $this->pest->post('/settings', '{
+                "ldapMode": "activeDirectory",
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('activeDirectory', $settings[0]['ldapMode']);
+
+            // and back again
+            $this->pest->post('/settings', '{
+                "ldapMode": "standard",
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals('standard', $settings[0]['ldapMode']);
+
+
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail('Invalid reply: ' . $this->pest->lastStatus());
+        }
+    }
 }

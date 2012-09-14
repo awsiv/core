@@ -2402,7 +2402,7 @@ cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings)
                 bson_append_bool(&set_op, "ldapEnabled", settings->ldap.enabled == TRINARY_TRUE);
             }
 
-            if (settings->ldap.mode)
+            if (settings->ldap.mode != LDAP_MODE_UNDEFINED)
             {
                 bson_append_string(&set_op, "ldapMode", HubSettingsLDAPModeToString(settings->ldap.mode));
             }
