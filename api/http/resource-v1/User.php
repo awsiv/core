@@ -185,8 +185,10 @@ class UserList extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
         $pass = $_SERVER['PHP_AUTH_PW'];
 
+        $external = Utils::checkBoolean(Utils::queryParam('external'), 'external');
+
         $response = new Response($request);
-        $response->body = cfapi_user_list($user, $pass,
+        $response->body = cfapi_user_list($user, $external,
                 DefaultParameters::page(),
                 DefaultParameters::count());
         $response->code = Response::OK;

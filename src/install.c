@@ -1101,8 +1101,10 @@ HubUser *NewHubUser(bool external, const char *username, const char *email, cons
     return user;
 }
 
-void DeleteHubUser(HubUser *user)
+void DeleteHubUser(void *_hub_user)
 {
+    HubUser *user = _hub_user;
+
     if (user)
     {
         free(user->username);

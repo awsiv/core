@@ -76,6 +76,29 @@ bool EnterpriseDBRelease(EnterpriseDB *conn)
     return released;
 }
 
+Trinary PHPZvalToTrinary(const zval *null_or_bool)
+{
+    switch (Z_TYPE_P(null_or_bool))
+    {
+    case IS_BOOL:
+        if (Z_LVAL_P(null_or_bool))
+        {
+            return TRINARY_TRUE;
+        }
+        else
+        {
+            return TRINARY_FALSE;
+        }
+
+    case IS_NULL:
+        return TRINARY_UNDEFINED;
+
+    default:
+        assert("Never reach");
+        return TRINARY_UNDEFINED;
+    }
+}
+
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
 {
     zval **data;

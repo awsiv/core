@@ -37,6 +37,20 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testListUsersExternalOnly()
+    {
+        try
+        {
+            $users = $this->getResults('/user?external=true');
+            $this->assertValidJson($users);
+            $this->assertEquals(0, sizeof($users));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testAddUser()
     {
         try
@@ -334,6 +348,61 @@ class UserTest extends APIBaseTest
             $jsonArray = $this->getResults('/user');
             $this->assertValidJson($jsonArray);
             $this->assertEquals(4, sizeof($jsonArray));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPListAsAdminExternalOnly()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $jsonArray = $this->getResults('/user?external=true');
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(2, sizeof($jsonArray));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPListAsAdminExternalOnlyPagination()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $jsonArray = $this->getResults('/user?external=true&page=1&count=1');
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(1, sizeof($jsonArray));
+
+            $jsonArray = $this->getResults('/user?external=true&page=2&count=1');
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(1, sizeof($jsonArray));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testLDAPListAsAdminInternalOnly()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $jsonArray = $this->getResults('/user?external=false');
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(2, sizeof($jsonArray));
         }
         catch (Pest_Exception $e)
         {

@@ -66,6 +66,30 @@ class Utils
         }
     }
 
+    public static function checkBoolean($var, $name)
+    {
+        if (!is_null($var))
+        {
+            if (strtolower($var) === "true")
+            {
+                return true;
+            }
+            else if (strtolower($var) === "false")
+            {
+                return false;
+            }
+            else
+            {
+                throw new ResponseException("query parameter '" . $name . "' must be an true or false",
+                        Response::BADREQUEST);
+            }
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+
     public static function checkPromiseState($state)
     {
         if (!is_null($state) && !in_array($state, array('kept', 'notkept', 'repaired')))

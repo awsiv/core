@@ -7,15 +7,28 @@
 #include "db_save.h"
 #include "conversion.h"
 
+static bool _KeepInternal(void *_user)
+{
+    HubUser *user = _user;
+    return !user->external;
+}
+
+static bool _KeepExternal(void *_user)
+{
+    HubUser *user = _user;
+    return user->external;
+}
+
 PHP_FUNCTION(cfapi_user_list)
 {
-    const char *username = NULL, *password = NULL;
-    int username_len = 0, password_len = 0;
+    const char *username = NULL;
+    zval *external_zval = NULL;
+    int username_len = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "szll",
                               &username, &username_len,
-                              &password, &password_len,
+                              &external_zval,
                               &page.pageNum,
                               &page.resultsPerPage) == FAILURE)
     {
@@ -23,12 +36,28 @@ PHP_FUNCTION(cfapi_user_list)
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
-    ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
     HubQuery *result = CFDB_ListUsers(username, NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");
+    }
+
+    {
+        Trinary external = PHPZvalToTrinary(external_zval);
+        switch (external)
+        {
+        case TRINARY_TRUE:
+            RlistFilter(&result->records, _KeepExternal, DeleteHubUser);
+            break;
+
+        case TRINARY_FALSE:
+            RlistFilter(&result->records, _KeepInternal, DeleteHubUser);
+            break;
+
+        default:
+            break;
+        }
     }
 
     const size_t total = RlistLen(result->records);

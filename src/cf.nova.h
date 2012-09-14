@@ -804,7 +804,7 @@ void DeleteHubVital(HubVital *hv);
 HubVitalPoint *NewHubVitalPoint(time_t t, double value);
 void DeleteHubVitalPoint(HubVitalPoint *point);
 HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles);
-void DeleteHubUser(HubUser *user);
+void DeleteHubUser(void *_hub_user);
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude, const char *classRxExclude,
                             const char *bundleRxInclude, const char *bundleRxExclude);
 int HubUserHash(const HubUser *user);
