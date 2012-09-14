@@ -717,5 +717,16 @@ bool LicenseInstall(char *path_source)
         return false;
     }
 
-    return CopyRegularFileDisk(path_source, path_destination, false);
+    bool success = CopyRegularFileDisk(path_source, path_destination, false);
+
+    if(success)
+    {
+        CfOut(cf_inform, "", "Installed license at %s", path_destination);
+    }
+    else
+    {
+        CfOut(cf_error, "", "!! Failed copying license from %s to %s", path_source, path_destination);
+    }
+
+    return success;
 }
