@@ -11,10 +11,13 @@ PHP_FUNCTION(cfapi_user_list)
 {
     const char *username = NULL, *password = NULL;
     int username_len = 0, password_len = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
                               &username, &username_len,
-                              &password, &password_len) == FAILURE)
+                              &password, &password_len,
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -28,6 +31,9 @@ PHP_FUNCTION(cfapi_user_list)
         THROW_GENERIC(result->errid, "Error listing users");
     }
 
+    const size_t total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubUser);
+
     JsonElement *data = JsonArrayCreate(500);
     for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
@@ -35,7 +41,7 @@ PHP_FUNCTION(cfapi_user_list)
     }
     DeleteHubQuery(result, DeleteHubUser);
 
-    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
+    RETURN_JSON(PackageResult(data, page.pageNum, total));
 }
 
 PHP_FUNCTION(cfapi_user_get)

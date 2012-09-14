@@ -186,7 +186,9 @@ class UserList extends Resource
         $pass = $_SERVER['PHP_AUTH_PW'];
 
         $response = new Response($request);
-        $response->body = cfapi_user_list($user, $pass);
+        $response->body = cfapi_user_list($user, $pass,
+                DefaultParameters::page(),
+                DefaultParameters::count());
         $response->code = Response::OK;
 
         return $response;

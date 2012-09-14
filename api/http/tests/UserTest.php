@@ -11,7 +11,25 @@ class UserTest extends APIBaseTest
         {
             $jsonArray = $this->getResults('/user');
             $this->assertValidJson($jsonArray);
-            $this->assertEquals(1, sizeof($jsonArray));
+            $this->assertEquals(2, sizeof($jsonArray));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testListUsersPaginated()
+    {
+        try
+        {
+            $users = $this->getResults('/user?page=1&count=1');
+            $this->assertValidJson($users);
+            $this->assertEquals(1, sizeof($users));
+
+            $jsonArray = $this->getResults('/user?page=2&count=1');
+            $this->assertValidJson($users);
+            $this->assertEquals(1, sizeof($users));
         }
         catch (Pest_Exception $e)
         {
@@ -315,7 +333,7 @@ class UserTest extends APIBaseTest
 
             $jsonArray = $this->getResults('/user');
             $this->assertValidJson($jsonArray);
-            $this->assertEquals(3, sizeof($jsonArray));
+            $this->assertEquals(4, sizeof($jsonArray));
         }
         catch (Pest_Exception $e)
         {
