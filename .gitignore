@@ -12,6 +12,11 @@ src/make_license_file
 *.pyc
 TAGS
 
+# docs
+
+docs/*.html
+docs/*.pdf
+
 # gcov/lcov
 
 *.gcno

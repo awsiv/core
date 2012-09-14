@@ -231,7 +231,7 @@ void DocumentFile(char *filename, char *outname)
         }
     }
 
-    fclose(fout);
+    fclose(fin);
 }
 
 /*****************************************************************************/
