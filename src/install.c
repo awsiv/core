@@ -1570,6 +1570,32 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
     }
 }
 
+void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceInclude, const char *namespaceExclude)
+{
+    if (namespaceInclude)
+    {
+        AppendRlist(&(filter->namespaceIncludes), namespaceInclude, CF_SCALAR);
+    }
+
+    if (namespaceExclude)
+    {
+        AppendRlist(&(filter->namespaceExcludes), namespaceExclude, CF_SCALAR);
+    }
+}
+
+void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRxInclude, const char *namespaceRxExclude)
+{
+    if (namespaceRxInclude)
+    {
+        AppendRlist(&(filter->namespaceRxIncludes), namespaceRxInclude, CF_SCALAR);
+    }
+
+    if (namespaceRxExclude)
+    {
+        AppendRlist(&(filter->namespaceRxExcludes), namespaceRxExclude, CF_SCALAR);
+    }
+}
+
 /*****************************************************************************/
 
 void DeletePromiseFilter(PromiseFilter *filter)
@@ -1583,10 +1609,16 @@ void DeletePromiseFilter(PromiseFilter *filter)
     free(filter->bundleTypeRxInclude);
     free(filter->bundleTypeInclude);
     free(filter->promiseTypeRxInclude);
+
     DeleteRlist(filter->bundleIncludes);
     DeleteRlist(filter->bundleRxIncludes);
     DeleteRlist(filter->bundleExcludes);
     DeleteRlist(filter->bundleRxExcludes);
+
+    DeleteRlist(filter->namespaceIncludes);
+    DeleteRlist(filter->namespaceRxIncludes);
+    DeleteRlist(filter->namespaceExcludes);
+    DeleteRlist(filter->namespaceRxExcludes);
 
     free(filter);
 }

@@ -70,6 +70,11 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     bson_append_string(&insert_op, cfp_bundlename, pp->bundle);
     bson_append_string(&insert_op, cfp_bundletype, pp->bundletype);
 
+    if (pp->namespace)
+    {
+        bson_append_string(&insert_op, cfr_bundle_namespace, pp->namespace);
+    }
+
     if (pp->audit)
     {
         CfDebug("In file %s near line %zu\n", pp->audit->filename, pp->offset.line);
@@ -198,6 +203,11 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
                 if ((sp = GetConstraintValue("comment", pp, CF_SCALAR)))
                 {
                     bson_append_string(&insert_op, cfp_comment, sp);
+                }
+
+                if (pp->namespace)
+                {
+                    bson_append_string(&insert_op, cfr_bundle_namespace, pp->namespace);
                 }
 
                 {

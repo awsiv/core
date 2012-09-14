@@ -835,6 +835,8 @@ void PromiseFilterAddPromiseTypeRx(PromiseFilter *filter, const char *promiseTyp
 void PromiseFilterAddBundleTypeRx(PromiseFilter *filter, const char *bundleTypeRxInclude);
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
+void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceInclude, const char *namespaceExclude);
+void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRxInclude, const char *namespaceRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
 
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,

@@ -66,6 +66,10 @@ typedef struct
     Rlist *bundleRxIncludes;
     Rlist *bundleExcludes;
     Rlist *bundleRxExcludes;
+    Rlist *namespaceIncludes;
+    Rlist *namespaceExcludes;
+    Rlist *namespaceRxIncludes;
+    Rlist *namespaceRxExcludes;
 } PromiseFilter;
 
 /* misc */

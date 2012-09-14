@@ -5930,6 +5930,12 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
     modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
     modified |= BsonAppendExcludeRxList(query, cfp_bundlename, filter->bundleRxExcludes);
 
+    modified |= BsonAppendIncludeList(query, cfr_bundle_namespace, filter->namespaceIncludes);
+    modified |= BsonAppendIncludeRxList(query, cfr_bundle_namespace, filter->namespaceRxIncludes);
+
+    modified |= BsonAppendExcludeList(query, cfr_bundle_namespace, filter->namespaceExcludes);
+    modified |= BsonAppendExcludeRxList(query, cfr_bundle_namespace, filter->namespaceRxExcludes);
+
     return modified;
 }
 
