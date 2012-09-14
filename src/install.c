@@ -802,11 +802,12 @@ void DeleteHubBundleSeen(HubBundleSeen *hp)
 
 /*****************************************************************************/
 
-HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
+HubPromise *NewHubPromise(const char *ns, char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons)
 {
     HubPromise *hp = xmalloc(sizeof(HubPromise));
 
+    hp->ns = SafeStringDuplicate(ns);
     hp->bundleName = SafeStringDuplicate(bn);
     hp->bundleType = SafeStringDuplicate(bt);
     hp->promiseType = SafeStringDuplicate(pt);
@@ -830,6 +831,7 @@ HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rli
 
 void DeleteHubPromise(HubPromise * hp)
 {
+    free(hp->ns);
     free(hp->bundleName);
     free(hp->bundleType);
     free(hp->promiseType);

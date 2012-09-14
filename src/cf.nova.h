@@ -483,6 +483,7 @@ typedef struct
 
 typedef struct
 {
+    char *ns;
     char *bundleName;
     char *bundleType;
     Rlist *bundleArgs;
@@ -784,7 +785,7 @@ HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle);
 void DeleteHubValue(HubValue *hp);
-HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
+HubPromise *NewHubPromise(const char *ns, char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons);
 HubPromiseBundle *NewHubPromiseBundle(char *bundleName, char *bundleType, Rlist *bundleArgs);
 void DeleteHubPromiseBundle(HubPromiseBundle * hb);

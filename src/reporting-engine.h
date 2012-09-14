@@ -66,6 +66,7 @@
                                  "FOREIGN KEY(PromiseHandle) REFERENCES PromiseDefinitions(PromiseHandle));"
 
 #define CREATE_SQL_PROMISEDEFINITIONS "CREATE TABLE " SQL_TABLE_PROMISEDEFINITIONS "(" \
+                                      "Namespace VARCHAR(50), " \
                                       "PromiseHandle VARCHAR(50), " \
                                       "Promiser VARCHAR(50), " \
                                       "Bundle VARCHAR(50), " \

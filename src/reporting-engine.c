@@ -30,7 +30,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
-static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *handle, char *promiser, char *bundle_name, char *promisee);
+static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const char *ns, const char *handle, const char *promiser, const char *bundle_name, const char *promisee);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -581,7 +581,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         {
             for(Rlist *promisees = hp->promisees; promisees != NULL; promisees = promisees->next)
             {
-                if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->handle, hp->promiser, hp->bundleName, ScalarValue(promisees)))
+                if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->ns, hp->handle, hp->promiser, hp->bundleName, ScalarValue(promisees)))
                 {
                     DeleteHubQuery(hq, DeleteHubPromise);
                     return;
@@ -590,7 +590,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         }
         else
         {
-            if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->handle, hp->promiser, hp->bundleName, ""))
+            if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->ns, hp->handle, hp->promiser, hp->bundleName, ""))
             {
                 DeleteHubQuery(hq, DeleteHubPromise);
                 return;
@@ -602,7 +602,8 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
 }
 
 
-static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *handle, char *promiser, char *bundle_name, char *promisee)
+static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const char *ns, const char *handle, const char *promiser,
+                                                            const char *bundle_name, const char *promisee)
 {
     char insert_op[CF_BUFSIZE] = {0};
 
@@ -610,8 +611,8 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, char *h
     char *promisee_escaped = EscapeCharCopy(promisee, '\'', '\'');
 
     snprintf(insert_op, sizeof(insert_op),
-             "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
-             handle, promiser_escaped, bundle_name, promisee_escaped);
+             "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
+             ns, handle, promiser_escaped, bundle_name, promisee_escaped);
 
     free(promisee_escaped);
     free(promiser_escaped);

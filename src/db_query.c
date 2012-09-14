@@ -4405,7 +4405,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bTyp
         if (strlen(handle) > 0 || strlen(comment) > 0)
         {
             PrependRlistAlienUnlocked(&recordList,
-                              NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL, handle, comment, NULL, 0, NULL));
+                              NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, handle, comment, NULL, 0, NULL));
         }
     }
 
@@ -4516,7 +4516,7 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
             if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
             {
                 PrependRlistAlienUnlocked(&recordList,
-                                  NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+                                  NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
                                                 (char *) bson_iterator_string(&it1), NULL, NULL, 0, NULL));
             }
         }
@@ -4545,7 +4545,8 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
     bson fields;
 
-    BsonSelectReportFields(&fields, 12,
+    BsonSelectReportFields(&fields, 13,
+                           cfr_bundle_namespace,
                            cfp_bundlename,
                            cfp_bundletype,
                            cfp_handle,
@@ -4568,11 +4569,13 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        char ns[CF_MAXVARSIZE] = { 0 };
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
         char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
         char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
         char file[CF_MAXVARSIZE];
 
+        BsonStringWrite(ns, sizeof(ns), &(cursor->current), cfr_bundle_namespace);
         BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
         BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle);
@@ -4590,7 +4593,7 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
         Rlist *promisees = BsonStringArrayAsRlist(&(cursor->current), cfp_promisee);
 
 
-        PrependRlistAlienUnlocked(&recordList, NewHubPromise(bundleName, bundleType, bundleArgs,
+        PrependRlistAlienUnlocked(&recordList, NewHubPromise(ns, bundleName, bundleType, bundleArgs,
                                                      promiseType, promiser, promisees,
                                                      classContext, promiseHandle, comment,
                                                      file, lineNumber, constraints));
@@ -4616,7 +4619,8 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
 
     bson fields;
 
-    BsonSelectReportFields(&fields, 11,
+    BsonSelectReportFields(&fields, 12,
+                           cfr_bundle_namespace,
                            cfp_promisetype,
                            cfp_classcontext,
                            cfp_promiser_exp,
@@ -4638,11 +4642,13 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        char ns[CF_MAXVARSIZE] = { 0 };
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
         char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
         char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
         char file[CF_MAXVARSIZE];
 
+        BsonStringWrite(ns, sizeof(ns), &(cursor->current), cfr_bundle_namespace);
         BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
         BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle_exp);
@@ -4658,7 +4664,7 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints_exp);
         Rlist *promisees = BsonStringArrayAsRlist(&(cursor->current), cfp_promisee);
 
-        PrependRlistAlienUnlocked(&recordList, NewHubPromise(bundleName, bundleType, NULL,
+        PrependRlistAlienUnlocked(&recordList, NewHubPromise(ns, bundleName, bundleType, NULL,
                                                      promiseType, promiser, promisees,
                                                      classContext, promiseHandle, comment,
                                                      file, lineNumber, constraints));
