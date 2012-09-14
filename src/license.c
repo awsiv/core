@@ -695,3 +695,27 @@ int Nova_CheckLicenseWin(char *pos)
 
     return true;
 }
+
+
+bool LicenseInstall(char *path_source)
+{
+    struct stat sb;
+
+    if(cfstat(path_source, &sb) == -1)
+    {
+        CfOut(cf_error, "cfstat", "!! Can not stat input license file %s", path_source);
+        return false;
+    }
+
+    char path_destination[MAX_FILENAME];
+    snprintf(path_destination, sizeof(path_destination), "%s/inputs/license.dat", CFWORKDIR);
+    MapName(path_destination);
+
+    if(cfstat(path_destination, &sb) == 0)
+    {
+        CfOut(cf_error, "", "!! A license file is already installed in %s -- please move it out of the way and try again", path_destination);
+        return false;
+    }
+
+    return CopyRegularFileDisk(path_source, path_destination, false);
+}

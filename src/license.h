@@ -16,5 +16,6 @@ typedef struct
 }EnterpriseLicense;
 
 bool LicenseFileParse(EnterpriseLicense *license, char *license_file_path);
+bool LicenseInstall(char *path_source);
 
 #endif  /* CFENGINE_LICENSE_H */
