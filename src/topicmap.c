@@ -1149,7 +1149,7 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
             }
 
           
-            for (i = 0; (i < CF_SERVICES_LIMIT && serv_array[i].port > 0); i++)
+            for (i = 0; (i < CF_SERVICES_LIMIT-1 && serv_array[i].port > 0); i++)
             {
                 if (strlen(serv_array[i].port) == 0)
                 {
