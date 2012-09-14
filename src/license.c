@@ -42,6 +42,8 @@ static char *LicenseFilePath(void);
 static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_ip_address);
 int Nova_HashKey(char *filename, char *buffer, const char *hash);
 static void Nova_LogLicenseStatus(void);
+static bool LicensePublicKeyPath(char path_public_key[MAX_FILENAME], char *path_license);
+
 
 /*****************************************************************************/
 
@@ -717,6 +719,20 @@ bool LicenseInstall(char *path_source)
         return false;
     }
 
+    char path_public_key[MAX_FILENAME];
+
+    if(!LicensePublicKeyPath(path_public_key, path_source))
+    {
+        CfOut(cf_error, "", "!! Could not find path to public key -- license parse error?");
+    }
+
+    if(cfstat(path_public_key, &sb) != 0)
+    {
+        CfOut(cf_error, "", "!! The licensed public key is not installed -- please copy it to %s and try again", path_public_key);
+        return false;
+    }
+
+
     bool success = CopyRegularFileDisk(path_source, path_destination, false);
 
     if(success)
@@ -729,4 +745,20 @@ bool LicenseInstall(char *path_source)
     }
 
     return success;
+}
+
+
+static bool LicensePublicKeyPath(char path_public_key[MAX_FILENAME], char *path_license)
+{
+    EnterpriseLicense license;
+
+    if(!LicenseFileParse(&license, path_license))
+    {
+        return false;
+    }
+
+    snprintf(path_public_key, MAX_FILENAME, "%s/ppkeys/root-SHA=%s.pub", CFWORKDIR, license.public_key_digest);
+    MapName(path_public_key);
+
+    return true;
 }
