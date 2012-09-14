@@ -125,7 +125,7 @@ class SettingsTest extends APIBaseTest
                 "ldapMode": "standard",
                 "ldapHost": "yahoo.comxxx",
                 "ldapBaseDN":"dc=cfengine;dc=com",
-                "ldapLoginAttribute":"uid",
+                "ldapLoginAttribute":"uidx",
                 "ldapUsersDirectory":"ou=jersey",
                 "ldapEncryption":"ssl",
                 "ldapPort": 1025,
@@ -141,7 +141,7 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals('standard', $settings[0]['ldapMode']);
             $this->assertEquals('yahoo.comxxx', $settings[0]['ldapHost']);
             $this->assertEquals('dc=cfengine;dc=com', $settings[0]['ldapBaseDN']);
-            $this->assertEquals('uid', $settings[0]['ldapLoginAttribute']);
+            $this->assertEquals('uidx', $settings[0]['ldapLoginAttribute']);
             $this->assertEquals('ou=jersey', $settings[0]['ldapUsersDirectory']);
             $this->assertEquals(1025, $settings[0]['ldapPort']);
             $this->assertEquals(1026, $settings[0]['ldapPortSSL']);
