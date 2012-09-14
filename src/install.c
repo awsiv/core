@@ -802,11 +802,12 @@ void DeleteHubBundleSeen(HubBundleSeen *hp)
 
 /*****************************************************************************/
 
-HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
+HubPromise *NewHubPromise(const char *ns, char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rlist *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons)
 {
     HubPromise *hp = xmalloc(sizeof(HubPromise));
 
+    hp->ns = SafeStringDuplicate(ns);
     hp->bundleName = SafeStringDuplicate(bn);
     hp->bundleType = SafeStringDuplicate(bt);
     hp->promiseType = SafeStringDuplicate(pt);
@@ -830,6 +831,7 @@ HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, Rli
 
 void DeleteHubPromise(HubPromise * hp)
 {
+    free(hp->ns);
     free(hp->bundleName);
     free(hp->bundleType);
     free(hp->promiseType);
@@ -1570,6 +1572,32 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
     }
 }
 
+void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceInclude, const char *namespaceExclude)
+{
+    if (namespaceInclude)
+    {
+        AppendRlist(&(filter->namespaceIncludes), namespaceInclude, CF_SCALAR);
+    }
+
+    if (namespaceExclude)
+    {
+        AppendRlist(&(filter->namespaceExcludes), namespaceExclude, CF_SCALAR);
+    }
+}
+
+void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRxInclude, const char *namespaceRxExclude)
+{
+    if (namespaceRxInclude)
+    {
+        AppendRlist(&(filter->namespaceRxIncludes), namespaceRxInclude, CF_SCALAR);
+    }
+
+    if (namespaceRxExclude)
+    {
+        AppendRlist(&(filter->namespaceRxExcludes), namespaceRxExclude, CF_SCALAR);
+    }
+}
+
 /*****************************************************************************/
 
 void DeletePromiseFilter(PromiseFilter *filter)
@@ -1583,10 +1611,16 @@ void DeletePromiseFilter(PromiseFilter *filter)
     free(filter->bundleTypeRxInclude);
     free(filter->bundleTypeInclude);
     free(filter->promiseTypeRxInclude);
+
     DeleteRlist(filter->bundleIncludes);
     DeleteRlist(filter->bundleRxIncludes);
     DeleteRlist(filter->bundleExcludes);
     DeleteRlist(filter->bundleRxExcludes);
+
+    DeleteRlist(filter->namespaceIncludes);
+    DeleteRlist(filter->namespaceRxIncludes);
+    DeleteRlist(filter->namespaceExcludes);
+    DeleteRlist(filter->namespaceRxExcludes);
 
     free(filter);
 }
