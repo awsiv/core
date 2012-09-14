@@ -1,15 +1,18 @@
-CFENGINE 3 ENTERPRISE 2.2.2
+CFENGINE 3 ENTERPRISE 2.2.3
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: August 2012
+RELEASE DATE: September 2012
+SCOPE 2.2.3: Minor bugfix release to Enterprise 2.2.2
 SCOPE 2.2.2: Minor bugfix release to Enterprise 2.2.1 
 SCOPE 2.2.1: Minor bugfix release to Enterprise 2.2.0 
 SCOPE 2.2.0: Official release of CFEngine 3 Enterprise (successor to CFEngine Nova 2.1.3)
-All documentation for 2.2.0 and 2.2.1 will apply to 2.2.2, except issues noted in change log and known issues below.
+All documentation for 2.2.x will apply to 2.2.3, except issues noted in change log and known issues below.
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
  PLATFORMS SUPPORTED
  COMPATIBILITY MATRIX
+ CHANGE LOG FROM 2.2.2
+ BUGFIXES SINCE 2.2.2
  CHANGE LOG FROM 2.2.1
  BUGFIXES SINCE 2.2.1
  BUGFIXES SINCE 2.2.0
@@ -53,18 +56,27 @@ Solaris 	10 					i86pc	 		No libvirt
 Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
 Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.6
+Community version base: 3.3.7
 
 
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
-2.2.2	2.2.x		Yes		Yes
-2.2.2	2.1.x		Yes		Yes		Bundle compliance report not compatible
+2.2.3	2.2.x		Yes		Yes
+2.2.3	2.1.x		Yes		Yes		Bundle compliance report not compatible
 2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
 2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 
 As always, test thoroughly in your lab before upgrading production environments!
+
+CHANGE LOG FROM 2.2.2:
+* Hub maintenance process timing transferred from being hard coded to being set in policy (default is every 6 hours; see CFE_hub_specific.cf)
+* Introduced new switch for cf-hub (-m) to start maintenance process
+* Performance enhancements on the hub database maintenance process
+* cf-runagent timeout previously only concerned connection timeout to the clients, now also includes a receive data timeout (default set to 30 seconds for both)
+
+BUGFIXES SINCE 2.2.2:
+* Fixed problem with non-existing directory for application logs (<DOCROOT>/application/logs)
 
 CHANGE LOG FROM 2.2.1:
 * Rename Engineering room to Status and Reports room
@@ -137,9 +149,14 @@ See separate INSTALL file for instructions.
 
 
 KNOWN ISSUES:
+* ACL posix library not included in package
 * Software and patches available/status reports containing maximum 5-minute old data: will only apply to clients that are upgraded to 2.2.x.
 * Compliance by bundle reports are incompatible with older clients (CFEngine Nova 2.1.4 and down). Data with a timestamp prior to upgrade to 2.2.x will not be shown in the reports.
 * Verbose output in command line interface (CLI) still indicates that you are using CFEngine 3 Nova (i.e. the CLI prefixes the verbose output with "nova> [MESSAGE]". See message for next release below.
+* A change in hub maintenance process interval from the default 6 hours will effect the time series graph on the Engineering page (may have blanks or other display problems).
+* If the external authentication database (LDAP or AD) contains empty fields there will be a mismatch in user attributes (empty field is populated with data from next user).
+* Listing of externally authenticated users limited to 100 entries (workaround consists in editing  /var/www/html/application/libraries/Auth_Ldap.php, replace 100 with desired number in the line containing "$password, 1, 100,$this->use_starttls").
+* Listing of externally authenticated users is blank it contains more than 1000 entries.
 
 
 IMPORTANT NOTICE FOR NEXT MAJOR RELEASE (CFENGINE 3 ENTERPRISE 3.0):
