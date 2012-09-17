@@ -1303,7 +1303,7 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 
 /*************************************************************************/
 
-int Nova_GetApplicationServices()
+JsonElement *Nova_GetApplicationServices()
 {
     bson_iterator it1;
     EnterpriseDB conn;
