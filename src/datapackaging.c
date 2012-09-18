@@ -174,7 +174,6 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
     double now = (double) time(NULL), average = 0, var = 0;
     char eventname[CF_BUFSIZE], buffer[CF_MAXVARSIZE];
     Event entry;
-    CEnt *array = xcalloc(1024,sizeof(CEnt));
     int i, ksize, vsize, first = true;
 
     CfOut(cf_verbose, "", " -> Packing class data");
@@ -196,6 +195,8 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
     memset(&entry, 0, sizeof(entry));
 
     /* Walk through the database and print out the key/data pairs. */
+
+    CEnt *array = xcalloc(1024,sizeof(CEnt));
 
     for (i = 0; i < 1024; i++)
     {
@@ -269,10 +270,10 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
         AppendItem(reply, buffer, NULL);
     }
 
+    free(array);
+
     DeleteDBCursor(dbp, dbcp);
     CloseDB(dbp);
-
-    free(array);
 }
 
 /*****************************************************************************/
