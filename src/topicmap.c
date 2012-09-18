@@ -222,11 +222,10 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
     
-    
-    /*
+
+    char buffer[1000000];
     Nova_GetUniqueBusinessGoals(buffer, 1000000);
     printf("\nGOALS:\n %s\n",buffer);
-
 
     printf("***************************************************\n");
     
@@ -281,7 +280,35 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    */
+
+    json = Nova2PHP_list_promises_with_promisee("www_in");
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\nPromises addressing: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+    
+    json = Nova2PHP_list_types_in_bundle("dragon_symphony");
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\ntype histo: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+
 }
 
 /*****************************************************************************/
@@ -1149,14 +1176,17 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
             }
 
           
-            for (i = 0; (i < CF_SERVICES_LIMIT-1 && serv_array[i].port > 0); i++)
+            for (i = 0; (i < CF_SERVICES_LIMIT-1 && strlen(serv_array[i].port) > 0); i++)
             {
                 if (strlen(serv_array[i].port) == 0)
                 {
                     break;
                 }
-             
-                if (strcmp(serv_array[i].name, portname) == 0)
+
+                char cmp[CF_SMALLBUF];
+                snprintf(cmp,CF_SMALLBUF-1,"%s_in", portname);
+
+                if (strcmp(cmp, serv_array[i].name) == 0)
                 {
                     serv_array[i].freq[type]++;
                     
