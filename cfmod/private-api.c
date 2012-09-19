@@ -4366,6 +4366,12 @@ PHP_FUNCTION(cfpr_list_business_goals)
 PHP_FUNCTION(cfpr_list_services)
 {
  JsonElement *out = Nova2PHP_list_services();
+
+ if (!out)
+ {
+     out = JsonObjectCreate(0);
+ }
+
  RETURN_JSON(out);
 }
 
@@ -4374,6 +4380,12 @@ PHP_FUNCTION(cfpr_list_services)
 PHP_FUNCTION(cfpr_list_service_ports)
 {
  JsonElement *out = Nova2PHP_list_service_ports();
+
+ if (!out)
+ {
+     out = JsonObjectCreate(0);
+ }
+
  RETURN_JSON(out);
 }
 
@@ -4391,6 +4403,12 @@ PHP_FUNCTION(list_promises_with_promisee)
     }
 
     JsonElement *out = Nova2PHP_list_promises_with_promisee(name);
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
+
     RETURN_JSON(out);
 }
 /******************************************************************************/
@@ -4407,6 +4425,12 @@ PHP_FUNCTION(agent_bundle_type_histogram)
     }
 
     JsonElement *out = Nova2PHP_list_types_in_bundle(name);
+
+    if (!out)
+    {
+       out = JsonObjectCreate(0);
+    }
+
     RETURN_JSON(out);
 }
 
@@ -4424,7 +4448,13 @@ PHP_FUNCTION(cfpr_goal_progress)
     }
 
  JsonElement *out = Nova2PHP_get_goal_progress((int) id, handle);
-    RETURN_JSON(out);
+
+ if (!out)
+ {
+     out = JsonObjectCreate(0);
+ }
+
+ RETURN_JSON(out);
 }
 
 /******************************************************************************/
@@ -4449,6 +4479,12 @@ PHP_FUNCTION(cfpr_bundle_for_topic)
 PHP_FUNCTION(cfpr_service_histogram)
 {
     JsonElement *out = Nova2PHP_get_service_histogram();
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
+
     RETURN_JSON(out);
 }
 
@@ -4466,6 +4502,12 @@ PHP_FUNCTION(cfpr_service_level_histogram)
     }
  
     JsonElement *out = Nova2PHP_get_service_level_histogram(srv);
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
+
     RETURN_JSON(out);
 }
 
@@ -4474,6 +4516,12 @@ PHP_FUNCTION(cfpr_service_level_histogram)
 PHP_FUNCTION(cfpr_port_histogram)
 {
     JsonElement *out = Nova2PHP_get_open_port_histograms();
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
+
     RETURN_JSON(out);
 }
 
