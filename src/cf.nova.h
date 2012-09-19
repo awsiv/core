@@ -1033,7 +1033,7 @@ Item *Nova_GetTopicsInContext(char *context);
 Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
 JsonElement *Nova_GetApplicationServices(void);
-int Nova_GetMeasuredServices(void);
+JsonElement *Nova_GetMeasuredServices(void);
 JsonElement *Nova_GetServiceHistogram(void);
 JsonElement *Nova_GetServiceLevels(char *service);
 Item *Nova_GetHandlesForGoal(int referred);

@@ -1455,7 +1455,7 @@ JsonElement *Nova_GetApplicationServices()
 
 /*************************************************************************/
 
-int Nova_GetMeasuredServices()
+JsonElement *Nova_GetMeasuredServices()
 {
     bson_iterator it1;
     EnterpriseDB conn;
