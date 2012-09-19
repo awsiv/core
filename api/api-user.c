@@ -254,7 +254,7 @@ PHP_FUNCTION(cfapi_user_subscription_query_list)
     {
         JsonArrayAppendObject(data, HubScheduledReportToJson((HubScheduledReport *)rp->item));
     }
-    DeleteHubQuery(result, DeleteScheduledReport);
+    DeleteHubQuery(result, DeleteHubScheduledReport);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
@@ -296,7 +296,7 @@ PHP_FUNCTION(cfapi_user_subscription_query_get)
     {
         JsonArrayAppendObject(data, HubScheduledReportToJson((HubScheduledReport *)rp->item));
     }
-    DeleteHubQuery(result, DeleteScheduledReport);
+    DeleteHubQuery(result, DeleteHubScheduledReport);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
@@ -311,16 +311,19 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     zend_bool enabled = false;
     const char *query = NULL; int query_len = 0;
     const char *schedule = NULL; int schedule_len = 0;
-    //const char *report_output_type = NULL; int report_output_type_len = 0;
+    const char *title = NULL; int title_len = 0;
+    const char *description = NULL; int description_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbssss",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &sub_id, &sub_id_len,
                               &to, &to_len,
                               &enabled,
                               &query, &query_len,
-                              &schedule, &schedule_len) == FAILURE)
+                              &schedule, &schedule_len,
+                              &title, &title_len,
+                              &description, &description_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -339,7 +342,9 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     }
 
     CFDB_SaveScheduledReport(conn, username_arg, to, sub_id, query, schedule,
-                             enabled, 1);
+                             enabled, 1,
+                             title_len > 0 ? title : NULL,
+                             description_len > 0 ? description : NULL);
 
     EnterpriseDBRelease(conn);
 

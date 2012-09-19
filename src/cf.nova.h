@@ -622,6 +622,8 @@ typedef struct
     char *query_id;
     char *query;
     char *schedule;
+    char *title;
+    char *description;
 } HubScheduledReport;
 
 typedef enum
@@ -844,8 +846,8 @@ HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int 
                                                     double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
-HubScheduledReport *NewScheduledReports( const char *user, const char *email, const char *query_id, const char *query, const char *schedule );
-void DeleteScheduledReport( HubScheduledReport *sr );
+HubScheduledReport *NewHubScheduledReport( const char *user, const char *email, const char *query_id, const char *query, const char *schedule, const char *title, const char *description);
+void DeleteHubScheduledReport( HubScheduledReport *sr );
 
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles);
 
@@ -1591,6 +1593,8 @@ typedef struct
 #define cfr_enabled "enabled"
 #define cfr_already_run "already_run"
 #define cfr_report_output_type "report_type"
+#define cfr_title "title"
+#define cfr_description "description"
 
 /* Output format for reports.
  * These values are stored ( turned on / off) in bits:

@@ -543,4 +543,45 @@ class UserTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
+    public function testAddQuerySubscriptionOptionalFields()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // initially there should be no subscriptions for a new user
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(0, sizeof($subs));
+
+            $this->pest->put('/user/snookie/subscription/query/stuff', '{
+                    "to": "snookie@cfengine.com",
+                    "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
+                    "schedule": "Monday.Hr23.Min59",
+                    "title": "My Jersey Report",
+                    "description": "Reporting from Jersey"
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // check by listing
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(1, sizeof($subs));
+            $this->assertEquals('stuff', $subs[0]['id']);
+            $this->assertEquals('My Jersey Report', $subs[0]['title']);
+            $this->assertEquals('Reporting from Jersey', $subs[0]['description']);
+
+
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 }

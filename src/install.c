@@ -2226,7 +2226,7 @@ static void DateStrToTime(const char *inStr, time_t *t)
 
 /*****************************************************************************/
 
-HubScheduledReport *NewScheduledReports(const char *user, const char *email, const char *query_id, const char *query, const char *schedule )
+HubScheduledReport *NewHubScheduledReport(const char *user, const char *email, const char *query_id, const char *query, const char *schedule, const char *title, const char *description)
 {
     HubScheduledReport *sr;
     sr = xmalloc( sizeof( HubScheduledReport ) );
@@ -2239,13 +2239,15 @@ HubScheduledReport *NewScheduledReports(const char *user, const char *email, con
     sr->enabled = false;
     sr->last_run = 0;
     sr->output_type = 0;
+    sr->title = SafeStringDuplicate(title);
+    sr->description = SafeStringDuplicate(description);
 
     return sr;
 }
 
 /*****************************************************************************/
 
-void DeleteScheduledReport(HubScheduledReport *sr)
+void DeleteHubScheduledReport(HubScheduledReport *sr)
 {
     if( sr )
     {
@@ -2254,6 +2256,8 @@ void DeleteScheduledReport(HubScheduledReport *sr)
         free( sr->query_id );
         free( sr->query );
         free( sr->schedule );
+        free(sr->title);
+        free(sr->description);
     }
 
     free( sr );

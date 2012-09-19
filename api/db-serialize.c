@@ -16,6 +16,16 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
     JsonObjectAppendInteger(obj, "outputType", scheduled_report->output_type);
     JsonObjectAppendInteger(obj, "lastRun", scheduled_report->last_run);
 
+    if (scheduled_report->title)
+    {
+        JsonObjectAppendString(obj, "title", scheduled_report->title);
+    }
+
+    if (scheduled_report->description)
+    {
+        JsonObjectAppendString(obj, "description", scheduled_report->description);
+    }
+
     return obj;
 }
 

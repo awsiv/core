@@ -34,7 +34,8 @@ class UserSubscriptionQuery extends Resource
         $response = new Response($request);
 
         if (cfapi_user_subscription_query_put($user, $username, $subscription_id,
-                $data->to, $data->enabled, $data->query, $data->schedule))
+                $data->to, $data->enabled, $data->query, $data->schedule,
+                $data->title, $data->description))
         {
             $response->code = Response::CREATED;
         }

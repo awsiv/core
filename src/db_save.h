@@ -49,7 +49,7 @@ void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_
 
 void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *email,
                               const char *scheduled_query_id, const char *scheduled_query,
-                              const char *schedule, const bool enabled, const int report_output_type );
+                              const char *schedule, const bool enabled, const int report_output_type, const char *title, const char *description );
 
 void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char *scheduled_query_id);
 

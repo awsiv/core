@@ -2322,7 +2322,8 @@ void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_
 
 void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *email,
                               const char *scheduled_query_id, const char *scheduled_query,
-                              const char *schedule, const bool enabled, const int report_output_type )
+                              const char *schedule, const bool enabled, const int report_output_type,
+                              const char *title, const char *description)
 {
     assert( conn );
     assert( user );
@@ -2346,6 +2347,17 @@ void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *
     bson_append_string( set_op, cfr_query_id, scheduled_query_id );
     bson_append_string( set_op, cfr_run_classes, schedule );
     bson_append_int( set_op, cfr_last_run, ( int ) time( NULL ) );
+
+    if (title)
+    {
+        bson_append_string(set_op, cfr_title, title);
+    }
+
+    if (description)
+    {
+        bson_append_string(set_op, cfr_description, description);
+    }
+
     BsonAppendBool( set_op, cfr_already_run, false );
     BsonAppendBool( set_op, cfr_enabled, enabled );
     bson_append_int( set_op, cfr_report_output_type, report_output_type );
