@@ -227,7 +227,7 @@ int EnterpriseExpiry(void)
     if ((strcmp(VYEAR, u_year) > 0) || ((strcmp(VYEAR, u_year) == 0) && (m_now > m_expire))
         || ((strcmp(VYEAR, u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
     {
-        if (!IsDefinedClass("bootstrap_mode"))  // avoid cf-promises complaints while bootstrapping
+        if (!IsDefinedClass("bootstrap_mode", NULL))  // avoid cf-promises complaints while bootstrapping
         {
             CfOut(cf_error, "", " !! %d licenses expired on %s %s %s -- reverting to Community Edition", LICENSES,
                   u_day, u_month, u_year);
@@ -511,7 +511,7 @@ void CheckLicenses(void)
     if (licenses == 0)
     {
         // using bootstrap_mode to avoid cf-promises complaining during bootstrap also (gets defined)
-        if (!IsDefinedClass("bootstrap_mode") && getuid() == 0 && (THIS_AGENT_TYPE != cf_know)
+        if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != cf_know)
             && (THIS_AGENT_TYPE != cf_keygen))
         {
             CfOut(cf_error, "", " !! Your configuration promises no host_licenses_paid in common control");
@@ -555,7 +555,7 @@ static void Nova_LogLicenseStatus(void)
     dummyattr.transaction.ifelapsed = 1440;     // 1 day
     dummyattr.transaction.expireafter = 1440;   // 1 day
 
-    if (!IsDefinedClass("am_policy_hub"))
+    if (!IsDefinedClass("am_policy_hub", NULL))
     {
         return;
     }

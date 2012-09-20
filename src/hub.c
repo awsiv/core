@@ -283,7 +283,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig config)
 
     for (cp = ControlBodyConstraints(policy, cf_hub); cp != NULL; cp = cp->next)
     {
-        if (IsExcluded(cp->classes))
+        if (IsExcluded(cp->classes, NULL))
         {
             continue;
         }
@@ -542,7 +542,7 @@ static int ScheduleRun(void)
     {
         CfDebug("Checking schedule %s...\n", ip->name);
 
-        if (IsDefinedClass(ip->name))
+        if (IsDefinedClass(ip->name, NULL))
         {
             CfOut(cf_verbose, "", "Waking up the agent at %s ~ %s \n", cf_ctime(&CFSTARTTIME), ip->name);
             return true;
@@ -737,7 +737,7 @@ static void Nova_CollectReports(void)
     Nova_Scan(masterhostlist);
     DeleteItemList(masterhostlist);
 
-    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+    if (CFH_ZENOSS && IsDefinedClass("Min00_05", NULL))
     {
         Nova_ZenossSummary(ZENOSS_PATH);
     }

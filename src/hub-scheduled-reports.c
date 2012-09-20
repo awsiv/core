@@ -164,7 +164,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
             continue;
         }        
 
-        bool is_class_defined = IsDefinedClass( run_class );
+        bool is_class_defined = IsDefinedClass( run_class, NULL );
 
         bool already_run = BsonBoolGet( mongo_cursor_bson( cursor ), cfr_already_run );
 

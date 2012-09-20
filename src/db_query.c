@@ -64,7 +64,7 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 
     // clients do not run mongo server -- will fail to connect
 
-    if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
+    if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
         CfOut(cf_verbose, "", "Ignoring DB get of (%s) - we are not a policy server", lval);
         return false;
@@ -6427,7 +6427,7 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
 bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
 {
-    if(!IsDefinedClass("am_policy_hub"))
+    if(!IsDefinedClass("am_policy_hub", NULL))
     {
         CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (not running as a hub)");
         return false;

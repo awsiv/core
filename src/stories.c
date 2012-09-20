@@ -706,7 +706,7 @@ void Nova_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
 
   for (cp = ControlBodyConstraints(policy, cf_common); cp != NULL; cp = cp->next)
     {
-    if (IsExcluded(cp->classes))
+    if (IsExcluded(cp->classes, NULL))
        {
        continue;
        }
