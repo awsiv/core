@@ -97,7 +97,7 @@ static void test_CFDB_QueryScheduledReport(void **state)
 
     }
 
-    DeleteHubQuery( hq, DeleteScheduledReport );
+    DeleteHubQuery(hq, DeleteHubScheduledReport);
 
     /* Cleanup test data */
     mongo_remove( conn, MONGO_SCHEDULED_REPORTS, query, NULL );
