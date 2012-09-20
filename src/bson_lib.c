@@ -650,7 +650,7 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
     }
 
     char *score_method = NULL;
-    const char score_key[10] = { 0 };
+    char score_key[10] = { 0 };
     switch (filter->method)
     {
         case HOST_RANK_METHOD_COMPLIANCE:
