@@ -1063,7 +1063,8 @@ int CFDB_PurgeDeletedHosts(void)
 
 /*****************************************************************************/
 
-void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey)
+void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey,
+                                         PromiseContextMode promise_context_mode)
 {
     assert(hostkey);
 
@@ -1071,7 +1072,7 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
     time_t to = GetShiftSlotStart(now);
     time_t from = to - SECONDS_PER_SHIFT;
 
-    HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1, false, NULL);
+    HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1, false, NULL, promise_context_mode);
 
     if (!result->records)
     {
@@ -1097,7 +1098,7 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
     repaired /= num_samples;
     notkept /= num_samples;
 
-    CFDB_SaveHostComplianceShift(conn, hostkey, kept, repaired, notkept, num_samples, from);
+    CFDB_SaveHostComplianceShift(conn, hostkey, kept, repaired, notkept, num_samples, from, promise_context_mode);
 }
 
 /*****************************************************************************/

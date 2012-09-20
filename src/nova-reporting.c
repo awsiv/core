@@ -2109,14 +2109,18 @@ void Nova_ZenossSummary(const char *docroot)
     }
 
     HostColourFilter *gyr_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
-                                                              HOST_COLOUR_GREEN_YELLOW_RED);
+                                                              HOST_COLOUR_GREEN_YELLOW_RED,
+                                                              PROMISE_CONTEXT_MODE_ALL);
+
     Item *gyr_list = CFDB_GetHostByColour(&conn, NULL, gyr_colour_filter);
     free(gyr_colour_filter);
 
     gyr_list = SortItemListCounters(gyr_list);
 
     HostColourFilter *blue_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
-                                                               HOST_COLOUR_BLUE);
+                                                               HOST_COLOUR_BLUE,
+                                                               PROMISE_CONTEXT_MODE_ALL);
+
     Item *blue_list = CFDB_GetHostByColour(&conn, NULL, blue_colour_filter);
     free(blue_colour_filter);
 
@@ -2126,7 +2130,9 @@ void Nova_ZenossSummary(const char *docroot)
     }
 
     HostColourFilter *black_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
-                                                               HOST_COLOUR_BLACK);
+                                                                HOST_COLOUR_BLACK,
+                                                                PROMISE_CONTEXT_MODE_ALL);
+
     Item *black_list = CFDB_GetHostByColour(&conn, NULL, black_colour_filter);
     free(black_colour_filter);
 

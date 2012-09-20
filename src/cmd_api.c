@@ -330,7 +330,7 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHostClassFilter(filter);
 

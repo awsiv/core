@@ -658,7 +658,6 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
 {
     Item *ip;
     char version[CF_SMALLBUF];
-    int kept, repaired, notrepaired;
     long date;
     time_t then;
 
@@ -672,7 +671,21 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
     time_t agent_last_run_time = 0;
     for (ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%ld,%127[^,],%d,%d,%d\n", &date, version, &kept, &repaired, &notrepaired);
+        int kept = 0,
+            repaired = 0,
+            notrepaired = 0;
+        int kept_user = -1,
+            repaired_user = -1,
+            notrepaired_user = -1;
+        int kept_internal = -1,
+            repaired_internal = -1,
+            notrepaired_internal = -1;
+
+        sscanf(ip->name, "%ld,%127[^,],%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
+               &date, version,
+               &kept, &repaired, &notrepaired,
+               &kept_user, &repaired_user, &notrepaired_user,
+               &kept_internal, &repaired_internal, &notrepaired_internal);
         then = (time_t) date;
 
         if ((agent_last_run_time < (time_t)date) && (strstr(version, "Promises.cf") != NULL))
@@ -680,7 +693,18 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
             agent_last_run_time = (time_t)date;
         }
 
-        CfDebug("Tcompliance: (%d,%d,%d) for version %s at %ld\n", kept, repaired, notrepaired, version, then);
+        if (kept_user == -1)
+        {
+            CfDebug("Tcompliance: (%d,%d,%d) for version %s at %ld\n", kept, repaired, notrepaired, version, then);
+        }
+        else
+        {
+        CfDebug("Tcompliance: %d,%d,%d (including: per user: %d,%d,%d per cfe internal: %d,%d,%d) for version %s at %ld\n",
+                kept, repaired, notrepaired,
+                kept_user, repaired_user, notrepaired_user,
+                kept_internal, repaired_internal, notrepaired_internal,
+                version, then);
+        }
     }
 
     /* nova agent < 2.2- black status estimation */
@@ -768,25 +792,43 @@ static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 
         switch (type)
         {
-        case 'W':
+        case cfmeter_week:
             CfDebug("Meter week compliance: %lf, %lf\n", kept, repaired);
             break;
-        case 'D':
+        case cfmeter_week_user:
+            CfDebug("Meter week compliance by user promises: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_week_internal:
+            CfDebug("Meter week compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_day:
             CfDebug("Meter daily compliance: %lf, %lf\n", kept, repaired);
             break;
-        case 'H':
+        case cfmeter_day_user:
+            CfDebug("Meter daily compliance by user promises: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_day_internal:
+            CfDebug("Meter daily compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_hour:
             CfDebug("Meter hourly compliance: %lf, %lf\n", kept, repaired);
             break;
-        case 'P':
+        case cfmeter_hour_user:
+            CfDebug("Meter hourly compliance by user: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_hour_internal:
+            CfDebug("Meter hourly compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+            break;
+        case cfmeter_perf:
             CfDebug("Meter performance: %lf, %lf\n", kept, repaired);
             break;
-        case 'S':
+        case cfmeter_other:
             CfDebug("Meter licenses: %lf, %lf\n", kept, repaired);
             break;
-        case 'C':
+        case cfmeter_comms:
             CfDebug("Meter comms: %lf, %lf\n", kept, repaired);
             break;
-        case 'A':
+        case cfmeter_anomaly:
             CfDebug("Meter anomalies: %lf, %lf\n", kept, repaired);
             break;
         }

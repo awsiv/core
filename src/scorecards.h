@@ -26,14 +26,23 @@ typedef enum
     HOST_COLOUR_BLACK
 } HostColour;
 
+typedef enum
+{
+    PROMISE_CONTEXT_MODE_ALL,
+    PROMISE_CONTEXT_MODE_USER,
+    PROMISE_CONTEXT_MODE_INTERNAL
+} PromiseContextMode;
+
 typedef struct
 {
     HostRankMethod method;
     HostColour colour;
     time_t blue_time_horizon;
+    PromiseContextMode promise_context;
 } HostColourFilter;
 
-HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours);
+HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours,
+                                      PromiseContextMode promise_context);
 const char *Nova_HostColourToString(HostColour colour);
 HostColour HostColourFromString(const char *colour);
 
@@ -41,7 +50,9 @@ HostColour HostColourFromScoreForConnectedHost(int score);
 HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black);
 
 int HostComplianceScore(double kept, double repaired);
-int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
+int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep, PromiseContextMode promise_context);
+
+PromiseContextMode PromiseContextModeFromString(const char *mode);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bufsize);

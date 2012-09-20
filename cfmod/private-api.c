@@ -1241,7 +1241,9 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
     HostColourFilter *hostColourFilter = NULL;
     if (!NULL_OR_EMPTY(hostcolour))
     {
-        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                               HostColourFromString(hostcolour),
+                                               PROMISE_CONTEXT_MODE_ALL);
     }
 
     Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
@@ -1776,7 +1778,9 @@ PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
 
     if (!NULL_OR_EMPTY(hostcolour))
     {
-        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                               HostColourFromString(hostcolour),
+                                               PROMISE_CONTEXT_MODE_ALL);
     }
     Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
 
@@ -2645,7 +2649,9 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
     HostColourFilter *hostColourFilter = NULL;
     if(!NULL_OR_EMPTY(hostcolour))
     {
-        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                               HostColourFromString(hostcolour),
+                                               PROMISE_CONTEXT_MODE_ALL);
     }
 
     JsonElement *json_out = NULL;
@@ -3023,7 +3029,8 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen)
     if (!NULL_OR_EMPTY(hostcolour))
     {
         hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
-                                               HostColourFromString(hostcolour));
+                                               HostColourFromString(hostcolour),
+                                               PROMISE_CONTEXT_MODE_ALL);
     }
 
     JsonElement *json_out = NULL;
@@ -3304,14 +3311,15 @@ PHP_FUNCTION(cfpr_show_topic_category)
 
 PHP_FUNCTION(cfpr_host_compliance_list_all)
 {
-    char *userName;
-    int user_len;
+    char *username = NULL; int user_len;
+    char *promise_context = NULL; int promise_context_len;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     zval *includes, *excludes;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
+                              &username, &user_len,
+                              &promise_context, &promise_context_len,
                               &includes,
                               &excludes,
                               &(page.resultsPerPage),
@@ -3323,7 +3331,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3335,7 +3343,10 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
     DATABASE_OPEN(&conn);
 
     buffer[0] = '\0';
-    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer));
+
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer), promise_context_mode);
 
     DATABASE_CLOSE(&conn);
 
@@ -3348,12 +3359,15 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
 PHP_FUNCTION(cfpr_host_count)
 {
-    char *username = NULL, *colour = NULL;
-    int user_len, colour_len;
+    char *username = NULL, *colour = NULL, *promise_context = NULL;
+    int user_len, colour_len, promise_context_len;
     zval *includes, *excludes;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaa",
-                              &username, &user_len, &colour, &colour_len, &includes, &excludes) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssaa",
+                              &username, &user_len,
+                              &colour, &colour_len,
+                              &promise_context, &promise_context_len,
+                              &includes, &excludes) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3376,7 +3390,11 @@ PHP_FUNCTION(cfpr_host_count)
     HostColourFilter *host_colour_filter = NULL;
     if (!NULL_OR_EMPTY(colour))
     {
-        host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(colour));
+        PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+        host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                 HostColourFromString(colour),
+                                                 promise_context_mode);
     }
 
     count = CFDB_CountHosts(&conn, filter, host_colour_filter);
@@ -3394,12 +3412,15 @@ PHP_FUNCTION(cfpr_host_count)
 PHP_FUNCTION(cfpr_host_compliance_timeseries)
 {
     char *username = NULL;
+    char *promise_context_mode = NULL;
     zval *contextIncludes = NULL,
          *contextExcludes = NULL;
     long username_len = -1;
+    long promise_context_mode_len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssaa",
                               &username, &username_len,
+                              &promise_context_mode, &promise_context_mode_len,
                               &contextIncludes,
                               &contextExcludes) == FAILURE)
     {
@@ -3425,7 +3446,10 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1, false, filter);
+        PromiseContextMode mode = PromiseContextModeFromString(promise_context_mode);
+
+        result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1,
+                                           false, filter, mode);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -3498,12 +3522,15 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
 PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
 {
     char *username = NULL;
+    char *promise_context_mode = NULL;
     zval *contextIncludes = NULL,
          *contextExcludes = NULL;
     long username_len = -1;
+    long promise_context_mode_len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssaa",
                               &username, &username_len,
+                              &promise_context_mode, &promise_context_mode_len,
                               &contextIncludes,
                               &contextExcludes) == FAILURE)
     {
@@ -3524,7 +3551,9 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        records = CFDB_QueryHostComplianceShifts(&conn, filter);
+        PromiseContextMode mode = PromiseContextModeFromString(promise_context_mode);
+
+        records = CFDB_QueryHostComplianceShifts(&conn, filter, mode);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -3630,11 +3659,14 @@ PHP_FUNCTION(cfpr_host_compliance_list)
     char buffer[CF_WEBBUFFER];
     char *colour = NULL;
     int colour_len;
+    char *promise_context = NULL;
+    int promise_context_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssaall",
                               &userName, &user_len,
                               &colour, &colour_len,
+                              &promise_context, &promise_context_len,
                               &includes,
                               &excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -3660,7 +3692,10 @@ PHP_FUNCTION(cfpr_host_compliance_list)
 
         DATABASE_OPEN(&conn);
 
-        Nova2PHP_host_compliance_list(&conn, colour, filter, &page, buffer, sizeof(buffer));
+        PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+        Nova2PHP_host_compliance_list(&conn, colour, filter, &page, buffer,
+                                      sizeof(buffer), promise_context_mode);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -5046,15 +5081,21 @@ PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name )
 
 PHP_FUNCTION(cfpr_astrolabe_host_list)
 {
-    char *username = NULL;
+    char *username = NULL; int username_len;
+    char *promise_context = NULL; int promise_context_len;
     zval *includes, *excludes;
-    int len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saa", &username, &len, &includes, &excludes) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaa",
+                              &username, &username_len,
+                              &promise_context, &promise_context_len,
+                              &includes, &excludes) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
+
+    ARGUMENT_CHECK_CONTENTS(username_len);
+    ARGUMENT_CHECK_CONTENTS(promise_context_len);
 
     HubQuery *result = NULL;
     {
@@ -5067,7 +5108,9 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryColour(&conn, HOST_RANK_METHOD_COMPLIANCE, filter);
+        PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+        result = CFDB_QueryColour(&conn, HOST_RANK_METHOD_COMPLIANCE, filter, promise_context_mode);
 
         DATABASE_CLOSE(&conn);
 

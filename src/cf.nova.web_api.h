@@ -215,8 +215,8 @@ JsonElement *Nova2PHP_show_topic_leads(int id);
 JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic);
 JsonElement *Nova2PHP_show_topic_hits(int id);
 JsonElement *Nova2PHP_show_topic_category(int id);
-void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize);
-void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize);
+void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize, PromiseContextMode promise_context);
+void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter, PageInfo *page, char *buf,
                         int bufsize);
 void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize);

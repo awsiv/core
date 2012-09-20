@@ -28,6 +28,6 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName);
   Reads the total-compliance subrecord for a host for the last shift interval, and adds
   the aggregated result in the compliance-shifts subrecord.
 */
-void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey);
+void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey, PromiseContextMode promise_context_mode);
 
 #endif

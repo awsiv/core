@@ -17,7 +17,32 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 #include <assert.h>
 
-HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
+PromiseContextMode PromiseContextModeFromString(const char *mode)
+{
+    if (mode == NULL)
+    {
+        return PROMISE_CONTEXT_MODE_ALL;
+    }
+
+    if (StringSafeCompare("user", mode) == 0)
+    {
+        return PROMISE_CONTEXT_MODE_USER;
+    }
+    else if (StringSafeCompare("internal", mode) == 0)
+    {
+        return PROMISE_CONTEXT_MODE_INTERNAL;
+    }
+    else
+    {
+        return PROMISE_CONTEXT_MODE_ALL;
+    }
+}
+
+
+/*****************************************************************************/
+
+HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours,
+                                      PromiseContextMode promise_context)
 {
     long bluehost_threshold = 0;
     if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
@@ -28,6 +53,7 @@ HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
     HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
     filter->method = method;
     filter->colour = colours;
+    filter->promise_context = promise_context;
 
     time_t now = time(NULL);
     filter->blue_time_horizon = (time_t)(now - bluehost_threshold);
@@ -326,108 +352,128 @@ int HostComplianceScore(double kept, double repaired)
     return result;
 }
 
-int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)
+int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r,
+                            PromiseContextMode promise_context)
 {
     int result = CF_GREEN;
     double kav, rav, notkept;
 
+    double kc = 0, rc = 0;
+
+    switch(promise_context)
+    {
+        case PROMISE_CONTEXT_MODE_ALL:
+            kc = k[meter_compliance_hour];
+            rc = r[meter_compliance_hour];
+            break;
+        case PROMISE_CONTEXT_MODE_USER:
+            kc = k[meter_compliance_hour_user];
+            rc = r[meter_compliance_hour_user];
+            break;
+        case PROMISE_CONTEXT_MODE_INTERNAL:
+            kc = k[meter_compliance_hour_internal];
+            rc = r[meter_compliance_hour_internal];
+            break;
+    }
+
     switch (method)
     {
-    default:
-    case HOST_RANK_METHOD_COMPLIANCE:
+        default:
+        case HOST_RANK_METHOD_COMPLIANCE:
 
-        notkept = 100 - k[meter_compliance_hour] - r[meter_compliance_hour];
+            notkept = 100 - kc - rc;
 
-        if (notkept > 20)       // 20% of promises are not kept => RED!
-        {
-            result = CF_RED_THRESHOLD + 100 + notkept;  // Make red override all variations in amber/green
-        }
+            if (notkept > 20)       // 20% of promises are not kept => RED!
+            {
+                result = CF_RED_THRESHOLD + 100 + notkept;  // Make red override all variations in amber/green
+            }
 
-        if (r[meter_compliance_hour] > 20)      // If more than 20% of promises were repaired => AMBER
-        {
-            result = CF_AMBER_THRESHOLD + 100 + r[meter_compliance_hour];
-        }
+            if (rc > 20)      // If more than 20% of promises were repaired => AMBER
+            {
+                result = CF_AMBER_THRESHOLD + 100 + rc;
+            }
 
-        result -= k[meter_compliance_hour];     // Adjust the Green Value relative
-        break;
+            result -= kc;     // Adjust the Green Value relative
+            break;
 
-    case HOST_RANK_METHOD_ANOMALY:
+        case HOST_RANK_METHOD_ANOMALY:
 
-        notkept = 100 - k[meter_anomalies_day] - r[meter_anomalies_day];
+            notkept = 100 - k[meter_anomalies_day] - r[meter_anomalies_day];
 
-        // If red or yellow, add the "badness" to the base threshold
-        // to ensure the worst host is ranked on top. We also add
-        // 100 in case k[meter_anomalies_day] pulls us back under the
-        // threshold
+            // If red or yellow, add the "badness" to the base threshold
+            // to ensure the worst host is ranked on top. We also add
+            // 100 in case k[meter_anomalies_day] pulls us back under the
+            // threshold
 
-        if (notkept > 20)
-        {
-            result = CF_RED_THRESHOLD + 100 + notkept;
-        }
+            if (notkept > 20)
+            {
+                result = CF_RED_THRESHOLD + 100 + notkept;
+            }
 
-        if (r[meter_anomalies_day] > 20)
-        {
-            result = CF_AMBER_THRESHOLD + 100 + r[meter_anomalies_day];
-        }
+            if (r[meter_anomalies_day] > 20)
+            {
+                result = CF_AMBER_THRESHOLD + 100 + r[meter_anomalies_day];
+            }
 
-        // We want worse hosts to have higher scores so they appear on top
-        // so subtract what is "good" about kept promises
+            // We want worse hosts to have higher scores so they appear on top
+            // so subtract what is "good" about kept promises
 
-        result -= k[meter_anomalies_day];
-        break;
+            result -= k[meter_anomalies_day];
+            break;
 
-    case HOST_RANK_METHOD_PERFORMANCE:
+        case HOST_RANK_METHOD_PERFORMANCE:
 
-        notkept = 100 - k[meter_perf_day] - r[meter_perf_day];
+            notkept = 100 - k[meter_perf_day] - r[meter_perf_day];
 
-        if (notkept > 20)
-        {
-            result = CF_RED_THRESHOLD + 100 + notkept;
-        }
+            if (notkept > 20)
+            {
+                result = CF_RED_THRESHOLD + 100 + notkept;
+            }
 
-        if (r[meter_perf_day] > 20)
-        {
-            result = CF_AMBER_THRESHOLD + 100 + r[meter_perf_day];
-        }
+            if (r[meter_perf_day] > 20)
+            {
+                result = CF_AMBER_THRESHOLD + 100 + r[meter_perf_day];
+            }
 
-        result -= k[meter_perf_day];
-        break;
+            result -= k[meter_perf_day];
+            break;
 
-    case HOST_RANK_METHOD_LASTSEEN:
+        case HOST_RANK_METHOD_LASTSEEN:
 
-        notkept = 100 - k[meter_comms_hour] - r[meter_comms_hour];
+            notkept = 100 - k[meter_comms_hour] - r[meter_comms_hour];
 
-        if (notkept > 20)
-        {
-            result = CF_RED_THRESHOLD + 100 + notkept;
-        }
+            if (notkept > 20)
+            {
+                result = CF_RED_THRESHOLD + 100 + notkept;
+            }
 
-        if (r[meter_comms_hour] > 20)
-        {
-            result = CF_AMBER_THRESHOLD + 100 + r[meter_comms_hour];
-        }
+            if (r[meter_comms_hour] > 20)
+            {
+                result = CF_AMBER_THRESHOLD + 100 + r[meter_comms_hour];
+            }
 
-        result -= k[meter_comms_hour];
-        break;
+            result -= k[meter_comms_hour];
+            break;
 
-    case HOST_RANK_METHOD_MIXED:
-        kav = (k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day]) / 3;
-        rav = (r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day]) / 3;
+        case HOST_RANK_METHOD_MIXED:
 
-        notkept = 100 - kav - rav;
+            kav = (k[meter_comms_hour] + kc + k[meter_anomalies_day]) / 3;
+            rav = (r[meter_comms_hour] + rc + r[meter_anomalies_day]) / 3;
 
-        if (notkept > 20)
-        {
-            result = CF_RED_THRESHOLD + 100 + notkept;
-        }
+            notkept = 100 - kav - rav;
 
-        if (rav > 20)
-        {
-            result = CF_AMBER_THRESHOLD + 100 + rav;
-        }
+            if (notkept > 20)
+            {
+                result = CF_RED_THRESHOLD + 100 + notkept;
+            }
 
-        result -= kav;
-        break;
+            if (rav > 20)
+            {
+                result = CF_AMBER_THRESHOLD + 100 + rav;
+            }
+
+            result -= kav;
+            break;
 
     }
 

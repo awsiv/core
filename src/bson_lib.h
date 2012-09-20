@@ -62,6 +62,7 @@ bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
 JsonElement* BsonContainerToJsonContainer(const bson *b, bson_type type, bool ignore_timestamp);
 int BsonIsTypeValid(bson_type type);
+void BsonAppendClassFilterFromPromiseContext(bson *query, PromiseContextMode promise_context);
 
 bool BsonInitFromJsonString(bson *bson_ret, const char *json_string);
 bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...);

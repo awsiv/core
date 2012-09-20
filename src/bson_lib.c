@@ -621,6 +621,27 @@ void BsonToString(char *retBuf, int retBufSz, bson *data)
 
 /*****************************************************************************/
 
+/* NOTE: Clients older than Enterprise 3.0 do not support
+   promise_context and have to be filter out */
+void BsonAppendClassFilterFromPromiseContext(bson *query, PromiseContextMode promise_context)
+{
+    if (promise_context != PROMISE_CONTEXT_MODE_ALL)
+    {
+        Rlist *old_ent_versions = NULL;
+        PrependRScalar(&old_ent_versions, (void *) "nova_2_0.*", CF_SCALAR);
+        PrependRScalar(&old_ent_versions, (void *) "nova_2_1.*", CF_SCALAR);
+        PrependRScalar(&old_ent_versions, (void *) "nova_2_2.*", CF_SCALAR);
+
+        bson_append_start_object(query, cfr_class_keys);
+        BsonAppendArrayRx(query, "$nin", old_ent_versions);
+        bson_append_finish_object(query);
+
+        DeleteRlist(old_ent_versions);
+    }
+}
+
+/*****************************************************************************/
+
 void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
 {
     if (filter == NULL)
@@ -629,10 +650,24 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
     }
 
     char *score_method = NULL;
+    const char score_key[10] = { 0 };
     switch (filter->method)
     {
         case HOST_RANK_METHOD_COMPLIANCE:
-            xasprintf(&score_method, "%s", cfr_score_comp);
+            switch (filter->promise_context)
+            {
+                case PROMISE_CONTEXT_MODE_ALL:
+                    strcpy(score_key, cfr_score_comp);
+                    break;
+                case PROMISE_CONTEXT_MODE_USER:
+                    strcpy(score_key, cfr_score_comp_user);
+                    break;
+                case PROMISE_CONTEXT_MODE_INTERNAL:
+                    strcpy(score_key, cfr_score_comp_internal);
+                    break;
+            }
+
+            xasprintf(&score_method, "%s", score_key);
             break;
 
         case HOST_RANK_METHOD_ANOMALY:
@@ -679,7 +714,7 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
             {
                 bson_append_start_object(query, "2");
                 {
-                    bson_append_start_object(query, score_method);
+                    bson_append_start_object(query, cfr_is_black);
                     bson_append_bool(query, "$exists", false);
                     bson_append_finish_object(query);
                 }
@@ -689,13 +724,16 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
             {
                 bson_append_start_object(query, "3");
                 {
-                    bson_append_start_object(query, cfr_is_black);
+                    bson_append_start_object(query, score_method);
                     bson_append_bool(query, "$exists", false);
                     bson_append_finish_object(query);
                 }
                 bson_append_finish_object(query);
             }
+
             bson_append_finish_object(query);
+
+            BsonAppendClassFilterFromPromiseContext(query, filter->promise_context);
         }
     }
 

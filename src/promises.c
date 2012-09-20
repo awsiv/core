@@ -19,11 +19,27 @@
 #include "expand.h"
 #include "sysinfo.h"
 #include "files_names.h"
+#include "assert.h"
+#include "constraints.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
 #include "db_query.h"
 #endif
+
+extern int PR_KEPT;
+extern int PR_REPAIRED;
+extern int PR_NOTKEPT;
+
+static int PR_KEPT_INTERNAL;
+static int PR_REPAIRED_INTERNAL;
+static int PR_NOTKEPT_INTERNAL;
+
+static int PR_KEPT_USER;
+static int PR_REPAIRED_USER;
+static int PR_NOTKEPT_USER;
+
+static bool IsInternalPromise(const Promise *pp);
 
 PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 
@@ -547,3 +563,108 @@ void AddGoalsToDB(char *goal_patterns)
 }
 
 /*****************************************************************************/
+
+static bool IsInternalPromise(const Promise *pp)
+{
+    assert(pp);
+
+    const char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
+
+    if (handle == NULL)
+    {
+        return false;
+    }
+
+    // todo: add full insternal handle name list
+    // todo: internal handle regex to global define
+    if (StringMatch(CF_INTERNAL_PROMISE_RX_HANDLE, handle))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void EnterpriseTrackTotalCompliance(const Promise *pp, char status) // status: c/r/n
+{
+    assert(pp);
+
+    int *tmp_internal = NULL;
+    int *tmp_user = NULL;
+
+    switch (status)
+    {
+        case 'c':
+            tmp_internal = &PR_KEPT_INTERNAL;
+            tmp_user = &PR_KEPT_USER;
+            break;
+        case 'r':
+            tmp_internal = &PR_REPAIRED_INTERNAL;
+            tmp_user = &PR_REPAIRED_USER;
+            break;
+        case 'n':
+            tmp_internal = &PR_NOTKEPT_INTERNAL;
+            tmp_user = &PR_NOTKEPT_USER;
+            break;
+        default:
+            return;
+    }
+
+    if (IsInternalPromise(pp))
+    {
+        (*tmp_internal)++;
+    }
+    else
+    {
+        (*tmp_user)++;
+    }
+}
+
+void LogTotalCompliance(const char *version)
+{
+    double total = (double) (PR_KEPT + PR_NOTKEPT + PR_REPAIRED) / 100.0;
+    double total_user = (double) (PR_KEPT_USER + PR_NOTKEPT_USER + PR_REPAIRED_USER) / 100.0;
+    double total_internal = (double) (PR_KEPT_INTERNAL + PR_NOTKEPT_INTERNAL + PR_REPAIRED_INTERNAL) / 100.0;
+
+    /* protect from dev by 0 */
+    if (total_user == 0)
+    {
+        total_user = 1;
+    }
+
+    if (total_internal == 0)
+    {
+        total_internal = 1;
+    }
+
+    if (total == 0)
+    {
+        total = 1;
+    }
+
+    char str_compliance[CF_BUFSIZE] = { 0 };
+
+    snprintf(str_compliance, CF_BUFSIZE,
+             "Outcome of version %s (" CF_AGENTC "-%d): Promises observed - "
+                "Total promise compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events). "
+                "User promise compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events). "
+                "CFEngine system compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events).",
+             version, CFA_BACKGROUND,
+             (double) PR_KEPT / total,
+             (double) PR_REPAIRED / total,
+             (double) PR_NOTKEPT / total,
+             PR_KEPT + PR_REPAIRED + PR_NOTKEPT,
+             (double) PR_KEPT_USER / total_user,
+             (double) PR_REPAIRED_USER / total_user,
+             (double) PR_NOTKEPT_USER / total_user,
+             PR_KEPT_USER + PR_REPAIRED_USER + PR_NOTKEPT_USER,
+             (double) PR_KEPT_INTERNAL / total_internal,
+             (double) PR_REPAIRED_INTERNAL / total_internal,
+             (double) PR_NOTKEPT_INTERNAL / total_internal,
+             PR_KEPT_INTERNAL + PR_REPAIRED_INTERNAL + PR_NOTKEPT_INTERNAL);
+
+
+    CfOut(cf_verbose, "", "%s", str_compliance);
+
+    PromiseLog(str_compliance);
+}

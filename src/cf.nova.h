@@ -20,6 +20,8 @@
 # include <ldap.h>
 #endif
 
+#define CF_INTERNAL_PROMISE_RX_HANDLE "cfe_internal_.*"
+
 #ifdef HAVE_LIBMONGOC
 // WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT
@@ -438,8 +440,14 @@ typedef struct
 } HubMeter;
 
 #define cfmeter_hour 'H'
+#define cfmeter_hour_user 'I'
+#define cfmeter_hour_internal 'J'
 #define cfmeter_week 'W'
+#define cfmeter_week_user 'X'
+#define cfmeter_week_internal 'Y'
 #define cfmeter_day  'D'
+#define cfmeter_day_user  'E'
+#define cfmeter_day_internal  'F'
 #define cfmeter_perf 'P'
 #define cfmeter_comms 'C'
 #define cfmeter_anomaly 'A'
@@ -949,6 +957,8 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
+void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
+
 /* registry.c */
 
 void Nova_TrackExecution();
@@ -1412,6 +1422,12 @@ typedef struct
 #define cfr_kept          "k"
 #define cfr_repaired      "r"
 #define cfr_notkept       "N"
+#define cfr_kept_user          "ku"
+#define cfr_repaired_user      "ru"
+#define cfr_notkept_user       "Nu"
+#define cfr_kept_internal          "ki"
+#define cfr_repaired_internal      "ri"
+#define cfr_notkept_internal       "Ni"
 #define cfr_vars          "vr"
 //#define cfr_var_keys      "vk"  // would optimize reads
 #define cfr_type          "T"
@@ -1453,10 +1469,14 @@ typedef struct
 #define cfr_netmeasure_q  "nq"
 #define cfr_environment   "env"
 #define cfr_score_comp    "scC"
+#define cfr_score_comp_user "scCu"
+#define cfr_score_comp_internal "scCi"
 #define cfr_score_anom    "scA"
 #define cfr_score_perf    "scP"
 #define cfr_score_lastseen "scL"
 #define cfr_score_mixed   "scM"
+#define cfr_score_mixed_user "scMu"
+#define cfr_score_mixed_internal "scMi"
 #define cfr_schedule      "sch"
 #define cfr_is_black      "bh"
 #define cfr_last_execution "lx"

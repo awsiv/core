@@ -1755,7 +1755,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
         return false;
     }
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, hostClassFilter);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
@@ -2625,7 +2625,7 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to,
-                                             k, nk, rep, false, hostClassFilter);
+                                             k, nk, rep, false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -3407,7 +3407,8 @@ JsonElement *Nova2PHP_show_topic_category(int id)
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize)
+void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+                                       PageInfo *page, char *buffer, int bufsize, PromiseContextMode promise_context)
 {
     Item *clist = NULL;
     char work[CF_BUFSIZE] = { 0 };
@@ -3415,7 +3416,10 @@ void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host
     int endIndex = 0;
     int count = -1;;
 
-    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
+    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                               HOST_COLOUR_GREEN_YELLOW_RED,
+                                                               promise_context);
+
     clist = CFDB_GetHostByColour(conn, host_class_filter, host_colour_filter);
     free(host_colour_filter);
 
@@ -3535,7 +3539,7 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
 /*****************************************************************************/
 
 void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFilter *host_class_filter,
-                                   PageInfo *page, char *buffer, int bufsize)
+                                   PageInfo *page, char *buffer, int bufsize, PromiseContextMode promise_context)
 {
     Item *ip, *clist;
     char work[CF_MAXVARSIZE], lastseen[CF_MAXVARSIZE] = { 0 };
@@ -3568,7 +3572,10 @@ void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFi
         return;
     }
 
-    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, host_colour);
+    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                               host_colour,
+                                                               promise_context);
+
     clist = CFDB_GetHostByColour(conn, host_class_filter, host_colour_filter);
     free(host_colour_filter);
 

@@ -300,7 +300,8 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
-    HubQuery *hq = CFDB_QueryColour(&dbconn, HOST_RANK_METHOD_COMPLIANCE, filter);
+    HubQuery *hq = CFDB_QueryColour(&dbconn, HOST_RANK_METHOD_COMPLIANCE,
+                                    filter, PROMISE_CONTEXT_MODE_ALL);
 
     CFDB_Close(&dbconn);
 

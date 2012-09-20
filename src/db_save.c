@@ -918,7 +918,6 @@ void CFDB_SaveTotalCompliance(mongo *conn, char *keyhash, Item *data)
     Item *ip;
     char version[CF_MAXVARSIZE];
     Item *keys = NULL, *addedKey = NULL;
-    int kept, repaired, notrepaired;
     char varName[CF_MAXVARSIZE];
     long t;
     time_t then;
@@ -938,7 +937,15 @@ void CFDB_SaveTotalCompliance(mongo *conn, char *keyhash, Item *data)
 
         for (ip = data; ip != NULL; ip = ip->next)
         {
-            sscanf(ip->name, "%ld,%127[^,],%d,%d,%d\n", &t, version, &kept, &repaired, &notrepaired);
+            int kept = 0, repaired = 0, notrepaired = 0;
+            int kept_user = -1, repaired_user = -1, notrepaired_user = -1;
+            int kept_internal = -1, repaired_internal = -1, notrepaired_internal = -1;
+
+            sscanf(ip->name, "%ld,%127[^,],%d,%d,%d,%d,%d,%d,%d,%d,%d\n", &t, version,
+                   &kept, &repaired, &notrepaired,
+                   &kept_user, &repaired_user, &notrepaired_user,
+                   &kept_internal, &repaired_internal, &notrepaired_internal);
+
             then = (time_t) t;
 
             snprintf(varName, sizeof(varName), "%s.%s", cfr_total_compliance, GenTimeKey(then));
@@ -962,6 +969,17 @@ void CFDB_SaveTotalCompliance(mongo *conn, char *keyhash, Item *data)
                 bson_append_int(&set_op, cfr_kept, kept);
                 bson_append_int(&set_op, cfr_repaired, repaired);
                 bson_append_int(&set_op, cfr_notkept, notrepaired);
+
+                if (kept_user != -1) /* got extended total compliance report with total user&cfe compliance data */
+                {
+                    bson_append_int(&set_op, cfr_kept_user, kept_user);
+                    bson_append_int(&set_op, cfr_repaired_user, repaired_user);
+                    bson_append_int(&set_op, cfr_notkept_user, notrepaired_user);
+
+                    bson_append_int(&set_op, cfr_kept_internal, kept_internal);
+                    bson_append_int(&set_op, cfr_repaired_internal, repaired_internal);
+                    bson_append_int(&set_op, cfr_notkept_internal, notrepaired_internal);
+                }
                 bson_append_finish_object(&set_op);
             }
         }
@@ -1232,6 +1250,8 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
         double kept_full[meter_endmark] = {0};
         double repaired_full[meter_endmark] = {0};
 
+        bool expanded = false;
+
         /* gather meters for score calculetion from meter report */
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
@@ -1248,14 +1268,46 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
                 repaired_full[meter_compliance_hour] = repaired;
                 break;
 
+            case cfmeter_hour_user:
+                kept_full[meter_compliance_hour_user] = kept;
+                repaired_full[meter_compliance_hour_user] = repaired;
+                expanded = true;
+                break;
+
+            case cfmeter_hour_internal:
+                kept_full[meter_compliance_hour_internal] = kept;
+                repaired_full[meter_compliance_hour_internal] = repaired;
+                expanded = true;
+                break;
+
             case cfmeter_day:
                 kept_full[meter_compliance_day] = kept;
                 repaired_full[meter_compliance_day] = repaired;
                 break;
 
+            case cfmeter_day_user:
+                kept_full[meter_compliance_day_user] = kept;
+                repaired_full[meter_compliance_day_user] = repaired;
+                break;
+
+            case cfmeter_day_internal:
+                kept_full[meter_compliance_day_internal] = kept;
+                repaired_full[meter_compliance_day_internal] = repaired;
+                break;
+
             case cfmeter_week:
                 kept_full[meter_compliance_week] = kept;
                 repaired_full[meter_compliance_week] = repaired;
+                break;
+
+            case cfmeter_week_user:
+                kept_full[meter_compliance_week_user] = kept;
+                repaired_full[meter_compliance_week_user] = repaired;
+                break;
+
+            case cfmeter_week_internal:
+                kept_full[meter_compliance_week_internal] = kept;
+                repaired_full[meter_compliance_week_internal] = repaired;
                 break;
 
             case cfmeter_perf:
@@ -1285,32 +1337,59 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
 
         if (method & HOST_RANK_METHOD_COMPLIANCE)
         {
-            score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, kept_full, repaired_full);
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE,
+                                            kept_full, repaired_full, PROMISE_CONTEXT_MODE_ALL);
             bson_append_int(&set_op, cfr_score_comp, score);
+
+            if (expanded)
+            {
+                int user_score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE,
+                                                kept_full, repaired_full, PROMISE_CONTEXT_MODE_USER);
+                int internal_score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE,
+                                                kept_full, repaired_full, PROMISE_CONTEXT_MODE_INTERNAL);
+
+                bson_append_int(&set_op, cfr_score_comp_user, user_score);
+                bson_append_int(&set_op, cfr_score_comp_internal, internal_score);
+            }
         }
 
         if (method & HOST_RANK_METHOD_ANOMALY)
         {
-            score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full, repaired_full);
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full,
+                                            repaired_full, PROMISE_CONTEXT_MODE_ALL);
             bson_append_int(&set_op, cfr_score_anom, score);
         }
 
         if (method & HOST_RANK_METHOD_PERFORMANCE)
         {
-            score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full, repaired_full);
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full,
+                                            repaired_full, PROMISE_CONTEXT_MODE_ALL);
             bson_append_int(&set_op, cfr_score_perf, score);
         }
 
         if (method & HOST_RANK_METHOD_LASTSEEN)
         {
-            score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full, repaired_full);
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full,
+                                            repaired_full, PROMISE_CONTEXT_MODE_ALL);
             bson_append_int(&set_op, cfr_score_lastseen, score);
         }
 
         if (method & HOST_RANK_METHOD_MIXED)
         {
-            score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full, repaired_full);
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full,
+                                            repaired_full, PROMISE_CONTEXT_MODE_ALL);
             bson_append_int(&set_op, cfr_score_mixed, score);
+
+            if (expanded)
+            {
+                int user_score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED,
+                                                kept_full, repaired_full, PROMISE_CONTEXT_MODE_USER);
+                int internal_score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED,
+                                                kept_full, repaired_full, PROMISE_CONTEXT_MODE_INTERNAL);
+
+                bson_append_int(&set_op, cfr_score_mixed_user, user_score);
+                bson_append_int(&set_op, cfr_score_mixed_internal, internal_score);
+            }
         }
 
         bson_append_finish_object(&set_op); // $set
@@ -1854,8 +1933,15 @@ void CFDB_SaveValueReport(EnterpriseDB *conn, char *keyhash, Item *data)
 /*****************************************************************************/
 
 void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int kept, int repaired,
-                                  int notkept, int num_samples, time_t shift_start)
+                                  int notkept, int num_samples, time_t shift_start,
+                                  PromiseContextMode promise_context_mode)
 {
+    char kept_path[CF_SMALLBUF];
+    char repaired_path[CF_SMALLBUF];
+    char notkept_path[CF_SMALLBUF];
+    char time_path[CF_SMALLBUF];
+    char count_path[CF_SMALLBUF];
+
     bson cond;
     bson_init(&cond);
     bson_append_string(&cond, cfr_keyhash, hostkey);
@@ -1870,17 +1956,36 @@ void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int k
         int shift_slot = GetShiftSlot(shift_start);
         snprintf(slot_key, sizeof(slot_key), "%s.%d", cfr_compliance_shifts, shift_slot);
 
+        switch (promise_context_mode)
         {
-            bson_append_start_object(&op, slot_key);
+            case PROMISE_CONTEXT_MODE_USER:
+                snprintf(kept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_kept_user);
+                snprintf(repaired_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_repaired_user);
+                snprintf(notkept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_notkept_user);
+                break;
 
-            bson_append_int(&op, cfr_kept, kept);
-            bson_append_int(&op, cfr_repaired, repaired);
-            bson_append_int(&op, cfr_notkept, notkept);
-            bson_append_int(&op, cfr_count, num_samples);
-            bson_append_int(&op, cfr_time, shift_start);
+            case PROMISE_CONTEXT_MODE_INTERNAL:
+                snprintf(kept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_kept_internal);
+                snprintf(repaired_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_repaired_internal);
+                snprintf(notkept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_notkept_internal);
+                break;
 
-            bson_append_finish_object(&op); // slot_key
+            case PROMISE_CONTEXT_MODE_ALL:
+            default:
+                snprintf(kept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_kept);
+                snprintf(repaired_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_repaired);
+                snprintf(notkept_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_notkept);
         }
+
+        snprintf(count_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_count);
+        snprintf(time_path, CF_SMALLBUF, "%s.%s", slot_key, cfr_time);
+
+        bson_append_int(&op, kept_path, kept);
+        bson_append_int(&op, repaired_path, repaired);
+        bson_append_int(&op, notkept_path, notkept);
+
+        bson_append_int(&op, count_path, num_samples);
+        bson_append_int(&op, time_path, shift_start);
 
         bson_append_finish_object(&op); // $set
     }
@@ -1894,9 +1999,15 @@ void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int k
 
 // TODO: deprecation candidate
 void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, double kept, double repaired,
-                                    double notkept, int count, time_t genTime)
+                                    double notkept, int count, time_t genTime,
+                                    PromiseContextMode promise_context_mode)
 {
     char varName[CF_SMALLBUF];
+    char kept_path[CF_SMALLBUF];
+    char repaired_path[CF_SMALLBUF];
+    char notkept_path[CF_SMALLBUF];
+    char time_path[CF_SMALLBUF];
+    char count_path[CF_SMALLBUF];
 
     bson cacheType;
 
@@ -1912,17 +2023,37 @@ void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, 
 
         snprintf(varName, sizeof(varName), "%s.%d", policy, slot);
 
+        switch (promise_context_mode)
         {
-            bson_append_start_object(&set_op, varName);
+            case PROMISE_CONTEXT_MODE_USER:
+                snprintf(kept_path, CF_SMALLBUF,"%s.%s", varName, cfr_kept_user);
+                snprintf(repaired_path, CF_SMALLBUF,"%s.%s", varName, cfr_repaired_user);
+                snprintf(notkept_path, CF_SMALLBUF,"%s.%s", varName, cfr_notkept_user);
+                break;
 
-            bson_append_double(&set_op, cfr_kept, kept);
-            bson_append_double(&set_op, cfr_repaired, repaired);
-            bson_append_double(&set_op, cfr_notkept, notkept);
-            bson_append_int(&set_op, cfc_count, count);
-            bson_append_int(&set_op, cfc_timegen, genTime);
+            case PROMISE_CONTEXT_MODE_INTERNAL:
+                snprintf(kept_path, CF_SMALLBUF,"%s.%s", varName, cfr_kept_internal);
+                snprintf(repaired_path, CF_SMALLBUF,"%s.%s", varName, cfr_repaired_internal);
+                snprintf(notkept_path, CF_SMALLBUF,"%s.%s", varName, cfr_notkept_internal);
+                break;
 
-            bson_append_finish_object(&set_op); // varName
+            case PROMISE_CONTEXT_MODE_ALL:
+            default:
+                snprintf(kept_path, CF_SMALLBUF,"%s.%s", varName, cfr_kept);
+                snprintf(repaired_path, CF_SMALLBUF,"%s.%s", varName, cfr_repaired);
+                snprintf(notkept_path, CF_SMALLBUF,"%s.%s", varName, cfr_notkept);
         }
+
+        snprintf(count_path, CF_SMALLBUF, "%s.%s", varName, cfr_count);
+        snprintf(time_path, CF_SMALLBUF, "%s.%s", varName, cfc_timegen);
+
+        bson_append_int(&set_op, kept_path, kept);
+        bson_append_int(&set_op, repaired_path, repaired);
+        bson_append_int(&set_op, notkept_path, notkept);
+
+        bson_append_int(&set_op, count_path, count);
+        bson_append_int(&set_op, time_path, genTime);
+
         bson_append_finish_object(&set_op); // $set
     }
     BsonFinish(&set_op);

@@ -95,14 +95,18 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
 
         // first any environment, then environment-specific
 
-        Nova_CacheTotalComplianceEnv(dbconn, "any", NULL, slot, curr, now);
+        Nova_CacheTotalComplianceEnv(dbconn, "any", NULL, slot, curr, now, PROMISE_CONTEXT_MODE_ALL);
+        Nova_CacheTotalComplianceEnv(dbconn, "any", NULL, slot, curr, now, PROMISE_CONTEXT_MODE_INTERNAL);
+        Nova_CacheTotalComplianceEnv(dbconn, "any", NULL, slot, curr, now, PROMISE_CONTEXT_MODE_USER);
 
         for (ep = env; ep != NULL; ep = ep->next)
         {
             snprintf(envName, sizeof(envName), "%s", ep->name);
             snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
 
-            Nova_CacheTotalComplianceEnv(dbconn, envName, envClass, slot, curr, now);
+            Nova_CacheTotalComplianceEnv(dbconn, envName, envClass, slot, curr, now, PROMISE_CONTEXT_MODE_ALL);
+            Nova_CacheTotalComplianceEnv(dbconn, envName, envClass, slot, curr, now, PROMISE_CONTEXT_MODE_INTERNAL);
+            Nova_CacheTotalComplianceEnv(dbconn, envName, envClass, slot, curr, now, PROMISE_CONTEXT_MODE_USER);
         }
     }
 
@@ -111,7 +115,9 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
     Rlist *hostkeys = CFDB_QueryHostKeys(dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL);
     for (const Rlist *rp = hostkeys; rp; rp = rp->next)
     {
-        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp));
+        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_ALL);
+        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_USER);
+        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_INTERNAL);
     }
     DeleteRlist(hostkeys);
 
@@ -121,7 +127,7 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
 /*******************************************************************/
 
 void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envClass, int slot,
-                                  time_t start, time_t now)
+                                  time_t start, time_t now, PromiseContextMode promise_context_mode)
 {
     HubQuery *hq;
     HubTotalCompliance *ht;
@@ -139,7 +145,7 @@ void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envCl
 
     HostClassFilter *filter = NewHostClassFilter(envClass, NULL);
 
-    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1, false, filter);
+    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1, false, filter, promise_context_mode);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -161,5 +167,5 @@ void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envCl
         notkept = notkept / count;
     }
 
-    CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now);
+    CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now, promise_context_mode);
 }

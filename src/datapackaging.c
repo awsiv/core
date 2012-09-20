@@ -26,6 +26,26 @@ typedef struct
     double d;
 } CEnt;
 
+typedef struct
+{
+    double kept;
+    double repaired;
+    double notrepaired;
+    long eventCount;
+} ComplianceLevel;
+
+typedef struct
+{
+    ComplianceLevel total;
+    ComplianceLevel user;
+    ComplianceLevel internal;
+} ComplianceSet;
+
+static ComplianceLevel BalanceCompliance(const ComplianceLevel c1, const ComplianceLevel c2);
+static ComplianceLevel GAvgCompliance(ComplianceLevel av, ComplianceLevel comp, double trust);
+static Item* ReadTotalComplianceLog(void);
+static ComplianceSet InitWeigthCompliance(ComplianceSet comp_set);
+
 /*****************************************************************************/
 
 static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu type)
@@ -1622,10 +1642,8 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
 
 /*****************************************************************************/
 
-static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
-{     
-    CfOut(cf_verbose, "", " -> Packing total compliance data");
-
+static Item* ReadTotalComplianceLog(void)
+{
     char name[CF_BUFSIZE] = "";
     snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_PROMISE_LOG);
     MapName(name);
@@ -1634,7 +1652,7 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
     if ((fin = fopen(name, "r")) == NULL)
     {
         CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
-        return;
+        return NULL;
     }
 
 /* Max 2016 entries - at least a week */
@@ -1681,16 +1699,86 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
 
     fclose(fin);
 
-    double av_day_kept = 100,
-           av_day_repaired = 0,
-           av_week_kept = 100,
-           av_week_repaired = 0,
-           av_hour_kept = 100,
-           av_hour_repaired = 0;
+    return file;
+}
+
+static ComplianceLevel BalanceCompliance(const ComplianceLevel c1, const ComplianceLevel c2)
+{
+    ComplianceLevel ret = { 0, 0, 0, 0 };
+
+    if ((c1.eventCount + c2.eventCount) <= 0)
+    {
+        return ret;
+    }
+
+    ret.kept = ((double)((c1.kept * c1.eventCount) + (c2.kept * c2.eventCount))) /
+            (double)(c1.eventCount + c2.eventCount);
+    ret.repaired = ((double)((c1.repaired * c1.eventCount) + (c2.repaired * c2.eventCount) + 1.0)) /
+            (double)(c1.eventCount + c2.eventCount);
+    ret.notrepaired = ((double)((c1.notrepaired * c1.eventCount) + (c2.notrepaired * c2.eventCount) + 1.0)) /
+            (double)(c1.eventCount + c2.eventCount);
+
+    return ret;
+}
+
+static ComplianceLevel GAvgCompliance(ComplianceLevel av, ComplianceLevel comp, double trust)
+{
+    ComplianceLevel res = { 0, 0, 0, 0 };
+
+    res.kept = GAverage(comp.kept, av.kept, trust);
+    res.repaired = GAverage(comp.repaired, av.repaired, trust);
+
+    return res;
+}
+
+static ComplianceSet InitWeigthCompliance(ComplianceSet comp_set)
+{
+    ComplianceSet res = {{ 0, 0, 0, 0 },
+                         { 0, 0, 0, 0 },
+                         { 0, 0, 0, 0 }};
+
+    res.total.kept = comp_set.total.kept;
+    res.total.repaired = comp_set.total.repaired;
+
+    res.user.kept = comp_set.user.kept;
+    res.user.repaired = comp_set.user.repaired;
+
+    res.internal.kept = comp_set.internal.kept;
+    res.internal.repaired = comp_set.internal.repaired;
+
+    return res;
+}
+
+static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from,
+                                     enum cfd_menu type)
+{     
+    CfOut(cf_verbose, "", " -> Packing total compliance data");
+
+    double trust_level = 0.5; // Trust level for geometrical avg for compliance avg
+
+    Item *file = ReadTotalComplianceLog();
+
+    if (file == NULL)
+    {
+        return;
+    }
+
+    ComplianceSet av_day = {{.kept = 0, .repaired = 0, .eventCount = 0},
+                            {.kept = 0, .repaired = 0, .eventCount = 0},
+                            {.kept = 0, .repaired = 0, .eventCount = 0}};
+
+    ComplianceSet av_week = {{.kept = 0, .repaired = 0, .eventCount = 0},
+                             {.kept = 0, .repaired = 0, .eventCount = 0},
+                             {.kept = 0, .repaired = 0, .eventCount = 0}};
+
+    ComplianceSet av_hour = {{.kept = 0, .repaired = 0, .eventCount = 0},
+                             {.kept = 0, .repaired = 0, .eventCount = 0},
+                             {.kept = 0, .repaired = 0, .eventCount = 0}};
 
     int i = 0;
     bool first = true;
     time_t now = time(NULL);
+    bool extended = false; // extended data introduced in Enterprise 3.0
 
     for (Item *ip = file; ip != NULL; ip = ip->next)
     {        
@@ -1700,6 +1788,9 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
         }
 
         // Complex parsing/extraction
+        ComplianceSet comp = {{ 0, 0, 0, -1 },
+                              { -1, -1, -1, -1 },
+                              { -1, -1, -1, -1 }};
 
         intmax_t start_i, end_i;
         sscanf(ip->name, "%jd,%jd", &start_i, &end_i);
@@ -1710,62 +1801,53 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
         char version[CF_MAXVARSIZE] = "";
         sscanf(strstr(ip->name, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", version);
 
-        int kept = 0,
-            repaired = 0,
-            notrepaired = 0;
+        sscanf(strstr(ip->name, "Promises observed") + strlen("Promises observed"),
+               "%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]",
+               &(comp.total.kept), &(comp.total.repaired),
+               &(comp.total.notrepaired), &(comp.total.eventCount),
+               &(comp.user.kept), &(comp.user.repaired),
+               &(comp.user.notrepaired), &(comp.user.eventCount),
+               &(comp.internal.kept), &(comp.internal.repaired),
+               &(comp.internal.notrepaired), &(comp.internal.eventCount));
 
-        sscanf(strstr(ip->name, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &kept, &repaired,
-               &notrepaired);
-
-        if (now - end < SECONDS_PER_DAY)
+        bool extended_record_1 = false;
+        if (comp.total.eventCount != -1) /* event_count is first of extended report, if missing then report is in old format */
         {
-            av_day_kept = GAverage((double) kept, av_day_kept, 0.5);
-            av_day_repaired = GAverage((double) repaired, av_day_repaired, 0.5);
-        }
-
-        if (now - end < SECONDS_PER_HOUR)
-        {
-            av_hour_kept = GAverage((double) kept, av_hour_kept, 0.5);
-            av_hour_repaired = GAverage((double) repaired, av_hour_repaired, 0.5);
-        }
-
-        if (now - end < SECONDS_PER_WEEK)
-        {
-            av_week_kept = GAverage((double) kept, av_week_kept, 0.5);
-            av_week_repaired = GAverage((double) repaired, av_week_repaired, 0.5);
+            extended_record_1 = true;
+            extended = true;
         }
 
         // Check for two entries
 
         if (ip->classes && strlen(ip->classes) > 0)
         {
-            int skept = 0, srepaired = 0, snotrepaired = 0;
+            ComplianceSet scomp = {{ 0, 0, 0, -1 },
+                                  { -1, -1, -1, -1 },
+                                  { -1, -1, -1, -1 }};
+
             char sversion[CF_MAXVARSIZE];
 
             sversion[0] = '\0';
             sscanf(ip->classes, "%jd,%jd", &start_i, &end_i);
+
             start = (time_t)start_i;
             end = (time_t)end_i;
             sscanf(strstr(ip->classes, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", sversion);
-            sscanf(strstr(ip->classes, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &skept,
-                   &srepaired, &snotrepaired);
 
-            if (now - end < SECONDS_PER_DAY)
-            {
-                av_day_kept = GAverage((double) skept, av_day_kept, 0.5);
-                av_day_repaired = GAverage((double) srepaired, av_day_repaired, 0.5);
-            }
+            sscanf(strstr(ip->classes, "Promises observed") + strlen("Promises observed"),
+                   "%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%ld%*[^0-9]",
+                   &(scomp.total.kept), &(scomp.total.repaired),
+                   &(scomp.total.notrepaired), &(scomp.total.eventCount),
+                   &(scomp.user.kept), &(scomp.user.repaired),
+                   &(scomp.user.notrepaired), &(scomp.user.eventCount),
+                   &(scomp.internal.kept), &(scomp.internal.repaired),
+                   &(scomp.internal.notrepaired), &(scomp.internal.eventCount));
 
-            if (now - end < SECONDS_PER_HOUR)
+            bool extended_record_2 = false;
+            if (scomp.total.eventCount != -1) /* sevent_count is first of extended report, if missing then report is in old format */
             {
-                av_hour_kept = GAverage((double) skept, av_hour_kept, 0.5);
-                av_hour_repaired = GAverage((double) srepaired, av_hour_repaired, 0.5);
-            }
-
-            if (now - end < SECONDS_PER_WEEK)
-            {
-                av_week_kept = GAverage((double) skept, av_week_kept, 0.5);
-                av_week_repaired = GAverage((double) srepaired, av_week_repaired, 0.5);
+                extended_record_2 = true;
+                extended = true;
             }
 
             if (strlen(version) + strlen(sversion) + 4 < CF_MAXVARSIZE)
@@ -1774,9 +1856,83 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
                 strcat(version, sversion);
             }
 
-            kept = (kept + skept) / 2;
-            repaired = (repaired + srepaired + 1) / 2;
-            notrepaired = (notrepaired + snotrepaired + 1) / 2;
+            if (extended_record_1 && extended_record_2)
+            {
+                comp.total = BalanceCompliance(comp.total, scomp.total);
+                comp.user = BalanceCompliance(comp.user, scomp.user);
+                comp.internal = BalanceCompliance(comp.internal, scomp.internal);
+            }
+            else
+            {
+                comp.total.kept = (comp.total.kept + scomp.total.kept) / 2;
+                comp.total.repaired = (comp.total.repaired + scomp.total.repaired + 1) / 2;
+                comp.total.notrepaired = (comp.total.notrepaired + scomp.total.notrepaired + 1) / 2;
+            }
+
+        }
+
+        // Calculate compliance meters over time-windows from balanced data sets
+        if (first)
+        {
+            if (extended_record_1)
+            {
+                av_week = InitWeigthCompliance(comp);
+                av_hour = InitWeigthCompliance(comp);
+                av_day = InitWeigthCompliance(comp);
+            }
+            else
+            {
+                av_week.total.kept = comp.total.kept;
+                av_week.total.repaired = comp.total.repaired;
+
+                av_day.total.kept = comp.total.kept;
+                av_day.total.repaired = comp.total.repaired;
+
+                av_hour.total.kept = comp.total.kept;
+                av_hour.total.repaired = comp.total.repaired;
+            }
+        }
+
+        if (now - end < SECONDS_PER_DAY)
+        {
+            if (extended_record_1)
+            {
+                av_day.total = GAvgCompliance(av_day.total, comp.total, trust_level);
+                av_day.user = GAvgCompliance(av_day.user, comp.user, trust_level);
+                av_day.internal = GAvgCompliance(av_day.internal, comp.internal, trust_level);
+            }
+            else
+            {
+                av_day.total = GAvgCompliance(av_day.total, comp.total, trust_level);
+            }
+        }
+
+        if (now - end < SECONDS_PER_HOUR)
+        {
+            if (extended_record_1)
+            {
+                av_hour.total = GAvgCompliance(av_hour.total, comp.total, trust_level);
+                av_hour.user = GAvgCompliance(av_hour.user, comp.user, trust_level);
+                av_hour.internal = GAvgCompliance(av_hour.internal, comp.internal, trust_level);
+            }
+            else
+            {
+                av_hour.total = GAvgCompliance(av_hour.total, comp.total, trust_level);
+            }
+        }
+
+        if (now - end < SECONDS_PER_WEEK)
+        {
+            if (extended_record_1)
+            {
+                av_week.total = GAvgCompliance(av_week.total, comp.total, trust_level);
+                av_week.user = GAvgCompliance(av_week.user, comp.user, trust_level);
+                av_week.internal = GAvgCompliance(av_week.internal, comp.internal, trust_level);
+            }
+            else
+            {
+                av_week.total = GAvgCompliance(av_week.total, comp.total, trust_level);
+            }
         }
 
         // Now store
@@ -1791,7 +1947,22 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
         }
 
         char buffer[CF_MAXTRANSSIZE] = "";
-        snprintf(buffer, sizeof(buffer), "%ld,%s,%d,%d,%d\n", start, version, kept, repaired, notrepaired);
+        if (comp.user.repaired == -1) // for old format < Nova 2.x
+        {
+            snprintf(buffer, sizeof(buffer), "%ld,%s,%d,%d,%d\n",
+                     start, version, (int)comp.total.kept,
+                     (int)comp.total.repaired, (int)comp.total.notrepaired);
+        }
+        else
+        {
+            snprintf(buffer, sizeof(buffer), "%ld,%s,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
+                     start, version,
+                     (int)(comp.total.kept + 0.5), (int)(comp.total.repaired + 0.5),
+                     (int)(comp.total.notrepaired + 0.5), (int)(comp.user.kept + 0.5),
+                     (int)(comp.user.repaired + 0.5), (int)(comp.user.notrepaired + 0.5),
+                     (int)(comp.internal.kept + 0.5), (int)(comp.internal.repaired + 0.5),
+                     (int)(comp.internal.notrepaired + 0.5));
+        }
 
         if (first)
         {
@@ -1809,12 +1980,52 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from, en
 
     DeleteItemList(file);
 
-    METER_KEPT[meter_compliance_week] = av_week_kept;
-    METER_REPAIRED[meter_compliance_week] = av_week_repaired;
-    METER_KEPT[meter_compliance_day] = av_day_kept;
-    METER_REPAIRED[meter_compliance_day] = av_day_repaired;
-    METER_KEPT[meter_compliance_hour] = av_hour_kept;
-    METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
+    if (extended) /* kept_user is first of extended report, if missing then report is in old format */
+    {
+        METER_KEPT[meter_compliance_week] = (int)(av_week.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_week] = (int)(av_week.total.repaired + 0.5);
+        METER_KEPT[meter_compliance_day] = (int)(av_day.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_day] = (int)(av_day.total.repaired + 0.5);
+        METER_KEPT[meter_compliance_hour] = (int)(av_hour.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_hour] = (int)(av_hour.total.repaired + 0.5);
+
+        METER_KEPT[meter_compliance_week_user] = (int)(av_week.user.kept + 0.5);
+        METER_REPAIRED[meter_compliance_week_user] = (int)(av_week.user.repaired + 0.5);
+        METER_KEPT[meter_compliance_day_user] = (int)(av_day.user.kept + 0.5);
+        METER_REPAIRED[meter_compliance_day_user] = (int)(av_day.user.repaired + 0.5);
+        METER_KEPT[meter_compliance_hour_user] = (int)(av_hour.user.kept + 0.5);
+        METER_REPAIRED[meter_compliance_hour_user] = (int)(av_hour.user.repaired + 0.5);
+
+        METER_KEPT[meter_compliance_week_internal] = (int)(av_week.internal.kept + 0.5);
+        METER_REPAIRED[meter_compliance_week_internal] = (int)(av_week.internal.repaired + 0.5);
+        METER_KEPT[meter_compliance_day_internal] = (int)(av_day.internal.kept + 0.5);
+        METER_REPAIRED[meter_compliance_day_internal] = (int)(av_day.internal.repaired + 0.5);
+        METER_KEPT[meter_compliance_hour_internal] = (int)(av_hour.internal.kept + 0.5);
+        METER_REPAIRED[meter_compliance_hour_internal] = (int)(av_hour.internal.repaired + 0.5);
+    }
+    else
+    {
+        METER_KEPT[meter_compliance_week] = (int)(av_week.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_week] = (int)(av_week.total.repaired + 0.5);
+        METER_KEPT[meter_compliance_day] = (int)(av_day.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_day] = (int)(av_day.total.repaired + 0.5);
+        METER_KEPT[meter_compliance_hour] = (int)(av_hour.total.kept + 0.5);
+        METER_REPAIRED[meter_compliance_hour] = (int)(av_hour.total.repaired + 0.5);
+
+        METER_KEPT[meter_compliance_week_user] = -1;
+        METER_REPAIRED[meter_compliance_week_user] = -1;
+        METER_KEPT[meter_compliance_day_user] = -1;
+        METER_REPAIRED[meter_compliance_day_user] = -1;
+        METER_KEPT[meter_compliance_hour_user] = -1;
+        METER_REPAIRED[meter_compliance_hour_user] = -1;
+
+        METER_KEPT[meter_compliance_week_internal] = -1;
+        METER_REPAIRED[meter_compliance_week_internal] = -1;
+        METER_KEPT[meter_compliance_day_internal] = -1;
+        METER_REPAIRED[meter_compliance_day_internal] = -1;
+        METER_KEPT[meter_compliance_hour_internal] = -1;
+        METER_REPAIRED[meter_compliance_hour_internal] = -1;
+    }
 }
 
 /*****************************************************************************/
@@ -1961,34 +2172,100 @@ static void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_men
 
     if (METER_KEPT[meter_compliance_week] > 0 || METER_REPAIRED[meter_compliance_week] > 0)
     {
-        snprintf(line, sizeof(line), "W: %.4lf %.4lf\n", METER_KEPT[meter_compliance_week],
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_week,
+                 METER_KEPT[meter_compliance_week],
                  METER_REPAIRED[meter_compliance_week]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_week_user] > 0 || METER_REPAIRED[meter_compliance_week_user] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_week_user,
+                 METER_KEPT[meter_compliance_week_user],
+                 METER_REPAIRED[meter_compliance_week_user]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_week_internal] > 0 || METER_REPAIRED[meter_compliance_week_internal] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_week_internal,
+                 METER_KEPT[meter_compliance_week_internal],
+                 METER_REPAIRED[meter_compliance_week_internal]);
         AppendItem(reply, line, NULL);
     }
 
     if (METER_KEPT[meter_compliance_day] > 0 || METER_REPAIRED[meter_compliance_day] > 0)
     {
-        snprintf(line, sizeof(line), "D: %.4lf %.4lf\n", METER_KEPT[meter_compliance_day],
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_day,
+                 METER_KEPT[meter_compliance_day],
                  METER_REPAIRED[meter_compliance_day]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_day_user] > 0 || METER_REPAIRED[meter_compliance_day_user] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_day_user,
+                 METER_KEPT[meter_compliance_day_user],
+                 METER_REPAIRED[meter_compliance_day_user]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_day_internal] > 0 || METER_REPAIRED[meter_compliance_day_internal] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_day_internal,
+                 METER_KEPT[meter_compliance_day_internal],
+                 METER_REPAIRED[meter_compliance_day_internal]);
         AppendItem(reply, line, NULL);
     }
 
     if (METER_KEPT[meter_compliance_hour] > 0 || METER_REPAIRED[meter_compliance_hour] > 0)
     {
-        snprintf(line, sizeof(line), "H: %.4lf %.4lf\n", METER_KEPT[meter_compliance_hour],
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_hour,
+                 METER_KEPT[meter_compliance_hour],
                  METER_REPAIRED[meter_compliance_hour]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_hour_user] > 0 || METER_REPAIRED[meter_compliance_hour_user] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_hour_user,
+                 METER_KEPT[meter_compliance_hour_user],
+                 METER_REPAIRED[meter_compliance_hour_user]);
+        AppendItem(reply, line, NULL);
+    }
+
+    if (METER_KEPT[meter_compliance_hour_internal] > 0 || METER_REPAIRED[meter_compliance_hour_internal] > 0)
+    {
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_hour_internal,
+                 METER_KEPT[meter_compliance_hour_internal],
+                 METER_REPAIRED[meter_compliance_hour_internal]);
         AppendItem(reply, line, NULL);
     }
 
     if (METER_KEPT[meter_perf_day] > 0 || METER_REPAIRED[meter_perf_day] > 0)
     {
-        snprintf(line, sizeof(line), "P: %.4lf %.4lf\n", METER_KEPT[meter_perf_day], METER_REPAIRED[meter_perf_day]);
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_perf,
+                 METER_KEPT[meter_perf_day],
+                 METER_REPAIRED[meter_perf_day]);
         AppendItem(reply, line, NULL);
     }
 
     if (METER_KEPT[meter_other_day] > 0 || METER_REPAIRED[meter_other_day] > 0)
     {
-        snprintf(line, sizeof(line), "S: %.4lf %.4lf\n", METER_KEPT[meter_other_day], METER_REPAIRED[meter_other_day]);
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_other,
+                 METER_KEPT[meter_other_day],
+                 METER_REPAIRED[meter_other_day]);
         AppendItem(reply, line, NULL);
     }
 
@@ -1996,14 +2273,18 @@ static void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_men
 
     if (METER_KEPT[meter_comms_hour] > 0 || METER_REPAIRED[meter_comms_hour] > 0)
     {
-        snprintf(line, sizeof(line), "C: %.4lf %.4lf\n", METER_KEPT[meter_comms_hour],
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_comms,
+                 METER_KEPT[meter_comms_hour],
                  METER_REPAIRED[meter_comms_hour]);
         AppendItem(reply, line, NULL);
     }
 
     if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] > 0)
     {
-        snprintf(line, sizeof(line), "A: %.4lf %.4lf\n", METER_KEPT[meter_anomalies_day],
+        snprintf(line, sizeof(line), "%c: %.4lf %.4lf\n",
+                 cfmeter_anomaly,
+                 METER_KEPT[meter_anomalies_day],
                  METER_REPAIRED[meter_anomalies_day]);
         AppendItem(reply, line, NULL);
     }

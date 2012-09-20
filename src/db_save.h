@@ -39,7 +39,8 @@ void CFDB_SaveLastUpdate(EnterpriseDB *conn, char *database, char *keyField, cha
 void CFDB_SaveLastHostUpdateSize(EnterpriseDB *conn, char *hostkey, int update_size);
 
 void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int kept, int repaired,
-                                  int notkept, int num_samples, time_t shift_start);
+                                  int notkept, int num_samples, time_t shift_start,
+                                  PromiseContextMode promise_context_mode);
 
 void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted);
 void CFDB_SaveLicenseNumberPromised(EnterpriseDB *conn, size_t num_promised);
@@ -56,7 +57,8 @@ void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char
 
 // TODO: deprecate
 void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, double kept, double repaired,
-                                    double notkept, int count, time_t genTime);
+                                    double notkept, int count, time_t genTime,
+                                    PromiseContextMode promise_context_mode);
 
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns);

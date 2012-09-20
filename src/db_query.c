@@ -391,12 +391,23 @@ HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, const char *hostKey)
 
 /*****************************************************************************/
 
-static const char *HostRankMethodToMongoCode(HostRankMethod method)
+static const char *HostRankMethodToMongoCode(HostRankMethod method,
+                                             PromiseContextMode promise_context)
 {
     switch (method)
     {
         case HOST_RANK_METHOD_COMPLIANCE:
-            return cfr_score_comp;
+            switch (promise_context)
+            {
+                case PROMISE_CONTEXT_MODE_ALL:
+                    return cfr_score_comp;
+
+                case PROMISE_CONTEXT_MODE_USER:
+                    return cfr_score_comp_user;
+
+                case PROMISE_CONTEXT_MODE_INTERNAL:
+                    return cfr_score_comp_internal;
+            }
 
         case HOST_RANK_METHOD_ANOMALY:
             return cfr_score_anom;
@@ -408,14 +419,25 @@ static const char *HostRankMethodToMongoCode(HostRankMethod method)
             return cfr_score_lastseen;
 
         case HOST_RANK_METHOD_MIXED:
-            return cfr_score_mixed;
+            switch (promise_context)
+            {
+                case PROMISE_CONTEXT_MODE_ALL:
+                    return cfr_score_mixed;
+
+                case PROMISE_CONTEXT_MODE_USER:
+                    return cfr_score_mixed_user;
+
+                case PROMISE_CONTEXT_MODE_INTERNAL:
+                    return cfr_score_mixed_internal;
+            }
 
         default:
             return cfr_score_comp;
     }
 }
 
-HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter)
+HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
+                           HostClassFilter *host_class_filter, PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
@@ -427,6 +449,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
     bson query;
     bson_init(&query);
     BsonAppendHostClassFilter(&query, host_class_filter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
     BsonFinish(&query);
 
     bson fields;
@@ -436,7 +459,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
                            cfr_ip_array,
                            cfr_host_array,
                            cfr_day,
-                           HostRankMethodToMongoCode(method),
+                           HostRankMethodToMongoCode(method, promise_context),
                            cfr_is_black);
 
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -487,7 +510,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
         host->last_report = last_report;
 
         int score = 0;
-        if (BsonIntGet(&cursor->current, HostRankMethodToMongoCode(method), &score))
+        if (BsonIntGet(&cursor->current, HostRankMethodToMongoCode(method, promise_context), &score))
         {
             host->colour = HostColourFromScore(now, last_report, blue_horizon, score, is_black);
         }
@@ -926,8 +949,11 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 }
 
 /*****************************************************************************/
-HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
-                                    int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
+                                    char *lversion, time_t from, time_t to, int lkept,
+                                    int lnotkept, int lrepaired, int sort,
+                                    HostClassFilter *hostClassFilter,
+                                    PromiseContextMode promise_context_mode)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh;
@@ -935,6 +961,31 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     int rkept, rnotkept, rrepaired, found = false;
     int match_kept, match_notkept, match_repaired, match_version, match_t;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rversion[CF_MAXVARSIZE];
+
+    char kept_k[CF_SMALLBUF] = {0};
+    char repaired_k[CF_SMALLBUF] = {0};
+    char notkept_k[CF_SMALLBUF] = {0};
+
+    switch (promise_context_mode)
+    {
+        case PROMISE_CONTEXT_MODE_USER:
+            strcpy(kept_k, cfr_kept_user);
+            strcpy(repaired_k, cfr_repaired_user);
+            strcpy(notkept_k, cfr_notkept_user);
+            break;
+
+        case PROMISE_CONTEXT_MODE_INTERNAL:
+            strcpy(kept_k, cfr_kept_internal);
+            strcpy(repaired_k, cfr_repaired_internal);
+            strcpy(notkept_k, cfr_notkept_internal);
+            break;
+
+        case PROMISE_CONTEXT_MODE_ALL:
+        default:
+            strcpy(kept_k, cfr_kept);
+            strcpy(repaired_k, cfr_repaired);
+            strcpy(notkept_k, cfr_notkept);
+    }
 
     bson query;
     bson_init(&query);
@@ -945,6 +996,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context_mode);
 
     BsonFinish(&query);
 
@@ -993,15 +1045,15 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
 
                     while (bson_iterator_next(&it3))
                     {
-                        if (strcmp(bson_iterator_key(&it3), cfr_kept) == 0)
+                        if (strcmp(bson_iterator_key(&it3), kept_k) == 0)
                         {
                             rkept = bson_iterator_int(&it3);
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_notkept) == 0)
+                        else if (strcmp(bson_iterator_key(&it3), notkept_k) == 0)
                         {
                             rnotkept = bson_iterator_int(&it3);
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_repaired) == 0)
+                        else if (strcmp(bson_iterator_key(&it3), repaired_k) == 0)
                         {
                             rrepaired = bson_iterator_int(&it3);
                         }
@@ -1012,10 +1064,6 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
                         else if (strcmp(bson_iterator_key(&it3), cfr_version) == 0)
                         {
                             strncpy(rversion, bson_iterator_string(&it3), CF_MAXVARSIZE - 1);
-                        }
-                        else
-                        {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in total compliance", bson_iterator_key(&it3));
                         }
                     }
 
@@ -1055,6 +1103,11 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
                             hh = CreateEmptyHubHost();
                         }
 
+                        if ((rkept == -1) || (rrepaired == -1) || (rnotkept == -1))
+                        {
+                            continue;
+                        }
+
                         PrependRlistAlienUnlocked(&record_list,
                                           NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept));
                     }
@@ -1079,12 +1132,13 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     return NewHubQuery(host_list, record_list);
 }
 
-Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter)
+Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+                                         PromiseContextMode promise_context_mode)
 {
-
     bson query;
     bson_init(&query);
     BsonAppendHostClassFilter(&query, host_class_filter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context_mode);
     BsonFinish(&query);
 
     bson fields;
@@ -1136,9 +1190,27 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
                     continue;
                 }
 
-                BsonIntGet(&entry, cfr_kept, &record->kept[shift_slot]);
-                BsonIntGet(&entry, cfr_repaired, &record->repaired[shift_slot]);
-                BsonIntGet(&entry, cfr_notkept, &record->notkept[shift_slot]);
+                switch (promise_context_mode)
+                {
+                    case PROMISE_CONTEXT_MODE_USER:
+                        BsonIntGet(&entry, cfr_kept_user, &record->kept[shift_slot]);
+                        BsonIntGet(&entry, cfr_repaired_user, &record->repaired[shift_slot]);
+                        BsonIntGet(&entry, cfr_notkept_user, &record->notkept[shift_slot]);
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_INTERNAL:
+                        BsonIntGet(&entry, cfr_kept_internal, &record->kept[shift_slot]);
+                        BsonIntGet(&entry, cfr_repaired_internal, &record->repaired[shift_slot]);
+                        BsonIntGet(&entry, cfr_notkept, &record->notkept[shift_slot]);
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_ALL:
+                    default:
+                        BsonIntGet(&entry, cfr_kept, &record->kept[shift_slot]);
+                        BsonIntGet(&entry, cfr_repaired, &record->repaired[shift_slot]);
+                        BsonIntGet(&entry, cfr_notkept, &record->notkept[shift_slot]);
+                        break;
+                }
                 BsonIntGet(&entry, cfr_count, &record->num_samples[shift_slot]);
             }
 
@@ -6095,7 +6167,7 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
                            cfr_keyhash,
                            cfr_ip_array,
                            cfr_host_array,
-                           HostRankMethodToMongoCode(method));
+                           HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL));
 
     mongo_cursor *cursor = NULL;
     cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6130,7 +6202,7 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
             /* Extract the common HubHost data */
             CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
 
-            if (strcmp(bson_iterator_key(&it1), HostRankMethodToMongoCode(method)) == 0)
+            if (strcmp(bson_iterator_key(&it1), HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL)) == 0)
             {
                 score = (int) bson_iterator_int(&it1);
             }
@@ -6237,7 +6309,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
 
     BsonSelectReportFields(&fields, 3,
                            cfr_day,
-                           HostRankMethodToMongoCode(method),
+                           HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL),
                            cfr_is_black);
 
     bson out = { 0 };
@@ -6255,7 +6327,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
         bool is_black = BsonBoolGet( &out, cfr_is_black );
 
         int score = 0;
-        if (BsonIntGet(&out, HostRankMethodToMongoCode(method), &score))
+        if (BsonIntGet(&out, HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL), &score))
         {
             *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
         }
