@@ -18,6 +18,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"
+#include "scope.h"
 
 #include <assert.h>
 
@@ -1602,8 +1603,8 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex,
-                         HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type, bool regex,
+                         const HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1613,7 +1614,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     }
 # endif
 
-    char buffer[CF_BUFSIZE] = { 0 }, lscope[CF_MAXVARSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
+    char buffer[CF_BUFSIZE] = { 0 }, jsonEscapedStr[CF_BUFSIZE] = { 0 };
     char rvalBuf[CF_MAXVARSIZE];
     HubVariable *hv;
     HubQuery *hq;
@@ -1630,13 +1631,17 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
+    {
+        char ns[CF_MAXVARSIZE] = { 0 };
+        char bundle[CF_MAXVARSIZE] = { 0 };
+        SplitScopeName(scope, ns, bundle);
+
+        hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
+    }
 
     int related_host_cnt = RlistLen(hq->hosts);
     CountMarginRecordsVars(&(hq->records), page, &first_scope_record_count, &last_scope_record_count);
     PageRecords(&(hq->records), page, DeleteHubVariable);
-
-    lscope[0] = '\0';
 
     snprintf(header, sizeof(header), "\"meta\":{\"count\":%d, \"related\" : %d ",
              page->totalResultCount, related_host_cnt);
@@ -1645,14 +1650,15 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{", bufsize);
 
+    char lbundle[CF_MAXVARSIZE] = { 0 };
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         found = true;
 
         hv = (HubVariable *) rp->item;
-        if (strcmp(lscope, hv->scope) != 0)
+        if (strcmp(lbundle, hv->bundle) != 0)
         {
-            strcpy(lscope, hv->scope);
+            strcpy(lbundle, hv->bundle);
 
             if (strlen(buffer) > 0)
             {
@@ -1663,9 +1669,18 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
                 first = false;
             }
 
-            snprintf(buffer, CF_BUFSIZE, "\"%s\":{"
-                     "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
-                     "\"data\":[", hv->scope);
+            if (hv->ns)
+            {
+                snprintf(buffer, CF_BUFSIZE, "\"%s:%s\":{"
+                         "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
+                         "\"data\":[", hv->ns, hv->bundle);
+            }
+            else
+            {
+                snprintf(buffer, CF_BUFSIZE, "\"%s\":{"
+                         "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
+                         "\"data\":[", hv->bundle);
+            }
             Join(returnval, buffer, bufsize);
 
         }
@@ -2596,7 +2611,11 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type,
+    char ns[CF_MAXVARSIZE] = { 0 };
+    char bundle[CF_MAXVARSIZE] = { 0 };
+    SplitScopeName(scope, ns, bundle);
+
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
                                        regex, 0, time(NULL), hostClassFilter);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);

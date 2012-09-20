@@ -609,8 +609,8 @@ int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *
 /*
  * cfpr_report_vars ( ssssssbssbll )
 */
-int Nova2PHP_vars_report_test(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex,
-                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_vars_report_test(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type, bool regex,
+                              const HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     char work[CF_BUFSIZE];
     char header[CF_BUFSIZE] = { 0 };

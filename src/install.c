@@ -435,7 +435,7 @@ void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc)
 
 /*****************************************************************************/
 
-HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t)
+HubVariable *NewHubVariable(HubHost *hh, const char *type, const char *ns, const char *bundle, const char *lval, Rval rval, time_t t)
 // NOTE: rval must be allocated by caller
 {
     HubVariable *hp;
@@ -444,7 +444,8 @@ HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rv
 
     hp->hh = hh;
     hp->rval = rval;
-    hp->scope = xstrdup(scope);
+    hp->ns = SafeStringDuplicate(ns);
+    hp->bundle = SafeStringDuplicate(bundle);
     hp->lval = xstrdup(lval);
     hp->dtype = xstrdup(type);
     hp->t = t;
@@ -455,7 +456,8 @@ HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rv
 
 void DeleteHubVariable(HubVariable *hv)
 {
-    free(hv->scope);
+    free(hv->ns);
+    free(hv->bundle);
     free(hv->lval);
     free(hv->dtype);
     DeleteRvalItem(hv->rval);
@@ -2114,6 +2116,18 @@ int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ())
 
 /*****************************************************************************/
 
+static void _HubVariableScope(const HubVariable *hv, char scope_out[CF_MAXVARSIZE])
+{
+    if (hv->ns)
+    {
+        snprintf(scope_out, CF_MAXVARSIZE, "%s:%s", hv->ns, hv->bundle);
+    }
+    else
+    {
+        strncpy(scope_out, hv->bundle, CF_MAXVARSIZE);
+    }
+}
+
 void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count, int *end_count)
 /**
  * Counts the total records for a scope
@@ -2121,7 +2135,6 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
  **/
 {
     int startIdx = 0, endIdx = 0, count = 0, head_count = 0, tail_count = 0;
-    HubVariable *hv, *hv2, *hv3;
     Rlist *rp, *rp2, *rp3;
     int last_scope = false;
     char lscope[CF_MAXVARSIZE];
@@ -2135,10 +2148,14 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
 
     for (rp = *records_p; (rp != NULL && !last_scope); rp = rp->next)
     {
-        hv = (HubVariable *) rp->item;
-        if (strcmp(lscope, hv->scope) != 0)
+        const HubVariable *hv = (HubVariable *) rp->item;
+
+        char rscope[CF_MAXVARSIZE] = { 0 };
+        _HubVariableScope(hv, rscope);
+
+        if (strcmp(lscope, rscope) != 0)
         {
-            strcpy(lscope, hv->scope);
+            strcpy(lscope, rscope);
             tail_count = 0;
         }
 
@@ -2147,9 +2164,12 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
             head_count = tail_count;
             for (rp3 = rp; rp3 != NULL; rp3 = rp3->next)
             {
-                hv3 = (HubVariable *) rp3->item;
+                const HubVariable *hv3 = (HubVariable *) rp3->item;
 
-                if (strcmp(lscope, hv3->scope) != 0)
+                char rscope3[CF_MAXVARSIZE] = { 0 };
+                _HubVariableScope(hv3, rscope3);
+
+                if (strcmp(lscope, rscope3) != 0)
                 {
                     break;
                 }
@@ -2162,9 +2182,12 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
             last_scope = true;
             for (rp2 = rp; rp2 != NULL; rp2 = rp2->next)
             {
-                hv2 = (HubVariable *) rp2->item;
+                const HubVariable *hv2 = (HubVariable *) rp2->item;
 
-                if (strcmp(lscope, hv2->scope) != 0)
+                char rscope2[CF_MAXVARSIZE] = { 0 };
+                _HubVariableScope(hv2, rscope2);
+
+                if (strcmp(lscope, rscope2) != 0)
                 {
                     break;
                 }

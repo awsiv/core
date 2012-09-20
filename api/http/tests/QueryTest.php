@@ -13,7 +13,7 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('Name', $response['data'][0]['header'][1]);
             $this->assertEquals('IPAddress', $response['data'][0]['header'][2]);
@@ -37,7 +37,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('10.0.0.153', $response['data'][0]['rows'][1][2]);
             $this->assertEquals('1328194213', $response['data'][0]['rows'][1][3]);
             $this->assertEquals('blue', $response['data'][0]['rows'][1][4]);
- 
+
         }
         catch (Pest_Exception $e)
         {
@@ -54,7 +54,7 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('FileName', $response['data'][0]['header'][1]);
             $this->assertEquals('ChangeTimeStamp', $response['data'][0]['header'][2]);
@@ -72,7 +72,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283', $response['data'][0]['rows'][1][0]);
             $this->assertEquals('/etc/passwd', $response['data'][0]['rows'][1][1]);
             $this->assertEquals('1234567', $response['data'][0]['rows'][1][2]);
- 
+
         }
         catch (Pest_Exception $e)
         {
@@ -89,7 +89,7 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('Name', $response['data'][0]['header'][1]);
             $this->assertEquals('DefineTimeStamp', $response['data'][0]['header'][2]);
@@ -107,7 +107,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283', $response['data'][0]['rows'][1][0]);
             $this->assertEquals('ubuntu_10_4', $response['data'][0]['rows'][1][1]);
             $this->assertEquals('1327653377', $response['data'][0]['rows'][1][2]);
- 
+
         }
         catch (Pest_Exception $e)
         {
@@ -124,12 +124,13 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
-            $this->assertEquals('Scope', $response['data'][0]['header'][1]);
-            $this->assertEquals('Name', $response['data'][0]['header'][2]);
-            $this->assertEquals('Value', $response['data'][0]['header'][3]);
-            $this->assertEquals('Type', $response['data'][0]['header'][4]);
+            $this->assertEquals('Namespace', $response['data'][0]['header'][1]);
+            $this->assertEquals('Bundle', $response['data'][0]['header'][2]);
+            $this->assertEquals('Name', $response['data'][0]['header'][3]);
+            $this->assertEquals('Value', $response['data'][0]['header'][4]);
+            $this->assertEquals('Type', $response['data'][0]['header'][5]);
 
             // check result row count
             $this->assertEquals('4', $response['data'][0]['row_count']);
@@ -178,7 +179,7 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('Name', $response['data'][0]['header'][1]);
             $this->assertEquals('Version', $response['data'][0]['header'][2]);
@@ -227,7 +228,7 @@ class QueryTest extends APIBaseTest
 
             // todo check result meta
 
-            // check result table schema 
+            // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('PromiseHandle', $response['data'][0]['header'][1]);
             $this->assertEquals('PromiseStatus', $response['data'][0]['header'][2]);

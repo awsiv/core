@@ -44,7 +44,8 @@
 
 #define CREATE_SQL_VARIABLES "CREATE TABLE " SQL_TABLE_VARIABLES "(" \
                              "HostKey VARCHAR(100), " \
-                             "Scope VARCHAR(50), " \
+                             "Namespace VARCHAR(50), " \
+                             "Bundle VARCHAR(50), " \
                              "Name VARCHAR(50), " \
                              "Value VARCHAR(100), " \
                              "Type VARCHAR(20), " \

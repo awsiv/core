@@ -231,7 +231,7 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
 }
 
 
-int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg)
+int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle, const char *lval, const char *rval, const char *type, bool regex, char *classreg)
 {
     char rvalBuf[CF_MAXVARSIZE];
     HubVariable *hv;
@@ -247,7 +247,7 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex, 0, time(NULL), filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -293,11 +293,11 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
         if (CSV)
         {
-            printf("%s,%s,%s.%s,%s\n", hv->hh->hostname, typestr, hv->scope, hv->lval, rvalBuf);
+            printf("%s,%s,%s:%s.%s,%s\n", hv->hh->hostname, typestr, hv->ns, hv->bundle, hv->lval, rvalBuf);
         }
         else
         {
-            printf("%25s %14s %s.%-25s %s\n", hv->hh->hostname, typestr, hv->scope, hv->lval, rvalBuf);
+            printf("%25s %14s %s:%s.%-25s %s\n", hv->hh->hostname, typestr, hv->ns, hv->bundle, hv->lval, rvalBuf);
         }
     }
 

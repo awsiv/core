@@ -17,8 +17,8 @@
 #include "bson_lib.h"
 #include "db_query.h"
 
-static int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize);
-static int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list);
+static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const char *bundle, const char *lval, char *returnval, int bufsize);
+static int Nova_GetReportedList(const char *hostkey, const char *ns, const char *bundle, const char *lval, Rlist **list);
 
 /***************************************************************************
 
@@ -411,25 +411,25 @@ uqhost[0] = '\0';
 
 // Don't use the buffer until we have the content ok
 
-Nova_GetReportedScalar(hostkey,"sys","uqhost",uqhost,CF_MAXVARSIZE);
-Nova_GetReportedScalar(hostkey,"sys","fqhost",fqhost,CF_MAXVARSIZE);
-Nova_GetReportedScalar(hostkey,"sys","ipv4",ipv4,CF_MAXVARSIZE);
-Nova_GetReportedScalar(hostkey,"sys","flavour",flavour,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"sys","os",os,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"sys","ostype",ostype,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"mon","value_loadavg",loadavg,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"mon","value_cpu",cpu,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"mon","dev_loadavg",devloadavg,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"sys","cpus",cpus,CF_SMALLBUF);
-Nova_GetReportedScalar(hostkey,"sys","constellation_version",version,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "sys","uqhost",uqhost,CF_MAXVARSIZE);
+Nova_GetReportedScalar(hostkey, NULL, "sys","fqhost",fqhost,CF_MAXVARSIZE);
+Nova_GetReportedScalar(hostkey, NULL, "sys","ipv4",ipv4,CF_MAXVARSIZE);
+Nova_GetReportedScalar(hostkey, NULL, "sys","flavour",flavour,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "sys","os",os,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "sys","ostype",ostype,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "mon","value_loadavg",loadavg,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "mon","value_cpu",cpu,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "mon","dev_loadavg",devloadavg,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "sys","cpus",cpus,CF_SMALLBUF);
+Nova_GetReportedScalar(hostkey, NULL, "sys","constellation_version",version,CF_SMALLBUF);
 
-Nova_GetReportedList(hostkey,"sys","ip_addresses",&ip_addresses);
-Nova_GetReportedList(hostkey,"sys","interfaces",&interfaces);
-Nova_GetReportedList(hostkey,"sys","hardware_addresses",&mac_addresses);
-Nova_GetReportedList(hostkey,"mon","listening_udp4_ports",&udp4);
-Nova_GetReportedList(hostkey,"mon","listening_tcp4_ports",&tcp4);
-Nova_GetReportedList(hostkey,"mon","listening_udp6_ports",&udp6);
-Nova_GetReportedList(hostkey,"mon","listening_tcp6_ports",&tcp6);
+Nova_GetReportedList(hostkey, NULL, "sys","ip_addresses",&ip_addresses);
+Nova_GetReportedList(hostkey, NULL, "sys","interfaces",&interfaces);
+Nova_GetReportedList(hostkey, NULL, "sys","hardware_addresses",&mac_addresses);
+Nova_GetReportedList(hostkey, NULL, "mon","listening_udp4_ports",&udp4);
+Nova_GetReportedList(hostkey, NULL, "mon","listening_tcp4_ports",&tcp4);
+Nova_GetReportedList(hostkey, NULL, "mon","listening_udp6_ports",&udp6);
+Nova_GetReportedList(hostkey, NULL, "mon","listening_tcp6_ports",&tcp6);
 
 // Report who am I?
 
@@ -1609,11 +1609,9 @@ for (ptr = list; ptr != NULL; ptr=ptr->next)
 
 /*****************************************************************************/
 
-int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize)
+static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const char *bundle, const char *lval, char *returnval, int bufsize)
 {
-    char buffer[CF_BUFSIZE];
-    HubVariable *hv;
-    HubQuery *hq;
+    char buffer[CF_BUFSIZE] = { 0 };
     Rlist *rp;
     EnterpriseDB dbconn;
 
@@ -1622,13 +1620,13 @@ int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnv
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL, NULL, false, 0, time(NULL), NULL);
 
     returnval[0] = '\0';
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
-        hv = (HubVariable *) rp->item;
+        const HubVariable *hv = (HubVariable *) rp->item;
 
         if (strlen(hv->dtype) > 1)      // list
         {
@@ -1661,12 +1659,10 @@ int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnv
 
 /*****************************************************************************/
 
-int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
+static int Nova_GetReportedList(const char *hostkey, const char *ns, const char *bundle, const char *lval, Rlist **list)
 /* This function allocates memory which needs to be deleted afterwards */
 {
-    char buffer[CF_BUFSIZE];
-    HubVariable *hv;
-    HubQuery *hq;
+    char buffer[CF_BUFSIZE] = { 0 };
     Rlist *rp;
     EnterpriseDB dbconn;
 
@@ -1675,11 +1671,11 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL, NULL, false, 0, time(NULL), NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
-        hv = (HubVariable *) rp->item;
+        const HubVariable *hv = rp->item;
 
         if (strlen(hv->dtype) > 1)      // list
         {

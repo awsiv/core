@@ -4,6 +4,7 @@
 #include "web_rbac.h"
 #include "common.h"
 #include "conversion.h"
+#include "scope.h"
 
 static const char *API_NAME = "CFEngine Nova";
 static const char *API_VERSION = "v1";
@@ -788,7 +789,13 @@ PHP_FUNCTION(cfmod_resource_variable)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, from, to, filter);
+        {
+            char ns[CF_MAXVARSIZE] = { 0 };
+            char bundle[CF_MAXVARSIZE] = { 0 };
+            SplitScopeName(scope, ns, bundle);
+
+            result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value, SerializeRvalType(type), true, from, to, filter);
+        }
 
         DATABASE_CLOSE(&conn);
 
@@ -809,7 +816,12 @@ PHP_FUNCTION(cfmod_resource_variable)
         JsonElement *value_entry = JsonObjectCreate(3);
 
         JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
-        JsonObjectAppendString(value_entry, LABEL_SCOPE, record->scope);
+        {
+            char record_scope[CF_MAXVARSIZE] = { 0 };
+            JoinScopeName(record->ns, record->bundle, record_scope);
+
+            JsonObjectAppendString(value_entry, LABEL_SCOPE, record_scope);
+        }
         JsonObjectAppendString(value_entry, LABEL_NAME, record->lval);
         JsonObjectAppendString(value_entry, LABEL_TYPE, datatype);
 

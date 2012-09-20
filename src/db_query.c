@@ -18,6 +18,7 @@
 #include "sort.h"
 #include "conversion.h"
 #include "granules.h"
+#include "scope.h"
 
 #include <assert.h>
 
@@ -1225,16 +1226,16 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, char *llval, char *lrval,
-                              const char *ltype, bool regex, time_t from, time_t to, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns, const char *bundle, const char *llval, const char *lrval,
+                              const char *ltype, bool regex, time_t from, time_t to, const HostClassFilter *hostClassFilter)
 {
     bson_iterator it1, it2, it3, it4, it5;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL, *newlist = NULL;
     int found = false;
-    bool match_type, match_scope, match_lval, match_rval, match_time;
+    bool match_type, match_ns, match_bundle, match_lval, match_rval, match_time;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE], dtype[CF_MAXVARSIZE], rtype;
+    char rlval[CF_MAXVARSIZE], dtype[CF_MAXVARSIZE], rtype;
     void *rrval;
 
     bson query;
@@ -1291,12 +1292,18 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                 {
                     bson_iterator_subiterator(&it2, &it3);
 
-                    strncpy(rscope, bson_iterator_key(&it2), CF_MAXVARSIZE);                    
-
-                    if(BsonIsKeyCorrupt(rscope))
+                    char rns[CF_MAXVARSIZE] = { 0 };
+                    char rbundle[CF_MAXVARSIZE] = { 0 };
                     {
-                        CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", rscope);
-                        continue;
+                        const char *scope = bson_iterator_key(&it2);
+
+                        if(BsonIsKeyCorrupt(scope))
+                        {
+                            CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", scope);
+                            continue;
+                        }
+
+                        SplitScopeName(scope, rns, rbundle);
                     }
 
                     while (bson_iterator_next(&it3))
@@ -1354,7 +1361,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
                         // Now do selection
 
-                        match_type = match_scope = match_lval = match_rval = match_time = true;
+                        match_type = match_ns = match_bundle = match_lval = match_rval = match_time = true;
 
                         if (regex)
                         {
@@ -1389,9 +1396,14 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                 }
                             }
 
-                            if (!NULL_OR_EMPTY(lscope) && !StringMatchFull(lscope, rscope))
+                            if (!NULL_OR_EMPTY(rns) && !NULL_OR_EMPTY(ns) && !StringMatchFull(ns, rns))
                             {
-                                match_scope = false;
+                                match_ns = false;
+                            }
+
+                            if (!NULL_OR_EMPTY(bundle) && !StringMatchFull(bundle, rbundle))
+                            {
+                                match_bundle = false;
                             }
 
                             if (!NULL_OR_EMPTY(ltype) && !StringMatchFull(ltype, dtype))
@@ -1432,9 +1444,14 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                 }
                             }
 
-                            if (!NULL_OR_EMPTY(lscope) && strcmp(lscope, rscope) != 0)
+                            if (!NULL_OR_EMPTY(rns) && !NULL_OR_EMPTY(ns) && !StringSafeEqual(ns, rns))
                             {
-                                match_scope = false;
+                                match_ns = false;
+                            }
+
+                            if (!NULL_OR_EMPTY(bundle) && !StringSafeEqual(bundle, rbundle))
+                            {
+                                match_bundle = false;
                             }
 
                             if (!NULL_OR_EMPTY(ltype) && strcmp(ltype, dtype) != 0)
@@ -1451,7 +1468,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                         Rval rval = (Rval) { rrval, rtype };
 
                         // NOTE: rrval's ownership (deallocation) is either transferred, or it is freed here
-                        if (match_type && match_scope && match_lval && match_rval && match_time)
+                        if (match_type && match_ns && match_bundle && match_lval && match_rval && match_time)
                         {
                             found = true;
 
@@ -1460,7 +1477,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlienUnlocked(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, timestamp));
+                            PrependRlistAlienUnlocked(&record_list, NewHubVariable(hh, dtype, rns, rbundle, rlval, rval, timestamp));
                         }
                         else
                         {

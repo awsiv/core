@@ -23,6 +23,7 @@
 #include "conversion.h"
 #include "nova-reporting.h"
 #include "hub-scheduled-reports.h"
+#include "scope.h"
 
 /*******************************************************************/
 

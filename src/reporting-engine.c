@@ -374,24 +374,24 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
         return;
     }
 
-    HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL,
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL, NULL,
                                        false, 0, time(NULL), filter);
     CFDB_Close(&dbconn);
 
     char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
-        HubVariable *hc = (HubVariable *) rp->item;
+        HubVariable *hv = (HubVariable *) rp->item;
 
-        if(hc->rval.rtype == CF_SCALAR)
+        if(hv->rval.rtype == CF_SCALAR)
         {
-            char *rval_scalar_escaped = EscapeCharCopy((char*) hc->rval.item, '\'', '\'');
+            char *rval_scalar_escaped = EscapeCharCopy((char*) hv->rval.item, '\'', '\'');
 
             char insert_op[CF_BUFSIZE] = {0};
 
             snprintf(insert_op, sizeof(insert_op),
-                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                     SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, DataTypeShortToType(hc->dtype));
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
+                     SkipHashType(hv->hh->keyhash), hv->ns ? hv->ns : "", hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
 
             free(rval_scalar_escaped);
 
@@ -403,15 +403,15 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
         }
         else
         {
-            for (Rlist *rpv = (Rlist*)hc->rval.item; rpv != NULL; rpv = rpv->next)
+            for (Rlist *rpv = (Rlist*)hv->rval.item; rpv != NULL; rpv = rpv->next)
             {
                 char *rval_scalar_escaped = EscapeCharCopy((char *) rpv->item, '\'', '\'');
 
                 char insert_op[CF_BUFSIZE] = {0};
 
                 snprintf(insert_op, sizeof(insert_op),
-                         "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                         SkipHashType(hc->hh->keyhash), hc->scope, hc->lval, rval_scalar_escaped, DataTypeShortToType(hc->dtype));
+                         "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
+                         SkipHashType(hv->hh->keyhash), hv->ns ? hv->ns : "", hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
 
                 free(rval_scalar_escaped);
 

@@ -370,7 +370,8 @@ typedef struct
 typedef struct
 {
     HubHost *hh;
-    char *scope;
+    char *ns;
+    char *bundle;
     char *lval;
     Rval rval;
     char *dtype;
@@ -767,7 +768,7 @@ HubTotalCompliance *NewHubTotalCompliance(HubHost *hh, time_t t, char *v, int k,
 void DeleteHubTotalCompliance(HubTotalCompliance *ht);
 HubHostComplianceShifts *NewHubHostComplianceShifts(const char *hostkey);
 void DeleteHubHostComplianceShifts(HubHostComplianceShifts *record);
-HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t);
+HubVariable *NewHubVariable(HubHost *hh, const char *type, const char *ns, const char *bundle, const char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
 HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t);
 unsigned int HubPromiseLogHash(const void *hp_record);

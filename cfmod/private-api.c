@@ -199,7 +199,7 @@ PHP_FUNCTION(cfpr_host_info)
         RETURN_NULL();
     }
 
-    HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
 
     time_t last_report_update = -1;
     int last_update_size = 0;
@@ -219,7 +219,7 @@ PHP_FUNCTION(cfpr_host_info)
     {
         HubVariable *var = (HubVariable *) rp->item;
 
-        if (var && strcmp(var->scope, "sys") == 0)
+        if (var && strcmp(var->bundle, "sys") == 0)
         {
             if (strcmp(var->lval, "ostype") == 0)
             {
