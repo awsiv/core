@@ -329,7 +329,7 @@ freebsd::
 
  package_list_command => "/usr/sbin/pkg_info";
  
- package_list_update_command => "/bin/true";
+ package_list_update_command => "/usr/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
 
 
@@ -352,7 +352,7 @@ netbsd::
 
  package_list_command => "/usr/sbin/pkg_info";
 
- package_list_update_command => "/bin/true";
+ package_list_update_command => "/usr/bin/true";
  package_list_update_ifelapsed => "0"; # avoid caching of list during upgrade
 
 
