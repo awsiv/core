@@ -290,6 +290,20 @@ typedef struct
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
+#define cfmeter_hour 'H'
+#define cfmeter_hour_user 'I'
+#define cfmeter_hour_internal 'J'
+#define cfmeter_week 'W'
+#define cfmeter_week_user 'X'
+#define cfmeter_week_internal 'Y'
+#define cfmeter_day  'D'
+#define cfmeter_day_user  'E'
+#define cfmeter_day_internal  'F'
+#define cfmeter_perf 'P'
+#define cfmeter_comms 'C'
+#define cfmeter_anomaly 'A'
+#define cfmeter_other 'S'
+
 #ifdef HAVE_LIBMONGOC
 #include "scorecards.h"
 
@@ -439,20 +453,6 @@ typedef struct
     double repaired;
     double notkept;
 } HubMeter;
-
-#define cfmeter_hour 'H'
-#define cfmeter_hour_user 'I'
-#define cfmeter_hour_internal 'J'
-#define cfmeter_week 'W'
-#define cfmeter_week_user 'X'
-#define cfmeter_week_internal 'Y'
-#define cfmeter_day  'D'
-#define cfmeter_day_user  'E'
-#define cfmeter_day_internal  'F'
-#define cfmeter_perf 'P'
-#define cfmeter_comms 'C'
-#define cfmeter_anomaly 'A'
-#define cfmeter_other 'S'
 
 typedef struct
 {
