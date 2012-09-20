@@ -373,7 +373,7 @@ solarisx86|solaris::
  
  package_changes => "individual";
  package_list_command => "/usr/bin/pkginfo -l";
- package_list_update_command => "/bin/true";
+ package_list_update_command => "/usr/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
  package_multiline_start    => "\s*PKGINST:\s+[^\s]+";
  package_list_name_regex    => "\s*PKGINST:\s+([^\s]+)";
@@ -394,7 +394,7 @@ aix::
 
  package_changes => "individual";
 
- package_list_update_command => "/bin/true";
+ package_list_update_command => "/usr/bin/true";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
 
  package_list_command       => "/usr/bin/lslpp -lc";
