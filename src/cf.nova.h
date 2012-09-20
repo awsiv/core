@@ -597,6 +597,7 @@ typedef struct
 {
     bool external;
     char *username;
+    char *name;
     char *email;
 
     Rlist *roles;
@@ -814,7 +815,8 @@ HubVital *NewHubVital(const char *hostkey, const char *id, const char *units, co
 void DeleteHubVital(HubVital *hv);
 HubVitalPoint *NewHubVitalPoint(time_t t, double value);
 void DeleteHubVitalPoint(HubVitalPoint *point);
-HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles);
+HubUser *NewHubUser(bool external, const char *username, const char *name, const char *email, const Rlist *roles);
+int HubUserCompare(const void *_hub_user_a, const void *_hub_user_b);
 void DeleteHubUser(void *_hub_user);
 HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude, const char *classRxExclude,
                             const char *bundleRxInclude, const char *bundleRxExclude);

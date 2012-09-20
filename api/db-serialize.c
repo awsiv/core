@@ -38,6 +38,11 @@ JsonElement *HubUserToJson(const HubUser *user)
 
     JsonObjectAppendBool(obj, "external", user->external);
 
+    if (user->name)
+    {
+        JsonObjectAppendString(obj, "name", user->name);
+    }
+
     if (user->email)
     {
         JsonObjectAppendString(obj, "email", user->email);

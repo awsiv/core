@@ -33,10 +33,11 @@
 # define MONGO_COLLECTION_USERS_INTERNAL MONGO_BASE ".users"
 # define MONGO_COLLECTION_USERS_EXTERNAL MONGO_BASE ".users.external"
 
-# define dbkey_user_name "username"
+# define dbkey_user_username "username"
 # define dbkey_user_password "password"
 # define dbkey_user_salt "salt"
 # define dbkey_user_roles "roles"
+# define dbkey_user_name "name"
 # define dbkey_user_email "email"
 
 # define dbkey_role_name "name"
@@ -65,7 +66,7 @@ static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(const char *name);
 static bool _UserIsAdmin(EnterpriseDB *conn, bool ldap_enabled, const char *username);
 static HubQuery *CFDB_GetRBACForUser(const char *userName);
-cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles);
+cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *name, const char *email, const Sequence *roles);
 static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password);
 static char *_LDAPUri(const HubSettingsLDAP *ldap_settings);
 
@@ -275,7 +276,7 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
 {
     bson query;
     bson_init(&query);
-    bson_append_string(&query, dbkey_user_name, username);
+    bson_append_string(&query, dbkey_user_username, username);
     bson_finish(&query);
 
     bson field;
@@ -619,7 +620,7 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
     return start;
 }
 
-cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email, const Sequence *roles)
+cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *name, const char *email, const Sequence *roles)
 {
     const char *collection = external ? MONGO_COLLECTION_USERS_EXTERNAL : MONGO_COLLECTION_USERS_INTERNAL;
 
@@ -638,10 +639,11 @@ cfapi_errid _CreateUser(EnterpriseDB *conn, bool external, const char *username,
         return ERRID_ARGUMENT_MISSING;
     }
 
-    return _UpdateUser(conn, external, username, password, email, roles);
+    return _UpdateUser(conn, external, username, password, name, email, roles);
 }
 
-cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *email, const Sequence *roles)
+cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username, const char *password, const char *name,
+                            const char *email, const Sequence *roles)
 {    
     EnterpriseDB conn[1];
     if (!CFDB_Open(conn))
@@ -657,7 +659,7 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
         return ERRID_ACCESS_DENIED;
     }
 
-    cfapi_errid result = _CreateUser(conn, false, username, password, email, roles);
+    cfapi_errid result = _CreateUser(conn, false, username, password, name, email, roles);
 
     if (!CFDB_Close(conn))
     {
@@ -667,14 +669,14 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
     return result;
 }
 
-cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *email,
-                        const Sequence *roles)
+cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username, const char *password, const char *name,
+                        const char *email, const Sequence *roles)
 {
     const char *users_collection = external ? MONGO_COLLECTION_USERS_EXTERNAL : MONGO_COLLECTION_USERS_INTERNAL;
 
     bson query;
     bson_init(&query);
-    bson_append_string(&query, dbkey_user_name, username);
+    bson_append_string(&query, dbkey_user_username, username);
     bson_finish(&query);
 
     bson set_op;
@@ -683,7 +685,7 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
     {
         if (!NULL_OR_EMPTY(username))
         {
-            bson_append_string(&set_op, dbkey_user_name, username);
+            bson_append_string(&set_op, dbkey_user_username, username);
         }
 
         if (!NULL_OR_EMPTY(password))
@@ -709,6 +711,11 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
         {
             bson_append_string(&set_op, dbkey_user_email, email);
         }
+
+        if (!NULL_OR_EMPTY(name))
+        {
+            bson_append_string(&set_op, dbkey_user_name, name);
+        }
     }
     bson_append_finish_object(&set_op);
     bson_finish(&set_op);
@@ -728,8 +735,8 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
     return errid;
 }
 
-cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *email,
-                            const Sequence *roles)
+cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username, const char *password, const char *name,
+                            const char *email, const Sequence *roles)
 {
     EnterpriseDB conn[1];
     if (!CFDB_Open(conn))
@@ -760,7 +767,7 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
     cfapi_errid result = ERRID_UNKNOWN;
     if (_GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
     {
-        result = _UpdateUser(conn, false, username, password, email, roles);
+        result = _UpdateUser(conn, false, username, password, name, email, roles);
     }
     else if (settings->ldap.enabled)
     {
@@ -772,11 +779,11 @@ cfapi_errid CFDB_UpdateUser(const char *updating_username, const char *username,
         {
             if (_GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
             {
-                result = _UpdateUser(conn, true, username, password, email, roles);
+                result = _UpdateUser(conn, true, username, password, name, email, roles);
             }
             else if (_UsernameExistsExternal(&settings->ldap, username) == ERRID_SUCCESS)
             {
-                result = _CreateUser(conn, true, username, password, email, roles);
+                result = _CreateUser(conn, true, username, password, name, email, roles);
             }
             else
             {
@@ -800,7 +807,7 @@ cfapi_errid _DeleteUser(EnterpriseDB *conn, bool external, const char *username)
 
     bson query;
     bson_init(&query);
-    bson_append_string(&query, dbkey_user_name, username);
+    bson_append_string(&query, dbkey_user_username, username);
     bson_finish(&query);
 
     MongoRemove(conn, users_collection, &query, NULL);
@@ -971,12 +978,13 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
     bson_init(&query);
     if (!NULL_OR_EMPTY(username_rx))
     {
-        bson_append_regex(&query, dbkey_user_name, username_rx, "");
+        bson_append_regex(&query, dbkey_user_username, username_rx, "");
     }
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 3,
+    BsonSelectReportFields(&field, 4,
+                           dbkey_user_username,
                            dbkey_user_name,
                            dbkey_user_email,
                            dbkey_user_roles);
@@ -990,15 +998,18 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         const char *username = NULL;
-        BsonStringGet(&cursor->current, dbkey_user_name, &username);
+        BsonStringGet(&cursor->current, dbkey_user_username, &username);
         assert(username);
+
+        const char *name = NULL;
+        BsonStringGet(&cursor->current, dbkey_user_name, &name);
 
         const char *email = NULL;
         BsonStringGet(&cursor->current, dbkey_user_email, &email);
 
         Rlist *roles = BsonStringArrayAsRlist(&cursor->current, dbkey_user_roles);
 
-        PrependRlistAlien(users_out, NewHubUser(external, username, email, roles));
+        PrependRlistAlien(users_out, NewHubUser(external, username, name, email, roles));
     }
 
     return ERRID_SUCCESS;
@@ -1028,11 +1039,12 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
 
     bson query;
     bson_init(&query);
-    bson_append_string(&query, dbkey_user_name, username);
+    bson_append_string(&query, dbkey_user_username, username);
     bson_finish(&query);
 
     bson field;
-    BsonSelectReportFields(&field, 2,
+    BsonSelectReportFields(&field, 3,
+                           dbkey_user_name,
                            dbkey_user_email,
                            dbkey_user_roles);
 
@@ -1052,9 +1064,12 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
         const char *email = NULL;
         BsonStringGet(&record, dbkey_user_email, &email);
 
+        const char *name = NULL;
+        BsonStringGet(&record, dbkey_user_name, &email);
+
         Rlist *roles = BsonStringArrayAsRlist(&record, dbkey_user_roles);
 
-        *user_out = NewHubUser(external, username, email, roles);
+        *user_out = NewHubUser(external, username, name, email, roles);
 
         DeleteRlist(roles);
     }
@@ -1107,7 +1122,7 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
     {
         if (user_out)
         {
-            *user_out = NewHubUser(true, username, NULL, NULL);
+            *user_out = NewHubUser(true, username, NULL, NULL, NULL);
         }
         result = ERRID_SUCCESS;
     }
@@ -1162,7 +1177,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char
 
                 if (!have_record)
                 {
-                    PrependRlistAlien(&external_users, NewHubUser(true, external_username, NULL, NULL));
+                    PrependRlistAlien(&external_users, NewHubUser(true, external_username, NULL, NULL, NULL));
                 }
             }
             DeleteRlist(external_usernames);

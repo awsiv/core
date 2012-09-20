@@ -1091,16 +1091,40 @@ void DeleteHubVitalPoint(HubVitalPoint *point)
 
 /*****************************************************************************/
 
-HubUser *NewHubUser(bool external, const char *username, const char *email, const Rlist *roles)
+HubUser *NewHubUser(bool external, const char *username, const char *name, const char *email, const Rlist *roles)
 {
     HubUser *user = xmalloc(sizeof(HubUser));
 
     user->external = external;
     user->username = SafeStringDuplicate(username);
+    user->name = SafeStringDuplicate(name);
     user->email = SafeStringDuplicate(email);
     user->roles = CopyRlist(roles);
 
     return user;
+}
+
+int HubUserCompare(const void *_hub_user_a, const void *_hub_user_b)
+{
+    const HubUser *a = _hub_user_a;
+    const HubUser *b = _hub_user_b;
+
+    if (a->name && !b->name)
+    {
+        return -1;
+    }
+    else if (!a->name && b->name)
+    {
+        return 1;
+    }
+    else if (a->name && b->name)
+    {
+        return StringSafeCompare(a->name, b->name);
+    }
+    else
+    {
+        return StringSafeCompare(a->username, b->username);
+    }
 }
 
 void DeleteHubUser(void *_hub_user)
@@ -1110,6 +1134,7 @@ void DeleteHubUser(void *_hub_user)
     if (user)
     {
         free(user->username);
+        free(user->name);
         free(user->email);
         DeleteRlist(user->roles);
 

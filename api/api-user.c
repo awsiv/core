@@ -6,6 +6,7 @@
 #include "db_query.h"
 #include "db_save.h"
 #include "conversion.h"
+#include "sort.h"
 
 static bool _KeepInternal(void *_user)
 {
@@ -42,6 +43,8 @@ PHP_FUNCTION(cfapi_user_list)
     {
         THROW_GENERIC(result->errid, "Error listing users");
     }
+
+    result->records = SortRlist(result->records, HubUserCompare);
 
     {
         Trinary external = PHPZvalToTrinary(external_zval);
@@ -109,13 +112,15 @@ PHP_FUNCTION(cfapi_user_put)
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
+    const char *name = NULL; int name_len = 0;
     const char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssz",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssz",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
+                              &name, &name_len,
                               &email, &email_len,
                               &roles_arg) == FAILURE)
     {
@@ -145,7 +150,7 @@ PHP_FUNCTION(cfapi_user_put)
     Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
 
     cfapi_errid err = ERRID_UNKNOWN;
-    if ((err = CFDB_CreateUser(username, username_arg, password, email, roles)) != ERRID_SUCCESS)
+    if ((err = CFDB_CreateUser(username, username_arg, password, name, email, roles)) != ERRID_SUCCESS)
     {
         SequenceDestroy(roles);
         THROW_GENERIC(err, "Unable to create user");
@@ -160,13 +165,15 @@ PHP_FUNCTION(cfapi_user_post)
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     char *password = NULL; int password_len = 0;
+    char *name = NULL; int name_len = 0;
     char *email = NULL; int email_len = 0;
     zval *roles_arg = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssz",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssz",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &password, &password_len,
+                              &name, &name_len,
                               &email, &email_len,
                               &roles_arg) == FAILURE)
     {
@@ -179,6 +186,7 @@ PHP_FUNCTION(cfapi_user_post)
     Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
     cfapi_errid err = CFDB_UpdateUser(username, username_arg,
                                       password_len > 0 ? password : NULL,
+                                      name_len > 0 ? name : NULL,
                                       email_len > 0 ? email : NULL,
                                       roles);
     SequenceDestroy(roles);

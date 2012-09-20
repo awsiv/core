@@ -81,6 +81,38 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testAddUserWithName()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "name": "Snookie",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // check user was added
+            $users = $this->getResults('/user');
+            $this->assertValidJson($users);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
+            $this->assertEquals('jersey', $users[0]['roles'][0]);
+            $this->assertEquals(false, $users[0]['external']);
+            $this->assertEquals('Snookie', $users[0]['name']);
+
+            //test newly created user can log in or not
+            $this->pest->setupAuth("snookie", "pass");
+            $response = $this->getResults('');
+            $this->assertValidJson($response);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testUpdateUnknownUser()
     {
         try
@@ -124,6 +156,39 @@ class UserTest extends APIBaseTest
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
 
             //test if only email was edited
+            $this->pest->setupAuth("snookie", "pass");
+            $response = $this->getResults('');
+            $this->assertValidJson($response);
+        }
+        catch (Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testUpdateName()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "name": "Snookie",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            $this->pest->post('/user/snookie', '{
+                    "name": "Snookie2"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            // check only name was updated and nothing other
+            $users = $this->getResults('/user');
+            $this->assertValidJson($users);
+            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('Snookie2', $users[0]['name']);
+
+            //test if only name was edited
             $this->pest->setupAuth("snookie", "pass");
             $response = $this->getResults('');
             $this->assertValidJson($response);
