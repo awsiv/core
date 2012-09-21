@@ -313,8 +313,8 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
         char insert_op[CF_BUFSIZE] = {0};
 
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s', '%ld','%s');", SQL_TABLE_HOSTS,
-                 SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report, Nova_HostColourToString(hh->colour));
+                 "INSERT INTO %s VALUES('%s','%s','%s','%ld');", SQL_TABLE_HOSTS,
+                 SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {

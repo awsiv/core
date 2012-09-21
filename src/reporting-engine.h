@@ -27,8 +27,7 @@
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
                          "Name VARCHAR(100), " \
                          "IPAddress VARCHAR(50), " \
-                         "ReportTimeStamp BIGINT, " \
-                         "Colour VARCHAR(20));"
+                         "ReportTimeStamp BIGINT);"
 
 #define CREATE_SQL_FILECHANGES "CREATE TABLE " SQL_TABLE_FILECHANGES "(" \
                                "HostKey VARCHAR(100), " \
