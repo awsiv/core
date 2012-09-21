@@ -44,8 +44,6 @@ PHP_FUNCTION(cfapi_user_list)
         THROW_GENERIC(result->errid, "Error listing users");
     }
 
-    result->records = SortRlist(result->records, HubUserCompare);
-
     {
         Trinary external = PHPZvalToTrinary(external_zval);
         switch (external)
@@ -62,6 +60,8 @@ PHP_FUNCTION(cfapi_user_list)
             break;
         }
     }
+
+    result->records = SortRlist(result->records, HubUserCompare);
 
     const size_t total = RlistLen(result->records);
     PageRecords(&result->records, &page, DeleteHubUser);
