@@ -410,9 +410,9 @@ class UserTest extends APIBaseTest
             $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
-            $jsonArray = $this->getResults('/user');
-            $this->assertValidJson($jsonArray);
-            $this->assertEquals(4, sizeof($jsonArray));
+            $users = $this->pest->get('/user');
+            $this->assertValidJson($users['data']);
+            $this->assertEquals(484, $users['meta']['total']);
         }
         catch (Pest_Exception $e)
         {
@@ -427,9 +427,9 @@ class UserTest extends APIBaseTest
             $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
-            $jsonArray = $this->getResults('/user?external=true');
-            $this->assertValidJson($jsonArray);
-            $this->assertEquals(2, sizeof($jsonArray));
+            $users = $this->pest->get('/user?external=true');
+            $this->assertValidJson($users['data']);
+            $this->assertEquals(482, $users['meta']['total']);
         }
         catch (Pest_Exception $e)
         {
