@@ -20,7 +20,7 @@ static void ScheduleRunMaintenanceJobs(void);
 
 void Nova_Maintain(void)
 {
-    HardClass("am_policy_hub", NULL);
+    HardClass("am_policy_hub");
 
     ScheduleRunMaintenanceJobs();
 }

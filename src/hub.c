@@ -157,7 +157,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             break;
 
         case 'd':
-            HardClass("opt_debug", NULL);
+            HardClass("opt_debug");
             DEBUG = true;
             break;
 
@@ -208,7 +208,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
         case 'n':
             DONTDO = true;
             IGNORELOCK = true;
-            HardClass("opt_dry_run", NULL);
+            HardClass("opt_dry_run");
             break;
 
         case 's':
@@ -702,7 +702,7 @@ static void StartHub(void)
         {
             CfOut(cf_verbose, "", " -> Wake up");
 
-            HardClass("am_policy_hub", NULL);
+            HardClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();

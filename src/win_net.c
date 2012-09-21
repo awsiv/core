@@ -176,7 +176,7 @@ void GetInterfacesInfo(enum cfagenttype ag)
                 // class e.g. ipv4_192_168_2_5
                 snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);
 
-                HardClass(buf, NULL);
+                HardClass(buf);
 
                 // add address part-clasess and vars, if ipv4
                 if (strcmp(ifType, "ipv4") == 0)
@@ -191,7 +191,7 @@ void GetInterfacesInfo(enum cfagenttype ag)
                             bufVal[j] = '\0';
 
                             snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
-                            HardClass(buf, NULL);
+                            HardClass(buf);
 
                             snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
                             NewScalar("sys", buf, bufVal, cf_str);

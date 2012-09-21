@@ -254,7 +254,7 @@ static void Nova_DefineHubMaster(void)
 
     if (CFDB_QueryIsMaster())
     {
-        HardClass("am_hub_master", NULL);
+        HardClass("am_hub_master");
         snprintf(master, sizeof(master), "%s", POLICY_SERVER);
     }
     else

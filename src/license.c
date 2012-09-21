@@ -138,7 +138,7 @@ int EnterpriseExpiry(void)
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
-            HardClass("am_policy_hub", NULL);
+            HardClass("am_policy_hub");
         }
         else if (Nova_HashKey(hub_key_path, name, license.digest))
         {
@@ -173,7 +173,7 @@ int EnterpriseExpiry(void)
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
-            HardClass("am_policy_hub", NULL);
+            HardClass("am_policy_hub");
         }
         else
         {
