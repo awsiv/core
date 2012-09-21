@@ -51,7 +51,7 @@ void RunScheduledEnterpriseReports(void)
 
     if (pid == 0)
     {
-        NewClass("am_policy_hub");
+        HardClass("am_policy_hub", NULL);
         ALARM_PID = -1;
         ScheduleRunScheduledReports();
         _exit(0);
