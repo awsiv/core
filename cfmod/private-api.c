@@ -1863,9 +1863,10 @@ PHP_FUNCTION(cfpr_get_value_graph)
 
 PHP_FUNCTION(cfpr_report_notkept)
 {
-    char *userName, *hostkey, *handle, *cause_rx;
+    char *userName = NULL, *hostkey = NULL, *handle = NULL,
+         *cause_rx = NULL, *promise_context = NULL;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len, c_len;
+    int user_len, hk_len, h_len, c_len, pc_len;
     char buffer[CF_WEBBUFFER];
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
@@ -1873,9 +1874,10 @@ PHP_FUNCTION(cfpr_report_notkept)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
@@ -1905,7 +1907,12 @@ PHP_FUNCTION(cfpr_report_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT,
+                        from, to, filter, &page, buffer, sizeof(buffer),
+                        promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1915,9 +1922,10 @@ PHP_FUNCTION(cfpr_report_notkept)
 
 PHP_FUNCTION(cfpr_report_repaired)
 {
-    char *userName, *hostkey, *handle, *cause_rx;
+    char *userName = NULL, *hostkey = NULL,
+         *handle = NULL, *cause_rx = NULL, *promise_context;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len, c_len;
+    int user_len, hk_len, h_len, c_len, pc_len;
     char buffer[CF_WEBBUFFER];
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
@@ -1925,9 +1933,10 @@ PHP_FUNCTION(cfpr_report_repaired)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
@@ -1957,7 +1966,12 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED,
+                        from, to, filter, &page, buffer, sizeof(buffer),
+                        promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);

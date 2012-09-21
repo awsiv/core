@@ -21,13 +21,13 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseLogState state, const char *lhandle,
-                               bool regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, int *total_results_out);
+                               bool regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, int *total_results_out, PromiseContextMode promsie_context);
 int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
+                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter);
 

@@ -2672,8 +2672,9 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
 
 /*****************************************************************************/
 int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
-                                 const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
-                                 HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
+                                 const char *lhandle, bool regex, const char *lcause_rx, time_t from,
+                                 time_t to, int sort, HostClassFilter *hostClassFilter, Rlist **host_list,
+                                 Rlist **record_list, PromiseContextMode promise_context)
 {
 
     char *promiseLogKey;
@@ -2697,6 +2698,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
     BsonFinish(&query);
 
     bson fields;
@@ -2765,6 +2767,26 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
                         continue;
                     }
 
+                    switch (promise_context)
+                    {
+                        case PROMISE_CONTEXT_MODE_INTERNAL:
+                            if (!CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_USER:
+                            if (CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_ALL:
+                            break;
+                    }
+
                     bson array;
 
                     if(!BsonGetArrayValue(&objPromiseLogData, cfr_time, &array))
@@ -2819,7 +2841,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
 HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
 {
-    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter, NULL);
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter, NULL, PROMISE_CONTEXT_MODE_ALL);
 
     Map *log_counts = MapNew(HubPromiseLogHash, HubPromiseLogEqual, NULL, free);
     for (const Rlist *rp = hq->records; rp; rp = rp->next)
@@ -2863,14 +2885,19 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, P
 
 HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, int *total_results_out)
+                               HostClassFilter *hostClassFilter, int *total_results_out, PromiseContextMode promise_context)
 {
     Rlist *record_list = NULL;
     Rlist *host_list = NULL;
 
-    int new_data_count = CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
+    int old_data_count = 0;
 
-    int old_data_count = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
+    int new_data_count = CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list, promise_context);
+
+    if (promise_context != PROMISE_CONTEXT_MODE_ALL)
+    {
+        old_data_count = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
+    }
 
     if(old_data_count > 0)
     {

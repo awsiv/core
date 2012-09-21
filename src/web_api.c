@@ -1113,8 +1113,10 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
-                        HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state,
+                        time_t from, time_t to, HostClassFilter *hostClassFilter,
+                        PageInfo *page, char *returnval, int bufsize,
+                        PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1135,7 +1137,8 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter, NULL);
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx,
+                              from, to, true, hostClassFilter, NULL, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
@@ -2895,7 +2898,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
     HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true,
                                         causeRx, from, to, false, hostClassFilter,
-                                        NULL);
+                                        NULL, PROMISE_CONTEXT_MODE_ALL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
