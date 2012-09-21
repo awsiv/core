@@ -818,7 +818,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
                                      size_t page, size_t results_per_page, const char **const errstr)
 {
     LDAP *ld;
-    LDAPMessage *res, *msg;
+    LDAPMessage *res;
     LDAPControl **serverctrls;
     BerElement *ber;
     struct berval **vals;
@@ -860,7 +860,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
     num_entries = ldap_count_entries(ld, res);
     num_refs = ldap_count_references(ld, res);
 
-    for (msg = ldap_first_message(ld, res); msg != NULL; msg = ldap_next_message(ld, msg))
+    for (LDAPMessage *msg = ldap_first_message(ld, res); msg != NULL; msg = ldap_next_message(ld, msg))
     {
         count++;
 

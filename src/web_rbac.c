@@ -51,6 +51,7 @@
 
 static const char *_EXTERNAL_FILTER_LDAP = "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson)(mail=*))";
 static const char *_EXTERNAL_FILTER_AD = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
+static const size_t _EXTERNAL_MAX_PAGE_SIZE = 100000;
 
 static time_t _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS = 5;
 
@@ -872,7 +873,7 @@ static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
         const char *errstr = NULL;
         Rlist *partial_result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_LDAP,
                                                               ldap_settings->login_attribute, "subtree", "sasl",
-                                                              start_tls, 0, 0, &errstr);
+                                                              start_tls, 1, _EXTERNAL_MAX_PAGE_SIZE, &errstr);
 
         free(dn);
         free(bind_dn);
@@ -919,7 +920,7 @@ static Rlist *_GetExternalUsernamesAD(const HubSettingsLDAP *ldap_settings)
 
     const char *errstr = NULL;
     Rlist *result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, ldap_settings->login_attribute, "subtree", "sasl",
-                                         start_tls, 0, 0, &errstr);
+                                         start_tls, 1, _EXTERNAL_MAX_PAGE_SIZE, &errstr);
 
     free(dn);
     free(bind_dn);

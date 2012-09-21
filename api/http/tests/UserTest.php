@@ -412,7 +412,7 @@ class UserTest extends APIBaseTest
 
             $users = $this->pest->get('/user');
             $this->assertValidJson($users['data']);
-            $this->assertEquals(484, $users['meta']['total']);
+            $this->assertEquals(1005, $users['meta']['total']);
         }
         catch (Pest_Exception $e)
         {
@@ -429,7 +429,7 @@ class UserTest extends APIBaseTest
 
             $users = $this->pest->get('/user?external=true');
             $this->assertValidJson($users['data']);
-            $this->assertEquals(482, $users['meta']['total']);
+            $this->assertEquals(1003, $users['meta']['total']);
         }
         catch (Pest_Exception $e)
         {
