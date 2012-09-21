@@ -487,7 +487,7 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_SOFTWARE,
-                 SkipHashType(hs->hh->keyhash), hs->name, hs->version, hs->arch);
+                 SkipHashType(hs->hh->keyhash), hs->name, hs->version, Nova_LongArch(hs->arch));
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
