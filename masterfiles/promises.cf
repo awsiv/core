@@ -75,7 +75,7 @@ bundle agent service_catalogue
 
   any::
 
-   "security" -> { goal_1, goal_2 }
+   "security" -> { goal_infosec, goal_compliance }
                   comment => "Basic change management",
                    handle => "service_catalogue_change_management",
                 usebundle => change_management;
