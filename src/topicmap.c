@@ -230,9 +230,8 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("***************************************************\n");
     
     printf("INPUT: handles::goal_customers\n");
-    int tid = Nova_GetTopicIdForTopic("handles::goal_customers");
 
-    json =  Nova2PHP_get_goal_progress(tid, "goal_customers");
+    json =  Nova2PHP_get_goal_progress("goal_customers");
 
     if (json)
     {
@@ -241,7 +240,7 @@ void Nova_ShowTopic(char *qualified_topic)
 
         JsonElementPrint(writer, json, 1);
         JsonElementDestroy(json);
-        printf("\n: GOAL_PROGRESS %s\n\n", StringWriterData(writer));
+        printf("\n: GOAL_PROGRESS for %s\n\n", StringWriterData(writer));
 
         WriterClose(writer);
     }
@@ -1279,8 +1278,6 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
     {
         HubClass *hc = (HubClass *) rp->item;
         
-        printf("CL: %s (%s)\n", hc->class, hc->hh->hostname);
-
         if (strcmp(hc->class+offset, h1n) == 0)
         {
             (*h1)++;

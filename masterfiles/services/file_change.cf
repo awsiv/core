@@ -40,13 +40,13 @@ vars:
 
 files:
 
-   "$(watch_files)"
+   "$(watch_files)" -> "goal_infosec"
       comment => "Change detection on important files",
        handle => "change_management_files_watch_files",
       changes => diff;
 	
   
-#   "$(watch_dirs)" 
+#   "$(watch_dirs)"  -> "goal_infosec"
 #      comment      => "Change detection on important directories",
 #      pathtype     => "literal",
 #      changes      => detect_all_change,

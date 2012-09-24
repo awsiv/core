@@ -4906,9 +4906,11 @@ JsonElement *Nova2PHP_get_service_level_histogram(char *srv)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_get_goal_progress(int goal_id, char *handle)
+JsonElement *Nova2PHP_get_goal_progress(char *handle)
 {
-
+    char name[CF_MAXVARSIZE];
+    snprintf(name, CF_MAXVARSIZE, "handles::%s", handle);
+    int goal_id = Nova_GetTopicIdForTopic(name);
     Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
     int hosts = 0;
     double have_people = false;
