@@ -124,9 +124,9 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
 /**
  * CFDB_QueryValueFromHostKeyStr:
  * Read top level value for corresponding db key and hostkey
- * Returns NULL if key is not found
+ * Returns false if key is not found
  */
-const char *CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval );
+bool CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval, char *buffer, int bufsize );
 
 //*****************************************************************************
 // Utility Queries

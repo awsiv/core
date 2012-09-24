@@ -6738,7 +6738,7 @@ cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out)
 
 /*********************************************************************************/
 
-const char *CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval )
+bool CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval, char *buffer, int bufsize )
 {
     bson query[1];
     bson_init( query );
@@ -6755,14 +6755,13 @@ const char *CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyha
 
     if( found )
     {
-        const char *reverse_ip_lookup = NULL;
-        BsonStringGet( record, lval, &reverse_ip_lookup );
+        BsonStringWrite( buffer, bufsize, record, lval );
 
         bson_destroy( record );
-        return reverse_ip_lookup;
+        return true;
     }
 
-    return NULL;
+    return false;
 }
 
 /*********************************************************************************/

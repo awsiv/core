@@ -5151,7 +5151,9 @@ PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name )
     EnterpriseDB conn[1];
     DATABASE_OPEN( conn );
 
-    const char *reverse_lookup_name = CFDB_QueryValueFromHostKeyStr( conn, hostkey, cfr_reverse_lookup_name );
+    char reverse_lookup_name[CF_BUFSIZE] = "\0";
+
+    CFDB_QueryValueFromHostKeyStr( conn, hostkey, cfr_reverse_lookup_name, reverse_lookup_name, CF_BUFSIZE - 1 );
 
     DATABASE_CLOSE( conn );
 
