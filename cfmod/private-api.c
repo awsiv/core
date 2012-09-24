@@ -5020,6 +5020,42 @@ PHP_FUNCTION(cfpr_update_host_identifier)
     RETURN_BOOL(true);
 }
 
+/******************************************************************************/
+
+PHP_FUNCTION( cfpr_reset_host_identifier )
+{
+    char *username;
+    int user_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &username, &user_len ) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS( user_len );
+
+    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
+        RETURN_BOOL(false);
+    }
+
+    EnterpriseDB conn[1];
+    DATABASE_OPEN(conn);
+
+    if (!CFDB_PutValue(conn, cfr_host_identifier, "", MONGO_SCRATCH))
+    {
+        DATABASE_CLOSE(conn);
+        zend_throw_exception(cfmod_exception_db, "Unable to reset host identifier", 0 TSRMLS_CC);
+        RETURN_BOOL(false);
+    }
+
+    DATABASE_CLOSE(conn);
+    RETURN_BOOL(true);
+}
+
 /**************************************************/
 
 PHP_FUNCTION(cfpr_get_host_identifier)

@@ -951,8 +951,13 @@ PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name );
  * \param variable name
  */
 // port plan: (further investigate)
-PHP_FUNCTION(cfpr_update_host_identifier);
-PHP_FUNCTION(cfpr_get_host_identifier);
+PHP_FUNCTION( cfpr_update_host_identifier );
+PHP_FUNCTION( cfpr_get_host_identifier );
+
+/*! \brief Resets the host identifier to default hostname ( reverse IP lookup )
+ * \param username ( must be admin )
+ */
+PHP_FUNCTION( cfpr_reset_host_identifier );
 
 /*! \brief A list of all environments
  */
