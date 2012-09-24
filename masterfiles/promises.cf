@@ -15,7 +15,7 @@ body common control
                     "cfengine_hub_vars",
 
                   # Agent bundle
-                    "cfengine_management",   # See cfe_internal/CFE_cfengine.cf
+                    "cfe_internal_management",   # See cfe_internal/CFE_cfengine.cf
                     "service_catalogue",
 
                    };
