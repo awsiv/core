@@ -9,13 +9,13 @@
 ##################################################################
 ##################################################################
 #
-# cfengine_management
+# cfe_internal_management
 #  - manage internal CFE functionalities (any:: can be modified)
 #  - some agent bundles are in CFE_hub_specific.cf
 #
 ##################################################################
 
-bundle agent cfengine_management
+bundle agent cfe_internal_management
 {
  methods:
 
@@ -25,67 +25,71 @@ bundle agent cfengine_management
 
   am_policy_hub::
 
-   "hub" usebundle => cfengine_update_folders,
-            handle => "cfe_internal_cfengine_management_update_folders",
+   "hub" usebundle => cfe_internal_update_folders,
+            handle => "cfe_internal_management_update_folders",
            comment => "Create empty directories for CFE self-upgrade";
 
-#   "hub" usebundle => cfengine_disable_selinux,
-#            handle => "cfe_internal_cfengine_management_disable_selinux",
+#   "hub" usebundle => cfe_internal_disable_selinux,
+#            handle => "cfe_internal_management_disable_selinux",
 #           comment => "Disable SELinux for now";
 
   # cfengine_selinux() can be "fix" or "disable"
-   "hub" usebundle => cfengine_selinux("fix"),
-            handle => "cfe_internal_cfengine_management_fix_selinux",
+   "hub" usebundle => cfe_internal_selinux("fix"),
+            handle => "cfe_internal_management_fix_selinux",
            comment => "Fix SELinux to be able to run Mission Portal and Mongo DB";
 
-   "hub" usebundle => cfengine_policysrv,
-            handle => "cfe_internal_cfengine_management_policysrv",
+   "hub" usebundle => cfe_internal_policysrv,
+            handle => "cfe_internal_management_policysrv",
            comment => "Prepare the policy hub";
 
-   "hub" usebundle => cfengine_php_mod,
-            handle => "cfe_internal_cfengine_management_php_mod",
+   "hub" usebundle => cfe_internal_php_mod,
+            handle => "cfe_internal_management_php_mod",
            comment => "Setup CFE PHP modules";
 
-   "hub" usebundle => cfengine_web_server("on"),
-            handle => "cfe_internal_cfengine_management_web_server",
+   "hub" usebundle => cfe_internal_web_server("on"),
+            handle => "cfe_internal_management_web_server",
            comment => "Manage Apache Web server (on/off)";
 
-   "hub" usebundle => cfengine_setup_knowledge,
-            handle => "cfe_internal_cfengine_management_setup_knowledge",
+   "hub" usebundle => cfe_internal_setup_knowledge,
+            handle => "cfe_internal_management_setup_knowledge",
            comment => "Manage CFE Knowledge Map";
 
-   "hub" usebundle => cfengine_editor,
-            handle => "cfe_internal_cfengine_management_online_editor",
+   "hub" usebundle => cfe_internal_editor,
+            handle => "cfe_internal_management_online_editor",
            comment => "Prepare CFE online editing tool";
 
-   "hub" usebundle => cfengine_rotate_mongod_log,
-            handle => "cfe_internal_cfengine_management_rotate_mongod_log",
+   "hub" usebundle => cfe_internal_rotate_mongod_log,
+            handle => "cfe_internal_management_rotate_mongod_log",
            comment => "Rotate the mongod log";
 
-   "hub" usebundle => cfengine_hub_maintain,
-            handle => "cfe_internal_cfengine_management_hub_maintain",
+   "hub" usebundle => cfe_internal_hub_maintain,
+            handle => "cfe_internal_management_hub_maintain",
             comment => "Start the hub maintenance process";
 
   any::
 
-   "any" usebundle => cfengine_correct_cftwin,
-            handle => "cfe_internal_cfengine_management_correct_cftwin",
+   "any" usebundle => cfe_internal_correct_cftwin,
+            handle => "cfe_internal_management_correct_cftwin",
            comment => "Ensure cf-twin in good shape";
 
-   "any" usebundle => cfengine_limit_robot_agents,
-            handle => "cfe_internal_cfengine_management_limit_cfe_agents",
+   "any" usebundle => cfe_internal_limit_robot_agents,
+            handle => "cfe_internal_management_limit_cfe_agents",
            comment => "Manage CFE processes";
+
+   "any" usebundle => cfe_internal_garbage_collection,
+            handle => "cfe_internal_management_garbage_collection",
+           comment => "Log rotate and tidy up CFE internal usage files";
 
 }
 
 ##################################################################
 #
-# cfengine_limit_rebot_agents
+# cfe_internal_limit_rebot_agents
 #  - kill CFE processes and restart it when the process grown  
 #
 ##################################################################
 
-bundle agent cfengine_limit_robot_agents
+bundle agent cfe_internal_limit_robot_agents
 {
  processes:
 
@@ -94,12 +98,12 @@ bundle agent cfengine_limit_robot_agents
    "cf-execd"
       process_count => check_execd("2"),
             comment => "Check cf-execd process if exceed the number",
-             handle => "cfe_internal_cfengine_limit_robot_agents_processes_check_cf_execd";
+             handle => "cfe_internal_limit_robot_agents_processes_check_cf_execd";
 
    "cf-monitord"
       process_count => check_monitord("1"),
             comment => "Check cf-monitord process if exceed the number",
-             handle => "cfe_internal_cfengine_limit_robot_agents_processes_check_cf_monitord";
+             handle => "cfe_internal_limit_robot_agents_processes_check_cf_monitord";
    
    #
    # Do not do this for cf-hub because cf-hub may have unlimited processes
@@ -111,7 +115,7 @@ bundle agent cfengine_limit_robot_agents
             signals => { "term", "kill" },
       restart_class => "restart_execd",
             comment => "When cf-execd comes undone then kill all and restart the process",
-             handle => "cfe_internal_cfengine_limit_robot_agents_processes_kill_cf_execd";
+             handle => "cfe_internal_limit_robot_agents_processes_kill_cf_execd";
 
   something_wrong_monitord::
 
@@ -119,7 +123,7 @@ bundle agent cfengine_limit_robot_agents
             signals => { "term", "kill" },
       restart_class => "restart_monitord",
             comment => "When cf-monitord comes undone then kill all and restart the process",
-             handle => "cfe_internal_cfengine_limit_robot_agents_processes_kill_cf_monitord";
+             handle => "cfe_internal_limit_robot_agents_processes_kill_cf_monitord";
 
 #
 
@@ -129,13 +133,13 @@ bundle agent cfengine_limit_robot_agents
 
    "$(sys.cf_execd)"
       comment => "Restart cf-execd process",
-       handle => "cfe_internal_cfengine_limit_robot_agents_commands_restart_cf_execd";
+       handle => "cfe_internal_limit_robot_agents_commands_restart_cf_execd";
 
   restart_monitord::
 
    "$(sys.cf_monitord)"
       comment => "Restart cf-monitord process",
-       handle => "cfe_internal_cfengine_limit_robot_agents_commands_restart_cf_monitord";
+       handle => "cfe_internal_limit_robot_agents_commands_restart_cf_monitord";
 
 }
 
@@ -155,12 +159,12 @@ out_of_range_define => {"something_wrong_monitord"};
 
 ##################################################################
 #
-# cfengine_correct_cftwin
+# cfe_internal_correct_cftwin
 #  - create cf-twin for self-upgrading purpose 
 #
 ##################################################################
 
-bundle agent cfengine_correct_cftwin
+bundle agent cfe_internal_correct_cftwin
 {
  files:
 
@@ -168,7 +172,7 @@ bundle agent cfengine_correct_cftwin
 
    "$(sys.workdir)\bin-twin"
                 comment => "Correct bin-twin directory, making it up-to-date syncing up with bin directory",
-                 handle => "cfe_internal_cfengine_correct_cftwin_file_bintwin",
+                 handle => "cfe_internal_correct_cftwin_file_bintwin",
       move_obstructions => "true",
               copy_from => local_dcp("$(sys.workdir)\bin"),
            depth_search => recurse("inf");
@@ -177,7 +181,7 @@ bundle agent cfengine_correct_cftwin
 
    "/var/cfengine/lib-twin"
                 comment => "Correct lib-twin to be the same as lib, in case of dependency upgrade. This effect cf-twin's behaviour",
-                 handle => "cfe_internal_cfengine_correct_cftwin_files_libtwin",
+                 handle => "cfe_internal_correct_cftwin_files_libtwin",
                   perms => m("644"),
       move_obstructions => "true",
               copy_from => local_cp_libtwin("/var/cfengine/lib"),
@@ -185,7 +189,7 @@ bundle agent cfengine_correct_cftwin
 
    "/var/cfengine/bin/cf-twin"
         comment => "Correct cf-twin to be the same as cf-agent, in case of dependency upgrade",
-         handle => "cfe_internal_cfengine_correct_cftwin_files_cftwin",
+         handle => "cfe_internal_correct_cftwin_files_cftwin",
           perms => m("755"),
       copy_from => local_cp("/var/cfengine/bin/cf-agent");
 
@@ -201,12 +205,12 @@ body copy_from local_cp_libtwin(from)
 
 ##################################################################
 #
-# garbage_collection
-#  - do a garbage clean up. Mostly CFE Nova logs 
+# cfe_internal_garbage_collection
+#  - do a garbage clean up. Mostly CFEngine 3 Enterprise logs 
 #
 ##################################################################
 
-bundle agent garbage_collection
+bundle agent cfe_internal_garbage_collection
 {
  files:
 
