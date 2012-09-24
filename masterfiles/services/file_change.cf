@@ -61,7 +61,6 @@ files:
 
 #     comment => "Watching our peers remote hash tables for changes - cross check",
 #   copy_from => remote_cp("$(sys.workdir)/checksum_digests.db","$(neighbours)"),
-#  depends_on => { "grant_hash_tables" },
 #      action => neighbourwatch("File hash changes observed on $(neighbours) (neighbourhood watch)");
 
 
