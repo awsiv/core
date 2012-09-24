@@ -2730,7 +2730,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
         time_t rt = 0;
         bool found = false;
 
-        while (bson_iterator_next(&itHostData))
+        while( BsonIsTypeValid( bson_iterator_next( &itHostData ) ) > 0 )
         {
 
             CFDB_ScanHubHost(&itHostData, keyhash, addresses, hostnames);
