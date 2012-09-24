@@ -1637,7 +1637,10 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
     {
         char ns[CF_MAXVARSIZE] = { 0 };
         char bundle[CF_MAXVARSIZE] = { 0 };
-        SplitScopeName(scope, ns, bundle);
+        if (scope)
+        {
+            SplitScopeName(scope, ns, bundle);
+        }
 
         hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
     }
@@ -2616,7 +2619,10 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
 
     char ns[CF_MAXVARSIZE] = { 0 };
     char bundle[CF_MAXVARSIZE] = { 0 };
-    SplitScopeName(scope, ns, bundle);
+    if (scope)
+    {
+        SplitScopeName(scope, ns, bundle);
+    }
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
                                        regex, 0, time(NULL), hostClassFilter);
