@@ -13,7 +13,6 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
     JsonObjectAppendString(obj, "query", scheduled_report->query);
     JsonObjectAppendString(obj, "schedule", scheduled_report->schedule);
     JsonObjectAppendBool(obj, "enabled", scheduled_report->enabled);
-    JsonObjectAppendInteger(obj, "outputType", scheduled_report->output_type);
     JsonObjectAppendInteger(obj, "lastRun", scheduled_report->last_run);
 
     if (scheduled_report->title)
@@ -24,6 +23,19 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
     if (scheduled_report->description)
     {
         JsonObjectAppendString(obj, "description", scheduled_report->description);
+    }
+
+    {
+        JsonElement *output_types = JsonArrayCreate(5);
+        if (BIT_CHECK(scheduled_report->output_type, REPORT_FORMAT_CSV))
+        {
+            JsonArrayAppendString(output_types, "csv");
+        }
+        if (BIT_CHECK(scheduled_report->output_type, REPORT_FORMAT_PDF))
+        {
+            JsonArrayAppendString(output_types, "pdf");
+        }
+        JsonObjectAppendArray(obj, "outputTypes", output_types);
     }
 
     return obj;

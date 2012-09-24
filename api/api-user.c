@@ -323,8 +323,9 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     const char *schedule = NULL; int schedule_len = 0;
     const char *title = NULL; int title_len = 0;
     const char *description = NULL; int description_len = 0;
+    zval *output_type = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbssss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbssssz",
                               &username, &username_len,
                               &username_arg, &username_arg_len,
                               &sub_id, &sub_id_len,
@@ -333,7 +334,8 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
                               &query, &query_len,
                               &schedule, &schedule_len,
                               &title, &title_len,
-                              &description, &description_len) == FAILURE)
+                              &description, &description_len,
+                              &output_type) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
@@ -341,9 +343,41 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
     ARGUMENT_CHECK_CONTENTS(sub_id_len, "sub_id");
-    ARGUMENT_CHECK_CONTENTS(to_len, "to");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
     ARGUMENT_CHECK_CONTENTS(schedule, "schedule");
+
+    int report_output_type = 0;
+    {
+        if (!PHPArrayIsStringArray(output_type))
+        {
+            THROW_GENERIC(ERRID_ARGUMENT_WRONG, "outputType is not a string array");
+        }
+
+        Sequence *output_type_seq = PHPStringArrayToSequence(output_type, true);
+        for (size_t i = 0; i < output_type_seq->length; i++)
+        {
+            const char *value = output_type_seq->data[i];
+            if (StringSafeEqual("csv", value))
+            {
+                BIT_SET(report_output_type, REPORT_FORMAT_CSV);
+            }
+            else if (StringSafeEqual("pdf", value))
+            {
+                BIT_SET(report_output_type, REPORT_FORMAT_PDF);
+            }
+            else
+            {
+                SequenceDestroy(output_type_seq);
+                THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Invalid output type");
+            }
+        }
+        SequenceDestroy(output_type_seq);
+
+        if (report_output_type == 0)
+        {
+            THROW_GENERIC(ERRID_ARGUMENT_WRONG, "No output type selected");
+        }
+    }
 
     EnterpriseDB *conn = EnterpriseDBAcquire();
     if (!conn)
@@ -351,8 +385,14 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    CFDB_SaveScheduledReport(conn, username_arg, to, sub_id, query, schedule,
-                             enabled, 1,
+    CFDB_SaveScheduledReport(conn,
+                             username_arg,
+                             to_len > 0 ? to : NULL,
+                             sub_id,
+                             query,
+                             schedule,
+                             enabled,
+                             report_output_type,
                              title_len > 0 ? title : NULL,
                              description_len > 0 ? description : NULL);
 

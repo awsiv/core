@@ -30,12 +30,17 @@ class UserSubscriptionQuery extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $data = json_decode($request->data);
+        $output_types = $data->outputTypes;
+        if (!$output_types)
+        {
+            $output_types = array('csv');
+        }
 
         $response = new Response($request);
 
         if (cfapi_user_subscription_query_put($user, $username, $subscription_id,
                 $data->to, $data->enabled, $data->query, $data->schedule,
-                $data->title, $data->description))
+                $data->title, $data->description, $output_types))
         {
             $response->code = Response::CREATED;
         }

@@ -655,10 +655,123 @@ class UserTest extends APIBaseTest
             $this->assertValidJson($subs);
             $this->assertEquals(1, sizeof($subs));
             $this->assertEquals('stuff', $subs[0]['id']);
+            $this->assertEquals('snookie@cfengine.com', $subs[0]['to']);
             $this->assertEquals('My Jersey Report', $subs[0]['title']);
             $this->assertEquals('Reporting from Jersey', $subs[0]['description']);
+            $this->assertEquals(1, sizeof($subs[0]['outputTypes']));
+            $this->assertEquals('csv', $subs[0]['outputTypes'][0]);
 
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
 
+    public function testAddQuerySubscriptionBareMinimum()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // initially there should be no subscriptions for a new user
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(0, sizeof($subs));
+
+            $this->pest->put('/user/snookie/subscription/query/stuff', '{
+                    "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
+                    "schedule": "Monday.Hr23.Min59"
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // check by listing
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(1, sizeof($subs));
+            $this->assertEquals('stuff', $subs[0]['id']);
+            $this->assertEquals(1, sizeof($subs[0]['outputTypes']));
+            $this->assertEquals('csv', $subs[0]['outputTypes'][0]);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testAddQuerySubscriptionPDFOnly()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // initially there should be no subscriptions for a new user
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(0, sizeof($subs));
+
+            $this->pest->put('/user/snookie/subscription/query/stuff', '{
+                    "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
+                    "schedule": "Monday.Hr23.Min59",
+                    "outputTypes": [ "pdf" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // check by listing
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(1, sizeof($subs));
+            $this->assertEquals('stuff', $subs[0]['id']);
+            $this->assertEquals(1, sizeof($subs[0]['outputTypes']));
+            $this->assertEquals('pdf', $subs[0]['outputTypes'][0]);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testAddQuerySubscriptionPDFAndCSV()
+    {
+        try
+        {
+            $this->pest->put('/user/snookie', '{
+                    "password": "pass",
+                    "email": "snookie@cfengine.com",
+                    "roles": [ "jersey" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // initially there should be no subscriptions for a new user
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(0, sizeof($subs));
+
+            $this->pest->put('/user/snookie/subscription/query/stuff', '{
+                    "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
+                    "schedule": "Monday.Hr23.Min59",
+                    "outputTypes": [ "pdf", "csv" ]
+                }');
+            $this->assertEquals(201, $this->pest->lastStatus());
+
+            // check by listing
+            $subs = $this->getResults('/user/snookie/subscription/query');
+            $this->assertValidJson($subs);
+            $this->assertEquals(1, sizeof($subs));
+            $this->assertEquals('stuff', $subs[0]['id']);
+            $this->assertEquals(2, sizeof($subs[0]['outputTypes']));
+            $this->assertEquals('csv', $subs[0]['outputTypes'][0]);
+            $this->assertEquals('pdf', $subs[0]['outputTypes'][1]);
         }
         catch (Pest_Exception $e)
         {

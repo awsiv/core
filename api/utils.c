@@ -99,6 +99,36 @@ Trinary PHPZvalToTrinary(const zval *null_or_bool)
     }
 }
 
+bool PHPArrayIsStringArray(const zval *php_array)
+{
+    zval **data;
+    HashTable *hash;
+    HashPosition hashPos;
+
+    switch (Z_TYPE_P(php_array))
+    {
+    case IS_ARRAY:
+        break;
+
+    default:
+        return false;
+    }
+
+    hash = Z_ARRVAL_P(php_array);
+
+    for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
+         zend_hash_get_current_data_ex(hash, (void *)&data, &hashPos) == SUCCESS;
+         zend_hash_move_forward_ex(hash, &hashPos))
+    {
+        if (Z_TYPE_PP(data) != IS_STRING)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
 {
     zval **data;
