@@ -1119,11 +1119,11 @@ int HubUserCompare(const void *_hub_user_a, const void *_hub_user_b)
     }
     else if (a->name && b->name)
     {
-        return StringSafeCompare(a->name, b->name);
+        return StringSafeCompare(a->name, b->name) < 0;
     }
     else
     {
-        return StringSafeCompare(a->username, b->username);
+        return StringSafeCompare(a->username, b->username) < 0;
     }
 }
 
