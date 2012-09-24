@@ -1987,28 +1987,30 @@ PHP_FUNCTION(cfpr_report_repaired)
 
 PHP_FUNCTION(cfpr_summarize_notkept)
 {
-    char *userName, *hostkey, *handle, *cause_rx;
-    zval *includes = NULL,
-         *excludes = NULL;
-    int user_len, hk_len, h_len, c_len;
-
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int c_len;
+    zval *includes = NULL;
+    zval *excludes = NULL;
+    char *sort_column_name; int sc_len;
+    char *promise_context = NULL; int pc_len;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
                               &to,
                               &includes,
                               &excludes,
-                              &sortColumnName, &sc_len,
-                              &sortDescending,
+                              &sort_column_name, &sc_len,
+                              &sort_descending,
                               &(page.resultsPerPage),
                               &(page.pageNum)) == FAILURE)
     {
@@ -2022,7 +2024,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2030,7 +2032,12 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
+                                                      PROMISE_LOG_STATE_NOTKEPT, from,
+                                                      to, filter, &page, promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(output);
@@ -2040,27 +2047,30 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
 PHP_FUNCTION(cfpr_summarize_repaired)
 {
-    char *userName, *hostkey, *handle, *cause_rx;
-    zval *includes = NULL,
-         *excludes = NULL;
-    int user_len, hk_len, h_len, c_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int c_len;
+    char *promise_context = NULL; int pc_len;
+    zval *includes = NULL;
+    zval *excludes = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    char *sort_column_name; int sc_len;
+    bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
                               &to,
                               &includes,
                               &excludes,
-                              &sortColumnName, &sc_len,
-                              &sortDescending,
+                              &sort_column_name, &sc_len,
+                              &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -2073,7 +2083,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2081,7 +2091,12 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
+                                                      PROMISE_LOG_STATE_REPAIRED, from,
+                                                      to, filter, &page, promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(output);

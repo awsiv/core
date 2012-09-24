@@ -498,7 +498,7 @@ static JsonElement *PromiseLogSummaryAsJson(EnterpriseDB *conn, PromiseLogState 
                                             int *total_results_out)
 {
     HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true,
-                                                   filter);
+                                                   filter, PROMISE_CONTEXT_MODE_ALL);
 
     if (total_results_out)
     {

@@ -2829,10 +2829,15 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
-                                      bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
+HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
+                                      PromiseLogState state, const char *handle,
+                                      bool regex, const char *cause, time_t from,
+                                      time_t to, bool sort, HostClassFilter *host_class_filter,
+                                      PromiseContextMode promise_context)
 {
-    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter, NULL, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause,
+                                        from, to, false, host_class_filter,
+                                        NULL, promise_context);
 
     Map *log_counts = MapNew(HubPromiseLogHash, HubPromiseLogEqual, NULL, free);
     for (const Rlist *rp = hq->records; rp; rp = rp->next)

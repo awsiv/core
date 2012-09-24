@@ -1192,7 +1192,8 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
-                                         HostClassFilter *hostClassFilter, PageInfo *page)
+                                         HostClassFilter *hostClassFilter, PageInfo *page,
+                                         PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1207,7 +1208,9 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, hostkey, state, handle,
+                                               true, causeRx, from, to, true,
+                                               hostClassFilter, promise_context);
 
     CFDB_Close(&dbconn);
 
