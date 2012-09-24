@@ -174,7 +174,7 @@ static cfapi_errid _LDAPAuthenticateAD(const char *url,
                                        const char *password)
 {
     char bind_dn[4096] = { 0 };
-    if (StringMatch("/^(\\w+\\.)+\\w{2,5}$/", ad_domain))
+    if (StringMatch("^(\\w+\\.)+\\w{2,5}$", ad_domain))
     {
         strcat(bind_dn, username);
         strcat(bind_dn, "@");
