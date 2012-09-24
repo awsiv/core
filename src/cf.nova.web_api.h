@@ -196,7 +196,8 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
                                       HostClassFilter *hostClassFilter, PageInfo *page);
 JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause,
                                        PromiseLogState state, time_t from, time_t to,
-                                       HostClassFilter *hostClassFilter, PageInfo *page);
+                                       HostClassFilter *hostClassFilter, PageInfo *page,
+                                       PromiseContextMode promise_context);
 JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year,
                                   HostClassFilter *hostClassFilter, PageInfo *page);
 

@@ -2887,7 +2887,8 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
 
 JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeRx,
                                        PromiseLogState state, time_t from, time_t to,
-                                       HostClassFilter *hostClassFilter, PageInfo *page)
+                                       HostClassFilter *hostClassFilter, PageInfo *page,
+                                       PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2898,7 +2899,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
     HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true,
                                         causeRx, from, to, false, hostClassFilter,
-                                        NULL, PROMISE_CONTEXT_MODE_ALL);
+                                        NULL, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

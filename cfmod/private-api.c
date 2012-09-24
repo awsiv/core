@@ -1863,19 +1863,22 @@ PHP_FUNCTION(cfpr_get_value_graph)
 
 PHP_FUNCTION(cfpr_report_notkept)
 {
-    char *userName = NULL, *hostkey = NULL, *handle = NULL,
-         *cause_rx = NULL, *promise_context = NULL;
-    zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len, c_len, pc_len;
-    char buffer[CF_WEBBUFFER];
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int c_len;
+    char *promise_context = NULL; int pc_len;
+    char *sort_column_name; int sc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    bool sort_descending;
+
+    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
-                              &userName, &user_len,
+                              &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
                               &handle, &h_len,
@@ -1884,7 +1887,7 @@ PHP_FUNCTION(cfpr_report_notkept)
                               &to,
                               &context_includes,
                               &context_excludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1899,7 +1902,7 @@ PHP_FUNCTION(cfpr_report_notkept)
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1922,19 +1925,22 @@ PHP_FUNCTION(cfpr_report_notkept)
 
 PHP_FUNCTION(cfpr_report_repaired)
 {
-    char *userName = NULL, *hostkey = NULL,
-         *handle = NULL, *cause_rx = NULL, *promise_context;
-    zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len, c_len, pc_len;
-    char buffer[CF_WEBBUFFER];
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int pc_len;
+    char *promise_context = NULL; int c_len;
+    char *sort_column_name = NULL; int sc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
+    bool sort_descending;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+
+    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
-                              &userName, &user_len,
+                              &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
                               &handle, &h_len,
@@ -1943,7 +1949,7 @@ PHP_FUNCTION(cfpr_report_repaired)
                               &to,
                               &context_includes,
                               &context_excludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1958,7 +1964,7 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2355,15 +2361,20 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 PHP_FUNCTION(cfpr_hosts_with_repaired)
 //$ret = cfpr_hosts_with_repaired($hostkey,$name,$from,$to,$class_regex);
 {
-    char *userName, *hostkey, *handle, *cause_rx;
-    int user_len, hk_len, h_len, c_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int c_len;
+    char *promise_context = NULL; int pc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaall",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaall",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
@@ -2382,7 +2393,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2390,10 +2401,12 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx,
                                          PROMISE_LOG_STATE_REPAIRED, from, to,
-                                         filter, &page);
+                                         filter, &page, promise_context_mode);
 
     if (!json_out)
     {
@@ -2409,16 +2422,20 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
 PHP_FUNCTION(cfpr_hosts_with_notkept)
 {
-    char *userName, *hostkey, *handle, *cause_rx;
-    int user_len, hk_len, h_len, c_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
-
+    char *userName = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *cause_rx = NULL; int c_len;
+    char *promise_context = NULL; int pc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
                               &from,
@@ -2445,10 +2462,12 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx,
                                          PROMISE_LOG_STATE_NOTKEPT, from, to,
-                                         filter, &page);
+                                         filter, &page, promise_context_mode);
 
     if (!json_out)
     {

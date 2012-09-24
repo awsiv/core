@@ -2894,7 +2894,7 @@ HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseL
 
     int new_data_count = CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list, promise_context);
 
-    if (promise_context != PROMISE_CONTEXT_MODE_ALL)
+    if (promise_context == PROMISE_CONTEXT_MODE_ALL)
     {
         old_data_count = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
     }
