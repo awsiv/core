@@ -2671,43 +2671,43 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
 }
 
 /*****************************************************************************/
-int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
+int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, PromiseLogState state,
                                  const char *lhandle, bool regex, const char *lcause_rx, time_t from,
-                                 time_t to, int sort, HostClassFilter *hostClassFilter, Rlist **host_list,
+                                 time_t to, int sort, HostClassFilter *host_class_filter, Rlist **host_list,
                                  Rlist **record_list, PromiseContextMode promise_context)
 {
 
-    char *promiseLogKey;
+    char *promise_log_key;
     switch (state)
     {
     case PROMISE_LOG_STATE_REPAIRED:
-        promiseLogKey = MONGO_LOGS_REPAIRED_COLL;
+        promise_log_key = MONGO_LOGS_REPAIRED_COLL;
         break;
     case PROMISE_LOG_STATE_NOTKEPT:
     default:
-        promiseLogKey = MONGO_LOGS_NOTKEPT_COLL;
+        promise_log_key = MONGO_LOGS_NOTKEPT_COLL;
         break;
     }
 
     bson query;
     bson_init(&query);
 
-    if (!NULL_OR_EMPTY(keyHash))
+    if (!NULL_OR_EMPTY(hostkey))
     {
-        bson_append_string(&query, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, hostkey);
     }
 
-    BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendHostClassFilter(&query, host_class_filter);
     BsonAppendClassFilterFromPromiseContext(&query, promise_context);
     BsonFinish(&query);
 
     bson fields;
 
-    BsonSelectReportFields(&fields, 4,
+    BsonSelectReportFields( &fields, 4,
                            cfr_keyhash,
                            cfr_ip_array,
                            cfr_host_array,
-                           promiseLogKey);
+                           promise_log_key );
 
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -2718,8 +2718,8 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator itHostData;
-        bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ));
+        bson_iterator host_data_iter;
+        bson_iterator_init(&host_data_iter, mongo_cursor_bson( cursor ));
 
         HubHost *hh = NULL;
         char keyhash[CF_MAXVARSIZE] = {0};
@@ -2730,27 +2730,27 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
         time_t rt = 0;
         bool found = false;
 
-        while( BsonIsTypeValid( bson_iterator_next( &itHostData ) ) > 0 )
+        while( BsonIsTypeValid( bson_iterator_next( &host_data_iter ) ) > 0 )
         {
 
-            CFDB_ScanHubHost(&itHostData, keyhash, addresses, hostnames);
+            CFDB_ScanHubHost(&host_data_iter, keyhash, addresses, hostnames);
 
-            if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
+            if ( strcmp(bson_iterator_key(&host_data_iter), promise_log_key ) == 0)    // new format
             {
-                bson_iterator iterPromiseLogElement;
-                bson_iterator_subiterator(&itHostData, &iterPromiseLogElement);
+                bson_iterator promise_log_element_iter;
+                bson_iterator_subiterator(&host_data_iter, &promise_log_element_iter);
 
-                while (bson_iterator_next(&iterPromiseLogElement))
+                while (bson_iterator_next(&promise_log_element_iter))
                 {
-                    bson_iterator iterPromiseLogData;
+                    bson_iterator promiselog_data_iter;
 
-                    bson_iterator_subiterator(&iterPromiseLogElement, &iterPromiseLogData);
+                    bson_iterator_subiterator(&promise_log_element_iter, &promiselog_data_iter);
 
-                    bson objPromiseLogData;
-                    bson_iterator_subobject( &iterPromiseLogElement, &objPromiseLogData);
+                    bson promiselog_data_obj;
+                    bson_iterator_subobject( &promise_log_element_iter, &promiselog_data_obj);
 
-                    BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
-                    BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
+                    BsonStringWrite(rhandle, sizeof(rhandle) - 1, &promiselog_data_obj, cfr_promisehandle);
+                    BsonStringWrite(rcause, sizeof(rcause) - 1, &promiselog_data_obj, cfr_cause);
 
                     if(!CompareStringOrRegex(rhandle, lhandle, regex) || !CompareStringOrRegex(rcause, lcause_rx, regex))
                     {
@@ -2779,17 +2779,17 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
 
                     bson array;
 
-                    if(!BsonGetArrayValue(&objPromiseLogData, cfr_time, &array))
+                    if(!BsonGetArrayValue(&promiselog_data_obj, cfr_time, &array))
                     {
                         continue;
                     }
 
-                    bson_iterator iterTimestamps;
-                    bson_iterator_init(&iterTimestamps, &array);
+                    bson_iterator timestamps_iter;
+                    bson_iterator_init(&timestamps_iter, &array);
 
-                    while (bson_iterator_next(&iterTimestamps))
+                    while (bson_iterator_next(&timestamps_iter))
                     {
-                        rt = bson_iterator_int(&iterTimestamps);
+                        rt = bson_iterator_int(&timestamps_iter);
 
                         if(!IsTimeWithinRange(from, to, rt))
                         {
@@ -2827,6 +2827,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
     return count;
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
@@ -2872,6 +2873,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, P
     return hq;
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
