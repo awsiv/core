@@ -5117,12 +5117,11 @@ PHP_FUNCTION( cfpr_get_reverse_ip_lookup_name )
     EnterpriseDB conn[1];
     DATABASE_OPEN( conn );
 
-    char domain_name[CF_MAXVARSIZE] = {0};
-    CFDB_HandleGetValue( cfr_reverse_lookup_name, domain_name, CF_MAXVARSIZE - 1, "", conn, MONGO_DATABASE );
+    const char *reverse_lookup_name = CFDB_QueryValueFromHostKeyStr( conn, hostkey, cfr_reverse_lookup_name );
 
     DATABASE_CLOSE( conn );
 
-    RETURN_STRING( domain_name, 1 );
+    RETURN_STRING( reverse_lookup_name, 1 );
 }
 
 /******************************************************************************/
