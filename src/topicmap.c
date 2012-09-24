@@ -1279,8 +1279,6 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
     {
         HubClass *hc = (HubClass *) rp->item;
         
-        printf("CL: %s (%s)\n", hc->class, hc->hh->hostname);
-
         if (strcmp(hc->class+offset, h1n) == 0)
         {
             (*h1)++;
