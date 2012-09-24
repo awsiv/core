@@ -121,6 +121,12 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
 int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash, HostClassFilter *host_class_filter);
 const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
                                        const char *ltype, char *lscope, char *lval);
+/**
+ * CFDB_QueryValueFromHostKeyStr:
+ * Read top level value for corresponding db key and hostkey
+ * Returns NULL if key is not found
+ */
+const char *CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval );
 
 //*****************************************************************************
 // Utility Queries

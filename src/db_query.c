@@ -6738,3 +6738,34 @@ cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out)
 
 
 }
+
+/*********************************************************************************/
+
+const char *CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, const char *lval )
+{
+    bson query[1];
+    bson_init( query );
+    bson_append_string( query, cfr_keyhash, keyhash );
+    bson_finish( query );
+
+    bson empty[1];
+    bson_empty( empty );
+
+    bson record[1] = {{0}};
+    bool found = MongoFindOne( conn, MONGO_DATABASE, query, empty, record ) == MONGO_OK;
+
+    bson_destroy( query );
+
+    if( found )
+    {
+        const char *reverse_ip_lookup = NULL;
+        BsonStringGet( record, lval, &reverse_ip_lookup );
+
+        bson_destroy( record );
+        return reverse_ip_lookup;
+    }
+
+    return NULL;
+}
+
+/*********************************************************************************/
