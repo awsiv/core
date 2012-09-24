@@ -1142,26 +1142,33 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
 PHP_FUNCTION(cfpr_report_compliance_promises)
 {
-    char *userName, *hostkey, *handle, *status;
-    char *fhostkey, *fhandle, *fstatus;
-    zval *context_includes = NULL, *context_excludes = NULL;
-    int hk_len, h_len, s_len, user_len;
-    char buffer[CF_WEBBUFFER];
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *status = NULL; int s_len;
+    char *promise_context = NULL; int pc_len;
+    char *fhostkey = NULL;
+    char *fhandle = NULL;
+    char *fstatus = NULL;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    char *sort_column_name; int sc_len;
+    bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
-                              &userName, &user_len,
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &status, &s_len,
                               &regex,
                               &context_includes,
                               &context_excludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1176,14 +1183,17 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL,
+                                 false, &page, buffer, sizeof(buffer), promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1194,28 +1204,35 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
 PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
 {
-    char *userName, *hostkey, *handle, *status, *hostcolour;
-    char *fhostkey, *fhandle, *fstatus;
-    zval *context_includes = NULL, *context_excludes = NULL;
-    int hk_len, h_len, s_len, hc_len;
-    char buffer[CF_WEBBUFFER];
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *status = NULL; int s_len;
+    char *hostcolour = NULL; int hc_len;
+    char *promise_context = NULL; int pc_len;
+    char *fhostkey = NULL;
+    char *fhandle = NULL;
+    char *fstatus = NULL;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     zend_bool regex;
-    int user_len;
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    char *sort_column_name; int sc_len;
+    bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
-                              &userName, &user_len,
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
                               &hostcolour, &hc_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &status, &s_len,
                               &regex,
                               &context_includes,
                               &context_excludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1230,7 +1247,7 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1238,15 +1255,21 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     HostColourFilter *hostColourFilter = NULL;
     if (!NULL_OR_EMPTY(hostcolour))
     {
         hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
                                                HostColourFromString(hostcolour),
-                                               PROMISE_CONTEXT_MODE_ALL);
+                                               promise_context_mode);
     }
 
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+
+
+    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter,
+                                 hostColourFilter, true, &page, buffer, sizeof(buffer),
+                                 promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     free(hostColourFilter);

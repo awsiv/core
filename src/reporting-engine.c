@@ -534,7 +534,7 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
         return;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY, false, 0, time(NULL), false, filter);
+    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY, false, 0, time(NULL), false, filter, PROMISE_CONTEXT_MODE_ALL);
 
     CFDB_Close(&dbconn);
 

@@ -99,11 +99,14 @@ HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *r
 
 /*****************************************************************************/
 
-bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex, PromiseState lstatus, time_t from, time_t to, time_t blueHorizonTime, HubHost *hh, Rlist **record_list )
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex,
+                                         PromiseState lstatus, time_t from, time_t to,
+                                         time_t blueHorizonTime, HubHost *hh,
+                                         Rlist **record_list, PromiseContextMode promise_context )
 {
-    char keyHashDb[CF_MAXVARSIZE] = {0};
-    char hostnames[CF_MAXVARSIZE] = {0};
-    char addresses[CF_MAXVARSIZE] = {0};
+    char keyHashDb[CF_MAXVARSIZE] = { 0 };
+    char hostnames[CF_MAXVARSIZE] = { 0 };
+    char addresses[CF_MAXVARSIZE] = { 0 };
 
     HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
     time_t last_report = 0;
@@ -137,6 +140,26 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
             {
                 char rhandle[CF_MAXVARSIZE] = {0};
                 strncpy(rhandle, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
+
+                switch (promise_context)
+                {
+                    case PROMISE_CONTEXT_MODE_USER:
+                        if (CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                        {
+                            continue;
+                        }
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_INTERNAL:
+                        if (!CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                        {
+                            continue;
+                        }
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_ALL:
+                        break;
+                }
 
                 bson_iterator it3;
                 bson_iterator_subiterator(&it2, &it3);

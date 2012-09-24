@@ -143,7 +143,7 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
 int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
-                                 HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize);
+                                 HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddr, time_t lago, int lregex,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,

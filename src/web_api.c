@@ -394,7 +394,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
 
     n = k = r = 0;
     n_av = k_av = r_av = 0;
@@ -525,7 +525,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, c
         status = "x";
     }
 
-    HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, NULL);
+    HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, NULL, PROMISE_CONTEXT_MODE_ALL);
 
     int blue_hosts = 0,
         tot_hosts = 0,
@@ -1835,8 +1835,10 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
-                                 HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex,
+                                 HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter,
+                                 bool lastRunOnly, PageInfo *page, char *returnval,
+                                 int bufsize, PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1866,11 +1868,14 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
 
     if(lastRunOnly)
     {
-        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, hostColourFilter);
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                                 regex, 0, time(NULL), false, hostClassFilter,
+                                                 hostColourFilter, promise_context);
     }
     else
     {
-        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, hostClassFilter);
+        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
+                                         time(NULL), true, hostClassFilter, promise_context);
     }
 
     int related_host_cnt = RlistLen(hq->hosts);
@@ -2701,12 +2706,14 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
     {
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
                                                  regex, 0, time(NULL), false,
-                                                 hostClassFilter, hostColourFilter);
+                                                 hostClassFilter, hostColourFilter,
+                                                 PROMISE_CONTEXT_MODE_ALL);
     }
     else
     {
         hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex,
-                                         0, time(NULL), false, hostClassFilter);
+                                         0, time(NULL), false, hostClassFilter,
+                                         PROMISE_CONTEXT_MODE_ALL);
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
@@ -5025,7 +5032,7 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle)
          
         //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
          
-        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL);
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL, PROMISE_CONTEXT_MODE_ALL);
 
         hosts = RlistLen(hq->hosts);
 

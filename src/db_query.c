@@ -1577,8 +1577,10 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
 }
 /*********************************************************************************/
 
-HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
+                                      PromiseState lstatus, bool regex, time_t from,
+                                      time_t to, int sort, HostClassFilter *hostClassFilter,
+                                      PromiseContextMode promise_context)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1597,6 +1599,7 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 
@@ -1631,7 +1634,9 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
         HubHost *hh = CreateEmptyHubHost();
 
-        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus, from, to, blueHorizonTime, hh, &record_list );
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
+                                                         from, to, blueHorizonTime, hh,
+                                                         &record_list, promise_context);
 
         if (found)
         {
@@ -1655,8 +1660,10 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 }
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter)
+HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
+                                              PromiseState lstatus, bool regex, time_t from,
+                                              time_t to, int sort, HostClassFilter *hostClassFilter,
+                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1675,6 +1682,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 
@@ -1710,7 +1718,10 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
         Rlist *record_list_single_host = NULL;
         HubHost *hh = CreateEmptyHubHost();
-        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus, from, to, blueHorizonTime, hh, &record_list_single_host );
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
+                                                         from, to, blueHorizonTime, hh,
+                                                         &record_list_single_host,
+                                                         promise_context);
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
 

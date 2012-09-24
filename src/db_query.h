@@ -44,9 +44,9 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns, const char *bundle, const char *llval,
                               const char *lrval, const char *ltype, bool regex, time_t from, time_t to, const HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter);
+                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
                              bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db);
