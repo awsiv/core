@@ -22,13 +22,14 @@ static bool _KeepExternal(void *_user)
 
 PHP_FUNCTION(cfapi_user_list)
 {
-    const char *username = NULL;
+    const char *username = NULL, *username_arg_rx = NULL;
     zval *external_zval = NULL;
-    int username_len = 0;
+    int username_len = 0, username_arg_rx_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "szll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sszll",
                               &username, &username_len,
+                              &username_arg_rx, &username_arg_rx_len,
                               &external_zval,
                               &page.pageNum,
                               &page.resultsPerPage) == FAILURE)
@@ -38,7 +39,8 @@ PHP_FUNCTION(cfapi_user_list)
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
 
-    HubQuery *result = CFDB_ListUsers(username, NULL);
+    HubQuery *result = CFDB_ListUsers(username,
+                                      username_arg_rx_len > 0 ? username_arg_rx : NULL);
     if (result->errid != ERRID_SUCCESS)
     {
         THROW_GENERIC(result->errid, "Error listing users");

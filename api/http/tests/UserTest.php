@@ -19,6 +19,22 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testListUsersUsernameRegex()
+    {
+        try
+        {
+            $users = $this->getResults('/user?username=jw.*');
+            $this->assertValidJson($users);
+            $this->assertEquals(1, sizeof($users));
+
+            $this->assertEquals('jwow', $users[0]['username']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testListUsersPaginated()
     {
         try
