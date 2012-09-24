@@ -4487,16 +4487,16 @@ PHP_FUNCTION(agent_bundle_type_histogram)
 
 PHP_FUNCTION(cfpr_goal_progress)
 {
- long id, hlen;
+ long hlen;
  char *handle;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ls", &id, &handle, &hlen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &handle, &hlen) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
-
- JsonElement *out = Nova2PHP_get_goal_progress((int) id, handle);
+ 
+ JsonElement *out = Nova2PHP_get_goal_progress(handle);
 
  if (!out)
  {
