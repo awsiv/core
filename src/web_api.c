@@ -5038,7 +5038,9 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle)
     return json;
 }
 
-/*****************************************************************************/
+/*****************************************************************************
+
+Deprecated
 
 JsonElement *Nova2PHP_get_open_port_histograms(void)
 {
@@ -5221,6 +5223,8 @@ JsonElement *Nova2PHP_get_open_port_histograms(void)
 
     return json;
 }
+
+*/
 
 /*****************************************************************************/
 
