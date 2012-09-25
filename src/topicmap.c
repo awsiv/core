@@ -61,6 +61,149 @@ static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufs
 static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist *services, const int type);
 static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l1, int *l2, int *l3, int *normal);
 
+
+/*****************************************************************************/
+/* SEARCH workers                                                            */
+/*****************************************************************************/
+
+void Nova_SearchHosts(Item **list, char *search, int type)
+{
+// Return URL to hosts matching search string (name, address, SHA)
+
+ // ip->name = hostname
+ // ip-classes = SHA-key
+}
+
+/*****************************************************************************/
+
+void Nova_SearchClasses(Item **list, char *search, int type)
+{
+// Return URL to hosts matching search string (classes)
+ // CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
+}
+
+/*****************************************************************************/
+
+void Nova_SearchVariables(Item **list, char *search, int type)
+{
+// Return URL to hosts matching search string (classes)  
+}
+
+/*****************************************************************************/
+
+void Nova_SearchReports(Item **list, char *search)
+{
+// Return URL to hosts matching search string (classes)  
+}
+
+/*****************************************************************************/
+
+Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
+{
+    bson_iterator it1;
+    EnterpriseDB conn;
+    char topic_name[CF_BUFSIZE];
+    char topic_context[CF_BUFSIZE];
+    int topic_id;
+    Item *list = NULL;
+
+    if (!CFDB_Open(&conn))
+    {
+        return NULL;
+    }
+
+    // Return topics matching search string (classes)
+    
+    bson query;
+
+    bson_init(&query);
+
+    Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
+
+    if (search_type == CF_SEARCH_REGEX)
+       {
+       if (!NULL_OR_EMPTY(search_topic))
+          {          
+          bson_append_regex(&query, cfk_topicname, topic_name, "");
+
+          if (strcmp(topic_context,"any") != 0)
+             {
+             bson_append_regex(&query, cfk_topiccontext, topic_context, "");
+             }
+          }
+       }
+    else // CF_SEARCH_EXACT
+       {
+       if (!NULL_OR_EMPTY(search_topic))
+          {          
+          bson_append_string(&query, cfk_topicname, topic_name);
+          if (strcmp(topic_context,"any") != 0)
+             {
+             bson_append_string(&query, cfk_topiccontext, topic_context);
+             }
+          }       
+       }
+    
+    BsonFinish(&query);
+
+/* BEGIN RESULT DOCUMENT */
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    {
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        topic_name[0] = '\0';
+        topic_context[0] = '\0';
+        topic_id = 0;
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            /* Query specific search/marshalling */
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
+            {
+                strncpy(topic_name, bson_iterator_string(&it1), CF_BUFSIZE - 1);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
+            {
+                strncpy(topic_context, bson_iterator_string(&it1), CF_BUFSIZE - 1);
+            }
+
+            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
+            {
+                topic_id = (int) bson_iterator_int(&it1);
+            }
+        }
+
+        if (!MergeExistingContexts(&list, topic_name, topic_context,merge))
+        {
+            PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
+
+    return list;
+}
+
 /*****************************************************************************/
 /* The main panels                                                           */
 /*****************************************************************************/
@@ -344,113 +487,6 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
     return topicid;
-}
-
-/*********************************************************************/
-
-Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
-{
-    bson_iterator it1;
-    EnterpriseDB conn;
-    char topic_name[CF_BUFSIZE];
-    char topic_context[CF_BUFSIZE];
-    int topic_id;
-    Item *list = NULL;
-
-    if (!CFDB_Open(&conn))
-    {
-        return NULL;
-    }
-
-/* BEGIN query document */
-    bson query;
-
-    bson_init(&query);
-
-    Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
-
-    if (search_type == CF_SEARCH_REGEX)
-       {
-       if (!NULL_OR_EMPTY(search_topic))
-          {          
-          bson_append_regex(&query, cfk_topicname, topic_name, "");
-
-          if (strcmp(topic_context,"any") != 0)
-             {
-             bson_append_regex(&query, cfk_topiccontext, topic_context, "");
-             }
-          }
-       }
-    else // CF_SEARCH_EXACT
-       {
-       if (!NULL_OR_EMPTY(search_topic))
-          {          
-          bson_append_string(&query, cfk_topicname, topic_name);
-          if (strcmp(topic_context,"any") != 0)
-             {
-             bson_append_string(&query, cfk_topiccontext, topic_context);
-             }
-          }       
-       }
-    
-    BsonFinish(&query);
-
-/* BEGIN RESULT DOCUMENT */
-    bson fields;
-    BsonSelectReportFields(&fields, 7,
-                           cfk_topicname,
-                           cfk_topicid,
-                           cfk_topiccontext,
-                           cfk_associations,
-                           cfk_associd,
-                           cfk_assoccontext,
-                           cfk_assocname);
-
-/* BEGIN SEARCH */
-
-    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
-
-    bson_destroy(&query);
-    bson_destroy(&fields);
-
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
-    {
-        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
-
-        topic_name[0] = '\0';
-        topic_context[0] = '\0';
-        topic_id = 0;
-
-        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
-        {
-            /* Query specific search/marshalling */
-
-            if (strcmp(bson_iterator_key(&it1), cfk_topicname) == 0)
-            {
-                strncpy(topic_name, bson_iterator_string(&it1), CF_BUFSIZE - 1);
-            }
-
-            if (strcmp(bson_iterator_key(&it1), cfk_topiccontext) == 0)
-            {
-                strncpy(topic_context, bson_iterator_string(&it1), CF_BUFSIZE - 1);
-            }
-
-            if (strcmp(bson_iterator_key(&it1), cfk_topicid) == 0)
-            {
-                topic_id = (int) bson_iterator_int(&it1);
-            }
-        }
-
-        if (!MergeExistingContexts(&list, topic_name, topic_context,merge))
-        {
-            PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
-        }
-    }
-
-    mongo_cursor_destroy(cursor);
-    CFDB_Close(&conn);
-
-    return list;
 }
 
 /*****************************************************************************/

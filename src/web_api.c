@@ -59,6 +59,12 @@ static bool IsEnvMissionPortalTesting(void);
 /* Helper functions                                                          */
 /*****************************************************************************/
 
+static int MightBeTopic(const char *search);
+static int MightBeHostId(const char *search);
+static int MightBeClass(const char *search);
+static int MightBeVariable(const char *search);
+static int MightBeReportType(const char *search);
+
 /*****************************************************************************/
 
 static void Nova_RegisterImg(Item **list, char *dir, char *pic)
@@ -3118,6 +3124,73 @@ int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNa
 
 /*****************************************************************************/
 
+Item *Nova2PHP_search(char *search, bool regex)
+{
+    Item *ip,*results = NULL;
+    Item *words = SplitStringAsItemList(search, ' ');
+
+    const char *excludes[] = { "tell", "me", "about", "host", "hosts", "report", "topic", "with", NULL };
+
+    printf("Analysing search string \"%s\"\n", search);
+
+    for (ip = words; ip != NULL; ip = ip->next)
+       {
+          if (StringInArray(excludes, ip->name))
+             {
+             continue;
+             }
+
+       
+       printf("Searching for %s\n", ip->name);
+       
+       // KM gets us anything about policy or syntax
+       
+       if (MightBeTopic(ip->name))
+          {
+          results = Nova_SearchTopicMap(ip->name,CF_SEARCH_REGEX, false);
+          }
+       
+       // Now add hosts with attributes
+       
+       if (MightBeHostId(ip->name))
+          {
+          Nova_SearchHosts(&results, ip->name,CF_SEARCH_REGEX);
+          }
+       
+       if (MightBeClass(ip->name))
+          {
+          Nova_SearchClasses(&results, ip->name,CF_SEARCH_REGEX);
+          }
+       
+       if (MightBeVariable(ip->name))
+          {
+          Nova_SearchVariables(&results, ip->name,CF_SEARCH_REGEX);
+          }
+       
+       if (MightBeReportType(ip->name))
+          {
+          Nova_SearchReports(&results, ip->name);
+          }
+       }
+
+    results = SortItemListNames(results);    
+
+    if (results == NULL)
+       {
+       PrependItem(&results, "Nothing matched the search", "any");
+       }
+    
+    for (ip = results; ip != NULL; ip=ip->next)
+       {
+       printf("%s, %s, %d\n", ip->name, ip->classes, ip->counter);
+       }
+    
+    return results;
+}
+
+
+/*****************************************************************************/
+
 JsonElement *Nova2PHP_search_topics(char *search, bool regex)
 {
     Item *ip,*results = NULL;
@@ -5142,5 +5215,96 @@ JsonElement *Nova2PHP_list_types_in_bundle(char *name)
      
      JsonObjectAppendInteger(types, "total", total);     
      return types;
+}
+
+/********************************************************************/
+/* Autodetect free text intentions                                  */
+/********************************************************************/
+
+static int MightBeTopic(const char *search)
+{
+ if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
+    {
+    return false;
+    }
+       
+ return true;
+}
+
+/********************************************************************/
+
+int MightBeHostId(const char *search)
+{
+ if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
+    {
+    return true;
+    }
+
+ if (IsIPV6Address(search) || IsIPV4Address(search))
+    {
+    return false;
+    }
+
+ return false;
+}
+
+/********************************************************************/
+
+static int MightBeClass(const char *search)
+{
+ if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
+    {
+    return false;
+    }
+
+ if (FullTextMatch(CF_CLASSRANGE, search))
+    {
+    return true;
+    }
+
+ return false;
+}
+
+/********************************************************************/
+
+static int MightBeVariable(const char *search)
+{
+ if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
+    {
+    return false;
+    }
+
+ if (strstr(search, "::"))
+    {
+    return false;
+    }
+ 
+ return true;
+}
+
+/********************************************************************/
+
+static int MightBeReportType(const char *search)
+{
+ if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
+    {
+    return false;
+    }
+
+
+ for (int i = 0; i < cfrep_unknown; i++)
+    {
+    if (strncmp(BASIC_REPORTS[i].name_old, search, strlen(search)) == 0)
+       {
+       return true;
+       }
+
+    if (strncmp(BASIC_REPORTS[i].name, search, strlen(search)) == 0)
+       {
+       return true;
+       }
+    }
+
+ return false;
 }
 

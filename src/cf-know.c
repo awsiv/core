@@ -132,6 +132,7 @@ static const struct option OPTIONS[] =
     {"lookup", required_argument, 0, 'l'},
     {"manpage", no_argument, 0, 'M'},
     {"tell-me-about", required_argument, 0, 'z'},
+    {"search", required_argument, 0, 's'},
     {"syntax", required_argument, 0, 'S'},
     {"topics", no_argument, 0, 'T'},
     {"test", required_argument, 0, 't'},
@@ -153,6 +154,7 @@ static const char *HINTS[] =
     "lookup",
     "Generate reference manpage from internal data",
     "Look up stories for a given topic on the command line (use \"any\" to list possible)",
+    "Search the hub generically for results",
     "Print a syntax summary of the optional keyword or this cfengine version",
     "Show all topic names in CFEngine",
     "Generate test data",
@@ -169,7 +171,7 @@ int main(int argc, char *argv[])
     ReportContext *report_context = OpenReports("knowledge");
     Policy *policy = NULL;
     
-    if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0)
+    if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
     {    
         policy = GenericInitialize("knowledge", config, report_context);
         ThisAgentInit();
@@ -226,6 +228,11 @@ int main(int argc, char *argv[])
     else if (strlen(FINDTOPIC) > 0)
     {
         Nova_ShowTopic(FINDTOPIC);
+        exit(0);
+    }
+    else if (strlen(SEARCH) > 0)
+    {
+        Item *list = Nova2PHP_search(SEARCH, true);
         exit(0);
     }
 #endif
@@ -303,6 +310,13 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             if (optarg)
                {
                strncpy(FINDTOPIC,optarg,CF_BUFSIZE-1);
+               }
+            break;
+
+        case 's':
+            if (optarg)
+               {
+               strncpy(SEARCH,optarg,CF_BUFSIZE-1);
                }
             break;
             
