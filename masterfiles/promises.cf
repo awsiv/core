@@ -12,7 +12,7 @@ body common control
 
                   # Common bundle first (Best Practice)
                     "def",
-                    "cfengine_hub_vars",
+                    "cfe_internal_hub_vars",
 
                   # Agent bundle
                     "cfe_internal_management",   # See cfe_internal/CFE_cfengine.cf
