@@ -159,11 +159,11 @@ error_messages::
            certainty => "possible";
 
 "fips mode is enabled, and md5 is not an approved algorithm"
-        is_caused_by => { "fips_mode", "changes (compound body)", "body_attributes::changes" },
+        is_caused_by => { "fips_mode", "changes", "body_attributes::changes" },
            certainty => "possible";
 
 "process_select body missing its process_result return value"
-        is_caused_by => { "process_result", "process_select (compound body)" },
+        is_caused_by => { "process_result", "process_select" },
            certainty => "possible";
 
 "unsupported database type"
