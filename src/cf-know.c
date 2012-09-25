@@ -103,6 +103,7 @@ int HTML = false;
 int WRITE_KMDB = false;
 char STORY[CF_BUFSIZE];
 char FINDTOPIC[CF_BUFSIZE];
+char SEARCH[CF_BUFSIZE];
 
 Occurrence *OCCURRENCES = NULL;
 Inference *INFERENCES = NULL;
