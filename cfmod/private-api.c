@@ -1322,15 +1322,22 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 
 PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
 {
-    char *userName, *hostkey, *handle, *status;
-    char *fhostkey, *fhandle, *fstatus;
-    int user_len, hk_len, h_len, s_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *status = NULL; int s_len;
+    char *promise_context = NULL; int pc_len;
+    char *fhostkey = NULL;
+    char *fhandle = NULL;
+    char *fstatus = NULL;
     zend_bool regex;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaa",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaa",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &status, &s_len,
                               &regex,
@@ -1347,7 +1354,7 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1355,7 +1362,11 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *out = Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *out = Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus,
+                                                           (bool) regex, filter,
+                                                           promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

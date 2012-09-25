@@ -1686,7 +1686,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
     BsonFinish(&query);
 
-/* BEGIN RESULT DOCUMENT */
+    /* BEGIN RESULT DOCUMENT */
 
     bson fields;
 
@@ -1696,7 +1696,6 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
                            cfr_host_array,
                            cfr_promisecompl,
                            cfr_day,
-                           cfr_score_comp,
                            cfr_is_black);
 
 /* BEGIN SEARCH */

@@ -204,7 +204,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
 /*
  * Summary reports
  */
-JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter);
+JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter);
 
 JsonElement *Nova2PHP_list_topics_for_bundle(char *name);

@@ -506,8 +506,10 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex,
-                            HostClassFilter *hostClassFilter)
+JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
+                                                  char *status, bool regex,
+                                                  HostClassFilter *hostClassFilter,
+                                                  PromiseContextMode promise_context)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -525,7 +527,9 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, c
         status = "x";
     }
 
-    HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, NULL, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                                       regex, 0, time(NULL), false,
+                                                       hostClassFilter, NULL, promise_context);
 
     int blue_hosts = 0,
         tot_hosts = 0,
