@@ -1182,6 +1182,9 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 /* Knowledge relationships                                                 */
 /***************************************************************************/
 
+#define KM_CONTROLLER_PREFIX "/index.php/knowledge/knowledgemap/pid"
+#define DOC_CONTROLLER_PREFIX "/docs"
+
 #define KM_AFFECTS_CERT_F "affects"
 #define KM_AFFECTS_CERT_B "is affected by"
 #define KM_CAUSE_CERT_F "causes"
