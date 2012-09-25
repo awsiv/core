@@ -172,11 +172,13 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval,
                                  HostClassFilter *hostClassFilter, PageInfo *page);
 JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from,
                                        time_t to, int k, int nk, int rep,
-                                       HostClassFilter *hostClassFilter, PageInfo *page);
+                                       HostClassFilter *hostClassFilter, PageInfo *page,
+                                       PromiseContextMode promise_context);
 JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                     bool regex, HostClassFilter *hostClassFilter,
                                     HostColourFilter *hostColourFilter,
-                                    bool lastRunOnly, PageInfo *page);
+                                    bool lastRunOnly, PageInfo *page,
+                                    PromiseContextMode promise_context);
 JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
                                      char *laddress, time_t lago, int lregex,
                                      HostClassFilter *hostClassFilter, PageInfo *page);

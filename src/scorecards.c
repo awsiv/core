@@ -28,7 +28,7 @@ PromiseContextMode PromiseContextModeFromString(const char *mode)
     {
         return PROMISE_CONTEXT_MODE_USER;
     }
-    else if (StringSafeCompare("internal", mode) == 0)
+    else if (StringSafeCompare("system", mode) == 0)
     {
         return PROMISE_CONTEXT_MODE_INTERNAL;
     }

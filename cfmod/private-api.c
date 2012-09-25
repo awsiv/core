@@ -2589,15 +2589,19 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
 PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 {
-    char *userName, *hostkey, *version;
-    int user_len, hk_len, v_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *version = NULL; int v_len;
+    char *promise_context = NULL; int pc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     long k, nk, r, t;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllaall",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllllaall",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &version, &v_len,
                               &t,
                               &k, &nk, &r,
@@ -2614,7 +2618,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fversion = (v_len == 0) ? NULL : version;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2622,9 +2626,12 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, time(NULL),
-                                         (int) k, (int) nk, (int) r, filter, &page);
+                                         (int) k, (int) nk, (int) r, filter, &page,
+                                         promise_context_mode);
 
     if (!json_out)
     {
@@ -2640,16 +2647,23 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
 PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 {
-    char *userName, *hostkey, *handle, *status;
-    char *fhostkey, *fhandle, *fstatus;
-    int user_len, hk_len, h_len, s_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *status = NULL; int s_len;
+    char *promise_context = NULL; int pc_len;
+    char *fhostkey = NULL;
+    char *fhandle = NULL;
+    char *fstatus = NULL;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaall",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &status, &s_len,
                               &regex,
@@ -2667,7 +2681,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2675,9 +2689,11 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex,
-                                      filter, NULL, false, &page);
+                                      filter, NULL, false, &page, promise_context_mode);
 
     if (!json_out)
     {
@@ -2692,16 +2708,23 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 /******************************************************************************/
 PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
 {
-    char *userName, *hostkey, *handle, *status, *hostcolour;
-    char *fhostkey, *fhandle, *fstatus;
-    int user_len, hk_len, h_len, s_len, hc_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *handle = NULL; int h_len;
+    char *status = NULL; int s_len;
+    char *hostcolour = NULL; int hc_len;
+    char *promise_context = NULL; int pc_len;
+    char *fhostkey = NULL;
+    char *fhandle = NULL;
+    char *fstatus = NULL;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &hostcolour, &hc_len,
                               &handle, &h_len,
                               &status, &s_len,
@@ -2720,7 +2743,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2728,17 +2751,21 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     HostColourFilter *hostColourFilter = NULL;
     if(!NULL_OR_EMPTY(hostcolour))
     {
+        // filter is used not on mongo so promise_context_mode value is not used
         hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
                                                HostColourFromString(hostcolour),
-                                               PROMISE_CONTEXT_MODE_ALL);
+                                               promise_context_mode);
     }
 
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex,
-                                      filter, hostColourFilter, true, &page);
+                                      filter, hostColourFilter, true, &page,
+                                      promise_context_mode);
 
     if (!json_out)
     {

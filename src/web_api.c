@@ -2661,7 +2661,8 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
 
 JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from,
                                        time_t to, int k, int nk, int rep,
-                                       HostClassFilter *hostClassFilter, PageInfo *page)
+                                       HostClassFilter *hostClassFilter, PageInfo *page,
+                                       PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2671,7 +2672,7 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to,
-                                             k, nk, rep, false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
+                                             k, nk, rep, false, hostClassFilter, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -2690,7 +2691,8 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
 JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                     bool regex, HostClassFilter *hostClassFilter,
                                     HostColourFilter *hostColourFilter,
-                                    bool lastRunOnly, PageInfo *page)
+                                    bool lastRunOnly, PageInfo *page,
+                                    PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2711,13 +2713,13 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
                                                  regex, 0, time(NULL), false,
                                                  hostClassFilter, hostColourFilter,
-                                                 PROMISE_CONTEXT_MODE_ALL);
+                                                 promise_context);
     }
     else
     {
         hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex,
                                          0, time(NULL), false, hostClassFilter,
-                                         PROMISE_CONTEXT_MODE_ALL);
+                                         promise_context);
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
