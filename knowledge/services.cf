@@ -456,7 +456,7 @@ things:
   "news"    comment => "A quick overview of what is new in the current release";
 
   "measures" synonyms => { "vital signs" },
-             comments => "Displays system vital signs, or actual measured state from cf-monitord"; 
+             comment => "Displays system vital signs, or actual measured state from cf-monitord"; 
 
   "classes" comment => "Display classes on hosts that match a pattern";
 }
