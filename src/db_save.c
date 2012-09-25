@@ -19,7 +19,7 @@
 
 bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name)
 {
-    if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
+ if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
         return false;
     }
@@ -54,7 +54,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
     char arrIndex[CF_BUFSIZE] = { 0 };
     int i = 0;
 
-    if (!IsDefinedClass("am_policy_hub"))
+    if (!IsDefinedClass("am_policy_hub", NULL))
     {
         CfOut(cf_verbose, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
         return false;
@@ -106,7 +106,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
 {
     mongo dbconn;
 
-    if (!IsDefinedClass("am_policy_hub"))
+    if (!IsDefinedClass("am_policy_hub", NULL))
     {
         CfOut(cf_verbose, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
         return;
@@ -2252,7 +2252,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
 int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
 {    
-    if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
+ if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
         CfOut(cf_verbose, "", "Ignoring caching of deleted hosts - not called by php module");
         return false;

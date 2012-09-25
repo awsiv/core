@@ -157,7 +157,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             break;
 
         case 'd':
-            NewClass("opt_debug");
+            HardClass("opt_debug");
             DEBUG = true;
             break;
 
@@ -208,7 +208,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
         case 'n':
             DONTDO = true;
             IGNORELOCK = true;
-            NewClass("opt_dry_run");
+            HardClass("opt_dry_run");
             break;
 
         case 's':
@@ -283,7 +283,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig config)
 
     for (cp = ControlBodyConstraints(policy, cf_hub); cp != NULL; cp = cp->next)
     {
-        if (IsExcluded(cp->classes))
+        if (IsExcluded(cp->classes, NULL))
         {
             continue;
         }
@@ -542,7 +542,7 @@ static int ScheduleRun(void)
     {
         CfDebug("Checking schedule %s...\n", ip->name);
 
-        if (IsDefinedClass(ip->name))
+        if (IsDefinedClass(ip->name, NULL))
         {
             CfOut(cf_verbose, "", "Waking up the agent at %s ~ %s \n", cf_ctime(&CFSTARTTIME), ip->name);
             return true;
@@ -702,7 +702,7 @@ static void StartHub(void)
         {
             CfOut(cf_verbose, "", " -> Wake up");
 
-            NewClass("am_policy_hub");
+            HardClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
@@ -737,7 +737,7 @@ static void Nova_CollectReports(void)
     Nova_Scan(masterhostlist);
     DeleteItemList(masterhostlist);
 
-    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+    if (CFH_ZENOSS && IsDefinedClass("Min00_05", NULL))
     {
         Nova_ZenossSummary(ZENOSS_PATH);
     }

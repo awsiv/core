@@ -236,7 +236,7 @@ void EnterpriseContext(void)
     snprintf(vbuff, sizeof(vbuff), "enterprise_%s", CanonifyName(Nova_Version()));
     CreateClassesFromCanonification(vbuff);
 
-    if (IsDefinedClass("am_policy_hub"))
+    if (IsDefinedClass("am_policy_hub", NULL))
     {
         Nova_DefineHubMaster();
     }
@@ -254,7 +254,7 @@ static void Nova_DefineHubMaster(void)
 
     if (CFDB_QueryIsMaster())
     {
-        NewClass("am_hub_master");
+        HardClass("am_hub_master");
         snprintf(master, sizeof(master), "%s", POLICY_SERVER);
     }
     else

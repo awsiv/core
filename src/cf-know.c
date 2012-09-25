@@ -406,7 +406,7 @@ static void KeepKnowControlPromises(Policy *policy)
 
     for (cp = ControlBodyConstraints(policy, cf_know); cp != NULL; cp = cp->next)
     {
-        if (IsExcluded(cp->classes))
+    if (IsExcluded(cp->classes, NULL))
         {
             continue;
         }
@@ -741,7 +741,7 @@ static void VerifyInferencePromise(Promise *pp)
     Attributes a = { {0} };
     Rlist *rpp, *rpq;
 
-    if (!IsDefinedClass(pp->classes))
+    if (!IsDefinedClass(pp->classes, NULL))
     {
         CfOut(cf_verbose, "", " -> Skipping inference for \"%s\" as class \"%s\" is not defined", pp->promiser,
               pp->classes);
