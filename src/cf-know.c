@@ -177,7 +177,6 @@ int main(int argc, char *argv[])
         ThisAgentInit();
         
         KeepKnowControlPromises(policy);
-        printf("xxxxxxxxx\n");
     }
     
 #if defined(HAVE_LIBMONGOC)
