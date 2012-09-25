@@ -619,7 +619,7 @@ DeleteRlist(tcp6);
 
 //Nova_GenerateStoryLineCmdLine(ipv4,cfi_cause);
 
-printf("CFEngine version Nova %s is tending to this host.\n",version);
+printf("CFEngine version Enterprise %s is tending to this host.\n",version);
 
 }
 

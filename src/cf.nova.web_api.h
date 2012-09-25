@@ -211,6 +211,7 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name);
 JsonElement *Nova2PHP_list_knowledge_bundles(void);
 void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize);
 JsonElement *Nova2PHP_search_topics(char *search, bool regex);
+Item *Nova2PHP_search(char *search, bool regex);
 JsonElement *Nova2PHP_show_topic(int id);
 JsonElement *Nova2PHP_show_topic_leads(int id);
 JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic);

@@ -120,10 +120,6 @@ PHP_FUNCTION(cfpr_service_histogram);
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_service_level_histogram);
 
-/*! \breif A histogram of open ports
- */
-// port plan: (further investigate)
-
 /*! \breif A histogram of a vital
  * \param hostKey
  * \param vitalId
