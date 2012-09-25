@@ -4594,24 +4594,6 @@ PHP_FUNCTION(cfpr_service_level_histogram)
     RETURN_JSON(out);
 }
 
-/******************************************************************************
-
-Deprecated
-
-PHP_FUNCTION(cfpr_port_histogram)
-{
-    JsonElement *out = Nova2PHP_get_open_port_histograms();
-
-    if (!out)
-    {
-        out = JsonObjectCreate(0);
-    }
-
-    RETURN_JSON(out);
-}
-
-*/
-
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_get_class_frequency)
