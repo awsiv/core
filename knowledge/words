@@ -42,12 +42,12 @@ any::accessedbefore
 functions::accumulated
 any::aces
 cfengine_2::acl
-any::acl (compound body)
+any::acl
 any::acl_directory_inherit
 any::acl_method
 any::acl_type
 values::action
-any::action (compound body)
+any::action
 any::action_policy
 any::actions
 any::active monitoring
@@ -90,7 +90,7 @@ any::aspect orientation
 models_of_organization::aspect paradigm
 documentation::associates
 any::association
-any::association (compound body)
+any::association
 any::associations
 scheduling::at
 documentation::atime
@@ -222,7 +222,7 @@ any::change management vs convergence
 any::change record
 functions::changedbefore
 any::changes
-any::changes (compound body)
+any::changes
 any::changes__compound_body_
 manual::changing a password
 any::changing passwords
@@ -242,7 +242,7 @@ daemons::clamd
 data_types::class
 any::class contexts
 values::classes
-any::classes (compound body)
+any::classes
 any::classes are sets
 any::classes report
 any::classify
@@ -280,7 +280,7 @@ any::configuration management database
 network_services::connectivity
 any::contact cfengine
 any::contain
-any::contain (compound body)
+any::contain
 special_topics_guide::content-driven policies
 any::contexts
 any::contextual adaptation of a file template
@@ -295,7 +295,7 @@ any::copernicus hints
 any::copy
 any::copy_backup
 any::copy_from
-any::copy_from (compound body)
+any::copy_from
 any::copy_patterns
 any::copy_size
 any::copying a file template into place
@@ -322,7 +322,7 @@ any::database_columns
 any::database_operation
 any::database_rows
 any::database_server
-any::database_server (compound body)
+any::database_server
 any::database_type
 any::databases
 documentation::db_server_connection_db
@@ -338,7 +338,7 @@ any::defaultroute
 special_topics_guide::define jobs with basic profile information
 any::delegating roles in a collaboration
 any::delete
-any::delete (compound body)
+any::delete
 any::delete (compound_body)
 any::delete_if_contains_from_list
 any::delete_if_match_from_list
@@ -348,7 +348,7 @@ any::delete_if_not_startwith_from_list
 any::delete_if_startwith_from_list
 any::delete_lines
 any::delete_select
-any::delete_select (compound body)
+any::delete_select
 system_knowledge::delta hub query
 any::deny
 management_terminology::departments
@@ -358,7 +358,7 @@ any::deploy
 any::deploying policy changes
 any::depth
 any::depth_search
-any::depth_search (compound body)
+any::depth_search
 services::desktop
 network_services::dhcp
 any::digest
@@ -394,9 +394,9 @@ any::each part disconnected, providing services
 fmd::ebc
 any::edit_backup
 any::edit_defaults
-any::edit_defaults (compound body)
+any::edit_defaults
 any::edit_field
-any::edit_field (compound body)
+any::edit_field
 documentation::edit_fstab
 promise_types::edit_line
 body_constraints::edit_xml
@@ -478,7 +478,7 @@ any::file_changes report
 system_reports::file_diffs report
 documentation::file_result
 any::file_select
-any::file_select (compound body)
+any::file_select
 documentation::file_to_print
 documentation::file_types
 functions::fileexists
@@ -630,7 +630,7 @@ documentation::insert_if_not_startwith_from_list
 documentation::insert_if_startwith_from_list
 promise_types::insert_lines
 any::insert_select
-any::insert_select (compound body)
+any::insert_select
 body_constraints::insert_type
 special_topics_guide::install latest package version example
 special_topics_guide::install specific package version example
@@ -716,7 +716,7 @@ topic_maps::linear topic map notation
 values::link type
 documentation::link_children
 any::link_from
-any::link_from (compound body)
+any::link_from
 documentation::link_type
 any::linkcopy_patterns
 any::links
@@ -724,7 +724,7 @@ any::linux
 any::list variable substitution and expansion
 any::lists
 any::location
-any::location (compound body)
+any::location
 any::location relationships
 logging::log rotation
 documentation::log_failed
@@ -758,7 +758,7 @@ any::manuals
 body_constraints::maproot
 documentation::match_range
 any::match_value
-any::match_value (compound body)
+any::match_value
 documentation::max_file_size
 any::measurement and monitoring
 any::measurement_class
@@ -787,7 +787,7 @@ any::monitoring in cfengine
 places::monterey
 any::more links in the chain
 any::mount
-any::mount (compound body)
+any::mount
 any::mount_options
 any::mount_server
 any::mount_source
@@ -864,7 +864,7 @@ any::package_list_update_command
 any::package_list_update_ifelapsed
 documentation::package_list_version_regex
 any::package_method
-any::package_method (compound body)
+any::package_method
 documentation::package_multiline_start
 documentation::package_name_convention
 documentation::package_name_regex
@@ -902,7 +902,7 @@ functions::peers
 any::performance report
 any::permission
 any::perms
-any::perms (compound body)
+any::perms
 documentation::persist_time
 any::persistent classes
 any::persistent classes for alert conditions
@@ -931,7 +931,7 @@ documentation::preserve
 documentation::preview
 faults::print server not running
 any::printfile
-any::printfile (compound body)
+any::printfile
 any::priority
 security::privacy
 any::private keys
@@ -939,11 +939,11 @@ any::proactive monitoring, problem, policy, summary
 any::problem
 any::procedures
 any::process_count
-any::process_count (compound body)
+any::process_count
 documentation::process_owner
 documentation::process_result
 any::process_select
-any::process_select (compound body)
+any::process_select
 body_constraints::process_stop
 any::processes
 monitoring::processor snapshot
@@ -1027,7 +1027,7 @@ any::remoteclassesmatching
 functions::remotescalar
 procedures::removing users
 cfengine_2::rename
-any::rename (compound body)
+any::rename
 special_topics_guide::repair
 any::repair_denied
 any::repair_failed
@@ -1036,7 +1036,7 @@ any::repaired_returncodes
 promise_types::replace_patterns
 documentation::replace_value
 any::replace_with
-any::replace_with (compound body)
+any::replace_with
 any::report_changes
 documentation::report_diffs
 documentation::report_level
@@ -1111,7 +1111,7 @@ documentation::select_field
 documentation::select_line_matching
 documentation::select_line_number
 values::select_region
-any::select_region (compound body)
+any::select_region
 documentation::select_start
 any::selectservers
 models_of_system_administration::self-healing
@@ -1257,7 +1257,7 @@ any::tamperproof data
 any::tamperproof system
 access_control::tcp wrappers
 any::tcp_ip
-any::tcp_ip (compound body)
+any::tcp_ip
 any::tcsh
 management_issues::team work
 any::teams
@@ -1355,7 +1355,7 @@ special_topics_guide::virtualized host examples
 any::visualization of monitoring in cfengine
 virtualization::vmware
 any::volume
-any::volume (compound body)
+any::volume
 promise_theory::voluntary cooperation
 documentation::vsize
 cfengine_2::warniflinematching
