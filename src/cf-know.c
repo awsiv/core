@@ -165,13 +165,18 @@ static const char *HINTS[] =
 int main(int argc, char *argv[])
 {
     GenericAgentConfig config = CheckOpts(argc, argv);
-
     ReportContext *report_context = OpenReports("knowledge");
-    Policy *policy = GenericInitialize("knowledge", config, report_context);
-    ThisAgentInit();
-
-    KeepKnowControlPromises(policy);
-
+    Policy *policy = NULL;
+    
+    if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0)
+    {    
+        policy = GenericInitialize("knowledge", config, report_context);
+        ThisAgentInit();
+        
+        KeepKnowControlPromises(policy);
+        printf("xxxxxxxxx\n");
+    }
+    
 #if defined(HAVE_LIBMONGOC)
 
     if (BGOALS)
