@@ -265,7 +265,7 @@ bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *def
     }
 }
 
-
+/*****************************************************************************/
 
 HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 {
