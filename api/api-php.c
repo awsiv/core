@@ -7,6 +7,10 @@
 #include "api-php.h"
 #include "api.h"
 #include "crypto.h"
+#include "log.h"
+#include "utils.h"
+#include "db_query.h"
+#include "cf.nova.h"
 
 /* If you declare any globals in cfengine-api-php.h uncomment this:
    ZEND_DECLARE_MODULE_GLOBALS(cfapi)
@@ -116,16 +120,43 @@ PHP_MINIT_FUNCTION(cfapi)
 
     AM_PHP_MODULE = 1; // FIX: remove
 
+    {
+        openlog("cfengine-enterprise-api", LOG_PERROR | LOG_NDELAY, LOG_USER);
+        static const int log_fallback_level = LOG_DEBUG;
+
+        EnterpriseDB *conn = EnterpriseDBAcquire();
+        if (conn)
+        {
+            HubSettings *settings = NULL;
+            if (CFDB_QuerySettings(conn, &settings) == ERRID_SUCCESS)
+            {
+                setlogmask(LOG_UPTO(settings->log_level));
+                syslog(LOG_NOTICE, "Initialized log-level: %s", LogLevelToString(settings->log_level));
+            }
+            else
+            {
+                setlogmask(LOG_UPTO(log_fallback_level));
+                syslog(LOG_ERR, "Unable to load settings from database, log-level set to: %s", LogLevelToString(log_fallback_level));
+            }
+        }
+        else
+        {
+            setlogmask(LOG_UPTO(log_fallback_level));
+            syslog(LOG_ERR, "Unable to connect to database, log-level set to: %s", LogLevelToString(log_fallback_level));
+        }
+    }
+
     CryptoInitialize();
 
+    syslog(LOG_NOTICE, "CFEngine Enterprise API module initialized");
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(cfapi)
 {
-    /* uncomment this line if you have INI entries
-       UNREGISTER_INI_ENTRIES();
-     */
+    syslog(LOG_NOTICE, "CFEngine Enterprise API module shutting down");
+    closelog();
+
     return SUCCESS;
 }
 

@@ -13,6 +13,8 @@ static const char *API_VERSION = "v1";
 
 PHP_FUNCTION(cfapi)
 {
+    syslog(LOG_DEBUG, "Requesting /api");
+
     const char *username = NULL; int username_len = 0;
     const char *password = NULL; int password_len = 0;
 

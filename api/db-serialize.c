@@ -1,5 +1,7 @@
 #include "db-serialize.h"
 
+#include "log.h"
+
 #include <assert.h>
 
 JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report)
@@ -195,6 +197,7 @@ typedef enum
     _SETTING_UNKNOWN = 0,
 
     _SETTING_RBAC_ENABLED,
+
     _SETTING_LDAP_ENABLED,
     _SETTING_LDAP_AD_DOMAIN,
     _SETTING_LDAP_BASE_DN,
@@ -207,7 +210,10 @@ typedef enum
     _SETTING_LDAP_USERS_DIR,
     _SETTING_LDAP_PORT,
     _SETTING_LDAP_PORT_SSL,
+
     _SETTING_BLUEHOST_HORIZON,
+
+    _SETTING_LOG_LEVEL,
 
     _SETTING_MAX
 } _Setting;
@@ -229,7 +235,8 @@ const char *_setting_strings[_SETTING_MAX] =
     [_SETTING_LDAP_USERS_DIR] = "ldapUsersDirectory",
     [_SETTING_LDAP_PORT] = "ldapPort",
     [_SETTING_LDAP_PORT_SSL] = "ldapPortSSL",
-    [_SETTING_BLUEHOST_HORIZON] = "blueHostHorizon"
+    [_SETTING_BLUEHOST_HORIZON] = "blueHostHorizon",
+    [_SETTING_LOG_LEVEL] = "logLevel"
 };
 
 const JsonPrimitiveType _setting_types[_SETTING_MAX] =
@@ -249,7 +256,8 @@ const JsonPrimitiveType _setting_types[_SETTING_MAX] =
     [_SETTING_LDAP_USERS_DIR] = JSON_PRIMITIVE_TYPE_STRING,
     [_SETTING_LDAP_PORT] = JSON_PRIMITIVE_TYPE_INTEGER,
     [_SETTING_LDAP_PORT_SSL] = JSON_PRIMITIVE_TYPE_INTEGER,
-    [_SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER
+    [_SETTING_BLUEHOST_HORIZON] = JSON_PRIMITIVE_TYPE_INTEGER,
+    [_SETTING_LOG_LEVEL] = JSON_PRIMITIVE_TYPE_STRING
 };
 
 const char * _setting_ranges[_SETTING_MAX] =
@@ -270,7 +278,9 @@ const char * _setting_ranges[_SETTING_MAX] =
     [_SETTING_LDAP_PORT] = NULL,
     [_SETTING_LDAP_PORT_SSL] = NULL,
 
-    [_SETTING_BLUEHOST_HORIZON] = NULL
+    [_SETTING_BLUEHOST_HORIZON] = NULL,
+
+    [_SETTING_LOG_LEVEL] = "(emergency|alert|critical|error|warning|notice|info|debug)"
 };
 
 
@@ -360,6 +370,11 @@ JsonElement *HubSettingsToJson(const HubSettings *settings)
     if (settings->bluehost_horizon > 0)
     {
         JsonObjectAppendInteger(obj, _setting_strings[_SETTING_BLUEHOST_HORIZON], settings->bluehost_horizon);
+    }
+
+    if (settings->log_level >= 0)
+    {
+        JsonObjectAppendString(obj, _setting_strings[_SETTING_LOG_LEVEL], LogLevelToString(settings->log_level));
     }
 
     return obj;
@@ -474,6 +489,9 @@ HubSettings *HubSettingsFromJson(const JsonElement *json, char error_out[CF_BUFS
             break;
         case _SETTING_BLUEHOST_HORIZON:
             settings->bluehost_horizon = JsonPrimitiveGetAsInteger(value);
+            break;
+        case _SETTING_LOG_LEVEL:
+            settings->log_level = LogLevelFromString(JsonPrimitiveGetAsString(value));
             break;
 
         default:

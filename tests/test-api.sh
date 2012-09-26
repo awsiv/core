@@ -21,12 +21,6 @@ kill_servers() {
 
 trap kill_servers INT QUIT 0
 
-./serve-php-fpm.sh&
-PHP_FPM_PID=$!
-
-./serve-nginx.sh&
-NGINX_PID=$!
-
 ./serve-mongo.sh&
 MONGO_PID=$!
 
@@ -45,6 +39,12 @@ done
 while ! mongo --port 27777 --eval 'db.ping'; do
   sleep 0.01
 done
+
+./serve-php-fpm.sh&
+PHP_FPM_PID=$!
+
+./serve-nginx.sh&
+NGINX_PID=$!
 
 ./load-data-ldap.sh data/ldap/jersey.ldif
 
