@@ -1770,8 +1770,10 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
 }
 
 /*****************************************************************************/
-int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
-                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to,
+                               int k, int nk, int rep, HostClassFilter *hostClassFilter,
+                               PageInfo *page, char *returnval, int bufsize,
+                               PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1794,7 +1796,8 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
         return false;
     }
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
+                                   true, hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
@@ -2678,7 +2681,8 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to,
-                                             k, nk, rep, false, hostClassFilter, promise_context);
+                                             k, nk, rep, false, hostClassFilter,
+                                             promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

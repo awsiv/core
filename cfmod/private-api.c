@@ -1088,20 +1088,23 @@ PHP_FUNCTION(cfpr_compliance_summary_graph)
 
 PHP_FUNCTION(cfpr_report_compliance_summary)
 {
-    char *userName, *hostkey, *version;
-    char *fhostkey, *fversion;
-    zval *contextIncludes = NULL, *contextExcludes = NULL;
-    int user_len, hk_len, v_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *version = NULL; int v_len;
+    char *promise_context = NULL; int pc_len;
+    zval *contextIncludes = NULL;
+    zval *contextExcludes = NULL;
     long k, nk, r, from;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    char *sort_column_name; int sc_len;
+    bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllaasbll",
-                              &userName, &user_len,
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllllaasbll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &version, &v_len,
                               &from,
                               &k,
@@ -1109,7 +1112,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
                               &r,
                               &contextIncludes,
                               &contextExcludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1118,12 +1121,12 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fversion = (v_len == 0) ? NULL : version;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fversion = (v_len == 0) ? NULL : version;
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1131,7 +1134,11 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL),
+                               (int) k, (int) nk, (int) r, filter, &page,
+                               buffer, sizeof(buffer), promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
