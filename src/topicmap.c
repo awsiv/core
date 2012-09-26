@@ -878,7 +878,6 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 {
     Rlist *rp;
     bson_iterator it1;
-    EnterpriseDB conn;
     char topic_name[CF_MAXVARSIZE] = { 0 };
     int topic_id = 0;
     char work[CF_BUFSIZE] = { 0 };
@@ -886,7 +885,14 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     Rlist *goal_patterns = NULL;
     char db_goal_patterns[CF_BUFSIZE] = { 0 };
 
-    if (CFDB_GetValue("goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH))
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    if ( CFDB_GetValue( &conn, "goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH ) )
     {
         goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
     }
@@ -904,13 +910,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     else
     {
         snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
-    }
-
-    
-    if (!CFDB_Open(&conn))
-    {
-        return false;
-    }
+    }   
 
 /* BEGIN query document */
     bson query;

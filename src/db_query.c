@@ -58,27 +58,16 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     return false;
 }
 /*****************************************************************************/
-int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
+bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *db_name )
 {
-    EnterpriseDB conn;
-
-    // clients do not run mongo server -- will fail to connect
-
     if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
         CfOut(cf_verbose, "", "Ignoring DB get of (%s) - we are not a policy server", lval);
         return false;
     }
 
-    if (!CFDB_Open(&conn))
-    {
-        return false;
-    }
+    CFDB_HandleGetValue(lval, rval, size, NULL, conn, db_name);
 
-    // TODO: why is this function not returning this result?
-    CFDB_HandleGetValue(lval, rval, size, NULL, &conn, db_name);
-
-    CFDB_Close(&conn);
     return true;
 }
 
