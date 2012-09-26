@@ -4142,13 +4142,16 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
 
 /*****************************************************************************/
 
-int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
+int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+                    HostColourFilter *host_colour_filter, PromiseContextMode promise_context)
 {
     bson query;
     bson_init(&query);
 
     BsonAppendHostClassFilter(&query, host_class_filter);
     BsonAppendHostColourFilter(&query, host_colour_filter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
     int count = CFDB_CountHostsGeneric(conn, &query);

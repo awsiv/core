@@ -3533,16 +3533,16 @@ PHP_FUNCTION(cfpr_host_count)
     int count = 0;
 
     HostColourFilter *host_colour_filter = NULL;
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     if (!NULL_OR_EMPTY(colour))
     {
-        PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
-
         host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
                                                  HostColourFromString(colour),
                                                  promise_context_mode);
     }
 
-    count = CFDB_CountHosts(&conn, filter, host_colour_filter);
+    count = CFDB_CountHosts(&conn, filter, host_colour_filter, promise_context_mode);
 
     DATABASE_CLOSE(&conn);
 
