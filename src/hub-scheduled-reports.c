@@ -223,6 +223,7 @@ static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id,
 static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
 {
     bson query[1];
+    bson_init( query );
     BsonAppendBool( query, cfr_already_run, false );
     BsonAppendBool( query, cfr_enabled, true );
     BsonFinish( query );
