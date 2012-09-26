@@ -426,6 +426,8 @@ static const char *HostRankMethodToMongoCode(HostRankMethod method,
     }
 }
 
+/*****************************************************************************/
+
 HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
                            HostClassFilter *host_class_filter, PromiseContextMode promise_context)
 {
@@ -515,6 +517,8 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
     mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, NULL);
 }
+
+/*****************************************************************************/
 
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort)
@@ -939,6 +943,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 }
 
 /*****************************************************************************/
+
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                                     char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort,
@@ -1121,6 +1126,8 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
     return NewHubQuery(host_list, record_list);
 }
+
+/*****************************************************************************/
 
 Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode)
@@ -1489,6 +1496,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 }
 
 /*********************************************************************************/
+
 const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
                                        const char *ltype, char *lscope, char *lval)
 {
