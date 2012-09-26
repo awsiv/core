@@ -25,6 +25,8 @@
 #define CF_MAXVARSIZE 1024
 #define cf_error 1
 
+#define DOC_CONTROLLER_PREFIX "/knowledge/docs"
+
 /*******************************************************************/
 
 typedef struct Rlist_ Rlist;
@@ -108,11 +110,11 @@ main(int argc, char **argv)
 
     if (argv[3] && strcmp(argv[3], "web") == 0)
     {
-        Manual(argv[1], argv[2], "/docs/");
+        Manual(argv[1], argv[2], DOC_CONTROLLER_PREFIX);
     }
     else
     {
-        Manual(argv[1], argv[2], "/docs/");
+        Manual(argv[1], argv[2], DOC_CONTROLLER_PREFIX);
     }
 }
 

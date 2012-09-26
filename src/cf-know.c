@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
     }
     else if (strlen(SEARCH) > 0)
     {
-        Item *list = Nova2PHP_search(SEARCH, true);
+        Item *list = Nova2PHP_search(SEARCH, true, "admin");
         exit(0);
     }
 #endif
