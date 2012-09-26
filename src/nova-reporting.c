@@ -142,7 +142,7 @@ ReportInfo BASIC_REPORTS[] =
      "cumulative (histogram) summary of promises not kept"},
 
     {CFRID_CONTEXTS, "system", "context classes", "class profile", "user defined classes observed on the system"},
-    {cfrid_neighbors, "system", "last saw neighbours", "last seen hosts",
+    {CFRID_NEIGHBORS, "system", "last saw neighbours", "last seen hosts",
      "when host neighbours were last seen online"},
     {CFRID_WEAKEST_HOSTS, "system", "weakest hosts", "weakest hosts", "worst available hosts ranked by compliance level"},
     {CFRID_VALUES, "system", "variables", "variables", "table of variable values last observed"},    
