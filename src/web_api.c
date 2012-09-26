@@ -64,6 +64,7 @@ static int MightBeHostId(const char *search);
 static int MightBeClass(const char *search);
 static int MightBeVariable(const char *search);
 static int MightBeReportType(const char *search);
+static int MightBeHostColour(const char *search);
 
 /*****************************************************************************/
 
@@ -3137,14 +3138,12 @@ int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNa
 
 /*****************************************************************************/
 
-Item *Nova2PHP_search(char *search, bool regex)
+Item *Nova2PHP_search(char *search, bool regex, char *username)
 {
-    Item *ip,*results = NULL;
+    Item *ip, *ipt, *results = NULL, *topics;
     Item *words = SplitStringAsItemList(search, ' ');
-
-    const char *excludes[] = { "tell", "me", "about", "host", "hosts", "report", "topic", "with", NULL };
-
-    printf("Analysing search string \"%s\"\n", search);
+    char url[CF_BUFSIZE], text[CF_BUFSIZE];
+    static char *excludes[] = { "tell", "me", "about", "host", "hosts", "report", "topic", "with", "running", NULL };
 
     for (ip = words; ip != NULL; ip = ip->next)
        {
@@ -3153,31 +3152,42 @@ Item *Nova2PHP_search(char *search, bool regex)
              continue;
              }
 
-       
-       printf("Searching for %s\n", ip->name);
-       
        // KM gets us anything about policy or syntax
        
        if (MightBeTopic(ip->name))
           {
-          results = Nova_SearchTopicMap(ip->name,CF_SEARCH_REGEX, false);
+          topics = Nova_SearchTopicMap(ip->name,CF_SEARCH_REGEX, false);
+
+          for (ipt = topics; ipt != NULL; ipt = ipt->next)
+             {
+             snprintf(url, CF_BUFSIZE, "%s/%d", KM_CONTROLLER_PREFIX, ipt->counter);
+             snprintf(text, CF_BUFSIZE, "%s appears in context '%s'", ipt->name, ipt->classes);
+             PrependItem(&results, text, url);
+             }
+
+          DeleteItemList(topics);
           }
        
        // Now add hosts with attributes
        
        if (MightBeHostId(ip->name))
           {
-          Nova_SearchHosts(&results, ip->name,CF_SEARCH_REGEX);
+          Nova_SearchHosts(&results, ip->name,CF_SEARCH_REGEX, username);
+          }
+
+       if (MightBeHostColour(ip->name))
+          {
+          Nova_SearchHosts(&results, ip->name,CF_SEARCH_REGEX, username);
           }
        
        if (MightBeClass(ip->name))
           {
-          Nova_SearchClasses(&results, ip->name,CF_SEARCH_REGEX);
+          Nova_SearchClasses(&results, ip->name,CF_SEARCH_REGEX, username);
           }
        
        if (MightBeVariable(ip->name))
           {
-          Nova_SearchVariables(&results, ip->name,CF_SEARCH_REGEX);
+          Nova_SearchVariables(&results, ip->name,CF_SEARCH_REGEX, username);
           }
        
        if (MightBeReportType(ip->name))
@@ -3195,7 +3205,7 @@ Item *Nova2PHP_search(char *search, bool regex)
     
     for (ip = results; ip != NULL; ip=ip->next)
        {
-       printf("%s, %s, %d\n", ip->name, ip->classes, ip->counter);
+       printf("TEXT \"%s\", URL=%s\n", ip->name, ip->classes);
        }
     
     return results;
@@ -3351,7 +3361,6 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
 
 void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 {
-    Item *results = NULL;
     bson_iterator it1;
     EnterpriseDB conn;
 
@@ -5246,16 +5255,33 @@ static int MightBeTopic(const char *search)
 
 /********************************************************************/
 
-int MightBeHostId(const char *search)
+static int MightBeHostId(const char *search)
 {
  if (strncmp(search, "SHA=", 4) == 0 || strncmp(search, "sha=", 4) == 0)
     {
     return true;
     }
 
- if (IsIPV6Address(search) || IsIPV4Address(search))
+ if (IsIPV6Address((char *)search) || IsIPV4Address((char *)search))
     {
-    return false;
+    return true;
+    }
+
+ return false;
+}
+
+/********************************************************************/
+
+static int MightBeHostColour(const char *search)
+{
+ const char *colours[] = { "red", "yellow", "green", "blue", "black", NULL };
+
+ for (int i = 0; colours[i] != NULL; i++)
+    {
+    if (strcmp(search, colours[i]) == 0)
+       {
+       return true;
+       }
     }
 
  return false;
@@ -5304,20 +5330,6 @@ static int MightBeReportType(const char *search)
     return false;
     }
 
-
- for (int i = 0; i < cfrep_unknown; i++)
-    {
-    if (strncmp(BASIC_REPORTS[i].name_old, search, strlen(search)) == 0)
-       {
-       return true;
-       }
-
-    if (strncmp(BASIC_REPORTS[i].name, search, strlen(search)) == 0)
-       {
-       return true;
-       }
-    }
-
- return false;
+ return true;
 }
 
