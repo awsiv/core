@@ -2607,6 +2607,11 @@ cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings)
             {
                 bson_append_int(&set_op, "blueHostHorizon", settings->bluehost_horizon);
             }
+
+            if (settings->log_level >= 0)
+            {
+                bson_append_int(&set_op, "logLevel", settings->log_level);
+            }
         }
         bson_append_finish_object(&set_op);
     }
@@ -2617,6 +2622,11 @@ cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings)
     {
         bson_destroy(&set_op);
         return ERRID_DB_OPERATION;
+    }
+
+    if (settings->log_level >= 0)
+    {
+        setlogmask(LOG_UPTO(settings->log_level));
     }
 
     bson_destroy(&set_op);

@@ -26,6 +26,7 @@
 #include "files_names.h"
 #include "rlist.h"
 #include "item_lib.h"
+#include "log.h"
 
 #include <assert.h>
 
@@ -138,6 +139,7 @@ static cfapi_errid _LDAPAuthenticate(const char *url,
                                      const char *username,
                                      const char *password)
 {
+    syslog(LOG_DEBUG, "Attempting to authenticate user %s against external OpenLDAP service", username);
 
     cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
     Rlist *user_directory_values = SplitStringAsRList(user_directories, ';');
@@ -155,14 +157,25 @@ static cfapi_errid _LDAPAuthenticate(const char *url,
         strcat(bind_dn, base_dn);
 
         const char *errmsg = NULL;
-        if (CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls,
-                               _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS,  &errmsg))
+        LogPerformanceTimer timer = LogPerformanceStart();
+        bool authenticated = CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls, _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS,  &errmsg);
+        LogPerformanceStop(&timer, "LDAP authenticate call to %s for user %s", url, username);
+        if (authenticated)
         {
             result = ERRID_SUCCESS;
             break;
         }
     }
     DeleteRlist(user_directory_values);
+
+    if (result == ERRID_SUCCESS)
+    {
+        syslog(LOG_INFO, "Authenticated user %s using OpenLDAP against %s", username, url);
+    }
+    else
+    {
+        syslog(LOG_NOTICE, "Authentication FAILED for user %s using OpenLDAP against %s", username, url);
+    }
 
     return result;
 }
@@ -173,6 +186,8 @@ static cfapi_errid _LDAPAuthenticateAD(const char *url,
                                        const char *username,
                                        const char *password)
 {
+    syslog(LOG_DEBUG, "Attempting to authenticate user %s against external Active Directory service %s", username, url);
+
     char bind_dn[4096] = { 0 };
     if (StringMatch("^(\\w+\\.)+\\w{2,5}$", ad_domain))
     {
@@ -188,20 +203,23 @@ static cfapi_errid _LDAPAuthenticateAD(const char *url,
     }
 
     const char *errmsg = NULL;
-    if (CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls,
-                           _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS, &errmsg))
+    LogPerformanceTimer timer = LogPerformanceStart();
+    bool authenticated = CfLDAPAuthenticate(url, bind_dn, password, "sasl", start_tls, _EXTERNAL_AUTHENTICATE_TIMEOUT_SECONDS, &errmsg);
+    LogPerformanceStop(&timer, "Active Directory authenticate call to %s for user %s", url, username);
+    if (authenticated)
     {
+        syslog(LOG_INFO, "Authenticated user %s using Active Directory against %s", username, url);
         return ERRID_SUCCESS;
     }
     else
     {
+        syslog(LOG_NOTICE, "Authentication FAILED for user %s using Active Directory against %s", username, url);
         return ERRID_RBAC_ACCESS_DENIED;
     }
 }
 
 static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password)
 {
-
     char url[2048] = { 0 };
     if (StringSafeEqual(ldap_settings->encryption, "ssl"))
     {

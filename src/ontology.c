@@ -537,12 +537,12 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     WriterWriteF(writer, "\n occurrences:\n");
 
     WriterWriteF(writer, "handles::\n");
-    WriterWriteF(writer, "\"/promise/details/%s\",\n", promise_id);
+    WriterWriteF(writer, "\"%s/%s\",\n", PROMISE_CONTROLLER_PREFIX, promise_id);
     WriterWriteF(writer, "   about_topics => { \"handles::%s\" },\n", promise_id);
     WriterWriteF(writer, "   represents => { \"definition\" };\n\n");
 
     WriterWriteF(writer, "bundles::\n");
-    WriterWriteF(writer, "\"/bundle/details/bundle/%s\"\n", pp->bundle);
+    WriterWriteF(writer, "\"%s/%s\"\n", BUNDLE_CONTROLLER_PREFIX, pp->bundle);
     WriterWriteF(writer, "   about_topics => { \"bundles::%s\" },\n", pp->bundle);
     WriterWriteF(writer, "   represents => { \"parent bundle\" };\n\n");
 
@@ -802,6 +802,20 @@ void ShowTopicRepresentation(const ReportContext *report_context)
 
     WriterWriteF(writer, " \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
 
+
+    // Reports linkage
+
+    WriterWriteF(writer, "occurrences:\n\n");
+        
+    for (i = 0; i < cfrep_unknown; i++)
+    {
+        WriterWriteF(writer, "\"%s/%s\" represents => { \"report generator\" }, about_topics => { \"system_reports::%s\", \"system_reports::%s\" };\n", REPORT_CONTROLLER_PREFIX, BASIC_REPORTS[i].id, BASIC_REPORTS[i].name, BASIC_REPORTS[i].name_old);
+    }
+
+
+    // Value types
+        
+    WriterWriteF(writer, "topics:\n");
     WriterWriteF(writer, "values::\n\n");
 
     for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
@@ -1161,8 +1175,8 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     if (promise_id)
     {
-        WriterWriteF(writer, "occurrences:  \"/promise/details/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
-                promise_id, promise_id);
+        WriterWriteF(writer, "occurrences:  \"%s/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
+                     PROMISE_CONTROLLER_PREFIX, promise_id, promise_id);
     }
 
 /* For activated classes we can assume that no one will */

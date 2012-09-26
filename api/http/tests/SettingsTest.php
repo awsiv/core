@@ -117,7 +117,34 @@ class SettingsTest extends APIBaseTest
         }
     }
 
-    public function testUpdateLdapSettings()
+    public function testUpdateSettingLogLevel()
+    {
+        try
+        {
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals(1, sizeof($settings));
+
+            $this->assertEquals('error', $settings[0]['logLevel']);
+
+            $this->pest->post('/settings', '{
+                "logLevel": "notice"
+                }');
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $settings = $this->getResults('/settings');
+            $this->assertValidJson($settings);
+            $this->assertEquals(1, sizeof($settings));
+
+            $this->assertEquals('notice', $settings[0]['logLevel']);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
+    public function testUpdateLogLevel()
     {
         try
         {
