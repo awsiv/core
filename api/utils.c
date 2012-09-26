@@ -30,7 +30,7 @@ JsonElement *PackageResultSQL(JsonHeaderTable *table)
     JsonElement *data1 = JsonObjectCreate(3);
     JsonObjectAppendString(data1, "query", table->title);
     JsonObjectAppendArray(data1, "header", table->header);
-    JsonObjectAppendInteger(data1, "row_count", JsonElementLength(table->rows));
+    JsonObjectAppendInteger(data1, "rowCount", JsonElementLength(table->rows));
     JsonObjectAppendArray(data1, "rows", table->rows);
 
     JsonElement *data = JsonArrayCreate(1);

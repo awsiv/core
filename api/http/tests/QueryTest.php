@@ -21,7 +21,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('Colour', $response['data'][0]['header'][4]);
 
             // check result row count
-            $this->assertEquals('2', $response['data'][0]['row_count']);
+            $this->assertEquals('2', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
@@ -60,7 +60,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('ChangeTimeStamp', $response['data'][0]['header'][2]);
 
             // check result row count
-            $this->assertEquals('2', $response['data'][0]['row_count']);
+            $this->assertEquals('2', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
@@ -95,7 +95,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('DefineTimeStamp', $response['data'][0]['header'][2]);
 
             // check result row count
-            $this->assertEquals('2', $response['data'][0]['row_count']);
+            $this->assertEquals('2', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
@@ -133,7 +133,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('Type', $response['data'][0]['header'][5]);
 
             // check result row count
-            $this->assertEquals('4', $response['data'][0]['row_count']);
+            $this->assertEquals('4', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
@@ -186,7 +186,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('Architecture', $response['data'][0]['header'][3]);
 
             // check result row count
-            $this->assertEquals('4', $response['data'][0]['row_count']);
+            $this->assertEquals('4', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
@@ -235,7 +235,7 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('CheckTimeStamp', $response['data'][0]['header'][3]);
 
             // check result row count
-            $this->assertEquals('2', $response['data'][0]['row_count']);
+            $this->assertEquals('2', $response['data'][0]['rowCount']);
 
             // check result rows content
             //row 1
