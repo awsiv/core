@@ -6730,6 +6730,14 @@ cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out)
             }
         }
 
+        {
+            int log_level = 0;
+            if (BsonIntGet(&record, "logLevel", &log_level))
+            {
+                settings->log_level = log_level;
+            }
+        }
+
         bson_destroy(&record);
 
         *settings_out = settings;

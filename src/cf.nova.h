@@ -671,6 +671,7 @@ typedef struct
     Trinary rbac_enabled;
     time_t bluehost_horizon;
     HubSettingsLDAP ldap;
+    int log_level;
 } HubSettings;
 
 #endif

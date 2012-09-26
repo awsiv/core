@@ -1203,6 +1203,8 @@ HubSettings *NewHubSettings(void)
     settings->ldap.username = NULL;
     settings->ldap.users_directory = NULL;
 
+    settings->log_level = -1;
+
     return settings;
 }
 
@@ -1219,6 +1221,8 @@ HubSettings *NewHubSettingsDefaults(void)
     settings->ldap.mode = LDAP_MODE_STANDARD;
     settings->ldap.port = 389;
     settings->ldap.port_ssl = 636;
+
+    settings->log_level = LOG_ERR;
 
     return settings;
 }
@@ -1259,6 +1263,8 @@ HubSettings *HubSettingsCopy(const HubSettings *settings)
     copy->ldap.port_ssl = settings->ldap.port_ssl;
     copy->ldap.username = SafeStringDuplicate(settings->ldap.username);
     copy->ldap.users_directory = SafeStringDuplicate(settings->ldap.users_directory);
+
+    copy->log_level = settings->log_level;
 
     return copy;
 }
@@ -1335,6 +1341,11 @@ HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSe
     if (new_settings->ldap.users_directory)
     {
         updated->ldap.users_directory = SafeStringDuplicate(new_settings->ldap.users_directory);
+    }
+
+    if (new_settings->log_level != -1)
+    {
+        updated->log_level = new_settings->log_level;
     }
 
     return updated;
