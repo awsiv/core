@@ -22,6 +22,7 @@ libcfnova_la_SOURCES = \
         cfnova.c \
         ldap_lib.c ldap_lib.h \
         license.c license.h \
+        log.c log.h \
         monitoring.c \
         ontology.c \
         datapackaging.c \
