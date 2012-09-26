@@ -59,6 +59,7 @@ static void SplayLongUpdates(void);
 static void Nova_UpdateMongoHostList(Item **list);
 static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
+static void SetDefaultPathsForSchedulingReports( void );
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -692,7 +693,9 @@ static void StartHub(void)
 // before Nova_Maintain() gets run
     CFDB_ConnectAndEnsureIndices();
 
-#if defined( HAVE_SQLITE3 )
+#if defined( HAVE_LIBSQLITE3 )
+    SetDefaultPathsForSchedulingReports();
+
     bool scheduled_reports_pending = true;
 #endif
 
@@ -706,7 +709,7 @@ static void StartHub(void)
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
-                #if defined( HAVE_SQLITE3 )
+                #if defined( HAVE_LIBSQLITE3 )
                 if( scheduled_reports_pending )
                 {
                     RunScheduledEnterpriseReports();
@@ -715,7 +718,7 @@ static void StartHub(void)
             }
         }
 
-    #if defined( HAVE_SQLITE3 )
+    #if defined( HAVE_LIBSQLITE3 )
         scheduled_reports_pending = CheckPendingScheduledReports();
     #endif
 
@@ -1091,4 +1094,66 @@ void Nova_HubLog(const char *fmt, ...)
     va_end(ap);
     fprintf(fout, "\n");
     fclose(fout);
+}
+
+/*********************************************************************/
+/* Stores default paths for  MP install dir and php */
+static void SetDefaultPathsForSchedulingReports( void )
+{
+    EnterpriseDB conn[1];
+
+    if( !CFDB_Open( conn ) )
+    {
+        return;
+    }
+
+    char path_db[CF_MAXVARSIZE] = {0};
+
+    if( !CFDB_HandleGetValue( cfr_mp_install_dir, path_db, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        Rval ret;
+        if( GetVariable( "sys", "doc_root", &ret ) != cf_notype )
+        {
+            char docroot[CF_MAXVARSIZE] = {0};
+            snprintf( docroot, CF_MAXVARSIZE - 1, "%s", ( char * ) ret.item );
+
+            if( !CFDB_PutValue( conn, cfr_mp_install_dir, docroot, MONGO_SCRATCH) )
+            {
+                CfOut( cf_error, "", "!! Couldn't set default path for mp_install_dir");
+            }
+        }
+    }
+
+    path_db[0] = '\0';
+
+    if( !CFDB_HandleGetValue( cfr_php_bin_dir, path_db, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        const char *path_env = getenv( "PATH" );
+
+        Rlist *path_list = SplitStringAsRList( path_env, ':' );
+
+        char path_str[CF_MAXVARSIZE] = {0};
+
+        for( Rlist *path_itr = path_list; path_itr != NULL; path_itr = path_itr->next )
+        {
+            char path_php[CF_MAXVARSIZE] = {0};
+            snprintf( path_php, CF_MAXVARSIZE - 1, "%s/php", (char *) path_itr->item );
+
+            struct stat stat_buf;
+            if( cfstat( path_php, &stat_buf ) == 0)
+            {
+                strncpy( path_str, (char *) path_itr->item, CF_MAXVARSIZE - 1 );
+                break;
+            }
+        }
+
+        DeleteRlist( path_list );
+
+        if( !CFDB_PutValue( conn, cfr_php_bin_dir, path_str, MONGO_SCRATCH) )
+        {
+            CfOut( cf_error, "", "!! Couldn't set default path for php_bin_dir");
+        }
+    }
+
+    CFDB_Close( conn );
 }

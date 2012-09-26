@@ -1627,6 +1627,9 @@ typedef struct
 #define cfr_title "title"
 #define cfr_description "description"
 
+#define cfr_mp_install_dir "mp_install_dir"
+#define cfr_php_bin_dir "php_bin_dir"
+
 /* Output format for reports.
  * These values are stored ( turned on / off) in bits:
  * - csv = 0001 (1)

@@ -3,7 +3,9 @@
  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
-#if defined( HAVE_SQLITE3 )
+#include "conf.h"
+
+#if defined( HAVE_LIBSQLITE3 )
 
 #include "cf.nova.h"
 #include "hub.h"
@@ -12,6 +14,7 @@
 #include "bson_lib.h"
 #include "reporting-engine.h"
 #include "hub-scheduled-reports.h"
+#include "db_query.h"
 #include <assert.h>
 
 static pid_t REPORT_SCHEDULER_CHILD_PID = -1;
@@ -21,7 +24,8 @@ static bool IsProcRunning(pid_t pid);
 static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn);
 
 static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn );
-static bool CreateScheduledReport( const char *user, const char *email, const char *query_id, const char *query );
+static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
+                                   const char *query_id, const char *query, int output_type );
 static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id, const char *query_id, const bool already_run );
 static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user, const char *query_id, time_t completed_time );
 
@@ -73,7 +77,7 @@ bool CheckPendingScheduledReports( void )
 
     if( !CFDB_Open( conn ) )
     {
-        return;
+        return false;
     }
 
     bool reports_pending = CFDB_QueryHasPendingSchedules( conn );
@@ -239,8 +243,9 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
         const char *fullname = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_fullname, &fullname );
 
-        const char *email = NULL;
-        BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_email, &email );
+        char email[CF_MAXVARSIZE] = {0};
+        email[0] = '\0';
+        BsonStringWrite( email, CF_MAXVARSIZE - 1, mongo_cursor_bson( cursor ), cfr_user_email);
 
         const char *query_id = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_query_id, &query_id );
@@ -248,7 +253,10 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
         const char *query = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_query, &query );
 
-        if( CreateScheduledReport( user, email, query_id, query ) )
+        int output_type = REPORT_FORMAT_CSV;
+        BsonIntGet( mongo_cursor_bson( cursor ), cfr_report_output_type, &output_type );
+
+        if( CreateScheduledReport( conn, user, email, query_id, query, output_type ) )
         {
             CFDB_SaveScheduledRunHistory( conn, user, query_id, time( NULL ) );
             CFDB_SaveAlreadyRun( conn, user, query_id, true );
@@ -260,49 +268,82 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
 
 /*******************************************************************/
 
-static bool CreateScheduledReport( const char *user, const char *email,
-                                   const char *query_id, const char *query )
+static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
+                                   const char *query_id, const char *query, int output_type )
 {
     assert( user );
     assert( email );
     assert( query_id );
     assert( query );
 
-    sqlite3 *db;
-    Rlist *context_include = NULL,
-          *context_exclude = NULL;
-    bool retval = true;
+    Nova_HubLog("Starting DBScheduledReportGeneration");
+    struct timespec measure_start = BeginMeasure();
 
-    if( Sqlite3_DBOpen( &db ) )
+    const char *report_format = NULL;
+
+    bool pdf = output_type & REPORT_FORMAT_PDF;
+    bool csv = output_type & REPORT_FORMAT_CSV;
+
+    if( pdf && csv )
     {
-        if( GenerateAllTables( db ) )
-        {
-            Rlist *tables = GetTableNamesInQuery( query );
-
-            if( tables )
-            {
-                LoadSqlite3Tables( db, tables, user, context_include, context_exclude );
-                DeleteRlist( tables );
-
-                char *err_msg = 0;
-
-                char path[CF_MAXVARSIZE] = { 0 };
-                snprintf( path, CF_MAXVARSIZE - 1, "%s/reports/%s-%s-%ld.csv", CFWORKDIR, user, query_id, time( NULL ) );
-
-                Writer *writer = FileWriter( fopen( path, "w" ) );
-
-                if ( !Sqlite3_Execute( db, query, ( void * ) BuildCSVOutput, ( void * ) writer, err_msg ) )
-                {                    
-                    retval = false;
-                }
-
-                WriterClose( writer );
-                Sqlite3_FreeString( err_msg );
-            }
-        }
-
-        Sqlite3_DBClose( db );
+        report_format = "csv+pdf";
     }
+    else if( csv )
+    {
+        report_format = "csv";
+    }
+    else if( pdf )
+    {
+        report_format = "pdf";
+    }
+
+    char cmd[CF_BUFSIZE] = {0};
+    char docroot[CF_MAXVARSIZE] = {0};
+    char php_path[CF_MAXVARSIZE] = {0};
+
+    const char *report_title = "Custom scheduled report";
+    const char *report_description = "Scheduled report";
+
+    if( !CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        CfOut( cf_error, "DBScheduledReportGeneration", "!! Cannot find doc_root" );
+        return false;
+    }
+
+    if( !CFDB_HandleGetValue(cfr_php_bin_dir, php_path, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        return false;
+    }
+
+    snprintf(cmd, CF_BUFSIZE - 1,
+             "%s/php %s/index.php advancedreports generatescheduledreport "
+             "\"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"",
+             php_path, docroot, user, query_id, query, report_format, report_title, report_description, email );
+
+    Nova_HubLog( "DBScheduledReportGeneration: command = %s", cmd );
+    FILE *pp;
+
+    if ((pp = cf_popen(cmd, "r")) == NULL)
+    {
+        CfOut( cf_error, "DBScheduledReportGeneration", "!! Could not run command \"%s\": %s \n", cmd, GetErrorStr() );
+        return false;
+    }
+
+    char line[CF_BUFSIZE] = {0};
+    int line_num = 0;
+
+    while (!feof(pp))
+    {
+        if (fgets(line, sizeof(line), pp))
+        {
+            Nova_HubLog("%d: %s", ++line_num, line);
+        }
+    }
+
+    bool retval = cf_pclose(pp);
+
+    Nova_HubLog("Finished DBScheduledReportGeneration");
+    EndMeasure( "DBScheduledReportGeneration", measure_start );
 
     return retval;
 }
