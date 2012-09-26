@@ -6316,6 +6316,8 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
     return delta;
 }
 
+/*****************************************************************************/
+
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result)
 {
     if (lkeyhash == NULL)
@@ -6386,6 +6388,8 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     return 0;
 }
 
+/*****************************************************************************/
+
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 {
     bool return_ip_address;
@@ -6421,6 +6425,8 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
     return return_list;
 }
+
+/*****************************************************************************/
 
 bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
 {
