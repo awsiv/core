@@ -802,6 +802,20 @@ void ShowTopicRepresentation(const ReportContext *report_context)
 
     WriterWriteF(writer, " \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
 
+
+    // Reports linkage
+
+    WriterWriteF(writer, "occurrences:\n\n");
+        
+    for (i = 0; i < cfrep_unknown; i++)
+    {
+        WriterWriteF(writer, "\"%s/%s\" represents => { \"report generator\" }, about_topics => { \"system_reports::%s\", \"system_reports::%s\" };\n", REPORT_CONTROLLER_PREFIX, BASIC_REPORTS[i].id, BASIC_REPORTS[i].name, BASIC_REPORTS[i].name_old);
+    }
+
+
+    // Value types
+        
+    WriterWriteF(writer, "topics:\n");
     WriterWriteF(writer, "values::\n\n");
 
     for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
