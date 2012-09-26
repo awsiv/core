@@ -274,14 +274,9 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
     assert( query_id );
     assert( query );
 
-    sqlite3 *db;
-    Rlist *context_include = NULL,
-          *context_exclude = NULL;
-    bool retval = true;
     Nova_HubLog("Starting DBScheduledReportGeneration");
     struct timespec measure_start = BeginMeasure();
 
-    if( Sqlite3_DBOpen( &db ) )
     const char *report_format = NULL;
 
     bool pdf = output_type & REPORT_FORMAT_PDF;
@@ -289,7 +284,6 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if( pdf && csv )
     {
-        if( GenerateAllTables( db ) )
         report_format = "csv+pdf";
     }
     else if( csv )
@@ -340,32 +334,8 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
     {
         if (fgets(line, sizeof(line), pp))
         {
-            Rlist *tables = GetTableNamesInQuery( query );
-
-            if( tables )
-            {
-                LoadSqlite3Tables( db, tables, user, context_include, context_exclude );
-                DeleteRlist( tables );
-
-                char *err_msg = 0;
-
-                char path[CF_MAXVARSIZE] = { 0 };
-                snprintf( path, CF_MAXVARSIZE - 1, "%s/reports/%s-%s-%ld.csv", CFWORKDIR, user, query_id, time( NULL ) );
-
-                Writer *writer = FileWriter( fopen( path, "w" ) );
-
-                if ( !Sqlite3_Execute( db, query, ( void * ) BuildCSVOutput, ( void * ) writer, err_msg ) )
-                {                    
-                    retval = false;
-                }
-
-                WriterClose( writer );
-                Sqlite3_FreeString( err_msg );
-            }
             Nova_HubLog("%d: %s", ++line_num, line);
         }
-
-        Sqlite3_DBClose( db );
     }
 
     bool retval = cf_pclose(pp);
