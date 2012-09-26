@@ -3415,8 +3415,6 @@ static void SkipOldClientVersionsFilter(bson *b)
     }
 
     DeleteRlist(new_client_versions);
-
-    BsonFinish(b);
 }
 
 /*****************************************************************************/
