@@ -537,12 +537,12 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     WriterWriteF(writer, "\n occurrences:\n");
 
     WriterWriteF(writer, "handles::\n");
-    WriterWriteF(writer, "\"/promise/details/%s\",\n", promise_id);
+    WriterWriteF(writer, "\"%s/%s\",\n", PROMISE_CONTROLLER_PREFIX, promise_id);
     WriterWriteF(writer, "   about_topics => { \"handles::%s\" },\n", promise_id);
     WriterWriteF(writer, "   represents => { \"definition\" };\n\n");
 
     WriterWriteF(writer, "bundles::\n");
-    WriterWriteF(writer, "\"/bundle/details/bundle/%s\"\n", pp->bundle);
+    WriterWriteF(writer, "\"%s/%s\"\n", BUNDLE_CONTROLLER_PREFIX, pp->bundle);
     WriterWriteF(writer, "   about_topics => { \"bundles::%s\" },\n", pp->bundle);
     WriterWriteF(writer, "   represents => { \"parent bundle\" };\n\n");
 
@@ -1161,8 +1161,8 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     if (promise_id)
     {
-        WriterWriteF(writer, "occurrences:  \"/promise/details/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
-                promise_id, promise_id);
+        WriterWriteF(writer, "occurrences:  \"%s/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
+                     PROMISE_CONTROLLER_PREFIX, promise_id, promise_id);
     }
 
 /* For activated classes we can assume that no one will */

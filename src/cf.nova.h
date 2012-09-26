@@ -1032,9 +1032,9 @@ void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 JsonElement *Nova_ScanTheRest(int pid);
 Item *Nova_SearchTopicMap(char *typed_topic,int type,int merge);
 void Nova_SearchPromises(Item **l, char *search, int type);
-void Nova_SearchHosts(Item **l, char *search, int type);
-void Nova_SearchClasses(Item **l, char *search, int type);
-void Nova_SearchVariables(Item **l, char *search, int type);
+void Nova_SearchHosts(Item **l, char *search, int type, char *user);
+void Nova_SearchClasses(Item **l, char *search, int type, char *user);
+void Nova_SearchVariables(Item **l, char *search, int type, char *user);
 void Nova_SearchReports(Item **l, char *search);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
 JsonElement *Nova_ScanOccurrences(int this_id);
@@ -1188,7 +1188,9 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 /***************************************************************************/
 
 #define KM_CONTROLLER_PREFIX "/index.php/knowledge/knowledgemap/pid"
-#define DOC_CONTROLLER_PREFIX "/docs"
+#define DOC_CONTROLLER_PREFIX "/knowledge/docs" // See also scanf_texinfo.c
+#define PROMISE_CONTROLLER_PREFIX "/policies/index/handle"
+#define BUNDLE_CONTROLLER_PREFIX "/policies/index/bundle"
 
 #define KM_AFFECTS_CERT_F "affects"
 #define KM_AFFECTS_CERT_B "is affected by"
