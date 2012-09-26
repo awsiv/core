@@ -108,11 +108,11 @@ main(int argc, char **argv)
 
     if (argv[3] && strcmp(argv[3], "web") == 0)
     {
-        Manual(argv[1], argv[2], "/docs/");
+        Manual(argv[1], argv[2], "/knowledge/docs/");
     }
     else
     {
-        Manual(argv[1], argv[2], "/docs/");
+        Manual(argv[1], argv[2], "/knowledge/docs/");
     }
 }
 
