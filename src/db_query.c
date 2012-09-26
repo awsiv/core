@@ -1690,7 +1690,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
     bson fields;
 
-    BsonSelectReportFields(&fields, 7,
+    BsonSelectReportFields(&fields, 6,
                            cfr_keyhash,
                            cfr_ip_array,
                            cfr_host_array,
