@@ -50,6 +50,8 @@ struct servhist
 
 #define CF_SERVICES_LIMIT 64
 #include "cf.nova.web_api.h"
+#include "db_query.h"
+#include "web_rbac.h"
 
 /*****************************************************************************/
 
@@ -66,34 +68,123 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 /* SEARCH workers                                                            */
 /*****************************************************************************/
 
-void Nova_SearchHosts(Item **list, char *search, int type)
+void Nova_SearchHosts(Item **list, char *search, int type, char *username)
 {
-// Return URL to hosts matching search string (name, address, SHA)
+    EnterpriseDB conn;
+    HubQuery *hq;
+    HubHost *hh;
+    Rlist *rp;
+    char *addr, *name;
+    char url[CF_BUFSIZE];
 
- // ip->name = hostname
- // ip-classes = SHA-key
+    if (!CFDB_Open(&conn))
+    {
+        return;
+    }
+
+    if (strncmp(search, "SHA=", 4) == 0)
+       {
+       printf("Lookfor hosts by key %s\n", search);
+
+       hq = CFDB_QueryHostByHostKey(&conn, search);
+       }
+    else
+       {
+       HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+       
+       // ?? ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+       
+       HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+       if (IsIPV6Address((char *)search) || IsIPV4Address((char *)search))
+          {
+          addr = search;
+          name = NULL;
+          }
+       else
+          {
+          addr = NULL;
+          name = search;
+          }
+       
+       hq = CFDB_QueryHostsByAddress(&conn, name, addr, filter);
+
+       for (rp = hq->hosts; rp != NULL; rp = rp->next)
+          {
+          hh = (HubHost *) rp->item;
+          snprintf(url, sizeof(url), "assets/host_assets/%s\n", hh->keyhash);
+          PrependItem(list, hh->hostname, url);
+          }
+
+       DeleteHubQuery(hq, free);
+       DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+       }
+        
+    CFDB_Close(&conn);
+
 }
 
 /*****************************************************************************/
 
-void Nova_SearchClasses(Item **list, char *search, int type)
+void Nova_SearchClasses(Item **list, char *search, int type, char *username)
+{
+ char url[CF_BUFSIZE], text[CF_BUFSIZE];
+
+/*
+
+    EnterpriseDB conn;
+    HubQuery *hq;
+    HubHost *hh;
+    Rlist *rp;
+    char *addr, *name;
+
+  Return URL to hosts matching search string (classes)
+  CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
+
+    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+    HostClassFilterAddClasses(filter, class_name, NULL);
+
+    HubQuery *hq = CFDB_QueryHostsByHostClassFilter(&conn, filter);
+
+    // Return a link to a list of matching hosts, and url
+    PrependItem(list, hh->hostname, url);
+    
+    DeleteHostClassFilter(filter);
+*/
+
+    snprintf(url, CF_BUFSIZE, "/search/index/name/%s/hosts_only/true/host/All/report/contexts", search);
+    snprintf(text, CF_BUFSIZE, "Generate a list of hosts defining classes like \"%s\"", search);
+    PrependItem(list, text, url);
+}
+
+/*****************************************************************************/
+
+void Nova_SearchVariables(Item **list, char *search, int type, char *username)
 {
 // Return URL to hosts matching search string (classes)
- // CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
-}
 
-/*****************************************************************************/
+ char text[CF_BUFSIZE];
+ snprintf(text, CF_BUFSIZE, "Generate a list of hosts with variables matching %s", search);
+ PrependItem(list, text, "/advancedreports");
 
-void Nova_SearchVariables(Item **list, char *search, int type)
-{
-// Return URL to hosts matching search string (classes)  
 }
 
 /*****************************************************************************/
 
 void Nova_SearchReports(Item **list, char *search)
 {
-// Return URL to hosts matching search string (classes)  
+ char text[CF_BUFSIZE], url[CF_BUFSIZE];
+   int s,e;
+
+ for (int i = 0; i < cfrep_unknown; i++)
+    {
+    if (BlockTextMatch(search, BASIC_REPORTS[i].name_old, &s, &e) || BlockTextMatch(search, BASIC_REPORTS[i].name, &s, &e))
+       {
+       snprintf(url, CF_BUFSIZE, "%s/%s", REPORT_CONTROLLER_PREFIX, BASIC_REPORTS[i].id);
+       snprintf(text, CF_BUFSIZE, "Generate a %s report", BASIC_REPORTS[i].name);
+       PrependItem(list, text, url);
+       }
+    }
 }
 
 /*****************************************************************************/
@@ -878,7 +969,6 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 {
     Rlist *rp;
     bson_iterator it1;
-    EnterpriseDB conn;
     char topic_name[CF_MAXVARSIZE] = { 0 };
     int topic_id = 0;
     char work[CF_BUFSIZE] = { 0 };
@@ -886,7 +976,14 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     Rlist *goal_patterns = NULL;
     char db_goal_patterns[CF_BUFSIZE] = { 0 };
 
-    if (CFDB_GetValue("goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH))
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    if ( CFDB_GetValue( &conn, "goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH ) )
     {
         goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
     }
@@ -904,13 +1001,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     else
     {
         snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
-    }
-
-    
-    if (!CFDB_Open(&conn))
-    {
-        return false;
-    }
+    }   
 
 /* BEGIN query document */
     bson query;

@@ -60,6 +60,7 @@ int EnterpriseExpiry(void)
         installed_time_str[CF_MAXVARSIZE];
     char snumber[CF_SMALLBUF];
     int m_now, m_expire, d_now, d_expire;
+    bool hub = false;
 
 #ifdef HAVE_LIBMONGOC
     bool am_policy_server = false;
@@ -71,14 +72,6 @@ int EnterpriseExpiry(void)
         return false;
     }
 
-    if (RecentlyCheckedLicense())
-    {
-        return false;
-    }
-
-    strcpy(u_day, INTERNAL_EXPIRY_DAY);
-    strcpy(u_month, INTERNAL_EXPIRY_MONTH);
-    strcpy(u_year, INTERNAL_EXPIRY_YEAR);
     policy_server[0] = '\0';
 
 // Verify first whether this host has been bootstrapped
@@ -92,6 +85,30 @@ int EnterpriseExpiry(void)
         fscanf(fp, "%s", policy_server);
         fclose(fp);
     }
+
+    snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
+    MapName(name);
+
+    struct stat sb;
+
+    if (stat(name, &sb) != -1)
+    {
+        HardClass("am_policy_hub");
+        hub = true;
+    }
+    else
+    {
+        hub = false;
+    }
+
+    if (RecentlyCheckedLicense())
+    {
+        return false;
+    }
+
+    strcpy(u_day, INTERNAL_EXPIRY_DAY);
+    strcpy(u_month, INTERNAL_EXPIRY_MONTH);
+    strcpy(u_year, INTERNAL_EXPIRY_YEAR);
 
     char *license_file_path = LicenseFilePath();
     EnterpriseLicense license;
@@ -161,19 +178,12 @@ int EnterpriseExpiry(void)
         CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
         LICENSES = MAX_FREE_LICENSES;
         snprintf(license.company_name, MAX_COMPANY_NAME + 1, "%s", INTERNAL_EXPIRY_COMPANY);
-
-        snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
-        MapName(name);
-
-        struct stat sb;
-
-        if (stat(name, &sb) != -1)
+        if (hub)
         {
             CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, license.company_name);
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
-            HardClass("am_policy_hub");
         }
         else
         {

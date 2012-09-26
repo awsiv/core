@@ -135,6 +135,9 @@ topics:
   "zsh" association => a("make use of","environment variables","are used by");
 
 
+ promises::
+
+    "internal_promise" comment => "A promise handle that is used by CFEngine's internal promises while executing. These promises are not reported on.";
 
 
 ###################################################################################

@@ -58,27 +58,16 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     return false;
 }
 /*****************************************************************************/
-int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
+bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *db_name )
 {
-    EnterpriseDB conn;
-
-    // clients do not run mongo server -- will fail to connect
-
     if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
         CfOut(cf_verbose, "", "Ignoring DB get of (%s) - we are not a policy server", lval);
         return false;
     }
 
-    if (!CFDB_Open(&conn))
-    {
-        return false;
-    }
+    CFDB_HandleGetValue(lval, rval, size, NULL, conn, db_name);
 
-    // TODO: why is this function not returning this result?
-    CFDB_HandleGetValue(lval, rval, size, NULL, &conn, db_name);
-
-    CFDB_Close(&conn);
     return true;
 }
 
@@ -276,7 +265,7 @@ bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *def
     }
 }
 
-
+/*****************************************************************************/
 
 HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 {
@@ -437,6 +426,8 @@ static const char *HostRankMethodToMongoCode(HostRankMethod method,
     }
 }
 
+/*****************************************************************************/
+
 HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
                            HostClassFilter *host_class_filter, PromiseContextMode promise_context)
 {
@@ -526,6 +517,8 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
     mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, NULL);
 }
+
+/*****************************************************************************/
 
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort)
@@ -950,6 +943,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 }
 
 /*****************************************************************************/
+
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                                     char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort,
@@ -1132,6 +1126,8 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
     return NewHubQuery(host_list, record_list);
 }
+
+/*****************************************************************************/
 
 Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode)
@@ -1500,6 +1496,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 }
 
 /*********************************************************************************/
+
 const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
                                        const char *ltype, char *lscope, char *lval)
 {
@@ -6327,6 +6324,8 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
     return delta;
 }
 
+/*****************************************************************************/
+
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result)
 {
     if (lkeyhash == NULL)
@@ -6397,6 +6396,8 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     return 0;
 }
 
+/*****************************************************************************/
+
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 {
     bool return_ip_address;
@@ -6432,6 +6433,8 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
     return return_list;
 }
+
+/*****************************************************************************/
 
 bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
 {
