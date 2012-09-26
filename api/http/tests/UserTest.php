@@ -79,7 +79,7 @@ class UserTest extends APIBaseTest
             $this->assertEquals(201, $this->pest->lastStatus());
 
             // check user was added
-            $users = $this->getResults('/user');
+            $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
@@ -166,7 +166,7 @@ class UserTest extends APIBaseTest
             $this->assertEquals(204, $this->pest->lastStatus());
 
             // check only email was updated and nothing other
-            $users = $this->getResults('/user');
+            $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
@@ -232,7 +232,7 @@ class UserTest extends APIBaseTest
             $this->assertEquals(204, $this->pest->lastStatus());
 
             // check roles was updated
-            $users = $this->getResults('/user');
+            $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
@@ -266,7 +266,7 @@ class UserTest extends APIBaseTest
             $this->assertEquals(204, $this->pest->lastStatus());
 
             // check roles was updated
-            $users = $this->getResults('/user');
+            $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
             $this->assertEquals('snookie', $users[0]['username']);
             $this->assertEquals(0, sizeof($users[0]['roles']));
