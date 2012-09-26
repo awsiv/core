@@ -3,7 +3,7 @@
  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
-#if defined( HAVE_SQLITE3 )
+#if defined( HAVE_LIBSQLITE3 )
 
 #include "cf.nova.h"
 #include "hub.h"

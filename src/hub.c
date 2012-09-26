@@ -693,7 +693,7 @@ static void StartHub(void)
 // before Nova_Maintain() gets run
     CFDB_ConnectAndEnsureIndices();
 
-#if defined( HAVE_SQLITE3 )
+#if defined( HAVE_LIBSQLITE3 )
     SetDefaultPathsForSchedulingReports();
 
     bool scheduled_reports_pending = true;
@@ -709,7 +709,7 @@ static void StartHub(void)
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
-                #if defined( HAVE_SQLITE3 )
+                #if defined( HAVE_LIBSQLITE3 )
                 if( scheduled_reports_pending )
                 {
                     RunScheduledEnterpriseReports();
@@ -718,7 +718,7 @@ static void StartHub(void)
             }
         }
 
-    #if defined( HAVE_SQLITE3 )
+    #if defined( HAVE_LIBSQLITE3 )
         scheduled_reports_pending = CheckPendingScheduledReports();
     #endif
 
