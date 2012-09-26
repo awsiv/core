@@ -1191,6 +1191,7 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 #define DOC_CONTROLLER_PREFIX "/knowledge/docs" // See also scanf_texinfo.c
 #define PROMISE_CONTROLLER_PREFIX "/policies/index/handle"
 #define BUNDLE_CONTROLLER_PREFIX "/policies/index/bundle"
+#define REPORT_CONTROLLER_PREFIX "/search/index/host/All/report"
 
 #define KM_AFFECTS_CERT_F "affects"
 #define KM_AFFECTS_CERT_B "is affected by"
