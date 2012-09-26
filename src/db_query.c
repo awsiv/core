@@ -3466,7 +3466,8 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                               HostClassFilter *hostClassFilter, int sort)
+                               HostClassFilter *hostClassFilter, int sort,
+                               PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
@@ -3485,6 +3486,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     /* Ignore data from client versions < 3.3.0
      * Old clients reported time (hours ago),
@@ -3527,7 +3529,8 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         HubHost *hh = CreateEmptyHubHost();
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp, hh, &record_list );
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp,
+                                                    hh, &record_list, promise_context);
 
         if (found)
         {           
@@ -3552,8 +3555,10 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                               HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort)
+HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
+                                       bool regex, HostClassFilter *hostClassFilter,
+                                       HostColourFilter *hostColourFilter, int sort,
+                                       PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
@@ -3573,6 +3578,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     /* Ignore data from client versions < 3.3.0
      * Old clients reported time (hours ago),
@@ -3617,7 +3623,9 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
         Rlist *record_list_single_host = NULL;
 
         HubHost *hh = CreateEmptyHubHost();
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTime, hh, &record_list_single_host );
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTime,
+                                                    hh, &record_list_single_host,
+                                                    promise_context);
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
 

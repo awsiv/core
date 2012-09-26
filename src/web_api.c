@@ -592,7 +592,9 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter)
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
+                                                 HostClassFilter *hostClassFilter,
+                                                 PromiseContextMode promise_context)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -603,7 +605,9 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,NULL, false);
+    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
+                                                hostClassFilter, NULL, false,
+                                                promise_context);
 
     int tot_hosts = 0;
     int blue_hosts = 0,
@@ -2190,7 +2194,7 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
 
 int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter,
                            HostColourFilter *hostColourFilter, bool lastRunOnly,
-                           PageInfo *page, char *returnval, int bufsize)
+                           PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -2211,11 +2215,12 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     if(lastRunOnly)
     {        
         hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
-                                          hostColourFilter, false);
+                                          hostColourFilter, false, promise_context);
     }
     else
     {
-        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
+                                  true, promise_context);
     }
 
     int skipped_host_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
@@ -2821,7 +2826,8 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
 JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
                                    HostClassFilter *hostClassFilter,
                                    HostColourFilter *hostColourFilter,
-                                   bool lastRunOnly, PageInfo *page)
+                                   bool lastRunOnly, PageInfo *page,
+                                   PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2835,12 +2841,13 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
     if(lastRunOnly)
     {
         hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
-                                          hostClassFilter, hostColourFilter, false);
+                                          hostClassFilter, hostColourFilter, false,
+                                          promise_context);
     }
     else
     {
         hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex,
-                                  hostClassFilter, true);
+                                  hostClassFilter, true, promise_context);
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);

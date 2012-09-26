@@ -151,7 +151,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize);
 int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *host_colour_filter, bool lastRunOnly,
-                           PageInfo *page, char *returnval, int bufsize);
+                           PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
@@ -189,7 +189,8 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
 JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
                                    HostClassFilter *hostClassFilter,
                                    HostColourFilter *hostColourFilter,
-                                   bool lastRunOnly, PageInfo *page);
+                                   bool lastRunOnly, PageInfo *page,
+                                   PromiseContextMode promise_context);
 JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
                                         time_t from, time_t to,
                                         HostClassFilter *hostClassFilter, PageInfo *page);
@@ -207,7 +208,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
  * Summary reports
  */
 JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter, PromiseContextMode promise_context);
-JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter);
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, PromiseContextMode promise_context);
 
 JsonElement *Nova2PHP_list_topics_for_bundle(char *name);
 JsonElement *Nova2PHP_list_knowledge_bundles(void);
