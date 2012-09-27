@@ -513,6 +513,23 @@ class UserTest extends APIBaseTest
         }
     }
 
+    public function testListExternalUsersUsernameRegex()
+    {
+        try
+        {
+            $this->pest->post('/settings', $this->ldapSettings);
+            $this->assertEquals(204, $this->pest->lastStatus());
+
+            $users = $this->getResults('/user?username=user50.*');
+            $this->assertValidJson($users);
+            $this->assertEquals(11, sizeof($users));
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
     public function testUpdateEmailForLDAPUserAsUser()
     {
         try

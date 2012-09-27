@@ -1000,22 +1000,38 @@ static char *_LDAPUri(const HubSettingsLDAP *ldap_settings)
     }
 }
 
-static Rlist *_ListUsernamesExternal(const HubSettingsLDAP *ldap_settings)
+static bool KeepMatchingRegexUsername(void *_username, void *_username_rx)
 {
+    const char *username = _username;
+    const char *username_rx = _username_rx;
+
+    return StringMatchFull(username_rx, username);
+}
+
+static Rlist *_ListUsernamesExternal(const HubSettingsLDAP *ldap_settings, const char *username_rx)
+{
+    Rlist *results = NULL;
+
     switch (ldap_settings->mode)
     {
     case LDAP_MODE_STANDARD:
-        return _GetExternalUsernamesLdap(ldap_settings);
+        results = _GetExternalUsernamesLdap(ldap_settings);
         break;
 
     case LDAP_MODE_AD:
-        return _GetExternalUsernamesAD(ldap_settings);
+        results = _GetExternalUsernamesAD(ldap_settings);
         break;
 
     default:
         assert(false && "External authentication mode not supported");
         return NULL;
     }
+
+    if (username_rx)
+    {
+        RlistFilter(&results, KeepMatchingRegexUsername, (void *)username_rx, free);
+    }
+    return results;
 }
 
 cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *username_rx, Rlist **users_out)
@@ -1065,7 +1081,7 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
 
 static bool _UsernameExistsExternal(const HubSettingsLDAP *ldap_settings, const char *username)
 {
-    Rlist *external_usernames = _ListUsernamesExternal(ldap_settings);
+    Rlist *external_usernames = _ListUsernamesExternal(ldap_settings, NULL);
     bool found = false;
     for (const Rlist *rp = external_usernames; rp; rp = rp->next)
     {
@@ -1208,7 +1224,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char
 
         // make empty records for all the external users we don't have on file
         {
-            Rlist *external_usernames = _ListUsernamesExternal(&settings->ldap);
+            Rlist *external_usernames = _ListUsernamesExternal(&settings->ldap, username_rx);
             for (const Rlist *rp = external_usernames; rp; rp = rp->next)
             {
                 const char *external_username = ScalarValue(rp);

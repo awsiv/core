@@ -8,13 +8,13 @@
 #include "conversion.h"
 #include "sort.h"
 
-static bool _KeepInternal(void *_user)
+static bool _KeepInternal(void *_user, void *_data)
 {
     HubUser *user = _user;
     return !user->external;
 }
 
-static bool _KeepExternal(void *_user)
+static bool _KeepExternal(void *_user, void *_data)
 {
     HubUser *user = _user;
     return user->external;
@@ -53,11 +53,11 @@ PHP_FUNCTION(cfapi_user_list)
         switch (external)
         {
         case TRINARY_TRUE:
-            RlistFilter(&result->records, _KeepExternal, DeleteHubUser);
+            RlistFilter(&result->records, _KeepExternal, NULL, DeleteHubUser);
             break;
 
         case TRINARY_FALSE:
-            RlistFilter(&result->records, _KeepInternal, DeleteHubUser);
+            RlistFilter(&result->records, _KeepInternal, NULL, DeleteHubUser);
             break;
 
         default:
