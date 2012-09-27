@@ -1441,10 +1441,9 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_bundles)
 PHP_FUNCTION(cfpr_report_lastseen)
 {
     char *userName, *hostkey, *host, *address, *hash;
-    char *fhostkey, *fhost, *faddress, *fhash;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, h_len, a_len, h2_len;
-    char buffer[CF_WEBBUFFER];
     long ago;
     time_t tago;
     zend_bool regex;
@@ -1452,9 +1451,13 @@ PHP_FUNCTION(cfpr_report_lastseen)
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbaasbll",
+
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssslbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &hash, &h2_len,
                               &host, &h_len,
                               &address, &a_len,
@@ -1473,10 +1476,10 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
     tago = (time_t) ago;
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhash = (h2_len == 0) ? NULL : hash;
-    fhost = (h_len == 0) ? NULL : host;
-    faddress = (a_len == 0) ? NULL : address;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhash = (h2_len == 0) ? NULL : hash;
+    char *fhost = (h_len == 0) ? NULL : host;
+    char *faddress = (a_len == 0) ? NULL : address;
 
     buffer[0] = '\0';
 
@@ -1488,7 +1491,11 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago, (bool) regex,
+                             filter, &page, buffer, sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2828,16 +2835,17 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
 PHP_FUNCTION(cfpr_hosts_with_lastseen)
 {
     char *userName, *hostkey, *host, *address, *hash;
-    char *fhostkey, *fhost, *faddress, *fhash;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, h_len, a_len, h2_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     long ago;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssslbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &hash, &h2_len,
                               &host, &h_len,
                               &address, &a_len,
@@ -2853,10 +2861,10 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhash = (h2_len == 0) ? NULL : hash;
-    fhost = (h_len == 0) ? NULL : host;
-    faddress = (a_len == 0) ? NULL : address;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhash = (h2_len == 0) ? NULL : hash;
+    char *fhost = (h_len == 0) ? NULL : host;
+    char *faddress = (a_len == 0) ? NULL : address;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -2866,9 +2874,11 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago,
-                                       (bool) regex, filter, &page);
+                                       (bool) regex, filter, &page, promise_context_mode);
 
     if (!json_out)
     {

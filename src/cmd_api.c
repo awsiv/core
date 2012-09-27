@@ -443,7 +443,9 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, filter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
+                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL);
+
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -508,7 +510,9 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, filter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
+                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL);
+
     DeleteHostClassFilter(filter);
 
     if (!CSV)

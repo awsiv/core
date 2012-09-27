@@ -1827,8 +1827,10 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 }
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
-                             bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
+                             char *laddr, time_t lago, bool regex, time_t from,
+                             time_t to, int sort, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context)
 {
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
@@ -1849,6 +1851,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 

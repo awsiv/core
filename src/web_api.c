@@ -1947,8 +1947,10 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
-                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress,
+                             time_t lago, int lregex, HostClassFilter *hostClassFilter,
+                             PageInfo *page, char *returnval, int bufsize,
+                             PromiseContextMode promise_context)
 {
     char buffer[CF_BUFSIZE];
     HubLastSeen *hl;
@@ -1967,7 +1969,8 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
     {
         return false;
     }
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, hostClassFilter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
+                            0, time(NULL), true, hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
@@ -2751,7 +2754,8 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
 
 JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
                                      char *laddress, time_t lago, int lregex,
-                                     HostClassFilter *hostClassFilter, PageInfo *page)
+                                     HostClassFilter *hostClassFilter, PageInfo *page,
+                                     PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2761,7 +2765,8 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
     }
 
     HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress,
-                                      lago, lregex, 0, time(NULL), false, hostClassFilter);
+                                      lago, lregex, 0, time(NULL), false,
+                                      hostClassFilter, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
