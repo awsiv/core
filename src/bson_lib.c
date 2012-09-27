@@ -263,6 +263,21 @@ bool BsonAppendBool( bson *b, const char *key, const bool value )
 }
 
 /*****************************************************************************/
+
+bool BsonAppendInt( bson *b, const char *key, int value )
+{
+    assert( b );
+    assert( key );
+
+    int retval = bson_append_int( b, key, value );
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+
 bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
 {
     if (value == NULL || value[0] == '\0')
