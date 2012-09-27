@@ -126,7 +126,7 @@ class QueryTest extends APIBaseTest
 
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
-            $this->assertEquals('Namespace', $response['data'][0]['header'][1]);
+            $this->assertEquals('NameSpace', $response['data'][0]['header'][1]);
             $this->assertEquals('Bundle', $response['data'][0]['header'][2]);
             $this->assertEquals('Name', $response['data'][0]['header'][3]);
             $this->assertEquals('Value', $response['data'][0]['header'][4]);
