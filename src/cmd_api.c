@@ -247,7 +247,9 @@ int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex, 0, time(NULL), filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex,
+                             0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL);
+
     DeleteHostClassFilter(filter);
 
     if (!CSV)

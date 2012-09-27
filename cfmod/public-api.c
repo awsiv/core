@@ -796,7 +796,9 @@ PHP_FUNCTION(cfmod_resource_variable)
             char bundle[CF_MAXVARSIZE] = { 0 };
             SplitScopeName(scope, ns, bundle);
 
-            result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value, SerializeRvalType(type), true, from, to, filter);
+            result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value,
+                                         SerializeRvalType(type), true, from, to,
+                                         filter, PROMISE_CONTEXT_MODE_ALL);
         }
 
         DATABASE_CLOSE(&conn);

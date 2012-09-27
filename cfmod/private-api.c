@@ -200,7 +200,9 @@ PHP_FUNCTION(cfpr_host_info)
         RETURN_NULL();
     }
 
-    HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL,
+                                           NULL, false, 0, time(NULL), NULL,
+                                           PROMISE_CONTEXT_MODE_ALL);
 
     time_t last_report_update = -1;
     int last_update_size = 0;
@@ -1017,19 +1019,21 @@ PHP_FUNCTION(cfpr_class_cloud)
 PHP_FUNCTION(cfpr_report_vars)
 {
     char *userName, *hostkey, *scope, *lval, *rval, *type;
-    char *fhostkey, *fscope, *flval, *frval, *ftype;
+    char *promise_context = NULL; int pc_len;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, s_len, l_len, r_len, t_len;
     zend_bool regex;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &scope, &s_len,
                               &lval, &l_len,
                               &rval, &r_len,
@@ -1046,11 +1050,11 @@ PHP_FUNCTION(cfpr_report_vars)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fscope = (s_len == 0) ? NULL : scope;
-    flval = (l_len == 0) ? NULL : lval;
-    frval = (r_len == 0) ? NULL : rval;
-    ftype = (t_len == 0) ? NULL : type;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fscope = (s_len == 0) ? NULL : scope;
+    char *flval = (l_len == 0) ? NULL : lval;
+    char *frval = (r_len == 0) ? NULL : rval;
+    char *ftype = (t_len == 0) ? NULL : type;
 
     buffer[0] = '\0';
 
@@ -1062,7 +1066,11 @@ PHP_FUNCTION(cfpr_report_vars)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, (bool) regex,
+                         filter, &page, buffer, sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2585,15 +2593,16 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 PHP_FUNCTION(cfpr_hosts_with_vars)
 {
     char *userName, *hostkey, *scope, *lval, *rval, *type;
-    char *fhostkey, *fscope, *flval, *frval, *ftype;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, s_len, l_len, r_len, t_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &scope, &s_len,
                               &lval, &l_len,
                               &rval, &r_len,
@@ -2609,11 +2618,11 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fscope = (s_len == 0) ? NULL : scope;
-    flval = (l_len == 0) ? NULL : lval;
-    frval = (r_len == 0) ? NULL : rval;
-    ftype = (t_len == 0) ? NULL : type;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fscope = (s_len == 0) ? NULL : scope;
+    char *flval = (l_len == 0) ? NULL : lval;
+    char *frval = (r_len == 0) ? NULL : rval;
+    char *ftype = (t_len == 0) ? NULL : type;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -2623,9 +2632,11 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval,
-                                   ftype, (bool) regex, filter, &page);
+    json_out = Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, (bool) regex,
+                                   filter, &page, promise_context_mode);
 
     if (!json_out)
     {

@@ -1226,8 +1226,11 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns, const char *bundle, const char *llval, const char *lrval,
-                              const char *ltype, bool regex, time_t from, time_t to, const HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns,
+                              const char *bundle, const char *llval, const char *lrval,
+                              const char *ltype, bool regex, time_t from, time_t to,
+                              const HostClassFilter *hostClassFilter,
+                              PromiseContextMode promise_context)
 {
     bson_iterator it1, it2, it3, it4, it5;
     HubHost *hh;
@@ -1247,6 +1250,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 
@@ -1304,6 +1308,28 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                         }
 
                         SplitScopeName(scope, rns, rbundle);
+
+                        switch (promise_context)
+                        {
+                            case PROMISE_CONTEXT_MODE_USER:
+                                if (CompareStringOrRegex(rbundle,
+                                                         CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                                {
+                                    continue;
+                                }
+                                break;
+
+                            case PROMISE_CONTEXT_MODE_INTERNAL:
+                                if (!CompareStringOrRegex(rbundle,
+                                                         CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                                {
+                                    continue;
+                                }
+                                break;
+
+                            case PROMISE_CONTEXT_MODE_ALL:
+                                break;
+                        }
                     }
 
                     while (bson_iterator_next(&it3))

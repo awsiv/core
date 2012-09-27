@@ -1622,7 +1622,8 @@ static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const cha
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL,
+                                       NULL, false, 0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL);
 
     returnval[0] = '\0';
 
@@ -1673,7 +1674,8 @@ static int Nova_GetReportedList(const char *hostkey, const char *ns, const char 
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL, NULL, false, 0, time(NULL), NULL);
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, NULL,
+                                       NULL, false, 0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
