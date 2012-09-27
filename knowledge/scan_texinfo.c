@@ -25,7 +25,7 @@
 #define CF_MAXVARSIZE 1024
 #define cf_error 1
 
-#define DOC_CONTROLLER_PREFIX "/knowledge/docs"
+#define DOC_CONTROLLER_PREFIX "/knowledge/docs/"
 
 /*******************************************************************/
 
