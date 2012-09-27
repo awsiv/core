@@ -94,6 +94,13 @@ typedef void EnterpriseDB;
 #define CF_SEARCH_REGEX 1
 #define CF_SEARCH_EXACT 2
 
+// Search categories in order of "importance"
+#define CF_CATEGORY_REPORTS 0
+#define CF_CATEGORY_HOSTS 1
+#define CF_CATEGORY_VARS 2 
+#define CF_CATEGORY_CLASSES 3
+#define CF_CATEGORY_TOPIC 4
+
 /************************************************************************************/
 /* Storyboarding (is not a form of torture)                                         */
 /************************************************************************************/
