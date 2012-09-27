@@ -3173,7 +3173,7 @@ Item *Nova2PHP_search(char *search, bool regex, char *username)
              {
              snprintf(url, CF_BUFSIZE, "%s/%d", KM_CONTROLLER_PREFIX, ipt->counter);
              snprintf(text, CF_BUFSIZE, "%s appears in context '%s'", ipt->name, ipt->classes);
-             PrependItem(&results, text, url);
+             PrependFullItem(&results, text, url, CF_CATEGORY_TOPIC, 0);
              }
 
           DeleteItemList(topics);
@@ -3213,12 +3213,7 @@ Item *Nova2PHP_search(char *search, bool regex, char *username)
        {
        PrependItem(&results, "Nothing matched the search", "any");
        }
-    
-    for (ip = results; ip != NULL; ip=ip->next)
-       {
-       printf("TEXT \"%s\", URL=%s\n", ip->name, ip->classes);
-       }
-    
+        
     return results;
 }
 
