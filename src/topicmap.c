@@ -114,6 +114,7 @@ void Nova_SearchHosts(Item **list, char *search, int type, char *username)
           hh = (HubHost *) rp->item;
           snprintf(url, sizeof(url), "assets/host_assets/%s\n", hh->keyhash);
           PrependItem(list, hh->hostname, url);
+          PrependFullItem(list, hh->hostname, url, CF_CATEGORY_HOSTS, 0);
           }
 
        DeleteHubQuery(hq, free);
@@ -154,7 +155,7 @@ void Nova_SearchClasses(Item **list, char *search, int type, char *username)
 
     snprintf(url, CF_BUFSIZE, "/search/index/name/%s/hosts_only/true/host/All/report/contexts", search);
     snprintf(text, CF_BUFSIZE, "Generate a list of hosts defining classes like \"%s\"", search);
-    PrependItem(list, text, url);
+    PrependFullItem(list, text, url, CF_CATEGORY_CLASSES, 0);
 }
 
 /*****************************************************************************/
@@ -165,8 +166,7 @@ void Nova_SearchVariables(Item **list, char *search, int type, char *username)
 
  char text[CF_BUFSIZE];
  snprintf(text, CF_BUFSIZE, "Generate a list of hosts with variables matching %s", search);
- PrependItem(list, text, "/advancedreports");
-
+ PrependFullItem(list, text, "/advancedreports", CF_CATEGORY_VARS, 0);
 }
 
 /*****************************************************************************/
@@ -182,7 +182,7 @@ void Nova_SearchReports(Item **list, char *search)
        {
        snprintf(url, CF_BUFSIZE, "%s/%s", REPORT_CONTROLLER_PREFIX, BASIC_REPORTS[i].id);
        snprintf(text, CF_BUFSIZE, "Generate a %s report", BASIC_REPORTS[i].name);
-       PrependItem(list, text, url);
+       PrependFullItem(list, text, url, CF_CATEGORY_REPORTS, 0);
        }
     }
 }
@@ -385,7 +385,7 @@ void Nova_DumpTopics()
 
 void Nova_ShowTopic(char *qualified_topic)
 {
- char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE], bundle[CF_BUFSIZE];
+     char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE], bundle[CF_BUFSIZE];
     int id;
     Writer *writer = NULL;
     JsonElement *json = NULL;
