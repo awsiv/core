@@ -349,7 +349,7 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
         }
     }
 
-    bool retval = cf_pclose(pp);
+    bool retval = cf_pclose(pp) == 0;
 
     Nova_HubLog("Finished DBScheduledReportGeneration");
     EndMeasure( "DBScheduledReportGeneration", measure_start );
