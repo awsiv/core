@@ -9,6 +9,7 @@
 #include "scorecards.h"
 #include "granules.h"
 #include "misc_lib.h"
+#include "item_lib.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -3248,6 +3249,8 @@ PHP_FUNCTION(cfpr_search_topics)
     char *fsearch;
     int user_len, s_len;
     zend_bool regex;
+    Item *results, *ip;
+    JsonElement *out = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssb",
                               &username, &user_len,
@@ -3268,9 +3271,53 @@ PHP_FUNCTION(cfpr_search_topics)
 
     fsearch = (s_len == 0) ? NULL : search;
 
-    JsonElement *out = NULL;
-    out = Nova2PHP_search_topics(fsearch, (bool) regex);
+    //Deprecated
+    //JsonElement *out = NULL;
+    //out = Nova2PHP_search_topics(fsearch, (bool) regex);
+    
+    results =  Nova2PHP_search(fsearch, true, username);
 
+    if (results)
+       {
+       out = JsonArrayCreate(100);
+       
+       for (ip = results; ip != NULL; ip = ip->next)
+          {
+          JsonElement *json_obj = JsonObjectCreate(3);
+          JsonObjectAppendString(json_obj, "url", ip->classes);
+          JsonObjectAppendString(json_obj, "text", ip->name);
+
+          switch (ip->counter)
+             {
+             case CF_CATEGORY_REPORTS:
+                 JsonObjectAppendString(json_obj, "category", "report data");
+                 break;             
+             case CF_CATEGORY_HOSTS:
+                 JsonObjectAppendString(json_obj, "category", "host data");
+                 break;                 
+             case CF_CATEGORY_VARS:
+                 JsonObjectAppendString(json_obj, "category", "host data");
+                 break;                 
+             case CF_CATEGORY_CLASSES:
+                 JsonObjectAppendString(json_obj, "category", "host data");
+                 break;
+             case CF_CATEGORY_TOPIC:
+             default:
+                 JsonObjectAppendString(json_obj, "category", "index page");
+             }
+          
+          JsonArrayAppendObject(out, json_obj);
+          }
+       
+       DeleteItemList(results);       
+       }
+    else
+       {
+       out = JsonArrayCreate(0);
+       }
+
+    DeleteItemList(results);
+    
     RETURN_JSON(out);
 }
 
