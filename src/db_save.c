@@ -2493,7 +2493,7 @@ void CFDB_SaveScheduledReport(EnterpriseDB *conn, const char *user, const char *
     }
 
     BsonAppendBool( set_op, cfr_already_run, false );
-    BsonAppendBool( set_op, cfr_enabled, enabled );
+    BsonAppendBool( set_op, cfr_enabled, true ); // enabled by default until API support is added
     bson_append_int( set_op, cfr_report_output_type, report_output_type );
     BsonFinish( set_op );
 
