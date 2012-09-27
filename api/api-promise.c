@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "db-serialize.h"
 #include "db_query.h"
+#include "log.h"
 
 
 PHP_FUNCTION(cfapi_promise_list)
@@ -47,12 +48,20 @@ PHP_FUNCTION(cfapi_promise_list)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubQuery *result = CFDB_QueryPromisesUnexpanded(conn, filter);
+    HubQuery *result = NULL;
+    size_t total = 0;
+    {
+        LogPerformanceTimer timer = LogPerformanceStart();
+        result = CFDB_QueryPromisesUnexpanded(conn, filter);
+        total = RlistLen(result->records);
+        LogPerformanceStop(&timer, "Queries unexpanded promises from database, got %d results", total);
+    }
+    assert(result);
+
     DeletePromiseFilter(filter);
     EnterpriseDBRelease(conn);
 
     JsonElement *data = JsonArrayCreate(5000);
-    const size_t total = RlistLen(result->records);
     PageRecords(&(result->records), &page, DeleteHubPromise);
 
     for (const Rlist *rp = result->records; rp; rp = rp->next)
@@ -104,7 +113,13 @@ PHP_FUNCTION(cfapi_promise_get)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubQuery *result = CFDB_QueryPromisesUnexpanded(conn, filter);
+
+    HubQuery *result = NULL;
+    {
+        LogPerformanceTimer timer = LogPerformanceStart();
+        result = CFDB_QueryPromisesUnexpanded(conn, filter);
+        LogPerformanceStop(&timer, "Queried unexpanded promise %s from database", handle);
+    }
     DeletePromiseFilter(filter);
     EnterpriseDBRelease(conn);
 

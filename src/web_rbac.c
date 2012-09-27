@@ -250,6 +250,7 @@ static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, c
 static cfapi_errid _AuthenticateExternal(const HubSettingsLDAP *ldap_settings, const char *username, const char *password)
 {
     assert(false && "Tried to authenticate using LDAP on a non-LDAP build");
+    syslog(LOG_ERR, "Attempted to authenticate user %s on a non-LDAP build", username);
     return ERRID_RBAC_ACCESS_DENIED;
 }
 
@@ -262,9 +263,11 @@ static bool _UserIsInRole(const HubUser *user, const char *rolename)
     {
         if (StringSafeEqual(rolename, ScalarValue(rp)))
         {
+            syslog(LOG_DEBUG, "Found that user %s is in role %s", user->username, rolename);
             return true;
         }
     }
+    syslog(LOG_DEBUG, "Could not find that user %s is in role %s", user->username, rolename);
     return false;
 }
 
@@ -324,11 +327,13 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
             if (VerifyPasswordInternal(password, db_password, db_salt))
             {
                 bson_destroy(&record);
+                syslog(LOG_DEBUG, "Authenticated internal user %s", username);
                 return ERRID_SUCCESS;
             }
             else
             {
                 bson_destroy(&record);
+                syslog(LOG_DEBUG, "Authenticating internal user %s FAILED (password)", username);
                 return ERRID_RBAC_ACCESS_DENIED;
             }
         }
@@ -336,6 +341,7 @@ static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *usernam
         bson_destroy(&record);
     }
 
+    syslog(LOG_DEBUG, "Authenticated internal user %s FAILED (no such user)", username);
     return ERRID_RBAC_ACCESS_DENIED;
 }
 
@@ -751,6 +757,15 @@ cfapi_errid _UpdateUser(EnterpriseDB *conn, bool external, const char *username,
         errid = ERRID_DB_OPERATION;
     }
 
+    if (errid == ERRID_SUCCESS)
+    {
+        syslog(LOG_INFO, "Saved %s user %s to database", external ? "external" : "internal", username);
+    }
+    else
+    {
+        syslog(LOG_NOTICE, "FAILED saving %s user %s to database", external ? "external" : "internal", username);
+    }
+
     return errid;
 }
 
@@ -838,6 +853,16 @@ cfapi_errid _DeleteUser(EnterpriseDB *conn, bool external, const char *username)
     {
         errid = ERRID_DB_OPERATION;
     }
+
+    if (errid == ERRID_SUCCESS)
+    {
+        syslog(LOG_INFO, "Deleted %s user %s from database", external ? "external" : "internal", username);
+    }
+    else
+    {
+        syslog(LOG_NOTICE, "FAILED deleting %s user %s from database", external ? "external" : "internal", username);
+    }
+
     return errid;
 }
 
@@ -889,9 +914,11 @@ static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
         char *bind_dn = StringConcatenate(7, ldap_settings->login_attribute, "=", ldap_settings->username, ",", user_dir, ",", ldap_settings->base_dn);
 
         const char *errstr = NULL;
+        LogPerformanceTimer timer = LogPerformanceStart();
         Rlist *partial_result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_LDAP,
                                                               ldap_settings->login_attribute, "subtree", "sasl",
                                                               start_tls, 1, _EXTERNAL_MAX_PAGE_SIZE, &errstr);
+        LogPerformanceStop(&timer, "Fetched list of external usernames using OpenLDAP");
 
         free(dn);
         free(bind_dn);
@@ -937,8 +964,10 @@ static Rlist *_GetExternalUsernamesAD(const HubSettingsLDAP *ldap_settings)
     bool start_tls = StringSafeEqual("tls", ldap_settings->encryption);
 
     const char *errstr = NULL;
+    LogPerformanceTimer timer = LogPerformanceStart();
     Rlist *result = CfLDAP_GetSingleAttributeList(ldap_settings->username, ldap_settings->password, uri, bind_dn, dn, _EXTERNAL_FILTER_AD, ldap_settings->login_attribute, "subtree", "sasl",
                                          start_tls, 1, _EXTERNAL_MAX_PAGE_SIZE, &errstr);
+    LogPerformanceStop(&timer, "Fetched list of external usernames using Active Directory");
 
     free(dn);
     free(bind_dn);
@@ -1309,9 +1338,18 @@ cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, cons
     bson_destroy(&set_op);
 
     cfapi_errid errid = ERRID_SUCCESS;
-    if (!MongoCheckForError(conn, "CFDB_DeleteRole", NULL, false))
+    if (!MongoCheckForError(conn, "CFDB_CreateRole", NULL, false))
     {
         errid = ERRID_DB_OPERATION;
+    }
+
+    if (errid == ERRID_SUCCESS)
+    {
+        syslog(LOG_INFO, "Created role %s", roleName);
+    }
+    else
+    {
+        syslog(LOG_NOTICE, "FAILED creating role %s", roleName);
     }
 
     CFDB_Close(conn);
@@ -1363,6 +1401,15 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
     if (!MongoCheckForError(conn, "CFDB_DeleteRole", NULL, false))
     {
         errid = ERRID_DB_OPERATION;
+    }
+
+    if (errid == ERRID_SUCCESS)
+    {
+        syslog(LOG_INFO, "Deleted role %s", roleName);
+    }
+    else
+    {
+        syslog(LOG_NOTICE, "FAILED deleting role %s", roleName);
     }
 
     CFDB_Close(conn);
