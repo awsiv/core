@@ -2381,20 +2381,20 @@ static void NewHit(Hit **list,char *context, char *locator, enum representations
 static void DeleteHitList(Hit *hp)
 
 {
- if (hp == NULL)
+    if (hp == NULL)
     {
-    return;
+        return;
     }
  
- if (hp->next)
+    if (hp->next)
     {
-    DeleteHitList(hp->next);
+        DeleteHitList(hp->next);
     }
 
- free(hp->occurrence_context);
- free(hp->locator);
- free(hp->represents);
- free(hp);
+    free(hp->occurrence_context);
+    free(hp->locator);
+    free(hp->represents);
+    free(hp);
 }
 
 /*****************************************************************************/
