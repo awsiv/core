@@ -238,6 +238,14 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
 
     while( mongo_cursor_next( cursor ) == MONGO_OK )
     {
+        const char *run_class = NULL;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_run_classes, &run_class);
+
+        if( NULL_OR_EMPTY( run_class ) || !IsDefinedClass( run_class, NULL ) )
+        {
+            continue;
+        }
+
         const char *user = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_id, &user );
 
