@@ -3308,8 +3308,6 @@ PHP_FUNCTION(cfpr_search_topics)
           
           JsonArrayAppendObject(out, json_obj);
           }
-       
-       DeleteItemList(results);       
        }
     else
        {
