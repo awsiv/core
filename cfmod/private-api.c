@@ -3283,27 +3283,32 @@ PHP_FUNCTION(cfpr_search_topics)
        
        for (ip = results; ip != NULL; ip = ip->next)
           {
-          JsonElement *json_obj = JsonObjectCreate(3);
+          JsonElement *json_obj = JsonObjectCreate(4);
           JsonObjectAppendString(json_obj, "url", ip->classes);
           JsonObjectAppendString(json_obj, "text", ip->name);
 
           switch (ip->counter)
              {
              case CF_CATEGORY_REPORTS:
-                 JsonObjectAppendString(json_obj, "category", "report data");
+                 JsonObjectAppendString(json_obj, "category", "Tools, Reports and Apps");
+                 JsonObjectAppendInteger(json_obj, "rank", 1);
                  break;             
              case CF_CATEGORY_HOSTS:
-                 JsonObjectAppendString(json_obj, "category", "host data");
+                 JsonObjectAppendString(json_obj, "category", "Possible matches in hosts");
+                 JsonObjectAppendInteger(json_obj, "rank", 2);                 
                  break;                 
              case CF_CATEGORY_VARS:
-                 JsonObjectAppendString(json_obj, "category", "host data");
+                 JsonObjectAppendString(json_obj, "category", "Possible matches in hosts");
+                 JsonObjectAppendInteger(json_obj, "rank", 2);                 
                  break;                 
              case CF_CATEGORY_CLASSES:
-                 JsonObjectAppendString(json_obj, "category", "host data");
+                 JsonObjectAppendString(json_obj, "category", "Possible matches in hosts");
+                 JsonObjectAppendInteger(json_obj, "rank", 2);                 
                  break;
              case CF_CATEGORY_TOPIC:
              default:
-                 JsonObjectAppendString(json_obj, "category", "index page");
+                 JsonObjectAppendString(json_obj, "category", "Topics in the knowledge index");
+                 JsonObjectAppendInteger(json_obj, "rank", 3);                 
              }
           
           JsonArrayAppendObject(out, json_obj);
