@@ -1280,7 +1280,8 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 
     snprintf(classname, CF_MAXVARSIZE-1, "%s_.*", srv);
 
-    hq = CFDB_QueryClasses(&dbconn, NULL, classname, true, now - (time_t)bluehost_threshold, now, NULL, false);
+    hq = CFDB_QueryClasses(&dbconn, NULL, classname, true, now - (time_t)bluehost_threshold,
+                           now, NULL, false, PROMISE_CONTEXT_MODE_ALL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

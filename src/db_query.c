@@ -697,8 +697,10 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char *lclass, bool regex, time_t from, time_t to,
-                            HostClassFilter *hostClassFilter, int sort)
+HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
+                            const char *lclass, bool regex, time_t from, time_t to,
+                            HostClassFilter *hostClassFilter, int sort,
+                            PromiseContextMode promise_context)
 {
     bson query;
     bson_init(&query);
@@ -709,6 +711,8 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char 
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
 
     BsonFinish(&query);
 

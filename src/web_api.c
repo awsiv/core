@@ -1488,8 +1488,10 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                            time_t from, time_t to, char *returnval, int bufsize)
+int Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
+                            HostClassFilter *hostClassFilter, PageInfo *page,
+                            time_t from, time_t to, char *returnval, int bufsize,
+                            PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1505,7 +1507,8 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to, hostClassFilter, true);
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
+                                     hostClassFilter, true, promise_context);
 
     PageRecords(&(hq->records), page, DeleteHubClass);
 
@@ -2606,7 +2609,8 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
-                                    HostClassFilter *hostClassFilter, PageInfo *page, time_t from, time_t to)
+                                    HostClassFilter *hostClassFilter, PageInfo *page,
+                                    time_t from, time_t to, PromiseContextMode promise_context)
 {    
     EnterpriseDB dbconn;
 
@@ -2615,9 +2619,8 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex,
-                                     from, to,
-                                     hostClassFilter, false);
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
+                                     hostClassFilter, false, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -4212,8 +4215,8 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
 /*****************************************************************************/
 
-int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, char *returnval,
-                          int bufsize)
+int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter,
+                          char *returnval, int bufsize, PromiseContextMode promise_context)
 {
     HubQuery *hq;
     Rlist *rp;
@@ -4235,7 +4238,8 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
     }
 
     time_t now = time(NULL);
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)bluehost_threshold, now, hostClassFilter, false);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)bluehost_threshold,
+                           now, hostClassFilter, false, promise_context);
 
     returnval[0] = '\0';
 

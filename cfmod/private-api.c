@@ -742,27 +742,29 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
 PHP_FUNCTION(cfpr_report_classes)
 {
-    char *userName, *hostkey, *name;
-    char *fname, *fhostkey;
-    zval *contextIncludes = NULL, *contextExcludes = NULL;
-
-    int user_len, hk_len, n_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *name = NULL; int n_len;
+    char *promise_context = NULL; int pc_len;
+    zval *contextIncludes = NULL;
+    zval *contextExcludes = NULL;
     zend_bool regex;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
-    char *sortColumnName;
-    int sc_len;
-    bool sortDescending;
+    char *sort_column_name; int sc_len;
+    bool sort_descending;
     time_t from, to;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaasbllll",
-                              &userName, &user_len,
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbllll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &regex,
                               &contextIncludes,
                               &contextExcludes,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &sort_column_name, &sc_len, &sort_descending,
                               &from, &to,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
@@ -772,12 +774,12 @@ PHP_FUNCTION(cfpr_report_classes)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fname = (n_len == 0) ? NULL : name;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fname = (n_len == 0) ? NULL : name;
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -785,7 +787,11 @@ PHP_FUNCTION(cfpr_report_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, from, to, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, from,
+                            to, buffer, sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2390,16 +2396,20 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
 PHP_FUNCTION(cfpr_hosts_with_classes)
 {
-    char *userName, *hostkey, *name;
-    int user_len, hk_len, n_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *name = NULL; int n_len;
+    char *promise_context = NULL; int pc_len;
+    zval *context_includes = NULL;
+    zval *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
     time_t from, to;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaallll",
-                              &userName, &user_len,
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaallll",
+                              &username, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &regex,
                               &context_includes,
@@ -2416,7 +2426,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fname = (n_len == 0) ? NULL : name;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2424,8 +2434,11 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page, from, to);
+    json_out = Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter,
+                                      &page, from, to, promise_context_mode);
 
     if (!json_out)
     {
@@ -3610,8 +3623,8 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
 {
     char *username = NULL;
     char *promise_context_mode = NULL;
-    zval *contextIncludes = NULL,
-         *contextExcludes = NULL;
+    zval *contextIncludes = NULL;
+    zval *contextExcludes = NULL;
     long username_len = -1;
     long promise_context_mode_len = -1;
 
@@ -4747,12 +4760,18 @@ PHP_FUNCTION(cfpr_service_level_histogram)
 
 PHP_FUNCTION(cfpr_get_class_frequency)
 {
-    char *userName, *hkey, *fhkey, *pattern, *fpattern;
-    int user_len, p_len, h_len, count;
-    char buffer[1000000];
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *promise_context = NULL; int promise_context_len;
+    char *pattern = NULL; int p_len;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
-                              &userName, &user_len, &hkey, &h_len, &pattern, &p_len) == FAILURE)
+    char buffer[CF_WEBBUFFER];
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssss",
+                             &username, &user_len,
+                             &hostkey, &hk_len,
+                             &promise_context, &promise_context_len,
+                             &pattern, &p_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -4760,18 +4779,22 @@ PHP_FUNCTION(cfpr_get_class_frequency)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fpattern = (p_len == 0) ? NULL : pattern;
-    fhkey = (h_len == 0) ? NULL : hkey;
+    char *fpattern = (p_len == 0) ? NULL : pattern;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
 
     buffer[0] = '\0';
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-    count = Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    int count = Nova2PHP_countclasses(fhostkey, fpattern, 1, filter, buffer, sizeof(buffer),
+                                      promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_LONG((long) count);
@@ -4781,12 +4804,18 @@ PHP_FUNCTION(cfpr_get_class_frequency)
 
 PHP_FUNCTION(cfpr_report_class_frequency)
 {
-    char *userName, *hkey, *fhkey, *pattern, *fpattern;
-    int user_len, p_len, h_len;
+    char *username = NULL; int user_len;
+    char *hostkey = NULL; int hk_len;
+    char *promise_context = NULL; int promise_context_len;
+    char *pattern = NULL; int p_len;
+
     char buffer[CF_WEBBUFFER];
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
-                              &userName, &user_len, &hkey, &h_len, &pattern, &p_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssss",
+                              &username, &user_len,
+                              &hostkey, &hk_len,
+                              &promise_context, &promise_context_len,
+                              &pattern, &p_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -4796,16 +4825,20 @@ PHP_FUNCTION(cfpr_report_class_frequency)
 
     buffer[0] = '\0';
 
-    fpattern = (p_len == 0) ? NULL : pattern;
-    fhkey = (h_len == 0) ? NULL : hkey;
+    char *fpattern = (p_len == 0) ? NULL : pattern;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
 
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-    Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_countclasses(fhostkey, fpattern, 1, filter, buffer, sizeof(buffer),
+                          promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
