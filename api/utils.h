@@ -18,6 +18,7 @@
     { \
         char *buffer = NULL; \
         xasprintf(&buffer, msg, ##__VA_ARGS__); \
+        syslog(LOG_DEBUG, "Generic error returned to client, code %d, message: %s", code, buffer); \
         zend_throw_exception(cfapi_exception, buffer, code TSRMLS_CC); \
         free(buffer); \
         RETURN_NULL(); \
@@ -25,12 +26,14 @@
 
 #define THROW_ARGS_MISSING() \
     { \
+        syslog(LOG_ERR, "PHP function called with wrong number of arguments"); \
         zend_throw_exception(cfapi_exception, "Wrong number or arguments", ERRID_ARGUMENT_MISSING TSRMLS_CC); \
         RETURN_NULL(); \
     }
 
 #define THROW_FORBIDDEN() \
     { \
+        syslog(LOG_DEBUG, "Sent Access Denied to client"); \
         zend_throw_exception(cfapi_exception, "Forbidden", ERRID_RBAC_ACCESS_DENIED TSRMLS_CC); \
         RETURN_NULL(); \
     }
@@ -38,6 +41,7 @@
 #define ARGUMENT_CHECK_CONTENTS(cond, arg) \
  if(!(cond)) \
     { \
+    syslog(LOG_ERR, "Required argument is empty: %s", arg); \
     zend_throw_exception(cfapi_exception, "Required argument is empty: " arg, ERRID_ARGUMENT_WRONG TSRMLS_CC); \
     RETURN_NULL(); \
     }

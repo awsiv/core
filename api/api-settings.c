@@ -8,6 +8,8 @@
 
 PHP_FUNCTION(cfapi_settings_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/settings");
+
     const char *username = NULL; int username_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
@@ -29,8 +31,7 @@ PHP_FUNCTION(cfapi_settings_get)
     EnterpriseDBRelease(conn);
     if (err != ERRID_SUCCESS)
     {
-        DeleteHubSettings(settings);
-        THROW_GENERIC(err, "Error retrieving settings");
+        syslog(LOG_ERR, "Retrieving settings from database FAILED, using built-in defaults");
     }
 
     JsonElement *data = JsonArrayCreate(1);
@@ -41,6 +42,8 @@ PHP_FUNCTION(cfapi_settings_get)
 
 PHP_FUNCTION(cfapi_settings_post)
 {
+    syslog(LOG_DEBUG, "Requesting POST /api/settings");
+
     const char *username = NULL; int username_len = 0;
     const char *post_data = NULL; int post_data_len = 0;
 
@@ -84,9 +87,7 @@ PHP_FUNCTION(cfapi_settings_post)
         cfapi_errid err = CFDB_QuerySettings(conn, &old_settings);
         if (err != ERRID_SUCCESS)
         {
-            DeleteHubSettings(new_settings);
-            EnterpriseDBRelease(conn);
-            THROW_GENERIC(err, "Unable to retrieve old settings");
+            syslog(LOG_ERR, "Retrieving settings from database FAILED, using built-in defaults");
         }
     }
     assert(old_settings);
@@ -100,6 +101,7 @@ PHP_FUNCTION(cfapi_settings_post)
         char error_msg[CF_BUFSIZE] = { 0 };
         if (!HubSettingsValidate(updated_settings, error_msg))
         {
+            syslog(LOG_NOTICE, "Settings update FAILED validation");
             DeleteHubSettings(updated_settings);
             EnterpriseDBRelease(conn);
             THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Error validating settings: %s", error_msg);
@@ -115,6 +117,7 @@ PHP_FUNCTION(cfapi_settings_post)
             DeleteHubSettings(updated_settings);
             THROW_GENERIC(err, "Unable to save settings");
         }
+        syslog(LOG_DEBUG, "Settings saved");
     }
 
     DeleteHubSettings(updated_settings);

@@ -13,7 +13,7 @@ static const char *API_VERSION = "v1";
 
 PHP_FUNCTION(cfapi)
 {
-    syslog(LOG_DEBUG, "Requesting /api");
+    syslog(LOG_DEBUG, "Requesting GET /api");
 
     const char *username = NULL; int username_len = 0;
     const char *password = NULL; int password_len = 0;
@@ -72,6 +72,8 @@ PHP_FUNCTION(cfapi)
 
 PHP_FUNCTION(cfapi_auth)
 {
+    syslog(LOG_DEBUG, "Requesting Authentication (cfapi_auth)");
+
     const char *username = NULL; int username_len = 0;
     const char *password = NULL; int password_len = 0;
 
@@ -100,6 +102,8 @@ PHP_FUNCTION(cfapi_auth)
 
 PHP_FUNCTION(cfapi_query_post)
 {
+    syslog(LOG_DEBUG, "Requesting POST /api/query");
+
     const char *username = NULL; int username_len = 0;
     const char *query = NULL; int query_len = 0;
 

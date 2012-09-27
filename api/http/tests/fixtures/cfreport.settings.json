@@ -1,5 +1,6 @@
 [
 {
-    "ldapHost": "google.com"
+    "ldapHost": "google.com",
+    "logLevel": 7
 }
 ]

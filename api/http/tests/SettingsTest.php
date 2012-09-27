@@ -14,6 +14,7 @@ class SettingsTest extends APIBaseTest
             $this->assertEquals(1, sizeof($settings));
 
             $this->assertEquals("google.com", $settings[0]['ldapHost']);
+            $this->assertEquals("debug", $settings[0]['logLevel']);
         }
         catch (Pest_Exception $e)
         {
@@ -125,7 +126,7 @@ class SettingsTest extends APIBaseTest
             $this->assertValidJson($settings);
             $this->assertEquals(1, sizeof($settings));
 
-            $this->assertEquals('error', $settings[0]['logLevel']);
+            $this->assertEquals('debug', $settings[0]['logLevel']);
 
             $this->pest->post('/settings', '{
                 "logLevel": "notice"

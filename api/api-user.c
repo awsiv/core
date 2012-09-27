@@ -22,6 +22,8 @@ static bool _KeepExternal(void *_user)
 
 PHP_FUNCTION(cfapi_user_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/user");
+
     const char *username = NULL, *username_arg_rx = NULL;
     zval *external_zval = NULL;
     int username_len = 0, username_arg_rx_len;
@@ -80,6 +82,8 @@ PHP_FUNCTION(cfapi_user_list)
 
 PHP_FUNCTION(cfapi_user_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/user/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
 
@@ -111,6 +115,8 @@ PHP_FUNCTION(cfapi_user_get)
 
 PHP_FUNCTION(cfapi_user_put)
 {
+    syslog(LOG_DEBUG, "Requesting PUT /api/user/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *password = NULL; int password_len = 0;
@@ -164,6 +170,8 @@ PHP_FUNCTION(cfapi_user_put)
 
 PHP_FUNCTION(cfapi_user_post)
 {
+    syslog(LOG_DEBUG, "Requesting POST /api/user/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     char *password = NULL; int password_len = 0;
@@ -208,6 +216,8 @@ PHP_FUNCTION(cfapi_user_post)
 
 PHP_FUNCTION(cfapi_user_delete)
 {
+    syslog(LOG_DEBUG, "Requesting DELETE /api/user/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
 
@@ -232,6 +242,8 @@ PHP_FUNCTION(cfapi_user_delete)
 
 PHP_FUNCTION(cfapi_user_subscription_query_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/user/:user/subscription/query");
+
     const char *username = NULL, *username_arg;
     int username_len = 0, username_arg_len = 0;
 
@@ -271,6 +283,8 @@ PHP_FUNCTION(cfapi_user_subscription_query_list)
 
 PHP_FUNCTION(cfapi_user_subscription_query_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/user/:user/subscription/query/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *sub_id = NULL; int sub_id_len = 0;
@@ -313,6 +327,8 @@ PHP_FUNCTION(cfapi_user_subscription_query_get)
 
 PHP_FUNCTION(cfapi_user_subscription_query_put)
 {
+    syslog(LOG_DEBUG, "Requesting PUT /api/user/:user/subscription/query/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *sub_id = NULL; int sub_id_len = 0;
@@ -403,6 +419,8 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
 
 PHP_FUNCTION(cfapi_user_subscription_query_delete)
 {
+    syslog(LOG_DEBUG, "Requesting DELETE /api/user/:user/subscription/query/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *username_arg = NULL; int username_arg_len = 0;
     const char *sub_id = NULL; int sub_id_len = 0;

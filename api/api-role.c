@@ -8,6 +8,8 @@
 
 PHP_FUNCTION(cfapi_role_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/role");
+
     const char *username = NULL; int username_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
@@ -36,6 +38,8 @@ PHP_FUNCTION(cfapi_role_list)
 
 PHP_FUNCTION(cfapi_role_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/role/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *role = NULL; int role_len = 0;
 
@@ -69,6 +73,8 @@ PHP_FUNCTION(cfapi_role_get)
 
 PHP_FUNCTION(cfapi_role_put)
 {
+    syslog(LOG_DEBUG, "Requesting PUT /api/role/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *name = NULL; int name_len = 0;
     const char *description = NULL; int description_len = 0;
@@ -116,6 +122,8 @@ PHP_FUNCTION(cfapi_role_put)
 
 PHP_FUNCTION(cfapi_role_post)
 {
+    syslog(LOG_DEBUG, "Requesting POST /api/role/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *name = NULL; int name_len = 0;
     const char *description = NULL; int description_len = 0;
@@ -158,6 +166,8 @@ PHP_FUNCTION(cfapi_role_post)
 
 PHP_FUNCTION(cfapi_role_delete)
 {
+    syslog(LOG_DEBUG, "Requesting DELETE /api/role/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *name = NULL; int name_len = 0;
 

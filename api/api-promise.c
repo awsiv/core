@@ -9,6 +9,8 @@
 
 PHP_FUNCTION(cfapi_promise_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/promise");
+
     const char *username = NULL; int username_len = 0;
     const char *type = NULL; int type_len = 0;
     PageInfo page = { 0 };
@@ -78,6 +80,8 @@ PHP_FUNCTION(cfapi_promise_list)
 
 PHP_FUNCTION(cfapi_promise_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/promise/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *handle = NULL; int handle_len = 0;
 

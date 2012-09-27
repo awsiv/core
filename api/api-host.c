@@ -12,6 +12,8 @@
 
 PHP_FUNCTION(cfapi_host_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/host");
+
     const char *username = NULL; int username_len = 0;
     zval *context_include = NULL, *context_exclude = NULL;
     PageInfo page = { 0 };
@@ -71,6 +73,8 @@ PHP_FUNCTION(cfapi_host_list)
 
 PHP_FUNCTION(cfapi_host_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/host/:id");
+
     const char *username = NULL; int username_len = 0;
     const char *hostkey = NULL; int hostkey_len = 0;
 
@@ -114,6 +118,8 @@ PHP_FUNCTION(cfapi_host_get)
 
 PHP_FUNCTION(cfapi_host_delete)
 {
+    syslog(LOG_DEBUG, "Requesting DELETE /api/host");
+
     const char *username = NULL; int username_len = 0;
     const char *hostkey = NULL; int hostkey_len = 0;
 
@@ -150,6 +156,8 @@ PHP_FUNCTION(cfapi_host_delete)
 
 PHP_FUNCTION(cfapi_host_context_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/host/:id/context");
+
     const char *username = NULL; int username_len = 0;
     const char *hostkey = NULL; int hostkey_len = 0;
 
@@ -191,6 +199,8 @@ PHP_FUNCTION(cfapi_host_context_list)
 
 PHP_FUNCTION(cfapi_host_vital_list)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/host/:id/vital");
+
     const char *username = NULL; int username_len = 0;
     const char *hostkey = NULL; int hostkey_len = 0;
 
@@ -238,6 +248,8 @@ PHP_FUNCTION(cfapi_host_vital_list)
 
 PHP_FUNCTION(cfapi_host_vital_get)
 {
+    syslog(LOG_DEBUG, "Requesting GET /api/host/:host/vital/:vital");
+
     const char *username = NULL; int username_len = 0;
     const char *hostkey = NULL; int hostkey_len = 0;
     const char *vital_id = NULL; int vital_id_len = 0;

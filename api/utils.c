@@ -63,6 +63,7 @@ EnterpriseDB *EnterpriseDBAcquire(void)
     EnterpriseDB *conn = xmalloc(sizeof(EnterpriseDB));
     if (!CFDB_Open(conn))
     {
+        syslog(LOG_ERR, "Acquiring database connection FAILED");
         return NULL;
     }
     return conn;
@@ -72,6 +73,10 @@ bool EnterpriseDBRelease(EnterpriseDB *conn)
 {
     assert(conn);
     bool released = CFDB_Close(conn);
+    if (!released)
+    {
+        syslog(LOG_ERR, "Releasing database connection FAILED");
+    }
     free(conn);
     return released;
 }
