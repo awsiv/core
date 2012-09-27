@@ -1195,7 +1195,7 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 /* Knowledge relationships                                                 */
 /***************************************************************************/
 
-#define KM_CONTROLLER_PREFIX "/index.php/knowledge/knowledgemap/pid"
+#define KM_CONTROLLER_PREFIX "/knowledge/knowledgemap/pid"
 #define DOC_CONTROLLER_PREFIX "/knowledge/docs" // See also scanf_texinfo.c
 #define PROMISE_CONTROLLER_PREFIX "/policies/index/handle"
 #define BUNDLE_CONTROLLER_PREFIX "/policies/index/bundle"
