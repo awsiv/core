@@ -193,7 +193,9 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
 }
 /*****************************************************************************/
 
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, time_t blueHorizonTime, HubHost *hh, Rlist **record_list )
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
+                                    time_t blueHorizonTime, HubHost *hh,
+                                    Rlist **record_list, PromiseContextMode promise_context )
 {
     char keyhash[CF_MAXVARSIZE] = {0},
          hostnames[CF_MAXVARSIZE] = {0},
@@ -241,6 +243,26 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, 
                 bson_iterator_subiterator(&iterAllBundles, &iterBundleData);
 
                 HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rname);
+
+                switch (promise_context)
+                {
+                    case PROMISE_CONTEXT_MODE_USER:
+                        if (CompareStringOrRegex(hb->bundle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                        {
+                            continue;
+                        }
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_INTERNAL:
+                        if (!CompareStringOrRegex(hb->bundle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                        {
+                            continue;
+                        }
+                        break;
+
+                    case PROMISE_CONTEXT_MODE_ALL:
+                        break;
+                }
 
                 if(CompareStringOrRegex(hb->bundle, lname, regex))
                 {

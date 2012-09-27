@@ -42,6 +42,8 @@ LogPerformanceTimer LogPerformanceStart(void)
         return start;
     }
     return start;
+#else
+    return NULL;
 #endif
 }
 

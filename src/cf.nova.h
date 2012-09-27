@@ -94,6 +94,13 @@ typedef void EnterpriseDB;
 #define CF_SEARCH_REGEX 1
 #define CF_SEARCH_EXACT 2
 
+// Search categories in order of "importance"
+#define CF_CATEGORY_REPORTS 0
+#define CF_CATEGORY_HOSTS 1
+#define CF_CATEGORY_VARS 2 
+#define CF_CATEGORY_CLASSES 3
+#define CF_CATEGORY_TOPIC 4
+
 /************************************************************************************/
 /* Storyboarding (is not a form of torture)                                         */
 /************************************************************************************/
@@ -1188,7 +1195,7 @@ void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, 
 /* Knowledge relationships                                                 */
 /***************************************************************************/
 
-#define KM_CONTROLLER_PREFIX "/index.php/knowledge/knowledgemap/pid"
+#define KM_CONTROLLER_PREFIX "/knowledge/knowledgemap/pid"
 #define DOC_CONTROLLER_PREFIX "/knowledge/docs" // See also scanf_texinfo.c
 #define PROMISE_CONTROLLER_PREFIX "/policies/index/handle"
 #define BUNDLE_CONTROLLER_PREFIX "/policies/index/bundle"

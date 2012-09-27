@@ -35,7 +35,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char *lclass, bool regex, time_t from, time_t to,
-                            HostClassFilter *hostClassFilter, int sort);
+                            HostClassFilter *hostClassFilter, int sort, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes);
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter, PromiseContextMode promise_context_mode);
@@ -55,9 +55,9 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                               HostClassFilter *hostClassFilter, int sort);
+                               HostClassFilter *hostClassFilter, int sort, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                               HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort);
+                               HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff, bool regex,
@@ -91,8 +91,8 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter);
 Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, char *bNameReferenced);
 HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex);
-int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType, char *fileName, char *outBuf,
-                             int outBufSz);
+int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType,
+                             char *fileName, char *outBuf, int outBufSz);
 Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *ip, time_t from, time_t to, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
 Item *CFDB_GetLastseenCache(void);
@@ -112,15 +112,18 @@ cfapi_errid CFDB_QuerySettings(EnterpriseDB *conn, HubSettings **settings_out);
 // Singleton Queries
 //*****************************************************************************
 int CFDB_QueryBundleCount(EnterpriseDB *conn);
-int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
-bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey, const HostClassFilter *hostClassFilter);
+int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+                    HostColourFilter *host_colour_filter, PromiseContextMode promise_context);
+bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey,
+                          const HostClassFilter *hostClassFilter);
 int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query);
 int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hostNameSz);
 HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey);
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result);
-int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash, HostClassFilter *host_class_filter);
-const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
-                                       const char *ltype, char *lscope, char *lval);
+int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
+                               HostClassFilter *host_class_filter);
+const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash, const char *ltype,
+                                       char *lscope, char *lval);
 /**
  * CFDB_QueryValueFromHostKeyStr:
  * Read top level value for corresponding db key and hostkey

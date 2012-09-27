@@ -231,7 +231,13 @@ int main(int argc, char *argv[])
     }
     else if (strlen(SEARCH) > 0)
     {
-        Item *list = Nova2PHP_search(SEARCH, true, "admin");
+        Item *ip, *list = Nova2PHP_search(SEARCH, true, "admin");
+
+        for (ip = list; ip != NULL; ip=ip->next)
+        {
+           printf("TEXT \"%s\", URL=%s\n", ip->name, ip->classes);
+        }
+
         exit(0);
     }
 #endif
