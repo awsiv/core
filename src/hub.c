@@ -521,6 +521,8 @@ static int ScheduleRun(void)
     DeleteAlphaList(&VADDCLASSES);
     InitAlphaList(&VADDCLASSES);
     DeleteItemList(IPADDRESSES);
+    DeleteAlphaList(&VHARDHEAP);
+    InitAlphaList(&VHARDHEAP);
     IPADDRESSES = NULL;
 
     DeleteScope("this");
