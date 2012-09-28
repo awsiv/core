@@ -29,31 +29,34 @@ PHP_FUNCTION(cfapi_host_list)
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
 
-    HostClassFilter *context_filter = NULL;
+    HubQuery *result = NULL;
     {
-        HubQuery *result = CFDB_HostClassFilterFromUserRBAC(username);
-        if (result->errid != ERRID_RBAC_DISABLED && result->errid != ERRID_SUCCESS)
+        HubQuery *filter_result = CFDB_HostClassFilterFromUserRBAC(username);
+        if (filter_result->errid != ERRID_RBAC_DISABLED && filter_result->errid != ERRID_SUCCESS)
         {
             THROW_GENERIC(result->errid, "Access denied");
         }
 
-        context_filter = (HostClassFilter *)HubQueryGetFirstRecord(result);
+        HostClassFilter *context_filter = (HostClassFilter *)HubQueryGetFirstRecord(filter_result);
         HostClassFilterAddIncludeExcludeLists(context_filter, context_include, context_exclude);
-    }
 
-    EnterpriseDB *conn = EnterpriseDBAcquire();
-    if (!conn)
-    {
-        THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
-    }
+        EnterpriseDB *conn = EnterpriseDBAcquire();
+        if (!conn)
+        {
+            THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
+        }
 
-    HubQuery *result = CFDB_QueryHostsByHostClassFilter(conn, context_filter);
+        result = CFDB_QueryHostsByHostClassFilter(conn, context_filter);
 
-    if (!EnterpriseDBRelease(conn))
-    {
-        DeleteHubQuery(result, NULL);
-        THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+        if (!EnterpriseDBRelease(conn))
+        {
+            DeleteHubQuery(result, NULL);
+            THROW_GENERIC(ERRID_DBCLOSE, "Unable to close database");
+        }
+
+        DeleteHubQuery(filter_result, DeleteHostClassFilter);
     }
+    assert(result);
 
     const size_t total = RlistLen(result->hosts);
     PageRecords(&result->hosts, &page, DeleteHubHost);
@@ -65,7 +68,7 @@ PHP_FUNCTION(cfapi_host_list)
         JsonArrayAppendObject(data, HubHostToJson(host));
     }
 
-    DeleteHubQuery(result, NULL);
+    DeleteHubQuery(result, DeleteHubHost);
 
     RETURN_JSON(PackageResult(data, page.pageNum, total));
 }
