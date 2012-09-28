@@ -1081,7 +1081,11 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
         Rlist *roles = BsonStringArrayAsRlist(&cursor->current, dbkey_user_roles);
 
         PrependRlistAlien(users_out, NewHubUser(external, username, name, email, roles));
+
+        DeleteRlist(roles);
     }
+
+    mongo_cursor_destroy(cursor);
 
     return ERRID_SUCCESS;
 }
