@@ -186,7 +186,13 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
 
     for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
     {
-        if (strcmp("cf3-Reference.html", dirp->d_name) == 0 || strcmp("Enterprise-2-2-OwnersManual.html", dirp->d_name) == 0)
+
+        if (strcmp("cf3-upgrade.html", dirp->d_name) == 0)
+        {
+            continue;
+        }
+    
+        if (strcmp("cf3-Reference.html", dirp->d_name) == 0 || FullTextMatch("Enterprise.*\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&refs, namedir, dirp->d_name);
         }
