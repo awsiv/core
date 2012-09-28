@@ -89,8 +89,6 @@ static void test_get_column_count(void **state)
 
         assert( sqlite3_prepare_v2(db, select_op, -1, &statement, 0) == SQLITE_OK);
         
-        printf("%s\n", select_op);
-
         assert((sqlite3_column_count(statement) == column_count[i]) && "This means that the table columns have been altered from what it was originally");
 
         assert(sqlite3_finalize(statement) == SQLITE_OK);
