@@ -697,8 +697,6 @@ static void StartHub(void)
 
 #if defined( HAVE_LIBSQLITE3 )
     SetDefaultPathsForSchedulingReports();
-
-    bool scheduled_reports_pending = true;
 #endif
 
     while (true)
@@ -711,21 +709,15 @@ static void StartHub(void)
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
-                #if defined( HAVE_LIBSQLITE3 )
-                if( scheduled_reports_pending )
-                {
-                    RunScheduledEnterpriseReports();
-                }
-                #endif
             }
         }
 
-    #if defined( HAVE_LIBSQLITE3 )
-        scheduled_reports_pending = CheckPendingScheduledReports();
-    #endif
-
         CfOut(cf_verbose, "", "Sleeping...");
         sleep(CFPULSETIME);
+
+#if defined( HAVE_LIBSQLITE3 )
+        RunScheduledEnterpriseReports();
+#endif
     }
 
     YieldCurrentLock(thislock); // Never get here
