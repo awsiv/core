@@ -28,6 +28,9 @@
 
 #include <assert.h>
 
+// no static - used in tests
+char *SqlVariableExpandNumeric(const char *query, const char *key, long value);
+
 const char *Nova_ShortArch(const char *arch)
 {
     if (strcmp(arch, "i386") == 0)
@@ -239,4 +242,29 @@ bool BundleQualifiedNameSplit(const char *qualified_bundle_name, char namespace_
     }
 
     return false;
+}
+
+char *SqlVariableExpand(const char *query)
+{
+#define SQL_UNIX_TIMESTAMP_NAME "TIMESTAMP_UNIX()"
+#define SQL_UNIX_TIMESTAMP_DAYS_NAME "TIMESTAMP_UNIX_DAYS()"
+
+    time_t seconds_since_1970 = time(NULL);
+    long days_since_1970 = (seconds_since_1970 / SECONDS_PER_DAY);
+    
+    char *exp = SqlVariableExpandNumeric(query, SQL_UNIX_TIMESTAMP_NAME, seconds_since_1970);
+    char *exp2 = SqlVariableExpandNumeric(exp, SQL_UNIX_TIMESTAMP_DAYS_NAME, days_since_1970);
+    free(exp);
+
+    return exp2;
+}
+
+char *SqlVariableExpandNumeric(const char *query, const char *key, long value)
+{
+    char value_str[32];
+    snprintf(value_str, sizeof(value_str), "%ld", value);
+    
+    char *exp = SearchAndReplace(query, key, value_str);
+
+    return exp;
 }

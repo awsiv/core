@@ -15,6 +15,7 @@
 #include "reporting-engine.h"
 #include "hub-scheduled-reports.h"
 #include "db_query.h"
+#include "conversion.h"
 #include <assert.h>
 
 static pid_t REPORT_SCHEDULER_CHILD_PID = -1;
@@ -299,10 +300,14 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
         return false;
     }
 
+    char *query_expanded = SqlVariableExpand(query);
+
     snprintf(cmd, CF_BUFSIZE - 1,
              "%s/php %s/index.php advancedreports generatescheduledreport "
              "\"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"",
-             php_path, docroot, user, query_id, query, report_format, report_title, report_description, email );
+             php_path, docroot, user, query_id, query_expanded, report_format, report_title, report_description, email );
+
+    free(query_expanded);
 
     Nova_HubLog( "DBScheduledReportGeneration: command = %s", cmd );
     FILE *pp;
