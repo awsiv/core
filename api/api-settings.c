@@ -36,6 +36,7 @@ PHP_FUNCTION(cfapi_settings_get)
 
     JsonElement *data = JsonArrayCreate(1);
     JsonArrayAppendObject(data, HubSettingsToJson(settings));
+    DeleteHubSettings(settings);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }

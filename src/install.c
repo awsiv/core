@@ -1285,11 +1285,13 @@ HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSe
 
     if (new_settings->ldap.ad_domain)
     {
+        free(updated->ldap.ad_domain);
         updated->ldap.ad_domain = SafeStringDuplicate(new_settings->ldap.ad_domain);
     }
 
     if (new_settings->ldap.base_dn)
     {
+        free(updated->ldap.base_dn);
         updated->ldap.base_dn = SafeStringDuplicate(new_settings->ldap.base_dn);
     }
 
@@ -1300,16 +1302,19 @@ HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSe
 
     if (new_settings->ldap.encryption)
     {
+        free(updated->ldap.encryption);
         updated->ldap.encryption = SafeStringDuplicate(new_settings->ldap.encryption);
     }
 
     if (new_settings->ldap.host)
     {
+        free(updated->ldap.host);
         updated->ldap.host = SafeStringDuplicate(new_settings->ldap.host);
     }
 
     if (new_settings->ldap.login_attribute)
     {
+        free(updated->ldap.login_attribute);
         updated->ldap.login_attribute = SafeStringDuplicate(new_settings->ldap.login_attribute);
     }
 
@@ -1320,6 +1325,7 @@ HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSe
 
     if (new_settings->ldap.password)
     {
+        free(updated->ldap.password);
         updated->ldap.password = SafeStringDuplicate(new_settings->ldap.password);
     }
 
@@ -1335,11 +1341,13 @@ HubSettings *HubSettingsUpdate(const HubSettings *existing_settings, const HubSe
 
     if (new_settings->ldap.username)
     {
+        free(updated->ldap.username);
         updated->ldap.username = SafeStringDuplicate(new_settings->ldap.username);
     }
 
     if (new_settings->ldap.users_directory)
     {
+        free(updated->ldap.users_directory);
         updated->ldap.users_directory = SafeStringDuplicate(new_settings->ldap.users_directory);
     }
 
