@@ -192,7 +192,7 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
             continue;
         }
     
-        if (strcmp("cf3-Reference.html", dirp->d_name) == 0 || FullTextMatch("Enterprise.*\.html", dirp->d_name))
+        if (strcmp("cf3-Reference.html", dirp->d_name) == 0 || FullTextMatch("Enterprise.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&refs, namedir, dirp->d_name);
         }
