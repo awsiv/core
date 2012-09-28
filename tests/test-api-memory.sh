@@ -74,14 +74,16 @@ runtest()
     PHPFILE=$1
     
     echo "Testing $PHPFILE..."
+    echo -e "php -n -d extension=$API -f $PHPFILE"
     
     TIME_START_TEST=$(date +%s)
-    OUTPUT_PHP=$(php -n -d extension=$API -f $PHPFILE 2>&1)
+    #OUTPUT_PHP=$(php -n -d extension=$API -f $PHPFILE) # 2>&1)
     TIME_END_TEST=$(date +%s)
 
     SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
     
     OUTPUT_VALGRIND=$(valgrind -q --main-stacksize=10000000 --max-stackframe=10000000 --leak-check=full --log-fd=1 php -n -d extension=$API -f $PHPFILE 2>/dev/null)
+    echo "done"
     
     if [ -n "$OUTPUT_VALGRIND" ]
     then
