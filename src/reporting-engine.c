@@ -12,6 +12,7 @@
 #include "conversion.h"
 #include "assert.h"
 #include "conf.h"
+#include "log.h"
 
 #if defined(HAVE_LIBSQLITE3)
 
@@ -143,7 +144,9 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 
     DeleteRlist(tables);
 
+    LogPerformanceTimer timer = LogPerformanceStart();
     JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
+    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op);
 
     Sqlite3_DBClose(db);
     return out;
@@ -264,6 +267,7 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
                     return ERRID_DB_OPERATION;
                 }
 
+                LogPerformanceTimer timer = LogPerformanceStart();
                 if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
                 {
                     (*fnptr) (db, promise_filter);
@@ -272,6 +276,7 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
                 {
                     (*fnptr) (db, context_filter);
                 }
+                LogPerformanceStop(&timer, "Loaded table %s", TABLES[i]);
 
                 if (!Sqlite3_CommitTransaction(db))
                 {
