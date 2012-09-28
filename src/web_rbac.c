@@ -688,8 +688,10 @@ cfapi_errid CFDB_CreateUser(const char *creating_username, const char *username,
 
     if (!_UserIsAdmin(conn, settings, creating_username))
     {
+        DeleteHubSettings(settings);
         return ERRID_ACCESS_DENIED;
     }
+    DeleteHubSettings(settings);
 
     cfapi_errid result = _CreateUser(conn, false, username, password, name, email, roles);
 
@@ -886,8 +888,10 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username)
 
     if (!_UserIsAdmin(conn, settings, deleting_username))
     {
+        DeleteHubSettings(settings);
         return ERRID_ACCESS_DENIED;
     }
+    DeleteHubSettings(settings);
 
     cfapi_errid result = ERRID_UNKNOWN;
     if (_GetUserRecord(conn, false, username, NULL) == ERRID_SUCCESS)
