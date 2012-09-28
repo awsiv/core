@@ -130,6 +130,7 @@ PHP_MINIT_FUNCTION(cfapi)
             HubSettings *settings = NULL;
             if (CFDB_QuerySettings(conn, &settings) == ERRID_SUCCESS)
             {
+                assert(settings);
                 setlogmask(LOG_UPTO(settings->log_level));
                 syslog(LOG_NOTICE, "Initialized log-level: %s", LogLevelToString(settings->log_level));
             }
@@ -138,6 +139,9 @@ PHP_MINIT_FUNCTION(cfapi)
                 setlogmask(LOG_UPTO(log_fallback_level));
                 syslog(LOG_ERR, "Unable to load settings from database, log-level set to: %s", LogLevelToString(log_fallback_level));
             }
+
+            DeleteHubSettings(settings);
+            EnterpriseDBRelease(conn);
         }
         else
         {

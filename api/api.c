@@ -28,7 +28,7 @@ PHP_FUNCTION(cfapi)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(password_len, "password");
 
-    bool authenticated_external;
+    bool authenticated_external = false;
     if (CFDB_UserAuthenticate(username, password, &authenticated_external) != ERRID_SUCCESS)
     {
         THROW_GENERIC(ERRID_RBAC_ACCESS_DENIED, "Forbidden");
