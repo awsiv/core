@@ -25,7 +25,7 @@
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
-                         "Name VARCHAR(100), " \
+                         "HostName VARCHAR(100), " \
                          "IPAddress VARCHAR(50), " \
                          "ReportTimeStamp BIGINT);"
 
@@ -37,7 +37,7 @@
 
 #define CREATE_SQL_CONTEXTS "CREATE TABLE " SQL_TABLE_CONTEXTS "(" \
                             "HostKey VARCHAR(100), " \
-                            "Name VARCHAR(50), " \
+                            "ContextName VARCHAR(50), " \
                             "DefineTimeStamp BIGINT, " \
                             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
@@ -45,16 +45,16 @@
                              "HostKey VARCHAR(100), " \
                              "NameSpace VARCHAR(50), " \
                              "Bundle VARCHAR(50), " \
-                             "Name VARCHAR(50), " \
-                             "Value VARCHAR(100), " \
-                             "Type VARCHAR(20), " \
+                             "VariableName VARCHAR(50), " \
+                             "VariableValue VARCHAR(100), " \
+                             "VariableType VARCHAR(20), " \
                              "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_SOFTWARE "CREATE TABLE " SQL_TABLE_SOFTWARE "(" \
                             "HostKey VARCHAR(100), " \
-                            "Name VARCHAR(50), " \
-                            "Version VARCHAR(50), " \
-                            "Architecture VARCHAR(20), " \
+                            "SoftwareName VARCHAR(50), " \
+                            "SoftwareVersion VARCHAR(50), " \
+                            "SoftwareArchitecture VARCHAR(20), " \
                             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_PROMISESTATUS "CREATE TABLE " SQL_TABLE_PROMISESTATUS "(" \
