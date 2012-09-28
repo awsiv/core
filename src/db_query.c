@@ -1299,15 +1299,17 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                     char rns[CF_MAXVARSIZE] = { 0 };
                     char rbundle[CF_MAXVARSIZE] = { 0 };
                     {
-                        const char *scope = bson_iterator_key(&it2);
-
-                        if(BsonIsKeyCorrupt(scope))
                         {
-                            CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", scope);
-                            continue;
-                        }
+                            const char *scope = bson_iterator_key(&it2);
 
-                        SplitScopeName(scope, rns, rbundle);
+                            if(BsonIsKeyCorrupt(scope))
+                            {
+                                CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", scope);
+                                continue;
+                            }
+
+                            SplitScopeName(scope, rns, rbundle);
+                        }
 
                         switch (promise_context)
                         {
@@ -1503,7 +1505,13 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlienUnlocked(&record_list, NewHubVariable(hh, dtype, rns, rbundle, rlval, rval, timestamp));
+                            PrependRlistAlienUnlocked(&record_list, NewHubVariable(hh,
+                                                                                   dtype,
+                                                                                   NULL_OR_EMPTY(rns) ? NULL : rns,
+                                                                                   rbundle,
+                                                                                   rlval,
+                                                                                   rval,
+                                                                                   timestamp));
                         }
                         else
                         {
