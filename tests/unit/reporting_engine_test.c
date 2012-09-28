@@ -14,8 +14,8 @@ static void test_get_table_names(void **state)
                                 "",
                                 "SELECT * FROM Hosts h, Variables v",
                                 "SELECT * FROM PromiseStatusLast s, PromiseDefinitions d, Contexts c",
-                                "SELECT Name FROM FileChanges f, Contexts s",
-                                "SELECT f.FileName, COUNT(*) FROM FileChanges f, Contexts s WHERE f.HostKey=s.HostKey AND f.ChangeTimeStamp>0 AND s.Name='linux' GROUP BY f.FileName ORDER BY f.FileName",
+                                "SELECT ContextName FROM FileChanges f, Contexts s",
+                                "SELECT f.FileName, COUNT(*) FROM FileChanges f, Contexts s WHERE f.HostKey=s.HostKey AND f.ChangeTimeStamp>0 AND s.ContextName='linux' GROUP BY f.FileName ORDER BY f.FileName",
                                 "SELECT * FROM Hosts, VARIABLES",
                                 NULL
                              };
@@ -64,13 +64,13 @@ static void test_get_column_count(void **state)
                          };
 
     int column_count[] = {
-                            5,  // hosts
+                            4,  // hosts
                             3,  // filechanges
                             3,  // contexts
-                            5,  // variables
+                            6,  // variables
                             4,  // software
                             4,  // promisestatuslast
-                            4,  // promisedefinitions
+                            5,  // promisedefinitions
                             0
                         };
 
@@ -88,6 +88,8 @@ static void test_get_column_count(void **state)
         snprintf(select_op, CF_BUFSIZE - 1, "SELECT * from %s;", tables[i]);
 
         assert( sqlite3_prepare_v2(db, select_op, -1, &statement, 0) == SQLITE_OK);
+        
+        printf("%s\n", select_op);
 
         assert((sqlite3_column_count(statement) == column_count[i]) && "This means that the table columns have been altered from what it was originally");
 
@@ -111,11 +113,11 @@ static void test_validate_column_names(void **state)
                          };
 
     const char *column_names[][5] = {
-      {"HostKey", "Name", "IPAddress", "ReportTimeStamp", "Colour"},        // hosts
+      {"HostKey", "HostName", "IPAddress", "ReportTimeStamp"},        // hosts
       {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL},               // filechanges
-      {"HostKey", "Name", "DefineTimeStamp", NULL, NULL},                   // contexts
-      {"HostKey", "Scope", "Name", "Value", "Type"},                        // variables
-      {"HostKey", "Name", "Version", "Architecture", NULL},                   // software
+      {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL},                   // contexts
+      {"HostKey", "Bundle", "VariableName", "VariableValue", "VariableType"},                        // variables
+      {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL},                   // software
       {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL},  // promisestatuslast
       {"PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
       {NULL, NULL, NULL, NULL,NULL}
