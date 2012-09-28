@@ -291,7 +291,14 @@ static bool _UserIsAdmin(EnterpriseDB *conn, bool ldap_enabled, const char *user
         }
     }
 
-    return user && _UserIsInRole(user, _ROLE_ADMIN);
+    bool is_in_role = false;
+    if (user)
+    {
+        is_in_role = _UserIsInRole(user, _ROLE_ADMIN);
+        DeleteHubUser(user);
+    }
+
+    return is_in_role;
 }
 
 static cfapi_errid _AuthenticateInternal(EnterpriseDB *conn, const char *username, const char *password)
@@ -1113,7 +1120,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
                            dbkey_user_roles);
 
     bson record = { 0 };
-    if( MongoFindOne( conn, users_collection, &query, &field, &record ) != MONGO_OK )
+    if (MongoFindOne(conn, users_collection, &query, &field, &record) != MONGO_OK)
     {
         bson_destroy(&query);
         bson_destroy(&field);
