@@ -697,12 +697,12 @@ static void StartHub(void)
 
 #if defined( HAVE_LIBSQLITE3 )
     SetDefaultPathsForSchedulingReports();
-
-    bool scheduled_reports_pending = true;
 #endif
 
     while (true)
     {
+        time_t start = time( NULL );
+
         if (ScheduleRun())
         {
             CfOut(cf_verbose, "", " -> Wake up");
@@ -711,21 +711,19 @@ static void StartHub(void)
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
-                #if defined( HAVE_LIBSQLITE3 )
-                if( scheduled_reports_pending )
-                {
-                    RunScheduledEnterpriseReports();
-                }
-                #endif
             }
         }
 
-    #if defined( HAVE_LIBSQLITE3 )
-        scheduled_reports_pending = CheckPendingScheduledReports();
-    #endif
+#if defined( HAVE_LIBSQLITE3 )
+        RunScheduledEnterpriseReports();
+#endif
+        int sleep_time = CFPULSETIME - ( time(NULL) - start );
 
-        CfOut(cf_verbose, "", "Sleeping...");
-        sleep(CFPULSETIME);
+        if( sleep_time > 0 )
+        {
+            CfOut(cf_verbose, "", "Sleeping...");
+            sleep(sleep_time);
+        }
     }
 
     YieldCurrentLock(thislock); // Never get here
@@ -868,11 +866,6 @@ static void Nova_ParallelizeScan(Item *masterlist)
             }
             CfOut(cf_error, "wait", "Error waiting hostscan processes to finish");
             return;
-        }
-
-        if (!RemoveFinishedPid(finished, children, &nchildren))
-        {
-            CfOut(cf_error, "", "Unexpected child reaped! pid %d.", finished);
         }
 
         RemoveFinishedPid(finished, children, &nchildren);

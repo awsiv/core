@@ -6,7 +6,6 @@
 #define CFENGINE_SCHEDULED_REPORTS_H
 
 void RunScheduledEnterpriseReports( void );
-bool CheckPendingScheduledReports( void );
 
 #endif
 
