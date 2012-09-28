@@ -520,8 +520,10 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
-                             bool regex, HostClassFilter *hostClassFilter, int sort)
+HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
+                             char *lver, const char *larch, bool regex,
+                             HostClassFilter *hostClassFilter, int sort,
+                             PromiseContextMode promise_context)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh = NULL;
@@ -545,6 +547,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 

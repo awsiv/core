@@ -1403,8 +1403,10 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
-                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
+                             bool regex, char *type, HostClassFilter *hostClassFilter,
+                             PageInfo *page, char *returnval, int bufsize,
+                             PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -1427,7 +1429,8 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
         return false;
     }
 
-    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, hostClassFilter, true);
+    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
+                            hostClassFilter, true, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
@@ -2596,7 +2599,8 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
 
 JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
                                      char *arch,  bool regex, char *type,
-                                     HostClassFilter *hostClassFilter, PageInfo *page)
+                                     HostClassFilter *hostClassFilter, PageInfo *page,
+                                     PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2606,7 +2610,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
     }
 
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch,
-                                      regex, hostClassFilter, false);
+                                      regex, hostClassFilter, false, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

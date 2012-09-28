@@ -199,7 +199,8 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
     }
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, filter, true);
+    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
+                            filter, true, PROMISE_CONTEXT_MODE_ALL);
     DeleteHostClassFilter(filter);
 
     if (!CSV)

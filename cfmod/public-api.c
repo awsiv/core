@@ -981,7 +981,8 @@ PHP_FUNCTION(cfmod_resource_software)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
-                                    Nova_ShortArch(arch), true, filter, true);
+                                    Nova_ShortArch(arch), true, filter, true,
+                                    PROMISE_CONTEXT_MODE_ALL);
 
         DATABASE_CLOSE(&conn);
 

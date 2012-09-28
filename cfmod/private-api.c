@@ -589,6 +589,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
+    char *promise_context = NULL; int pc_len;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
@@ -598,9 +599,10 @@ PHP_FUNCTION(cfpr_report_software_in)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -631,8 +633,11 @@ PHP_FUNCTION(cfpr_report_software_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page, buffer,
-                             sizeof(buffer));
+                             sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -644,6 +649,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
+    char *promise_context = NULL; int pc_len;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
@@ -653,9 +659,10 @@ PHP_FUNCTION(cfpr_report_patch_in)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -686,8 +693,11 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page, buffer,
-                             sizeof(buffer));
+                             sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -699,6 +709,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
+    char *promise_context = NULL; int pc_len;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
@@ -708,9 +719,10 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -741,7 +753,11 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail,
+                             filter, &page, buffer, sizeof(buffer), promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2204,14 +2220,16 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = {0};
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -2239,9 +2257,11 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
-                                       cfr_software, filter, &page);
+                                       cfr_software, filter, &page, promise_context_mode);
 
     if (!json_out)
     {
@@ -2311,13 +2331,15 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 {
     char *userName, *hostkey, *name, *version, *arch;
     int user_len, hk_len, n_len, v_len, a_len;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -2345,9 +2367,11 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
-                                       cfr_patch_installed, filter, &page);
+                                       cfr_patch_installed, filter, &page, promise_context_mode);
 
     if (!json_out)
     {
@@ -2365,14 +2389,16 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &name, &n_len,
                               &version, &v_len,
                               &arch, &a_len,
@@ -2400,9 +2426,11 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
-                                       cfr_patch_avail, filter, &page);
+                                       cfr_patch_avail, filter, &page, promise_context_mode);
 
     if (!json_out)
     {
