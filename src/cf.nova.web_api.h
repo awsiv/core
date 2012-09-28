@@ -129,7 +129,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                           PageInfo *page, char *buffer, int bufsize);
 void Nova2PHP_summary_meter(char *buffer, int bufsize);
-void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize);
+void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);
 int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);

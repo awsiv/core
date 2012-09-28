@@ -204,7 +204,7 @@ static void Nova_BarMeter(int pos, double kept, double rep, char *name, char *bu
     Join(buffer, work, bufsize);
 }
 
-void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
+void Nova_Meter(bson *query, char *db, char *buffer, int bufsize, PromiseContextMode promise_context)
 {
     double kept = 0, repaired = 0;
     double kept_week = 0, kept_day = 0, kept_hour = 0, kept_comms = 0, kept_anom = 0, kept_perf = 0, kept_other = 0;
@@ -239,21 +239,84 @@ void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
         switch (hm->type)
         {
         case cfmeter_week:
-            kept_week += kept;
-            rep_week += repaired;
-            num_week++;
+            if (promise_context == PROMISE_CONTEXT_MODE_ALL)
+            {
+                kept_week += kept;
+                rep_week += repaired;
+                num_week++;
+            }
+            break;
+
+        case cfmeter_week_user:
+            if (promise_context == PROMISE_CONTEXT_MODE_USER)
+            {
+                kept_week += kept;
+                rep_week += repaired;
+                num_week++;
+            }
+            break;
+
+        case cfmeter_week_internal:
+            if (promise_context == PROMISE_CONTEXT_MODE_INTERNAL)
+            {
+                kept_week += kept;
+                rep_week += repaired;
+                num_week++;
+            }
             break;
 
         case cfmeter_hour:
-            kept_hour += kept;
-            rep_hour += repaired;
-            num_hour++;
+            if (promise_context == PROMISE_CONTEXT_MODE_ALL)
+            {
+                kept_hour += kept;
+                rep_hour += repaired;
+                num_hour++;
+            }
+            break;
+
+        case cfmeter_hour_user:
+            if (promise_context == PROMISE_CONTEXT_MODE_USER)
+            {
+                kept_hour += kept;
+                rep_hour += repaired;
+                num_hour++;
+            }
+            break;
+
+        case cfmeter_hour_internal:
+            if (promise_context == PROMISE_CONTEXT_MODE_INTERNAL)
+            {
+                kept_hour += kept;
+                rep_hour += repaired;
+                num_hour++;
+            }
             break;
 
         case cfmeter_day:
-            kept_day += kept;
-            rep_day += repaired;
-            num_day++;
+            if (promise_context == PROMISE_CONTEXT_MODE_ALL)
+            {
+                kept_day += kept;
+                rep_day += repaired;
+                num_day++;
+            }
+            break;
+
+        case cfmeter_day_user:
+            if (promise_context == PROMISE_CONTEXT_MODE_USER)
+            {
+                kept_day += kept;
+                rep_day += repaired;
+                num_day++;
+            }
+            break;
+
+        case cfmeter_day_internal:
+            if (promise_context == PROMISE_CONTEXT_MODE_INTERNAL)
+            {
+                kept_day += kept;
+                rep_day += repaired;
+                num_day++;
+            }
             break;
 
         case cfmeter_perf:

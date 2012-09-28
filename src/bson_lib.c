@@ -747,8 +747,6 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
             }
 
             bson_append_finish_object(query);
-
-            BsonAppendClassFilterFromPromiseContext(query, filter->promise_context);
         }
     }
 
@@ -809,6 +807,8 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
 
         bson_append_bool(query, cfr_is_black, true);
     }
+
+    BsonAppendClassFilterFromPromiseContext(query, filter->promise_context);
 
     free(score_method);
 }

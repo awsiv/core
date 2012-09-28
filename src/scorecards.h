@@ -56,6 +56,6 @@ PromiseContextMode PromiseContextModeFromString(const char *mode);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bufsize);
-void Nova_Meter(bson *query, char *db, char *buffer, int bufsize);
+void Nova_Meter(bson *query, char *db, char *buffer, int bufsize, PromiseContextMode promise_context);
 
 #endif

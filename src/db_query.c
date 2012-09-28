@@ -6268,7 +6268,7 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
                            cfr_keyhash,
                            cfr_ip_array,
                            cfr_host_array,
-                           HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL));
+                           HostRankMethodToMongoCode(method, host_colour_filter->promise_context));
 
     mongo_cursor *cursor = NULL;
     cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6303,7 +6303,8 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
             /* Extract the common HubHost data */
             CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
 
-            if (strcmp(bson_iterator_key(&it1), HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL)) == 0)
+            if (strcmp(bson_iterator_key(&it1),
+                       HostRankMethodToMongoCode(method, host_colour_filter->promise_context)) == 0)
             {
                 score = (int) bson_iterator_int(&it1);
             }

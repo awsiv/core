@@ -271,9 +271,13 @@ PHP_FUNCTION(cfpr_host_meter)
 {
     char *userName, *hostKey;
     int user_len, hk_len;
+    char *promise_context = NULL; int pc_len;
     char buffer[CF_WEBBUFFER];
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &hostKey, &hk_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+                              &userName, &user_len,
+                              &hostKey, &hk_len,
+                              &promise_context, &pc_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -289,8 +293,11 @@ PHP_FUNCTION(cfpr_host_meter)
         RETURN_NULL();
     }
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     buffer[0] = '\0';
-    Nova2PHP_meter(hostKey, buffer, sizeof(buffer));
+    Nova2PHP_meter(hostKey, buffer, sizeof(buffer), promise_context_mode);
+
     RETURN_STRING(buffer, 1);
 }
 
@@ -3580,9 +3587,11 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
     buffer[0] = '\0';
 
+    printf("promise_context: %s\n", promise_context);
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer), promise_context_mode);
+    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer),
+                                      promise_context_mode);
 
     DATABASE_CLOSE(&conn);
 

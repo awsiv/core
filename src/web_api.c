@@ -365,7 +365,7 @@ void Nova2PHP_summary_meter(char *buffer, int bufsize)
 
     bson_empty(query);
 
-    Nova_Meter(query, MONGO_DATABASE, buffer, bufsize);
+    Nova_Meter(query, MONGO_DATABASE, buffer, bufsize, PROMISE_CONTEXT_MODE_ALL);
 }
 
 /*****************************************************************************/
@@ -676,7 +676,7 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
 
 /*****************************************************************************/
 
-void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize)
+void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize, PromiseContextMode promise_context)
 {
     bson query;
 
@@ -687,9 +687,11 @@ void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize)
         bson_append_string(&query, cfr_keyhash, hostkey);
     }
 
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
-    Nova_Meter(&query, MONGO_DATABASE, buffer, bufsize);
+    Nova_Meter(&query, MONGO_DATABASE, buffer, bufsize, promise_context);
 
     bson_destroy(&query);
 }
@@ -3558,7 +3560,8 @@ JsonElement *Nova2PHP_show_topic_category(int id)
 /*****************************************************************************/
 
 void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter,
-                                       PageInfo *page, char *buffer, int bufsize, PromiseContextMode promise_context)
+                                       PageInfo *page, char *buffer, int bufsize,
+                                       PromiseContextMode promise_context)
 {
     Item *clist = NULL;
     char work[CF_BUFSIZE] = { 0 };
