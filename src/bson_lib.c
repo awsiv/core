@@ -278,6 +278,51 @@ bool BsonAppendInt( bson *b, const char *key, int value )
 
 /*****************************************************************************/
 
+bool BsonAppendDouble( bson *b, const char *key, double value )
+{
+    assert( b );
+    assert( key );
+
+    int retval = bson_append_double( b, key, value );
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+
+bool BsonAppendLong( bson *b, const char *key, long value )
+{
+    assert( b );
+    assert( key );
+
+    int retval = bson_append_long( b, key, value );
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+
+bool BsonAppendStringAt( bson *b, int pos, const char *value )
+{
+    assert( b );
+    assert( pos >= 0 );
+    assert( value );
+
+    char index_str[32];
+    snprintf( index_str, sizeof(index_str), "%d", pos );
+
+    int ret = bson_append_string( b, index_str, value );
+
+    assert( ret == BSON_OK );
+
+    return ret == BSON_OK;
+}
+/*****************************************************************************/
+
 bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
 {
     if (value == NULL || value[0] == '\0')
@@ -1336,6 +1381,25 @@ void BsonFinish( bson *b )
     int ret = bson_finish( b );
 
     assert( ret == BSON_OK );
+}
+
+/*****************************************************************************/
+
+void BsonFilterInStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist)
+{
+    bson_append_start_object( b, key );
+    {
+        bson_append_start_array( b, "$in" );
+
+        int i = 0;
+        for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
+        {
+            BsonAppendStringAt( b, i, ScalarValue( rp ) );
+        }
+
+        bson_append_finish_array( b );
+    }
+    bson_append_finish_object(b);
 }
 
 /*****************************************************************************/

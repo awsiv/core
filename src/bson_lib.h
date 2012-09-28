@@ -40,7 +40,10 @@ bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendBool( bson *b, const char *key, const bool value );
 bool BsonAppendInt( bson *b, const char *key, int value );
+bool BsonAppendDouble( bson *b, const char *key, double value );
+bool BsonAppendLong( bson *b, const char *key, long value );
 bool BsonAppendStringSafe(bson *b, const char *key, const char *value);
+bool BsonAppendStringAt( bson *b, int pos, const char *value );
 bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue);
 void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
@@ -97,5 +100,16 @@ void BsonObjectDelete(bson *b);
  *  - Makes sure that return value from bson_finish is BSON_OK
  */
 void BsonFinish(bson *b);
+
+/**
+ * Wrappers specific to filtering
+ * Naming:
+ *      - The word immediately after BsonFilter is the mongodb operator used
+ *          eg. 'In' = $in for BsonFilterIn
+ *      - This is followed by the type of data to be appended
+ *          eg. StringArrayRlist
+ */
+
+void BsonFilterInStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
 
 #endif
