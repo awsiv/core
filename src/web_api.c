@@ -1699,7 +1699,7 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
                 first = false;
             }
 
-            if (NULL_OR_EMPTY(hv->ns))
+            if (!NULL_OR_EMPTY(hv->ns))
             {
                 snprintf(buffer, CF_BUFSIZE, "\"%s:%s\":{"
                          "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
