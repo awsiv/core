@@ -6057,6 +6057,9 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
     bson record = { 0 };
 
     bool found = MongoFindOne(conn, MONGO_SCRATCH, bson_empty(&query), &fields, &record) == MONGO_OK;
+
+    bson_destroy(&fields);
+
     if (found)
     {
         bson license_object;
@@ -6072,7 +6075,7 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
             }
         }
 
-        bson_destroy(&fields);
+        bson_destroy(&record);
     }
 
     return found ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
