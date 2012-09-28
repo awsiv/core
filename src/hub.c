@@ -701,6 +701,8 @@ static void StartHub(void)
 
     while (true)
     {
+        time_t start = time( NULL );
+
         if (ScheduleRun())
         {
             CfOut(cf_verbose, "", " -> Wake up");
@@ -715,8 +717,13 @@ static void StartHub(void)
 #if defined( HAVE_LIBSQLITE3 )
         RunScheduledEnterpriseReports();
 #endif
-        CfOut(cf_verbose, "", "Sleeping...");
-        sleep(CFPULSETIME);
+        int sleep_time = CFPULSETIME - ( time(NULL) - start );
+
+        if( sleep_time > 0 )
+        {
+            CfOut(cf_verbose, "", "Sleeping...");
+            sleep(sleep_time);
+        }
     }
 
     YieldCurrentLock(thislock); // Never get here
