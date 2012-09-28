@@ -1176,6 +1176,7 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
     if (!capable)
     {
         CFDB_Close(conn);
+        DeleteHubSettings(settings);
         return ERRID_ACCESS_DENIED;
     }
 
@@ -1203,10 +1204,11 @@ cfapi_errid CFDB_GetUser(const char *getting_username, const char *username, Hub
     }
     else
     {
-        return ERRID_ITEM_NONEXISTING;
+        result = ERRID_ITEM_NONEXISTING;
     }
 
     CFDB_Close(conn);
+    DeleteHubSettings(settings);
     return result;
 }
 
