@@ -21,18 +21,23 @@ static pid_t REPORT_SCHEDULER_CHILD_PID = -1;
 
 static void ScheduleRunScheduledReports(void);
 static bool IsProcRunning(pid_t pid);
-static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn);
 
-static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn );
+static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query_ids );
 static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
                                    const char *query_id, const char *query, int output_type );
 static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id, const char *query_id, const bool already_run );
 static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user, const char *query_id, time_t completed_time );
+static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn );
 
 /*******************************************************************/
 
 void RunScheduledEnterpriseReports(void)
 {
+    if( !CFDB_QueryIsMaster() )
+    {
+        return;
+    }
+
     if (REPORT_SCHEDULER_CHILD_PID != -1)
     {
         if (IsProcRunning(REPORT_SCHEDULER_CHILD_PID))
@@ -71,24 +76,6 @@ void RunScheduledEnterpriseReports(void)
 
 /*******************************************************************/
 
-bool CheckPendingScheduledReports( void )
-{
-    EnterpriseDB conn[1];
-
-    if( !CFDB_Open( conn ) )
-    {
-        return false;
-    }
-
-    bool reports_pending = CFDB_QueryHasPendingSchedules( conn );
-
-    CFDB_Close( conn );
-
-    return reports_pending;
-}
-
-/*******************************************************************/
-
 static void ScheduleRunScheduledReports(void)
 {
     time_t now = time( NULL );
@@ -100,14 +87,17 @@ static void ScheduleRunScheduledReports(void)
         return;
     }
 
-    /* This picks up the pending schedules since the last report generation */
-    if( !CFDB_QueryHasPendingSchedules( conn ) )
+    Rlist *pending_schedules = NULL;
+    pending_schedules = CFDB_QueryPendingSchedulesList( conn );
+
+    if( !pending_schedules )
     {
         CFDB_Close( conn );
         return;
     }
 
-    CFDB_QueryGenerateScheduledReports( conn );
+    CFDB_QueryGenerateScheduledReports( conn, pending_schedules );
+    DeleteRlist( pending_schedules );
 
     CFDB_Close( conn );
 
@@ -128,21 +118,19 @@ static bool IsProcRunning( pid_t pid )
 
 /*******************************************************************/
 
-static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
+static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn )
 {
-
     bson query[1];
     bson_init( query );
     BsonAppendBool( query, cfr_enabled, true );
     BsonFinish( query );
 
     bson fields[1];
-    BsonSelectReportFields( fields, 5,
-                            cfr_run_classes,
-                            cfr_already_run,
-                            cfr_enabled,
+    BsonSelectReportFields( fields, 4,
                             cfr_user_id,
-                            cfr_query_id );
+                            cfr_query_id,
+                            cfr_run_classes,
+                            cfr_already_run );
 
     mongo_cursor *cursor = MongoFind( conn, MONGO_SCHEDULED_REPORTS,
                                       query, fields, 0, 0, CF_MONGO_SLAVE_OK );
@@ -150,8 +138,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
     bson_destroy(query);
     bson_destroy(fields);
 
-    bool has_pending_scheduled_queries = false;
-
+    Rlist *pending_queries = NULL;
     while ( mongo_cursor_next( cursor ) == MONGO_OK )
     {
         const char *user_id = NULL;
@@ -166,7 +153,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
         if( NULL_OR_EMPTY( run_class ) )
         {
             continue;
-        }        
+        }
 
         bool is_class_defined = IsDefinedClass( run_class, NULL );
 
@@ -174,7 +161,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
 
         if( is_class_defined && !already_run )
         {
-            has_pending_scheduled_queries = true;
+            PrependRlist( &pending_queries, (void *) run_class, CF_SCALAR );
         }
         else if( !is_class_defined && already_run )
         {
@@ -185,7 +172,7 @@ static bool CFDB_QueryHasPendingSchedules(EnterpriseDB *conn)
 
     mongo_cursor_destroy( cursor );
 
-    return has_pending_scheduled_queries;
+    return pending_queries;
 }
 
 /*******************************************************************/
@@ -214,18 +201,17 @@ static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id,
 
     bson_destroy( query );
     bson_destroy( set_op );
-
-    MongoCheckForError( conn, "Save already run value", "CFDB_SaveAlreadyRun", NULL );
 }
 
 /*******************************************************************/
 
-static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
+static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query_ids )
 {
     bson query[1];
     bson_init( query );
     BsonAppendBool( query, cfr_already_run, false );
     BsonAppendBool( query, cfr_enabled, true );
+    BsonFilterInStringArrayRlist( query, cfr_run_classes, query_ids );
     BsonFinish( query );
 
     bson empty[1];
@@ -238,19 +224,8 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn )
 
     while( mongo_cursor_next( cursor ) == MONGO_OK )
     {
-        const char *run_class = NULL;
-        BsonStringGet( mongo_cursor_bson( cursor ), cfr_run_classes, &run_class);
-
-        if( NULL_OR_EMPTY( run_class ) || !IsDefinedClass( run_class, NULL ) )
-        {
-            continue;
-        }
-
         const char *user = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_id, &user );
-
-        const char *fullname = NULL;
-        BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_fullname, &fullname );
 
         char email[CF_MAXVARSIZE] = {0};
         email[0] = '\0';

@@ -712,12 +712,11 @@ static void StartHub(void)
             }
         }
 
-        CfOut(cf_verbose, "", "Sleeping...");
-        sleep(CFPULSETIME);
-
 #if defined( HAVE_LIBSQLITE3 )
         RunScheduledEnterpriseReports();
 #endif
+        CfOut(cf_verbose, "", "Sleeping...");
+        sleep(CFPULSETIME);
     }
 
     YieldCurrentLock(thislock); // Never get here
