@@ -1,4 +1,4 @@
-CFENGINE 3 ENTERPRISE 2.2
+CFENGINE 3 ENTERPRISE 3.0
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
 RELEASE DATE: June 4th, 2012
 SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise (successor to CFENgine Nova 2.1.3)
@@ -31,7 +31,7 @@ Ubuntu		8.04, 8.10, 9.04, 9.10,			i686,x86-64
 Ubuntu		10.04, 10.10, 11.04, 11.10, 12.04 	i686,x86-64
 Windows 	Server 2003, Server 2008		x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.3
+Community version base: 3.4.0
 
 
 BASIC INSTALLATION INSTRUCTIONS (CLEAN INSTALL):
