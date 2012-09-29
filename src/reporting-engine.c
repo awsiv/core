@@ -120,24 +120,30 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 #if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
 
+    char *select_op_expanded = SqlVariableExpand(select_op);
+
     if (!Sqlite3_DBOpen(&db))
     {
         /* TODO: better error handling */
         Sqlite3_DBClose(db);
-        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
     if (!GenerateAllTables(db))
     {
         Sqlite3_DBClose(db);
-        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    Rlist *tables = GetTableNamesInQuery(select_op);
+
+    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
     if(!tables)
     {
         Sqlite3_DBClose(db);
-        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
     LoadSqlite3Tables(db, tables, username);
@@ -145,9 +151,12 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     DeleteRlist(tables);
 
     LogPerformanceTimer timer = LogPerformanceStart();
-    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op);
-    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op);
 
+    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
+
+    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
+
+    free(select_op_expanded);
     Sqlite3_DBClose(db);
     return out;
 #else
