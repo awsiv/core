@@ -1,7 +1,6 @@
-CFENGINE 3 ENTERPRISE 2.2.3
-CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
+CFENGINE 3 ENTERPRISE 3.0
 RELEASE DATE: September 2012
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 2.2.x (successor to CFEngine Nova 2.1.x)
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 (successor to CFEngine Nova 2.2.x)
 
 -----------------------------------------------------------
  TABLE OF CONTENTS:
