@@ -2,7 +2,7 @@ CFENGINE 3 ENTERPRISE 3.0
 RELEASE DATE: September 2012
 SCOPE 3.0.0: Official release of CFEngine 3 Enterprise 3.0
 
-All documentation for 2.2.x will apply to 2.2.3, except issues noted in change log and known issues below.
+All documentation for 2.2.x will apply to 3.0, except issues noted in change log and known issues below.
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
@@ -59,7 +59,7 @@ Community version base: 3.4.0
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 3.0.0   3.0.0           Yes             Yes
-3.0.0   2.2.x           Yes             Yes             Old hosts omitted when promise filter (user/system) is active
+3.0.0   2.2.x           Yes             Yes             Hosts running 2.x agents omitted when promise filter (user/system) is active
 2.2.3	2.2.x		Yes		Yes
 2.2.3	2.1.x		Yes		Yes		Bundle compliance report not compatible
 2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
@@ -67,6 +67,22 @@ HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 
 As always, test thoroughly in your lab before upgrading production environments!
+
+CHANGE LOG FROM 2.2.x:
+
+* New Functionality in Mission Portal
+   - Ability to build customizable reports through SQL
+   - Scheduling of SQL reports
+   - Semantic Index for quick, text-based navigation to features, knowledge and concepts
+   - ...
+* Redesign of Mission Portal
+   - New visual appearance
+   - New navigation concepts with shorter paths to different views
+   - ...
+* REST API v2
+* Support for collecting reports from hosts behind a NAT boundary/inside a DMZ
+* ...
+
 
 CHANGE LOG FROM 2.2.2:
 * Hub maintenance process timing transferred from being hard coded to being set in policy (default is every 6 hours; see CFE_hub_specific.cf)
