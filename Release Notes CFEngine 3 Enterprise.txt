@@ -58,6 +58,8 @@ Community version base: 3.4.0
 
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
+3.0.0   3.0.0           Yes             Yes
+3.0.0   2.2.x           Yes             Yes             Old hosts omitted when promise filter (user/system) is active
 2.2.3	2.2.x		Yes		Yes
 2.2.3	2.1.x		Yes		Yes		Bundle compliance report not compatible
 2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
