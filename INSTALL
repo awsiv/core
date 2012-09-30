@@ -37,22 +37,22 @@ INSTALLATION INSTRUCTIONS (CLEAN INSTALL):
 * As always, install HUB first, then client(s).
 * For large systems (> 1000 hosts) we recommend increasing the memory limit in php.conf on the HUB (for instance to 128 MB)
 
-CFEngine 3 Enterprise is provided in two packages, cfengine-nova_2.2.x and cfengine-nova-expansion_2.2.x (the nova name remains in the packages to ensure backwards compatibility with package managers). The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
+CFEngine 3 Enterprise is provided in two packages, cfengine-nova_3.0.x and cfengine-nova-expansion_3.0.x (the nova name remains in the packages to ensure backwards compatibility with package managers). The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
 
 The general installation steps are as follows:
 1. Copy the CFEngine 3 Enterprise packages to the system.
 2. Unpack the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
    [RedHat/CentOS/SUSE]
-     $ rpm -Uvh cfengine-nova-2.2.x-y.x86_64.rpm cfengine-nova-expansion-2.2.x-y.x86_64.rpm
+     $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm cfengine-nova-expansion-3.0.x-y.x86_64.rpm
    [Debian/Ubuntu]
-     $ dpkg --install cfengine-nova_2.2.x-y_x86_64.deb cfengine-nova-expansion_2.2.x-y_x86_64.deb
+     $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb cfengine-nova-expansion_3.0.x-y_x86_64.deb
 3. (Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
 4. (Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
 5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
      $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
 6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait 10-15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
 
-See Enterprise 2.2 Owner's Manual for more detailed installation instructions and troubleshooting tips.
+See Enterprise 3.0 Owner's Manual for more detailed installation instructions and troubleshooting tips.
 
 If you wish to manually install cfmod to the machine, you'll need to do the following:
 1. Make a symlink from php library directory (typically something like
@@ -62,15 +62,15 @@ If you wish to manually install cfmod to the machine, you'll need to do the foll
 
 
 UPGRADE PROCEDURE:
-The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 2.2 Owner's Manual for upgrading from other versions. 
+The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 3.0 Owner's Manual for upgrading from other versions. 
 
 Start with the hub (policy server):
 1. Stop all CFE processes (/etc/init.d/cfengine3 stop)
 2. Upgrade the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
    [RedHat/CentOS/SUSE]
-     $ rpm -Uvh cfengine-nova-2.2.x-y.x86_64.rpm cfengine-nova-expansion-2.2.x-y.x86_64.rpm
+     $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm cfengine-nova-expansion-3.0.x-y.x86_64.rpm
    [Debian/Ubuntu]
-     $ dpkg --install cfengine-nova_2.2.x-y_x86_64.deb cfengine-nova-expansion_2.2.x-y_x86_64.deb
+     $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb cfengine-nova-expansion_3.0.x-y_x86_64.deb
 3. Remove Mongodb lock if present:
      $ rm -f /var/cfengine/state/mongod.lock
 4. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
@@ -121,7 +121,7 @@ For client upgrades there are 2 approaches: manual or automatic upgrade.
       C:\Program Files\Cfengine\bin-twin
 * Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in /var/cfengine/master_software_updates and CFEngine 3 Enterprise will take care of the rest.
 
-CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions and troubleshooting tips.
+CFEngine should now be up and running on your system. See Enterprise 3.0 Owner's Manual for more detailed installation instructions and troubleshooting tips.
 
 
 SOFTWARE DEPENDENCIES (specific to CFEngine 3 Enterprise)
