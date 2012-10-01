@@ -70,7 +70,7 @@ bundle agent update_bins
                              handle => "cfe_internal_update_bins_vars_novapkg_not_solaris_aix",
                          ifvarclass => "nova_edition";
 
-  solaris::
+  solaris.!sunos_i86pc::
 
    "pkgarch"                 string => "sparc",
                             comment => "Name convention of package arch on Solaris",
