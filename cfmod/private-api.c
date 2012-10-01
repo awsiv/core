@@ -172,11 +172,13 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
 PHP_FUNCTION(cfpr_host_info)
 {
     char *username = NULL, *hostkey = NULL;
+    char *promise_context = NULL; int pc_len;
     int username_len = -1, hostkey_len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
                               &username, &username_len,
-                              &hostkey, &hostkey_len) == FAILURE)
+                              &hostkey, &hostkey_len,
+                              &promise_context, &pc_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -243,8 +245,10 @@ PHP_FUNCTION(cfpr_host_info)
         }
     }
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     HostColour colour = HOST_COLOUR_BLUE;
-    CFDB_GetHostColour(host->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+    CFDB_GetHostColour(host->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour, promise_context_mode);
     JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
 
     DeleteHubHost(host);
@@ -4084,9 +4088,13 @@ PHP_FUNCTION(cfpr_host_compliance_colour)
 {
     char *userName, *hostKey;
     int user_len, hk_len;
+    char *promise_context = NULL; int pc_len;
     char buffer[128];
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &hostKey, &hk_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+                              &userName, &user_len,
+                              &hostKey, &hk_len,
+                              &promise_context, &pc_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -4102,8 +4110,10 @@ PHP_FUNCTION(cfpr_host_compliance_colour)
         RETURN_NULL();
     }
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     buffer[0] = '\0';
-    Nova2PHP_get_host_colour(hostKey, buffer, sizeof(buffer));
+    Nova2PHP_get_host_colour(hostKey, buffer, sizeof(buffer), promise_context_mode);
 
     RETURN_STRING(buffer, 1);
 }

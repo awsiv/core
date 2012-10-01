@@ -119,7 +119,7 @@ bool CFDB_HasMatchingHost(EnterpriseDB *conn, const char *hostKey,
 int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query);
 int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hostNameSz);
 HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey);
-bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result);
+bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result, PromiseContextMode promise_context);
 int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
                                HostClassFilter *host_class_filter);
 const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash, const char *ltype,

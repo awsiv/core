@@ -428,7 +428,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
         }
 
         HostColour colour;
-        CFDB_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        CFDB_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour, PROMISE_CONTEXT_MODE_ALL);
         if (colour == HOST_COLOUR_BLACK)
         {
             if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
@@ -3785,10 +3785,12 @@ void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFi
 
 /*****************************************************************************/
 
-void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
+void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize,
+                              PromiseContextMode promise_context)
 {
     HostColour colour = HOST_COLOUR_BLUE;
-    CFDB_GetHostColour(hostkey, HOST_RANK_METHOD_COMPLIANCE, &colour);
+    CFDB_GetHostColour(hostkey, HOST_RANK_METHOD_COMPLIANCE, &colour,
+                       promise_context);
 
     strncpy(buffer, Nova_HostColourToString(colour), bufsize);
 }

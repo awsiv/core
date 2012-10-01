@@ -434,7 +434,6 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
     {
-        assert(false && "Could not determine blue horizon");
         blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
     }
 
@@ -6385,7 +6384,8 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
 /*****************************************************************************/
 
-bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result)
+bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result,
+                        PromiseContextMode promise_context)
 {
     if (lkeyhash == NULL)
     {
@@ -6416,7 +6416,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
 
     BsonSelectReportFields(&fields, 3,
                            cfr_day,
-                           HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL),
+                           HostRankMethodToMongoCode(method, promise_context),
                            cfr_is_black);
 
     bson out = { 0 };
@@ -6434,7 +6434,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
         bool is_black = BsonBoolGet( &out, cfr_is_black );
 
         int score = 0;
-        if (BsonIntGet(&out, HostRankMethodToMongoCode(method, PROMISE_CONTEXT_MODE_ALL), &score))
+        if (BsonIntGet(&out, HostRankMethodToMongoCode(method, promise_context), &score))
         {
             *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
         }
