@@ -73,7 +73,7 @@ bundle agent cfe_internal_update_folders
 
  files:
 
-  "$(sys.workdir)/master_software_updates/$(dirs)/."
+  "$(sys.workdir)/master_software_updates/$(dirs)/." -> { "goal_updated" }
      comment => "Prepare binary upgrade folders for all distributions in our environment",
       handle => "cfe_internal_update_folders_files_create_dirs",
       create => "true";
@@ -645,19 +645,19 @@ bundle agent cfe_internal_php_mod
 
   restart_webserver.redhat::
 
-   "/etc/init.d/httpd restart"
+   "/etc/init.d/httpd restart" -> { "goal_availabilty" }
       comment => "Restart httpd service on RedHat/CentOS/Fedora",
        handle => "cfe_internal_php_mod_commands_httpd_redhat";
 
   restart_webserver.debian::
 
-   "/etc/init.d/apache2 restart"
+   "/etc/init.d/apache2 restart" -> { "goal_availabilty" }
       comment => "Restart apache2 service on Debian/Ubuntu",
        handle => "cfe_internal_php_mod_commands_apache2_debian";
 
   restart_webserver.SuSE::
 
-   "/etc/init.d/apache2 restart"
+   "/etc/init.d/apache2 restart"  -> { "goal_availabilty" }
       comment => "Restart apache2 service on SuSE",
        handle => "cfe_internal_php_mod_commands_apache2_suse";
 
@@ -835,7 +835,7 @@ bundle agent cfe_internal_policysrv
 
   restart_apache2::
 
-   "/sbin/service apache2 restart"
+   "/sbin/service apache2 restart" -> { "goal_availability" }
       comment => "Restart APACHE2 on SLES/OpenSuSE",
        handle => "cfe_internal_policysrv_commands_restart_apache2";
 
@@ -857,7 +857,7 @@ bundle agent cfe_internal_policysrv
 
   restart_httpd::
 
-   "/sbin/service httpd restart"
+   "/sbin/service httpd restart" -> { "goal_availability" }
       comment => "Restart HTTPD on Redhat/CentOS/Fedora",
        handle => "cfe_internal_policysrv_commands_restart_httpd";
 
