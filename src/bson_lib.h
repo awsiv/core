@@ -46,7 +46,7 @@ bool BsonAppendString(bson *b, const char *key, const char *value);
 bool BsonAppendStringNonEmpty(bson *b, const char *key, const char *value);
 bool BsonAppendRegex(bson *b, const char *key, const char *pattern, const char *opts);
 bool BsonAppendStringAt( bson *b, int pos, const char *value );
-bool BsonAppendRegexSafe(bson *b, const char *key, char *rx_value);
+bool BsonAppendRegexNonEmpty(bson *b, const char *key, char *rx_value);
 void BsonAppendStringArray(bson *b, char *array_name, Item *array_values);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
 void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq);

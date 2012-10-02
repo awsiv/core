@@ -384,6 +384,12 @@ bool BsonAppendRegex(bson *b, const char *key, const char *pattern, const char *
     assert( !b->finished );
     assert( key );
     assert( pattern );
+    assert( opts );
+
+    if( !pattern || !opts )
+    {
+        return false;
+    }
 
     int ret = bson_append_regex( b, key, pattern, opts );
 
@@ -452,13 +458,14 @@ bool BsonAppendFinishArray( bson *b )
 
 /*****************************************************************************/
 
-bool BsonAppendRegexSafe(bson *b, const char *key, char *rx_value)
+bool BsonAppendRegexNonEmpty(bson *b, const char *key, char *rx_value)
 {
     assert( b );
     assert( !b->finished );
     assert( key );
+    assert( rx_value );
 
-    if (rx_value == NULL || rx_value[0] == '\0')
+    if (rx_value[0] == '\0')
     {
         return false;
     }

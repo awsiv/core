@@ -6083,15 +6083,15 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
     bool modified = false;
 
     modified |= BsonAppendStringNonEmpty(query, cfp_handle, filter->handleInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_handle, filter->handleRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_handle, filter->handleRxInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_promiser, filter->promiserInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_promiser, filter->promiserRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_promiser, filter->promiserRxInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
     modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
@@ -6120,15 +6120,15 @@ static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter)
     bool modified = false;
 
     modified |= BsonAppendStringNonEmpty(query, cfp_handle_exp, filter->handleInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_handle_exp, filter->handleRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_handle_exp, filter->handleRxInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_promiser_exp, filter->promiserInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_promiser_exp, filter->promiserRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_promiser_exp, filter->promiserRxInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
 
     modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
-    modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
+    modified |= BsonAppendRegexNonEmpty(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
     modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
