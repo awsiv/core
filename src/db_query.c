@@ -3446,7 +3446,7 @@ static void SkipOldClientVersionsFilter(bson *b)
 
     {
         bson_append_start_object(b, cfr_class_keys);
-        BsonAppendArrayRx(b, "$in", new_client_versions);
+        BsonAppendArrayRegex(b, "$in", new_client_versions);
         bson_append_finish_object(b);
     }
 
@@ -3479,7 +3479,7 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
     GetOldClientVersions(&old_client_versions);
 
     bson_append_start_object(&query, cfr_class_keys);
-    BsonAppendArrayRx(&query, "$in", old_client_versions);
+    BsonAppendArrayRegex(&query, "$in", old_client_versions);
     bson_append_finish_object(&query);
 
     DeleteRlist(old_client_versions);
@@ -3489,7 +3489,7 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
     Rlist *new_client_versions = NULL;
     GetNewClientVersions(&new_client_versions);
 
-    BsonAppendExcludeRxList(&query, cfr_class_keys, new_client_versions);
+    BsonAppendExcludeRegexList(&query, cfr_class_keys, new_client_versions);
 
     DeleteRlist(new_client_versions);
 
@@ -6094,16 +6094,16 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
     modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
-    modified |= BsonAppendIncludeRxList(query, cfp_bundlename, filter->bundleRxIncludes);
+    modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
 
     modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
-    modified |= BsonAppendExcludeRxList(query, cfp_bundlename, filter->bundleRxExcludes);
+    modified |= BsonAppendExcludeRegexList(query, cfp_bundlename, filter->bundleRxExcludes);
 
     modified |= BsonAppendIncludeList(query, cfr_bundle_namespace, filter->namespaceIncludes);
-    modified |= BsonAppendIncludeRxList(query, cfr_bundle_namespace, filter->namespaceRxIncludes);
+    modified |= BsonAppendIncludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxIncludes);
 
     modified |= BsonAppendExcludeList(query, cfr_bundle_namespace, filter->namespaceExcludes);
-    modified |= BsonAppendExcludeRxList(query, cfr_bundle_namespace, filter->namespaceRxExcludes);
+    modified |= BsonAppendExcludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxExcludes);
 
     return modified;
 }
@@ -6131,10 +6131,10 @@ static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter)
     modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
-    modified |= BsonAppendIncludeRxList(query, cfp_bundlename, filter->bundleRxIncludes);
+    modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
 
     modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
-    modified |= BsonAppendExcludeRxList(query, cfp_bundlename, filter->bundleRxExcludes);
+    modified |= BsonAppendExcludeRegexList(query, cfp_bundlename, filter->bundleRxExcludes);
 
     return modified;
 }

@@ -550,8 +550,8 @@ bool BsonAppendHostClassFilter(bson *query, const HostClassFilter *filter)
 
     bool modified = false;
 
-    modified |= BsonAppendIncludeRxList(query, cfr_class_keys, filter->classRxIncludes);
-    modified |= BsonAppendExcludeRxList(query, cfr_class_keys, filter->classRxExcludes);
+    modified |= BsonAppendIncludeRegexList(query, cfr_class_keys, filter->classRxIncludes);
+    modified |= BsonAppendExcludeRegexList(query, cfr_class_keys, filter->classRxExcludes);
 
     return modified;
 }
@@ -582,7 +582,7 @@ bool BsonAppendIncludeList(bson *b, char *key, Rlist *include_values)
 
 /*****************************************************************************/
 
-void BsonAppendArrayRx(bson *b, const char *key, Rlist *rx_values)
+void BsonAppendArrayRegex(bson *b, const char *key, Rlist *rx_values)
 {
     assert( b );
     assert( !b->finished );
@@ -608,7 +608,7 @@ void BsonAppendArrayRx(bson *b, const char *key, Rlist *rx_values)
 
 /*****************************************************************************/
 
-bool BsonAppendIncludeRxList(bson *b, char *include_key, Rlist *include_rx_values)
+bool BsonAppendIncludeRegexList(bson *b, char *include_key, Rlist *include_rx_values)
 {
     assert( b );
     assert( !b->finished );
@@ -621,14 +621,14 @@ bool BsonAppendIncludeRxList(bson *b, char *include_key, Rlist *include_rx_value
 
     {
         BsonAppendStartObject( b, include_key );
-        BsonAppendArrayRx( b, "$all", include_rx_values );
+        BsonAppendArrayRegex( b, "$all", include_rx_values );
         return BsonAppendFinishObject( b );
     }
 }
 
 /*****************************************************************************/
 
-bool BsonAppendExcludeRxList(bson *b, char *exclude_key, Rlist *exclude_rx_values)
+bool BsonAppendExcludeRegexList(bson *b, char *exclude_key, Rlist *exclude_rx_values)
 {
     assert( b );
     assert( !b->finished );
@@ -644,7 +644,7 @@ bool BsonAppendExcludeRxList(bson *b, char *exclude_key, Rlist *exclude_rx_value
         {
             BsonAppendStartObject( b, "$not" );
 
-            BsonAppendArrayRx( b, "$all", exclude_rx_values );
+            BsonAppendArrayRegex( b, "$all", exclude_rx_values );
 
             BsonAppendFinishObject( b );
         }
@@ -865,7 +865,7 @@ void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise
 
         {
             BsonAppendStartObject(b, cfr_class_keys);
-            BsonAppendArrayRx(b, "$nin", old_ent_versions);
+            BsonAppendArrayRegex(b, "$nin", old_ent_versions);
             BsonAppendFinishObject(b);
         }
 
