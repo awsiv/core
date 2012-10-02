@@ -150,8 +150,8 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
                                 char *returnval, int bufsize);
 int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize);
-int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *host_colour_filter, bool lastRunOnly,
-                           PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
+JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *host_colour_filter, bool lastRunOnly,
+                           PageInfo *page, PromiseContextMode promise_context);
 int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,

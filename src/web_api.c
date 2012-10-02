@@ -2197,26 +2197,17 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter,
+JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter,
                            HostColourFilter *hostColourFilter, bool lastRunOnly,
-                           PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context)
+                           PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_bundle_report_test(hostkey, bundle, regex, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
-    EnterpriseDB dbconn;
-
+    EnterpriseDB dbconn = { 0 };
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
     HubQuery *hq;
-
     if(lastRunOnly)
     {        
         hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
@@ -2232,23 +2223,34 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
 
-    char header[CF_BUFSIZE] = { 0 };
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, \"old_skipped\" : %d, "
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
-             page->totalResultCount, related_host_cnt, skipped_host_cnt);
+    JsonElement *payload = JsonObjectCreate(2);
+    {
+        JsonElement *meta = JsonObjectCreate(4);
 
-    int headerLen = strlen(header);
-    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
+        JsonObjectAppendInteger(meta, "old_skipped", skipped_host_cnt);
+        {
+            JsonElement *header = JsonObjectCreate(6);
 
-    int truncated = false;
-    char buffer[CF_BUFSIZE] = { 0 };
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Bundle", 1);
+            JsonObjectAppendInteger(header, "Last Verified", 2);
+            JsonObjectAppendInteger(header, "%% Compliance", 3);
+            JsonObjectAppendInteger(header, "Avg %% Compliance", 4);
+            JsonObjectAppendInteger(header, "+/- %%", 5);
 
-    Rlist *rp;
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+            JsonObjectAppendObject(meta, "header", header);
+        }
+
+        JsonObjectAppendObject(payload, "meta", meta);
+    }
+
+    JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+    for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubBundleSeen *hb = (HubBundleSeen *) rp->item;
+
         char bundleComp[CF_SMALLBUF];
         char bundleAvg[CF_SMALLBUF];
         char bundleDev[CF_SMALLBUF];
@@ -2257,24 +2259,18 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         WriteDouble2Str_MP(hb->bundleavg * 100, bundleAvg, sizeof(bundleAvg));
         WriteDouble2Str_MP(hb->bundledev * 100, bundleDev, sizeof(bundleDev));
 
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,\"%s\",\"%s\",\"%s\"],",
-                 hb->hh->hostname, hb->bundle, hb->t,
-                 bundleComp, bundleAvg, bundleDev);
+        JsonElement *entry = JsonArrayCreate(6);
 
-        int margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            break;
-        }
+        JsonArrayAppendString(entry, NULLStringToEmpty(hb->hh->hostname));
+        JsonArrayAppendString(entry, NULLStringToEmpty(hb->bundle));
+        JsonArrayAppendInteger(entry, hb->t);
+        JsonArrayAppendString(entry, bundleComp);
+        JsonArrayAppendString(entry, bundleAvg);
+        JsonArrayAppendString(entry, bundleDev);
+
+        JsonArrayAppendArray(data, entry);
     }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+    JsonObjectAppendArray(payload, "data", data);
 
     DeleteHubQuery(hq, DeleteHubBundleSeen);
 
@@ -2283,7 +2279,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
