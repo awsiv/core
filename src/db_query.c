@@ -49,12 +49,14 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     BsonSelectReportFields(&field, 1, "_id");
 
     bson empty = { 0 };
-    if( MongoFindOne( conn, fullCollectionName, &query, &field, &empty) == MONGO_OK )
+    if (MongoFindOne(conn, fullCollectionName, &query, &field, &empty) == MONGO_OK)
     {
-        bson_destroy( &field );
+        bson_destroy(&field);
+        bson_destroy(&empty);
         return true;
     }
 
+    bson_destroy(&field);
     return false;
 }
 /*****************************************************************************/
