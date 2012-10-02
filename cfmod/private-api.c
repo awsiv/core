@@ -1989,8 +1989,6 @@ PHP_FUNCTION(cfpr_report_notkept)
     PageInfo page = { 0 };
     bool sort_descending;
 
-    char buffer[CF_WEBBUFFER];
-
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
                               &username, &user_len,
                               &hostkey, &hk_len,
@@ -2014,8 +2012,6 @@ PHP_FUNCTION(cfpr_report_notkept)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2026,13 +2022,13 @@ PHP_FUNCTION(cfpr_report_notkept)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT,
-                        from, to, filter, &page, buffer, sizeof(buffer),
-                        promise_context_mode);
+    JsonElement *payload = Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT,
+                                               from, to, filter, &page,
+                                               promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -2050,8 +2046,6 @@ PHP_FUNCTION(cfpr_report_repaired)
     bool sort_descending;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
-
-    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
                               &username, &user_len,
@@ -2076,8 +2070,6 @@ PHP_FUNCTION(cfpr_report_repaired)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2088,13 +2080,12 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED,
-                        from, to, filter, &page, buffer, sizeof(buffer),
-                        promise_context_mode);
+    JsonElement *payload = Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED,
+                                               from, to, filter, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

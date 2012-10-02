@@ -1133,71 +1133,56 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state,
-                        time_t from, time_t to, HostClassFilter *hostClassFilter,
-                        PageInfo *page, char *returnval, int bufsize,
-                        PromiseContextMode promise_context)
+JsonElement *Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state,
+                                 time_t from, time_t to, HostClassFilter *hostClassFilter,
+                                 PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_promiselog_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
-    char buffer[CF_BUFSIZE] = { 0 }, jsonEscapedStr[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
-    HubPromiseLog *hp;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    bool truncated = false;
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx,
-                              from, to, true, hostClassFilter, NULL, promise_context);
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx,
+                                        from, to, true, hostClassFilter, NULL, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3}",
-             page->totalResultCount, related_host_cnt);
-
-    int headerLen = strlen(header);
-    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(3);
     {
-        hp = (HubPromiseLog *) rp->item;
-        EscapeJson(hp->cause, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        snprintf(buffer, sizeof(buffer),
-                 "[ \"%s\",\"%s\",\"%s\",%ld ],",
-                 hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t);
-
-        int margin = headerLen + noticeLen + strlen(buffer);
-
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonElement *meta = JsonObjectCreate(2);
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(5);
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Promise Handle", 1);
+            JsonObjectAppendInteger(header, "Report", 2);
+            JsonObjectAppendInteger(header, "Time", 3);
+            JsonObjectAppendObject(meta, "header", header);
         }
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            HubPromiseLog *hp = (HubPromiseLog *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(4);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->handle));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->cause));
+            JsonArrayAppendInteger(entry, hp->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
+
 
     DeleteHubQuery(hq, DeleteHubPromiseLog);
 
@@ -1206,7 +1191,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

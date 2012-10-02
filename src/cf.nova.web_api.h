@@ -124,8 +124,8 @@ void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                                          HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
-int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
-                        HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
+JsonElement *Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
+                        HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                           PageInfo *page, char *buffer, int bufsize);
 void Nova2PHP_summary_meter(char *buffer, int bufsize);
