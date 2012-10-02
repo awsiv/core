@@ -25,7 +25,10 @@ static bool IsProcRunning(pid_t pid);
 
 static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query_ids );
 static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
-                                   const char *query_id, const char *query, int output_type );
+                                   const char *query_id, const char *query, const char *title,
+                                   const char *description, int output_type );
+static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, const char *query_id,
+                                      const char *query, _Bool copy_to_webdir, char *path_buffer, int bufsize );
 static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id, const char *query_id, const bool already_run );
 static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user, const char *query_id, time_t completed_time );
 static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn );
@@ -238,10 +241,16 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query
         const char *query = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_query, &query );
 
+        const char *title = NULL;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_title, &title );
+
+        const char *description = NULL;
+        BsonStringGet( mongo_cursor_bson( cursor ), cfr_description, &description );
+
         int output_type = REPORT_FORMAT_CSV;
         BsonIntGet( mongo_cursor_bson( cursor ), cfr_report_output_type, &output_type );
 
-        if( CreateScheduledReport( conn, user, email, query_id, query, output_type ) )
+        if( CreateScheduledReport( conn, user, email, query_id, query, title, description, output_type ) )
         {
             CFDB_SaveScheduledRunHistory( conn, user, query_id, time( NULL ) );
             CFDB_SaveAlreadyRun( conn, user, query_id, true );
@@ -254,9 +263,10 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query
 /*******************************************************************/
 
 static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
-                                   const char *query_id, const char *query, int output_type )
+                                   const char *query_id, const char *query,
+                                   const char *title, const char *description, int output_type )
 {
-    assert( user );
+    assert( !NULL_OR_EMPTY(user) );
     assert( email );
     assert( query_id );
     assert( query );
@@ -269,25 +279,27 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
     bool pdf = output_type & REPORT_FORMAT_PDF;
     bool csv = output_type & REPORT_FORMAT_CSV;
 
-    if( pdf && csv )
+    char path_to_csv[CF_MAXVARSIZE] = "\0";
+
+    bool copy_to_webroot = !NULL_OR_EMPTY(email) || pdf;
+
+    bool retval = CreateScheduledReportCSV( conn, user, query_id, query, copy_to_webroot, path_to_csv, CF_MAXVARSIZE - 1 );
+
+    if( pdf && retval )
     {
-        report_format = "csv+pdf";
-    }
-    else if( csv )
-    {
-        report_format = "csv";
-    }
-    else if( pdf )
-    {
-        report_format = "pdf";
+        if( csv )
+        {
+            report_format = "csv+pdf";
+        }
+        else
+        {
+            report_format = "pdf";
+        }
     }
 
     char cmd[CF_BUFSIZE] = {0};
     char docroot[CF_MAXVARSIZE] = {0};
     char php_path[CF_MAXVARSIZE] = {0};
-
-    const char *report_title = "Custom scheduled report";
-    const char *report_description = "Scheduled report";
 
     if( !CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
@@ -304,8 +316,8 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     snprintf(cmd, CF_BUFSIZE - 1,
              "%s/php %s/index.php advancedreports generatescheduledreport "
-             "\"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"",
-             php_path, docroot, user, query_id, query_expanded, report_format, report_title, report_description, email );
+             "\"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"",
+             php_path, docroot, user, query_id, query_expanded, report_format, title, description, email, path_to_csv );
 
     free(query_expanded);
 
@@ -329,10 +341,80 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
         }
     }
 
-    bool retval = cf_pclose(pp) == 0;
+    retval = cf_pclose(pp) == 0;
 
     Nova_HubLog("Finished DBScheduledReportGeneration");
     EndMeasure( "DBScheduledReportGeneration", measure_start );
+
+    return retval;
+}
+
+/*******************************************************************/
+
+static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, const char *query_id,
+                                      const char *query, bool copy_to_webdir, char *path_buffer, int bufsize )
+{
+    assert( user );
+    assert( query_id );
+
+    sqlite3 *db;
+    bool retval = true;
+    char filename[CF_MAXVARSIZE] = {0};
+    char path_origin[CF_MAXVARSIZE] = { 0 };
+
+    if( Sqlite3_DBOpen( &db ) )
+    {
+        if( GenerateAllTables( db ) )
+        {
+            Rlist *tables = GetTableNamesInQuery( query );
+
+            if( tables )
+            {
+                LoadSqlite3Tables( db, tables, user );
+                DeleteRlist( tables );
+
+                char *err_msg = 0;
+
+                snprintf( filename, CF_MAXVARSIZE - 1, "%s-%s-%ld.csv", user, query_id, time( NULL ) );
+                snprintf( path_origin, CF_MAXVARSIZE - 1, "%s/reports/%s", CFWORKDIR, filename );
+
+                Writer *writer = FileWriter( fopen( path_origin, "w" ) );
+
+                if ( !Sqlite3_Execute( db, query, ( void * ) BuildCSVOutput, ( void * ) writer, err_msg ) )
+                {
+                    CfOut( cf_error, "DBScheduledCSVReportGeneration", "%s", err_msg );
+                    retval = false;
+                }
+
+                WriterClose( writer );
+                Sqlite3_FreeString( err_msg );
+            }
+        }
+
+        Sqlite3_DBClose( db );
+    }
+
+    if( copy_to_webdir && retval )
+    {
+        char docroot[CF_MAXVARSIZE] = {0};
+
+        if( !CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+        {
+            CfOut( cf_error, "DBScheduledCSVReportGeneration", "!! Cannot find doc_root" );
+            return false;
+        }
+
+        /* copy file to web root */
+        char path_dest[CF_MAXVARSIZE] = {0};
+        snprintf( path_dest, CF_MAXVARSIZE - 1, "%s/tmp/%s", docroot, filename );
+        if( !CopyRegularFileDisk(path_origin, path_dest, false) )
+        {
+            CfOut( cf_error, "DBScheduledCSVReportGeneration", "!! Cannot create file: \"%s\" ", path_dest );
+            return false;
+        }
+
+        snprintf( path_buffer, bufsize, "%s", path_dest );
+    }
 
     return retval;
 }
