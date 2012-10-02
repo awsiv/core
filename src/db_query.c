@@ -6082,15 +6082,15 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
 
     bool modified = false;
 
-    modified |= BsonAppendStringSafe(query, cfp_handle, filter->handleInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_handle, filter->handleInclude);
     modified |= BsonAppendRegexSafe(query, cfp_handle, filter->handleRxInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_promiser, filter->promiserInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_promiser, filter->promiserInclude);
     modified |= BsonAppendRegexSafe(query, cfp_promiser, filter->promiserRxInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_promisetype, filter->promiseTypeInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_bundletype, filter->bundleTypeInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
     modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
@@ -6119,15 +6119,15 @@ static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter)
 
     bool modified = false;
 
-    modified |= BsonAppendStringSafe(query, cfp_handle_exp, filter->handleInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_handle_exp, filter->handleInclude);
     modified |= BsonAppendRegexSafe(query, cfp_handle_exp, filter->handleRxInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_promiser_exp, filter->promiserInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_promiser_exp, filter->promiserInclude);
     modified |= BsonAppendRegexSafe(query, cfp_promiser_exp, filter->promiserRxInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_promisetype, filter->promiseTypeInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
 
-    modified |= BsonAppendStringSafe(query, cfp_bundletype, filter->bundleTypeInclude);
+    modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
     modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
     modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
@@ -6562,23 +6562,23 @@ HubQuery *CFDB_QueryScheduledReport( EnterpriseDB *conn, const char *user, const
     bson_init( &query );
     if (user)
     {
-        BsonAppendStringSafe( &query, cfr_user_id, user );
+        BsonAppendStringNonEmpty( &query, cfr_user_id, user );
     }
     if (email)
     {
-        BsonAppendStringSafe( &query, cfr_user_email, email );
+        BsonAppendStringNonEmpty( &query, cfr_user_email, email );
     }
     if (scheduled_query_id)
     {
-        BsonAppendStringSafe( &query, cfr_query_id, scheduled_query_id );
+        BsonAppendStringNonEmpty( &query, cfr_query_id, scheduled_query_id );
     }
     if (scheduled_query)
     {
-        BsonAppendStringSafe( &query, cfr_query, scheduled_query );
+        BsonAppendStringNonEmpty( &query, cfr_query, scheduled_query );
     }
     if (schedule)
     {
-        BsonAppendStringSafe( &query, cfr_run_classes, schedule );
+        BsonAppendStringNonEmpty( &query, cfr_run_classes, schedule );
     }
     BsonFinish( &query );
 

@@ -341,13 +341,13 @@ bool BsonAppendStringAt( bson *b, int pos, const char *value )
 
 /*****************************************************************************/
 
-bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
+bool BsonAppendStringNonEmpty(bson *b, const char *key, const char *value)
 {
     assert( b );
     assert( !b->finished );
     assert( key );
 
-    if (value == NULL || value[0] == '\0')
+    if (value[0] == '\0')
     {
         return false;
     }
@@ -363,6 +363,11 @@ bool BsonAppendString(bson *b, const char *key, const char *value)
     assert( !b->finished );
     assert( key );
     assert( value );
+
+    if( !value )
+    {
+        return false;
+    }
 
     int ret = bson_append_string(b, key, value);
 
