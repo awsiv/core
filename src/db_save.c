@@ -201,7 +201,7 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
     {
         bson_append_start_object( &set_op, "$set" );
         {
-            BsonAppendStringSafe( &set_op, cfr_reverse_lookup_name, IPString2Hostname( ipaddr ) );
+            BsonAppendStringNonEmpty( &set_op, cfr_reverse_lookup_name, IPString2Hostname( ipaddr ) );
         }
         bson_append_finish_object( &set_op );
     }
@@ -2518,7 +2518,7 @@ void CFDB_RemoveScheduledReport(EnterpriseDB *conn, const char *user, const char
     bson query[1];
     bson_init( query );
     bson_append_string( query, cfr_user_id, user );
-    BsonAppendStringSafe( query, cfr_query_id, scheduled_query_id);
+    BsonAppendStringNonEmpty( query, cfr_query_id, scheduled_query_id);
     BsonFinish( query );
 
     MongoRemove( conn, MONGO_SCHEDULED_REPORTS, query, NULL );

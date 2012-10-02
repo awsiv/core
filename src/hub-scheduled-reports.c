@@ -187,8 +187,8 @@ static void CFDB_SaveAlreadyRun( EnterpriseDB *conn, const char *user_id,
     bson query[1];
 
     bson_init( query );
-    BsonAppendStringSafe( query, cfr_user_id, user_id );
-    BsonAppendStringSafe( query, cfr_query_id, query_id );
+    BsonAppendStringNonEmpty( query, cfr_user_id, user_id );
+    BsonAppendStringNonEmpty( query, cfr_query_id, query_id );
     BsonFinish( query );
 
     bson set_op[1];
@@ -427,8 +427,8 @@ static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user,
     bson query[1];
 
     bson_init( query );
-    BsonAppendStringSafe( query, cfr_user_id, user );
-    BsonAppendStringSafe( query, cfr_query_id, query_id );
+    BsonAppendStringNonEmpty( query, cfr_user_id, user );
+    BsonAppendStringNonEmpty( query, cfr_query_id, query_id );
     BsonFinish( query );
 
     bson push_op[1];
