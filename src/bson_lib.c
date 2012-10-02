@@ -336,11 +336,7 @@ bool BsonAppendStringAt( bson *b, int pos, const char *value )
     char index_str[32];
     snprintf( index_str, sizeof(index_str), "%d", pos );
 
-    int ret = BsonAppendString( b, index_str, value );
-
-    assert( ret == BSON_OK );
-
-    return ret == BSON_OK;
+    return BsonAppendString( b, index_str, value );
 }
 
 /*****************************************************************************/
