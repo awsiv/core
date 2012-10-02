@@ -597,7 +597,6 @@ PHP_FUNCTION(cfpr_report_software_in)
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -627,8 +626,6 @@ PHP_FUNCTION(cfpr_report_software_in)
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -639,12 +636,12 @@ PHP_FUNCTION(cfpr_report_software_in)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page, buffer,
-                             sizeof(buffer), promise_context_mode);
+    JsonElement *payload = Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page,
+                                                    promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -657,7 +654,6 @@ PHP_FUNCTION(cfpr_report_patch_in)
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -687,8 +683,6 @@ PHP_FUNCTION(cfpr_report_patch_in)
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -699,12 +693,12 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page, buffer,
-                             sizeof(buffer), promise_context_mode);
+    JsonElement *payload = Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page,
+                                                    promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -717,7 +711,6 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
     zend_bool regex;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -747,8 +740,6 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -759,12 +750,12 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail,
-                             filter, &page, buffer, sizeof(buffer), promise_context_mode);
+    JsonElement *payload = Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail,
+                                                    filter, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

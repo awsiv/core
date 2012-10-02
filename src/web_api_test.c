@@ -399,68 +399,6 @@ int Nova2PHP_value_report_test(char *hostkey, char *day, char *month, char *year
 
 /*****************************************************************************/
 /*
- * cfpr_report_software_in ( sssssbssbll )
- * cfpr_report_patch_in ( sssssbssbll )
- * cfpr_report_patch_avail ( sssssbssbll ) 
-*/
-int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
-                                  HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
-{
-    char work[CF_BUFSIZE] = { 0 };
-    char header[CF_BUFSIZE] = { 0 };
-    //  int margin = 0;
-    int headerLen = 0;
-    int noticeLen = 0;
-    int truncated = false;
-
-    int startIndex = page->resultsPerPage * (page->pageNum - 1);
-    int endIndex = page->resultsPerPage * page->pageNum;
-    int total = GetTotalCount(endIndex);
-
-    if (endIndex > total)
-    {
-        endIndex = total;
-    }
-
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : 1, "
-             "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4" "}", total);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    char *p = returnval;
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (int i = startIndex; i < endIndex; i++)
-    {
-        char hostname[CF_MAXVARSIZE];
-        char name[CF_MAXVARSIZE];
-        char version[CF_MAXVARSIZE];
-
-        RandomizeString(HOSTNAME_LEN, hostname, sizeof(hostname));
-        RandomizeString(HANDLE_LEN, name, sizeof(name));
-        RandomizeString(WORD_LEN, version, sizeof(version));
-
-        snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],", hostname, name, version, "a", time(NULL));
-
-        //  margin = headerLen + noticeLen + strlen(work);
-        p = strcatUnsafe(p, work);
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    Nova_AddReportHeader(header, truncated, work, sizeof(work) - 1);
-
-    Join(returnval, work, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
-    return true;
-}
-
-/*****************************************************************************/
-/*
  * cfpr_report_vars ( ssssssbssbll )
 */
 int Nova2PHP_vars_report_test(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type, bool regex,

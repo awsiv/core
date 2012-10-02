@@ -131,8 +131,8 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
 void Nova2PHP_summary_meter(char *buffer, int bufsize);
 void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);
-int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
-                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
+JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
+                             HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                             time_t from, time_t to, char *returnval, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);

@@ -7,8 +7,9 @@ $arch = NULL;
 $regex = false;
 $resultsPerPage = 10;
 $pageNum = 1;
+$promiseContext = null;
 
-$res =  cfpr_report_software_in($userName, $hostKey, $name, $version, $arch, $regex, array(), array(), "sortnone", false, $resultsPerPage, $pageNum);
+$res =  cfpr_report_software_in($userName, $hostKey, $promiseContext, $name, $version, $arch, $regex, array(), array(), "sortnone", false, $resultsPerPage, $pageNum);
 fwrite(STDERR, $res);
 
 ?>

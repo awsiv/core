@@ -1385,89 +1385,68 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
-                             bool regex, char *type, HostClassFilter *hostClassFilter,
-                             PageInfo *page, char *returnval, int bufsize,
-                             PromiseContextMode promise_context)
+JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
+                                      bool regex, char *type, HostClassFilter *hostClassFilter,
+                                      PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_software_report_test(hostkey, name, value, arch, regex, type, hostClassFilter, page, returnval,
-                                             bufsize);
-    }
-# endif
-
-    char buffer[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    HubSoftware *hs;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
+    HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
                             hostClassFilter, true, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
 
-    if(strcmp(type, cfr_software) == 0)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        snprintf(header, sizeof(header),
-                 "\"meta\":{\"count\" : %d, \"related\" : %d, "
-                 "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
-                 "}", page->totalResultCount, related_host_cnt);
-    }
-    else
-    {
-        // Patches installed and patches available reports don't have timestamps
-        snprintf(header, sizeof(header),
-                 "\"meta\":{\"count\" : %d, \"related\" : %d, "
-                 "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3"
-                 "}", page->totalResultCount, related_host_cnt);
-    }
+        JsonElement *meta = JsonObjectCreate(4);
 
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
-    {
-        hs = (HubSoftware *) rp->item;
-
-        if(strcmp(type, cfr_software) == 0)
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
-                     hs->hh->hostname, hs->name, hs->version, Nova_LongArch(hs->arch), hs->t);
+            JsonElement *header = JsonObjectCreate(6);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Package Name", 1);
+            JsonObjectAppendInteger(header, "Version", 2);
+            JsonObjectAppendInteger(header, "Architecture", 3);
+
+            if(strcmp(type, cfr_software) == 0)
+            {
+                JsonObjectAppendInteger(header, "Last seen", 4);
+            }
+
+            JsonObjectAppendObject(meta, "header", header);
         }
-        else
-        {
-            // Patches installed and patches available reports don't have timestamps
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\"],",
-                     hs->hh->hostname, hs->name, hs->version, Nova_LongArch(hs->arch));
-        }
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            break;
-        }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubSoftware *hs = (HubSoftware *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(5);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hs->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hs->name));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hs->version));
+            JsonArrayAppendString(entry, Nova_LongArch(hs->arch));
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            if(strcmp(type, cfr_software) == 0)
+            {
+                JsonArrayAppendInteger(entry, hs->t);
+            }
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
 
@@ -1476,7 +1455,7 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
@@ -1850,15 +1829,10 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
                                           HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter,
                                           bool lastRunOnly, PageInfo *page, PromiseContextMode promise_context)
 {
-    char buffer[CF_BUFSIZE];
     HubPromiseCompliance *hp;
     HubQuery *hq;
     Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
