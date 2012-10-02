@@ -136,7 +136,7 @@ bool CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, con
 //*****************************************************************************
 long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey);
 long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey);
-bool CFDB_GetBlueHostThreshold(unsigned long *threshold);
+void CFDB_GetBlueHostThreshold(unsigned long *threshold);
 bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *db_name );
 bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name);
 int CFDB_QueryIsMaster(void);

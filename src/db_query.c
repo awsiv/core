@@ -73,15 +73,20 @@ bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *
 
 /*****************************************************************************/
 
-bool CFDB_GetBlueHostThreshold(unsigned long *threshold)
+void CFDB_GetBlueHostThreshold(unsigned long *threshold)
 {
+    HubSettings *settings = NULL;
+
     EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
-        return false;
+        // return the default, if any.
+        settings = NewHubSettingsDefaults();
+        *threshold = settings->bluehost_horizon;
+        DeleteHubSettings(settings);
+        return;
     }
 
-    HubSettings *settings = NULL;
     cfapi_errid err = CFDB_QuerySettings(&conn, &settings);
     if (err != ERRID_SUCCESS)
     {
@@ -91,7 +96,7 @@ bool CFDB_GetBlueHostThreshold(unsigned long *threshold)
         DeleteHubSettings(settings);
 
         CFDB_Close(&conn);
-        return false;
+        return;
     }
     else
     {
@@ -99,7 +104,7 @@ bool CFDB_GetBlueHostThreshold(unsigned long *threshold)
         DeleteHubSettings(settings);
 
         CFDB_Close(&conn);
-        return true;
+        return;
     }
 }
 
@@ -432,10 +437,7 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
                            HostClassFilter *host_class_filter, PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
-    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
-    {
-        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    }
+    CFDB_GetBlueHostThreshold(&blue_horizon);
 
     bson query;
     bson_init(&query);
@@ -1621,11 +1623,7 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
-    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
-    {
-        assert(false && "Could not determine blue horizon");
-        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    }
+    CFDB_GetBlueHostThreshold(&blue_horizon);
 
     bson query;
     bson_init(&query);
@@ -1704,11 +1702,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
-    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
-    {
-       // assert(false && "Could not determine blue horizon");
-        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    }
+    CFDB_GetBlueHostThreshold(&blue_horizon);
 
     bson query;
     bson_init(&query);
@@ -3513,11 +3507,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
                                PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
-    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
-    {
-        assert(false && "Could not determine blue horizon");
-        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    }
+    CFDB_GetBlueHostThreshold(&blue_horizon);
 
     /* BEGIN query document */
     bson query;
@@ -3604,11 +3594,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
                                        PromiseContextMode promise_context)
 {
     unsigned long blue_horizon;
-    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
-    {
-        assert(false && "Could not determine blue horizon");
-        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
-    }
+    CFDB_GetBlueHostThreshold(&blue_horizon);
 
 /* BEGIN query document */
 
@@ -6393,10 +6379,8 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     }
 
     unsigned long bluehost_threshold;
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return false;
-    }
+    CFDB_GetBlueHostThreshold(&bluehost_threshold);
+
     time_t now = time(NULL);
 
     EnterpriseDB conn;

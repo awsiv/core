@@ -386,10 +386,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
     char *current_host = "x";
     unsigned long bluehost_threshold;
 
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return false;
-    }
+    CFDB_GetBlueHostThreshold(&bluehost_threshold);
 
     if (!CFDB_Open(&dbconn))
     {
@@ -4248,10 +4245,7 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
     EnterpriseDB dbconn;
     unsigned long bluehost_threshold;
 
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return false;
-    }
+    CFDB_GetBlueHostThreshold(&bluehost_threshold);
 
 /* BEGIN query document */
 
@@ -4963,10 +4957,7 @@ int Nova2PHP_get_bluehost_threshold(char *buffer, int buffsize)
 {
     unsigned long threshold;
 
-    if (!CFDB_GetBlueHostThreshold(&threshold))
-    {
-        return false;
-    }
+    CFDB_GetBlueHostThreshold(&threshold);
 
     snprintf(buffer, buffsize, "%lu", threshold);
     return true;

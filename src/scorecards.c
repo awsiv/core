@@ -45,10 +45,7 @@ HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours,
                                       PromiseContextMode promise_context)
 {
     long bluehost_threshold = 0;
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return NULL;
-    }
+    CFDB_GetBlueHostThreshold(&bluehost_threshold);
 
     HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
     filter->method = method;

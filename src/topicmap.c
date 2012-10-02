@@ -1253,10 +1253,7 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
     unsigned long bluehost_threshold;
     time_t now = time(NULL);
 
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return;
-    }
+    CFDB_GetBlueHostThreshold(&bluehost_threshold);
 
     if (!CFDB_Open(&dbconn))
     {
