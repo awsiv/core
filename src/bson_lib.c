@@ -250,9 +250,26 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
 
 /*****************************************************************************/
 
+bool BsonAppendNull( bson *b, const char *key )
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    int retval = bson_append_null( b, key );
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+
+
 bool BsonAppendBool( bson *b, const char *key, const bool value )
 {
     assert( b );
+    assert( !b->finished );
     assert( key );
 
     int retval = bson_append_bool( b, key, value );
@@ -267,6 +284,7 @@ bool BsonAppendBool( bson *b, const char *key, const bool value )
 bool BsonAppendInt( bson *b, const char *key, int value )
 {
     assert( b );
+    assert( !b->finished );
     assert( key );
 
     int retval = bson_append_int( b, key, value );
@@ -281,6 +299,7 @@ bool BsonAppendInt( bson *b, const char *key, int value )
 bool BsonAppendDouble( bson *b, const char *key, double value )
 {
     assert( b );
+    assert( !b->finished );
     assert( key );
 
     int retval = bson_append_double( b, key, value );
@@ -295,6 +314,7 @@ bool BsonAppendDouble( bson *b, const char *key, double value )
 bool BsonAppendLong( bson *b, const char *key, long value )
 {
     assert( b );
+    assert( !b->finished );
     assert( key );
 
     int retval = bson_append_long( b, key, value );
@@ -309,116 +329,224 @@ bool BsonAppendLong( bson *b, const char *key, long value )
 bool BsonAppendStringAt( bson *b, int pos, const char *value )
 {
     assert( b );
+    assert( !b->finished );
     assert( pos >= 0 );
     assert( value );
 
     char index_str[32];
     snprintf( index_str, sizeof(index_str), "%d", pos );
 
-    int ret = bson_append_string( b, index_str, value );
+    int ret = BsonAppendString( b, index_str, value );
 
     assert( ret == BSON_OK );
 
     return ret == BSON_OK;
 }
+
 /*****************************************************************************/
 
 bool BsonAppendStringSafe(bson *b, const char *key, const char *value)
 {
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
     if (value == NULL || value[0] == '\0')
     {
         return false;
     }
 
-    if(bson_append_string(b, key, value) == BSON_OK)
-    {
-        return true;
-    }
-
-    return false;
+    return BsonAppendString(b, key, value);
 }
 
 /*****************************************************************************/
 
-bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue)
+bool BsonAppendString(bson *b, const char *key, const char *value)
 {
-    if (rxValue == NULL || rxValue[0] == '\0')
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+    assert( value );
+
+    int ret = bson_append_string(b, key, value);
+
+    assert( ret == BSON_OK);
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendRegex(bson *b, const char *key, const char *pattern, const char *opts)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+    assert( pattern );
+
+    int ret = bson_append_regex( b, key, pattern, opts );
+
+    assert( ret == BSON_OK);
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendStartObject( bson *b, const char *key )
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    int ret = bson_append_start_object( b, key );
+
+    assert( ret == BSON_OK );
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendStartArray( bson *b, const char *key)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    int ret = bson_append_start_array( b, key );
+
+    assert( ret == BSON_OK );
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendFinishObject( bson *b )
+{
+    assert( b );
+    assert( !b->finished );
+
+    int ret = bson_append_finish_object( b );
+
+    assert( ret == BSON_OK );
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendFinishArray( bson *b )
+{
+    assert( b );
+    assert( !b->finished );
+
+    int ret = bson_append_finish_array( b );
+
+    assert( ret == BSON_OK );
+
+    return ret == BSON_OK;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendRegexSafe(bson *b, const char *key, char *rx_value)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    if (rx_value == NULL || rx_value[0] == '\0')
     {
         return false;
     }
 
-    char anchoredRx[CF_MAXVARSIZE];
+    char anchored_rx[CF_MAXVARSIZE];
 
-    AnchorRegex(rxValue, anchoredRx, sizeof(anchoredRx));
+    AnchorRegex(rx_value, anchored_rx, sizeof(anchored_rx));
 
-    if (bson_append_regex(bb, key, anchoredRx, "") == BSON_OK)
-    {
-        return true;
-    }
-
-    return false;
+    return BsonAppendRegex(b, key, anchored_rx, "");
 }
 
 /*****************************************************************************/
 
-void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues)
-{    
-    int i = 0;
-    char iStr[32];
-
-    Item *ip;
+void BsonAppendStringArray(bson *b, char *array_name, Item *array_values)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( array_name );
 
     {
-        bson_append_start_array(b, arrayName);
+        BsonAppendStartArray( b, array_name );
 
-        for (ip = arrayValues; ip != NULL; ip = ip->next, i++)
+        int i = 0;
+        char index_str[32];
+
+        for (Item *ip = array_values; ip != NULL; ip = ip->next, i++)
         {
-            snprintf(iStr, sizeof(iStr), "%d", i);
-            bson_append_string(b, iStr, ip->name);
+            snprintf(index_str, sizeof(index_str), "%d", i);
+            BsonAppendString( b, index_str, ip->name );
         }
 
-        bson_append_finish_object(b);
+        BsonAppendFinishArray( b );
     }
 }
 
+/*****************************************************************************/
+
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist)
 {
-    int i = 0;
-    char index_str[32];
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
     {
-        bson_append_start_array(b, key);
+        BsonAppendStartArray( b, key );
+
+        int i = 0;
+        char index_str[32];
 
         for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
         {
             snprintf(index_str, sizeof(index_str), "%d", i);
-            bson_append_string(b, index_str, ScalarValue(rp));
+            BsonAppendString( b, index_str, ScalarValue(rp) );
         }
 
-        bson_append_finish_object(b);
+        BsonAppendFinishArray( b );
     }
 }
 
+/*****************************************************************************/
+
 void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq)
 {
-    assert(string_seq);
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+    assert( string_seq );
+
     {
-        bson_append_start_array(b, key);
+        BsonAppendStartArray( b, key );
 
         for (int i = 0; i < string_seq->length; i++)
         {
             char index_str[32] = { 0 };
             snprintf(index_str, sizeof(index_str), "%d", i);
-            bson_append_string(b, index_str, string_seq->data[i]);
+            BsonAppendString( b, index_str, string_seq->data[i] );
         }
 
-        bson_append_finish_object(b);
+        BsonAppendFinishArray( b );
     }
 }
 
 /*****************************************************************************/
 
-bool BsonAppendHostClassFilter(bson *queryBuffer, const HostClassFilter *filter)
+bool BsonAppendHostClassFilter(bson *query, const HostClassFilter *filter)
 {
+    assert( query );
+    assert( !query->finished );
+
     if (filter == NULL)
     {
         return false;
@@ -426,24 +554,31 @@ bool BsonAppendHostClassFilter(bson *queryBuffer, const HostClassFilter *filter)
 
     bool modified = false;
 
-    modified |= BsonAppendIncludeRxList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
-    modified |= BsonAppendExcludeRxList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
+    modified |= BsonAppendIncludeRxList(query, cfr_class_keys, filter->classRxIncludes);
+    modified |= BsonAppendExcludeRxList(query, cfr_class_keys, filter->classRxExcludes);
 
     return modified;
 }
 
 /*****************************************************************************/
 
-bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeValues)
+bool BsonAppendIncludeList(bson *b, char *key, Rlist *include_values)
 {
-    if (!includeValues)
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    if (!include_values)
     {
         return false;
     }
 
-    for (Rlist *rp = includeValues; rp; rp = rp->next)
+    for (Rlist *rp = include_values; rp; rp = rp->next)
     {
-        bson_append_string(queryBuffer, includeKey, ScalarValue(rp));
+        if( !BsonAppendString( b, key, ScalarValue(rp) ))
+        {
+            return false;
+        }
     }
 
     return true;
@@ -451,142 +586,179 @@ bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeVa
 
 /*****************************************************************************/
 
-void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values)
-{    
-    int i = 0;
+void BsonAppendArrayRx(bson *b, const char *key, Rlist *rx_values)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
 
     {
-        bson_append_start_array(buffer, key);
+        BsonAppendStartArray( b, key );
+
+        int i = 0;
         for (Rlist *rp = rx_values; rp != NULL; rp = rp->next, i++)
         {
-            char anchoredRx[CF_BUFSIZE] = { 0 };
-            AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
+            char anchored_rx[CF_BUFSIZE] = { 0 };
+            AnchorRegex(ScalarValue(rp), anchored_rx, sizeof(anchored_rx));
 
             char index_str[32] = { 0 };
             snprintf(index_str, sizeof(index_str), "%d", i);
-            bson_append_regex(buffer, index_str, anchoredRx, "");
+            BsonAppendRegex(b, index_str, anchored_rx, "");
         }
 
-        bson_append_finish_object(buffer);
+        BsonAppendFinishArray( b );
     }
 }
 
-bool BsonAppendIncludeRxList(bson *query, char *include_key, Rlist *include_rx_values)
+/*****************************************************************************/
+
+bool BsonAppendIncludeRxList(bson *b, char *include_key, Rlist *include_rx_values)
 {
+    assert( b );
+    assert( !b->finished );
+    assert( include_key );
+
     if (!include_rx_values)
     {
         return false;
     }
 
     {
-        bson_append_start_object(query, include_key);
-        BsonAppendArrayRx(query, "$all", include_rx_values);
-        bson_append_finish_object(query);
+        BsonAppendStartObject( b, include_key );
+        BsonAppendArrayRx( b, "$all", include_rx_values );
+        return BsonAppendFinishObject( b );
     }
-    return true;
 }
 
-bool BsonAppendExcludeRxList(bson *query, char *exclude_key, Rlist *exclude_rx_values)
+/*****************************************************************************/
+
+bool BsonAppendExcludeRxList(bson *b, char *exclude_key, Rlist *exclude_rx_values)
 {
+    assert( b );
+    assert( !b->finished );
+    assert( exclude_key );
+
     if (!exclude_rx_values)
     {
         return false;
     }
 
     {
-        bson_append_start_object(query, exclude_key);
+        BsonAppendStartObject( b, exclude_key );
         {
-            bson_append_start_object(query, "$not");
+            BsonAppendStartObject( b, "$not" );
 
-            BsonAppendArrayRx(query, "$all", exclude_rx_values);
+            BsonAppendArrayRx( b, "$all", exclude_rx_values );
 
-            bson_append_finish_object(query);
+            BsonAppendFinishObject( b );
         }
-        bson_append_finish_object(query);
+        return BsonAppendFinishObject( b );
     }
-    return true;
 }
 
 /*****************************************************************************/
 
-bool BsonAppendExcludeList(bson *query, char *excludeKey, Rlist *excludeValues)
+bool BsonAppendExcludeList(bson *b, char *exclude_key, Rlist *exclude_values)
 {
-    if (!excludeValues)
+    assert( b );
+    assert( !b->finished );
+    assert( exclude_key );
+
+    if (!exclude_values)
     {
         return false;
     }
 
+    bool ret = false;
     {
-        bson_append_start_object(query, excludeKey);
+        BsonAppendStartObject(b, exclude_key);
         {
-            bson_append_start_array(query, "$not");
+            BsonAppendStartArray(b, "$not");
 
-            for (Rlist *rp = excludeValues; rp != NULL; rp = rp->next)
+            for (Rlist *rp = exclude_values; rp != NULL; rp = rp->next)
             {
-                bson_append_string(query, excludeKey, ScalarValue(rp));
+                BsonAppendString(b, exclude_key, ScalarValue(rp));
             }
 
-            bson_append_finish_object(query);
+            BsonAppendFinishArray(b);
         }
-        bson_append_finish_object(query);
+        ret = BsonAppendFinishObject(b);
     }
-    return true;
+
+    return ret;
 }
 
 /*****************************************************************************/
 
 void BsonAppendAddToSetString(bson *b, char *key, char *value)
 {
-    bson_append_start_object(b, "$addToSet");
-    bson_append_string(b, key, value);
-    bson_append_finish_object(b);
-}
-
-/*****************************************************************************/
-
-void BsonAppendRecentQuery(bson *query, int maxAgeInSeconds)
-{
-    time_t currentTimeStamp = time(NULL);
-    time_t minTimeStamp = currentTimeStamp - maxAgeInSeconds;
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+    assert( value );
 
     {
-        bson_append_start_object(query, cfr_time);
-
-        bson_append_int(query, "$gte", minTimeStamp);
-
-        bson_append_finish_object(query);
+        BsonAppendStartObject(b, "$addToSet");
+        BsonAppendString(b, key, value);
+        BsonAppendFinishObject(b);
     }
 }
 
 /*****************************************************************************/
 
-void BsonAppendAgedQuery(bson *query, int maxAgeInSeconds)
+void BsonAppendRecentQuery(bson *b, int max_age_seconds)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( max_age_seconds >= 0 );
+
+    time_t now = time(NULL);
+    time_t min_timestamp = now - max_age_seconds;
+
+    {
+        BsonAppendStartObject(b, cfr_time);
+
+        BsonAppendInt(b, "$gte", min_timestamp);
+
+        BsonAppendFinishObject(b);
+    }
+}
+
+/*****************************************************************************/
+
+void BsonAppendAgedQuery(bson *b, int max_age_seconds)
 /*
  * timestamp not there or older than maxAgeInSeconds
  */
 {
-    time_t currentTimeStamp = time(NULL);
-    time_t minTimeStamp = currentTimeStamp - maxAgeInSeconds;
+    assert( b );
+    assert( !b->finished );
+    assert( max_age_seconds >= 0 );
 
-    bson_append_start_array(query, "$or");
+    time_t now = time(NULL);
+    time_t min_timestamp = now - max_age_seconds;
+
     {
+        BsonAppendStartArray(b, "$or");
+
         {
-            bson_append_start_object(query, "0");
-            bson_append_null(query, cfr_time);
-            bson_append_finish_object(query);
+            BsonAppendStartObject(b, "0");
+            BsonAppendNull(b, cfr_time);
+            BsonAppendFinishObject(b);
         }
 
         {
-            bson_append_start_object(query, "1");
+            BsonAppendStartObject(b, "1");
             {
-                bson_append_start_object(query, cfr_time);
-                bson_append_int(query, "$lt", minTimeStamp);
-                bson_append_finish_object(query);
+                BsonAppendStartObject(b, cfr_time);
+                BsonAppendInt(b, "$lt", min_timestamp);
+                BsonAppendFinishObject(b);
             }
-            bson_append_finish_object(query);
+            BsonAppendFinishObject(b);
         }
+
+        BsonAppendFinishArray(b);
     }
-    bson_append_finish_object(query);
 }
 
 /*****************************************************************************/
@@ -683,8 +855,11 @@ void BsonToString(char *retBuf, int retBufSz, bson *data)
 
 /* NOTE: Clients older than Enterprise 3.0 do not support
    promise_context and have to be filter out */
-void BsonAppendClassFilterFromPromiseContext(bson *query, PromiseContextMode promise_context)
+void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise_context)
 {
+    assert( b );
+    assert( !b->finished );
+
     if (promise_context != PROMISE_CONTEXT_MODE_ALL)
     {
         Rlist *old_ent_versions = NULL;
@@ -692,9 +867,11 @@ void BsonAppendClassFilterFromPromiseContext(bson *query, PromiseContextMode pro
         PrependRScalar(&old_ent_versions, (void *) "nova_2_1.*", CF_SCALAR);
         PrependRScalar(&old_ent_versions, (void *) "nova_2_2.*", CF_SCALAR);
 
-        bson_append_start_object(query, cfr_class_keys);
-        BsonAppendArrayRx(query, "$nin", old_ent_versions);
-        bson_append_finish_object(query);
+        {
+            BsonAppendStartObject(b, cfr_class_keys);
+            BsonAppendArrayRx(b, "$nin", old_ent_versions);
+            BsonAppendFinishObject(b);
+        }
 
         DeleteRlist(old_ent_versions);
     }
@@ -704,6 +881,9 @@ void BsonAppendClassFilterFromPromiseContext(bson *query, PromiseContextMode pro
 
 void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
 {
+    assert( query );
+    assert( !query->finished );
+
     if (filter == NULL)
     {
         return;
@@ -750,107 +930,107 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
     if (filter->colour == HOST_COLOUR_BLUE) // blue overwrites black status
     {
         {
-            bson_append_start_array(query, "$or");
+            BsonAppendStartArray(query, "$or");
             {
-                bson_append_start_object(query, "0");
+                BsonAppendStartObject(query, "0");
                 {
-                    bson_append_start_object(query, cfr_day);
-                    bson_append_long(query, "$lt", filter->blue_time_horizon);
-                    bson_append_finish_object(query);
+                    BsonAppendStartObject(query, cfr_day);
+                    BsonAppendLong(query, "$lt", filter->blue_time_horizon);
+                    BsonAppendFinishObject(query);
                 }
-                bson_append_finish_object(query);
+                BsonAppendFinishObject(query);
             }
 
             {
-                bson_append_start_object(query, "1");
+                BsonAppendStartObject(query, "1");
                 {
-                    bson_append_start_object(query, cfr_day);
-                    bson_append_bool(query, "$exists", false);
-                    bson_append_finish_object(query);
+                    BsonAppendStartObject(query, cfr_day);
+                    BsonAppendBool(query, "$exists", false);
+                    BsonAppendFinishObject(query);
                 }
-                bson_append_finish_object(query);
+                BsonAppendFinishObject(query);
             }
 
             {
-                bson_append_start_object(query, "2");
+                BsonAppendStartObject(query, "2");
                 {
-                    bson_append_start_object(query, cfr_is_black);
-                    bson_append_bool(query, "$exists", false);
-                    bson_append_finish_object(query);
+                    BsonAppendStartObject(query, cfr_is_black);
+                    BsonAppendBool(query, "$exists", false);
+                    BsonAppendFinishObject(query);
                 }
-                bson_append_finish_object(query);
+                BsonAppendFinishObject(query);
             }
 
             {
-                bson_append_start_object(query, "3");
+                BsonAppendStartObject(query, "3");
                 {
-                    bson_append_start_object(query, score_method);
-                    bson_append_bool(query, "$exists", false);
-                    bson_append_finish_object(query);
+                    BsonAppendStartObject(query, score_method);
+                    BsonAppendBool(query, "$exists", false);
+                    BsonAppendFinishObject(query);
                 }
-                bson_append_finish_object(query);
+                BsonAppendFinishObject(query);
             }
 
-            bson_append_finish_object(query);
+            BsonAppendFinishArray(query);
         }
     }
 
     if (filter->colour == HOST_COLOUR_GREEN)
     {
-        bson_append_start_object(query, score_method);
-        bson_append_int(query, "$lt", CF_AMBER_THRESHOLD);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, score_method);
+        BsonAppendInt(query, "$lt", CF_AMBER_THRESHOLD);
+        BsonAppendFinishObject(query);
 
-        bson_append_start_object (query, cfr_day);
-        bson_append_long(query, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query);
+        BsonAppendStartObject (query, cfr_day);
+        BsonAppendLong(query, "$gte", filter->blue_time_horizon);
+        BsonAppendFinishObject(query);
 
-        bson_append_bool(query, cfr_is_black, false);
+        BsonAppendBool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_YELLOW)
     {
-        bson_append_start_object(query, score_method);
-        bson_append_int(query, "$gte", CF_AMBER_THRESHOLD);
-        bson_append_int(query, "$lt", CF_RED_THRESHOLD);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, score_method);
+        BsonAppendInt(query, "$gte", CF_AMBER_THRESHOLD);
+        BsonAppendInt(query, "$lt", CF_RED_THRESHOLD);
+        BsonAppendFinishObject(query);
 
-        bson_append_start_object (query, cfr_day);
-        bson_append_long(query, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query);
+        BsonAppendStartObject (query, cfr_day);
+        BsonAppendLong(query, "$gte", filter->blue_time_horizon);
+        BsonAppendFinishObject(query);
 
-        bson_append_bool(query, cfr_is_black, false);
+        BsonAppendBool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_RED)
     {
-        bson_append_start_object(query, score_method);
-        bson_append_int(query, "$gte", CF_RED_THRESHOLD);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, score_method);
+        BsonAppendInt(query, "$gte", CF_RED_THRESHOLD);
+        BsonAppendFinishObject(query);
 
-        bson_append_start_object (query, cfr_day);
-        bson_append_long(query, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, cfr_day);
+        BsonAppendLong(query, "$gte", filter->blue_time_horizon);
+        BsonAppendFinishObject(query);
 
-        bson_append_bool(query, cfr_is_black, false);
+        BsonAppendBool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_GREEN_YELLOW_RED) // !BLUE
     {
-        bson_append_start_object(query, cfr_day);
-        bson_append_long(query, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, cfr_day);
+        BsonAppendLong(query, "$gte", filter->blue_time_horizon);
+        BsonAppendFinishObject(query);
 
-        bson_append_bool(query, cfr_is_black, false);
+        BsonAppendBool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_BLACK)
     {
-        bson_append_start_object (query, cfr_day);
-        bson_append_long(query, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query);
+        BsonAppendStartObject(query, cfr_day);
+        BsonAppendLong(query, "$gte", filter->blue_time_horizon);
+        BsonAppendFinishObject(query);
 
-        bson_append_bool(query, cfr_is_black, true);
+        BsonAppendBool(query, cfr_is_black, true);
     }
 
     BsonAppendClassFilterFromPromiseContext(query, filter->promise_context);
@@ -860,7 +1040,7 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
 
 /*****************************************************************************/
 
-void BsonAppendSortField(bson *bb, char *sortField)
+void BsonAppendSortField(bson *b, char *sort_field)
 /* 
  * usage:
  * bson_init(&bb);
@@ -871,15 +1051,18 @@ void BsonAppendSortField(bson *bb, char *sortField)
  * bson_from_buffer(&query, &bb);
  *
  * Supports sorting ascending on one field currently.
- * Works with libmongoc v. 0.2, may need adjustment for newer versions.
  */
-{
-    bson_append_start_object(bb, "$query");
-    bson_append_finish_object(bb);
+{    
+    assert( b );
+    assert( !b->finished );
+    assert( !NULL_OR_EMPTY(sort_field));
 
-    bson_append_start_object(bb, "$orderby");
-    bson_append_int(bb, sortField, -1);
-    bson_append_finish_object(bb);
+    BsonAppendStartObject(b, "$query");
+    BsonAppendFinishObject(b);
+
+    BsonAppendStartObject(b, "$orderby");
+    BsonAppendInt(b, sort_field, -1);
+    BsonAppendFinishObject(b);
 }
 
 /*****************************************************************************/
@@ -933,7 +1116,7 @@ int BsonSelectReportFields( bson *fields, int fieldCount, ... )
     for ( count = 0; count < fieldCount; count++ )
     {
         char *key = va_arg( arguments, char *);
-        bson_append_int(fields, key, 1);
+        BsonAppendInt(fields, key, 1);
     }
 
     va_end ( arguments );
@@ -977,22 +1160,22 @@ static bool JsonPrimitiveToBson(const JsonElement *primitive, bson *buffer, cons
     {
         case JSON_PRIMITIVE_TYPE_INTEGER:
         {
-            bson_append_int(buffer, key, (int)StringToLong(value));
+            BsonAppendInt(buffer, key, (int)StringToLong(value));
             break;
         }
         case JSON_PRIMITIVE_TYPE_STRING:
         {
-            bson_append_string(buffer, key, value);
+            BsonAppendString(buffer, key, value);
             break;
         }
         case JSON_PRIMITIVE_TYPE_REAL:
         {
-            bson_append_double(buffer, key, (double)StringToDouble(value));
+            BsonAppendDouble(buffer, key, (double)StringToDouble(value));
             break;
         }
         case JSON_PRIMITIVE_TYPE_BOOL:
         {
-            bson_append_bool(buffer, key, StringSafeCompare(value,"false")? true:false);
+            BsonAppendBool(buffer, key, StringSafeCompare(value,"false")? true:false);
             break;
         }
         default:
@@ -1030,18 +1213,18 @@ static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
         {
             if (JsonIteratorCurrentContrainerType(&it) == JSON_CONTAINER_TYPE_OBJECT)
             {
-                bson_append_start_object(buffer, JsonIteratorCurrentKey(&it));
+                BsonAppendStartObject(buffer, JsonIteratorCurrentKey(&it));
 
                 if (!JsonComplexToBson(JsonIteratorCurrentValue(&it), buffer))
                 {
                     return false;
                 }
 
-                bson_append_finish_object(buffer);
+                BsonAppendFinishObject(buffer);
             }
             else // ARRAY
             {
-                bson_append_start_array(buffer, JsonIteratorCurrentKey(&it));
+                BsonAppendStartArray(buffer, JsonIteratorCurrentKey(&it));
 
                 char iStr[CF_SMALLBUF];
                 int i = 0;
@@ -1053,13 +1236,13 @@ static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
 
                     if (JsonIteratorCurrentElementType(&it2) == JSON_ELEMENT_TYPE_CONTAINER)
                     {
-                        bson_append_start_object(buffer, iStr);
+                        BsonAppendStartObject(buffer, iStr);
 
                         if (!JsonComplexToBson(JsonIteratorCurrentValue(&it2), buffer))
                         {
                             return false;
                         }
-                        bson_append_finish_object(buffer);
+                        BsonAppendFinishArray(buffer);
                     }
                     else
                     {
@@ -1072,7 +1255,7 @@ static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
                     i++;
                 }
 
-                bson_append_finish_object(buffer);
+                BsonAppendFinishObject(buffer);
             }
         }
     }
@@ -1085,7 +1268,9 @@ static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
 
 bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
 {
-    assert(json_string);
+    assert( bson_ret );
+    assert( !bson_ret->finished );
+    assert( json_string );
 
     const char * json_string_new = SearchAndReplace(json_string, "'", "\"");
 
@@ -1110,6 +1295,9 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
 
 static bool BsonInitFromJsonStringFV(bson *bson_ret, const char *fmt, va_list ap)
 {
+    assert( bson_ret );
+    assert( !bson_ret->finished );
+
     char *str = NULL;
 
     xvasprintf(&str, fmt, ap);
@@ -1123,6 +1311,8 @@ static bool BsonInitFromJsonStringFV(bson *bson_ret, const char *fmt, va_list ap
 
 bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...)
 {
+    assert( bson_ret );
+    assert( !bson_ret->finished );
     va_list ap;
 
     va_start(ap, fmt);
@@ -1387,9 +1577,12 @@ void BsonFinish( bson *b )
 
 void BsonFilterInStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist)
 {
-    bson_append_start_object( b, key );
+    assert( b );
+    assert( !b->finished );
+
+    BsonAppendStartObject( b, key );
     {
-        bson_append_start_array( b, "$in" );
+        BsonAppendStartArray( b, "$in" );
 
         int i = 0;
         for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
@@ -1397,9 +1590,9 @@ void BsonFilterInStringArrayRlist(bson *b, const char *key, const Rlist *string_
             BsonAppendStringAt( b, i, ScalarValue( rp ) );
         }
 
-        bson_append_finish_array( b );
+        BsonAppendFinishArray( b );
     }
-    bson_append_finish_object(b);
+    BsonAppendFinishObject(b);
 }
 
 /*****************************************************************************/
