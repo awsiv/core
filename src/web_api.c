@@ -1846,18 +1846,10 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex,
-                                 HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter,
-                                 bool lastRunOnly, PageInfo *page, char *returnval,
-                                 int bufsize, PromiseContextMode promise_context)
+JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex,
+                                          HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter,
+                                          bool lastRunOnly, PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_compliance_promises_test(hostkey, handle, status, regex, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
     char buffer[CF_BUFSIZE];
     HubPromiseCompliance *hp;
     HubQuery *hq;
@@ -1892,53 +1884,62 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseCompliance);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"%% Runs Kept\":3,\"+/- %%\":4,\"Last verified\":5"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        hp = (HubPromiseCompliance *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        char E[CF_SMALLBUF];
-        char D[CF_SMALLBUF];
-
-        WriteDouble2Str_MP(hp->e, E, sizeof(E));
-        WriteDouble2Str_MP(hp->d, D, sizeof(D));
-
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
-                 hp->hh->hostname, hp->handle, Nova_LongState(hp->status), E, D, hp->t);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(6);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Promise Handle", 1);
+            JsonObjectAppendInteger(header, "Last Known State", 2);
+            JsonObjectAppendInteger(header, "%% Runs Kept", 3);
+            JsonObjectAppendInteger(header, "+/- %%", 4);
+            JsonObjectAppendInteger(header, "Last verified", 5);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            hp = (HubPromiseCompliance *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            char E[CF_SMALLBUF] = { 0 };
+            char D[CF_SMALLBUF] = { 0 };
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            WriteDouble2Str_MP(hp->e, E, sizeof(E));
+            WriteDouble2Str_MP(hp->d, D, sizeof(D));
+
+            JsonElement *entry = JsonArrayCreate(6);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->handle));
+            JsonArrayAppendString(entry, NULLStringToEmpty(Nova_LongState(hp->status)));
+            JsonArrayAppendString(entry, E);
+            JsonArrayAppendString(entry, D);
+            JsonArrayAppendInteger(entry, hp->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
-    hq = NULL;
 
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

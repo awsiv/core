@@ -1206,8 +1206,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    char buffer[CF_WEBBUFFER];
-
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
                               &username, &user_len,
                               &hostkey, &hk_len,
@@ -1230,8 +1228,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1241,12 +1237,12 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL,
-                                 false, &page, buffer, sizeof(buffer), promise_context_mode);
+    JsonElement *payload = Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL,
+                                                        false, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -1268,8 +1264,6 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
-
-    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaasbll",
                               &username, &user_len,
@@ -1294,8 +1288,6 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1314,16 +1306,13 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
                                                promise_context_mode);
     }
 
-
-
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter,
-                                 hostColourFilter, true, &page, buffer, sizeof(buffer),
-                                 promise_context_mode);
+    JsonElement *payload = Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter,
+                                                        hostColourFilter, true, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     free(hostColourFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 /******************************************************************************/
 
