@@ -1625,7 +1625,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
     char *fhostkey, *ffile;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, f_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
@@ -1654,8 +1653,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1664,10 +1661,10 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, from, to, filter, &page);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -1678,7 +1675,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
     char *fhostkey, *ffile, *fdiff;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, f_len, d_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
@@ -1709,8 +1705,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
     ffile = (f_len == 0) ? NULL : file;
     fdiff = (d_len == 0) ? NULL : diff;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1719,11 +1713,11 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, to, filter, &page);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

@@ -737,8 +737,8 @@ HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t)
     hp = xmalloc(sizeof(HubFileDiff));
 
     hp->hh = hh;
-    hp->path = xstrdup(file);
-    hp->diff = xstrdup(diff);
+    hp->path = SafeStringDuplicate(file);
+    hp->diff = SafeStringDuplicate(diff);
     hp->t = t;
     return hp;
 }

@@ -67,6 +67,7 @@ runtest()
     echo "Testing $PHPFILE..."
     
     TIME_START_TEST=$(date +%s)
+    echo "php -n -d extension=$CFMOD -f $PHPFILE"
     OUTPUT_PHP=$(php -n -d extension=$CFMOD -f $PHPFILE 2>&1)
     TIME_END_TEST=$(date +%s)
     

@@ -9,7 +9,9 @@
 
 #include <stdbool.h>
 
-void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
+#include "json.h"
+
+JsonElement *Nova_FormatDiff(const char *diffStr);
 char *Nova_LongState(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
 

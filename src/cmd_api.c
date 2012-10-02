@@ -681,8 +681,15 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     {
         hd = (HubFileDiff *) rp->item;
 
-        char diff[CF_BUFSIZE] = {0};
-        Nova_FormatDiff(hd->diff, diff, sizeof(diff) - 1);
+        char *diff = NULL;
+        {
+            JsonElement *diff_json = Nova_FormatDiff(hd->diff);
+            Writer *writer = StringWriter();
+            JsonElementPrint(writer, diff_json, 2);
+            diff = StringWriterClose(writer);
+
+            JsonElementDestroy(diff_json);
+        }
 
         if (CSV)
         {
@@ -704,6 +711,8 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
         {
             printf("%s file %s changed on %ld\n%s\n", hd->hh->hostname, hd->path, hd->t, diff);
         }
+
+        free(diff);
     }
 
     DeleteHubQuery(hq, DeleteHubFileDiff);

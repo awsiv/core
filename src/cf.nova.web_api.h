@@ -113,7 +113,7 @@ JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_goal_progress(char *handle);
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
-void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
+JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize);
@@ -152,10 +152,10 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilte
                            char *returnval, int bufsize);
 JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *host_colour_filter, bool lastRunOnly,
                            PageInfo *page, PromiseContextMode promise_context);
-int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
-                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
-                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
+JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
+                                HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
+                              HostClassFilter *hostClassFilter, PageInfo *page);
 int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 

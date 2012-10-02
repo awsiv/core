@@ -2259,135 +2259,119 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
-                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
-                                int bufsize)
+JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
+                                HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    char buffer[CF_BUFSIZE];
-    HubFileChanges *hC;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true, hostClassFilter);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileChanges);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"File\":1,\"Change Type\":2,\"Change Detected at\":3"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(3);
     {
-        hC = (HubFileChanges *) rp->item;
-
-        EscapeJson(hC->path, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",%ld],",
-                 hC->hh->hostname, jsonEscapedStr, hC->msg, hC->t);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonElement *meta = JsonObjectCreate(2);
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(5);
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "File", 1);
+            JsonObjectAppendInteger(header, "Change Type", 2);
+            JsonObjectAppendInteger(header, "Change Detected at", 3);
+            JsonObjectAppendObject(meta, "header", header);
         }
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            HubFileChanges *hC = (HubFileChanges *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(4);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hC->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hC->path));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hC->msg));
+            JsonArrayAppendInteger(entry, hC->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubFileChanges);
-
     CFDB_Close(&dbconn);
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
-                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
-                              int bufsize)
+JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
+                                       HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    char buffer[CF_BUFSIZE];
-    HubFileDiff *hd;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, hostClassFilter);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-             "\"Change Details\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(3);
     {
-        hd = (HubFileDiff *) rp->item;
-
-        EscapeJson(hd->path, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        char diff[CF_BUFSIZE] = {0};
-
-        Nova_FormatDiff(hd->diff, diff, sizeof(diff) - 1);
-
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%s],",
-                 hd->hh->hostname, jsonEscapedStr, hd->t, diff);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonElement *meta = JsonObjectCreate(2);
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(5);
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "File", 1);
+            JsonObjectAppendInteger(header, "Change Detected at", 2);
+            {
+                JsonElement *change_details = JsonObjectCreate(2);
+                JsonObjectAppendInteger(change_details, "index", 3);
+                {
+                    JsonElement *subkeys = JsonObjectCreate(3);
+                    JsonObjectAppendInteger(subkeys, "plusminus", 0);
+                    JsonObjectAppendInteger(subkeys, "line", 1);
+                    JsonObjectAppendInteger(subkeys, "diff", 2);
+                    JsonObjectAppendObject(change_details, "subkeys", subkeys);
+                }
+                JsonObjectAppendObject(header, "Change Details", change_details);
+            }
+            JsonObjectAppendObject(meta, "header", header);
         }
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            HubFileDiff *hd = (HubFileDiff *) rp->item;
+            JsonElement *entry = JsonArrayCreate(4);
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hd->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hd->path));
+            JsonArrayAppendInteger(entry, hd->t);
+            JsonArrayAppendArray(entry, Nova_FormatDiff(NULLStringToEmpty(hd->diff)));
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubFileDiff);
 
@@ -2396,7 +2380,7 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
@@ -4298,37 +4282,29 @@ void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize)
+JsonElement *Nova_FormatDiff(const char *diffStr)
 {
-    snprintf(returnval, bufsize, "[");
+    JsonElement *returnval = JsonArrayCreate(16);
 
-    const char *sp;
-    char tline[CF_BUFSIZE];
-
-    for (sp = diffStr; *sp != '\0'; sp += strlen(tline) + 1)
+    char tline[CF_BUFSIZE] = { 0 };
+    for (const char *sp = diffStr; *sp != '\0'; sp += strlen(tline) + 1)
     {
         int line = 0;
-        char pm;
+        char pm[2] = { 0 };
 
-        char work[CF_BUFSIZE],
-             diff[CF_BUFSIZE],
-             jsonEscapedStr[CF_BUFSIZE] = {0};
-
-        sscanf(sp, "%c,%d,%2047[^\n]", &pm, &line, diff);
+        char diff[CF_BUFSIZE] = { 0 };
+        sscanf(sp, "%c,%d,%2047[^\n]", pm, &line, diff);
         sscanf(sp, "%2047[^\n]", tline);
 
-        EscapeJson(diff, jsonEscapedStr, sizeof(jsonEscapedStr));
-        snprintf(work, sizeof(work), "[\"%c\",%d,\"%s\"],", pm, line, jsonEscapedStr);
+        JsonElement *entry = JsonArrayCreate(3);
+        JsonArrayAppendString(entry, pm);
+        JsonArrayAppendInteger(entry, line);
+        JsonArrayAppendString(entry, diff);
 
-        if (!Join(returnval, work, bufsize))
-        {
-            break;
-        }
+        JsonArrayAppendArray(returnval, entry);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-
-    EndJoin(returnval, "]\n", bufsize);
+    return returnval;
 }
 
 /*****************************************************************************/
