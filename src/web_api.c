@@ -2066,60 +2066,52 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex, H
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                           char *returnval, int bufsize)
+JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    char buffer[CF_BUFSIZE];
-    HubSetUid *hS;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter);
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSetUid);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"File\":1" "}",
-             page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        hS = (HubSetUid *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        EscapeJson(hS->path, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\"],", hS->hh->hostname, jsonEscapedStr);
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(9);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "File", 1);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            HubSetUid *hS = (HubSetUid *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(2);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hS->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hS->path));
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubSetUid);
 
@@ -2128,7 +2120,7 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilte
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

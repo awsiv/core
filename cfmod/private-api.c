@@ -1560,7 +1560,6 @@ PHP_FUNCTION(cfpr_report_setuid)
     char *fhostkey, *ffile;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1586,8 +1585,6 @@ PHP_FUNCTION(cfpr_report_setuid)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1596,10 +1593,10 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, &page);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
