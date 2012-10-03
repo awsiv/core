@@ -1900,94 +1900,94 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress,
-                             time_t lago, int lregex, HostClassFilter *hostClassFilter,
-                             PageInfo *page, char *returnval, int bufsize,
-                             PromiseContextMode promise_context)
+JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress,
+                                      time_t lago, int lregex, HostClassFilter *hostClassFilter,
+                                      PageInfo *page, PromiseContextMode promise_context)
 {
-    char buffer[CF_BUFSIZE];
-    HubLastSeen *hl;
-    HubQuery *hq;
-    Rlist *rp;
-    int count = 0;
     EnterpriseDB dbconn;
-    char inout[CF_SMALLBUF];
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
-/* BEGIN query document */
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                            0, time(NULL), true, hostClassFilter, promise_context);
+
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
+                                      0, time(NULL), true, hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"Comms Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Was Last Seen At\":4,\"Hrs ago\":5,\"Avg Comms Interval\":6,\"+/- hrs\":7,\"Remote host's key\":8"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    count += strlen(returnval);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        hl = (HubLastSeen *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        switch (hl->direction)
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-        case LAST_SEEN_DIRECTION_OUTGOING:
-            snprintf(inout, CF_SMALLBUF, "by us (+)");
-            break;
-        case LAST_SEEN_DIRECTION_INCOMING:
-            snprintf(inout, CF_SMALLBUF, "by them (-)");
-            break;
+            JsonElement *header = JsonObjectCreate(9);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Comms Initiated", 1);
+            JsonObjectAppendInteger(header, "Remote host name", 2);
+            JsonObjectAppendInteger(header, "Remote IP address", 3);
+            JsonObjectAppendInteger(header, "Was Last Seen At", 4);
+            JsonObjectAppendInteger(header, "Hrs ago", 5);
+            JsonObjectAppendInteger(header, "Avg Comms Interval", 6);
+            JsonObjectAppendInteger(header, "+/- hrs", 7);
+            JsonObjectAppendInteger(header, "Remote host's key", 8);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
 
-        char hrsAgo[CF_SMALLBUF];
-        char hrsAvg[CF_SMALLBUF];
-        char hrsDev[CF_SMALLBUF];
-
-        WriteDouble2Str_MP(hl->hrsago, hrsAgo, sizeof(hrsAgo));
-        WriteDouble2Str_MP(hl->hrsavg, hrsAvg, sizeof(hrsAvg));
-        WriteDouble2Str_MP(hl->hrsdev, hrsDev, sizeof(hrsDev));
-
-        snprintf(buffer, sizeof(buffer),
-                 "[\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                 "\"%s\",\"%s\",\"%s\",\"%s\"],",
-                 hl->hh->hostname, inout, hl->rhost->hostname, hl->rhost->ipaddr, hl->t,
-                 hrsAgo, hrsAvg, hrsDev, hl->rhost->keyhash);
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            break;
-        }
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubLastSeen *hl = (HubLastSeen *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            char inout[CF_SMALLBUF];
+            switch (hl->direction)
+            {
+            case LAST_SEEN_DIRECTION_OUTGOING:
+                snprintf(inout, CF_SMALLBUF, "by us (+)");
+                break;
+            case LAST_SEEN_DIRECTION_INCOMING:
+                snprintf(inout, CF_SMALLBUF, "by them (-)");
+                break;
+            }
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            char hrsAgo[CF_SMALLBUF];
+            char hrsAvg[CF_SMALLBUF];
+            char hrsDev[CF_SMALLBUF];
+
+            WriteDouble2Str_MP(hl->hrsago, hrsAgo, sizeof(hrsAgo));
+            WriteDouble2Str_MP(hl->hrsavg, hrsAvg, sizeof(hrsAvg));
+            WriteDouble2Str_MP(hl->hrsdev, hrsDev, sizeof(hrsDev));
+
+            JsonElement *entry = JsonArrayCreate(9);
+
+            JsonArrayAppendString(entry, NULLStringToEmpty(hl->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(inout));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hl->rhost->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hl->rhost->ipaddr));
+            JsonArrayAppendInteger(entry, hl->t);
+            JsonArrayAppendString(entry, hrsAgo);
+            JsonArrayAppendString(entry, hrsAvg);
+            JsonArrayAppendString(entry, hrsDev);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hl->rhost->keyhash));
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubLastSeen);
 
     CFDB_Close(&dbconn);
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

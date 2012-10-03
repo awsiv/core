@@ -11,8 +11,9 @@ $sortCol = "last-seen";
 $sortDescending = true;
 $resultsPerPage = 100;
 $pageNum = 1;
+$promiseContext = null;
 
-$res = cfpr_report_lastseen($userName, $hostKey, $key, $name, $address, $ago, true, $classIncludes, $classExcludes, $sortCol, $sortDescending, $resultsperPage, $pageNum);
+$res = cfpr_report_lastseen($userName, $hostKey, $promiseContext, $key, $name, $address, $ago, true, $classIncludes, $classExcludes, $sortCol, $sortDescending, $resultsperPage, $pageNum);
 
 fwrite(STDERR, $res);
 ?>

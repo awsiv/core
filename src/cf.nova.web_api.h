@@ -144,8 +144,8 @@ JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t fro
                                HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
                                  HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, PromiseContextMode promise_context);
-int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddr, time_t lago, int lregex,
-                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
+JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddr, time_t lago, int lregex,
+                             HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                                 char *returnval, int bufsize);
 int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
