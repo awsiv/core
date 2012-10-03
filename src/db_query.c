@@ -6082,28 +6082,73 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
 
     bool modified = false;
 
-    modified |= BsonAppendStringNonEmpty(query, cfp_handle, filter->handleInclude);
-    modified |= BsonAppendRegexNonEmpty(query, cfp_handle, filter->handleRxInclude);
+    if (filter->handleInclude)
+    {
+        modified |= BsonAppendStringNonEmpty(query, cfp_handle, filter->handleInclude);
+    }
+    if (filter->handleRxInclude)
+    {
+        modified |= BsonAppendRegexNonEmpty(query, cfp_handle, filter->handleRxInclude);
+    }
 
-    modified |= BsonAppendStringNonEmpty(query, cfp_promiser, filter->promiserInclude);
-    modified |= BsonAppendRegexNonEmpty(query, cfp_promiser, filter->promiserRxInclude);
+    if (filter->promiserInclude)
+    {
+        modified |= BsonAppendStringNonEmpty(query, cfp_promiser, filter->promiserInclude);
+    }
+    if (filter->promiserRxInclude)
+    {
+        modified |= BsonAppendRegexNonEmpty(query, cfp_promiser, filter->promiserRxInclude);
+    }
 
-    modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
+    if (filter->promiseTypeInclude)
+    {
+        modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
+    }
 
-    modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
-    modified |= BsonAppendRegexNonEmpty(query, cfp_bundletype, filter->bundleTypeRxInclude);
+    if (filter->promiseTypeInclude)
+    {
+        modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
+    }
+    if (filter->bundleTypeRxInclude)
+    {
+        modified |= BsonAppendRegexNonEmpty(query, cfp_bundletype, filter->bundleTypeRxInclude);
+    }
 
-    modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
-    modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
+    if (filter->bundleIncludes)
+    {
+        modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
+    }
+    if (filter->bundleRxIncludes)
+    {
+        modified |= BsonAppendIncludeRegexList(query, cfp_bundlename, filter->bundleRxIncludes);
+    }
 
-    modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
-    modified |= BsonAppendExcludeRegexList(query, cfp_bundlename, filter->bundleRxExcludes);
+    if (filter->bundleExcludes)
+    {
+        modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
+    }
+    if (filter->bundleRxExcludes)
+    {
+        modified |= BsonAppendExcludeRegexList(query, cfp_bundlename, filter->bundleRxExcludes);
+    }
 
-    modified |= BsonAppendIncludeList(query, cfr_bundle_namespace, filter->namespaceIncludes);
-    modified |= BsonAppendIncludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxIncludes);
+    if (filter->namespaceIncludes)
+    {
+        modified |= BsonAppendIncludeList(query, cfr_bundle_namespace, filter->namespaceIncludes);
+    }
+    if (filter->namespaceRxIncludes)
+    {
+        modified |= BsonAppendIncludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxIncludes);
+    }
 
-    modified |= BsonAppendExcludeList(query, cfr_bundle_namespace, filter->namespaceExcludes);
-    modified |= BsonAppendExcludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxExcludes);
+    if (filter->namespaceExcludes)
+    {
+        modified |= BsonAppendExcludeList(query, cfr_bundle_namespace, filter->namespaceExcludes);
+    }
+    if (filter->namespaceRxExcludes)
+    {
+        modified |= BsonAppendExcludeRegexList(query, cfr_bundle_namespace, filter->namespaceRxExcludes);
+    }
 
     return modified;
 }
