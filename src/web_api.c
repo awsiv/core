@@ -2887,25 +2887,20 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize)
+JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter)
 {
     EnterpriseDB dbconn;
-    Rlist *classList, *rp;
-    Item *ip, *list = NULL;
-    char work[CF_MAXVARSIZE], context[CF_MAXVARSIZE];
-    int pid;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
-
     if (!CFDB_Open(&dbconn))
     {
-        return -1;
+        return NULL;
     }
 
-    classList = CFDB_QueryBundleClasses(&dbconn, promiseFilter);
+    Rlist *classList = CFDB_QueryBundleClasses(&dbconn, promiseFilter);
 
+    Item *list = NULL;
     if (classList)
     {
-        for (rp = classList; rp != NULL; rp = rp->next)
+        for (const Rlist *rp = classList; rp != NULL; rp = rp->next)
         {
             PrependItem(&list, rp->item, NULL);
         }
@@ -2913,28 +2908,23 @@ int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int
         IdempPrependItem(&list, "any", NULL);
     }
 
+    JsonElement *payload = JsonArrayCreate(ItemListSize(list));
     if (list)
     {
         list = SortItemListNames(list);
 
-        snprintf(buffer, bufsize, "[");
-
-        for (ip = list; ip != NULL; ip = ip->next)
+        for (const Item *ip = list; ip != NULL; ip = ip->next)
         {
+            char context[CF_MAXVARSIZE] = { 0 };
             snprintf(context, CF_MAXVARSIZE, "class_contexts::%s", ip->name);
-            pid = Nova_GetTopicIdForTopic(context);
+            int pid = Nova_GetTopicIdForTopic(context);
 
-            EscapeJson(ip->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(work, CF_MAXVARSIZE, "[%d,\"%s\"],", pid, jsonEscapedStr);
+            JsonElement *entry = JsonArrayCreate(2);
+            JsonArrayAppendInteger(entry, pid);
+            JsonArrayAppendString(entry, NULLStringToEmpty(ip->name));
 
-            if (!Join(buffer, work, bufsize))
-            {
-                break;
-            }
+            JsonArrayAppendArray(payload, entry);
         }
-
-        ReplaceTrailingChar(buffer, ',', '\0');
-        EndJoin(buffer, "]", bufsize);
 
         DeleteItemList(list);
     }
@@ -2944,7 +2934,7 @@ int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

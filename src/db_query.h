@@ -87,7 +87,7 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bType, char *bName);
 HubQuery *CFDB_QueryPolicyFinderData(EnterpriseDB *conn, char *handle, char *promiser, char *bName, int escRegex);
 Item *CFDB_QueryBundles(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex);
-Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter);
+Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, const PromiseFilter *filter);
 Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, char *bNameReferenced);
 HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex);

@@ -4887,7 +4887,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
+Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, const PromiseFilter *filter)
 /*
  * Returns the set of classes used in the given bundle.
  * MEMORY NOTE: Caller must free returned value with DeleteRlist()

@@ -4357,7 +4357,6 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
 {
     char *userName, *bundleName, *bundleType;
     int user_len, btype_len, bname_len;
-    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
                               &userName, &user_len, &bundleType, &btype_len, &bundleName, &bname_len) == FAILURE)
@@ -4377,12 +4376,11 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
     PromiseFilterAddBundleType(filter, bundleType);
     PromiseFilterAddBundles(filter, bundleName, NULL);
 
-    buffer[0] = '\0';
-    Nova2PHP_bundle_classes_used(filter, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_bundle_classes_used(filter);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

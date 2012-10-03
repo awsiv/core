@@ -234,7 +234,7 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int buf
 int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize);
 
 char *Nova2PHP_GetPromiseComment(char *handle);
-int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize);
+JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter);
 int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize);
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer,
                                          int bufsize);
