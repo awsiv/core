@@ -1451,20 +1451,11 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
-                            HostClassFilter *hostClassFilter, PageInfo *page,
-                            time_t from, time_t to, char *returnval, int bufsize,
-                            PromiseContextMode promise_context)
+JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
+                                     HostClassFilter *hostClassFilter, PageInfo *page,
+                                     time_t from, time_t to, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_classes_report_test(hostkey, name, regex, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
     EnterpriseDB dbconn;
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
@@ -1474,46 +1465,53 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
                                      hostClassFilter, true, promise_context);
 
     PageRecords(&(hq->records), page, DeleteHubClass);
-
     int related_host_cnt = RlistLen(hq->hosts);
-    char header[CF_BUFSIZE] = { 0 };
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"Class or Context\":1,\"in %% runs\":2,\"+/- %%\":3,\"Last occurred\":4"
-             "}", page->totalResultCount, related_host_cnt);
 
-    int headerLen = strlen(header),
-        noticeLen = strlen(CF_NOTICE_TRUNCATED),
-        truncated = false;
-    char buffer[CF_BUFSIZE] = { 0 };
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        HubClass *hc = (HubClass *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%lf,%lf,%ld],", hc->hh->hostname, hc->class, hc->prob*100.0, hc->dev*100.0, hc->t);
-        int margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(6);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Class or Context", 1);
+            JsonObjectAppendInteger(header, "in %% runs", 2);
+            JsonObjectAppendInteger(header, "+/- %%", 3);
+            JsonObjectAppendInteger(header, "Last occured", 4);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubClass *hc = (HubClass *) rp->item;
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonElement *entry = JsonArrayCreate(5);
+
+            JsonArrayAppendString(entry, NULLStringToEmpty(hc->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hc->class));
+            JsonArrayAppendReal(entry, hc->prob*100.0);
+            JsonArrayAppendReal(entry, hc->dev*100.0);
+            JsonArrayAppendInteger(entry, hc->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubClass);
 
     CFDB_Close(&dbconn);
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
