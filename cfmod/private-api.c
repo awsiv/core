@@ -1513,7 +1513,6 @@ PHP_FUNCTION(cfpr_report_performance)
     char *fhostkey, *fjob;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1539,8 +1538,6 @@ PHP_FUNCTION(cfpr_report_performance)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fjob = (j_len == 0) ? NULL : job;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1549,10 +1546,10 @@ PHP_FUNCTION(cfpr_report_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, &page);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

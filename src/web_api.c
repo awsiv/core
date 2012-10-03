@@ -1991,70 +1991,68 @@ JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, c
 }
 
 /*****************************************************************************/
-int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                                char *returnval, int bufsize)
+JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    char buffer[CF_BUFSIZE];
-    HubPerformance *hP;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true, hostClassFilter);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPerformance);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        hP = (HubPerformance *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        char Q[CF_SMALLBUF];
-        char E[CF_SMALLBUF];
-        char D[CF_SMALLBUF];
-
-        WriteDouble2Str_MP(hP->q, Q, sizeof(Q));
-        WriteDouble2Str_MP(hP->e, E, sizeof(E));
-        WriteDouble2Str_MP(hP->d, D, sizeof(D));
-
-        EscapeJson(hP->event, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld ],",
-                 hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(9);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Event", 1);
+            JsonObjectAppendInteger(header, "Last completion time (seconds)", 2);
+            JsonObjectAppendInteger(header, "Avg completion time (seconds)", 3);
+            JsonObjectAppendInteger(header, "+/- seconds", 4);
+            JsonObjectAppendInteger(header, "Last performed", 5);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubPerformance *hP = (HubPerformance *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            char Q[CF_SMALLBUF];
+            char E[CF_SMALLBUF];
+            char D[CF_SMALLBUF];
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            WriteDouble2Str_MP(hP->q, Q, sizeof(Q));
+            WriteDouble2Str_MP(hP->e, E, sizeof(E));
+            WriteDouble2Str_MP(hP->d, D, sizeof(D));
+
+            JsonElement *entry = JsonArrayCreate(6);
+
+            JsonArrayAppendString(entry, NULLStringToEmpty(hP->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hP->event));
+            JsonArrayAppendString(entry, Q);
+            JsonArrayAppendString(entry, E);
+            JsonArrayAppendString(entry, D);
+            JsonArrayAppendInteger(entry, hP->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubPerformance);
 
@@ -2063,7 +2061,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/
