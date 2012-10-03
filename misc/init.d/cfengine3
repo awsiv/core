@@ -299,14 +299,14 @@ case "$1" in
 			if [ $cfexecd_status ]; then
 				$ECHO -n "Shutting down `basename $CFEXECD` ... "
 				/sbin/start-stop-daemon -o --stop --retry 5 --name `basename $CFEXECD`
-				$RM /var/lock/`basename $CFEXECD`
+				$RM -f /var/lock/`basename $CFEXECD`
 				$ECHO
 			fi
 		elif [ "$RUN_CF_EXECD" = "1" ] && [ "$DEBIAN" = "1" ] && [ "$SSD" = "0" ]; then
 			if [ $cfexecd_status ]; then
 				$ECHO -n "Shutting down `basename $CFEXECD` ... "
 				$PKILL `basename $CFEXECD`
-				$RM /var/lock/`basename $CFEXECD`
+				$RM -f /var/lock/`basename $CFEXECD`
 				$ECHO
 			fi
 		fi
@@ -344,14 +344,14 @@ case "$1" in
 			if [ $cfserverd_status ]; then
 				$ECHO -n "Shutting down `basename $CFSERVD` ... "
 				/sbin/start-stop-daemon -o --stop --retry 5 --name `basename $CFSERVD`
-				$RM /var/lock/`basename $CFSERVD`
+				$RM -f /var/lock/`basename $CFSERVD`
 				$ECHO
 			fi
 		elif [ "$RUN_CF_SERVERD" = "1" ] && [ "$DEBIAN" = "1" ] && [ "$SSD" = "0" ]; then
 			if [ $cfserverd_status ]; then
 				$ECHO -n "Shutting down `basename $CFSERVD` ... "
 				$PKILL `basename $CFSERVD`
-				$RM /var/lock/`basename $CFSERVD`
+				$RM -f /var/lock/`basename $CFSERVD`
 				$ECHO
 			fi
 		fi
@@ -389,14 +389,14 @@ case "$1" in
 			if [ $cfmonitord_status ]; then
 				$ECHO -n "Shutting down `basename $CFMOND` ... "
 				/sbin/start-stop-daemon -o --stop --retry 5 --name `basename $CFMOND`
-				$RM /var/lock/`basename $CFMOND`
+				$RM -f /var/lock/`basename $CFMOND`
 				$ECHO
 			fi
 		elif [ "$RUN_CF_MONITORD" = "1" ] && [ "$DEBIAN" = "1" ] && [ "$SSD" = "0" ]; then
 			if [ $cfmonitord_status ]; then
 				$ECHO -n "Shutting down `basename $CFMOND` ... "
 				$PKILL `basename $CFMONITORD`
-				$RM /var/lock/`basename $CFMOND`
+				$RM -f /var/lock/`basename $CFMOND`
 				$ECHO
 			fi
 		fi
@@ -404,7 +404,7 @@ case "$1" in
 		# shutdown cf-hub
 		# Redhat/Centos/Fedora
 		if [ "$REDHAT" = "1" ] && [ "$FUNC" = "1" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB`: "
 				killproc $CFHUB
 				if [ -f /var/lock/subsys/`basename $CFHUB` ]; then
@@ -413,7 +413,7 @@ case "$1" in
 				$ECHO
 			fi
 		elif [ "$REDHAT" = "1" ] && [ "$FUNC" = "0" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB`: "
 				$PKILL `basename $CFHUB`
 				if [ -f /var/lock/subsys/`basename $CFHUB` ]; then
@@ -424,7 +424,7 @@ case "$1" in
 		fi
 		# SUSE
 		if [ "$RUN_CF_HUB" = "1" ] && [ "$SUSE" = "1" ] && [ "$PROC" = "1" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB`: "
 				/sbin/killproc -TERM $CFHUB
 				rc_status -v
@@ -433,7 +433,7 @@ case "$1" in
 				fi
 			fi
 		elif [ "$RUN_CF_HUB" = "1" ] && [ "$SUSE" = "1" ] && [ "$PROC" = "0" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB`: "
 				$PKILL `basename $CFHUB`
 				if [ -f /var/run/`basename $CFHUB`.pid ]; then
@@ -443,20 +443,20 @@ case "$1" in
 		fi
 		# Debian/Ubuntu
 		if [ "$DEBIAN" = "1" ] && [ "$SSD" = "1" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB` ... "
 				/sbin/start-stop-daemon -o --stop --retry 5 --name `basename $CFHUB`
 				if [ -f /var/lock/`basename $CFHUB` ]; then
-					$RM /var/lock/`basename $CFHUB`
+					$RM -f /var/lock/`basename $CFHUB`
 				fi
 				$ECHO
 			fi
 		elif [ "$DEBIAN" = "1" ] && [ "$SSD" = "0" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO -n "Shutting down `basename $CFHUB` ... "
 				$PKILL `basename $CFHUB`
 				if [ -f /var/lock/`basename $CFHUB` ]; then
-					$RM /var/lock/`basename $CFHUB`
+					$RM -f /var/lock/`basename $CFHUB`
 				fi
 				$ECHO
 			fi
@@ -565,20 +565,20 @@ case "$1" in
 		if [ "$REDHAT" = "1" ] && [ "$FUNC" = "1" ]; then
 			status $CFHUB
 		elif [ "$REDHAT" = "1" ] && [ "$FUNC" = "0" ]; then
-			if [ $cfhub_status ]; then
+			if [ "$cfhub_status" ]; then
 				$ECHO "cf-hub (pid $cfhub_status) is running..."
 			else
 				$ECHO "cf-hub is not running"
 			fi	
 		fi
 		# SUSE
-		if [ $cfhub_status ] && [ "$SUSE" = "1" ] && [ "$PROC" = "1" ]; then
+		if [ "$cfhub_status" ] && [ "$SUSE" = "1" ] && [ "$PROC" = "1" ]; then
 			echo -n "Checking for `basename $CFHUB` "
 			checkproc $CFHUB
 			rc_status -v
 		fi
 		# Debain/Ubuntu
-		if [ $cfhub_status ] && [ "$DEBIAN" = "1" ]; then
+		if [ "$cfhub_status" ] && [ "$DEBIAN" = "1" ]; then
 			$ECHO "cf-hub (pid $cfhub_status) is running..."
 		elif [ "$DEBIAN" = "1" ]; then
 			$ECHO "cf-hub is not running"
