@@ -20,7 +20,24 @@ static void test_query_promiselog_repaired(void **state)
     assert_true(CFDB_Close(conn));
 }
 
+static void test_query_total_compliance(void **state)
+{
+    EnterpriseDB conn[1];
+    if (!CFDB_Open(conn))
+    {
+        fprintf(stderr, "Connection to mongod failed - couldn't proceed with testing\n");
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, 0, time(NULL), -1, -1, -1, false, NULL, PROMISE_CONTEXT_MODE_ALL);
+    assert_true(hq != NULL);
+
+    DeleteHubQuery(hq, DeleteHubTotalCompliance);
+    assert_true(CFDB_Close(conn));
+}
+
 #endif
+
 
 int main()
 {
@@ -28,6 +45,7 @@ int main()
     {
 #if defined(HAVE_LIBMONGOC)
         unit_test(test_query_promiselog_repaired),
+        unit_test(test_query_total_compliance)
 #endif
     };
 
