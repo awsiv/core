@@ -39,12 +39,12 @@ commands:
   vmware_dev::
     "/usr/bin/vmware-cmd -H <dev_server_IP> -U admin -P admin /vmfs/volumes/4fafd02bc-744a40987d-4as2-08asdfasd1dasdf/ubuntu-12.04-i386-devserver/ubuntu-12.04-i386-devserver.vmx start soft" -> { "goal_agility", "goal_efficiency", "goal_productive", "developers@example.com", "sysadmin@example.com", "devops" }
       comment => "Make sure the development server is running",
-       handle => "example_use_goals_commands_vmware_dev_usr_bin_vmware-cmd";
+       handle => "example_use_goals_commands_vmware_dev_usr_bin_vmware_cmd";
 
   vmware_test::
     "/usr/bin/vmware-cmd -H <test_server_IP> -U admin -P admin /vmfs/volumes/4fafd02de-744a4098de-4a2s-08asdfasd1dasge/ubuntu-12.04-i386-testserver/ubuntu-12.04-i386-testserver.vmx start soft" -> { "goal_agility", "goal_efficiency", "goal_productive", "developers@example.com", "sysadmin@example.com",  "devops" }
       comment => "Make sure the test server is running",
-       handle => "example_use_goals_commands_vmware_test_usr_bin_vmware-cmd";
+       handle => "example_use_goals_commands_vmware_test_usr_bin_vmware_cmd";
 
 }
 
