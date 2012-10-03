@@ -265,10 +265,15 @@ bundle agent cfe_internal_setup_knowledge
 
   init_mongo::
 
+   "$(sys.workdir)/bin/mongo phpcfengine $(sys.workdir)/share/GUI/phpcfenginenova/export.js"
+      contain => silent_in_dir("$(sys.workdir)"),
+      comment => "Initialise mongo phpcfengine",
+       handle => "cfe_internal_setup_knowledge_commands_mongo_exportjs";
+
    "$(sys.workdir)/bin/mongo --quiet cfreport $(sys.workdir)/share/GUI/api/mongo-initialize.js"
       contain => silent_in_dir("$(sys.workdir)"),
-      comment => "Initialise mongo authentication to access Nova Mission Portal 2.1.0 ++",
-       handle => "cfe_internal_setup_knowledge_commands_mongo_exportjs";
+      comment => "Initialise mongo cfreport database",
+       handle => "cfe_internal_setup_knowledge_commands_mongo_mongoinitializejs";
 
   init_knowledge|(am_policy_hub.kn_update)::
 
