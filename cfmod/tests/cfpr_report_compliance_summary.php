@@ -8,8 +8,9 @@ $sortDescending = true;
 $resultsPerPage = 100;
 $pageNum = 1;
 $version = NULL;
+$promiseContext = null;
 
-$res = cfpr_report_compliance_summary($userName, $hostKey, $version, -1, -1, -1, -1, $inclist, $exlist, $sortCol, $sortDescending, $resultsPerPage, $pageNum);
+$res = cfpr_report_compliance_summary($userName, $hostKey, $promiseContext, $version, -1, -1, -1, -1, $inclist, $exlist, $sortCol, $sortDescending, $resultsPerPage, $pageNum);
 
 fwrite(STDERR, $res);
 ?>

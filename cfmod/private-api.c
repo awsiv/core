@@ -1128,8 +1128,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    char buffer[CF_WEBBUFFER];
-
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllllaasbll",
                               &username, &user_len,
                               &hostkey, &hk_len,
@@ -1153,8 +1151,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fversion = (v_len == 0) ? NULL : version;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1165,13 +1161,13 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL),
-                               (int) k, (int) nk, (int) r, filter, &page,
-                               buffer, sizeof(buffer), promise_context_mode);
+    JsonElement *payload = Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL),
+                                                      (int) k, (int) nk, (int) r, filter,
+                                                      &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

@@ -1737,70 +1737,63 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
 }
 
 /*****************************************************************************/
-int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to,
-                               int k, int nk, int rep, HostClassFilter *hostClassFilter,
-                               PageInfo *page, char *returnval, int bufsize,
-                               PromiseContextMode promise_context)
+JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to,
+                                        int k, int nk, int rep, HostClassFilter *hostClassFilter,
+                                        PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_compliance_report_test(hostkey, version, from, k, nk, rep, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
-    char buffer[CF_BUFSIZE];
-    HubTotalCompliance *ht;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
-                                   true, hostClassFilter, promise_context);
+    HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
+                                             true, hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\": {\"Host\":0,\"Policy Version\":1,\"%% Kept\":2,\"%% Repaired\":3,\"%% Not Kept\":4,\"Last verified\":5"
-             "}", page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        ht = (HubTotalCompliance *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        snprintf(buffer, sizeof(buffer),
-                 "[\"%s\",\"%s\",%d,%d,%d,%ld],",
-                 ht->hh->hostname, ht->version, ht->kept, ht->repaired, ht->notkept, ht->t);
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(6);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Policy Version", 1);
+            JsonObjectAppendInteger(header, "Kept", 2);
+            JsonObjectAppendInteger(header, "Repaired", 3);
+            JsonObjectAppendInteger(header, "Not Kept", 4);
+            JsonObjectAppendInteger(header, "Last verified", 5);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubTotalCompliance *ht = (HubTotalCompliance *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(6);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendString(entry, NULLStringToEmpty(ht->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(ht->version));
+            JsonArrayAppendInteger(entry, ht->kept);
+            JsonArrayAppendInteger(entry, ht->repaired);
+            JsonArrayAppendInteger(entry, ht->notkept);
+            JsonArrayAppendInteger(entry, ht->t);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubTotalCompliance);
 
@@ -1809,7 +1802,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

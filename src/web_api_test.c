@@ -373,66 +373,6 @@ int Nova2PHP_vars_report_test(const char *hostkey, const char *scope, const char
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k, int nk, int rep,
-                                    HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
-{
-    char work[CF_BUFSIZE];
-
-    char header[CF_BUFSIZE] = { 0 };
-    //  int margin = 0;
-    int headerLen = 0;
-    int noticeLen = 0;
-    int truncated = false;
-
-    int startIndex = page->resultsPerPage * (page->pageNum - 1);
-    int endIndex = page->resultsPerPage * page->pageNum;
-    int total = GetTotalCount(endIndex);
-
-    if (endIndex > total)
-    {
-        endIndex = total;
-    }
-
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : 1, "
-             "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5"
-             "}", total);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    char *p = returnval;
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (int i = startIndex; i < endIndex; i++)
-    {
-        char hostname[CF_MAXVARSIZE];
-        char version[CF_MAXVARSIZE];
-
-        RandomizeString(HOSTNAME_LEN, hostname, sizeof(hostname));
-        RandomizeString(WORD_LEN * 4, version, sizeof(version));
-
-        snprintf(work, sizeof(work),
-                 "[\"%s\",\"%s\",%d,%d,%d,%ld],",
-                 hostname, version, (rand() % 100) / 100, (rand() % 100) / 100, (rand() % 100) / 100, time(NULL));
-
-        p = strcatUnsafe(p, work);
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    Nova_AddReportHeader(header, truncated, work, sizeof(work) - 1);
-
-    Join(returnval, work, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
-
-    return true;
-}
-
-/*****************************************************************************/
-
 int GetTotalCount(int endIndex)
 {
     const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
