@@ -126,8 +126,8 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
                                          HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                         HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
-int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                          PageInfo *page, char *buffer, int bufsize);
+JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
+                                   PageInfo *page);
 void Nova2PHP_summary_meter(char *buffer, int bufsize);
 void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);

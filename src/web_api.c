@@ -1264,68 +1264,59 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
 
 /*****************************************************************************/
 
-int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                          PageInfo *page, char *returnval, int bufsize)
+JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
+                                   PageInfo *page)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_value_report_test(hostkey, day, month, year, hostClassFilter, page, returnval, bufsize);
-    }
-# endif
-
-    HubValue *hp;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    char buffer[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
-/* BEGIN query document */
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubValue);
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d, \"related\" : %d, "
-             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4}",
-             page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        hp = (HubValue *) rp->item;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        snprintf(buffer, sizeof(buffer),
-                 "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf ],",
-                 hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
         {
-            truncated = true;
-            break;
+            JsonElement *header = JsonObjectCreate(6);
+
+            JsonObjectAppendInteger(header, "Host", 0);
+            JsonObjectAppendInteger(header, "Summary of Day", 1);
+            JsonObjectAppendInteger(header, "Value of Promises Kept", 2);
+            JsonObjectAppendInteger(header, "Value of Repairs", 3);
+            JsonObjectAppendInteger(header, "Loss for Promises Not Kept", 4);
+
+            JsonObjectAppendObject(meta, "header", header);
         }
+
+        JsonObjectAppendObject(payload, "meta", meta);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    {
+        JsonElement *data = JsonArrayCreate(RlistLen(hq->records));
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            const HubValue *hp = (HubValue *) rp->item;
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+            JsonElement *entry = JsonArrayCreate(5);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->hh->hostname));
+            JsonArrayAppendString(entry, NULLStringToEmpty(hp->day));
+            JsonArrayAppendReal(entry, hp->kept);
+            JsonArrayAppendReal(entry, hp->repaired);
+            JsonArrayAppendReal(entry, hp->notkept);
+
+            JsonArrayAppendArray(data, entry);
+        }
+        JsonObjectAppendArray(payload, "data", data);
+    }
 
     DeleteHubQuery(hq, DeleteHubValue);
 
@@ -1334,7 +1325,7 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

@@ -1878,7 +1878,6 @@ PHP_FUNCTION(cfpr_report_value)
     char *fhostkey, *fmonth, *fday, *fyear;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, d_len, m_len, y_len;
-    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -1906,8 +1905,6 @@ PHP_FUNCTION(cfpr_report_value)
     fmonth = (m_len == 0) ? NULL : month;
     fyear = (y_len == 0) ? NULL : year;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1916,10 +1913,11 @@ PHP_FUNCTION(cfpr_report_value)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
