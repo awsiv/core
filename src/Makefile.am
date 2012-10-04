@@ -66,6 +66,7 @@ libcfnova_la_SOURCES += \
         db_maintain.c db_maintain.h \
         db_query.c db_query.h \
         db_save.c db_save.h \
+        file-cache.c file-cache.h \
         histogram.c \
         install.c install.h \
         magnify.c \
