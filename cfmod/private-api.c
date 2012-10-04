@@ -1008,8 +1008,6 @@ PHP_FUNCTION(cfpr_class_cloud)
     char *classes;
     char *fclasses;
     int cl_len;
-    const int bufsize = 512 * 1024;
-    char buffer[bufsize];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &classes, &cl_len) == FAILURE)
     {
@@ -1020,12 +1018,11 @@ PHP_FUNCTION(cfpr_class_cloud)
 
     char **classArray = String2StringArray(fclasses, ',');
 
-    buffer[0] = '\0';
-    Nova2PHP_classes_summary(classArray, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_classes_summary(classArray);
 
     FreeStringArray(classArray);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

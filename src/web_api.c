@@ -1516,74 +1516,58 @@ JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
+JsonElement *Nova2PHP_classes_summary(char **classes)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_classes_summary_test(classes, buf, bufsize);
-    }
-# endif
-
     EnterpriseDB dbconn;
-    HubQuery *hq;
-    HubClassSum *hc;
-    HubHost *hh;
-    Rlist *rp;
-    char work[CF_MAXVARSIZE];
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryClassSum(&dbconn, classes);
+    HubQuery *hq = CFDB_QueryClassSum(&dbconn, classes);
 
-    StartJoin(buf, "{", bufsize);
+    JsonElement *payload = JsonObjectCreate(2);
 
     if (hq && hq->hosts)
     {
-
-        Join(buf, "\"hosts\":[", bufsize);
-
-        for (rp = hq->hosts; rp != NULL; rp = rp->next)
         {
-            hh = (HubHost *) rp->item;
-            snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", hh->hostname, hh->keyhash);
-
-            if (!Join(buf, work, bufsize - 10))
+            JsonElement *hosts = JsonArrayCreate(RlistLen(hq->hosts));
+            for (const Rlist *rp = hq->hosts; rp != NULL; rp = rp->next)
             {
-                break;
+                const HubHost *hh = (HubHost *) rp->item;
+
+                JsonElement *entry = JsonArrayCreate(2);
+
+                JsonArrayAppendString(entry, NULLStringToEmpty(hh->hostname));
+                JsonArrayAppendString(entry, NULLStringToEmpty(hh->keyhash));
+
+                JsonArrayAppendArray(hosts, entry);
             }
+            JsonObjectAppendArray(payload, "hosts", hosts);
         }
 
-        ReplaceTrailingChar(buf, ',', '\0');
-        EndJoin(buf, "]", bufsize);
-
-        Join(buf, ",\n\"classes\":[", bufsize - 10);
-
-        for (rp = hq->records; rp != NULL; rp = rp->next)
         {
-            hc = (HubClassSum *) rp->item;
-            snprintf(work, sizeof(work), "[\"%s\",%d]\n,", hc->class, hc->frequency);
-
-            if (!Join(buf, work, bufsize - 10))
+            JsonElement *classes = JsonArrayCreate(RlistLen(hq->records));
+            for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
             {
-                break;
-            }
-        }
+                const HubClassSum *hc = (HubClassSum *) rp->item;
 
-        ReplaceTrailingChar(buf, ',', '\0');
-        EndJoin(buf, "]", bufsize);
+                JsonElement *entry = JsonArrayCreate(2);
+
+                JsonArrayAppendString(entry, NULLStringToEmpty(hc->class));
+                JsonArrayAppendInteger(entry, hc->frequency);
+
+                JsonArrayAppendArray(classes, entry);
+            }
+            JsonObjectAppendArray(payload, "classes", classes);
+        }
     }
-
-    EndJoin(buf, "}", bufsize);
 
     DeleteHubQuery(hq, DeleteHubClassSum);
 
     CFDB_Close(&dbconn);
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

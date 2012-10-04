@@ -135,7 +135,7 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
                              HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                             time_t from, time_t to, PromiseContextMode promise_context);
-int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);
+JsonElement *Nova2PHP_classes_summary(char **classes);
 int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, char *returnval,
                           int bufsize, PromiseContextMode promise_context);
 int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type,

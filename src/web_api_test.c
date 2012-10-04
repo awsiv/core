@@ -102,61 +102,6 @@ int Nova2PHP_promise_list_test(PromiseFilter *promiseFilter, char *returnval, in
 
 /*****************************************************************************/
 /*
- * cfpr_class_cloud(s) 
- * buffer limit ~5Kb
-*/
-int Nova2PHP_classes_summary_test(char **classes, char *returnval, int bufsize)
-{
-    int total = GetTotalCount(0);
-
-    if (total > 9000)
-    {
-        total = 9000;
-    }
-
-    char *p = returnval;
-
-    StartJoin(returnval, "{\"hosts\":[", bufsize);
-
-    for (int i = 0; i < (total / 5); i++)
-    {
-        char work[CF_MAXVARSIZE] = { 0 };
-        char hostname[CF_MAXVARSIZE] = { 0 };
-        char keyhash[CF_MAXVARSIZE] = { 0 };
-
-        RandomizeString(HOSTNAME_LEN, hostname, sizeof(hostname));
-        RandomizeString(KEYHASH_LEN, keyhash, sizeof(keyhash));
-
-        snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", hostname, keyhash);
-
-        p = strcatUnsafe(p, work);
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    Join(returnval, ",\n\"classes\":[", bufsize - 10);
-
-    for (int i = 0; i < (total * 4) / 5; i++)
-    {
-        char work[CF_MAXVARSIZE] = { 0 };
-        char context[CF_MAXVARSIZE] = { 0 };
-
-        RandomizeString(HANDLE_LEN, context, sizeof(context));
-
-        snprintf(work, sizeof(work), "[\"%s\",%d]\n,", context, i);
-
-        p = strcatUnsafe(p, work);
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]}", bufsize);
-
-    return true;
-}
-
-/*****************************************************************************/
-/*
  * cfpr_show_hosts_name(ssll)
  * cfpr_show_hosts_ip(ssll)
 */
