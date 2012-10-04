@@ -1572,36 +1572,18 @@ JsonElement *Nova2PHP_classes_summary(char **classes)
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval,
-                         const char *rval, const char *type, bool regex,
-                         const HostClassFilter *hostClassFilter, PageInfo *page,
-                         char *returnval, int bufsize, PromiseContextMode promise_context)
+JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval,
+                                  const char *rval, const char *type, bool regex,
+                                  const HostClassFilter *hostClassFilter, PageInfo *page,
+                                  PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_vars_report_test(hostkey, scope, lval, rval, type, regex, hostClassFilter, page, returnval,
-                                         bufsize);
-    }
-# endif
-
-    char buffer[CF_BUFSIZE] = { 0 }, jsonEscapedStr[CF_BUFSIZE] = { 0 };
-    char rvalBuf[CF_MAXVARSIZE];
-    HubVariable *hv;
-    HubQuery *hq;
-    Rlist *rp;
     EnterpriseDB dbconn;
-    int first = true, countadded = false, found = false;
-    int scope_record_count = 0, last_scope_record_count = 0, first_scope_record_count = 0;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, noticeLen = 0, headerLen = 0;
-    int truncated = false;
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
+    HubQuery *hq;
     {
         char ns[CF_MAXVARSIZE] = { 0 };
         char bundle[CF_MAXVARSIZE] = { 0 };
@@ -1613,102 +1595,92 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
         hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
                                  regex, 0, time(NULL), hostClassFilter, promise_context);
     }
+    assert(hq);
+    if (!hq)
+    {
+        return NULL;
+    }
 
     int related_host_cnt = RlistLen(hq->hosts);
-    CountMarginRecordsVars(&(hq->records), page, &first_scope_record_count, &last_scope_record_count);
     PageRecords(&(hq->records), page, DeleteHubVariable);
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\":%d, \"related\" : %d ",
-             page->totalResultCount, related_host_cnt);
-
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{", bufsize);
-
-    char lbundle[CF_MAXVARSIZE] = { 0 };
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    JsonElement *payload = JsonObjectCreate(2);
     {
-        found = true;
+        JsonElement *meta = JsonObjectCreate(4);
 
-        hv = (HubVariable *) rp->item;
-        if (strcmp(lbundle, hv->bundle) != 0)
+        JsonObjectAppendInteger(meta, "count", page->totalResultCount);
+        JsonObjectAppendInteger(meta, "related", related_host_cnt);
+
+        JsonObjectAppendObject(payload, "meta", meta);
+    }
+
+    {
+        char lscope[CF_MAXVARSIZE] = { 0 };
+        JsonElement *scope_entry = NULL;
+        JsonElement *scope_data = NULL;
+        for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
         {
-            strcpy(lbundle, hv->bundle);
+            const HubVariable *hv = (HubVariable *) rp->item;
+            char scope[CF_MAXVARSIZE] = { 0 };
+            JoinScopeName(hv->ns, hv->bundle, scope);
 
-            if (strlen(buffer) > 0)
+            if (!StringSafeEqual(lscope, scope))
             {
-                returnval[strlen(returnval) - 1] = '\0';
-                snprintf(buffer, CF_BUFSIZE, "],\"count\":%d},", first ? first_scope_record_count : scope_record_count);
-                Join(returnval, buffer, bufsize);       // end scope
-                scope_record_count = 0;
-                first = false;
+                if (scope_entry)
+                {
+                    assert(scope_data);
+                    JsonObjectAppendInteger(scope_entry, "count", JsonElementLength(scope_data));
+                    scope_entry = NULL;
+                    scope_data = NULL;
+                }
+
+                strcpy(lscope, scope);
+
+                scope_entry = JsonObjectCreate(2);
+                JsonObjectAppendObject(payload, lscope, scope_entry);
+
+                scope_data = JsonArrayCreate(50);
+                JsonObjectAppendArray(scope_entry, "data", scope_data);
+
+                JsonElement *header = JsonObjectCreate(5);
+                JsonObjectAppendInteger(header, "Host", 0);
+                JsonObjectAppendInteger(header, "Type", 1);
+                JsonObjectAppendInteger(header, "Name", 2);
+                JsonObjectAppendInteger(header, "Value", 3);
+                JsonObjectAppendInteger(header, "Last seen", 4);
+
+                JsonObjectAppendObject(scope_entry, "header", header);
             }
 
-            if (!NULL_OR_EMPTY(hv->ns))
+            assert(scope_data);
+            if (!scope_data)
             {
-                snprintf(buffer, CF_BUFSIZE, "\"%s:%s\":{"
-                         "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
-                         "\"data\":[", hv->ns, hv->bundle);
+                // don't crash in the unlikely event of an empty-string scope
+                continue;
+            }
+
+            char rvalBuf[CF_MAXVARSIZE];
+            if (strlen(hv->dtype) > 1) // list
+            {
+                PrintRlist(rvalBuf, sizeof(rvalBuf), hv->rval.item);
             }
             else
             {
-                snprintf(buffer, CF_BUFSIZE, "\"%s\":{"
-                         "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
-                         "\"data\":[", hv->bundle);
+                snprintf(rvalBuf, sizeof(rvalBuf), "%s", (char *) hv->rval.item);
             }
-            Join(returnval, buffer, bufsize);
 
+            JsonElement *data_entry = JsonArrayCreate(5);
+
+            JsonArrayAppendString(data_entry, NULLStringToEmpty(hv->hh->hostname));
+            JsonArrayAppendString(data_entry, DataTypeShortToType(hv->dtype));
+            JsonArrayAppendString(data_entry, NULLStringToEmpty(hv->lval));
+            JsonArrayAppendString(data_entry, NULLStringToEmpty(rvalBuf));
+            JsonArrayAppendInteger(data_entry, hv->t);
+
+            JsonArrayAppendArray(scope_data, data_entry);
         }
-
-        if (strlen(hv->dtype) > 1)      // list
-        {
-            PrintRlist(rvalBuf, sizeof(rvalBuf), hv->rval.item);
-        }
-        else
-        {
-            snprintf(rvalBuf, sizeof(rvalBuf), "%s", (char *) hv->rval.item);
-        }
-
-        EscapeJson(rvalBuf, jsonEscapedStr, sizeof(jsonEscapedStr));
-
-        snprintf(buffer, CF_BUFSIZE,
-                 "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],", hv->hh->hostname, DataTypeShortToType(hv->dtype), hv->lval, jsonEscapedStr, hv->t);
-
-        margin = headerLen + noticeLen + strlen(buffer);
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            countadded = true;
-            break;
-        }
-        scope_record_count++;
     }
 
-    if (!countadded)
-    {
-        returnval[strlen(returnval) - 1] = '\0';
-        snprintf(buffer, CF_BUFSIZE, "],\"count\":%d}", last_scope_record_count);
-        Join(returnval, buffer, bufsize);       // end scope
-    }
-    else if (first)
-    {
-        returnval[strlen(returnval) - 1] = ']';
-    }
-    else
-    {
-        returnval[strlen(returnval) - 1] = '\0';
-    }
-
-    if (found)
-    {
-        Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-        Join(returnval, buffer, bufsize);
-        EndJoin(returnval, "}}\n", bufsize);
-    }
-    else
-    {
-        snprintf(returnval, bufsize, "{ \"meta\": { \"count\": 0, \"related\": 0 }}");
-    }
 
     DeleteHubQuery(hq, DeleteHubVariable);
 
@@ -1717,7 +1689,7 @@ int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lva
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

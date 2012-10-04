@@ -138,8 +138,8 @@ JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex, Host
 JsonElement *Nova2PHP_classes_summary(char **classes);
 int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, char *returnval,
                           int bufsize, PromiseContextMode promise_context);
-int Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type,
-                         bool regex, const HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize, PromiseContextMode promise_context);
+JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const char *lval, const char *rval, const char *type,
+                         bool regex, const HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
