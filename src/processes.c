@@ -16,7 +16,7 @@
 # include <zone.h>
 #endif
 
-static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb);
+static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb, const char *handle);
 static int Nova_GetFirstChangePosition(char *file, char *destination);
 static int Nova_FileIsBinary(char *name, int size, int maxsize);
 static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize);
@@ -70,7 +70,8 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
 
     if (change && (cfstat(destination, &dsb) != -1))
     {
-        Nova_DoFileDiff(file, destination, sb, dsb);
+        const char *handle = PromiseID(pp);
+        Nova_DoFileDiff(file, destination, sb, dsb, handle);
     }
 
 /* Copy the current version to repository for versioning,
@@ -103,7 +104,8 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
 /* Level                                                                     */
 /*****************************************************************************/
 
-static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb)
+static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
+                            struct stat dsb, const char *handle)
 {
     int pos;
     time_t now = time(NULL);
@@ -130,6 +132,11 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struc
     }
 
     fprintf(fout, "CHANGE %s\n", file);
+
+    if (handle != NULL)
+    {
+        fprintf(fout, "promise handle: %s\n", handle);
+    }
 
     pos = Nova_GetFirstChangePosition(file, destination);
 

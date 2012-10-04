@@ -2539,8 +2539,10 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff, bool regex,
-                             time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
+                             char *ldiff, bool regex, time_t from, time_t to,
+                             int sort, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context)
 {
 /* BEGIN query document */
     bson query;
@@ -2552,6 +2554,8 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
     bson fields;
@@ -2592,7 +2596,8 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                 bson_iterator_subiterator(&it1, &it2);
 
                 char rname[CF_MAXVARSIZE] = {0},
-                     rdiff[CF_BUFSIZE] = {0};
+                     rdiff[CF_BUFSIZE] = {0},
+                     rhandle[CF_MAXVARSIZE] = {0};
 
                 time_t timestamp = 0;
 
@@ -2615,6 +2620,30 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                         {
                             timestamp = bson_iterator_int(&it3);
                         }
+                        else if (strcmp(bson_iterator_key(&it3), cfr_promisehandle) == 0)
+                        {
+                            snprintf(rhandle, sizeof(rhandle), "%s", bson_iterator_string(&it3));
+                        }
+                    }
+
+                    switch (promise_context)
+                    {
+                        case PROMISE_CONTEXT_MODE_INTERNAL:
+                            if (!CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_USER:
+                            if (CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_ALL:
+                            break;
                     }
 
                     bool matched = true;

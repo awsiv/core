@@ -1651,8 +1651,8 @@ PHP_FUNCTION(cfpr_report_filechanges)
 PHP_FUNCTION(cfpr_report_filediffs)
 {
     char *userName, *hostkey, *file, *diff;
-    char *fhostkey, *ffile, *fdiff;
     zval *context_includes = NULL, *context_excludes = NULL;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, f_len, d_len;
     zend_bool regex;
     time_t from, to;
@@ -1661,9 +1661,10 @@ PHP_FUNCTION(cfpr_report_filediffs)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &f_len,
                               &diff, &d_len,
                               &regex,
@@ -1680,9 +1681,9 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    ffile = (f_len == 0) ? NULL : file;
-    fdiff = (d_len == 0) ? NULL : diff;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *ffile = (f_len == 0) ? NULL : file;
+    char *fdiff = (d_len == 0) ? NULL : diff;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -1692,7 +1693,10 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *payload = Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, to, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *payload = Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, 
+                                                     from, to, filter, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3034,16 +3038,17 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 PHP_FUNCTION(cfpr_hosts_with_filediffs)
 {
     char *userName, *hostkey, *file, *diff;
-    char *fhostkey, *ffile;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, j_len, d_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &j_len,
                               &diff, &d_len,
                               &regex,
@@ -3059,8 +3064,8 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    ffile = (j_len == 0) ? NULL : file;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *ffile = (j_len == 0) ? NULL : file;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -3070,9 +3075,11 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+        PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex,
-                                        from, to, filter, &page);
+                                        from, to, filter, &page, promise_context_mode);
 
     if (!json_out)
     {

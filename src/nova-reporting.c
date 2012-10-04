@@ -1033,6 +1033,12 @@ void SummarizeFileChanges(int xml, int html, int csv, int embed, char *styleshee
         sscanf(line, "CHANGE %[^\n]", name);
 
         fgets(line, CF_BUFSIZE - 1, fin);
+        /* check if promise handle is included into log record */
+        if (strncmp(line, "promise handle:", strlen("promise handle:")) == 0)
+        {
+            fgets(line, CF_BUFSIZE - 1, fin);
+        }
+
         sscanf(line, "%128[^;];%[^\n]", datestr, size);
 
         if (strncmp(datestr, "END", strlen("END")) == 0)

@@ -61,7 +61,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff, bool regex,
-                             time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                             time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, PromiseContextMode promise_context);
 HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime);
 HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx, HostClassFilter *hostClassFilter, PageInfo *page);
 HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter);

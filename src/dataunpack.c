@@ -168,6 +168,7 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], change[CF_BUFSIZE];
+    char handle[CF_MAXVARSIZE];
     long t;
     char *sp;
 
@@ -182,7 +183,22 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
     {
         // Extract records
         change[0] = '\0';
-        sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+        name[0] = '\0';
+        handle[0] = '\0';
+        bool is_handle = false;
+
+        /* protocol for  Enterprise 3.0.0 */
+        if (strncmp(ip->name, "300", strlen("300")) == 0)
+        {
+            sscanf(ip->name, "300|%ld|%255[^|]|%255[^|]|%2047[^\n]",
+                   &t, name, handle, change);
+
+            is_handle = true;
+        }
+        else /* protocol for Enterpise 2.x.x */
+        {
+            sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+        }
 
         for (sp = change; *sp != '\0'; sp++)
         {
@@ -192,7 +208,8 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
             }
         }
 
-        CfDebug("Change-diff: in file %s at %ld \nbegin\n%s\nend\n", name, t, change);
+        CfDebug("Change-diff: in file %s at %ld for promise handle: %s\nbegin\n%s\nend\n",
+                name, t, (is_handle)? handle : "undefined", change);
     }
 }
 

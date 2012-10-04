@@ -1762,10 +1762,12 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], change[CF_BUFSIZE], nameNoDot[CF_MAXVARSIZE];
+    char handle[CF_MAXVARSIZE];
     char varName[128];
     time_t then;
     long t;
     char *sp;
+    bool is_handle;
 
 // find right host
     bson host_key;
@@ -1783,7 +1785,22 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
         for (ip = data; ip != NULL; ip = ip->next)
         {
             change[0] = '\0';
-            sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+            name[0] = '\0';
+            handle[0] = '\0';
+            is_handle = false;
+
+            /* protocol for  Enterprise 3.0.0 */
+            if (strncmp(ip->name, "300", strlen("300")) == 0)
+            {
+                sscanf(ip->name, "300|%ld|%255[^|]|%255[^|]|%2047[^\n]",
+                       &t, name, handle, change);
+
+                is_handle = true;
+            }
+            else /* protocol for Enterpise 2.x.x */
+            {
+                sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+            }
 
             for (sp = change; *sp != '\0'; sp++)
             {
@@ -1803,6 +1820,12 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
                 bson_append_int(&set_op, cfr_time, then);
                 bson_append_string(&set_op, cfr_name, name);
                 bson_append_string(&set_op, cfr_diff, change);
+
+                if  (is_handle)
+                {
+                    bson_append_string(&set_op, cfr_promisehandle, handle);
+                }
+
                 bson_append_finish_object(&set_op); // varName
             }
         }

@@ -509,12 +509,14 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
     FILE *fin;
     char name[CF_BUFSIZE], line[CF_BUFSIZE], size[CF_MAXVARSIZE];
     char no[CF_SMALLBUF], change[CF_BUFSIZE], changeNoTab[CF_BUFSIZE], reformat[CF_BUFSIZE],
-        output[CF_MAXTRANSSIZE], aggregate[CF_BUFSIZE];
+         output[CF_MAXTRANSSIZE], aggregate[CF_BUFSIZE];
+    char handle[CF_BUFSIZE] = { 0 };
     Item *ip, *file = NULL;
     char pm;
     int first = true;
     time_t then;
     long lthen;
+    bool is_handle;
 
     CfOut(cf_verbose, "", " -> Packing diff data");
 
@@ -531,6 +533,8 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
 
     while (!feof(fin))
     {
+        is_handle = false;
+
         line[0] = '\0';
         fgets(line, CF_BUFSIZE - 1, fin);
 
@@ -542,7 +546,17 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
         name[0] = '\0';
         sscanf(line, "CHANGE %[^\n]", name);
 
+        handle[0] = '\0';
         fgets(line, CF_BUFSIZE - 1, fin);
+
+        /* check if promise handle is included into log record */
+        if (strncmp(line, "promise handle:", strlen("promise handle:")) == 0)
+        {
+            is_handle = true;
+            sscanf(line, "promise handle: %[^\n]", handle);
+            fgets(line, CF_BUFSIZE - 1, fin);
+        }
+
         sscanf(line, "%ld;%[^\n]", &lthen, size);
 
         then = (time_t) lthen;
@@ -594,7 +608,20 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
             }
         }
 
-        snprintf(output, sizeof(output), "%ld|%s|%s\n", then, name, aggregate);
+        /* prefix is a protocol version number Enterprise 3.0.0 -> 300
+           which make it easier for modyfication */
+        if (is_handle)
+        {
+            snprintf(output, sizeof(output), "300|%ld|%s|%s|%s\n",
+                     then, name, handle, aggregate);
+        }
+        else /* for 2.x.x where handle is missing*/
+        {
+            /* if promise handle is missing then send empty space for parsing on hub */
+            snprintf(output, sizeof(output), "%ld|%s|%s\n",
+                     then, name, aggregate);
+
+        }
 
         if (strlen(aggregate) > 0)
         {

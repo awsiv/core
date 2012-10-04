@@ -2272,7 +2272,7 @@ JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, 
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
-                                       HostClassFilter *hostClassFilter, PageInfo *page)
+                                       HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
@@ -2280,7 +2280,9 @@ JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, b
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex,
+                                      from, to, true, hostClassFilter,
+                                      promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
@@ -2815,7 +2817,8 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
 
 JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
                                       bool regex, time_t from, time_t to,
-                                      HostClassFilter *hostClassFilter, PageInfo *page)
+                                      HostClassFilter *hostClassFilter, PageInfo *page,
+                                      PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2825,7 +2828,7 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
     }
 
     HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from,
-                                      to, false, hostClassFilter);
+                                      to, false, hostClassFilter, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

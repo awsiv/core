@@ -153,7 +153,7 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
 JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page);
 JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
-                              HostClassFilter *hostClassFilter, PageInfo *page);
+                              HostClassFilter *hostClassFilter, PageInfo *page, PromiseContextMode promise_context);
 int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 
@@ -197,7 +197,8 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
                                         HostClassFilter *hostClassFilter, PageInfo *page);
 JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
                                       bool regex, time_t from, time_t to,
-                                      HostClassFilter *hostClassFilter, PageInfo *page);
+                                      HostClassFilter *hostClassFilter, PageInfo *page,
+                                      PromiseContextMode promise_context);
 JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause,
                                        PromiseLogState state, time_t from, time_t to,
                                        HostClassFilter *hostClassFilter, PageInfo *page,

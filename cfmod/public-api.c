@@ -1208,7 +1208,8 @@ PHP_FUNCTION(cfmod_resource_file)
         DATABASE_OPEN(&conn);
 
         change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from, (time_t)to, true, filter);
-        diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, (time_t)from, (time_t)to, true, filter);
+        diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, (time_t)from,
+                                         (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL);
 
         DATABASE_CLOSE(&conn);
 
