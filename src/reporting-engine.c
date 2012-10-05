@@ -452,7 +452,9 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         return;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, false, 0, time(NULL), false, filter);
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, false, 0,
+                                         time(NULL), false, filter,
+                                         PROMISE_CONTEXT_MODE_ALL);
 
     CFDB_Close(&dbconn);
 
