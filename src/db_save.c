@@ -1714,9 +1714,12 @@ void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
             char change[2] = {0};
             char msg[CF_MAXVARSIZE] = {0},
                  temp_name[CF_MAXVARSIZE] = {0};
+            char handle[CF_MAXVARSIZE] = { 0 };
 
             change[0] = '\0';
-            sscanf(ip->name, "%ld,%255[^,],%1[^,],%255[^\n]", &date, temp_name, change, msg);
+            sscanf(ip->name, "%ld,%255[^,],%255[^,],%1[^,],%255[^\n]",
+                   &date, handle, temp_name, change, msg);
+
             then = (time_t) date;
 
             if(change[0] != '\0')
@@ -1742,6 +1745,8 @@ void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
 
                 bson_append_string(&set_op, cfr_filechangetype, change);
                 bson_append_string(&set_op, cfr_filechangemsg, msg);
+
+                bson_append_string(&set_op, cfr_promisehandle, handle);
 
                 bson_append_finish_object(&set_op); // varName
             }

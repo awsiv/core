@@ -2408,8 +2408,10 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
-                                int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
+                                bool regex, time_t from, time_t to,
+                                int sort, HostClassFilter *hostClassFilter,
+                                PromiseContextMode promise_context)
 {
 /* BEGIN query document */
     bson query;
@@ -2421,6 +2423,8 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
 /* BEGIN RESULT DOCUMENT */
@@ -2449,7 +2453,8 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
              hostnames[CF_BUFSIZE] = {0},
              addresses[CF_BUFSIZE] = {0},
              rname[CF_BUFSIZE] = {0},
-             handle[CF_MAXVARSIZE];
+             handle[CF_MAXVARSIZE] = {0},
+             promise_handle[CF_MAXVARSIZE] = {0};
 
         bool found = false;
         HubHost *hh = CreateEmptyHubHost();
@@ -2470,6 +2475,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                 time_t timestamp = 0;
                 char change_type[2] = {0},
                      change_msg[CF_MAXVARSIZE] = {0};
+                promise_handle[0] = '\0';
 
                 snprintf(change_type, sizeof(change_type), "U"); // default = unknown
 
@@ -2498,6 +2504,30 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                         {
                             strncpy(change_msg, bson_iterator_string(&it3), sizeof(change_msg) - 1);
                         }
+                        else if (strcmp(bson_iterator_key(&it3), cfr_promisehandle) == 0)
+                        {
+                            strncpy(promise_handle, bson_iterator_string(&it3), sizeof(promise_handle) - 1);
+                        }
+                    }
+
+                    switch (promise_context)
+                    {
+                        case PROMISE_CONTEXT_MODE_INTERNAL:
+                            if (!CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_USER:
+                            if (CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                            {
+                                continue;
+                            }
+                            break;
+
+                        case PROMISE_CONTEXT_MODE_ALL:
+                            break;
                     }
 
                     bool matched = true;

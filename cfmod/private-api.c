@@ -1603,6 +1603,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
     char *userName, *hostkey, *file;
     char *fhostkey, *ffile;
     zval *context_includes = NULL, *context_excludes = NULL;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, f_len;
     zend_bool regex;
     time_t from, to;
@@ -1611,9 +1612,10 @@ PHP_FUNCTION(cfpr_report_filechanges)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &f_len,
                               &regex,
                               &from,
@@ -1640,7 +1642,12 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *payload = Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, from, to, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *payload = Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex,
+                                                       from, to, filter, &page,
+                                                       promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(payload);
@@ -2985,15 +2992,17 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 {
     char *userName, *hostkey, *file;
     char *fhostkey, *ffile;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbllaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &j_len,
                               &regex,
                               &from,
@@ -3019,9 +3028,11 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
     json_out = Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, from,
-                                          to, filter, &page);
+                                          to, filter, &page, promise_context_mode);
 
     if (!json_out)
     {

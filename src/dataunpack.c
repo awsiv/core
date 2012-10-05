@@ -143,6 +143,7 @@ static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
+    char handle[CF_MAXVARSIZE];
     long date;
     time_t then;
 
@@ -156,9 +157,10 @@ static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
     for (ip = data; ip != NULL; ip = ip->next)
     {
         // Extract records
-        sscanf(ip->name, "%ld,%255[^\n]", &date, name);
+        sscanf(ip->name, "%ld,%255[^,],%255[^\n]", &date, handle, name);
         then = (time_t) date;
-        CfDebug("File-change event: in \"%s\" at %ld\n", name, then);
+
+        CfDebug("File-change event: in \"%s\" at %ld (by promise: %s)\n", name, then, handle);
     }
 }
 
