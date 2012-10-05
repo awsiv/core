@@ -72,5 +72,7 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
 JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count);
 
 
+bool PHPArrayBoolGet(zval *php_array, char *key, bool *out);
+bool PHPArrayStringGet(zval *php_array, char *key, char *buffer, int bufsize);
 
 #endif

@@ -68,3 +68,42 @@ JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count)
 
     return output;
 }
+
+bool PHPArrayStringGet(zval *php_array, char *key, char *buffer, int bufsize)
+{
+    assert( php_array );
+    assert( key );
+    assert( strlen(key) > 0 );
+    assert( buffer );
+    assert( bufsize > 0 );
+
+    zval **zvalue;
+    bool retval = zend_hash_find(Z_ARRVAL_P(php_array), key, strlen(key) + 1, (void**)&zvalue) != FAILURE;
+
+    assert( retval && "Couldn't find value for key" && key);
+
+    if( retval )
+    {
+        snprintf( buffer, bufsize, "%s", Z_STRVAL_PP(zvalue));
+    }
+
+    return retval;
+}
+
+bool PHPArrayBoolGet(zval *php_array, char *key, bool *out)
+{
+    assert( php_array );
+    assert( key );
+    assert( strlen(key) > 0 );
+
+    zval **zvalue;
+    bool retval = zend_hash_find(Z_ARRVAL_P(php_array), key, strlen(key) + 1, (void**)&zvalue) != FAILURE;
+    assert( retval && "Couldn't find value for key" && key);
+
+    if(retval)
+    {
+        *out = Z_BVAL_PP(zvalue);
+    }
+
+    return retval;
+}
