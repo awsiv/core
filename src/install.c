@@ -1673,30 +1673,6 @@ void DeletePromiseFilter(PromiseFilter *filter)
     free(filter);
 }
 
-
-JsonHeaderTable *NewJsonHeaderTable(const char *title, JsonElement *header, JsonElement *rows)
-{
-    assert(header);
-    assert(rows);
-
-    JsonHeaderTable *table = xmalloc(sizeof(JsonHeaderTable));
-
-    table->title = SafeStringDuplicate(title);
-    table->header = header;
-    table->rows = rows;
-
-    return table;
-}
-
-
-void DeleteJsonHeaderTable(JsonHeaderTable *table)
-{
-    free(table->title);
-    JsonElementDestroy(table->header);
-    JsonElementDestroy(table->rows);
-    free(table);
-}
-
 /*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/

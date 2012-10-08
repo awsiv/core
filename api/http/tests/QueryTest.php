@@ -7,7 +7,9 @@ class QueryTest extends APIBaseTest
     public function testHostsTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM Hosts ORDER BY HostKey');
+            $response = $this->pest->post('/query', '{
+                "query": "SELECT * FROM Hosts ORDER BY HostKey"
+                }');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
@@ -15,7 +17,7 @@ class QueryTest extends APIBaseTest
 
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
-            $this->assertEquals('Name', $response['data'][0]['header'][1]);
+            $this->assertEquals('HostName', $response['data'][0]['header'][1]);
             $this->assertEquals('IPAddress', $response['data'][0]['header'][2]);
             $this->assertEquals('ReportTimeStamp', $response['data'][0]['header'][3]);
             $this->assertEquals('Colour', $response['data'][0]['header'][4]);
@@ -48,7 +50,9 @@ class QueryTest extends APIBaseTest
     public function testFileChangesTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM FileChanges ORDER BY HostKey');
+            $response = $this->pest->post('/query', '{
+                "query": "SELECT * FROM FileChanges ORDER BY HostKey"
+                }');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
@@ -83,7 +87,9 @@ class QueryTest extends APIBaseTest
     public function testContextsTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM Contexts ORDER BY HostKey LIMIT 2');
+            $response = $this->pest->post('/query', '{
+                "query": "SELECT * FROM Contexts ORDER BY HostKey LIMIT 2"
+                }');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
@@ -118,7 +124,9 @@ class QueryTest extends APIBaseTest
     public function testVariablesTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM Variables WHERE Type="s" OR Type="sl" ORDER BY Type LIMIT 4');
+            $response = $this->pest->post('/query', '{
+                "query": "' . "SELECT * FROM Variables WHERE Type='s' OR Type='sl' ORDER BY Type LIMIT 4" . '"' .
+                '}');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
@@ -173,7 +181,9 @@ class QueryTest extends APIBaseTest
     public function testSoftwareTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM Software ORDER BY Name LIMIT 4');
+            $response = $this->pest->post('/query', '{
+                "query": "SELECT * FROM Software ORDER BY Name LIMIT 4"
+                }');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
@@ -222,7 +232,9 @@ class QueryTest extends APIBaseTest
     public function testPromiseStatusLastTableQuery(){
          try
         {
-            $response = $this->pest->post('/query', 'SELECT * FROM  PromiseStatusLast ORDER BY PromiseHandle LIMIT 2');
+            $response = $this->pest->post('/query', '{
+                "query": "SELECT * FROM  PromiseStatusLast ORDER BY PromiseHandle LIMIT 2"
+                }');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 

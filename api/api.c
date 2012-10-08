@@ -1,6 +1,5 @@
 #include "api.h"
 
-#include "reporting-engine.h"
 #include "web_rbac.h"
 #include "utils.h"
 #include "db-serialize.h"
@@ -96,35 +95,4 @@ PHP_FUNCTION(cfapi_auth)
     default:
         RETURN_BOOL(false);
     }
-}
-
-//******************************************************************************
-
-PHP_FUNCTION(cfapi_query_post)
-{
-    syslog(LOG_DEBUG, "Requesting POST /api/query");
-
-    const char *username = NULL; int username_len = 0;
-    const char *query = NULL; int query_len = 0;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
-                              &username, &username_len,
-                              &query, &query_len) == FAILURE)
-    {
-        THROW_ARGS_MISSING();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(username_len, "username");
-    ARGUMENT_CHECK_CONTENTS(query_len, "query");
-
-    JsonHeaderTable *table = EnterpriseExecuteSQL(username, query);
-
-    assert(table);
-
-    if (table->rows == NULL)
-    {
-        table->rows = JsonArrayCreate(0);
-    }
-
-    RETURN_JSON(PackageResultSQL(table));
 }

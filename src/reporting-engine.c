@@ -20,7 +20,7 @@
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
-static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
+static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
 static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op);
 
 /* Conversion functions */
@@ -115,7 +115,21 @@ bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_ca
 /******************************************************************/
 #endif
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op)
+static JsonElement *PackageReportingEngineResult(const char *query,
+                                                 JsonElement *columns,
+                                                 JsonElement *rows)
+{
+    JsonElement *result = JsonObjectCreate(3);
+
+    JsonObjectAppendString(result, "query", query);
+    JsonObjectAppendArray(result, "header", columns);
+    JsonObjectAppendInteger(result, "rowCount", JsonElementLength(rows));
+    JsonObjectAppendArray(result, "rows", rows);
+
+    return result;
+}
+
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
 {
 #if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
@@ -126,15 +140,17 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     {
         /* TODO: better error handling */
         Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
         free(select_op_expanded);
-        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        return result;
     }
 
     if (!GenerateAllTables(db))
     {
         Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
         free(select_op_expanded);
-        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        return result;
     }
 
 
@@ -142,8 +158,9 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
     if(!tables)
     {
         Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
         free(select_op_expanded);
-        return NewJsonHeaderTable(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        return result;
     }
 
     LoadSqlite3Tables(db, tables, username);
@@ -152,7 +169,8 @@ JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_o
 
     LogPerformanceTimer timer = LogPerformanceStart();
 
-    JsonHeaderTable *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
+    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
+    assert(out);
 
     LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
 
@@ -190,20 +208,21 @@ int BuildJsonOutput(void *out, int argc, char **argv, char **azColName)
 
 /******************************************************************/
 
-static JsonHeaderTable *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op)
+static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op)
 {
     /* Query sqlite and print table contents */
     char *err_msg = 0;
 
-    JsonHeaderTable *result = NewJsonHeaderTable(select_op, GetColumnNames(db, select_op), JsonArrayCreate(5));
+    JsonElement *rows = JsonArrayCreate(5);
 
-    if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, (void *)result->rows, err_msg))
+    if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, rows, err_msg))
     {
         Sqlite3_FreeString(err_msg);
-        return NewJsonHeaderTable(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
+        JsonElementDestroy(rows);
+        return PackageReportingEngineResult(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    return result;
+    return PackageReportingEngineResult(select_op, GetColumnNames(db, select_op), rows);
 }
 
 static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)

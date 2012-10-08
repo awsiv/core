@@ -147,6 +147,7 @@ FileCacheEntry FileCacheGet(FileCache *cache, const char *key)
     {
         entry.value_size = bytes_read;
         entry.last_modified = last_modified;
+        syslog(LOG_DEBUG, "Retrieved cached version at %s", entry_path);
         return entry;
     }
     else
