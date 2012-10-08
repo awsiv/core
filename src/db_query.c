@@ -6164,7 +6164,7 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
         modified |= BsonAppendStringNonEmpty(query, cfp_promisetype, filter->promiseTypeInclude);
     }
 
-    if (filter->promiseTypeInclude)
+    if (filter->bundleTypeInclude)
     {
         modified |= BsonAppendStringNonEmpty(query, cfp_bundletype, filter->bundleTypeInclude);
     }
