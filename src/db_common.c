@@ -187,4 +187,16 @@ int MongoCount( EnterpriseDB *conn, const char *db, const char *coll,
 }
 
 /********************************************************************/
+bool MongoCursorNext(mongo_cursor *cursor)
+{
+    assert( cursor );
+
+    if(!cursor)
+    {
+        return false;
+    }
+
+    return mongo_cursor_next(cursor) == MONGO_OK;
+}
+/********************************************************************/
 
