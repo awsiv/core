@@ -872,13 +872,11 @@ void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise
     if (promise_context != PROMISE_CONTEXT_MODE_ALL)
     {
         Rlist *old_ent_versions = NULL;
-        PrependRScalar(&old_ent_versions, (void *) "nova_2_0.*", CF_SCALAR);
-        PrependRScalar(&old_ent_versions, (void *) "nova_2_1.*", CF_SCALAR);
-        PrependRScalar(&old_ent_versions, (void *) "nova_2_2.*", CF_SCALAR);
+        PrependRScalar(&old_ent_versions, (void *) "enterprise_3.*", CF_SCALAR);
 
         {
             BsonAppendStartObject(b, cfr_class_keys);
-            BsonAppendArrayRegex(b, "$nin", old_ent_versions);
+            BsonAppendArrayRegex(b, "$in", old_ent_versions);
             BsonAppendFinishObject(b);
         }
 
