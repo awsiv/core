@@ -1391,6 +1391,12 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
                             hostClassFilter, true, promise_context);
 
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+	
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
 
@@ -1442,11 +1448,6 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
     }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
-    }
 
     return payload;
 }
