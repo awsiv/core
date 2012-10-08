@@ -76,6 +76,8 @@ const char *Nova_HostColourToString(HostColour colour)
         return "green_yellow_red";
     case HOST_COLOUR_BLACK:
         return "black";
+    case HOST_COLOUR_NONE:
+        return "none";
     default:
         return "unknown";
     }
@@ -108,6 +110,10 @@ HostColour HostColourFromString(const char *colour)
     else if (StringSafeCompare(colour, "black") == 0)
     {
         return HOST_COLOUR_BLACK;
+    }
+    else if (StringSafeCompare(colour, "none") == 0)
+    {
+        return HOST_COLOUR_NONE;
     }
     else
     {

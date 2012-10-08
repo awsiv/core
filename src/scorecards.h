@@ -23,7 +23,8 @@ typedef enum
     HOST_COLOUR_YELLOW,
     HOST_COLOUR_RED,
     HOST_COLOUR_GREEN_YELLOW_RED,
-    HOST_COLOUR_BLACK
+    HOST_COLOUR_BLACK,
+    HOST_COLOUR_NONE
 } HostColour;
 
 typedef enum
