@@ -882,7 +882,7 @@ PHP_FUNCTION(cfmod_resource_context)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryClasses(&conn, hostkey, name, true, from, to, filter, false,
-                                   PROMISE_CONTEXT_MODE_ALL);
+                                   PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
 

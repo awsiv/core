@@ -19,6 +19,7 @@
 #include "conversion.h"
 #include "granules.h"
 #include "scope.h"
+#include "db-export-csv.h"
 
 #include <assert.h>
 
@@ -706,7 +707,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                             const char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort,
-                            PromiseContextMode promise_context)
+                            PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     bson query;
     bson_init(&query);
@@ -718,8 +719,6 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
     BsonAppendClassFilterFromPromiseContext(&query, promise_context);
-
-
     BsonFinish(&query);
 
     bson fields;
@@ -730,7 +729,8 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                            cfr_host_array,
                            cfr_class);
 
-    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = NULL;
+    cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -738,23 +738,28 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
     Rlist *record_list = NULL,
           *host_list = NULL;
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
+
+    while ( MongoCursorNext(cursor) )
     {
         bson_iterator it1;
 
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         char keyhash[CF_MAXVARSIZE] = {0},
-             hostnames[CF_BUFSIZE] = {0},
-             addresses[CF_BUFSIZE] = {0};
+                hostnames[CF_BUFSIZE] = {0},
+                addresses[CF_BUFSIZE] = {0};
+
+        BsonStringWrite( keyhash, CF_MAXVARSIZE - 1, mongo_cursor_bson(cursor), cfr_keyhash );
+        GetHostNameAndIP( mongo_cursor_bson(cursor), hostnames, addresses, CF_BUFSIZE -1 );
+
+        HubHost *hh = NewHubHost( NULL, keyhash, addresses, hostnames );
 
         bool found = false;
-        HubHost *hh = CreateEmptyHubHost();
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
             if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
             {
                 bson_iterator it2;
@@ -801,16 +806,32 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                     if (match_class)
                     {
                         found = true;
+                        HubClass *hc = NewHubClass(hh, rclass, rex, rsigma, timestamp);
 
-                        PrependRlistAlienUnlocked(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
+                        if( wr_info )
+                        {
+                            ExportWebReportUpdate( writer, (void *) hc, HubClassToCSV, wr_info );
+                            DeleteHubClass(hc);
+                        }
+                        else
+                        {
+                            PrependRlistAlienUnlocked(&record_list, hc);
+                        }
                     }
                 }
             }
         }
 
-        if (found)
+        if( wr_info )
         {
-            UpdateHubHost(hh, keyhash, addresses, hostnames);
+            DeleteHubHost(hh);
+            hh = NULL;
+            continue;
+        }
+
+
+        if (found )
+        {
             PrependRlistAlienUnlocked(&host_list, hh);
         }
         else
@@ -821,6 +842,8 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
     }
 
     mongo_cursor_destroy(cursor);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     if (sort)
     {

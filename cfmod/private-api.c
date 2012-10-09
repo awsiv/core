@@ -766,15 +766,17 @@ PHP_FUNCTION(cfpr_report_classes)
     char *hostkey = NULL; int hk_len;
     char *name = NULL; int n_len;
     char *promise_context = NULL; int pc_len;
-    zval *contextIncludes = NULL;
-    zval *contextExcludes = NULL;
+    zval *contextIncludes = NULL,
+            *contextExcludes = NULL,
+            *report_file_info_array = NULL;
+
     zend_bool regex;
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
     time_t from, to;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbllll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbllll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -784,13 +786,16 @@ PHP_FUNCTION(cfpr_report_classes)
                               &contextExcludes,
                               &sort_column_name, &sc_len, &sort_descending,
                               &from, &to,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fname = (n_len == 0) ? NULL : name;
@@ -805,8 +810,19 @@ PHP_FUNCTION(cfpr_report_classes)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *payload = Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, from,
-                                                   to, promise_context_mode);
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportClassesReport( fhostkey, fname, (bool) regex, filter, from, to,
+                                          promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, from,
+                                          to, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

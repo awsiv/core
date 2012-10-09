@@ -382,7 +382,7 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
     }
 
     HubQuery *hq = CFDB_QueryClasses(&dbconn, NULL, NULL, false, 0, time(NULL),
-                                     filter, false, PROMISE_CONTEXT_MODE_ALL);
+                                     filter, false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     CFDB_Close(&dbconn);
 

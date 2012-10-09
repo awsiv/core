@@ -42,17 +42,13 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
                                       bool sort, HostClassFilter *host_class_filter,
                                       PromiseContextMode promise_context);
 
-HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
-                           HostClassFilter *host_class_filter,
-                           PromiseContextMode promise_context);
-HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
-                             char *lver, const char *larch, bool regex,
-                             HostClassFilter *hostClassFilter, int sort,
-                             PromiseContextMode promise_context);
-HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char *lclass,
-                            bool regex, time_t from, time_t to,
+HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter, PromiseContextMode promise_context);
+HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, const char *larch,
+                             bool regex, HostClassFilter *hostClassFilter, int sort, PromiseContextMode promise_context);
+HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
+                            const char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort,
-                            PromiseContextMode promise_context);
+                            PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes);
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                                     char *lversion, time_t from, time_t to, int lkept,

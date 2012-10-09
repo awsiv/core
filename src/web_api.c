@@ -1465,7 +1465,7 @@ JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
-                                     hostClassFilter, true, promise_context);
+                                     hostClassFilter, true, promise_context, NULL);
 
     PageRecords(&(hq->records), page, DeleteHubClass);
     int related_host_cnt = RlistLen(hq->hosts);
@@ -2518,7 +2518,7 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
-                                     hostClassFilter, false, promise_context);
+                                     hostClassFilter, false, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -4135,7 +4135,7 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
 
     time_t now = time(NULL);
     hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)bluehost_threshold,
-                           now, hostClassFilter, false, promise_context);
+                           now, hostClassFilter, false, promise_context, NULL);
 
     returnval[0] = '\0';
 

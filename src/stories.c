@@ -641,7 +641,7 @@ if (!CFDB_Open(&dbconn))
 
 time_t now = time(NULL);
 hq = CFDB_QueryClasses(&dbconn, hostkey, NULL, false, now - 10000, now, NULL,
-                       false, PROMISE_CONTEXT_MODE_ALL);
+                       false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -728,7 +728,7 @@ if (!CFDB_Open(&dbconn))
 
 time_t now = time(NULL);
 hq = CFDB_QueryClasses(&dbconn, hostkey, NULL, false, now - 10000, now, NULL,
-                       false, PROMISE_CONTEXT_MODE_ALL);
+                       false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
