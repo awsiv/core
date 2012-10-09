@@ -422,7 +422,8 @@ static JsonElement *PromiseLogAsJson(EnterpriseDB *conn, PromiseLogState state, 
                                      const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
                                      int *total_results_out)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter, total_results_out, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true,
+                                            filter, total_results_out, PROMISE_CONTEXT_MODE_ALL, NULL);
     PageRecords(&(result->records), page, DeleteHubPromiseLog);
 
     JsonElement *output = JsonArrayCreate(100);

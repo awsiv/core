@@ -329,6 +329,20 @@ void HubValueToCSV( void *data, char buffer[CF_BUFSIZE])
 }
 
 /*****************************************************************************/
+
+void HubPromiseLogToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubPromiseLog *hp = (HubPromiseLog *) data;
+
+    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%ld\n",
+              NULLStringToEmpty(hp->hh->hostname),
+              NULLStringToEmpty(hp->handle),
+              NULLStringToEmpty(hp->cause),
+              hp->t);
+}
+
+/*****************************************************************************/
+
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  
   assert( wr_info );

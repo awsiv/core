@@ -1144,7 +1144,7 @@ JsonElement *Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, Pro
     }
 
     HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx,
-                                        from, to, true, hostClassFilter, NULL, promise_context);
+                                        from, to, true, hostClassFilter, NULL, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
@@ -2856,7 +2856,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
     HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true,
                                         causeRx, from, to, false, hostClassFilter,
-                                        NULL, promise_context);
+                                        NULL, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

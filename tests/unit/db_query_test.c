@@ -13,7 +13,8 @@ static void test_query_promiselog_repaired(void **state)
         return;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseLog(conn, NULL, PROMISE_LOG_STATE_REPAIRED, NULL, false, NULL, 0, time(NULL), false, NULL, NULL, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, NULL, PROMISE_LOG_STATE_REPAIRED, NULL, false, NULL,
+                                        0, time(NULL), false, NULL, NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
     assert_true(hq != NULL);
 
     DeleteHubQuery(hq, DeleteHubPromiseLog);
