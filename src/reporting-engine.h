@@ -72,7 +72,7 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
-JsonHeaderTable *EnterpriseExecuteSQL(const char *username, const char *select_op);
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op);
 
 #if defined(HAVE_LIBSQLITE3)
 bool Sqlite3_DBOpen(sqlite3 **db);

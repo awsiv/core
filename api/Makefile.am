@@ -15,11 +15,12 @@ phplib_LTLIBRARIES = cfengine-enterprise-api.la
 
 cfengine_enterprise_api_la_SOURCES = api-php.c api-php.h \
         api.c api.h \
-	api-host.c \
-	api-promise.c \
-	api-role.c \
-	api-settings.c \
-	api-user.c \
+        api-query.c \
+        api-host.c \
+        api-promise.c \
+        api-role.c \
+        api-settings.c \
+        api-user.c \
         db-serialize.c db-serialize.h \
         utils.c utils.h
 

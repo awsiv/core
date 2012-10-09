@@ -13,6 +13,7 @@ MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
         conversion_test \
+        file_cache_test \
         license_test \
         structure_allocation_test
 
@@ -51,3 +52,5 @@ license_test_LDADD = $(top_builddir)/src/libpromises.la
 structure_allocation_test_SOURCES = $(MOCKERY_SOURCES) structure_allocation_test.c
 structure_allocation_test_LDADD = $(top_builddir)/src/libpromises.la
 
+file_cache_test_SOURCES = $(MOCKERY_SOURCES) file_cache_test.c
+file_cache_test_LDADD = $(top_builddir)/src/libpromises.la

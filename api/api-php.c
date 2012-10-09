@@ -12,9 +12,7 @@
 #include "db_query.h"
 #include "cf.nova.h"
 
-/* If you declare any globals in cfengine-api-php.h uncomment this:
-   ZEND_DECLARE_MODULE_GLOBALS(cfapi)
-*/
+ZEND_DECLARE_MODULE_GLOBALS(cfapi)
 
 /* True global resources - no need for thread safety here */
 
@@ -79,6 +77,19 @@ zend_module_entry cfapi_module_entry = {
 #endif
     STANDARD_MODULE_PROPERTIES
 };
+
+static void cfapi_init_globals(zend_cfapi_globals *globals)
+{
+    globals->query_cache = FileCacheNew("cfapi-query", "/tmp");
+    if (globals->query_cache)
+    {
+        syslog(LOG_NOTICE, "Initialized file cache for queries");
+    }
+    else
+    {
+        syslog(LOG_ERR, "Error initializing file cache for queries");
+    }
+}
 
 ZEND_GET_MODULE(cfapi)
      extern int AM_PHP_MODULE; // FIX: remove
@@ -151,6 +162,9 @@ PHP_MINIT_FUNCTION(cfapi)
     }
 
     CryptoInitialize();
+    syslog(LOG_NOTICE, "Initialized crypto");
+
+    ZEND_INIT_MODULE_GLOBALS(cfapi, cfapi_init_globals, NULL);
 
     syslog(LOG_NOTICE, "CFEngine Enterprise API module initialized");
     return SUCCESS;
@@ -159,6 +173,8 @@ PHP_MINIT_FUNCTION(cfapi)
 PHP_MSHUTDOWN_FUNCTION(cfapi)
 {
     syslog(LOG_NOTICE, "CFEngine Enterprise API module shutting down");
+
+    FileCacheDestroy(CFAPI_G(query_cache));
     closelog();
 
     return SUCCESS;
