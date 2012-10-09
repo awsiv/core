@@ -346,7 +346,6 @@ bool BsonAppendStringNonEmpty(bson *b, const char *key, const char *value)
     assert( b );
     assert( !b->finished );
     assert( key );
-    assert( value );
 
     if (NULL_OR_EMPTY(value))
     {
@@ -363,7 +362,6 @@ bool BsonAppendString(bson *b, const char *key, const char *value)
     assert( b );
     assert( !b->finished );
     assert( key );
-    assert( value );
 
     if( !value )
     {
@@ -464,7 +462,6 @@ bool BsonAppendRegexNonEmpty(bson *b, const char *key, char *rx_value)
     assert( b );
     assert( !b->finished );
     assert( key );
-    assert( rx_value );
 
     if (NULL_OR_EMPTY(rx_value))
     {
