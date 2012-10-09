@@ -12,6 +12,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "granules.h"
 #include "files_names.h"
 #include "conversion.h"
+#include "bson_hub_conversion.h"
 
 #include "db_query.h"
 
@@ -576,4 +577,31 @@ HostColour HostColourFromScoreForConnectedHost(int score)
 {
     return HostColourFromScore(1, 1, 1, score, false);
 }
+/*****************************************************************************/
+
+bool IsHandleWithinPromiseContext(const char *handle, PromiseContextMode promise_context)
+{
+    switch (promise_context)
+    {
+        case PROMISE_CONTEXT_MODE_USER:
+            if (CompareStringOrRegex(handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+            {
+                return false;
+            }
+            break;
+
+        case PROMISE_CONTEXT_MODE_INTERNAL:
+            if (!CompareStringOrRegex(handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+            {
+                return false;
+            }
+            break;
+
+        case PROMISE_CONTEXT_MODE_ALL:
+            break;
+    }
+
+    return true;
+}
+
 /*****************************************************************************/

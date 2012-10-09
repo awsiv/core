@@ -1317,27 +1317,11 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                             SplitScopeName(scope, rns, rbundle);
                         }
 
-                        switch (promise_context)
+                        if (!IsHandleWithinPromiseContext(rbundle, promise_context))
                         {
-                            case PROMISE_CONTEXT_MODE_USER:
-                                if (CompareStringOrRegex(rbundle,
-                                                         CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                                {
-                                    continue;
-                                }
-                                break;
-
-                            case PROMISE_CONTEXT_MODE_INTERNAL:
-                                if (!CompareStringOrRegex(rbundle,
-                                                         CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                                {
-                                    continue;
-                                }
-                                break;
-
-                            case PROMISE_CONTEXT_MODE_ALL:
-                                break;
+                            continue;
                         }
+
                     }
 
                     while (bson_iterator_next(&it3))
@@ -2510,24 +2494,9 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                         }
                     }
 
-                    switch (promise_context)
+                    if (!IsHandleWithinPromiseContext(promise_handle, promise_context))
                     {
-                        case PROMISE_CONTEXT_MODE_INTERNAL:
-                            if (!CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_USER:
-                            if (CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_ALL:
-                            break;
+                        continue;
                     }
 
                     bool matched = true;
@@ -2656,24 +2625,9 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
                         }
                     }
 
-                    switch (promise_context)
+                    if (!IsHandleWithinPromiseContext(rhandle, promise_context))
                     {
-                        case PROMISE_CONTEXT_MODE_INTERNAL:
-                            if (!CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_USER:
-                            if (CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_ALL:
-                            break;
+                        continue;
                     }
 
                     bool matched = true;
@@ -2862,24 +2816,9 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
                         continue;
                     }
 
-                    switch (promise_context)
+                    if (!IsHandleWithinPromiseContext(rhandle, promise_context))
                     {
-                        case PROMISE_CONTEXT_MODE_INTERNAL:
-                            if (!CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_USER:
-                            if (CompareStringOrRegex(rhandle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                            {
-                                continue;
-                            }
-                            break;
-
-                        case PROMISE_CONTEXT_MODE_ALL:
-                            break;
+                        continue;
                     }
 
                     bson array;
@@ -4810,24 +4749,9 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
         int line_number = 0;
         BsonIntGet(&(cursor->current), cfp_lineno, &line_number);
 
-        switch (promise_context)
+        if (!IsHandleWithinPromiseContext(promise_handle, promise_context))
         {
-            case PROMISE_CONTEXT_MODE_USER:
-                if (CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                {
-                    continue;
-                }
-                break;
-
-            case PROMISE_CONTEXT_MODE_INTERNAL:
-                if (!CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                {
-                    continue;
-                }
-                break;
-
-            case PROMISE_CONTEXT_MODE_ALL:
-                break;
+            continue;
         }
 
         Rlist *bundle_args = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
@@ -4954,24 +4878,9 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter,
         BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
 
-        switch (promise_context)
+        if (!IsHandleWithinPromiseContext(bundleName, promise_context))
         {
-            case PROMISE_CONTEXT_MODE_USER:
-                if (CompareStringOrRegex(bundleName, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                {
-                    continue;
-                }
-                break;
-
-            case PROMISE_CONTEXT_MODE_INTERNAL:
-                if (!CompareStringOrRegex(bundleName, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                {
-                    continue;
-                }
-                break;
-
-            case PROMISE_CONTEXT_MODE_ALL:
-                break;
+            continue;
         }
 
         if (!ReturnItemInClass(bundlesFound, bundleName, bundleType))

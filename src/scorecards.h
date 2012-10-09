@@ -54,6 +54,7 @@ int HostComplianceScore(double kept, double repaired);
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep, PromiseContextMode promise_context);
 
 PromiseContextMode PromiseContextModeFromString(const char *mode);
+bool IsHandleWithinPromiseContext(const char *handle, PromiseContextMode promise_context);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bufsize);
