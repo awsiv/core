@@ -1181,14 +1181,15 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
     char *hostkey = NULL; int hk_len;
     char *version = NULL; int v_len;
     char *promise_context = NULL; int pc_len;
-    zval *contextIncludes = NULL;
-    zval *contextExcludes = NULL;
+    zval *contextIncludes = NULL,
+            *contextExcludes = NULL,
+            *report_file_info_array = NULL;
     long k, nk, r, from;
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllllaasbll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -1200,13 +1201,16 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
                               &contextIncludes,
                               &contextExcludes,
                               &sort_column_name, &sc_len, &sort_descending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fversion = (v_len == 0) ? NULL : version;
@@ -1221,9 +1225,21 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *payload = Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL),
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportComplianceReport( fhostkey, fversion, (time_t) from, time(NULL),
+                                          (int) k, (int) nk, (int) r, filter,
+                                          promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL),
                                                       (int) k, (int) nk, (int) r, filter,
                                                       &page, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3770,7 +3786,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         PromiseContextMode mode = PromiseContextModeFromString(promise_context_mode);
 
         result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1,
-                                           false, filter, mode);
+                                           false, filter, mode, NULL);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

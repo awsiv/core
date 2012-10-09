@@ -1709,7 +1709,7 @@ JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t fro
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
-                                             true, hostClassFilter, promise_context);
+                                             true, hostClassFilter, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
@@ -2585,7 +2585,7 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to,
                                              k, nk, rep, false, hostClassFilter,
-                                             promise_context);
+                                             promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

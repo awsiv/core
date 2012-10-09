@@ -1015,14 +1015,14 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                                     char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort,
                                     HostClassFilter *hostClassFilter,
-                                    PromiseContextMode promise_context_mode)
+                                    PromiseContextMode promise_context_mode,
+                                    WebReportFileInfo *wr_info)
 {
     bson_iterator it1, it2, it3;
-    HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     int rkept, rnotkept, rrepaired, found = false;
     int match_kept, match_notkept, match_repaired, match_version, match_t;
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rversion[CF_MAXVARSIZE];
+    char rversion[CF_MAXVARSIZE];
 
     char kept_k[CF_SMALLBUF] = {0};
     char repaired_k[CF_SMALLBUF] = {0};
@@ -1069,23 +1069,28 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                            cfr_host_array,
                            cfr_total_compliance);
 
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
 
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
+
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
+        char keyhash[CF_MAXVARSIZE] = {0},
+                hostnames[CF_BUFSIZE] = {0},
+                addresses[CF_BUFSIZE] = {0};
+
+        BsonStringWrite( keyhash, CF_MAXVARSIZE - 1, mongo_cursor_bson(cursor), cfr_keyhash );
+        GetHostNameAndIP( mongo_cursor_bson(cursor), hostnames, addresses, CF_BUFSIZE -1 );
+
+        HubHost *hh = NewHubHost( NULL, keyhash, addresses, hostnames );
+
         found = false;
-        hh = NULL;
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
@@ -1160,31 +1165,41 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                     {
                         found = true;
 
-                        if (!hh)
-                        {
-                            hh = CreateEmptyHubHost();
-                        }
-
                         if ((rkept == -1) || (rrepaired == -1) || (rnotkept == -1))
                         {
                             continue;
                         }
 
-                        PrependRlistAlienUnlocked(&record_list,
-                                          NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept));
+                        HubTotalCompliance *hc = NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept);
+
+                        if( wr_info )
+                        {
+                            ExportWebReportUpdate( writer, (void *) hc, HubTotalComplianceToCSV, wr_info);
+                            DeleteHubTotalCompliance(hc);
+                        }
+                        else
+                        {
+                            PrependRlistAlienUnlocked(&record_list, hc);
+                        }
                     }
                 }
             }
         }
 
+        if( wr_info )
+        {
+            continue;
+        }
+
         if (found)
         {
-            UpdateHubHost(hh, keyhash, addresses, hostnames);
             PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
     mongo_cursor_destroy(cursor);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     if (sort)
     {

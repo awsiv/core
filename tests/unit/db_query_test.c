@@ -29,7 +29,7 @@ static void test_query_total_compliance(void **state)
         return;
     }
 
-    HubQuery *hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, 0, time(NULL), -1, -1, -1, false, NULL, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, 0, time(NULL), -1, -1, -1, false, NULL, PROMISE_CONTEXT_MODE_ALL, NULL, NULL);
     assert_true(hq != NULL);
 
     DeleteHubQuery(hq, DeleteHubTotalCompliance);
