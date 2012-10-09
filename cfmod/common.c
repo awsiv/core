@@ -107,3 +107,44 @@ bool PHPArrayBoolGet(zval *php_array, char *key, bool *out)
 
     return retval;
 }
+
+WebReportFileInfo *PHPArrayWebReportFileInfoGet( zval *php_array )
+{
+    assert( php_array );
+
+    bool retval = false;
+
+    bool csv_create;
+    retval = PHPArrayBoolGet(php_array, cfphp_csv_create, &csv_create);
+    assert(retval);
+
+    bool pdf_create;
+    retval |= PHPArrayBoolGet(php_array, cfphp_pdf_create, &pdf_create);
+    assert(retval);
+
+    if(!retval)
+    {
+        return NULL;
+    }
+
+    char path[CF_MAXVARSIZE] = "\0";
+    if(!PHPArrayStringGet(php_array, cfphp_report_path, path, CF_MAXVARSIZE - 1))
+    {
+        return NULL;
+    }
+
+    char filename[CF_MAXVARSIZE] = "\0";
+    if(!PHPArrayStringGet(php_array, cfphp_report_filename, filename, CF_MAXVARSIZE - 1))
+    {
+        return NULL;
+    }
+
+    char request_id[CF_MAXVARSIZE] = "\0";
+    if(!PHPArrayStringGet(php_array, cfphp_request_id, request_id, CF_MAXVARSIZE - 1))
+    {
+        return NULL;
+    }
+
+    return NewWebReportFileInfo(csv_create|pdf_create, path, filename, request_id);
+}
+
