@@ -582,7 +582,7 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
     DeleteHostClassFilter(filter);
 
     if (!CSV)

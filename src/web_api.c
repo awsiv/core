@@ -2040,8 +2040,7 @@ JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
-                                    promise_context);
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSetUid);
@@ -2718,8 +2717,12 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
+<<<<<<< HEAD
     HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
                                     promise_context);
+=======
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter, NULL);
+>>>>>>> Export CSV for Setuid Report
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

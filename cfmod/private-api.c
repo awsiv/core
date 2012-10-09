@@ -1684,7 +1684,9 @@ PHP_FUNCTION(cfpr_report_setuid)
 {
     char *userName, *hostkey, *file;
     char *promise_context = NULL; int pc_len;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    zval *context_includes = NULL,
+            *context_excludes = NULL,
+            *report_file_info_array = NULL;
     int user_len, hk_len, j_len;
     zend_bool regex;
     PageInfo page = { 0 };
@@ -1692,7 +1694,7 @@ PHP_FUNCTION(cfpr_report_setuid)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -1701,13 +1703,17 @@ PHP_FUNCTION(cfpr_report_setuid)
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &promise_promise_context, &pc_len,
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *ffile = (j_len == 0) ? NULL : file;
@@ -1722,9 +1728,17 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex,
-                                                  filter, &page, promise_context_mode);
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportSetuidReport( fhostkey, ffile, (bool) regex, filter, promise_context_mode, report_file_info );
 
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, promise_context_mode, &page);
+    }
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(payload);

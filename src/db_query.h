@@ -84,7 +84,8 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                                 PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter,
-                           PromiseContextMode promise_context);
+                           PromiseContextMode promise_context,
+                           WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort,
                                PromiseContextMode promise_context);

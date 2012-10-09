@@ -466,3 +466,51 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
 
 /*****************************************************************************/
 
+JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
+                                   HostClassFilter *filter, WebReportFileInfo *wr_info)
+{
+    assert( filter && wr_info );
+
+    EnterpriseDB dbconn;
+    DATABASE_OPEN_WR(&dbconn);
+
+    wr_info->write_data = false;
+    CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, wr_info);
+
+    DATABASE_CLOSE_WR(&dbconn);
+
+    RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
+
+    pid_t pid = fork();
+
+    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+
+    if (pid == 0)
+    {
+        ALARM_PID = -1;
+        EnterpriseDB dbconn;
+
+        if( !CFDB_Open(&dbconn) )
+        {
+            _exit(0);
+        }
+
+        wr_info->write_data = true;
+        CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, wr_info);
+
+        CFDB_Close(&dbconn);
+
+        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
+        {
+            ExportReportPDF( wr_info->report_filename, "title", "description" );
+        }
+
+        _exit(0);
+    }
+
+    JsonElement *retval = JsonObjectCreate(1);
+    JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
+    return retval;
+}
+
+/*****************************************************************************/

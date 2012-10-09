@@ -67,3 +67,6 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
 
 JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
                                         HostClassFilter *filter, WebReportFileInfo *wr_info);
+
+JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
+                                   HostClassFilter *filter, WebReportFileInfo *wr_info);

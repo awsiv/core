@@ -292,6 +292,17 @@ void HubPerformanceToCSV( void *data, char buffer[CF_BUFSIZE])
 
 /*****************************************************************************/
 
+void HubSetuidToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubSetUid *hu = (HubSetUid *) data;
+
+    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\"\n",
+             NULLStringToEmpty(hu->hh->hostname),
+             NULLStringToEmpty(hu->path));
+}
+
+/*****************************************************************************/
+
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  
   assert( wr_info );

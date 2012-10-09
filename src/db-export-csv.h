@@ -19,6 +19,7 @@ void HubTotalComplianceToCSV( void *data, char buffer[]);
 void HubPromiseComplianceToCSV( void *data, char buffer[CF_BUFSIZE]);
 void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE]);
 void HubPerformanceToCSV( void *data, char buffer[CF_BUFSIZE]);
+void HubSetuidToCSV( void *data, char buffer[CF_BUFSIZE]);
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info );
 
