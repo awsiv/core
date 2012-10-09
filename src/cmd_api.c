@@ -632,7 +632,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true,
-                               filter, PROMISE_CONTEXT_MODE_ALL);
+                               filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 

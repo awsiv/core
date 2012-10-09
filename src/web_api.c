@@ -2209,7 +2209,7 @@ JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to,
-                                         true, hostClassFilter, promise_context);
+                                         true, hostClassFilter, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileChanges);
@@ -2796,7 +2796,7 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to,
-                                         false, hostClassFilter, promise_context);
+                                         false, hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

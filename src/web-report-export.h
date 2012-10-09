@@ -70,3 +70,7 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
 
 JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
                                    HostClassFilter *filter, WebReportFileInfo *wr_info);
+
+JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
+                                         time_t from, time_t to, HostClassFilter *filter,
+                                         PromiseContextMode promise_context, WebReportFileInfo *wr_info);

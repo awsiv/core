@@ -303,6 +303,19 @@ void HubSetuidToCSV( void *data, char buffer[CF_BUFSIZE])
 
 /*****************************************************************************/
 
+void HubFileChangesToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubFileChanges *hC = (HubFileChanges *) data;
+
+    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%ld\n",
+             NULLStringToEmpty(hC->hh->hostname),
+             NULLStringToEmpty(hC->path),
+             NULLStringToEmpty(hC->msg),
+             hC->t);
+}
+
+/*****************************************************************************/
+
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  
   assert( wr_info );
