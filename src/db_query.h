@@ -92,10 +92,10 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                                 bool regex, time_t from, time_t to, int sort,
                                 HostClassFilter *hostClassFilter,
                                 PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff,
-                             bool regex, time_t from, time_t to, int sort,
-                             HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context);
+HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
+                             char *ldiff, bool regex, time_t from, time_t to,
+                             int sort, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime);
 HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx,
                                           HostClassFilter *hostClassFilter, PageInfo *page);

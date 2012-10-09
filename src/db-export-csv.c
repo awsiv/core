@@ -351,6 +351,39 @@ void HubPromiseSumToCSV( void *data, char buffer[CF_MAXVARSIZE])
               hS->cause,
               hS->occurences);
 }
+
+/*****************************************************************************/
+void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubFileDiff *hd = (HubFileDiff *) data;
+
+    assert( hd );
+
+    const char *diff_str = NULLStringToEmpty(hd->diff);
+
+    char tline[CF_BUFSIZE] = { 0 };
+    buffer[0] = '\0';
+    for (const char *sp = diff_str; *sp != '\0'; sp += strlen(tline) + 1)
+    {
+        int line = 0;
+        char pm[2] = { 0 };
+
+        char diff[CF_BUFSIZE] = { 0 };
+        sscanf(sp, "%c,%d,%2047[^\n]", pm, &line, diff);
+        sscanf(sp, "%2047[^\n]", tline);
+
+        char csv_line[CF_BUFSIZE];
+        snprintf(csv_line, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,\"%s\",%d,\"%s\"\n",
+                 NULLStringToEmpty(hd->hh->hostname),
+                 NULLStringToEmpty(hd->path),
+                 hd->t,
+                 pm,
+                 line,
+                 diff);
+
+        strncat(buffer, csv_line, CF_BUFSIZE - 1);
+    }
+}
 /*****************************************************************************/
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )

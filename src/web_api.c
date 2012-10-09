@@ -2271,7 +2271,7 @@ JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, b
 
     HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex,
                                       from, to, true, hostClassFilter,
-                                      promise_context);
+                                      promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
@@ -2826,7 +2826,7 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
     }
 
     HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from,
-                                      to, false, hostClassFilter, promise_context);
+                                      to, false, hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

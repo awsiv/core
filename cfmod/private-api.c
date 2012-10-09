@@ -1822,7 +1822,9 @@ PHP_FUNCTION(cfpr_report_filechanges)
 PHP_FUNCTION(cfpr_report_filediffs)
 {
     char *userName, *hostkey, *file, *diff;
-    zval *context_includes = NULL, *context_excludes = NULL;
+    zval *context_includes = NULL,
+            *context_excludes = NULL,
+            *report_file_info_array = NULL;
     char *promise_context = NULL; int pc_len;
     int user_len, hk_len, f_len, d_len;
     zend_bool regex;
@@ -1832,7 +1834,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbllaasbll|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -1844,13 +1846,16 @@ PHP_FUNCTION(cfpr_report_filediffs)
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *ffile = (f_len == 0) ? NULL : file;
@@ -1866,8 +1871,19 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *payload = Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, 
-                                                     from, to, filter, &page, promise_context_mode);
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportFileDiffsReport( fhostkey, ffile, fdiff, (bool) regex, from, to,
+                                            filter, promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex,
+                                  from, to, filter, &page, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

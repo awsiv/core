@@ -678,7 +678,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true,
-                            filter, PROMISE_CONTEXT_MODE_ALL);
+                            filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
