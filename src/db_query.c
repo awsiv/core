@@ -4748,7 +4748,8 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter,
+                                       PromiseContextMode promise_context)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
  * FIXME: If not found by handle: may want to do second lookup in expanded promise db
@@ -4760,6 +4761,8 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
     bson_init(&query);
     BsonAppendPromiseFilterUnexpanded(&query, filter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
     bson fields;
@@ -4784,43 +4787,63 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    Rlist *recordList = NULL;
+    Rlist *record_list = NULL;
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char ns[CF_MAXVARSIZE] = { 0 };
-        char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
-        char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
-        char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
+        char bundle_name[CF_MAXVARSIZE], bundle_type[CF_MAXVARSIZE];
+        char promise_handle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE];
+        char promise_type[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], class_context[CF_MAXVARSIZE];
         char file[CF_MAXVARSIZE];
 
         BsonStringWrite(ns, sizeof(ns), &(cursor->current), cfr_bundle_namespace);
-        BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
-        BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
-        BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle);
+        BsonStringWrite(bundle_name, sizeof(bundle_name), &(cursor->current), cfp_bundlename);
+        BsonStringWrite(bundle_type, sizeof(bundle_type), &(cursor->current), cfp_bundletype);
+        BsonStringWrite(promise_handle, sizeof(promise_handle), &(cursor->current), cfp_handle);
         BsonStringWrite(promiser, sizeof(promiser), &(cursor->current), cfp_promiser);
-        BsonStringWrite(promiseType, sizeof(promiseType), &(cursor->current), cfp_promisetype);
+        BsonStringWrite(promise_type, sizeof(promise_type), &(cursor->current), cfp_promisetype);
         BsonStringWrite(comment, sizeof(comment), &(cursor->current), cfp_comment);
-        BsonStringWrite(classContext, sizeof(classContext), &(cursor->current), cfp_classcontext);
+        BsonStringWrite(class_context, sizeof(class_context), &(cursor->current), cfp_classcontext);
         BsonStringWrite(file, sizeof(file), &(cursor->current), cfp_file);
 
-        int lineNumber = 0;
-        BsonIntGet(&(cursor->current), cfp_lineno, &lineNumber);
+        int line_number = 0;
+        BsonIntGet(&(cursor->current), cfp_lineno, &line_number);
 
-        Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
+        switch (promise_context)
+        {
+            case PROMISE_CONTEXT_MODE_USER:
+                if (CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                {
+                    continue;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_INTERNAL:
+                if (!CompareStringOrRegex(promise_handle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                {
+                    continue;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_ALL:
+                break;
+        }
+
+        Rlist *bundle_args = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints);
         Rlist *promisees = BsonStringArrayAsRlist(&(cursor->current), cfp_promisee);
 
 
-        PrependRlistAlienUnlocked(&recordList, NewHubPromise(ns, bundleName, bundleType, bundleArgs,
-                                                     promiseType, promiser, promisees,
-                                                     classContext, promiseHandle, comment,
-                                                     file, lineNumber, constraints));
+        PrependRlistAlienUnlocked(&record_list, NewHubPromise(ns, bundle_name, bundle_type,
+                                                     bundle_args, promise_type, promiser,
+                                                     promisees, class_context, promise_handle,
+                                                     comment, file, line_number, constraints));
     }
 
     mongo_cursor_destroy(cursor);
 
-    return NewHubQuery(NULL, recordList);
+    return NewHubQuery(NULL, record_list);
 }
 
 /*****************************************************************************/
@@ -4896,7 +4919,8 @@ HubQuery *CFDB_QueryPromisesExpanded(EnterpriseDB *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter,
+                                   PromiseContextMode promise_context)
 /**
  * Differs from CFDB_QueryPromisesUnexpanded() in that it only returns distinct bundles.
  */
@@ -4904,14 +4928,18 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
     bson query;
 
     bson_init(&query);
+
     BsonAppendPromiseFilterUnexpanded(&query, filter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
+
     BsonFinish(&query);
 
     bson fields;
 
     BsonSelectReportFields(&fields, 3, cfp_bundlename, cfp_bundletype, cfp_bundleargs);
 
-    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = MongoFind(conn, MONGO_PROMISES_UNEXP, &query, &fields,
+                                     0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
@@ -4925,6 +4953,26 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 
         BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
         BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
+
+        switch (promise_context)
+        {
+            case PROMISE_CONTEXT_MODE_USER:
+                if (CompareStringOrRegex(bundleName, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                {
+                    continue;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_INTERNAL:
+                if (!CompareStringOrRegex(bundleName, CF_INTERNAL_PROMISE_RX_HANDLE, true))
+                {
+                    continue;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_ALL:
+                break;
+        }
 
         if (!ReturnItemInClass(bundlesFound, bundleName, bundleType))
         {

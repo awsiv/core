@@ -2912,7 +2912,7 @@ int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize
         return false;
     }
 
-    HubQuery *hqBundles = CFDB_QueryPromiseBundles(&dbconn, filter);
+    HubQuery *hqBundles = CFDB_QueryPromiseBundles(&dbconn, filter, PROMISE_CONTEXT_MODE_ALL);
 
     if (CountRecords(hqBundles) == 0)
     {
@@ -3831,7 +3831,8 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
         return false;
     }
 
-    HubQuery *hqPromise = CFDB_QueryPromisesUnexpanded(&dbconn, filter);
+    HubQuery *hqPromise = CFDB_QueryPromisesUnexpanded(&dbconn, filter,
+                                                       PROMISE_CONTEXT_MODE_ALL);
 
     if (CountRecords(hqPromise) == 0)
     {
@@ -4668,7 +4669,8 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize, PageInfo *page)
+int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize,
+                          PageInfo *page, PromiseContextMode promise_context)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -4691,7 +4693,7 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int buf
         return false;
     }
 
-    hq = CFDB_QueryPromisesUnexpanded(&dbconn, promiseFilter);
+    hq = CFDB_QueryPromisesUnexpanded(&dbconn, promiseFilter, promise_context);
 
     CFDB_Close(&dbconn);
 

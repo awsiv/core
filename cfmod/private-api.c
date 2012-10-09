@@ -4071,13 +4071,16 @@ PHP_FUNCTION(cfpr_host_compliance_colour)
 
 PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 {
-    char *userName, *handle;
+    char *userName = NULL, *handle = NULL;
     int user_len, h_len;
-    char buffer[CF_WEBBUFFER];
+    char *promise_context = NULL; int pc_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+    char buffer[CF_WEBBUFFER];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
                               &userName, &user_len,
+                              &promise_context, &pc_len,
                               &handle, &h_len,
                               &(page.resultsPerPage),
                               &(page.pageNum)) == FAILURE)
@@ -4100,7 +4103,9 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 
     PromiseFilterAddPromiseBodyRx(filter, fhandle, NULL);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, promise_context_mode);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4140,7 +4145,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser)
 
     PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4180,7 +4185,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
 
     PromiseFilterAddPromiseBodyRx(filter, NULL, fpromiser);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4218,7 +4223,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type)
 
     PromiseFilterAddPromiseType(filter, promiseType);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4257,7 +4262,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle)
     PromiseFilterAddBundles(filter, bundleName, NULL);
 
     buffer[0] = '\0';
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4300,7 +4305,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
     PromiseFilterAddBundleTypeRx(filter, fBundleTypeRx);
     PromiseFilterAddBundlesRx(filter, fBundleNameRx, NULL);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4335,7 +4340,7 @@ PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
     DATABASE_OPEN(&conn);
 
-    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4425,7 +4430,7 @@ PHP_FUNCTION(cfpr_bundle_arguments)
 
     DATABASE_OPEN(&conn);
 
-    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter, PROMISE_CONTEXT_MODE_ALL);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4452,10 +4457,12 @@ PHP_FUNCTION(cfpr_bundle_arguments)
 
 PHP_FUNCTION(cfpr_bundle_list_all)
 {
-    char *userName;
-    int user_len;
+    char *userName = NULL; int user_len;
+    char *promise_context = NULL; int pc_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &userName, &user_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &userName, &user_len,
+                              &promise_context, &pc_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -4469,11 +4476,13 @@ PHP_FUNCTION(cfpr_bundle_list_all)
 
     PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
-    HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, filter);
+    HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, filter, promise_context_mode);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -4557,7 +4566,7 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 
     DATABASE_OPEN(&conn);
 
-    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+    HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter, PROMISE_CONTEXT_MODE_ALL);
 
     DeletePromiseFilter(filter);
     DATABASE_CLOSE(&conn);

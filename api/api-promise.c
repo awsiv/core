@@ -54,7 +54,7 @@ PHP_FUNCTION(cfapi_promise_list)
     size_t total = 0;
     {
         LogPerformanceTimer timer = LogPerformanceStart();
-        result = CFDB_QueryPromisesUnexpanded(conn, filter);
+        result = CFDB_QueryPromisesUnexpanded(conn, filter, PROMISE_CONTEXT_MODE_ALL);
         total = RlistLen(result->records);
         LogPerformanceStop(&timer, "Queries unexpanded promises from database, got %d results", total);
     }
@@ -121,7 +121,7 @@ PHP_FUNCTION(cfapi_promise_get)
     HubQuery *result = NULL;
     {
         LogPerformanceTimer timer = LogPerformanceStart();
-        result = CFDB_QueryPromisesUnexpanded(conn, filter);
+        result = CFDB_QueryPromisesUnexpanded(conn, filter, PROMISE_CONTEXT_MODE_ALL);
         LogPerformanceStop(&timer, "Queried unexpanded promise %s from database", handle);
     }
     DeletePromiseFilter(filter);
