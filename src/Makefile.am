@@ -67,6 +67,7 @@ libcfnova_la_SOURCES += \
         db_query.c db_query.h \
         db_save.c db_save.h \
         file-cache.c file-cache.h \
+        db-export-csv.c db-export-csv.h \
         histogram.c \
         install.c install.h \
         magnify.c \
