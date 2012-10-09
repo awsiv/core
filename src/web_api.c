@@ -1274,8 +1274,12 @@ JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *
         return NULL;
     }
 
+<<<<<<< HEAD
     HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true,
                                          hostClassFilter, promise_context);
+=======
+    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter, NULL);
+>>>>>>> Export CSV for Value Report
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubValue);
@@ -2462,7 +2466,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
     }
 
     HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year,
-                                         true, hostClassFilter, promise_context);
+                                         true, hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
