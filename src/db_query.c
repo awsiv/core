@@ -1940,15 +1940,13 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
                              char *laddr, time_t lago, bool regex, time_t from,
                              time_t to, int sort, HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context)
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
-    HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     double rago, ravg, rdev;
     char rhash[CF_MAXVARSIZE], rhost[CF_MAXVARSIZE], raddr[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     bool match_host, match_hash, match_addr, match_ago, match_timestamp, found = false;
 
 /* BEGIN query document */
@@ -1972,33 +1970,35 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                            cfr_host_array,
                            cfr_lastseen);
 
-/* BEGIN SEARCH */
-
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
     cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
 
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
+
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
         rhash[0] = '\0';
         raddr[0] = '\0';
         rhost[0] = '\0';
         found = false;
-        hh = NULL;
+
+        const char *keyhash = NULL;
+        BsonStringGet( mongo_cursor_bson(cursor), cfr_keyhash, &keyhash );
+
+        char hostnames[CF_BUFSIZE] = "\0",
+                addresses[CF_BUFSIZE] = "\0";
+
+        GetHostNameAndIP( mongo_cursor_bson( cursor ), hostnames, addresses, CF_BUFSIZE - 1);
+
+        HubHost *hh = NewHubHost(NULL, keyhash, addresses, hostnames);
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
             if (strcmp(bson_iterator_key(&it1), cfr_lastseen) == 0)
             {
                 bson_iterator_subiterator(&it1, &it2);
@@ -2103,22 +2103,36 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                         }
 
                         LastSeenDirection direction = *rhash;
+                        HubLastSeen *hl = NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp);
 
-                        PrependRlistAlienUnlocked(&record_list,
-                                          NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp));
+                        if( wr_info )
+                        {
+                            ExportWebReportUpdate( writer, (void *) hl, HubLastseenToCSV, wr_info);
+                            DeleteHubLastSeen(hl);
+                        }
+                        else
+                        {
+                            PrependRlistAlienUnlocked(&record_list, hl);
+                        }
                     }
                 }
             }
         }
 
+        if(wr_info)
+        {
+            continue;
+        }
+
         if (found)
         {
-            UpdateHubHost(hh, keyhash, addresses, hostnames);
             PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
     mongo_cursor_destroy(cursor);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     if (sort)
     {

@@ -60,3 +60,7 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
                                           HostClassFilter *host_class_filter, HostColourFilter *host_color_filter,
                                           bool last_run_only, PromiseContextMode promise_context,
                                           WebReportFileInfo *wr_info);
+
+JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, char *laddress,
+                                      time_t lago, int lregex, HostClassFilter *filter,
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info);

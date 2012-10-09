@@ -246,6 +246,34 @@ void HubPromiseComplianceToCSV( void *data, char buffer[CF_BUFSIZE])
              hp->d,
              hp->t);
 }
+
+/*****************************************************************************/
+void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubLastSeen *hl = (HubLastSeen *) data;
+
+    char inout[CF_SMALLBUF];
+    switch (hl->direction)
+    {
+    case LAST_SEEN_DIRECTION_OUTGOING:
+        snprintf(inout, CF_SMALLBUF, "by us (+)");
+        break;
+    case LAST_SEEN_DIRECTION_INCOMING:
+        snprintf(inout, CF_SMALLBUF, "by them (-)");
+        break;
+    }
+
+    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",\"%s\",%ld,%f,%f,%f,\"%s\"\n",
+             NULLStringToEmpty(hl->hh->hostname),
+             NULLStringToEmpty(inout),
+             NULLStringToEmpty(hl->rhost->hostname),
+             NULLStringToEmpty(hl->rhost->ipaddr),
+             hl->t,
+             hl->hrsago,
+             hl->hrsavg,
+             hl->hrsdev,
+             NULLStringToEmpty(hl->rhost->keyhash));
+}
 /*****************************************************************************/
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )

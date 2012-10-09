@@ -1872,7 +1872,7 @@ JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, c
     }
 
     HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                                      0, time(NULL), true, hostClassFilter, promise_context);
+                                      0, time(NULL), true, hostClassFilter, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
@@ -2663,7 +2663,7 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
 
     HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress,
                                       lago, lregex, 0, time(NULL), false,
-                                      hostClassFilter, promise_context);
+                                      hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
