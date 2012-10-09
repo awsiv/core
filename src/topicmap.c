@@ -1156,7 +1156,7 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
     int i;
 
     hq = CFDB_QueryVariables(dbconn, NULL, NULL, NULL, variable, NULL, NULL, true,
-                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL);
+                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

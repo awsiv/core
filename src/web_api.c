@@ -1598,7 +1598,7 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const 
         }
 
         hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                 regex, 0, time(NULL), hostClassFilter, promise_context);
+                                 regex, 0, time(NULL), hostClassFilter, promise_context, NULL);
     }
     assert(hq);
     if (!hq)
@@ -2555,7 +2555,7 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
     }
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                       regex, 0, time(NULL), hostClassFilter, promise_context);
+                                       regex, 0, time(NULL), hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

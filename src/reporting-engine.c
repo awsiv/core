@@ -419,7 +419,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     }
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL, NULL,
-                                       false, 0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL);
+                                       false, 0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL);
     CFDB_Close(&dbconn);
 
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)

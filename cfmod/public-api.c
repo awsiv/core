@@ -798,7 +798,7 @@ PHP_FUNCTION(cfmod_resource_variable)
 
             result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value,
                                          SerializeRvalType(type), true, from, to,
-                                         filter, PROMISE_CONTEXT_MODE_ALL);
+                                         filter, PROMISE_CONTEXT_MODE_ALL, NULL);
         }
 
         DATABASE_CLOSE(&conn);
