@@ -248,6 +248,23 @@ void HubPromiseComplianceToCSV( void *data, char buffer[CF_BUFSIZE])
 }
 
 /*****************************************************************************/
+
+void HubPromiseComplianceWeightedToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
+
+    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%f,%f,%ld,\"%s\"\n",
+             NULLStringToEmpty(hp->hh->hostname),
+             NULLStringToEmpty(hp->handle),
+             NULLStringToEmpty(Nova_LongState(hp->status)),
+             hp->e,
+             hp->d,
+             hp->t,
+             Nova_HostColourToString(hp->hh->colour));
+}
+
+/*****************************************************************************/
+
 void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE])
 {
     HubLastSeen *hl = (HubLastSeen *) data;

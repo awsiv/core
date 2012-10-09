@@ -1699,7 +1699,8 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
                                       PromiseState lstatus, bool regex, time_t from,
                                       time_t to, int sort, HostClassFilter *hostClassFilter,
-                                      PromiseContextMode promise_context)
+                                      PromiseContextMode promise_context,
+                                      WebReportFileInfo *wr_info)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1742,16 +1743,36 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
     time_t blueHorizonTime = time(NULL) - blue_horizon;
 
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
+
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        const char *keyhash = NULL;
+        BsonStringGet( mongo_cursor_bson(cursor), cfr_keyhash, &keyhash );
+
+        char hostnames[CF_BUFSIZE] = "\0",
+                addresses[CF_BUFSIZE] = "\0";
+
+        GetHostNameAndIP( mongo_cursor_bson( cursor ), hostnames, addresses, CF_BUFSIZE - 1);
+
+        HubHost *hh = NewHubHost(NULL, keyhash, addresses, hostnames);
+
         bson_iterator it;
         bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
-        HubHost *hh = CreateEmptyHubHost();
-
         bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
                                                          from, to, blueHorizonTime, hh,
-                                                         &record_list, promise_context);
+                                                         &record_list, promise_context,
+                                                         wr_info, writer);
+
+
+        if(wr_info)
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
+            continue;
+        }
 
         if (found)
         {
@@ -1766,6 +1787,8 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
     mongo_cursor_destroy(cursor);
 
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortPromiseCompliance);
@@ -1778,7 +1801,8 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
                                               PromiseState lstatus, bool regex, time_t from,
                                               time_t to, int sort, HostClassFilter *hostClassFilter,
-                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context)
+                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context,
+                                              WebReportFileInfo *wr_info)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1821,17 +1845,29 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
     time_t blueHorizonTime = time(NULL) - blue_horizon;
 
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
+
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        const char *keyhash = NULL;
+        BsonStringGet( mongo_cursor_bson(cursor), cfr_keyhash, &keyhash );
+
+        char hostnames[CF_BUFSIZE] = "\0",
+                addresses[CF_BUFSIZE] = "\0";
+
+        GetHostNameAndIP( mongo_cursor_bson( cursor ), hostnames, addresses, CF_BUFSIZE - 1);
+
+        HubHost *hh = NewHubHost(NULL, keyhash, addresses, hostnames);
+
         bson_iterator it;
         bson_iterator_init(&it, mongo_cursor_bson( cursor ));
 
         Rlist *record_list_single_host = NULL;
-        HubHost *hh = CreateEmptyHubHost();
         bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
                                                          from, to, blueHorizonTime, hh,
                                                          &record_list_single_host,
-                                                         promise_context);
+                                                         promise_context, NULL, NULL);
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
 
@@ -1897,7 +1933,18 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
                             continue;
                         }
 
-                        PrependRlistAlienUnlocked(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                        HubPromiseCompliance *promise_compliance = NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t);
+
+                        if( wr_info )
+                        {
+                            ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
+                            DeleteHubPromiseCompliance(promise_compliance);
+                        }
+                        else
+                        {
+                            PrependRlistAlienUnlocked(&record_list, promise_compliance);
+                        }
+
                         hostDataAdded = true;
                     }
                 }
@@ -1909,7 +1956,18 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
                 {
                     HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
-                    PrependRlistAlienUnlocked(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                    HubPromiseCompliance *promise_compliance = NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t);
+
+                    if( wr_info )
+                    {
+                        ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
+                        DeleteHubPromiseCompliance(promise_compliance);
+                    }
+                    else
+                    {
+                        PrependRlistAlienUnlocked(&record_list, promise_compliance);
+                    }
+
                     hostDataAdded = true;
                 }
             }
@@ -1919,6 +1977,11 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
         DeleteHubQuery(hq, DeleteHubPromiseCompliance);
         hq = NULL;
         record_list_single_host = NULL;
+
+        if(wr_info)
+        {
+            continue;
+        }
 
         if(!hostDataAdded)
         {
@@ -1932,6 +1995,8 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
     }
 
     mongo_cursor_destroy(cursor);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     return NewHubQuery(host_list, record_list);
 }

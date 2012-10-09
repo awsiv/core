@@ -398,7 +398,8 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL),
+                                     false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     n = k = r = 0;
     n_av = k_av = r_av = 0;
@@ -533,7 +534,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
 
     HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
                                                        regex, 0, time(NULL), false,
-                                                       hostClassFilter, NULL, promise_context);
+                                                       hostClassFilter, NULL, promise_context, NULL);
 
     int blue_hosts = 0,
         tot_hosts = 0,
@@ -1794,12 +1795,12 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
     {
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
                                                  regex, 0, time(NULL), false, hostClassFilter,
-                                                 hostColourFilter, promise_context);
+                                                 hostColourFilter, promise_context, NULL);
     }
     else
     {
         hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                         time(NULL), true, hostClassFilter, promise_context);
+                                         time(NULL), true, hostClassFilter, promise_context, NULL);
     }
 
     int related_host_cnt = RlistLen(hq->hosts);
@@ -2629,13 +2630,13 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
                                                  regex, 0, time(NULL), false,
                                                  hostClassFilter, hostColourFilter,
-                                                 promise_context);
+                                                 promise_context, NULL);
     }
     else
     {
         hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex,
                                          0, time(NULL), false, hostClassFilter,
-                                         promise_context);
+                                         promise_context, NULL);
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
@@ -4952,7 +4953,8 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle)
          
         //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
          
-        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false, NULL, NULL, PROMISE_CONTEXT_MODE_ALL);
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false,
+                                                 NULL, NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         hosts = RlistLen(hq->hosts);
 

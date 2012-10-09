@@ -103,20 +103,15 @@ HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *r
 bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex,
                                          PromiseState lstatus, time_t from, time_t to,
                                          time_t blueHorizonTime, HubHost *hh,
-                                         Rlist **record_list, PromiseContextMode promise_context )
+                                         Rlist **record_list, PromiseContextMode promise_context,
+                                         WebReportFileInfo *wr_info, Writer *writer)
 {
-    char keyHashDb[CF_MAXVARSIZE] = { 0 };
-    char hostnames[CF_MAXVARSIZE] = { 0 };
-    char addresses[CF_MAXVARSIZE] = { 0 };
-
     HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
     time_t last_report = 0;
     bool found = false;
 
     while (bson_iterator_next(it))
     {
-        CFDB_ScanHubHost(it, keyHashDb, addresses, hostnames);
-
         if (strcmp(bson_iterator_key(it), cfr_is_black) == 0)
         {
             if(bson_iterator_bool(it))
@@ -178,7 +173,16 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
                 if (matched)
                 {
                     found = true;
-                    PrependRlistAlien(record_list, hp);
+
+                    if( wr_info )
+                    {
+                        ExportWebReportUpdate( writer, (void *) hp, HubPromiseComplianceToCSV, wr_info);
+                        DeleteHubPromiseCompliance(hp);
+                    }
+                    else
+                    {
+                        PrependRlistAlien(record_list, hp);
+                    }
                 }
             }
         }
@@ -186,7 +190,6 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
 
     if (found)
     {
-        UpdateHubHost(hh, keyHashDb, addresses, hostnames);
         hh->colour = colour;
     }
 

@@ -371,7 +371,7 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                             true, from, to, true, filter, PROMISE_CONTEXT_MODE_ALL);
+                                             true, from, to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);

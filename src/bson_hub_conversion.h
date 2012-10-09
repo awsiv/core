@@ -12,7 +12,11 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
                                     time_t blueHorizonTime, HubHost *hh,
                                     Rlist **record_list, PromiseContextMode promise_context,
                                     WebReportFileInfo *wr_info, Writer *writer );
-bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex, PromiseState lstatus, time_t from, time_t to, time_t blueHorizonTime, HubHost *hh, Rlist **record_list, PromiseContextMode promise_context);
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex,
+                                         PromiseState lstatus, time_t from, time_t to,
+                                         time_t blueHorizonTime, HubHost *hh,
+                                         Rlist **record_list, PromiseContextMode promise_context,
+                                         WebReportFileInfo *wr_info, Writer *writer);
 void CFDB_ScanHubHost(bson_iterator *it1, char *keyhash, char *ipaddr, char *hostnames);
 
 /* utilities */

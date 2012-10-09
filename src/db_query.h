@@ -52,22 +52,21 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
                                     PromiseContextMode promise_context_mode, WebReportFileInfo *wr_info);
 Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode);
-HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
-                                      PromiseState lstatus, bool regex, time_t from,
-                                      time_t to, int sort,
-                                      HostClassFilter *hostClassFilter,
-                                      PromiseContextMode promise_context);
-HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
-                                              char *lhandle, PromiseState lstatus,
-                                              bool regex, time_t from, time_t to,
-                                              int sort, HostClassFilter *hostClassFilter,
-                                              HostColourFilter *hostColourFilter,
-                                              PromiseContextMode promise_context);
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns,
                               const char *bundle, const char *llval, const char *lrval,
                               const char *ltype, bool regex, time_t from, time_t to,
                               const HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
                               WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
+                                      PromiseState lstatus, bool regex, time_t from,
+                                      time_t to, int sort, HostClassFilter *hostClassFilter,
+                                      PromiseContextMode promise_context,
+                                      WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
+                                              PromiseState lstatus, bool regex, time_t from,
+                                              time_t to, int sort, HostClassFilter *hostClassFilter,
+                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context,
+                                              WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
                              char *laddr, time_t lago, bool regex, time_t from,
                              time_t to, int sort, HostClassFilter *hostClassFilter,

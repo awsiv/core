@@ -295,7 +295,7 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
 {
     assert( host_class_filter && wr_info );
 
-    if (!status)                // any
+    if (!status)
     {
         status = "x";
     }
@@ -313,7 +313,7 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
     else
     {
         CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                         time(NULL), false, host_class_filter, promise_context, wr_info);
+                                    time(NULL), false, host_class_filter, promise_context, wr_info);
     }
 
     DATABASE_CLOSE_WR(&dbconn);
@@ -335,7 +335,6 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
         }
 
         wr_info->write_data = true;
-
         if(last_run_only)
         {
             CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
@@ -345,7 +344,7 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
         else
         {
             CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                             time(NULL), false, host_class_filter, promise_context, wr_info);
+                                        time(NULL), false, host_class_filter, promise_context, wr_info);
         }
 
         CFDB_Close(&dbconn);
