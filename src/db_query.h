@@ -32,8 +32,11 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
                                  const char *lhandle, bool regex, const char *lcause_rx, time_t from,
                                  time_t to, int sort, HostClassFilter *host_class_filter, Rlist **host_list,
                                  Rlist **record_list, PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
-                                      bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter, PromiseContextMode promise_context);
+HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
+                                      PromiseLogState state, const char *handle,
+                                      bool regex, const char *cause, time_t from,
+                                      time_t to, bool sort, HostClassFilter *host_class_filter,
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter, PromiseContextMode promise_context);
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
                              char *lver, const char *larch, bool regex,

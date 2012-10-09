@@ -342,6 +342,16 @@ void HubPromiseLogToCSV( void *data, char buffer[CF_BUFSIZE])
 }
 
 /*****************************************************************************/
+void HubPromiseSumToCSV( void *data, char buffer[CF_MAXVARSIZE])
+{
+    HubPromiseSum *hS = (HubPromiseSum *) data;
+
+    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%d\n",
+              hS->handle,
+              hS->cause,
+              hS->occurences);
+}
+/*****************************************************************************/
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  

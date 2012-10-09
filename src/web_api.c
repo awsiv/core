@@ -1215,7 +1215,7 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
 
     HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, hostkey, state, handle,
                                                true, causeRx, from, to, true,
-                                               hostClassFilter, promise_context);
+                                               hostClassFilter, promise_context, NULL);
 
     CFDB_Close(&dbconn);
 

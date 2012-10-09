@@ -3089,7 +3089,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
                                       PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from,
                                       time_t to, bool sort, HostClassFilter *host_class_filter,
-                                      PromiseContextMode promise_context)
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause,
                                         from, to, false, host_class_filter,
@@ -3111,15 +3111,46 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
         *count = *count + 1;
     }
 
+    Writer *writer = NULL;
+    if( wr_info && wr_info->write_data )
+    {
+        writer = ExportWebReportStart( wr_info );
+        assert( writer );
+        if(!writer)
+        {
+            for (Rlist *rp = hq->records; rp; rp = rp->next)
+            {
+                DeleteHubPromiseLog(rp->item);
+                rp->item = NULL;
+            }
+
+            DeleteRlist(hq->records);
+            MapDestroy(log_counts);
+            return NULL;
+        }
+    }
+
     Rlist *sum_records = NULL;
     MapIterator iter = MapIteratorInit(log_counts);
     MapKeyValue *item;
+
     while ((item = MapIteratorNext(&iter)))
     {
         const HubPromiseLog *record = (const HubPromiseLog *)item->key;
         const int *count = (const int *)item->value;
-        PrependRlistAlienUnlocked(&sum_records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
-    }
+
+        HubPromiseSum *hS = NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0);
+
+        if( wr_info )
+        {
+            ExportWebReportUpdate( writer, (void *) hS, HubPromiseSumToCSV, wr_info);
+            DeleteHubPromiseSum(hS);
+        }
+        else
+        {
+            PrependRlistAlienUnlocked(&sum_records, hS);
+        }
+    }    
 
     for (Rlist *rp = hq->records; rp; rp = rp->next)
     {
@@ -3128,6 +3159,8 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
     }
     DeleteRlist(hq->records);
     MapDestroy(log_counts);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     hq->records = sort ? SortRlist(sum_records, HubPromiseSumCompare) : sum_records;
 
@@ -3346,7 +3379,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
     if(count > 0)
     {
         QueryInsertHostInfo(conn,*host_list);
-    }
+    }    
 
     return count;
 }

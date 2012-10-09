@@ -2266,15 +2266,16 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     char *hostkey = NULL; int hk_len;
     char *handle = NULL; int h_len;
     char *cause_rx = NULL; int c_len;
-    zval *includes = NULL;
-    zval *excludes = NULL;
+    zval *includes = NULL,
+            *excludes = NULL,
+            *report_file_info_array = NULL;
     char *sort_column_name; int sc_len;
     char *promise_context = NULL; int pc_len;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -2287,13 +2288,16 @@ PHP_FUNCTION(cfpr_summarize_notkept)
                               &sort_column_name, &sc_len,
                               &sort_descending,
                               &(page.resultsPerPage),
-                              &(page.pageNum)) == FAILURE)
+                              &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
@@ -2309,13 +2313,26 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
-                                                      PROMISE_LOG_STATE_NOTKEPT, from,
-                                                      to, filter, &page, promise_context_mode);
+    JsonElement *payload = NULL;
+
+    if( report_file_info )
+    {
+        payload = WebExportPromiseLogSummaryReport( hostkey, fhandle, fcause_rx,
+                                                    PROMISE_LOG_STATE_NOTKEPT, from, to, filter,
+                                                    promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
+                                             PROMISE_LOG_STATE_NOTKEPT, from,
+                                             to, filter, &page, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_JSON(output);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
@@ -2327,14 +2344,15 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     char *handle = NULL; int h_len;
     char *cause_rx = NULL; int c_len;
     char *promise_context = NULL; int pc_len;
-    zval *includes = NULL;
-    zval *excludes = NULL;
+    zval *includes = NULL,
+            *excludes = NULL,
+            *report_file_info_array = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllaasbll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -2346,13 +2364,16 @@ PHP_FUNCTION(cfpr_summarize_repaired)
                               &excludes,
                               &sort_column_name, &sc_len,
                               &sort_descending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
@@ -2368,13 +2389,25 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
-                                                      PROMISE_LOG_STATE_REPAIRED, from,
-                                                      to, filter, &page, promise_context_mode);
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportPromiseLogSummaryReport( hostkey, fhandle, fcause_rx,
+                                                    PROMISE_LOG_STATE_REPAIRED, from, to, filter,
+                                                    promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx,
+                                              PROMISE_LOG_STATE_REPAIRED, from,
+                                              to, filter, &page, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_JSON(output);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/

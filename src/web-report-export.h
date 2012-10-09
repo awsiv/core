@@ -81,3 +81,7 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
 JsonElement *WebExportPromiseLogReport(char *hostkey, char *handle, char *causeRx,
                                        PromiseLogState state, time_t from, time_t to, HostClassFilter *filter,
                                        PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+
+JsonElement *WebExportPromiseLogSummaryReport(char *hostkey, char *handle, char *causeRx, PromiseLogState state,
+                                              time_t from, time_t to, HostClassFilter *filter,
+                                              PromiseContextMode promise_context, WebReportFileInfo *wr_info);
