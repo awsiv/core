@@ -527,13 +527,13 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
                              char *lver, const char *larch, bool regex,
                              HostClassFilter *hostClassFilter, int sort,
-                             PromiseContextMode promise_context)
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
+    bool is_software_report = strcmp(type, cfr_software) == 0; // else patch report
+
     bson_iterator it1, it2, it3;
-    HubHost *hh = NULL;
     Rlist *record_list = NULL, *host_list = NULL;
     char rname[CF_MAXVARSIZE] = { 0 }, rversion[CF_MAXVARSIZE] = { 0 }, rarch[3] = { 0 }, arch[3] = { 0 };
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     int found = false;
 
     if (!NULL_OR_EMPTY(larch))
@@ -570,13 +570,13 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
 /* BEGIN SEARCH */
 
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
+
+    Writer *writer = NULL;
+    WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
     time_t lastSeen = 0;
 
@@ -584,21 +584,24 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
-        hh = NULL;
         found = false;
 
-        if (strcmp(type, cfr_software) == 0)
+        char keyhash[CF_MAXVARSIZE] = {0},
+                hostnames[CF_BUFSIZE] = {0},
+                addresses[CF_BUFSIZE] = {0};
+
+        BsonStringWrite( keyhash, CF_MAXVARSIZE - 1, mongo_cursor_bson(cursor), cfr_keyhash );
+        GetHostNameAndIP( mongo_cursor_bson(cursor), hostnames, addresses, CF_BUFSIZE -1 );
+
+        HubHost *hh = NewHubHost( NULL, keyhash, addresses, hostnames );
+
+        if (is_software_report)
         {
             BsonTimeGet(&(cursor->current), cfr_software_t, &lastSeen);
         }
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
             if (strcmp(bson_iterator_key(&it1), type) == 0)
             {
                 bson_iterator_subiterator(&it1, &it2);
@@ -678,21 +681,52 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlienUnlocked(&record_list, NewHubSoftware(hh, rname, rversion, rarch, lastSeen));
+                            HubSoftware *hs = NewHubSoftware(hh, rname, rversion, rarch, lastSeen);
+
+                            if( wr_info )
+                            {
+                                if(is_software_report)
+                                {
+                                    ExportWebReportUpdate( writer, (void *) hs, HubPatchesToCSV, wr_info );
+                                }
+                                else
+                                {
+                                    ExportWebReportUpdate( writer, (void *) hs, HubSoftwareToCSV, wr_info );
+                                }
+
+                                DeleteHubSoftware(hs);
+                            }
+                            else
+                            {
+                                PrependRlistAlienUnlocked(&record_list, hs);
+                            }
                         }
                     }
                 }
             }
         }
 
+        if( wr_info )
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
+            continue;
+        }
+
         if (found)
         {
-            UpdateHubHost(hh, keyhash, addresses, hostnames);
             PrependRlistAlienUnlocked(&host_list, hh);
+        }
+        else
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
         }
     }
 
     mongo_cursor_destroy(cursor);
+
+    WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
     if (sort)
     {

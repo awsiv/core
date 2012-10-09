@@ -1389,7 +1389,7 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
     }
 
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
-                            hostClassFilter, true, promise_context);
+                            hostClassFilter, true, promise_context, NULL);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -1399,6 +1399,8 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
 	
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
+
+    bool add_timestamp = strcmp( type, cfr_software ) == 0;
 
     JsonElement *payload = JsonObjectCreate(2);
     {
@@ -1414,7 +1416,7 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
             JsonObjectAppendInteger(header, "Version", 2);
             JsonObjectAppendInteger(header, "Architecture", 3);
 
-            if(strcmp(type, cfr_software) == 0)
+            if(add_timestamp)
             {
                 JsonObjectAppendInteger(header, "Last seen", 4);
             }
@@ -2490,7 +2492,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
     }
 
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch,
-                                      regex, hostClassFilter, false, promise_context);
+                                      regex, hostClassFilter, false, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
