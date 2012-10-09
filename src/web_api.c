@@ -1963,7 +1963,7 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true,
-                                         hostClassFilter, promise_context);
+                                         hostClassFilter, promise_context, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPerformance);
@@ -2691,7 +2691,7 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex,
-                                         false, hostClassFilter, promise_context);
+                                         false, hostClassFilter, promise_context, NULL);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 

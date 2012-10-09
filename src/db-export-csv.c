@@ -274,6 +274,22 @@ void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE])
              hl->hrsdev,
              NULLStringToEmpty(hl->rhost->keyhash));
 }
+
+/*****************************************************************************/
+
+void HubPerformanceToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubPerformance *hp = (HubPerformance *) data;
+
+    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%f,%f,%f,%ld\n",
+             NULLStringToEmpty(hp->hh->hostname),
+             NULLStringToEmpty(hp->event),
+             hp->q,
+             hp->e,
+             hp->d,
+             hp->t);
+}
+
 /*****************************************************************************/
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )

@@ -78,9 +78,10 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                              time_t to, int sort, HostClassFilter *hostClassFilter,
                              PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db);
+
 HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                                 bool regex, int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context);
+                                PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter,
                            PromiseContextMode promise_context);
