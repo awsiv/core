@@ -384,6 +384,38 @@ void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE])
         strncat(buffer, csv_line, CF_BUFSIZE - 1);
     }
 }
+
+/*****************************************************************************/
+
+void HubBundleSeenToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubBundleSeen *hb = (HubBundleSeen *) data;
+
+    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,%f,%f,%f\n",
+              NULLStringToEmpty(hb->hh->hostname),
+              NULLStringToEmpty(hb->bundle),
+              hb->t,
+              hb->bundlecomp,
+              hb->bundleavg,
+              hb->bundledev );
+}
+
+/*****************************************************************************/
+
+void HubBundleSeenWeightedToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubBundleSeen *hb = (HubBundleSeen *) data;
+
+    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,%f,%f,%f,\"%s\"\n",
+              NULLStringToEmpty(hb->hh->hostname),
+              NULLStringToEmpty(hb->bundle),
+              hb->t,
+              hb->bundlecomp,
+              hb->bundleavg,
+              hb->bundledev,
+              Nova_HostColourToString(hb->hh->colour));
+}
+
 /*****************************************************************************/
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )

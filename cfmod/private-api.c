@@ -1930,14 +1930,15 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
     char *hostkey = NULL; int hk_len;
     char *bundle = NULL; int b_len;
     char *promise_context = NULL; int pc_len;
-    zval *context_includes = NULL;
-    zval *context_excludes = NULL;
+    zval *context_includes = NULL,
+            *context_excludes = NULL,
+            *report_file_info_array = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -1946,13 +1947,16 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
                               &context_includes,
                               &context_excludes,
                               &sort_column_name, &sc_len, &sort_descending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fbundle = (b_len == 0) ? NULL : bundle;
@@ -1967,8 +1971,20 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
-    JsonElement *payload = Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, NULL, false, &page,
+    JsonElement *payload = NULL;
+
+    if( report_file_info )
+    {
+        payload = WebExportBundleComplianceReport( hostkey, fbundle, (bool) regex, filter, NULL, false,
+                                                   promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, NULL, false, &page,
                                                   promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1984,14 +2000,15 @@ PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
     char *bundle = NULL; int b_len;
     char *promise_context = NULL; int pc_len;
     char *hostcolour = NULL; int hc_len;
-    zval *context_includes = NULL;
-    zval *context_excludes = NULL;
+    zval *context_includes = NULL,
+            *context_excludes = NULL,
+            *report_file_info_array = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
     char *sort_column_name; int sc_len;
     bool sort_descending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll|a",
                               &username, &user_len,
                               &hostkey, &hk_len,
                               &hostcolour, &hc_len,
@@ -2001,13 +2018,16 @@ PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
                               &context_includes,
                               &context_excludes,
                               &sort_column_name, &sc_len, &sort_descending,
-                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+                              &(page.resultsPerPage), &(page.pageNum),
+                              &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
+    WebReportFileInfo *report_file_info = NULL;
+    PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fbundle = (b_len == 0) ? NULL : bundle;
@@ -2032,8 +2052,19 @@ PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
                                                promise_context_mode);
     }
 
-    JsonElement *payload = Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, hostColourFilter,
-                                                  true, &page, promise_context_mode);
+    JsonElement *payload = NULL;
+    if( report_file_info )
+    {
+        payload = WebExportBundleComplianceReport( fhostkey, fbundle, (bool) regex, filter, hostColourFilter,
+                                                   true, promise_context_mode, report_file_info );
+
+        DeleteWebReportFileInfo( report_file_info );
+    }
+    else
+    {
+        payload = Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, hostColourFilter,
+                                         true, &page, promise_context_mode);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     free(hostColourFilter);

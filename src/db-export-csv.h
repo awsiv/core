@@ -25,6 +25,8 @@ void HubValueToCSV( void *data, char buffer[CF_BUFSIZE]);
 void HubPromiseLogToCSV( void *data, char buffer[CF_BUFSIZE]);
 void HubPromiseSumToCSV( void *data, char buffer[CF_MAXVARSIZE]);
 void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE]);
+void HubBundleSeenToCSV( void *data, char buffer[CF_BUFSIZE]);
+void HubBundleSeenWeightedToCSV( void *data, char buffer[CF_BUFSIZE]);
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info );
 

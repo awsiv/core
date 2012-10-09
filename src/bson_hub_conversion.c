@@ -18,6 +18,7 @@
 
 #include "bson_lib.h"
 #include "files_names.h"
+#include "db-export-csv.h"
 
 #include <assert.h>
 
@@ -195,12 +196,10 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
 
 bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
                                     time_t blueHorizonTime, HubHost *hh,
-                                    Rlist **record_list, PromiseContextMode promise_context )
+                                    Rlist **record_list, PromiseContextMode promise_context,
+                                    WebReportFileInfo *wr_info, Writer *writer )
 {
-    char keyhash[CF_MAXVARSIZE] = {0},
-         hostnames[CF_MAXVARSIZE] = {0},
-         addresses[CF_MAXVARSIZE] = {0},
-         rname[CF_MAXVARSIZE] = {0};
+    char rname[CF_MAXVARSIZE] = {0};
 
     HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
     time_t last_report = 0;
@@ -208,8 +207,6 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
 
     while (bson_iterator_next(it))
     {
-        CFDB_ScanHubHost(it, keyhash, addresses, hostnames);
-
         if (strcmp(bson_iterator_key(it), cfr_is_black) == 0)
         {
             if(bson_iterator_bool(it))
@@ -267,7 +264,16 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
                 if(CompareStringOrRegex(hb->bundle, lname, regex))
                 {
                     found = true;
-                    PrependRlistAlien(record_list, hb);
+
+                    if( wr_info )
+                    {
+                        ExportWebReportUpdate( writer, (void *) hb, HubBundleSeenToCSV, wr_info);
+                        DeleteHubBundleSeen(hb);
+                    }
+                    else
+                    {
+                        PrependRlistAlien(record_list, hb);
+                    }
                 }
             }
         }
@@ -275,7 +281,6 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
 
     if (found)
     {
-        UpdateHubHost(hh, keyhash, addresses, hostnames);
         hh->colour = colour;
     }
 

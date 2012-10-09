@@ -610,7 +610,7 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
 
     HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
                                                 hostClassFilter, NULL, false,
-                                                promise_context);
+                                                promise_context, NULL);
 
     int tot_hosts = 0;
     int blue_hosts = 0,
@@ -2128,12 +2128,12 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
     if(lastRunOnly)
     {        
         hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
-                                          hostColourFilter, false, promise_context);
+                                          hostColourFilter, false, promise_context, NULL);
     }
     else
     {
         hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
-                                  true, promise_context);
+                                  true, promise_context, NULL);
     }
 
     int skipped_host_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
@@ -2761,12 +2761,12 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
     {
         hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
                                           hostClassFilter, hostColourFilter, false,
-                                          promise_context);
+                                          promise_context, NULL);
     }
     else
     {
         hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex,
-                                  hostClassFilter, true, promise_context);
+                                  hostClassFilter, true, promise_context, NULL);
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
