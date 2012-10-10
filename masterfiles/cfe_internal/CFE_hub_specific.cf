@@ -96,7 +96,7 @@ bundle agent cfe_internal_php_mod
 {
  files:
 
-  redhat_5|redhat_6|centos_5|centos_6::
+  redhat_5|redhat_6|centos_5|centos_6|scientific_5|scientific_6::
 
    "/etc/php.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
@@ -229,7 +229,7 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
 
-  redhat_5|redhat_6|centos_6::
+  redhat_5|redhat_6|centos_6|scientific_5|scientific_6::
 
    "/etc/php.d/mcrypt.ini"
         comment => "Put mcrypt.ini to its place",
@@ -694,7 +694,7 @@ bundle agent cfe_internal_policysrv
             comment => "Get the whole contents of the file to extract a timezone later on",
              handle => "cfe_internal_policysrv_vars_buffer_suse";
 
-  (redhat_5|redhat_6|centos_6).am_policy_hub::
+  (redhat_5|redhat_6|centos_6|scientific_5|scientific_6).am_policy_hub::
 
    "match_package" slist => {
                              "httpd",
