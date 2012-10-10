@@ -1702,7 +1702,7 @@ PHP_FUNCTION(cfpr_report_performance)
     }
     else
     {
-        payload = Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, promise_context_mode, &page);
+        payload = Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, &page, promise_context_mode);
     }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1736,7 +1736,6 @@ PHP_FUNCTION(cfpr_report_setuid)
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
                               &(page.resultsPerPage), &(page.pageNum),
-                              &promise_promise_context, &pc_len,
                               &report_file_info_array) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1769,7 +1768,7 @@ PHP_FUNCTION(cfpr_report_setuid)
     }
     else
     {
-        payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, promise_context_mode, &page);
+        payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, &page, promise_context_mode);
     }
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2166,7 +2165,7 @@ PHP_FUNCTION(cfpr_report_value)
     else
     {
         payload = Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter,
-                                        promise_context_mode, &page);
+                                        &page, promise_context_mode);
     }
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

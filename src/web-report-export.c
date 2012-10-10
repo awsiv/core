@@ -486,7 +486,9 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
 /*****************************************************************************/
 
 JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
-                                        HostClassFilter *filter, WebReportFileInfo *wr_info)
+                                        HostClassFilter *filter,
+                                        PromiseContextMode promise_context,
+                                        WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -494,7 +496,7 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
     DATABASE_OPEN_WR(&dbconn);
 
     wr_info->write_data = false;
-    CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, wr_info);
+    CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -515,7 +517,7 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
         }
 
         wr_info->write_data = true;
-        CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, wr_info);
+        CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 
@@ -535,7 +537,9 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
 /*****************************************************************************/
 
 JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
-                                   HostClassFilter *filter, WebReportFileInfo *wr_info)
+                                   HostClassFilter *filter,
+                                   PromiseContextMode promise_context,
+                                   WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -543,7 +547,7 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
     DATABASE_OPEN_WR(&dbconn);
 
     wr_info->write_data = false;
-    CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, wr_info);
+    CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -564,7 +568,7 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
         }
 
         wr_info->write_data = true;
-        CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, wr_info);
+        CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 
@@ -633,7 +637,9 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
 
 /*****************************************************************************/
 JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *year,
-                                  HostClassFilter *filter, WebReportFileInfo *wr_info)
+                                  HostClassFilter *filter,
+                                  PromiseContextMode promise_context,
+                                  WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -641,7 +647,7 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
     DATABASE_OPEN_WR(&dbconn);
 
     wr_info->write_data = false;
-    CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, wr_info);
+    CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -662,7 +668,7 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
         }
 
         wr_info->write_data = true;
-        CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, wr_info);
+        CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 

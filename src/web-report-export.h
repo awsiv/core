@@ -71,17 +71,22 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 
 JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
-                                        HostClassFilter *filter, WebReportFileInfo *wr_info);
+                                        HostClassFilter *filter, PromiseContextMode promise_context,
+                                        WebReportFileInfo *wr_info);
 
 JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
-                                   HostClassFilter *filter, WebReportFileInfo *wr_info);
+                                   HostClassFilter *filter,
+                                   PromiseContextMode promise_context,
+                                   WebReportFileInfo *wr_info);
 
 JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
                                          time_t from, time_t to, HostClassFilter *filter,
                                          PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 
 JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *year,
-                                  HostClassFilter *filter, WebReportFileInfo *wr_info);
+                                  HostClassFilter *filter,
+                                  PromiseContextMode promise_context,
+                                  WebReportFileInfo *wr_info);
 
 JsonElement *WebExportPromiseLogReport(char *hostkey, char *handle, char *causeRx,
                                        PromiseLogState state, time_t from, time_t to, HostClassFilter *filter,
