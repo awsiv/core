@@ -435,6 +435,18 @@ void HubBundleSeenWeightedToCSV( void *data, char buffer[CF_BUFSIZE])
 
 /*****************************************************************************/
 
+void HubHostToCSV( void *data, char buffer[CF_BUFSIZE])
+{
+    HubHost *hh = (HubHost *) data;
+
+    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\"\n",
+              NULLStringToEmpty(hh->keyhash),
+              NULLStringToEmpty(hh->hostname),
+              NULLStringToEmpty(hh->ipaddr) );
+}
+
+/*****************************************************************************/
+
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  
   assert( wr_info );

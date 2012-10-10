@@ -834,3 +834,57 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
 
 /*****************************************************************************/
 
+JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_info )
+{
+    assert( records_p );
+    assert( wr_info );
+
+    int host_count = 0;
+    if( records_p && wr_info )
+    {
+        host_count = RlistLen( records_p );
+        wr_info->total_lines = host_count;
+        wr_info->write_data = true;
+    }
+
+    RETURN_WITH_ERROR_JSON_WR( host_count == 0,
+                               "The query returned empty results. Please try different filters." );
+
+    pid_t pid = fork();
+
+    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+
+    if (pid == 0)
+    {
+        ALARM_PID = -1;
+
+        Writer *writer = NULL;
+        if( wr_info->write_data == true )
+        {
+            writer = ExportWebReportStart( wr_info );
+            assert( writer );
+            if(!writer)
+            {
+                _exit(0);
+            }
+
+            for (Rlist *rp = records_p; rp != NULL; rp = rp->next)
+            {
+                HubHost *hh = (HubHost *) rp->item;
+                ExportWebReportUpdate( writer, (void *) hh, HubHostToCSV, wr_info );
+            }
+
+            ExportWebReportStatusFinalize( wr_info );
+            WriterClose(writer);
+        }
+
+        _exit(0);
+    }
+
+    JsonElement *retval = JsonObjectCreate(1);
+    JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
+    return retval;
+}
+
+/*****************************************************************************/
+

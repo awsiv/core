@@ -93,3 +93,5 @@ JsonElement *WebExportPromiseLogSummaryReport(char *hostkey, char *handle, char 
 JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bool regex,
                                       time_t from, time_t to, HostClassFilter *filter,
                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+
+JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_info );
