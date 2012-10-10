@@ -28,6 +28,10 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter);
+static bool EnterpriseDBToSqlite3_Variables_Insert(sqlite3 *db, char *keyhash,
+                                                   const char *ns, const char *bundle,
+                                                   const char *lval, const char *rval,
+                                                   char *dtype);
 static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
@@ -418,29 +422,15 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                                        false, 0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL);
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubVariable *hv = (HubVariable *) rp->item;
 
         if(hv->rval.rtype == CF_SCALAR)
         {
-            char *rval_scalar_escaped = EscapeCharCopy((char*) hv->rval.item, '\'', '\'');
-
-            char insert_op[CF_BUFSIZE] = {0};
-
-            char v_namespace[CF_MAXVARSIZE] = { 0 };
-            SetVirtualNameSpace(hv->bundle, hv->ns, v_namespace, CF_MAXVARSIZE);
-
-            snprintf(insert_op, sizeof(insert_op),
-                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                     SkipHashType(hv->hh->keyhash), v_namespace, hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
-
-            free(rval_scalar_escaped);
-
-            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+            if (!EnterpriseDBToSqlite3_Variables_Insert(db, hv->hh->keyhash, hv->ns, hv->bundle,
+                                                        hv->lval, hv->rval.item, hv->dtype))
             {
-                Sqlite3_FreeString(err);
                 return;
             }
         }
@@ -448,22 +438,10 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
         {
             for (Rlist *rpv = (Rlist*)hv->rval.item; rpv != NULL; rpv = rpv->next)
             {
-                char *rval_scalar_escaped = EscapeCharCopy((char *) rpv->item, '\'', '\'');
-
-                char insert_op[CF_BUFSIZE] = {0};
-
-                char v_namespace[CF_MAXVARSIZE] = { 0 };
-                SetVirtualNameSpace(hv->bundle, hv->ns, v_namespace, CF_MAXVARSIZE);
-
-                snprintf(insert_op, sizeof(insert_op),
-                         "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                         SkipHashType(hv->hh->keyhash), v_namespace, hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
-
-                free(rval_scalar_escaped);
-
-                if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+                if (!EnterpriseDBToSqlite3_Variables_Insert(db, hv->hh->keyhash, hv->ns,
+                                                            hv->bundle, hv->lval, rpv->item,
+                                                            hv->dtype))
                 {
-                    Sqlite3_FreeString(err);
                     return;
                 }
             }
@@ -471,6 +449,34 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     }
 
     DeleteHubQuery(hq, DeleteHubVariable);
+}
+
+static bool EnterpriseDBToSqlite3_Variables_Insert(sqlite3 *db, char *keyhash,
+                                                   const char *ns, const char *bundle,
+                                                   const char *lval, const char *rval,
+                                                   char *dtype)
+{
+    char *rval_scalar_escaped = EscapeCharCopy((char*) rval, '\'', '\'');
+
+    char v_namespace[CF_MAXVARSIZE] = { 0 };
+    SetVirtualNameSpace(bundle, ns, v_namespace, CF_MAXVARSIZE);
+
+    char insert_op[CF_BUFSIZE] = { 0 };
+    snprintf(insert_op, sizeof(insert_op),
+             "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
+             SkipHashType(keyhash), v_namespace, bundle, lval, rval_scalar_escaped,
+             DataTypeShortToType(dtype));
+
+    free(rval_scalar_escaped);
+
+    char *err = 0;
+    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+    {
+        Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
 }
 
 /******************************************************************/
