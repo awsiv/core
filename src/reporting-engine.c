@@ -31,10 +31,17 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter *filter);
-static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const char *ns, const char *handle, const char *promiser, const char *bundle_name, const char *promisee);
+static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const char *ns,
+                                                            const char *handle,
+                                                            const char *promiser,
+                                                            const char *bundle_name,
+                                                            const char *promisee);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
+
+static void SetVirtualNameSpace(const char *handle, const char *namespace,
+                                char *buffer, size_t buffer_size);
 
 /******************************************************************/
 
@@ -422,9 +429,12 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
             char insert_op[CF_BUFSIZE] = {0};
 
+            char v_namespace[CF_MAXVARSIZE] = { 0 };
+            SetVirtualNameSpace(hv->bundle, hv->ns, v_namespace, CF_MAXVARSIZE);
+
             snprintf(insert_op, sizeof(insert_op),
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                     SkipHashType(hv->hh->keyhash), hv->ns ? hv->ns : "", hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
+                     SkipHashType(hv->hh->keyhash), v_namespace, hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
 
             free(rval_scalar_escaped);
 
@@ -442,9 +452,12 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
 
                 char insert_op[CF_BUFSIZE] = {0};
 
+                char v_namespace[CF_MAXVARSIZE] = { 0 };
+                SetVirtualNameSpace(hv->bundle, hv->ns, v_namespace, CF_MAXVARSIZE);
+
                 snprintf(insert_op, sizeof(insert_op),
                          "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-                         SkipHashType(hv->hh->keyhash), hv->ns ? hv->ns : "", hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
+                         SkipHashType(hv->hh->keyhash), v_namespace, hv->bundle, hv->lval, rval_scalar_escaped, DataTypeShortToType(hv->dtype));
 
                 free(rval_scalar_escaped);
 
@@ -647,9 +660,12 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
     char *promiser_escaped = EscapeCharCopy(promiser, '\'', '\'');
     char *promisee_escaped = EscapeCharCopy(promisee, '\'', '\'');
 
+    char v_namespace[CF_MAXVARSIZE] = { 0 };
+    SetVirtualNameSpace(handle, ns, v_namespace, CF_MAXVARSIZE);
+
     snprintf(insert_op, sizeof(insert_op),
              "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
-             ns, handle, promiser_escaped, bundle_name, promisee_escaped);
+             v_namespace, handle, promiser_escaped, bundle_name, promisee_escaped);
 
     free(promisee_escaped);
     free(promiser_escaped);
@@ -782,6 +798,28 @@ int BuildCSVOutput(void *out, int argc, char **argv, char **azColName)
     WriterWriteF(writer, "%s", csv_row);
 
     return 0;
+}
+
+/******************************************************************/
+
+static void SetVirtualNameSpace(const char *handle, const char *namespace,
+                                char *buffer, size_t buffer_size)
+{
+    if (IsHandleWithinPromiseContext(handle, PROMISE_CONTEXT_MODE_INTERNAL))
+    {
+        snprintf(buffer, buffer_size, "%s", CF_INTERNAL_NAMESPACE);
+    }
+    else
+    {
+        if (namespace)
+        {
+            snprintf(buffer, buffer_size, "%s", namespace);
+        }
+        else
+        {
+            snprintf(buffer, buffer_size, "%s", "");
+        }
+    }
 }
 
 /******************************************************************/
