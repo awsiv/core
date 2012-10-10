@@ -118,7 +118,6 @@ PHP_FUNCTION(cfapi_query_post)
             const char *data = cache_entry.value;
             table = JsonParse(&data);
             assert(table);
-            FileCacheEntryDestroy(&cache_entry);
             JsonObjectAppendBool(table, "cached", true);
         }
         else
@@ -131,6 +130,7 @@ PHP_FUNCTION(cfapi_query_post)
             WriterClose(writer);
             JsonObjectAppendBool(table, "cached", false);
         }
+        FileCacheEntryDestroy(&cache_entry);
     }
 
     JsonElement *rows = JsonObjectGet(table, "rows");
