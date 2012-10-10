@@ -1079,7 +1079,8 @@ PHP_FUNCTION(cfmod_resource_setuid)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
+        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter,
+                                  PROMISE_CONTEXT_MODE_ALL);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

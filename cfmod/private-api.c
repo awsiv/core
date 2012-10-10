@@ -1502,8 +1502,8 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
 PHP_FUNCTION(cfpr_report_performance)
 {
-    char *userName, *hostkey, *job;
-    char *fhostkey, *fjob;
+    char *userName = NULL, *hostkey = NULL, *job = NULL;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
     zend_bool regex;
@@ -1512,9 +1512,10 @@ PHP_FUNCTION(cfpr_report_performance)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &job, &j_len,
                               &regex,
                               &context_includes,
@@ -1528,8 +1529,8 @@ PHP_FUNCTION(cfpr_report_performance)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fjob = (j_len == 0) ? NULL : job;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fjob = (j_len == 0) ? NULL : job;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -1539,7 +1540,11 @@ PHP_FUNCTION(cfpr_report_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *payload = Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *payload = Nova2PHP_performance_report(fhostkey, fjob, (bool) regex,
+                                                       filter, &page, promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(payload);
@@ -1550,7 +1555,7 @@ PHP_FUNCTION(cfpr_report_performance)
 PHP_FUNCTION(cfpr_report_setuid)
 {
     char *userName, *hostkey, *file;
-    char *fhostkey, *ffile;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
     zend_bool regex;
@@ -1559,9 +1564,10 @@ PHP_FUNCTION(cfpr_report_setuid)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &j_len,
                               &regex,
                               &context_includes,
@@ -1575,8 +1581,8 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    ffile = (j_len == 0) ? NULL : file;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *ffile = (j_len == 0) ? NULL : file;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -1586,7 +1592,11 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *payload = Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex,
+                                                  filter, &page, promise_context_mode);
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_JSON(payload);
@@ -1860,8 +1870,9 @@ PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
 
 PHP_FUNCTION(cfpr_report_value)
 {
-    char *userName, *hostkey, *day, *month, *year;
-    char *fhostkey, *fmonth, *fday, *fyear;
+    char *userName = NULL, *hostkey = NULL, *day = NULL,
+         *month = NULL, *year = NULL;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, d_len, m_len, y_len;
     PageInfo page = { 0 };
@@ -1869,9 +1880,10 @@ PHP_FUNCTION(cfpr_report_value)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &day, &d_len,
                               &month, &m_len,
                               &year, &y_len,
@@ -1886,10 +1898,10 @@ PHP_FUNCTION(cfpr_report_value)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fday = (d_len == 0) ? NULL : day;
-    fmonth = (m_len == 0) ? NULL : month;
-    fyear = (y_len == 0) ? NULL : year;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fday = (d_len == 0) ? NULL : day;
+    char *fmonth = (m_len == 0) ? NULL : month;
+    char *fyear = (y_len == 0) ? NULL : year;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -1899,7 +1911,10 @@ PHP_FUNCTION(cfpr_report_value)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    JsonElement *payload = Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page);
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
+    JsonElement *payload = Nova2PHP_value_report(fhostkey, fday, fmonth, fyear,
+                                                 filter, &page, promise_context_mode);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2223,15 +2238,17 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
 PHP_FUNCTION(cfpr_hosts_with_value)
 {
-    char *userName, *hostkey, *day, *month, *year;
-    char *fhostkey, *fmonth, *fday, *fyear;
+    char *userName = NULL, *hostkey = NULL, *day = NULL,
+         *month = NULL, *year = NULL;
+    char *promise_context = NULL; int pc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, d_len, m_len, y_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &day, &d_len,
                               &month, &m_len,
                               &year, &y_len,
@@ -2245,10 +2262,10 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fday = (d_len == 0) ? NULL : day;
-    fmonth = (m_len == 0) ? NULL : month;
-    fyear = (y_len == 0) ? NULL : year;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fday = (d_len == 0) ? NULL : day;
+    char *fmonth = (m_len == 0) ? NULL : month;
+    char *fyear = (y_len == 0) ? NULL : year;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -2258,8 +2275,11 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, &page);
+    json_out = Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, &page,
+                                    promise_context_mode);
 
     if (!json_out)
     {
@@ -2886,16 +2906,17 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
 PHP_FUNCTION(cfpr_hosts_with_performance)
 {
-    char *userName, *hostkey, *job;
-    char *fhostkey, *fjob;
+    char *userName = NULL, *hostkey = NULL, *job = NULL;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &job, &j_len,
                               &regex,
                               &context_includes,
@@ -2908,8 +2929,8 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fjob = (j_len == 0) ? NULL : job;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fjob = (j_len == 0) ? NULL : job;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -2919,8 +2940,11 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_performance_hosts(fhostkey, fjob, (bool) regex, filter, &page);
+    json_out = Nova2PHP_performance_hosts(fhostkey, fjob, (bool) regex, filter, &page,
+                                          promise_context_mode);
 
     if (!json_out)
     {
@@ -2936,16 +2960,17 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
 PHP_FUNCTION(cfpr_hosts_with_setuid)
 {
-    char *userName, *hostkey, *file;
-    char *fhostkey, *ffile;
+    char *userName = NULL, *hostkey = NULL, *file = NULL;
+    char *promise_context = NULL; int pc_len;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
+                              &promise_context, &pc_len,
                               &file, &j_len,
                               &regex,
                               &context_includes,
@@ -2958,8 +2983,8 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    ffile = (j_len == 0) ? NULL : file;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *ffile = (j_len == 0) ? NULL : file;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
@@ -2969,8 +2994,11 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
+    PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
+
     JsonElement *json_out = NULL;
-    json_out = Nova2PHP_setuid_hosts(fhostkey, ffile, (bool) regex, filter, &page);
+    json_out = Nova2PHP_setuid_hosts(fhostkey, ffile, (bool) regex, filter, &page,
+                                     promise_context_mode);
 
     if (!json_out)
     {

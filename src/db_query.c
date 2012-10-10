@@ -2132,14 +2132,15 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, int sort,
-                                HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
+                                bool regex, int sort, HostClassFilter *hostClassFilter,
+                                PromiseContextMode promise_context)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_MAXVARSIZE],
-        rhandle[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE],
+         rname[CF_MAXVARSIZE], rhandle[CF_MAXVARSIZE];
     int match_name, found = false;
     double rsigma, rex, rq;
     time_t rtime;
@@ -2155,6 +2156,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 
@@ -2284,7 +2286,8 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 /*****************************************************************************/
 
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                           HostClassFilter *hostClassFilter)
+                           HostClassFilter *hostClassFilter,
+                           PromiseContextMode promise_context)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh;
@@ -2301,6 +2304,7 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 
@@ -3097,8 +3101,9 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
-                                HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth,
+                                char *lyear, int sort, HostClassFilter *hostClassFilter,
+                                PromiseContextMode promise_context)
 {
     bson_iterator it1, it2, it3;
     HubHost *hh;
@@ -3117,6 +3122,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
     }
 
     BsonAppendHostClassFilter(&query, hostClassFilter);
+    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
 
     BsonFinish(&query);
 

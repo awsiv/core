@@ -1264,8 +1264,9 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                                   PageInfo *page)
+JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year,
+                                   HostClassFilter *hostClassFilter, PageInfo *page,
+                                   PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
@@ -1273,7 +1274,8 @@ JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true,
+                                         hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubValue);
@@ -1947,7 +1949,9 @@ JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, c
 }
 
 /*****************************************************************************/
-JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page)
+JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
+                                         HostClassFilter *hostClassFilter, PageInfo *page,
+                                         PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
@@ -1955,7 +1959,8 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex, H
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true,
+                                         hostClassFilter, promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPerformance);
@@ -2022,7 +2027,9 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex, H
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page)
+JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
+                                    HostClassFilter *hostClassFilter, PageInfo *page,
+                                    PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
@@ -2030,7 +2037,8 @@ JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostC
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter);
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
+                                    promise_context);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSetUid);
@@ -2441,7 +2449,8 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year,
-                                  HostClassFilter *hostClassFilter, PageInfo *page)
+                                  HostClassFilter *hostClassFilter, PageInfo *page,
+                                  PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2451,7 +2460,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
     }
 
     HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year,
-                                         true, hostClassFilter);
+                                         true, hostClassFilter, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -2668,7 +2677,8 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
-                                        HostClassFilter *hostClassFilter, PageInfo *page)
+                                        HostClassFilter *hostClassFilter, PageInfo *page,
+                                        PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2678,7 +2688,7 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
     }
 
     HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex,
-                                         false, hostClassFilter);
+                                         false, hostClassFilter, promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
@@ -2695,7 +2705,8 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
-                                   HostClassFilter *hostClassFilter, PageInfo *page)
+                                   HostClassFilter *hostClassFilter, PageInfo *page,
+                                   PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
 
@@ -2704,7 +2715,8 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter);
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
+                                    promise_context);
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
 
