@@ -39,6 +39,7 @@ EnterpriseDB *EnterpriseDBAcquire(void)
     if (!CFDB_Open(conn))
     {
         syslog(LOG_ERR, "Acquiring database connection FAILED");
+        free(conn);
         return NULL;
     }
     return conn;
