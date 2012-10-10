@@ -1315,17 +1315,23 @@ cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, cons
         return ERRID_DBCONNECT;
     }
 
-    HubSettings *settings = NULL;
-    CFDB_QuerySettings(conn, &settings);
-
-    if (!_UserIsAdmin(conn, settings->ldap.enabled, creatingUser))
     {
-        CFDB_Close(conn);
-        return ERRID_ACCESS_DENIED;
+        HubSettings *settings = NULL;
+        CFDB_QuerySettings(conn, &settings);
+
+        if (!_UserIsAdmin(conn, settings->ldap.enabled, creatingUser))
+        {
+            DeleteHubSettings(settings);
+            CFDB_Close(conn);
+            return ERRID_ACCESS_DENIED;
+        }
+
+        DeleteHubSettings(settings);
     }
 
     if (RoleExists(roleName))
     {
+
         CFDB_Close(conn);
         return ERRID_ITEM_EXISTS;
     }
@@ -1401,13 +1407,17 @@ cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool
         return ERRID_DBCONNECT;
     }
 
-    HubSettings *settings = NULL;
-    CFDB_QuerySettings(conn, &settings);
-
-    if (!_UserIsAdmin(conn, settings, deletingUser))
     {
-        CFDB_Close(conn);
-        return ERRID_ACCESS_DENIED;
+        HubSettings *settings = NULL;
+        CFDB_QuerySettings(conn, &settings);
+
+        if (!_UserIsAdmin(conn, settings, deletingUser))
+        {
+            DeleteHubSettings(settings);
+            CFDB_Close(conn);
+            return ERRID_ACCESS_DENIED;
+        }
+        DeleteHubSettings(settings);
     }
 
     if (!RoleExists(roleName))
