@@ -21,7 +21,7 @@
 #endif
 
 #define CF_INTERNAL_PROMISE_RX_HANDLE "cfe_internal_.*"
-#define CF_INTERNAL_NAMESPACE "system"
+#define CF_INTERNAL_NAMESPACE "cfe_system"
 
 #ifdef HAVE_LIBMONGOC
 // WARNING: If changing collection names: grep through source
