@@ -34,7 +34,9 @@ PHP_FUNCTION(cfapi_host_list)
         HubQuery *filter_result = CFDB_HostClassFilterFromUserRBAC(username);
         if (filter_result->errid != ERRID_RBAC_DISABLED && filter_result->errid != ERRID_SUCCESS)
         {
-            THROW_GENERIC(result->errid, "Access denied");
+            cfapi_errid err = filter_result->errid;
+            DeleteHubQuery(filter_result, DeleteHostClassFilter);
+            THROW_GENERIC(err, "Access denied");
         }
 
         HostClassFilter *context_filter = (HostClassFilter *)HubQueryGetFirstRecord(filter_result);
