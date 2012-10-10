@@ -24,6 +24,7 @@
 #include "vars.h"
 #include "conversion.h"
 #include "files_lib.h"
+#include "files_interfaces.h"
 #include "license.h"
 
 #ifdef HAVE_LIBMONGOC

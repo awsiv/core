@@ -12,6 +12,7 @@
 #include "env_context.h"
 #include "lastseen.h"
 #include "files_names.h"
+#include "files_interfaces.h"
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"

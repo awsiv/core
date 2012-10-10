@@ -15,6 +15,7 @@
 #include "db_maintain.h"
 #include "db_query.h"
 #include "db_save.h"
+#include "files_interfaces.h"
 #include "lastseen.h"
 #include "granules.h"
 #include "hub-maintenance.h"

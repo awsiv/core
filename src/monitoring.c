@@ -16,6 +16,7 @@
 #include "probes.h"
 #include "files_lib.h"
 #include "files_names.h"
+#include "files_interfaces.h"
 #include "vars.h"
 #include "item_lib.h"
 #include "conversion.h"
