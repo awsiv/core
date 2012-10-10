@@ -19,6 +19,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "sort.h"
 #include "conversion.h"
 #include "scope.h"
+#include "web-report-export.h"
 
 #include <assert.h>
 
@@ -46,6 +47,8 @@ static const char *ERRID_DESCRIPTION[] =
 // deprecate in favour of JSONErrorFromId
 static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
 static JsonElement *CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page);
+static JsonElement *GenerateHostOnlyReport( Rlist **records_p, PageInfo *page,
+                                            WebReportFileInfo *wr_info );
 static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
 JsonElement *JSONErrorFromId(cfapi_errid errid);
 
@@ -2346,7 +2349,22 @@ int Nova_AddReportHeader(char *header, int truncated, char *buffer, int bufsize)
 /* Search for hosts with property X,Y,Z                                      */
 /*****************************************************************************/
 
-JsonElement *CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page)
+static JsonElement *GenerateHostOnlyReport( Rlist **records_p, PageInfo *page,
+                                            WebReportFileInfo *wr_info )
+{
+    if( wr_info )
+    {
+        return WebExportHostOnlyReport( *records_p, wr_info );
+    }
+    else
+    {
+        return CreateJsonHostOnlyReport( records_p, page );
+    }
+}
+
+/*****************************************************************************/
+
+static JsonElement *CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page)
 {
     assert(records_p);
     assert(page);
@@ -2453,7 +2471,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 
 JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year,
                                   HostClassFilter *hostClassFilter, PageInfo *page,
-                                  PromiseContextMode promise_context)
+                                  PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2465,14 +2483,14 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
     HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year,
                                          true, hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubValue);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubValue);
 
     return json_out;
 }
@@ -2482,7 +2500,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
 JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
                                      char *arch,  bool regex, char *type,
                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                     PromiseContextMode promise_context)
+                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2494,14 +2512,14 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch,
                                       regex, hostClassFilter, false, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubSoftware);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubSoftware);
 
     return json_out;
 }
@@ -2510,7 +2528,8 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
 
 JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
                                     HostClassFilter *hostClassFilter, PageInfo *page,
-                                    time_t from, time_t to, PromiseContextMode promise_context)
+                                    time_t from, time_t to, PromiseContextMode promise_context,
+                                    WebReportFileInfo *wr_info)
 {    
     EnterpriseDB dbconn;
 
@@ -2522,14 +2541,14 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
     HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
                                      hostClassFilter, false, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubClass);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubClass);    
 
     return json_out;
 }
@@ -2538,7 +2557,8 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
 
 JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval,
                                  char *type, bool regex, HostClassFilter *hostClassFilter,
-                                 PageInfo *page, PromiseContextMode promise_context)
+                                 PageInfo *page, PromiseContextMode promise_context,
+                                 WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2557,14 +2577,14 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
     HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
                                        regex, 0, time(NULL), hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubVariable);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubVariable);
 
     return json_out;
 }
@@ -2574,7 +2594,7 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
 JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from,
                                        time_t to, int k, int nk, int rep,
                                        HostClassFilter *hostClassFilter, PageInfo *page,
-                                       PromiseContextMode promise_context)
+                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2587,14 +2607,14 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
                                              k, nk, rep, false, hostClassFilter,
                                              promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubTotalCompliance);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubTotalCompliance);
 
     return json_out;
 }
@@ -2605,7 +2625,8 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                     bool regex, HostClassFilter *hostClassFilter,
                                     HostColourFilter *hostColourFilter,
                                     bool lastRunOnly, PageInfo *page,
-                                    PromiseContextMode promise_context)
+                                    PromiseContextMode promise_context,
+                                    WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2635,14 +2656,14 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                          promise_context, NULL);
     }
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubPromiseCompliance);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubPromiseCompliance);
 
     return json_out;
 }
@@ -2652,7 +2673,7 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
 JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
                                      char *laddress, time_t lago, int lregex,
                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                     PromiseContextMode promise_context)
+                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2665,14 +2686,14 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
                                       lago, lregex, 0, time(NULL), false,
                                       hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubLastSeen);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubLastSeen);
 
     return json_out;
 }
@@ -2681,7 +2702,8 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
 
 JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
                                         HostClassFilter *hostClassFilter, PageInfo *page,
-                                        PromiseContextMode promise_context)
+                                        PromiseContextMode promise_context,
+                                        WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2693,14 +2715,15 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
     HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex,
                                          false, hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubPerformance);
 
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubPerformance);
 
     return json_out;
 }
@@ -2709,7 +2732,8 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
 
 JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
                                    HostClassFilter *hostClassFilter, PageInfo *page,
-                                   PromiseContextMode promise_context)
+                                   PromiseContextMode promise_context,
+                                   WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2718,21 +2742,17 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-<<<<<<< HEAD
     HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
-                                    promise_context);
-=======
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter, NULL);
->>>>>>> Export CSV for Setuid Report
-
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubSetUid);
+                                    promise_context, NULL);
 
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubSetUid);
 
     return json_out;
 }
@@ -2743,7 +2763,8 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
                                    HostClassFilter *hostClassFilter,
                                    HostColourFilter *hostColourFilter,
                                    bool lastRunOnly, PageInfo *page,
-                                   PromiseContextMode promise_context)
+                                   PromiseContextMode promise_context,
+                                   WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2766,18 +2787,23 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
                                   hostClassFilter, true, promise_context, NULL);
     }
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    int skipped_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
-    JsonElement *json_obj_meta = JsonObjectGetAsObject(json_out, "meta");
-    JsonObjectAppendInteger(json_obj_meta, "old_skipped", skipped_cnt);
-
-    DeleteHubQuery(hq, DeleteHubBundleSeen);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubBundleSeen);
+
+    if( wr_info )
+    {
+        return json_out;
+    }
+
+    int skipped_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
+    JsonElement *json_obj_meta = JsonObjectGetAsObject(json_out, "meta");
+    JsonObjectAppendInteger(json_obj_meta, "old_skipped", skipped_cnt);
 
     return json_out;
 }
@@ -2787,7 +2813,7 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
 JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
                                         time_t from, time_t to,
                                         HostClassFilter *hostClassFilter, PageInfo *page,
-                                        PromiseContextMode promise_context)
+                                        PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2799,11 +2825,11 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
     HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to,
                                          false, hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
+    CFDB_Close(&dbconn);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     DeleteHubQuery(hq, DeleteHubFileChanges);
-
-    CFDB_Close(&dbconn);
 
     return json_out;
 }
@@ -2813,7 +2839,7 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
 JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
                                       bool regex, time_t from, time_t to,
                                       HostClassFilter *hostClassFilter, PageInfo *page,
-                                      PromiseContextMode promise_context)
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2825,14 +2851,14 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
     HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from,
                                       to, false, hostClassFilter, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubFileDiff);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubFileDiff);
 
     return json_out;
 }
@@ -2842,7 +2868,7 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
 JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeRx,
                                        PromiseLogState state, time_t from, time_t to,
                                        HostClassFilter *hostClassFilter, PageInfo *page,
-                                       PromiseContextMode promise_context)
+                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     EnterpriseDB dbconn;
 
@@ -2855,14 +2881,14 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
                                         causeRx, from, to, false, hostClassFilter,
                                         NULL, promise_context, NULL);
 
-    JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
-
-    DeleteHubQuery(hq, DeleteHubPromiseLog);
-
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts ), page, wr_info );
+
+    DeleteHubQuery(hq, DeleteHubPromiseLog);
 
     return json_out;
 }
