@@ -36,7 +36,6 @@ bool ExportWebReportUpdate( Writer *writer, void *data,
                             void (*fn_ptr_get_csv)(void *, Writer *),
                             WebReportFileInfo *wr_info );
 
-Writer *ExportWebReportStart( WebReportFileInfo *wr_info );
 void ExportWebReportWriteHeader(Writer *writer,
                                 void (*fn_ptr_get_csv)(void *, Writer *),
                                 WebReportFileInfo *wr_info);
