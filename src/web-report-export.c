@@ -5,10 +5,6 @@
 
 #include <assert.h>
 
-
-static bool ExportReportPDF( const char* csv_file, const char *title, const char *description );
-
-
 /*****************************************************************************/
 
 WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
@@ -56,23 +52,6 @@ void DeleteWebReportFileInfo( WebReportFileInfo *w )
 
 /*****************************************************************************/
 
-static bool ExportReportPDF( const char* csv_file, const char *title, const char *description )
-{
-    char cmd[CF_MAXVARSIZE] = {0};
-    snprintf(cmd, CF_BUFSIZE - 1, "/usr/bin/php /var/www/index.php csv2pdf convert \"%s.csv\" \"%s\" \"%s\"", csv_file, title, description);
-
-    FILE *pp;
-    if ((pp = cf_popen(cmd, "r")) == NULL)
-    {
-        CfOut( cf_error, "WebPDFexport", "!! Could not run command \"%s\": %s \n", cmd, GetErrorStr() );
-        return false;
-    }
-
-    return cf_pclose(pp) == 0;
-}
-
-/*****************************************************************************/
-
 JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, char *arch,
                                       bool regex, char *type, HostClassFilter *filter,
                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info )
@@ -110,11 +89,6 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
                            filter, false, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -161,11 +135,6 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
                           filter, false, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -222,11 +191,6 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -272,11 +236,6 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
                                   false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -349,11 +308,6 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -418,11 +372,6 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -470,11 +419,6 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -520,11 +464,6 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
         CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -572,11 +511,6 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -621,11 +555,6 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
         CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -672,11 +601,6 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -721,11 +645,6 @@ JsonElement *WebExportPromiseLogReport(char *hostkey, char *handle, char *causeR
                              from, to, false, filter, NULL, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
@@ -774,11 +693,6 @@ JsonElement *WebExportPromiseLogSummaryReport(char *hostkey, char *handle, char 
 
         CFDB_Close(&dbconn);
 
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
-
         _exit(0);
     }
 
@@ -824,11 +738,6 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
                            from, to, false, filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
-
-        if( wr_info->total_lines > 0 && (wr_info->report_type & REPORT_FORMAT_PDF ))
-        {
-            ExportReportPDF( wr_info->report_filename, "title", "description" );
-        }
 
         _exit(0);
     }
