@@ -683,7 +683,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
                             HubSoftware *hs = NewHubSoftware(hh, rname, rversion, rarch, lastSeen);
 
-                            if( wr_info )
+                            if (wr_info)
                             {
                                 if(is_software_report)
                                 {
@@ -706,7 +706,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
             }
         }
 
-        if( wr_info )
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -842,7 +842,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                         found = true;
                         HubClass *hc = NewHubClass(hh, rclass, rex, rsigma, timestamp);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hc, HubClassToCSV, wr_info );
                             DeleteHubClass(hc);
@@ -856,7 +856,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
             }
         }
 
-        if( wr_info )
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -1094,8 +1094,6 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
             if (strcmp(bson_iterator_key(&it1), cfr_total_compliance) == 0)
             {
                 bson_iterator_subiterator(&it1, &it2);
@@ -1172,7 +1170,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
                         HubTotalCompliance *hc = NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hc, HubTotalComplianceToCSV, wr_info);
                             DeleteHubTotalCompliance(hc);
@@ -1186,8 +1184,10 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
             }
         }
 
-        if( wr_info )
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -1363,8 +1363,6 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
             rlval[0] = '\0';
             rrval = NULL;
             rtype = CF_SCALAR;
@@ -1578,7 +1576,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                                                              rval,
                                                              timestamp);
 
-                            if( wr_info )
+                            if (wr_info)
                             {
                                 ExportWebReportUpdate( writer, (void *) hv, HubVariablesToCSV, wr_info);
                                 DeleteHubVariable(hv);
@@ -1597,7 +1595,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
             }
         }
 
-        if( wr_info )
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -1767,7 +1765,7 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
                                                          wr_info, writer);
 
 
-        if(wr_info)
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -1935,7 +1933,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
                         HubPromiseCompliance *promise_compliance = NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
                             DeleteHubPromiseCompliance(promise_compliance);
@@ -1958,7 +1956,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 
                     HubPromiseCompliance *promise_compliance = NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t);
 
-                    if( wr_info )
+                    if (wr_info)
                     {
                         ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
                         DeleteHubPromiseCompliance(promise_compliance);
@@ -1978,8 +1976,10 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
         hq = NULL;
         record_list_single_host = NULL;
 
-        if(wr_info)
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -2170,7 +2170,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                         LastSeenDirection direction = *rhash;
                         HubLastSeen *hl = NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hl, HubLastseenToCSV, wr_info);
                             DeleteHubLastSeen(hl);
@@ -2184,8 +2184,10 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -2436,7 +2438,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                         }
 
                         HubPerformance *hp = NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, rhandle);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hp, HubPerformanceToCSV, wr_info);
                             DeleteHubPerformance(hp);
@@ -2450,8 +2452,10 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -2569,7 +2573,7 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
                         }
 
                         HubSetUid *hu = NewHubSetUid(hh, rname);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hu, HubSetuidToCSV, wr_info);
                             DeleteHubSetUid(hu);
@@ -2583,8 +2587,10 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -2727,7 +2733,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                         found = true;
 
                         HubFileChanges *hC = NewHubFileChanges(hh, rname, timestamp, handle, change_type[0], change_msg);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hC, HubFileChangesToCSV, wr_info);
                             DeleteHubFileChanges(hC);
@@ -2741,7 +2747,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
             }
         }
 
-        if( wr_info )
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -2883,7 +2889,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
                         found = true;
 
                         HubFileDiff *hD = NewHubFileDiff(hh, rname, rdiff, timestamp);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hD, HubFileDiffToCSV, wr_info);
                             DeleteHubFileDiff(hD);
@@ -2897,7 +2903,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -3124,7 +3130,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
 
                         HubPromiseLog *hP = NewHubPromiseLog(hh, rhandle, rcause, rt);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hP, HubPromiseLogToCSV, wr_info);
                             DeleteHubPromiseLog(hP);
@@ -3138,10 +3144,10 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
             DeleteHubHost(hh);
-            hh=NULL;
+            hh = NULL;
             continue;
         }
 
@@ -3159,7 +3165,7 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
         WriterClose(writer);
     }
 
-    if( wr_info )
+    if (wr_info)
     {
         return 0;;
     }
@@ -3230,7 +3236,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
 
         HubPromiseSum *hS = NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0);
 
-        if( wr_info )
+        if (wr_info)
         {
             ExportWebReportUpdate( writer, (void *) hS, HubPromiseSumToCSV, wr_info);
             DeleteHubPromiseSum(hS);
@@ -3279,7 +3285,7 @@ HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseL
                                                          &host_list, &record_list, wr_info);
     }
 
-    if( wr_info )
+    if (wr_info)
     {
         return NULL;
     }
@@ -3439,7 +3445,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 
             HubPromiseLog *hP = NewHubPromiseLog(hh,rhandle,rcause,rt);
 
-            if( wr_info )
+            if (wr_info)
             {
                 ExportWebReportUpdate( writer, (void *) hP, HubPromiseLogToCSV, wr_info);
                 DeleteHubPromiseLog(hP);
@@ -3459,7 +3465,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
         WriterClose(writer);
     }
 
-    if( wr_info )
+    if (wr_info)
     {
         return count;
     }
@@ -3603,7 +3609,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 
                         HubValue *hV = NewHubValue(hh, rday, rkept, rrepaired, rnotkept, rhandle);
 
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hV, HubValueToCSV, wr_info);
                             DeleteHubValue(hV);
@@ -3617,8 +3623,10 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
             }
         }
 
-        if(wr_info)
+        if (wr_info)
         {
+            DeleteHubHost(hh);
+            hh = NULL;
             continue;
         }
 
@@ -3973,7 +3981,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
         bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp,
                                                     hh, &record_list, promise_context, wr_info, writer);
 
-        if(wr_info)
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
@@ -4152,7 +4160,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
                         HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp,
                                                                 hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) bundle, HubBundleSeenWeightedToCSV, wr_info);
                             DeleteHubBundleSeen(bundle);
@@ -4176,7 +4184,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
                         HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp,
                                                                 hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t);
-                        if( wr_info )
+                        if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) bundle, HubBundleSeenWeightedToCSV, wr_info);
                             DeleteHubBundleSeen(bundle);
@@ -4197,7 +4205,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
         hq = NULL;
         record_list_single_host = NULL;
 
-        if(wr_info)
+        if (wr_info)
         {
             DeleteHubHost(hh);
             hh = NULL;
