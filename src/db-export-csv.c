@@ -5,6 +5,7 @@
 #include "db_common.h"
 #include "db_query.h"
 #include "scope.h"
+#include "csv_writer.h"
 
 #include <assert.h>
 
@@ -141,7 +142,7 @@ void GetHostNameAndIP( const bson *b, char *hostname, char *address, int bufsize
 
 /*****************************************************************************/
 
-void HubClassToCSV( void *data, char buffer[CF_BUFSIZE] )
+void HubClassToCSV( void *data, Writer *w )
 {
     assert(data);
     HubClass *hc = (HubClass *) data;
@@ -149,46 +150,55 @@ void HubClassToCSV( void *data, char buffer[CF_BUFSIZE] )
     assert(hc);
     assert(hc->hh);
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%f,%f,%ld\n",
-             NULLStringToEmpty(hc->hh->hostname),
-             NULLStringToEmpty(hc->class),
-             hc->prob * 100.0,
-             hc->dev * 100.0,
-             hc->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hc->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hc->class));
+    CsvWriterFieldF(c, "%f", hc->prob * 100.0);
+    CsvWriterFieldF(c, "%f", hc->dev * 100.0);
+    CsvWriterFieldF(c, "%ld", hc->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubSoftwareToCSV( void *data, char buffer[CF_BUFSIZE] )
+void HubSoftwareToCSV( void *data, Writer *w )
 {
     HubSoftware *hs = (HubSoftware *) data;
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",\"%s\",%ld\n",
-             NULLStringToEmpty(hs->hh->hostname),
-             NULLStringToEmpty(hs->name),
-             NULLStringToEmpty(hs->version),
-             NULLStringToEmpty(hs->arch),
-             hs->t);
+
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->name));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->version));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->arch));
+    CsvWriterFieldF(c, "%ld", hs->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubPatchesToCSV( void *data, char buffer[CF_BUFSIZE] )
+void HubPatchesToCSV( void *data, Writer *w )
 {
     HubSoftware *hs = (HubSoftware *) data;
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",\"%s\"\n",
-             NULLStringToEmpty(hs->hh->hostname),
-             NULLStringToEmpty(hs->name),
-             NULLStringToEmpty(hs->version),
-             NULLStringToEmpty(hs->arch));
+
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->name));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->version));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->arch));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubVariablesToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubVariablesToCSV( void *data, Writer *w)
 {
     HubVariable *hv = (HubVariable *) data;
-
-    assert(hv);
 
     if( NULL_OR_EMPTY(hv->ns) && NULL_OR_EMPTY(hv->bundle) )
     {
@@ -208,64 +218,76 @@ void HubVariablesToCSV( void *data, char buffer[CF_BUFSIZE])
         snprintf(rval, CF_MAXVARSIZE, "%s", (char *) hv->rval.item);
     }
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld\n",
-             NULLStringToEmpty(hv->hh->hostname),
-             scope,
-             DataTypeShortToType(hv->dtype),
-             NULLStringToEmpty(hv->lval),
-             NULLStringToEmpty(rval),
-             hv->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hv->hh->hostname));
+    CsvWriterFieldF(c, "%s", scope);
+    CsvWriterFieldF(c, "%s", DataTypeShortToType(hv->dtype));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hv->lval));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(rval));
+    CsvWriterFieldF(c, "%ld", hv->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubTotalComplianceToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubTotalComplianceToCSV(void *data, Writer *w)
 {
     HubTotalCompliance *ht = (HubTotalCompliance *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%d,%d,%d,%ld\n",
-             NULLStringToEmpty(ht->hh->hostname),
-             NULLStringToEmpty(ht->version),
-             ht->kept,
-             ht->repaired,
-             ht->notkept,
-             ht->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(ht->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(ht->version));
+    CsvWriterFieldF(c, "%d", ht->kept);
+    CsvWriterFieldF(c, "%d", ht->repaired);
+    CsvWriterFieldF(c, "%d", ht->notkept);
+    CsvWriterFieldF(c, "%ld", ht->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubPromiseComplianceToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubPromiseComplianceToCSV( void *data, Writer *w)
 {
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%f,%f,%ld\n",
-             NULLStringToEmpty(hp->hh->hostname),
-             NULLStringToEmpty(hp->handle),
-             NULLStringToEmpty(Nova_LongState(hp->status)),
-             hp->e,
-             hp->d,
-             hp->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(Nova_LongState(hp->status)));
+    CsvWriterFieldF(c, "%f", hp->e);
+    CsvWriterFieldF(c, "%f", hp->d);
+    CsvWriterFieldF(c, "%ld", hp->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubPromiseComplianceWeightedToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubPromiseComplianceWeightedToCSV( void *data, Writer *w)
 {
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%f,%f,%ld,\"%s\"\n",
-             NULLStringToEmpty(hp->hh->hostname),
-             NULLStringToEmpty(hp->handle),
-             NULLStringToEmpty(Nova_LongState(hp->status)),
-             hp->e,
-             hp->d,
-             hp->t,
-             Nova_HostColourToString(hp->hh->colour));
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(Nova_LongState(hp->status)));
+    CsvWriterFieldF(c, "%f", hp->e);
+    CsvWriterFieldF(c, "%f", hp->d);
+    CsvWriterFieldF(c, "%ld", hp->t);
+    CsvWriterFieldF(c, "%s", Nova_HostColourToString(hp->hh->colour));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubLastseenToCSV( void *data, Writer *w)
 {
     HubLastSeen *hl = (HubLastSeen *) data;
 
@@ -280,97 +302,118 @@ void HubLastseenToCSV( void *data, char buffer[CF_BUFSIZE])
         break;
     }
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",\"%s\",%ld,%f,%f,%f,\"%s\"\n",
-             NULLStringToEmpty(hl->hh->hostname),
-             NULLStringToEmpty(inout),
-             NULLStringToEmpty(hl->rhost->hostname),
-             NULLStringToEmpty(hl->rhost->ipaddr),
-             hl->t,
-             hl->hrsago,
-             hl->hrsavg,
-             hl->hrsdev,
-             NULLStringToEmpty(hl->rhost->keyhash));
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(inout));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->ipaddr));
+    CsvWriterFieldF(c, "%ld", hl->t);
+    CsvWriterFieldF(c, "%f", hl->hrsago);
+    CsvWriterFieldF(c, "%f", hl->hrsavg);
+    CsvWriterFieldF(c, "%f", hl->hrsdev);
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->keyhash));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubPerformanceToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubPerformanceToCSV( void *data, Writer *w)
 {
     HubPerformance *hp = (HubPerformance *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%f,%f,%f,%ld\n",
-             NULLStringToEmpty(hp->hh->hostname),
-             NULLStringToEmpty(hp->event),
-             hp->q,
-             hp->e,
-             hp->d,
-             hp->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->event));
+    CsvWriterFieldF(c, "%f", hp->q);
+    CsvWriterFieldF(c, "%f", hp->e);
+    CsvWriterFieldF(c, "%f", hp->d);
+    CsvWriterFieldF(c, "%ld", hp->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubSetuidToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubSetuidToCSV( void *data, Writer *w)
 {
     HubSetUid *hu = (HubSetUid *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\"\n",
-             NULLStringToEmpty(hu->hh->hostname),
-             NULLStringToEmpty(hu->path));
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hu->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hu->path));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubFileChangesToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubFileChangesToCSV( void *data, Writer *w)
 {
     HubFileChanges *hC = (HubFileChanges *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%ld\n",
-             NULLStringToEmpty(hC->hh->hostname),
-             NULLStringToEmpty(hC->path),
-             NULLStringToEmpty(hC->msg),
-             hC->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->path));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->msg));
+    CsvWriterFieldF(c, "%ld", hC->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubValueToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubValueToCSV( void *data, Writer *w)
 {
     HubValue *hV = (HubValue *) data;
 
-    snprintf(buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%f,%f,%f\n",
-             NULLStringToEmpty(hV->hh->hostname),
-             NULLStringToEmpty(hV->day),
-             hV->kept,
-             hV->repaired,
-             hV->notkept);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hV->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hV->day));
+    CsvWriterFieldF(c, "%f", hV->kept);
+    CsvWriterFieldF(c, "%f", hV->repaired);
+    CsvWriterFieldF(c, "%f", hV->notkept);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubPromiseLogToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubPromiseLogToCSV( void *data, Writer *w)
 {
     HubPromiseLog *hp = (HubPromiseLog *) data;
 
-    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\",%ld\n",
-              NULLStringToEmpty(hp->hh->hostname),
-              NULLStringToEmpty(hp->handle),
-              NULLStringToEmpty(hp->cause),
-              hp->t);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->cause));
+    CsvWriterFieldF(c, "%ld", hp->t);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
-void HubPromiseSumToCSV( void *data, char buffer[CF_MAXVARSIZE])
+void HubPromiseSumToCSV( void *data, Writer *w)
 {
     HubPromiseSum *hS = (HubPromiseSum *) data;
 
-    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%d\n",
-              hS->handle,
-              hS->cause,
-              hS->occurences);
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hS->handle));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hS->cause));
+    CsvWriterFieldF(c, "%d", hS->occurences);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
-void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubFileDiffToCSV( void *data, Writer *w)
 {
     HubFileDiff *hd = (HubFileDiff *) data;
 
@@ -378,8 +421,9 @@ void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE])
 
     const char *diff_str = NULLStringToEmpty(hd->diff);
 
-    char tline[CF_BUFSIZE] = { 0 };
-    buffer[0] = '\0';
+    CsvWriter *c = CsvWriterOpen(w);
+
+    char tline[CF_BUFSIZE] = { 0 };    
     for (const char *sp = diff_str; *sp != '\0'; sp += strlen(tline) + 1)
     {
         int line = 0;
@@ -389,60 +433,71 @@ void HubFileDiffToCSV( void *data, char buffer[CF_BUFSIZE])
         sscanf(sp, "%c,%d,%2047[^\n]", pm, &line, diff);
         sscanf(sp, "%2047[^\n]", tline);
 
-        char csv_line[CF_BUFSIZE];
-        snprintf(csv_line, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,\"%s\",%d,\"%s\"\n",
-                 NULLStringToEmpty(hd->hh->hostname),
-                 NULLStringToEmpty(hd->path),
-                 hd->t,
-                 pm,
-                 line,
-                 diff);
 
-        strncat(buffer, csv_line, CF_BUFSIZE - 1);
+
+        CsvWriterFieldF(c, "%s", NULLStringToEmpty(hd->hh->hostname));
+        CsvWriterFieldF(c, "%s", NULLStringToEmpty(hd->path));
+        CsvWriterFieldF(c, "%ld", hd->t);
+        CsvWriterFieldF(c, "%s", NULLStringToEmpty(pm));
+        CsvWriterFieldF(c, "%d", line);
+        CsvWriterFieldF(c, "%s", NULLStringToEmpty(diff));
+
+        CsvWriterNewRecord(c);
     }
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubBundleSeenToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubBundleSeenToCSV( void *data, Writer *w)
 {
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
-    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,%f,%f,%f\n",
-              NULLStringToEmpty(hb->hh->hostname),
-              NULLStringToEmpty(hb->bundle),
-              hb->t,
-              hb->bundlecomp,
-              hb->bundleavg,
-              hb->bundledev );
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->bundle));
+    CsvWriterFieldF(c, "%ld", hb->t);
+    CsvWriterFieldF(c, "%f", hb->bundlecomp);
+    CsvWriterFieldF(c, "%f", hb->bundleavg);
+    CsvWriterFieldF(c, "%f", hb->bundledev);
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubBundleSeenWeightedToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubBundleSeenWeightedToCSV( void *data, Writer *w)
 {
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
-    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",%ld,%f,%f,%f,\"%s\"\n",
-              NULLStringToEmpty(hb->hh->hostname),
-              NULLStringToEmpty(hb->bundle),
-              hb->t,
-              hb->bundlecomp,
-              hb->bundleavg,
-              hb->bundledev,
-              Nova_HostColourToString(hb->hh->colour));
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->bundle));
+    CsvWriterFieldF(c, "%ld", hb->t);
+    CsvWriterFieldF(c, "%f", hb->bundlecomp);
+    CsvWriterFieldF(c, "%f", hb->bundleavg);
+    CsvWriterFieldF(c, "%f", hb->bundledev);
+    CsvWriterFieldF(c, "%s", Nova_HostColourToString(hb->hh->colour));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
 
-void HubHostToCSV( void *data, char buffer[CF_BUFSIZE])
+void HubHostToCSV( void *data, Writer *w)
 {
     HubHost *hh = (HubHost *) data;
 
-    snprintf( buffer, CF_BUFSIZE - 1, "\"%s\",\"%s\",\"%s\"\n",
-              NULLStringToEmpty(hh->keyhash),
-              NULLStringToEmpty(hh->hostname),
-              NULLStringToEmpty(hh->ipaddr) );
+    CsvWriter *c = CsvWriterOpen(w);
+
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hh->keyhash));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hh->hostname));
+    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hh->ipaddr));
+
+    CsvWriterClose(c);
 }
 
 /*****************************************************************************/
@@ -476,7 +531,7 @@ Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 /*****************************************************************************/
 
 bool ExportWebReportUpdate( Writer *writer, void *data,
-                            void (*fn_ptr_get_csv)(void *, char *),
+                            void (*fn_ptr_get_csv)(void *, Writer *),
                             WebReportFileInfo *wr_info )
 {
     assert( wr_info );
@@ -492,10 +547,7 @@ bool ExportWebReportUpdate( Writer *writer, void *data,
     assert( wr_info->lines_written >= 0 );
     assert( wr_info->lines_since_last_update >= 0 );
 
-    char buffer[CF_BUFSIZE] = "\0";
-    (*fn_ptr_get_csv)( data, buffer );
-
-    WriterWriteF(writer, "%s", buffer);
+    (*fn_ptr_get_csv) (data, writer);
 
     wr_info->lines_written++;
     
