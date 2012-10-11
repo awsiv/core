@@ -2488,9 +2488,9 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubValue);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2517,9 +2517,9 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubSoftware);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2546,9 +2546,9 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
+    DeleteHubQuery(hq, DeleteHubClass);
 
-    DeleteHubQuery(hq, DeleteHubClass);    
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2582,9 +2582,9 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubVariable);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2612,9 +2612,9 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubTotalCompliance);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2661,9 +2661,9 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2691,9 +2691,9 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubLastSeen);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2721,9 +2721,9 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubPerformance);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2750,9 +2750,9 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubSetUid);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2792,9 +2792,9 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubBundleSeen);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     if( wr_info )
     {
@@ -2827,9 +2827,9 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
 
     CFDB_Close(&dbconn);
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubFileChanges);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2856,9 +2856,9 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubFileDiff);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
 
     return json_out;
 }
@@ -2886,9 +2886,9 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts ), page, wr_info );
-
     DeleteHubQuery(hq, DeleteHubPromiseLog);
+
+    JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts ), page, wr_info );
 
     return json_out;
 }
