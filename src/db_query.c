@@ -4706,8 +4706,6 @@ HubQuery *CFDB_QueryPromisesUnexpanded(EnterpriseDB *conn, PromiseFilter *filter
 
     bson_init(&query);
     BsonAppendPromiseFilterUnexpanded(&query, filter);
-    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
-
     BsonFinish(&query);
 
     bson fields;
@@ -4858,10 +4856,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter,
     bson query;
 
     bson_init(&query);
-
     BsonAppendPromiseFilterUnexpanded(&query, filter);
-    BsonAppendClassFilterFromPromiseContext(&query, promise_context);
-
     BsonFinish(&query);
 
     bson fields;
