@@ -71,6 +71,21 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
 JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count);
 
+#include "web-report-export.h"
 
+WebReportFileInfo *PHPArrayWebReportFileInfoGet( zval *php_array );
+bool PHPArrayBoolGet(zval *php_array, char *key, bool *out);
+bool PHPArrayStringGet(zval *php_array, char *key, char *buffer, int bufsize);
+
+#define PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info) \
+if( report_file_info_array ) \
+{ \
+    report_file_info = PHPArrayWebReportFileInfoGet(report_file_info_array); \
+    if( !report_file_info ) \
+    { \
+        zend_throw_exception(cfmod_exception_args, "Incorrect/Incomplete arguments for CSV/PDF esporting", 0 TSRMLS_CC); \
+        RETURN_NULL(); \
+    } \
+} \
 
 #endif

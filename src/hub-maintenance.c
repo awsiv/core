@@ -145,7 +145,8 @@ void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envCl
 
     HostClassFilter *filter = NewHostClassFilter(envClass, NULL);
 
-    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1, false, filter, promise_context_mode);
+    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1,
+                                   false, filter, promise_context_mode, NULL);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)

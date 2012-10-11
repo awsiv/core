@@ -16,95 +16,85 @@ HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char
                                    HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryHostsByHostClassFilter(EnterpriseDB *conn, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, const char *hostKey);
-HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth,
-                                char *lyear, int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context);
-HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth,
-                               char *lyear, int sort, char *classRegex);
+HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
+                                HostClassFilter *hostClassFilter, PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
+                               char *classRegex);
+
 HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
-                               const char *lhandle, bool regex, const char *lcause,
-                               time_t from, time_t to, int sort,
+                               const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, int *total_results_out,
-                               PromiseContextMode promsie_context);
-int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash,
-                                    PromiseLogState state, const char *lhandle, bool regex,
-                                    const char *lcause, time_t from, time_t to, int sort,
-                                    HostClassFilter *hostClassFilter, Rlist **host_list,
-                                    Rlist **record_list);
-int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash,
-                                 PromiseLogState state, const char *lhandle, bool regex,
-                                 const char *lcause, time_t from, time_t to, int sort,
-                                 HostClassFilter *hostClassFilter, Rlist **host_list,
-                                 Rlist **record_list, PromiseContextMode promise_context);
+                               PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
+                                    const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
+                                    HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list, WebReportFileInfo *wr_info);
+int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, PromiseLogState state,
+                                 const char *lhandle, bool regex, const char *lcause_rx, time_t from,
+                                 time_t to, int sort, HostClassFilter *host_class_filter, Rlist **host_list,
+                                 Rlist **record_list, PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
                                       PromiseLogState state, const char *handle,
-                                      bool regex, const char *cause, time_t from, time_t to,
-                                      bool sort, HostClassFilter *host_class_filter,
-                                      PromiseContextMode promise_context);
-
-HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
-                           HostClassFilter *host_class_filter,
-                           PromiseContextMode promise_context);
+                                      bool regex, const char *cause, time_t from,
+                                      time_t to, bool sort, HostClassFilter *host_class_filter,
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter, PromiseContextMode promise_context);
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
                              char *lver, const char *larch, bool regex,
                              HostClassFilter *hostClassFilter, int sort,
-                             PromiseContextMode promise_context);
-HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash, const char *lclass,
-                            bool regex, time_t from, time_t to,
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
+                            const char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort,
-                            PromiseContextMode promise_context);
+                            PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes);
-HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
-                                    char *lversion, time_t from, time_t to, int lkept,
-                                    int lnotkept, int lrepaired, int sort,
-                                    HostClassFilter *hostClassFilter,
-                                    PromiseContextMode promise_context_mode);
-Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn,
-                                         HostClassFilter *host_class_filter,
+HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
+                                    int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter,
+                                    PromiseContextMode promise_context_mode, WebReportFileInfo *wr_info);
+Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode);
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns,
                               const char *bundle, const char *llval, const char *lrval,
                               const char *ltype, bool regex, time_t from, time_t to,
-                              const HostClassFilter *hostClassFilter,
-                              PromiseContextMode promise_context);
+                              const HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
+                              WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
                                       PromiseState lstatus, bool regex, time_t from,
-                                      time_t to, int sort,
-                                      HostClassFilter *hostClassFilter,
-                                      PromiseContextMode promise_context);
-HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
-                                              char *lhandle, PromiseState lstatus,
-                                              bool regex, time_t from, time_t to,
-                                              int sort, HostClassFilter *hostClassFilter,
-                                              HostColourFilter *hostColourFilter,
-                                              PromiseContextMode promise_context);
-HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash,
-                             char *lhost, char *laddr, time_t lago, bool regex,
-                             time_t from, time_t to, int sort,
-                             HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context);
+                                      time_t to, int sort, HostClassFilter *hostClassFilter,
+                                      PromiseContextMode promise_context,
+                                      WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
+                                              PromiseState lstatus, bool regex, time_t from,
+                                              time_t to, int sort, HostClassFilter *hostClassFilter,
+                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context,
+                                              WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
+                             char *laddr, time_t lago, bool regex, time_t from,
+                             time_t to, int sort, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db);
+
 HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                                 bool regex, int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context);
+                                PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter,
-                           PromiseContextMode promise_context);
+                           PromiseContextMode promise_context,
+                           WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort,
-                               PromiseContextMode promise_context);
+                               PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
                                        bool regex, HostClassFilter *hostClassFilter,
                                        HostColourFilter *hostColourFilter, int sort,
-                                       PromiseContextMode promise_context);
+                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                                 bool regex, time_t from, time_t to, int sort,
                                 HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context);
-HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff,
-                             bool regex, time_t from, time_t to, int sort,
-                             HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context);
+                                PromiseContextMode promise_context, WebReportFileInfo *wr_info);
+HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
+                             char *ldiff, bool regex, time_t from, time_t to,
+                             int sort, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime);
 HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx,
                                           HostClassFilter *hostClassFilter, PageInfo *page);
