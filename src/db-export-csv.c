@@ -144,7 +144,21 @@ void GetHostNameAndIP( const bson *b, char *hostname, char *address, int bufsize
 
 void HubClassToCSV( void *data, Writer *w )
 {
-    assert(data);
+    assert(w);
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Class or Context");
+        CsvWriterField(c, "in %% runs");
+        CsvWriterField(c, "+/- %%");
+        CsvWriterField(c, "Last occured");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubClass *hc = (HubClass *) data;
 
     assert(hc);
@@ -165,6 +179,21 @@ void HubClassToCSV( void *data, Writer *w )
 
 void HubSoftwareToCSV( void *data, Writer *w )
 {
+    assert(w);
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Package name");
+        CsvWriterField(c, "Version");
+        CsvWriterField(c, "Architecture");
+        CsvWriterField(c, "Last seen");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubSoftware *hs = (HubSoftware *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -182,6 +211,20 @@ void HubSoftwareToCSV( void *data, Writer *w )
 
 void HubPatchesToCSV( void *data, Writer *w )
 {
+    assert(w);
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Package name");
+        CsvWriterField(c, "Version");
+        CsvWriterField(c, "Architecture");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubSoftware *hs = (HubSoftware *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -198,6 +241,23 @@ void HubPatchesToCSV( void *data, Writer *w )
 
 void HubVariablesToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Scope or bundle");
+        CsvWriterField(c, "Type");
+        CsvWriterField(c, "Name");
+        CsvWriterField(c, "Value");
+        CsvWriterField(c, "Last seen");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubVariable *hv = (HubVariable *) data;
 
     if( NULL_OR_EMPTY(hv->ns) && NULL_OR_EMPTY(hv->bundle) )
@@ -234,6 +294,23 @@ void HubVariablesToCSV( void *data, Writer *w)
 
 void HubTotalComplianceToCSV(void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Policy version");
+        CsvWriterField(c, "Kept");
+        CsvWriterField(c, "Repaired");
+        CsvWriterField(c, "Not kept");
+        CsvWriterField(c, "Last verified");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubTotalCompliance *ht = (HubTotalCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -252,6 +329,23 @@ void HubTotalComplianceToCSV(void *data, Writer *w)
 
 void HubPromiseComplianceToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Promise handle");
+        CsvWriterField(c, "Last known state");
+        CsvWriterField(c, "%% Runs kept");
+        CsvWriterField(c, "+/- %%");
+        CsvWriterField(c, "Last verified");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -270,6 +364,24 @@ void HubPromiseComplianceToCSV( void *data, Writer *w)
 
 void HubPromiseComplianceWeightedToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Promise handle");
+        CsvWriterField(c, "Last known state");
+        CsvWriterField(c, "%% Runs kept");
+        CsvWriterField(c, "+/- %%");
+        CsvWriterField(c, "Last verified");
+        CsvWriterField(c, "Host compliance status");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -289,6 +401,26 @@ void HubPromiseComplianceWeightedToCSV( void *data, Writer *w)
 
 void HubLastseenToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Comms initiated");
+        CsvWriterField(c, "Remote host name");
+        CsvWriterField(c, "Remote IP address");
+        CsvWriterField(c, "Was last seen at");
+        CsvWriterField(c, "Hrs ago");
+        CsvWriterField(c, "Avg Comms interval");
+        CsvWriterField(c, "+/- hrs");
+        CsvWriterField(c, "Remote host's key");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubLastSeen *hl = (HubLastSeen *) data;
 
     char inout[CF_SMALLBUF];
@@ -321,6 +453,23 @@ void HubLastseenToCSV( void *data, Writer *w)
 
 void HubPerformanceToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Event");
+        CsvWriterField(c, "Last completion time (seconds)");
+        CsvWriterField(c, "Avg completion time (seconds)");
+        CsvWriterField(c, "+/- seconds");
+        CsvWriterField(c, "Last performed");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubPerformance *hp = (HubPerformance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -339,6 +488,19 @@ void HubPerformanceToCSV( void *data, Writer *w)
 
 void HubSetuidToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "File");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubSetUid *hu = (HubSetUid *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -353,6 +515,21 @@ void HubSetuidToCSV( void *data, Writer *w)
 
 void HubFileChangesToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "File");
+        CsvWriterField(c, "Change type");
+        CsvWriterField(c, "Change detected at");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubFileChanges *hC = (HubFileChanges *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -369,6 +546,22 @@ void HubFileChangesToCSV( void *data, Writer *w)
 
 void HubValueToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Summary of day");
+        CsvWriterField(c, "Value of promises kept");
+        CsvWriterField(c, "Value of repairs");
+        CsvWriterField(c, "Loss for promises not kept");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubValue *hV = (HubValue *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -386,6 +579,21 @@ void HubValueToCSV( void *data, Writer *w)
 
 void HubPromiseLogToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Promise handle");
+        CsvWriterField(c, "Report");
+        CsvWriterField(c, "Time");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubPromiseLog *hp = (HubPromiseLog *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -401,6 +609,20 @@ void HubPromiseLogToCSV( void *data, Writer *w)
 /*****************************************************************************/
 void HubPromiseSumToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Promise handle");
+        CsvWriterField(c, "Report");
+        CsvWriterField(c, "Occurences");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubPromiseSum *hS = (HubPromiseSum *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -415,6 +637,23 @@ void HubPromiseSumToCSV( void *data, Writer *w)
 /*****************************************************************************/
 void HubFileDiffToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "File");
+        CsvWriterField(c, "Change detected at");
+        CsvWriterField(c, "plusminus");
+        CsvWriterField(c, "line");
+        CsvWriterField(c, "diff");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubFileDiff *hd = (HubFileDiff *) data;
 
     assert( hd );
@@ -452,6 +691,23 @@ void HubFileDiffToCSV( void *data, Writer *w)
 
 void HubBundleSeenToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Bundle");
+        CsvWriterField(c, "Last verified");
+        CsvWriterField(c, "%% Compliance");
+        CsvWriterField(c, "Avg %% compliance");
+        CsvWriterField(c, "+/- %%");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -470,6 +726,24 @@ void HubBundleSeenToCSV( void *data, Writer *w)
 
 void HubBundleSeenWeightedToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Host");
+        CsvWriterField(c, "Bundle");
+        CsvWriterField(c, "Last verified");
+        CsvWriterField(c, "%% Compliance");
+        CsvWriterField(c, "Avg %% compliance");
+        CsvWriterField(c, "+/- %%");
+        CsvWriterField(c, "Host compliance status");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -489,6 +763,20 @@ void HubBundleSeenWeightedToCSV( void *data, Writer *w)
 
 void HubHostToCSV( void *data, Writer *w)
 {
+    assert(w);
+
+    if (!data)
+    {
+        CsvWriter *c = CsvWriterOpen(w);
+
+        CsvWriterField(c, "Hostkey");
+        CsvWriterField(c, "Hostname");
+        CsvWriterField(c, "IP address");
+
+        CsvWriterClose(c);
+        return;
+    }
+
     HubHost *hh = (HubHost *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
@@ -524,8 +812,26 @@ Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
         writer = FileWriter( fopen( wr_info->csv_path, "r+" ) );
     }
 
-    // TODO: write header
     return writer;
+}
+
+/*****************************************************************************/
+
+void ExportWebReportWriteHeader(Writer *writer,
+                                void (*fn_ptr_get_csv)(void *, Writer *),
+                                WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+    assert(wr_info->total_lines >= 0);
+
+    if( !wr_info->write_data )
+    {
+        return;
+    }
+
+    assert(writer);
+
+    (*fn_ptr_get_csv) (NULL, writer);
 }
 
 /*****************************************************************************/

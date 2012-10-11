@@ -773,15 +773,16 @@ JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_in
     {
         ALARM_PID = -1;
 
-        Writer *writer = NULL;
         if( wr_info->write_data == true )
         {
-            writer = ExportWebReportStart( wr_info );
+            Writer *writer = ExportWebReportStart(wr_info);
             assert( writer );
             if(!writer)
             {
                 _exit(0);
             }
+
+            ExportWebReportWriteHeader(writer, HubHostToCSV, wr_info);
 
             for (Rlist *rp = records_p; rp != NULL; rp = rp->next)
             {
