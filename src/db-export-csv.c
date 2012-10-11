@@ -21,7 +21,7 @@ bool ExportWebReportStatusInitialize( WebReportFileInfo *wr_info )
 
     if( !ret )
     {
-      wr_info->error_in_update = true;
+        wr_info->error_in_update = true;
         //      write to syslog / apache error log
     }
 
@@ -32,9 +32,9 @@ bool ExportWebReportStatusInitialize( WebReportFileInfo *wr_info )
 
 bool ExportWebReportStatusFinalize( WebReportFileInfo *wr_info )
 {
-  if(!wr_info)
+    if(!wr_info)
     {
-      return false;
+        return false;
     }
 
     assert(wr_info->write_data == true);
@@ -52,7 +52,7 @@ bool ExportWebReportStatusFinalize( WebReportFileInfo *wr_info )
 
     if( !ret )
     {
-      wr_info->error_in_update = true;
+        wr_info->error_in_update = true;
     }
 
     return ret;
@@ -449,27 +449,27 @@ void HubHostToCSV( void *data, char buffer[CF_BUFSIZE])
 
 Writer *ExportWebReportStart( WebReportFileInfo *wr_info )
 {  
-  assert( wr_info );
-  assert( wr_info->write_data );
+    assert( wr_info );
+    assert( wr_info->write_data );
 
     if( !ExportWebReportStatusInitialize( wr_info ) )
     {
-      return NULL;
+        return NULL;
     }
 
-     Writer *writer = NULL;
+    Writer *writer = NULL;
 
-     struct stat s;
-     if (stat(wr_info->csv_path, &s) == -1)
-     {
-         writer = FileWriter( fopen( wr_info->csv_path, "w" ) );
-     }
-     else
-     {
-         writer = FileWriter( fopen( wr_info->csv_path, "r+" ) );
-     }
+    struct stat s;
+    if (stat(wr_info->csv_path, &s) == -1)
+    {
+        writer = FileWriter( fopen( wr_info->csv_path, "w" ) );
+    }
+    else
+    {
+        writer = FileWriter( fopen( wr_info->csv_path, "r+" ) );
+    }
 
-     // TODO: write header 
+    // TODO: write header
     return writer;
 }
 

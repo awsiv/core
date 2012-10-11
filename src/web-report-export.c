@@ -48,7 +48,7 @@ void DeleteWebReportFileInfo( WebReportFileInfo *w )
         free( w->report_path );
         free( w->report_filename );
         free( w->request_id );
-	free( w->csv_path );
+        free( w->csv_path );
     }
 
     free(w);
@@ -84,7 +84,7 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
 
     wr_info->write_data = false;
     CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch, regex,
-                                            filter, false, promise_context, wr_info);
+                       filter, false, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -107,7 +107,7 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
 
         wr_info->write_data = true;
         CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch, regex,
-                                                filter, false, promise_context, wr_info);
+                           filter, false, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 
@@ -136,7 +136,7 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
     DATABASE_OPEN_WR(&dbconn);
     wr_info->write_data = false;
     CFDB_QueryClasses(&dbconn, hostkey, context, regex, from, to,
-                                           filter, false, promise_context, wr_info);
+                      filter, false, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -158,7 +158,7 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
 
         wr_info->write_data = true;
         CFDB_QueryClasses(&dbconn, hostkey, context, regex, from, to,
-                                               filter, false, promise_context, wr_info);
+                          filter, false, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 
@@ -179,9 +179,9 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
 /*****************************************************************************/
 
 JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, const char *lval,
-                                  const char *rval, const char *type, bool regex,
-                                  const HostClassFilter *filter,
-                                  PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                      const char *rval, const char *type, bool regex,
+                                      const HostClassFilter *filter,
+                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -196,7 +196,7 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
     DATABASE_OPEN_WR(&dbconn);
     wr_info->write_data = false;
     CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                     regex, 0, time(NULL), filter, promise_context, wr_info);
+                        regex, 0, time(NULL), filter, promise_context, wr_info);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -218,7 +218,7 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
         wr_info->write_data = true;
         CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                         regex, 0, time(NULL), filter, promise_context, wr_info);
+                            regex, 0, time(NULL), filter, promise_context, wr_info);
 
         CFDB_Close(&dbconn);
 
@@ -237,8 +237,8 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
 /*****************************************************************************/
 JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from, time_t to,
-                                        int k, int nk, int rep, HostClassFilter *filter,
-                                        PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                       int k, int nk, int rep, HostClassFilter *filter,
+                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -289,9 +289,9 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
 /*****************************************************************************/
 
 JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char *status, bool regex,
-                                          HostClassFilter *host_class_filter, HostColourFilter *host_color_filter,
-                                          bool last_run_only, PromiseContextMode promise_context,
-                                          WebReportFileInfo *wr_info)
+                                              HostClassFilter *host_class_filter, HostColourFilter *host_color_filter,
+                                              bool last_run_only, PromiseContextMode promise_context,
+                                              WebReportFileInfo *wr_info)
 {
     assert( host_class_filter && wr_info );
 
@@ -434,8 +434,8 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
 /*****************************************************************************/
 
 JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, char *laddress,
-                                      time_t lago, int lregex, HostClassFilter *filter,
-                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                     time_t lago, int lregex, HostClassFilter *filter,
+                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
@@ -588,8 +588,8 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
 /*****************************************************************************/
 
 JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
-                                         time_t from, time_t to, HostClassFilter *filter,
-                                         PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                        time_t from, time_t to, HostClassFilter *filter,
+                                        PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );
 
