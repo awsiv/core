@@ -104,10 +104,10 @@ bool ExportWebReportUpdateStatus( WebReportFileInfo *wr_info )
         return false;
     }
 
-    long double lines_written = wr_info->lines_written;
-    long double total_lines =  wr_info->total_lines;
+    double lines_written = wr_info->lines_written;
+    double total_lines = wr_info->total_lines;
 
-    int percent_done = (int) (lines_written / total_lines) * 100;
+    int percent_done = (lines_written / total_lines) * 100.0;
 
     char status_str[CF_MAXVARSIZE];
     snprintf( status_str, CF_MAXVARSIZE - 1, "%d", percent_done );
