@@ -1675,9 +1675,6 @@ typedef struct
 #define REPORT_FORMAT_CSV 1
 #define REPORT_FORMAT_PDF 2
 
-#define BIT_SET( a, b ) (a |= b)
-#define BIT_CHECK( a, b ) (a & b)
-
 // Report types
 
 #define CFREPORT_HOSTS 1

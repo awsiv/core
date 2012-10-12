@@ -29,11 +29,11 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
 
     {
         JsonElement *output_types = JsonArrayCreate(5);
-        if (BIT_CHECK(scheduled_report->output_type, REPORT_FORMAT_CSV))
+        if (scheduled_report->output_type & REPORT_FORMAT_CSV)
         {
             JsonArrayAppendString(output_types, "csv");
         }
-        if (BIT_CHECK(scheduled_report->output_type, REPORT_FORMAT_PDF))
+        if (scheduled_report->output_type & REPORT_FORMAT_PDF)
         {
             JsonArrayAppendString(output_types, "pdf");
         }
