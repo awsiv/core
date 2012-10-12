@@ -578,11 +578,11 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    if(is_software_report)
+    if( wr_info && is_software_report)
     {
         ExportWebReportWriteHeader( writer, HubSoftwareToCSV, wr_info );
     }
-    else
+    else if (wr_info)
     {
         ExportWebReportWriteHeader( writer, HubPatchesToCSV, wr_info );
     }
@@ -783,7 +783,10 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubClassToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubClassToCSV, wr_info);
+    }
 
     while ( MongoCursorNext(cursor) )
     {
@@ -1087,7 +1090,10 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubTotalComplianceToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubTotalComplianceToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -1358,7 +1364,10 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubVariablesToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubVariablesToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -1758,7 +1767,10 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubPromiseComplianceToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPromiseComplianceToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -1862,7 +1874,10 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubPromiseComplianceWeightedToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPromiseComplianceWeightedToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -2061,7 +2076,10 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubLastseenToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubLastseenToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -2370,7 +2388,10 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubPerformanceToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPerformanceToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -2542,7 +2563,10 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubSetuidToCSV,wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubSetuidToCSV,wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -2675,7 +2699,10 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubFileChangesToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubFileChangesToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {        
@@ -2844,7 +2871,10 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubFileDiffToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubFileDiffToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -3078,7 +3108,10 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *hostkey, Promis
         }
     }
 
-    ExportWebReportWriteHeader(writer, HubPromiseLogToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPromiseLogToCSV, wr_info);
+    }
 
     int count = 0;
 
@@ -3255,7 +3288,10 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
         }
     }
 
-    ExportWebReportWriteHeader(writer, HubPromiseSumToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPromiseSumToCSV, wr_info);
+    }
 
     Rlist *sum_records = NULL;
     MapIterator iter = MapIteratorInit(log_counts);
@@ -3433,7 +3469,10 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
         }
     }
 
-    ExportWebReportWriteHeader(writer, HubPromiseLogToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubPromiseLogToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
@@ -3559,7 +3598,10 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubValueToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubValueToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {        
@@ -3999,7 +4041,10 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubBundleSeenToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubBundleSeenToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {        
@@ -4110,7 +4155,10 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
     Writer *writer = NULL;
     WEB_REPORT_EXPORT_START( wr_info, writer, cursor );
 
-    ExportWebReportWriteHeader(writer, HubBundleSeenWeightedToCSV, wr_info);
+    if (wr_info)
+    {
+        ExportWebReportWriteHeader(writer, HubBundleSeenWeightedToCSV, wr_info);
+    }
 
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
