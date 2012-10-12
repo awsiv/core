@@ -26,6 +26,7 @@
 #include "files_lib.h"
 #include "files_interfaces.h"
 #include "license.h"
+#include "files_interfaces.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
