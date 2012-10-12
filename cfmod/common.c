@@ -108,6 +108,11 @@ bool PHPArrayBoolGet(zval *php_array, char *key, bool *out)
     return retval;
 }
 
+bool PHPArrayIsEmpty(zval *php_array)
+{
+    return zend_hash_num_elements(Z_ARRVAL_P(php_array)) == 0;
+}
+
 WebReportFileInfo *PHPArrayWebReportFileInfoGet( zval *php_array )
 {
     assert( php_array );

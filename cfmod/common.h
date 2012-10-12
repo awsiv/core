@@ -76,9 +76,10 @@ JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count);
 WebReportFileInfo *PHPArrayWebReportFileInfoGet( zval *php_array );
 bool PHPArrayBoolGet(zval *php_array, char *key, bool *out);
 bool PHPArrayStringGet(zval *php_array, char *key, char *buffer, int bufsize);
+bool PHPArrayIsEmpty(zval *php_array);
 
 #define PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info) \
-if( report_file_info_array ) \
+if( report_file_info_array && !PHPArrayIsEmpty(report_file_info_array) ) \
 { \
     report_file_info = PHPArrayWebReportFileInfoGet(report_file_info_array); \
     if( !report_file_info ) \
