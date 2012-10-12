@@ -1688,6 +1688,14 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const 
 
             JsonArrayAppendArray(scope_data, data_entry);
         }
+
+        if (scope_entry)
+        {
+            assert(scope_data);
+            JsonObjectAppendInteger(scope_entry, "count", JsonElementLength(scope_data));
+            scope_entry = NULL;
+            scope_data = NULL;
+        }
     }
 
 
