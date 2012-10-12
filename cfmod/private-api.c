@@ -1726,7 +1726,7 @@ PHP_FUNCTION(cfpr_report_setuid)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll|a",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -2118,7 +2118,7 @@ PHP_FUNCTION(cfpr_report_value)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssaasbll|a",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssaasbll|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
