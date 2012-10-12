@@ -799,7 +799,7 @@ cursor = MongoFind(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&query);
 bson_destroy(&field);
 
-while (mongo_cursor_next(cursor) == MONGO_OK)  // loops over documents
+while (MongoCursorNext(cursor))  // loops over documents
    {
    bson_iterator_init(&it1, mongo_cursor_bson(cursor));
    

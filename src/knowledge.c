@@ -633,7 +633,7 @@ static Rlist *Nova_GetTestMachines(void)
 
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents  
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
@@ -731,7 +731,7 @@ void Nova_UpdateTestData(void)
 
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents   
+    while (MongoCursorNext(cursor))   // loops over documents
     {
 
         bson_iterator_init(&it, mongo_cursor_bson(cursor));

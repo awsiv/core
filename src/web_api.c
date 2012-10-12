@@ -3200,7 +3200,7 @@ JsonElement *Nova2PHP_list_knowledge_bundles(void)
     mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_BUNDLES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -3249,7 +3249,7 @@ JsonElement *Nova2PHP_list_topics_for_bundle(char *name)
     mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         char topic[CF_BUFSIZE] = {0}, context[CF_BUFSIZE] = {0};
         int topic_id = 0;
@@ -3318,7 +3318,7 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 
     buffer[0] = '\0';
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -4076,7 +4076,7 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     cfapi_errid errid = ERRID_SUCCESS;
 
-    if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
+    if (MongoCursorNext(cursor))      // not more than one record
     {
         bson_iterator it1;
 
@@ -4419,7 +4419,7 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
 
     CFDB_Close(&dbconn);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator i;
 

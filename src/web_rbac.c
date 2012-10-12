@@ -1070,7 +1070,7 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
     bson_destroy(&field);
 
     *users_out = NULL;
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         const char *username = NULL;
         BsonStringGet(&cursor->current, dbkey_user_username, &username);
@@ -1707,7 +1707,7 @@ HubQuery *CFDB_GetRoles(bson *query)
 
     CFDB_Close(&conn);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
 	char name[CF_MAXVARSIZE], desc[CF_MAXVARSIZE], clRxIncl[CF_MAXVARSIZE],
 	    clRxExcl[CF_MAXVARSIZE], bRxIncl[CF_MAXVARSIZE], bRxExcl[CF_MAXVARSIZE];
