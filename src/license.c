@@ -18,6 +18,7 @@
 #include "crypto.h"
 #include "files_names.h"
 #include "vars.h"
+#include "files_interfaces.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

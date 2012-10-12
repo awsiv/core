@@ -16,6 +16,7 @@
 #include "granules.h"
 #include "hub-maintenance.h"
 #include "hub-worker.h"
+#include "files_interfaces.h"
 
 /*******************************************************************/
 
