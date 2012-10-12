@@ -1912,7 +1912,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
     }
     else
     {
-        Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex,
+        payload = Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex,
                                   from, to, filter, &page, promise_context_mode);
     }
 
