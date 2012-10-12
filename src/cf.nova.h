@@ -256,6 +256,7 @@ typedef struct
     long lines_written;
     long lines_since_last_update;
     int report_type;
+    pid_t child_pid;
     bool write_data;
     bool error_in_update;
     char *report_path;

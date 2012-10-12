@@ -5,6 +5,8 @@
 
 #include <assert.h>
 
+static bool WebExportWriteChildPid(WebReportFileInfo *wr_info);
+
 /*****************************************************************************/
 
 WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
@@ -31,6 +33,7 @@ WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_pat
     w->lines_since_last_update = 0;
     w->write_data = false;
     w->error_in_update = false;
+    w->child_pid = -1;
 
     return w;
 }
@@ -69,11 +72,11 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
 
@@ -92,6 +95,8 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -116,11 +121,11 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -138,6 +143,8 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -171,11 +178,11 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -193,6 +200,8 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -217,11 +226,11 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -239,6 +248,8 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -279,11 +290,11 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -310,6 +321,8 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -344,11 +357,11 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -375,6 +388,8 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
         _exit(0);
     }
 
+    WebExportWriteChildPid(wr_info);
+
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
     return retval;
@@ -399,11 +414,11 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -421,6 +436,8 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -446,11 +463,11 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -467,6 +484,8 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -492,11 +511,11 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -513,6 +532,8 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -537,11 +558,11 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -558,6 +579,8 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -582,11 +605,11 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -603,6 +626,8 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -626,11 +651,11 @@ JsonElement *WebExportPromiseLogReport(char *hostkey, char *handle, char *causeR
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -648,6 +673,8 @@ JsonElement *WebExportPromiseLogReport(char *hostkey, char *handle, char *causeR
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -673,11 +700,11 @@ JsonElement *WebExportPromiseLogSummaryReport(char *hostkey, char *handle, char 
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -695,6 +722,8 @@ JsonElement *WebExportPromiseLogSummaryReport(char *hostkey, char *handle, char 
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -719,11 +748,11 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
 
     RETURN_WITH_ERROR_JSON_WR( wr_info->total_lines < 1, "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
         EnterpriseDB dbconn;
@@ -741,6 +770,8 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
 
         _exit(0);
     }
+
+    WebExportWriteChildPid(wr_info);
 
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
@@ -765,11 +796,11 @@ JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_in
     RETURN_WITH_ERROR_JSON_WR( host_count == 0,
                                "The query returned empty results. Please try different filters." );
 
-    pid_t pid = fork();
+    wr_info->child_pid = fork();
 
-    RETURN_WITH_ERROR_JSON_WR( pid == -1, "Unable to start CSV exporter process." );
+    RETURN_WITH_ERROR_JSON_WR( wr_info->child_pid == -1, "Unable to start CSV exporter process." );
 
-    if (pid == 0)
+    if (wr_info->child_pid == 0)
     {
         ALARM_PID = -1;
 
@@ -800,6 +831,8 @@ JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_in
         _exit(0);
     }
 
+    WebExportWriteChildPid(wr_info);
+
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
     return retval;
@@ -807,3 +840,24 @@ JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_in
 
 /*****************************************************************************/
 
+static bool WebExportWriteChildPid(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char pid_file[CF_MAXVARSIZE] = "\0";
+    snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
+
+    Writer *writer = FileWriter(fopen(pid_file, "w"));
+    assert(writer);
+    if(!writer)
+    {
+        return false;
+    }
+
+    WriterWriteF(writer, "%d", wr_info->child_pid);
+
+    WriterClose( writer );
+    return true;
+}
+
+/*****************************************************************************/
