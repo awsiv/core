@@ -28,6 +28,10 @@ WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_pat
     snprintf(csv_path, CF_MAXVARSIZE - 1, "%s/%s.csv", w->report_path, w->report_filename);
     w->csv_path = SafeStringDuplicate( csv_path );
 
+    char abort_file[CF_MAXVARSIZE];
+    snprintf(abort_file, CF_MAXVARSIZE - 1, "%s/%s.abort", w->report_path, w->report_filename);
+    w->abort_file = SafeStringDuplicate(abort_file);
+
     w->total_lines = 0;
     w->lines_written = 0;
     w->lines_since_last_update = 0;

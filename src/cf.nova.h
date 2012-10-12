@@ -263,7 +263,12 @@ typedef struct
     char *report_filename;
     char *request_id;
     char *csv_path;
+    char *abort_file;
 }WebReportFileInfo;
+
+WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
+                                         const char *report_filename, const char *request_id );
+void DeleteWebReportFileInfo( WebReportFileInfo *w );
 
 /*****************************************************************************/
 

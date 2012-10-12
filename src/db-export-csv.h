@@ -40,6 +40,8 @@ void ExportWebReportWriteHeader(Writer *writer,
                                 void (*fn_ptr_get_csv)(void *, Writer *),
                                 WebReportFileInfo *wr_info);
 
+void ExportWebReportCheckAbort(WebReportFileInfo *wr_info, Writer *w);
+
 #define WEB_REPORT_EXPORT_START( wr_info, writer, cursor ) \
     if( wr_info && wr_info->write_data ) \
     { \

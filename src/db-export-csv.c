@@ -49,7 +49,7 @@ bool ExportWebReportStatusFinalize( WebReportFileInfo *wr_info )
 
     char done_str[CF_MAXVARSIZE];
     snprintf( done_str, CF_MAXVARSIZE -1 , "%d", done );
-    bool ret = ExportWebReportWriteStatusString( "100", wr_info->csv_path, false );
+    bool ret = ExportWebReportWriteStatusString( done_str, wr_info->csv_path, false );
 
     if( !ret )
     {
@@ -849,6 +849,8 @@ bool ExportWebReportUpdate( Writer *writer, void *data,
         return true;
     }
 
+    ExportWebReportCheckAbort(wr_info, writer);
+
     assert( writer );
     assert( wr_info->lines_written >= 0 );
     assert( wr_info->lines_since_last_update >= 0 );
@@ -868,6 +870,29 @@ bool ExportWebReportUpdate( Writer *writer, void *data,
     }
 
     return true;
+}
+
+/*****************************************************************************/
+
+void ExportWebReportCheckAbort(WebReportFileInfo *wr_info, Writer *w)
+{
+    assert(wr_info);
+
+    struct stat s;
+    if(stat(wr_info->abort_file, &s) == -1)
+    {
+        return;
+    }
+
+    // cleanup
+    WriterClose(w);
+
+    ExportWebReportWriteStatusString("-1", wr_info->csv_path, false);
+    remove(wr_info->csv_path);
+
+    DeleteWebReportFileInfo(wr_info);
+
+    _exit(0);
 }
 
 /*****************************************************************************/

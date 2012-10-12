@@ -35,10 +35,6 @@
     return error;\
    }\
 
-WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
-                                         const char *report_filename, const char *request_id );
-void DeleteWebReportFileInfo( WebReportFileInfo *w );
-
 JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, char *arch,
                                       bool regex, char *type, HostClassFilter *filter,
                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info );
