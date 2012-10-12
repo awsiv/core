@@ -111,12 +111,24 @@ JsonElement *HubRoleToJson(const HubRole *role)
     return obj;
 }
 
+static const char *StrippedHostKey(const char *hostkey)
+{
+    if (hostkey)
+    {
+        if (strncmp(hostkey, "SHA=", 4) == 0)
+        {
+            return hostkey + (4 * sizeof(char));
+        }
+    }
+    return hostkey;
+}
+
 JsonElement *HubHostToJson(const HubHost *host)
 {
     assert(host);
 
     JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "id", host->keyhash);
+    JsonObjectAppendString(obj, "id", StrippedHostKey(host->keyhash));
 
     if (host->hostname)
     {

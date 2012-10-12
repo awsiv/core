@@ -100,6 +100,15 @@ class Utils
         return $state;
     }
 
+    public static function prefixedHostKey($hostkey)
+    {
+        if ($hostkey && substr($hostkey, 0, 4) !== 'SHA=')
+        {
+            return 'SHA=' . $hostkey;
+        }
+        return $hostkey;
+    }
+
     public static function CFAPIErrorCodeToHttpCode($cfapi_code)
     {
         switch ($cfapi_code)
@@ -123,7 +132,6 @@ class Utils
 
             default:
                 return 500;
-
         }
     }
 }

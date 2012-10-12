@@ -10,8 +10,11 @@ class HostVital extends Resource
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfapi_host_vital_get($user, $host_id, $vital_id,
-            DefaultParameters::from(), DefaultParameters::to());
+        $payload = cfapi_host_vital_get($user,
+                Utils::prefixedHostKey($host_id),
+                $vital_id,
+                DefaultParameters::from(),
+                DefaultParameters::to());
         if ($payload)
         {
             $response->code = Response::OK;
@@ -31,12 +34,13 @@ class HostVital extends Resource
  */
 class HostContextList extends Resource
 {
-    function get($request, $hostid)
+    function get($request, $host_id)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfapi_host_context_list($user, $hostid);
+        $payload = cfapi_host_context_list($user,
+                Utils::prefixedHostKey($host_id));
         if ($payload)
         {
             $response->code = Response::OK;
@@ -56,12 +60,13 @@ class HostContextList extends Resource
  */
 class HostVitalList extends Resource
 {
-    function get($request, $hostid)
+    function get($request, $host_id)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfapi_host_vital_list($user, $hostid);
+        $payload = cfapi_host_vital_list($user,
+                Utils::prefixedHostKey($host_id));
         if ($payload)
         {
             $response->code = Response::OK;
@@ -77,16 +82,17 @@ class HostVitalList extends Resource
 }
 
 /**
- * @uri /host/:id 1
+ * @uri /host/:host_id 1
  */
 class Host extends Resource
 {
-    function get($request, $id)
+    function get($request, $host_id)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfapi_host_get($user, $id);
+        $payload = cfapi_host_get($user,
+                Utils::prefixedHostKey($host_id));
         if ($payload)
         {
             $response->code = Response::OK;
@@ -100,13 +106,14 @@ class Host extends Resource
         return $response;
     }
 
-    function delete($request, $id)
+    function delete($request, $host_id)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
 
-        if (cfapi_host_delete($user, $id))
+        if (cfapi_host_delete($user,
+                Utils::prefixedHostKey($host_id)))
         {
             $response->code = Response::NOCONTENT;
         }
