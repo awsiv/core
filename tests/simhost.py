@@ -74,16 +74,43 @@ class SimHost:
                                           "cl": cl 
                                         }})
 
+    def __update_logs_notkept(self):
+        nk_data = {};
+        for i in range(10):
+            handle = 'cfengine_limit_robot_agents_processes_kill_cf_monitord_' + str(1);
+            cause = " !! Couldn't send promised signal 'kill' (9) to pid 17409 (might be dead) " + str(i);
+            nk_key = handle + "@" + cause;
+            t = int(time.time());
+
+            nk_value = {};
+            nk_value["h"] = handle;
+            nk_value["ca"] = cause;
+            time_array = [];
+
+            for j in range(100):
+                time_array.append( t - j)
+
+            nk_value["t"] = time_array;
+
+            nk_data[nk_key] = nk_value;
+
+            self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        {"$set":{
+                                            "logs_nk": nk_data
+                                        }},
+                                        upsert = True)
+
     def update(self):
         # update host id
         self.conn.cfreport.hosts.update({ "kH": self.hostkey },
-                                        { "kH": self.hostkey, 
+                                        {"$set":{ "kH": self.hostkey,
                                           "ha": [ self.hostname ], 
                                           "ip": [ self.ip ],
                                           "t": int(time.time())
-                                        },
+                                        }},
                                         upsert = True)
         self.__update_classes()
+        self.__update_logs_notkept()
         
                                         
 
