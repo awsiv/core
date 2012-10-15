@@ -367,6 +367,8 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
         bson_init(&keys);
         bson_append_string(&keys, cfr_keyhash, keyHash);
         bson_append_string(&keys, cfm_id, monId);
+        bson_append_int(&keys, cfr_day, time(NULL));
+
         BsonFinish(&keys);
 
         // create object to insert

@@ -4429,54 +4429,77 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
     }
 }
 
-cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t last_update, time_t from, time_t to, HubVital **vital_out)
+cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t from, time_t to, HubVital **vital_out)
 {
     assert(hostkey);
     assert(vital_id);
     assert(vital_out);
 
-    if (!hostkey || !vital_id || !vital_out)
+    if (!vital_id || !vital_out)
     {
         return ERRID_ARGUMENT_MISSING;
     }
 
     from = MAX(from, 0);
-    to = MIN(to, last_update);
+    to = MIN(to, MeasurementSlotStart(time(NULL)));
 
     bson query;
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+
+    if (hostkey)
+    {
+        bson_append_string(&query, cfr_keyhash, hostkey);
+    }
     bson_append_string(&query, cfm_id, vital_id);
     BsonFinish(&query);
 
     // result
     bson fields;
 
-    BsonSelectReportFields(&fields, 3,
+    BsonSelectReportFields(&fields, 5,
+                           cfr_keyhash,
                            cfm_units,
                            cfm_description,
+                           cfr_day,
                            cfm_q_arr);
 
-    bson record = { 0 };
-
-    bool found = MongoFindOne(conn, MONGO_DATABASE_MON_MG, &query, &fields, &record) == MONGO_OK;
+    mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    if (found)
+    *vital_out = NULL;
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
+        const bson *record = mongo_cursor_bson(cursor);
+
+        const char *vital_hostkey = NULL;
+        BsonStringGet(record, cfr_keyhash, &vital_hostkey);
+        assert(vital_hostkey);
+
         const char *units = NULL;
-        BsonStringGet(&record, cfm_units, &units);
+        BsonStringGet(record, cfm_units, &units);
 
         const char *description = NULL;
-        BsonStringGet(&record, cfm_description, &description);
+        BsonStringGet(record, cfm_description, &description);
 
-        HubVital *vital = NewHubVital(hostkey, vital_id, units, description, MeasurementSlotStart(last_update));
+        time_t last_update = BsonLongGet(record, cfr_day);
+        if (last_update == 0)
+        {
+            // old-style record without timestamp information, get from host record
+            CFDB_QueryLastHostUpdate(conn, vital_hostkey, &last_update);
+            if (last_update == 0)
+            {
+                continue;
+            }
+        }
+
+        HubVital *vital = NewHubVital(vital_hostkey, vital_id, units, description, MeasurementSlotStart(last_update));
         vital->q = SequenceCreate(CF_MAX_SLOTS, DeleteHubVitalPoint);
 
         bson q_arr = { 0 };
-        if (BsonArrayGet(&record, cfm_q_arr, &q_arr))
+        if (BsonArrayGet(record, cfm_q_arr, &q_arr))
         {
             bson_iterator q_iter[1];
             bson_iterator_init(q_iter, &q_arr);
@@ -4492,16 +4515,16 @@ cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char 
             }
         }
 
+        if (*vital_out)
+        {
+            vital->next = *vital_out;
+        }
         *vital_out = vital;
-        bson_destroy(&record);
-    }
-    else
-    {
-        *vital_out = NULL;
     }
 
+    mongo_cursor_destroy(cursor);
 
-    return found ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
+    return *vital_out ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
 }
 
 int CFDB_QueryMagView2(EnterpriseDB *conn, const char *keyhash, const char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)
