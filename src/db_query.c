@@ -6339,13 +6339,6 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
 
 /******************************************************************/
 
-
-/******************************************************************/
-
-
-
-/*****************************************************************************/
-
 HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx,
                                           HostClassFilter *hostClassFilter, PageInfo *page)
 {
@@ -6378,10 +6371,9 @@ HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_
 
 /*****************************************************************************/
 
-int CFDB_QueryIsMaster(void)
+bool CFDB_QueryIsMaster(void)
 {
-    bson_iterator it1;
-    int ret = false;
+
     EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
@@ -6394,46 +6386,28 @@ int CFDB_QueryIsMaster(void)
     bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
     BsonFinish(&cmd);
 
-    bson result;
+    bson result = {0};
 
-    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result) == MONGO_OK)
+    bool ret = false;
+    if (MongoRunCommand(&conn, "admin", &cmd, &result) == MONGO_OK)
     {
-        if (bson_find(&it1, &result, "ismaster"))
-        {
-            if (bson_iterator_bool(&it1))
-            {
-                ret = true;
-            }
-        }
-        else
-        {
-            CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
-        }
-
+        BsonBoolGetCheckExists(&result, "ismaster", &ret);
         bson_destroy(&result);
     }
     else
     {
         MongoCheckForError(&conn, "CFDB_QueryIsMaster()", "", NULL);
     }
-
+    
     bson_destroy(&cmd);
     CFDB_Close(&conn);
-
-    if (!ret)
-    {
-        CfOut(cf_verbose, "", "We are part of report replica set, but not master \n");
-    }
-
     return ret;
 }
 
 /*************************************************/
 
-int CFDB_QueryMasterIP(char *buffer, int bufsize)
+bool CFDB_QueryMasterIP(char *buffer, int bufsize)
 {
-    bson_iterator it1;
-    int ret = false;
     EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
@@ -6446,25 +6420,18 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
     bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
     BsonFinish(&cmd);
 
-    bson result;
-
-    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result) == MONGO_OK)
+    bson result = {0};
+    
+    bool ret = false;
+    if (MongoRunCommand(&conn, "admin", &cmd, &result) == MONGO_OK)
     {
-        if (bson_find(&it1, &result, "primary"))
-        {
-            snprintf(buffer, bufsize, "%s", bson_iterator_string(&it1));
-            ret = true;
-        }
-        else
-        {
-            CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
-        }
-
+        BsonStringWrite(buffer, bufsize, &result, "primary");
         bson_destroy(&result);
+        ret = true;
     }
     else
     {
-        MongoCheckForError(&conn, "CFDB_QueryIsMaster()", "", NULL);
+        MongoCheckForError(&conn, "CFDB_QueryMasterIP()", "", NULL);
     }
 
     bson_destroy(&cmd);
@@ -6489,11 +6456,10 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
     bson_append_string(&cmd, "replSetGetStatus", MONGO_HOSTS_COLLECTION);
     BsonFinish(&cmd);
 
-    bson result;
+    bson result = {0};
 
-    if (mongo_run_command(conn, "admin", &cmd, &result) == MONGO_OK)
+    if (MongoRunCommand(conn, "admin", &cmd, &result) == MONGO_OK)
     {
-
         bson_iterator_init(&it1, &result);
 
         if (bson_find(&it1, &result, "ok") && bson_iterator_int(&it1) == 1)

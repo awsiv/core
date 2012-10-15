@@ -194,8 +194,8 @@ void CFDB_GetBlueHostThreshold(unsigned long *threshold);
 bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *db_name );
 bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval,
                          EnterpriseDB *conn, const char *db_name);
-int CFDB_QueryIsMaster(void);
-int CFDB_QueryMasterIP(char *buffer, int bufsize);
+bool CFDB_QueryIsMaster(void);
+bool CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize);
 cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out);
 

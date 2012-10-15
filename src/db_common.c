@@ -143,6 +143,17 @@ int MongoFindOne( EnterpriseDB *conn, const char *ns, const bson *query,
 
 /********************************************************************/
 
+int MongoRunCommand(EnterpriseDB *conn, const char *ns, const bson *query, bson *out)
+{
+    assert( conn && ns);
+    assert( query && query->finished);
+    assert( out && !out->finished );
+
+    return mongo_run_command( conn, ns, query, out );
+}
+
+/********************************************************************/
+
 int MongoUpdate( EnterpriseDB *conn, const char *ns, const bson *cond,
     const bson *op, int flags, mongo_write_concern *custom_write_concern )
 {
