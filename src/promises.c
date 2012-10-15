@@ -255,18 +255,13 @@ static void Nova_DefineHubMaster(void)
     if (CFDB_QueryIsMaster())
     {
         HardClass("am_hub_master");
-        snprintf(master, sizeof(master), "%s", POLICY_SERVER);
     }
-    else
+    
+    char *sp;
+    CFDB_QueryMasterIP(master, sizeof(master));
+    if ((sp = strchr(master, ':')))
     {
-        char *sp;
-
-        CFDB_QueryMasterIP(master, sizeof(master));
-
-        if ((sp = strchr(master, ':')))
-        {
-            *sp = '\0';
-        }
+        *sp = '\0';
     }
 
     if (!NULL_OR_EMPTY(master) && !IsIPV4Address(master) && !IsIPV6Address(master))
