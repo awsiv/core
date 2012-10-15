@@ -70,9 +70,9 @@ class SimHost:
                           }
         
         self.conn.cfreport.hosts.update({ "kH": self.hostkey },
-                                        { "ck": sample,
+                                        {"$set":{ "ck": sample,
                                           "cl": cl 
-                                        })
+                                        }})
 
     def update(self):
         # update host id
