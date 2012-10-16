@@ -21,6 +21,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "sort.h"
 #include "conversion.h"
 #include "sequence.h"
+#include "granules.h"
 
 #include <assert.h>
 
@@ -1067,6 +1068,15 @@ HubVitalPoint *NewHubVitalPoint(time_t t, double value)
     point->value = value;
 
     return point;
+}
+
+const HubVitalPoint *HubVitalLastValue(const HubVital *vital)
+{
+    if (vital->q)
+    {
+        return vital->q->data[vital->q->length - 1];
+    }
+    return NULL;
 }
 
 void DeleteHubVitalPoint(HubVitalPoint *point)

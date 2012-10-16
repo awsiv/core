@@ -10,6 +10,9 @@
 #include "granules.h"
 #include "misc_lib.h"
 #include "item_lib.h"
+#include "set.h"
+#include "install.h"
+#include "sort.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -308,6 +311,106 @@ PHP_FUNCTION(cfpr_host_meter)
 /*****************************************************************************/
 /* Vitals functions                                                          */
 /*****************************************************************************/
+
+static int CompareHubVitalsByLastValue(const void *_a, const void *_b)
+{
+    const HubVital *a = _a;
+    const HubVital *b = _b;
+    const HubVitalPoint *a_point = HubVitalLastValue(a);
+    const HubVitalPoint *b_point = HubVitalLastValue(b);
+    if (!a_point || !b_point)
+    {
+        return 0;
+    }
+    return a_point->value - b_point->value;
+}
+
+static bool HubVitalIsInAllowedHostkeySet(void *_vital, void *_hostkeys)
+{
+    HubVital *vital = _vital;
+    Set *hostkeys = _hostkeys;
+
+    return SetContains(hostkeys, vital->hostkey);
+}
+
+PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *vital_id = NULL; int vital_id_len = 0;
+    PageInfo page = { 0 };
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &username, &username_len,
+                              &vital_id, &vital_id_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len);
+    ARGUMENT_CHECK_CONTENTS(vital_id_len);
+
+    HostClassFilter *filter = NULL;
+    {
+        HubQuery *result = CFDB_HostClassFilterFromUserRBAC(username);
+        ERRID_RBAC_CHECK(result, DeleteHostClassFilter);
+
+        filter = (HostClassFilter *) HubQueryGetFirstRecord(result);
+        DeleteHubQuery(result, NULL);
+    }
+    assert(filter);
+
+    EnterpriseDB conn[1];
+    if (!CFDB_Open(conn))
+    {
+        RETURN_NULL();
+    }
+
+    HubQuery *result = CFDB_QueryVital(conn, NULL, vital_id, 0, time(NULL));
+
+    Set *hostkeys = SetNew((MapHashFn)OatHash, (MapKeyEqualFn)StringSafeEqual, free);
+    {
+        Rlist *key_list = CFDB_QueryHostKeys(conn, NULL, NULL, 0, time(NULL), filter);
+        for (const Rlist *rp = key_list; rp; rp = rp->next)
+        {
+            SetAdd(hostkeys, SafeStringDuplicate(ScalarValue(rp)));
+        }
+        DeleteRlist(key_list);
+    }
+
+    CFDB_Close(conn);
+    DeleteHostClassFilter(filter);
+
+    RlistFilter(&result->records, HubVitalIsInAllowedHostkeySet, hostkeys, (void (*)(void *))DeleteHubVital);
+    SetDestroy(hostkeys);
+
+    PageRecords(&result->records, &page, DeleteHubVital);
+    result->records = SortRlist(result->records, CompareHubVitalsByLastValue);
+
+    JsonElement *payload = JsonArrayCreate(RlistLen(result->records));
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        const HubVital *vital = rp->item;
+
+        JsonElement *entry = JsonObjectCreate(5);
+        JsonObjectAppendString(entry, "hostkey", vital->hostkey);
+        JsonObjectAppendString(entry, "vitalId", vital->id);
+        {
+            const HubVitalPoint *last_value = HubVitalLastValue(vital);
+            if (last_value)
+            {
+                JsonObjectAppendInteger(entry, "lastUpdate", last_value->t);
+                JsonObjectAppendReal(entry, "lastValue", last_value->value);
+            }
+        }
+        JsonArrayAppendObject(payload, entry);
+    }
+
+    DeleteHubQuery(result, DeleteHubVital);
+
+    RETURN_JSON(payload);
+}
 
 PHP_FUNCTION(cfpr_vitals_list)
 {

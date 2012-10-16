@@ -99,6 +99,10 @@ PHP_FUNCTION(cfpr_vitals_view_week);
 // port plan: /host/vitals
 PHP_FUNCTION(cfpr_vitals_view_year);
 
+/*! \brief Special vitals function, should be killed ASAP, replaced by RE or something
+ */
+PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value);
+
 /*! \brief A histogram of bundle types
  */
 // port plan: (further investigate)
