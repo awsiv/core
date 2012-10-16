@@ -488,8 +488,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     }
     else
     {
-        WriterWriteF(writer, "   comment => \"(Uncommented \\\"%s\\\" promise by %.25s..)\";\n", pp->agentsubtype,
-                NovaEscape(pp->promiser));
+        WriterWriteF(writer, "   comment => \"Uncommented \\\"%s\\\" promise\";\n", pp->agentsubtype);
     }
 
     WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,

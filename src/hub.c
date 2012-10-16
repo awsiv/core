@@ -25,6 +25,7 @@
 #include "nova-reporting.h"
 #include "hub-scheduled-reports.h"
 #include "scope.h"
+#include "files_interfaces.h"
 
 /*******************************************************************/
 
@@ -948,7 +949,7 @@ static void Nova_CountMonitoredClasses(void)
 
     time_t now = time(NULL);
     hq = CFDB_QueryClasses(&dbconn, NULL, work, true, now - CF_HUB_HORIZON, now,
-                           NULL, false, PROMISE_CONTEXT_MODE_ALL);
+                           NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

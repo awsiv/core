@@ -16,6 +16,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "files_interfaces.h"
+
 // always returns 0 (assumes process is run by root/Administrator)
 uid_t getuid(void)
 {

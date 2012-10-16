@@ -227,7 +227,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false,
-                                    from, to, false, filter, PROMISE_CONTEXT_MODE_ALL);
+                                    from, to, false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -275,7 +275,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from,
-                                    to, false, filter, PROMISE_CONTEXT_MODE_ALL);
+                                    to, false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
 
@@ -371,7 +371,7 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                             true, from, to, true, filter, PROMISE_CONTEXT_MODE_ALL);
+                                             true, from, to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -422,7 +422,8 @@ static JsonElement *PromiseLogAsJson(EnterpriseDB *conn, PromiseLogState state, 
                                      const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
                                      int *total_results_out)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter, total_results_out, PROMISE_CONTEXT_MODE_ALL);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true,
+                                            filter, total_results_out, PROMISE_CONTEXT_MODE_ALL, NULL);
     PageRecords(&(result->records), page, DeleteHubPromiseLog);
 
     JsonElement *output = JsonArrayCreate(100);
@@ -500,7 +501,7 @@ static JsonElement *PromiseLogSummaryAsJson(EnterpriseDB *conn, PromiseLogState 
                                             int *total_results_out)
 {
     HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true,
-                                                   filter, PROMISE_CONTEXT_MODE_ALL);
+                                                   filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     if (total_results_out)
     {
@@ -798,7 +799,7 @@ PHP_FUNCTION(cfmod_resource_variable)
 
             result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value,
                                          SerializeRvalType(type), true, from, to,
-                                         filter, PROMISE_CONTEXT_MODE_ALL);
+                                         filter, PROMISE_CONTEXT_MODE_ALL, NULL);
         }
 
         DATABASE_CLOSE(&conn);
@@ -882,7 +883,7 @@ PHP_FUNCTION(cfmod_resource_context)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryClasses(&conn, hostkey, name, true, from, to, filter, false,
-                                   PROMISE_CONTEXT_MODE_ALL);
+                                   PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
 
@@ -982,7 +983,7 @@ PHP_FUNCTION(cfmod_resource_software)
 
         result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
                                     Nova_ShortArch(arch), true, filter, true,
-                                    PROMISE_CONTEXT_MODE_ALL);
+                                    PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
 
@@ -1079,8 +1080,7 @@ PHP_FUNCTION(cfmod_resource_setuid)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter,
-                                  PROMISE_CONTEXT_MODE_ALL);
+        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1209,9 +1209,9 @@ PHP_FUNCTION(cfmod_resource_file)
         DATABASE_OPEN(&conn);
 
         change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from,
-                                              (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL);
+                                              (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
         diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, (time_t)from,
-                                         (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL);
+                                         (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
         DATABASE_CLOSE(&conn);
 

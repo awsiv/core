@@ -375,11 +375,11 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
             const char *value = output_type_seq->data[i];
             if (StringSafeEqual("csv", value))
             {
-                BIT_SET(report_output_type, REPORT_FORMAT_CSV);
+                report_output_type |= REPORT_FORMAT_CSV;
             }
             else if (StringSafeEqual("pdf", value))
             {
-                BIT_SET(report_output_type, REPORT_FORMAT_PDF);
+                report_output_type |= REPORT_FORMAT_PDF;
             }
             else
             {

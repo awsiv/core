@@ -99,6 +99,19 @@ bool BsonTimeGet(const bson *b, const char *key, time_t *out)
     }
 }
 
+bool BsonDoubleGet(const bson *b, const char *key, double *out)
+{
+    bson_iterator it;
+
+    if (bson_find(&it, b, key) == BSON_DOUBLE)
+    {
+        *out = bson_iterator_double(&it);
+        return true;
+    }
+
+    return false;
+}
+
 bool BsonArrayGet(const bson *b, const char *key, bson *out)
 {
     bson_iterator it;
@@ -382,8 +395,6 @@ bool BsonAppendRegex(bson *b, const char *key, const char *pattern, const char *
     assert( b );
     assert( !b->finished );
     assert( key );
-    assert( pattern );
-    assert( opts );
 
     if( !pattern || !opts )
     {

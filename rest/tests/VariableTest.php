@@ -5,15 +5,13 @@ require_once "RestBaseTest.php";
 class VariableTest extends RestBaseTest
 {
 
-    /**
-     * test valid json response 
-     */
     public function testAllVariable()
     {
         try
         {
             $jsonArray = $this->getResults('/variable');
             $this->assertValidJson($jsonArray);
+            $this->assertEquals(13, sizeof($jsonArray));
         }
         catch (Pest_NotFound $e)
         {
@@ -21,9 +19,6 @@ class VariableTest extends RestBaseTest
         }
     }
 
-    /**
-     * Test variable with host key 
-     */
     public function testWithHostKey()
     {
         $jsonArray = $this->getResults('/variable?hostkey=' . $this->hostA);
@@ -38,9 +33,6 @@ class VariableTest extends RestBaseTest
         }
     }
 
-    /**
-     * Test variable with name 
-     */
     public function testWithName()
     {
 
@@ -57,9 +49,6 @@ class VariableTest extends RestBaseTest
         }
     }
 
-    /**
-     * Test software with scope 
-     */
     public function testWithScope()
     {
 
@@ -69,9 +58,6 @@ class VariableTest extends RestBaseTest
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
     }
 
-    /**
-     * Test software with value 
-     */
     public function testWithValue()
     {
 
@@ -81,9 +67,6 @@ class VariableTest extends RestBaseTest
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
     }
 
-    /**
-     * Test software with type 
-     */
     public function testVariableWithType()
     {
 
@@ -91,6 +74,20 @@ class VariableTest extends RestBaseTest
         $jsonArray = $this->getResults('/variable?type=' . $value);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
+    }
+
+    public function testHostByContext()
+    {
+        try
+        {
+            $jsonArray = $this->getResults('/variable?context=PK_SHA_30565.*' . $ip);
+            $this->assertValidJson($jsonArray);
+            $this->assertEquals(6, sizeof($jsonArray));
+        }
+        catch (Pest_NotFound $e)
+        {
+            $this->fail('Resource not found');
+        }
     }
 
 }

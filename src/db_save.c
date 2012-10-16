@@ -367,6 +367,8 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
         bson_init(&keys);
         bson_append_string(&keys, cfr_keyhash, keyHash);
         bson_append_string(&keys, cfm_id, monId);
+        bson_append_int(&keys, cfr_day, time(NULL));
+
         BsonFinish(&keys);
 
         // create object to insert
@@ -2252,7 +2254,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
         MongoCheckForError(conn, "GetNoteID", keyhash, NULL);
 
-        while (mongo_cursor_next(cursor) == MONGO_OK && !found)
+        while (MongoCursorNext(cursor) && !found)
         {
             bson_iterator_init(&it1, mongo_cursor_bson(cursor));
             objectId[0] = '\0';

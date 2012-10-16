@@ -45,7 +45,8 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool rege
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, filter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
+                                     time(NULL), false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
     DeleteHostClassFilter(filter);
 
     n = k = r = 0;
@@ -202,7 +203,7 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
-                            filter, true, PROMISE_CONTEXT_MODE_ALL);
+                            filter, true, PROMISE_CONTEXT_MODE_ALL, NULL);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -251,7 +252,7 @@ int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex,
-                             0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL);
+                             0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
@@ -335,7 +336,8 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter,
+                                   PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
@@ -393,7 +395,8 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL),
+                                     true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -449,7 +452,7 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL);
+                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
@@ -516,7 +519,7 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL);
+                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
@@ -581,7 +584,7 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, PROMISE_CONTEXT_MODE_ALL);
+    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -631,7 +634,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true,
-                               filter, PROMISE_CONTEXT_MODE_ALL);
+                               filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 
@@ -677,7 +680,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true,
-                            filter, PROMISE_CONTEXT_MODE_ALL);
+                            filter, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     DeleteHostClassFilter(filter);
 

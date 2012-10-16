@@ -143,7 +143,7 @@ static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn )
     bson_destroy(fields);
 
     Rlist *pending_queries = NULL;
-    while ( mongo_cursor_next( cursor ) == MONGO_OK )
+    while (MongoCursorNext(cursor))
     {
         const char *user_id = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_id, &user_id );
@@ -226,7 +226,7 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query
 
     bson_destroy( query );
 
-    while( mongo_cursor_next( cursor ) == MONGO_OK )
+    while (MongoCursorNext(cursor))
     {
         const char *user = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_user_id, &user );

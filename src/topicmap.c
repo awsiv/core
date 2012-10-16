@@ -255,7 +255,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -335,7 +335,7 @@ void Nova_DumpTopics()
     mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -466,7 +466,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -542,7 +542,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -683,7 +683,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -811,7 +811,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -916,7 +916,7 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
     snprintf(buffer, bufsize, "No available comment");
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -1032,7 +1032,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     int referred = false;
     Item *check = NULL;
     
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         JsonElement *json_obj = JsonObjectCreate(4);
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
@@ -1156,7 +1156,7 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
     int i;
 
     hq = CFDB_QueryVariables(dbconn, NULL, NULL, NULL, variable, NULL, NULL, true,
-                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL);
+                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -1279,7 +1279,7 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
     snprintf(classname, CF_MAXVARSIZE-1, "%s_.*", srv);
 
     hq = CFDB_QueryClasses(&dbconn, NULL, classname, true, now - (time_t)bluehost_threshold,
-                           now, NULL, false, PROMISE_CONTEXT_MODE_ALL);
+                           now, NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -1375,7 +1375,7 @@ JsonElement *Nova_GetApplicationServices()
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -1497,7 +1497,7 @@ JsonElement *Nova_GetMeasuredServices()
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -1654,7 +1654,7 @@ void Nova_FillInGoalComment(Item *ip)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -1710,7 +1710,7 @@ const char *Nova_GetBundleComment(char *bundle)
 
     CFDB_Close(&conn);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -2192,7 +2192,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -2291,7 +2291,7 @@ Item *Nova_GetTopicsInContext(char *context)
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
+    while (MongoCursorNext(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 

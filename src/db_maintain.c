@@ -313,7 +313,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
 
     now = time(NULL);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
+    while (MongoCursorNext(cursor))   // iterate over docs
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -420,7 +420,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
 
     now = time(NULL);
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
+    while (MongoCursorNext(cursor))   // iterate over docs
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
@@ -537,7 +537,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostke
     Item *uniquePromiseKeysList = NULL;
     char rhandle[CF_BUFSIZE] = {0};
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ) );
@@ -584,7 +584,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *h
     char rhandle[CF_BUFSIZE] = {0};
     char keyhash[CF_BUFSIZE] = {0};
 
-    while (mongo_cursor_next(cursor) == MONGO_OK)
+    while (MongoCursorNext(cursor))
     {
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ) );
@@ -1072,7 +1072,8 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
     time_t to = GetShiftSlotStart(now);
     time_t from = to - SECONDS_PER_SHIFT;
 
-    HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1, false, NULL, promise_context_mode);
+    HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1,
+                                                 false, NULL, promise_context_mode, NULL);
 
     if (!result->records)
     {

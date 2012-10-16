@@ -9,5 +9,5 @@ LOGDIR=${ROOT}/log
 mkdir -p $LOGDIR
 mkdir -p ${ROOT}/var
 
-CFENGINE_TEST_OVERRIDE_MONGO_PORT=27777 exec gdb --args php -a -d extension=mongo.so -d extension=$CFMOD -d extension=$CFAPI
+CFENGINE_TEST_OVERRIDE_MONGO_PORT=27777 exec gdb --args php -n -a -d extension=mongo.so -d extension=$CFMOD -d extension=$CFAPI
 run

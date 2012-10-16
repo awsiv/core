@@ -182,7 +182,7 @@ PHP_FUNCTION(cfapi_host_context_list)
     }
 
     HubQuery *result = CFDB_QueryClasses(conn, hostkey, NULL, false, 0, time(NULL),
-                                         NULL, false, PROMISE_CONTEXT_MODE_ALL);
+                                         NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
 
     if (!EnterpriseDBRelease(conn))
     {
@@ -289,13 +289,10 @@ PHP_FUNCTION(cfapi_host_vital_get)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    time_t last_update = 0;
-    CFDB_QueryLastHostUpdate(conn, hostkey, &last_update);
-
     HubVital *vital = NULL;
     {
         LogPerformanceTimer timer = LogPerformanceStart();
-        cfapi_errid err = CFDB_QueryVital(conn, hostkey, vital_id, last_update, from, to, &vital);
+        cfapi_errid err = CFDB_QueryVital(conn, hostkey, vital_id, from, to, &vital);
         LogPerformanceStop(&timer, "Getting vital %s for host: %s", vital_id, hostkey);
 
         EnterpriseDBRelease(conn);

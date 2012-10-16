@@ -244,6 +244,32 @@ typedef struct
 
 #endif
 
+#define cfphp_csv_create "csv" //bool
+#define cfphp_pdf_create "pdf" //bool
+#define cfphp_report_path "path" // string (directory)
+#define cfphp_report_filename "filename" //string
+#define cfphp_request_id "request_id" // string
+
+typedef struct
+{
+    long total_lines;
+    long lines_written;
+    long lines_since_last_update;
+    int report_type;
+    pid_t child_pid;
+    bool write_data;
+    bool error_in_update;
+    char *report_path;
+    char *report_filename;
+    char *request_id;
+    char *csv_path;
+    char *abort_file;
+}WebReportFileInfo;
+
+WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
+                                         const char *report_filename, const char *request_id );
+void DeleteWebReportFileInfo( WebReportFileInfo *w );
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
@@ -1654,9 +1680,6 @@ typedef struct
 
 #define REPORT_FORMAT_CSV 1
 #define REPORT_FORMAT_PDF 2
-
-#define BIT_SET( a, b ) (a |= b)
-#define BIT_CHECK( a, b ) (a & b)
 
 // Report types
 

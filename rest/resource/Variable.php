@@ -8,7 +8,7 @@ class Variable extends Resource
     function get($request)
     {
         Utils::checkValidQueryParams(array('hostkey', 'scope', 'name', 'value',
-            'type'));
+            'type', 'context'));
 
         $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
@@ -16,6 +16,7 @@ class Variable extends Resource
         $name = Utils::queryParam('name');
         $value = Utils::queryParam('value');
         $type = Utils::queryParam('type');
+        $context = Utils::queryParam('context');
 
         $response = new Response($request);
         $payload = $response->body = cfmod_resource_variable($username,
