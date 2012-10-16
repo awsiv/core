@@ -340,12 +340,13 @@ static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, F
 {
     int pos = 0, size = 0, read1, read2, c1, c2;
     FILE *fin1, *fin2;
-    char line1[CF_BUFSIZE], line2[CF_BUFSIZE];
+    char line1[CF_BUFSIZE] = { 0 }, line2[CF_BUFSIZE] = { 0 };
     FileLine *flp1, *flp2, *last1 = 0, *last2 = 0;
 
     if ((fin1 = fopen(file, "r")) == NULL)
     {
         CfOut(cf_error, "fopen", " !! Unable to read the changed file %s", file);
+        return 0;
     }
 
     if ((fin2 = fopen(destination, "r")) == NULL)
