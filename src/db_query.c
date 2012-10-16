@@ -4351,13 +4351,12 @@ Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
 
 /*****************************************************************************/
 
-HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t last_host_update)
+HubQuery *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
 {
     bson_iterator it1;
-    HubVital *hv = NULL;
     char id[CF_MAXVARSIZE];
     char units[CF_MAXVARSIZE];
     char description[CF_MAXVARSIZE];
@@ -4371,7 +4370,11 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t l
     // field
     bson fields;
 
-    BsonSelectReportFields(&fields, 3, cfm_id, cfm_units, cfm_description);
+    BsonSelectReportFields(&fields, 4,
+                           cfm_id,
+                           cfm_units,
+                           cfm_description,
+                           cfr_day);
 
     // use mag collection since it is updated most frequently
     mongo_cursor *cursor = MongoFind(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -4379,6 +4382,7 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t l
     bson_destroy(&query);
     bson_destroy(&fields);
 
+    Rlist *records = NULL;
     while (MongoCursorNext(cursor))
     {
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
@@ -4386,6 +4390,7 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t l
         id[0] = '\0';
         units[0] = '\0';
         description[0] = '\0';
+        time_t last_update = 0;
 
         while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
         {
@@ -4401,14 +4406,26 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, const char *keyHash, time_t l
             {
                 snprintf(description, sizeof(description), "%s", bson_iterator_string(&it1));
             }
+            else if (strcmp(bson_iterator_key(&it1), cfr_day) == 0)
+            {
+                last_update = bson_iterator_long(&it1);
+            }
         }
 
-        hv = PrependHubVital(&hv, id, units, description, MeasurementSlotStart(last_host_update));
+        if (last_update == 0)
+        {
+            if (CFDB_QueryLastHostUpdate(conn, keyHash, &last_update) != ERRID_SUCCESS)
+            {
+                continue;
+            }
+        }
+
+        PrependRlistAlienUnlocked(&records, NewHubVital(keyHash, id, units, description, MeasurementSlotStart(last_update)));
     }
 
     mongo_cursor_destroy(cursor);
 
-    return hv;
+    return NewHubQuery(NULL, records);
 }
 
 /*****************************************************************************/
@@ -4429,17 +4446,8 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
     }
 }
 
-cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t from, time_t to, HubVital **vital_out)
+HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t from, time_t to)
 {
-    assert(hostkey);
-    assert(vital_id);
-    assert(vital_out);
-
-    if (!vital_id || !vital_out)
-    {
-        return ERRID_ARGUMENT_MISSING;
-    }
-
     from = MAX(from, 0);
     to = MIN(to, MeasurementSlotStart(time(NULL)));
 
@@ -4450,7 +4458,10 @@ cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char 
     {
         bson_append_string(&query, cfr_keyhash, hostkey);
     }
-    bson_append_string(&query, cfm_id, vital_id);
+    if (vital_id)
+    {
+        bson_append_string(&query, cfm_id, vital_id);
+    }
     BsonFinish(&query);
 
     // result
@@ -4468,8 +4479,7 @@ cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char 
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    *vital_out = NULL;
-
+    Rlist *records = NULL;
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         const bson *record = mongo_cursor_bson(cursor);
@@ -4515,16 +4525,12 @@ cfapi_errid CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char 
             }
         }
 
-        if (*vital_out)
-        {
-            vital->next = *vital_out;
-        }
-        *vital_out = vital;
+        PrependRlistAlienUnlocked(&records, vital);
     }
 
     mongo_cursor_destroy(cursor);
 
-    return *vital_out ? ERRID_SUCCESS : ERRID_ITEM_NONEXISTING;
+    return NewHubQuery(NULL, records);
 }
 
 int CFDB_QueryMagView2(EnterpriseDB *conn, const char *keyhash, const char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)

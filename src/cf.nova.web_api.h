@@ -87,7 +87,7 @@ bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const
 int Nova_GetTopicIdForTopic(char *typed_topic);
 #endif
 
-bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
+JsonElement *Nova2PHP_vitals_list(char *hostkey);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int bufsize);

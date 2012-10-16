@@ -701,51 +701,48 @@ void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize, PromiseContextMode
 /* Vitals functions                                                          */
 /*****************************************************************************/
 
-bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
+JsonElement *Nova2PHP_vitals_list(char *hostkey)
 {
-    EnterpriseDB dbconn;
-    bool ret = false;
-    char work[CF_MAXVARSIZE];
-    time_t lastUpdate = 0;
-    char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
-    HubVital *res, *hv;
-
-    if (!CFDB_Open(&dbconn))
+    EnterpriseDB conn[1];
+    if (!CFDB_Open(conn))
     {
         return false;
     }
 
-    res = CFDB_QueryVitalsMeta(&dbconn, keyHash, 0);
-
-    strcpy(buffer, "{");
-
-    Nova2PHP_hostinfo(keyHash, hostName, ipAddress, sizeof(hostName));
-
-    int size = 0;
-    CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, &lastUpdate, &size);
-
-    CFDB_Close(&dbconn);
-
-    snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : %ld, \n\"obs\" : [",
-             hostName, ipAddress, lastUpdate);
-
-    Join(buffer, work, bufsize);
-
-    for (hv = res; hv != NULL; hv = hv->next)
+    JsonElement *payload = JsonObjectCreate(4);
     {
-        snprintf(work, sizeof(work), "{\"id\":\"%s\", \"units\":\"%s\", \"desc\":\"%s\"},",
-                 hv->id, hv->units, hv->description);
-        Join(buffer, work, bufsize);
+        char hostname[CF_MAXVARSIZE] = { 0 },
+             ip[CF_MAXVARSIZE] = { 0 };
+        Nova2PHP_hostinfo(hostkey, hostname, ip, sizeof(hostname));
 
-        ret = true;
+        int size = 0;
+        time_t last_update = 0;
+        CFDB_QueryLastUpdate(conn, MONGO_DATABASE, cfr_keyhash, hostkey, &last_update, &size);
+
+        JsonObjectAppendString(payload, "hostname", NULLStringToEmpty(hostname));
+        JsonObjectAppendString(payload, "ip", NULLStringToEmpty(ip));
+        JsonObjectAppendInteger(payload, "ls", last_update);
+    }
+    {
+        HubQuery *result = CFDB_QueryVitalsMeta(conn, hostkey);
+        CFDB_Close(conn);
+        JsonElement *observations = JsonArrayCreate(RlistLen(result->records));
+
+        for (const Rlist *rp = result->records; rp; rp = rp->next)
+        {
+            const HubVital *vital = rp->item;
+
+            JsonElement *entry = JsonObjectCreate(3);
+            JsonObjectAppendString(entry, "id", NULLStringToEmpty(vital->id));
+            JsonObjectAppendString(entry, "units", NULLStringToEmpty(vital->units));
+            JsonObjectAppendString(entry, "desc", NULLStringToEmpty(vital->description));
+        }
+
+        DeleteHubQuery(result, DeleteHubVital);
+        JsonObjectAppendArray(payload, "obs", observations);
     }
 
-    DeleteHubVital(res);
-
-    ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer, "]}", bufsize);
-
-    return ret;
+    return payload;
 }
 
 /*****************************************************************************/

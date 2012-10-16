@@ -235,18 +235,19 @@ PHP_FUNCTION(cfapi_host_vital_list)
     CFDB_QueryLastHostUpdate(conn, hostkey, &last_host_update);
 
     LogPerformanceTimer timer = LogPerformanceStart();
-    HubVital *results = CFDB_QueryVitalsMeta(conn, hostkey, last_host_update);
+    HubQuery *result = CFDB_QueryVitalsMeta(conn, hostkey);
     LogPerformanceStop(&timer, "Listing vitals for host: %s", hostkey);
 
     EnterpriseDBRelease(conn);
 
     JsonElement *data = JsonArrayCreate(500);
-    for (const HubVital *vital = results; vital; vital = vital->next)
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
+        const HubVital *vital = rp->item;
         JsonArrayAppendObject(data, HubVitalToJson(vital));
     }
 
-    DeleteHubVital(results);
+    DeleteHubQuery(result, DeleteHubVital);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
@@ -289,22 +290,24 @@ PHP_FUNCTION(cfapi_host_vital_get)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubVital *vital = NULL;
+    HubQuery *result = NULL;
     {
         LogPerformanceTimer timer = LogPerformanceStart();
-        cfapi_errid err = CFDB_QueryVital(conn, hostkey, vital_id, from, to, &vital);
+        result = CFDB_QueryVital(conn, hostkey, vital_id, from, to);
         LogPerformanceStop(&timer, "Getting vital %s for host: %s", vital_id, hostkey);
 
         EnterpriseDBRelease(conn);
-        if (err != ERRID_SUCCESS)
+        if (RlistLen(result->records) == 0)
         {
-            THROW_GENERIC(err, "Could not lookup vital");
+            DeleteHubQuery(result, DeleteHubVital);
+            THROW_GENERIC(ERRID_ITEM_NONEXISTING, "Could not lookup vital");
         }
     }
-    assert(vital);
 
     JsonElement *data = JsonArrayCreate(1);
-    JsonArrayAppendObject(data, HubVitalToJson(vital));
+    JsonArrayAppendObject(data, HubVitalToJson((HubVital *)result->records->item));
+
+    DeleteHubQuery(result, DeleteHubVital);
 
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }

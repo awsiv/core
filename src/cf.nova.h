@@ -606,8 +606,6 @@ typedef struct
     HubNote *note;
 } HubNoteInfo;
 
-typedef struct HubVital_ HubVital;
-
 typedef struct
 {
     time_t t;
@@ -616,7 +614,7 @@ typedef struct
 
 #include "sequence.h"
 
-struct HubVital_
+typedef struct
 {
     char *hostkey;
     char *id;
@@ -624,8 +622,7 @@ struct HubVital_
     char *description;
     time_t last_update;
     Sequence *q; // HubVitalPoint
-    HubVital *next;
-};
+} HubVital;
 
 typedef struct
 {

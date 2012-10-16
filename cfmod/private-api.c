@@ -313,7 +313,6 @@ PHP_FUNCTION(cfpr_vitals_list)
 {
     char *userName, *hostKey;
     int user_len, hk_len;
-    char buffer[4096];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &hostKey, &hk_len) == FAILURE)
     {
@@ -331,10 +330,9 @@ PHP_FUNCTION(cfpr_vitals_list)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_vitals_list(hostKey, buffer, sizeof(buffer));
+    JsonElement *payload = Nova2PHP_vitals_list(hostKey);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(payload);
 }
 
 /******************************************************************************/
