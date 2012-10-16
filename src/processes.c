@@ -130,6 +130,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
     if ((fout = fopen(logname, "a")) == NULL)
     {
         CfOut(cf_error, "fopen", " !! Unable to open change log %s\n", logname);
+        return;
     }
 
     fprintf(fout, "CHANGE %s\n", file);
