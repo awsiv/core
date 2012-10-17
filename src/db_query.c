@@ -20,6 +20,7 @@
 #include "granules.h"
 #include "scope.h"
 #include "db-export-csv.h"
+#include "install.h"
 
 #include <assert.h>
 
@@ -4448,8 +4449,7 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
 
 HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *vital_id, time_t from, time_t to)
 {
-    from = MAX(from, 0);
-    to = MIN(to, MeasurementSlotStart(time(NULL)));
+    to = MIN(to, time(NULL));
 
     bson query;
     bson_init(&query);
@@ -4494,15 +4494,19 @@ HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *v
         const char *description = NULL;
         BsonStringGet(record, cfm_description, &description);
 
-        time_t last_update = BsonLongGet(record, cfr_day);
-        if (last_update == 0)
+        time_t last_update = 0;
+        if (!BsonTimeGet(record, cfr_day, &last_update))
         {
+            last_update = 24 * 7 * 60 * 60 * 5;
             // old-style record without timestamp information, get from host record
+            /*
             CFDB_QueryLastHostUpdate(conn, vital_hostkey, &last_update);
             if (last_update == 0)
             {
                 continue;
             }
+            last_update = MeasurementSlotStart(last_update - CF_MEASURE_INTERVAL);
+            */
         }
 
         HubVital *vital = NewHubVital(vital_hostkey, vital_id, units, description, MeasurementSlotStart(last_update));
@@ -4525,6 +4529,7 @@ HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *v
             }
         }
 
+        SequenceSort(vital->q, HubVitalPointCompare, NULL);
         PrependRlistAlienUnlocked(&records, vital);
     }
 

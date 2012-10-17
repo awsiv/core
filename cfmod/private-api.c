@@ -312,17 +312,46 @@ PHP_FUNCTION(cfpr_host_meter)
 /* Vitals functions                                                          */
 /*****************************************************************************/
 
-static int CompareHubVitalsByLastValue(const void *_a, const void *_b)
+static int CompareHubVitalsByLastValueAsc(const void *a, const void *b)
 {
-    const HubVital *a = _a;
-    const HubVital *b = _b;
-    const HubVitalPoint *a_point = HubVitalLastValue(a);
-    const HubVitalPoint *b_point = HubVitalLastValue(b);
+    const HubVital *a_hv = a;
+    const HubVital *b_hv = b;
+    const HubVitalPoint *a_point = HubVitalLastValue(a_hv);
+    const HubVitalPoint *b_point = HubVitalLastValue(b_hv);
     if (!a_point || !b_point)
     {
         return 0;
     }
-    return a_point->value - b_point->value;
+
+    if (a_point->value < b_point->value)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+static int CompareHubVitalsByLastValueDesc(const void *a, const void *b)
+{
+    const HubVital *a_hv = a;
+    const HubVital *b_hv = b;
+    const HubVitalPoint *a_point = HubVitalLastValue(a_hv);
+    const HubVitalPoint *b_point = HubVitalLastValue(b_hv);
+    if (!a_point || !b_point)
+    {
+        return 0;
+    }
+
+    if (a_point->value > b_point->value)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 static bool HubVitalIsInAllowedHostkeySet(void *_vital, void *_hostkeys)
@@ -339,13 +368,15 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
     const char *vital_id = NULL; int vital_id_len = 0;
     zval *context_includes = NULL,
          *context_excludes = NULL;
+    bool desc = false;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaabll",
                               &username, &username_len,
                               &vital_id, &vital_id_len,
                               &context_includes,
                               &context_excludes,
+                              &desc,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -390,8 +421,16 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
     RlistFilter(&result->records, HubVitalIsInAllowedHostkeySet, hostkeys, (void (*)(void *))DeleteHubVital);
     SetDestroy(hostkeys);
 
+    if (desc)
+    {
+        result->records = SortRlist(result->records, CompareHubVitalsByLastValueDesc);
+    }
+    else
+    {
+        result->records = SortRlist(result->records, CompareHubVitalsByLastValueAsc);
+    }
+
     PageRecords(&result->records, &page, DeleteHubVital);
-    result->records = SortRlist(result->records, CompareHubVitalsByLastValue);
 
     JsonElement *payload = JsonArrayCreate(RlistLen(result->records));
     for (const Rlist *rp = result->records; rp; rp = rp->next)

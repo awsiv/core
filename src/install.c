@@ -1070,11 +1070,25 @@ HubVitalPoint *NewHubVitalPoint(time_t t, double value)
     return point;
 }
 
+int HubVitalPointCompare(const void *a, const void *b, void *user_data)
+{
+    const HubVitalPoint *ap = a;
+    const HubVitalPoint *bp = b;
+    if (ap && bp)
+    {
+        return ap->t - bp->t;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 const HubVitalPoint *HubVitalLastValue(const HubVital *vital)
 {
-    if (vital->q)
+    if (vital->q && vital->q->length > 0)
     {
-        return vital->q->data[vital->q->length - 1];
+       return vital->q->data[vital->q->length - 1];
     }
     return NULL;
 }

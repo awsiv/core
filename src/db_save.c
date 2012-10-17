@@ -385,13 +385,13 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
                 bson_append_double(&set_op, cfm_expmax, monExpMax);
             }
 
-            bson_append_int(&keys, cfr_day, time(NULL));
-
             slotStart = ip;
 
+            const time_t now = time(NULL);
+            time_t most_recent_slot_time = 0;
             while (ip && (strncmp(ip->name, "M:", 2) != 0))
             {
-   	        sscanf(ip->name, "%d %lf %lf %lf %lf", &slot, &q, &e, &d, &g);
+                sscanf(ip->name, "%d %lf %lf %lf %lf", &slot, &q, &e, &d, &g);
                 
                 if (slot < 0 || slot >= numSlots)
                 {
@@ -406,14 +406,17 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
                 snprintf(varName, sizeof(varName), "%s.%d", cfm_expect_arr, slot);
                 bson_append_double(&set_op, varName, e);
 
-		snprintf(varName, sizeof(varName), "%s.%d", cfm_grad_arr, slot);
-		bson_append_double(&set_op, varName, g);
+                snprintf(varName, sizeof(varName), "%s.%d", cfm_grad_arr, slot);
+                bson_append_double(&set_op, varName, g);
 
                 snprintf(varName, sizeof(varName), "%s.%d", cfm_deviance_arr, slot);
                 bson_append_double(&set_op, varName, d);
 
+                most_recent_slot_time = MAX(most_recent_slot_time, MeasurementSlotTime(slot, CF_MAX_SLOTS, now));
+
                 ip = ip->next;
             }
+            bson_append_int(&set_op, cfr_day, most_recent_slot_time);
             bson_append_finish_object(&set_op);
         }
         BsonFinish(&set_op);
