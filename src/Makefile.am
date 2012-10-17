@@ -86,10 +86,8 @@ libcfnova_la_SOURCES += \
 if !NDEBUG
 libcfnova_la_SOURCES += \
         web_api_test.c
-
-libcfnova_la_LIBADD = ../sqlite3/libsqlite3.la
 endif
-
+libcfnova_la_LIBADD = ../sqlite3/libsqlite3.la
 else # !MONGO
 libcfnova_la_SOURCES += \
 	stubs.c
