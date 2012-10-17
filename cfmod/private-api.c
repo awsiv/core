@@ -337,11 +337,15 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
 {
     const char *username = NULL; int username_len = 0;
     const char *vital_id = NULL; int vital_id_len = 0;
+    zval *context_includes = NULL,
+         *context_excludes = NULL;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
                               &username, &username_len,
                               &vital_id, &vital_id_len,
+                              &context_includes,
+                              &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -357,6 +361,7 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
         ERRID_RBAC_CHECK(result, DeleteHostClassFilter);
 
         filter = (HostClassFilter *) HubQueryGetFirstRecord(result);
+        HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
         DeleteHubQuery(result, NULL);
     }
     assert(filter);
