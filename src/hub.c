@@ -697,9 +697,7 @@ static void StartHub(void)
 // before Nova_Maintain() gets run
     CFDB_ConnectAndEnsureIndices();
 
-//#if defined( HAVE_LIBSQLITE3 )
     SetDefaultPathsForSchedulingReports();
-//#endif
 
     while (true)
     {
@@ -716,9 +714,8 @@ static void StartHub(void)
             }
         }
 
-//#if defined( HAVE_LIBSQLITE3 )
         RunScheduledEnterpriseReports();
-//#endif
+
         int sleep_time = CFPULSETIME - ( time(NULL) - start );
 
         if( sleep_time > 0 )

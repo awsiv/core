@@ -5,8 +5,6 @@
 */
 #include "conf.h"
 
-//#if defined( HAVE_LIBSQLITE3 )
-
 #include "cf.nova.h"
 #include "hub.h"
 #include "env_context.h"
@@ -450,4 +448,3 @@ static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user,
 }
 
 /*******************************************************************/
-//#endif

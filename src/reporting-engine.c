@@ -14,8 +14,6 @@
 #include "conf.h"
 #include "log.h"
 
-//#if defined(HAVE_LIBSQLITE3)
-
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -124,7 +122,6 @@ bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_ca
 }
 
 /******************************************************************/
-//#endif
 
 static JsonElement *PackageReportingEngineResult(const char *query,
                                                  JsonElement *columns,
@@ -142,7 +139,6 @@ static JsonElement *PackageReportingEngineResult(const char *query,
 
 JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
 {
-//#if defined(HAVE_LIBSQLITE3)
     sqlite3 *db;
 
     char *select_op_expanded = SqlVariableExpand(select_op);
@@ -188,14 +184,8 @@ JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
     free(select_op_expanded);
     Sqlite3_DBClose(db);
     return out;
-//#else
-//    return NULL; /* TODO: Return error - not configured with sqlite3 */
-//#endif
 }
 
-/******************************************************************/
-
-//#if defined(HAVE_LIBSQLITE3)
 /******************************************************************/
 /* Callback function for iterating through the resultset          */
 /* from sqlite                                                    */
@@ -830,5 +820,3 @@ static void SetVirtualNameSpace(const char *handle, const char *namespace,
 }
 
 /******************************************************************/
-
-//#endif
