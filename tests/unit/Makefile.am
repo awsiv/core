@@ -7,7 +7,7 @@ top_build_prefix = $(abs_top_builddir)/
 
 CMOCKERY_DIR = $(top_srcdir)/tests/unit
 
-AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(top_srcdir)/src -I$(CMOCKERY_DIR)
+AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(top_srcdir)/src -I$(CMOCKERY_DIR) -I$(top_srcdir)/nova/sqlite3
 
 MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
