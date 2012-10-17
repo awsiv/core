@@ -66,18 +66,6 @@ if test "x$with_ldap" != xno; then
    ])
 fi
 
-AC_ARG_WITH([sqlite3],
-    [AS_HELP_STRING([--with-sqlite3[[=PATH]]], [use Sqlite 3 to store temporary data])])
-AS_IF([test -n "$with_sqlite3" && test "x$with_sqlite3" != "xno"], [WITH_SQLITE3=1], [WITH_SQLITE3=0])
-
-if test $WITH_SQLITE3 = 1; then
-  CF3_WITH_LIBRARY(sqlite3, [
-    AC_CHECK_LIB(sqlite3, sqlite3_open, [], [AC_MSG_ERROR(Cannot find sqlite3)])
-    AC_CHECK_HEADERS(sqlite3.h, [], [AC_MSG_ERROR(Cannot find sqlite3)])
-    AC_DEFINE(SQLITE3, 1, [Define if SQLITE3 is available])
-  ])
-fi
-
 AC_ARG_WITH([enterprise-api],
     [AS_HELP_STRING([--with-enterprise-api[[=PATH]]], [enable Enterprise API using path to locate php-config])],
     [], [with_enterprise_api=check])

@@ -12,7 +12,7 @@ LDADD = $(BERKELEY_DB_LDFLAGS) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENS
 INCLUDES = $(BERKELEY_DB_CFLAGS) $(OPENSSL_LIB_CPPFLAGS)
 AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
-AM_CPPFLAGS = -I$(srcdir)/../../core/src
+AM_CPPFLAGS = -I$(srcdir)/../../core/src -I$(srcdir)/../sqlite3
 
 noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la
 
@@ -86,6 +86,8 @@ libcfnova_la_SOURCES += \
 if !NDEBUG
 libcfnova_la_SOURCES += \
         web_api_test.c
+
+libcfnova_la_LIBADD = ../sqlite3/libsqlite3.la
 endif
 
 else # !MONGO

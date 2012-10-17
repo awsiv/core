@@ -9,12 +9,6 @@ if test "x$NOVA_SUBDIR" != "x"; then
     AC_MSG_RESULT([ -> MongoDB: disabled])
   fi
 
-  if test $WITH_SQLITE3 = 1; then
-    AC_MSG_RESULT([ -> Sqlite3: $SQLITE3_PATH])
-  else
-    AC_MSG_RESULT([ -> Sqlite3: disabled])
-  fi
-
   if test "x$ac_cv_lib_ldap_ldap_get_values_len" = "xyes"; then
     AC_MSG_RESULT([ -> LDAP: $LDAP_PATH])
   else
