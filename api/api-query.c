@@ -122,7 +122,7 @@ PHP_FUNCTION(cfapi_query_post)
         }
         else
         {
-            table = EnterpriseExecuteSQL(username, query);
+            table = EnterpriseExecuteSQL(username, query, false);
             assert(table);
             Writer *writer = StringWriter();
             JsonElementPrint(writer, table, 0);

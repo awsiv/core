@@ -14,7 +14,24 @@
 #include "conf.h"
 #include "log.h"
 
+#include "db-export-csv.h"
+#include "csv_writer.h"
+#include "files_interfaces.h"
+
 /******************************************************************/
+
+enum re_async_errid{
+    async_err_unknown = -1,
+    async_err_success = 0,
+    async_err_start_proc,
+    async_err_enterprise_db_connect,
+    async_err_sqlite3_connect,
+    async_err_sqlite3_prepare,
+    async_err_sqlite3_query,
+    async_err_io,
+    async_err_unexpected_child_exit
+};
+
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
@@ -45,6 +62,20 @@ bool GenerateAllTables(sqlite3 *db);
 static void SetVirtualNameSpace(const char *handle, const char *namespace,
                                 char *buffer, size_t buffer_size);
 
+
+JsonElement *EnterpriseExecuteSync(const char *username, const char *select_op);
+bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *select_op_expanded);
+
+/* Asynchronous query */
+int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
+void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op);
+static char *AsyncToken(const char *username, const char *query);
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status);
+
+static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
+bool ReadExporterPid(WebReportFileInfo *wr_info);
+int ReadExportStatus(WebReportFileInfo *wr_info);
 /******************************************************************/
 
 char *TABLES[SQL_TABLE_COUNT] =
@@ -137,53 +168,16 @@ static JsonElement *PackageReportingEngineResult(const char *query,
     return result;
 }
 
-JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
-{
-    sqlite3 *db;
-
-    char *select_op_expanded = SqlVariableExpand(select_op);
-
-    if (!Sqlite3_DBOpen(&db))
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op, bool async)
+{    
+    if (async)
     {
-        /* TODO: better error handling */
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
+        return EnterpriseExecuteSQLAsync(username, select_op);
     }
-
-    if (!GenerateAllTables(db))
+    else
     {
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
+        return EnterpriseExecuteSync(username, select_op);
     }
-
-
-    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
-    if(!tables)
-    {
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
-    }
-
-    LoadSqlite3Tables(db, tables, username);
-
-    DeleteRlist(tables);
-
-    LogPerformanceTimer timer = LogPerformanceStart();
-
-    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
-    assert(out);
-
-    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
-
-    free(select_op_expanded);
-    Sqlite3_DBClose(db);
-    return out;
 }
 
 /******************************************************************/
@@ -817,6 +811,397 @@ static void SetVirtualNameSpace(const char *handle, const char *namespace,
             snprintf(buffer, buffer_size, "%s", "");
         }
     }
+}
+
+/******************************************************************/
+
+int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
+{
+    assert(out);
+    //assert( wr_info->total_lines >= 0 );
+
+    WebReportFileInfo *wr_info = (WebReportFileInfo *) out;
+
+    if( !wr_info->write_data )
+    {
+        wr_info->total_lines++;
+        return 0;
+    }
+
+    Writer *writer = FileWriter( fopen( wr_info->csv_path, "a+" ) );
+
+    // TODO: handle sqlite3 db close
+    ExportWebReportCheckAbort(wr_info, writer);
+
+    assert( writer );
+    assert( wr_info->lines_written >= 0 );
+    assert( wr_info->lines_since_last_update >= 0 );
+
+    if (wr_info->report_type & REPORT_FORMAT_CSV)
+    {
+        CsvWriter *c = CsvWriterOpen(writer);
+
+        for(int i=0; i<argc; i++)
+        {
+            CsvWriterField(c, argv[i] ? argv[i] : "NULL");
+        }
+        CsvWriterNewRecord(c);
+        CsvWriterClose(c);
+    }
+    else
+    {
+        // support for other formats later
+        WriterClose(writer);
+        return 0;
+    }
+
+    wr_info->lines_written++;
+
+    if( wr_info->lines_since_last_update++ >= CHECKPOINT )
+    {
+        wr_info->lines_since_last_update = 0;
+
+        if( !ExportWebReportUpdateStatus( wr_info ))
+        {
+            WriterClose(writer);
+            return 0;
+        }
+    }
+
+    WriterClose(writer);
+    return 0;
+}
+
+/******************************************************************/
+
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status)
+{
+    JsonElement *error = JsonObjectCreate(1);
+    JsonObjectAppendInteger(error, "status", status);
+    JsonObjectAppendInteger(error, "error_id", err_id);
+    JsonObjectAppendString(error, "msg", err_msg);
+    JsonObjectAppendString(error, "token", token);
+    JsonObjectAppendString(error, "link", file);
+    assert(error);
+
+    return error;
+}
+
+/******************************************************************/
+
+static char *AsyncToken(const char *username, const char *query)
+{
+    char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
+
+    HashString(username, strlen(username), digest, cf_md5);
+    HashString(query, strlen(query), digest, cf_md5);
+
+    char time_str[CF_SMALLBUF] = {0};
+    snprintf(time_str, CF_SMALLBUF - 1, "%ld", time(NULL));
+
+    HashString(time_str, CF_SMALLBUF - 1, digest, cf_md5);
+
+    return HashPrint(cf_md5, digest);
+}
+
+/******************************************************************/
+
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op)
+{
+    assert( username && select_op );
+
+    char token[CF_BUFSIZE] = {0};
+    snprintf(token, CF_BUFSIZE - 1, "%s", AsyncToken(username, select_op));
+
+    enum re_async_errid err = async_err_success;
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+        err = async_err_start_proc;
+
+        return PackageAsyncQueryResult(async_err_start_proc, "Cannot start process", token, "", -1);
+    }
+
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(REPORT_FORMAT_CSV, "/tmp", token, "");
+
+    if (pid == 0)
+    {
+        ALARM_PID = -1;
+
+        char *select_op_expanded = SqlVariableExpand(select_op);
+
+        sqlite3 *db;
+        if (!Sqlite3_DBOpen(&db))
+        {
+            free(select_op_expanded);
+            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_connect, "Cannot connect to temporary DB");
+            _exit(0);
+        }
+
+        if (!EnterpriseQueryPrepare(db, username, select_op_expanded))
+        {
+            Sqlite3_DBClose(db);
+            free(select_op_expanded);
+
+            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_prepare, "Cannot load temporary DB");
+            _exit(0);
+        }        
+
+        Writer *writer = NULL;
+        struct stat s;
+        if (stat(wr_info->csv_path, &s) == -1)
+        {
+            writer = FileWriter( fopen( wr_info->csv_path, "w" ) );
+        }
+
+        WriterClose(writer);
+
+        AsyncQueryExportResult(db, select_op, wr_info);
+
+        DeleteWebReportFileInfo(wr_info);
+
+        Sqlite3_DBClose(db);
+        free(select_op_expanded);
+        _exit(0);
+    }
+    else
+    {
+        wr_info->child_pid = pid;
+        WebExportWriteChildPid(wr_info);
+    }
+
+    DeleteWebReportFileInfo(wr_info);
+
+    return PackageAsyncQueryResult(async_err_success, "CSV exporter process started", token, wr_info->csv_path, 0);
+}
+
+/******************************************************************/
+
+void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info)
+{
+    /* Query sqlite and print table contents */
+    char *err_msg = 0;
+
+    //count
+    wr_info->total_lines = 0;
+    wr_info->write_data = false;
+
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    {
+        Sqlite3_FreeString(err_msg);
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error counting result");
+    }
+
+    if(wr_info->total_lines <= 0)
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Query returned empty results");
+        return;
+    }
+
+    // export
+    wr_info->write_data = true;
+    if( !ExportWebReportStatusInitialize( wr_info ) )
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error initializing status");
+        return;
+    }
+
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    {
+        Sqlite3_FreeString(err_msg);
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error executing SQL");
+        return;
+    }
+
+    if (!ExportWebReportStatusFinalize(wr_info))
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error finalizing status");
+        return;
+    }
+}
+
+/******************************************************************/
+
+bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *select_op_expanded)
+{
+    if (!GenerateAllTables(db))
+    {
+        return false;
+    }
+
+
+    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
+    if(!tables)
+    {
+        return false;
+    }
+
+    LoadSqlite3Tables(db, tables, username);
+
+    DeleteRlist(tables);
+
+    return true;
+}
+
+/******************************************************************/
+
+JsonElement *EnterpriseExecuteSync(const char *username, const char *select_op)
+{
+    char *select_op_expanded = SqlVariableExpand(select_op);
+
+    sqlite3 *db;
+
+    if (!Sqlite3_DBOpen(&db))
+    {
+        Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return result;
+    }
+
+    if (!EnterpriseQueryPrepare(db, username, select_op_expanded))
+    {
+        Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return result;
+    }
+
+    LogPerformanceTimer timer = LogPerformanceStart();
+
+    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
+    Sqlite3_DBClose(db);
+
+    assert(out);
+
+    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
+
+    free(select_op_expanded);
+    return out;
+}
+
+/******************************************************************/
+
+JsonElement *AsyncQueryStatus(const char *token, int report_type)
+{
+    assert(token);
+
+    //TODO: directory must be configurable
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(report_type, "/tmp", token, "");
+
+    if(!IsExporterProcRunning(wr_info))
+    {
+        return PackageAsyncQueryResult(async_err_unexpected_child_exit, "Process exited unexpectedly", token, wr_info->csv_path, -1);
+    }
+
+    int status = ReadExportStatus(wr_info);
+
+    if(status < 0)
+    {
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, status);
+    }
+
+    return PackageAsyncQueryResult(async_err_success, "Success", token, wr_info->csv_path, status);
+}
+
+/******************************************************************/
+
+static bool IsExporterProcRunning(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    if (wr_info->child_pid <= 0)
+    {
+        ReadExporterPid(wr_info);
+    }
+
+    assert(wr_info->child_pid > 0);
+
+    if( kill(wr_info->child_pid, 0) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/******************************************************************/
+
+bool ReadExporterPid(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char pid_file[CF_MAXVARSIZE] = {0};
+    snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
+
+    FILE *fin = fopen(pid_file, "r");
+    if (fin == NULL)
+    {
+        return false;
+    }
+
+    int pid = -1;
+    fscanf(fin,"%d",&pid);
+
+    fclose(fin);
+
+    wr_info->child_pid = (pid_t) pid;
+
+    return wr_info->child_pid > 0;
+}
+
+/******************************************************************/
+
+int ReadExportStatus(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char status_file[CF_MAXVARSIZE] = {0};
+    snprintf(status_file, CF_MAXVARSIZE - 1, "%s.status", wr_info->csv_path);
+
+    FILE *fin = fopen(status_file, "r");
+    if (fin == NULL)
+    {
+        return -1;
+    }
+
+    int status = -1;
+    fscanf(fin,"%d",&status);
+    fclose(fin);
+
+    return status;
+}
+
+/******************************************************************/
+
+JsonElement *AsyncQueryAbort(const char *token)
+{
+    assert(token);
+
+    //TODO: directory must be configurable
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(0, "/tmp", token, "");
+
+    assert(wr_info);
+    assert(wr_info->abort_file);
+
+    FILE *fin = fopen(wr_info->abort_file, "w");
+    if (fin == NULL)
+    {
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, -1);
+    }
+
+    fclose(fin);
+
+    // TODO: check if the child has actually exit for robustness
+    // status is not important here
+    return PackageAsyncQueryResult(async_err_success, "Query aborted", token, wr_info->csv_path, -1);
 }
 
 /******************************************************************/
