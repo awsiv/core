@@ -1130,6 +1130,31 @@ bool ExportSQLCSVReportUpdate( Writer *writer, char *csv_line, WebReportFileInfo
 
 /******************************************************************/
 
+JsonElement *AsyncQueryStatus(const char *token, int report_type)
+{
+    assert(token);
+
+    //TODO: directory must be configurable
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(report_type, "/tmp", token, "");
+
+    if(!IsExporterProcRunning(wr_info))
+    {
+        return PackageAsyncQueryResult(async_err_unexpected_child_exit, "Process exited unexpectedly", token, -1);
+    }
+
+    int status = ReadExportStatus(wr_info);
+
+    if(status < 0)
+    {
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, status);
+    }
+
+    return PackageAsyncQueryResult(async_err_success, "Success", token, status);
+}
+
+/******************************************************************/
+
 static bool IsExporterProcRunning(WebReportFileInfo *wr_info)
 {
     assert(wr_info);
@@ -1196,6 +1221,32 @@ int ReadExportStatus(WebReportFileInfo *wr_info)
     fclose(fin);
 
     return status;
+}
+
+/******************************************************************/
+
+JsonElement *AsyncQueryAbort(const char *token)
+{
+    assert(token);
+
+    //TODO: directory must be configurable
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(0, "/tmp", token, "");
+
+    assert(wr_info);
+    assert(wr_info->abort_file);
+
+    FILE *fin = fopen(wr_info->abort_file, "w");
+    if (fin == NULL)
+    {
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, -1);
+    }
+
+    fclose(fin);
+
+    // TODO: check if the child has actually exit for robustness
+    // status is not important here
+    return PackageAsyncQueryResult(async_err_success, "Query aborted", token, -1);
 }
 
 /******************************************************************/
