@@ -1082,52 +1082,6 @@ JsonElement *EnterpriseExecuteSync(const char *username, const char *select_op)
     free(select_op_expanded);
     return out;
 }
-/******************************************************************/
-bool ExportSQLCSVReportUpdate( Writer *writer, char *csv_line, WebReportFileInfo *wr_info)
-{
-    assert( wr_info );
-    assert( wr_info->total_lines >= 0 );
-
-    if( !wr_info->write_data )
-    {
-        wr_info->total_lines++;
-        return true;
-    }
-
-    ExportWebReportCheckAbort(wr_info, writer);
-
-    assert( writer );
-    assert( wr_info->lines_written >= 0 );
-    assert( wr_info->lines_since_last_update >= 0 );
-
-    if (wr_info->report_type & REPORT_FORMAT_CSV)
-    {
-        CsvWriter *c = CsvWriterOpen(writer);
-
-        CsvWriterField(c, csv_line);
-        CsvWriterNewRecord(c);
-        CsvWriterClose(c);
-    }
-    else
-    {
-        // support for other formats later
-        return false;
-    }
-
-    wr_info->lines_written++;
-
-    if( wr_info->lines_since_last_update++ >= CHECKPOINT )
-    {
-        wr_info->lines_since_last_update = 0;
-
-        if( !ExportWebReportUpdateStatus( wr_info ))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 /******************************************************************/
 
