@@ -16,6 +16,19 @@
 
 /******************************************************************/
 
+enum re_async_errid{
+    async_err_unknown = -1,
+    async_err_success = 0,
+    async_err_start_proc,
+    async_err_enterprise_db_connect,
+    async_err_sqlite3_connect,
+    async_err_sqlite3_prepare,
+    async_err_sqlite3_query,
+    async_err_io,
+    async_err_unexpected_child_exit
+};
+
+
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
