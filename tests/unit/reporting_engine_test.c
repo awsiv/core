@@ -111,7 +111,6 @@ static void test_validate_column_names(void **state)
                          };
 
     const char *column_names[][5] = {
-      {"HostKey", "HostName", "IPAddress", "ReportTimeStamp"},        // hosts
       {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL},               // filechanges
       {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL},                   // contexts
       {"HostKey", "Bundle", "VariableName", "VariableValue", "VariableType"},                        // variables
@@ -119,6 +118,7 @@ static void test_validate_column_names(void **state)
       {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL},  // promisestatuslast
       {"PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
       {NULL, NULL, NULL, NULL,NULL}
+        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL},        // hosts
     };
 
     sqlite3 *db;
