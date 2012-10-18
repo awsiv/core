@@ -110,15 +110,15 @@ static void test_validate_column_names(void **state)
                             NULL
                          };
 
-    const char *column_names[][5] = {
-      {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL},               // filechanges
-      {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL},                   // contexts
-      {"HostKey", "Bundle", "VariableName", "VariableValue", "VariableType"},                        // variables
-      {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL},                   // software
-      {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL},  // promisestatuslast
-      {"PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
-      {NULL, NULL, NULL, NULL,NULL}
-        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL},        // hosts
+    const char *column_names[][6] = {
+        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL},        // hosts
+        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL},               // filechanges
+        {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL},                   // contexts
+        {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType"},                        // variables
+        {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL},                   // software
+        {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL},  // promisestatuslast
+        {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
+        {NULL, NULL, NULL, NULL, NULL, NULL}
     };
 
     sqlite3 *db;
@@ -159,13 +159,9 @@ int main()
     {
 #if defined(HAVE_LIBSQLITE3)
         unit_test(test_get_table_names),
-        unit_test(test_get_column_count)
-        /* sqlite3_column_name segfaults in RHEL 5 builds,
-           will comment this to allow for normal packaging to proceed
-           Redmine #1025
-        */
-//        unit_test(test_validate_column_names)
 #endif
+        unit_test(test_get_column_count),
+        unit_test(test_validate_column_names)
     };
 
     PRINT_TEST_BANNER();
