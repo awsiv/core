@@ -3,8 +3,6 @@
 #include "reporting-engine.c"
 #include "cf.nova.h"
 
-#if defined(HAVE_LIBSQLITE3)
-
 static void test_get_table_names(void **state)
 {
     const char *select_op_list[] = {
@@ -151,15 +149,11 @@ static void test_validate_column_names(void **state)
     Sqlite3_DBClose(db);
 }
 
-#endif
-
 int main()
 {
     const UnitTest tests[] =
     {
-#if defined(HAVE_LIBSQLITE3)
         unit_test(test_get_table_names),
-#endif
         unit_test(test_get_column_count),
         unit_test(test_validate_column_names)
     };
