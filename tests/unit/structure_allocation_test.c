@@ -1,7 +1,6 @@
 #include "platform.h"
 #include "test.h"
 #include "json.h"
-#include "install.h"
 
 /*
  * Segfaults and leaks (valgrind) are the fault lines here.
