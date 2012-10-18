@@ -9,8 +9,6 @@
 
 #include <assert.h>
 
-#define CHECKPOINT 1000
-
 /*****************************************************************************/
 
 bool ExportWebReportStatusInitialize( WebReportFileInfo *wr_info )
@@ -895,4 +893,24 @@ void ExportWebReportCheckAbort(WebReportFileInfo *wr_info, Writer *w)
     _exit(0);
 }
 
+/*****************************************************************************/
+bool WebExportWriteChildPid(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char pid_file[CF_MAXVARSIZE] = "\0";
+    snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
+
+    Writer *writer = FileWriter(fopen(pid_file, "w"));
+    assert(writer);
+    if(!writer)
+    {
+        return false;
+    }
+
+    WriterWriteF(writer, "%d", wr_info->child_pid);
+
+    WriterClose( writer );
+    return true;
+}
 /*****************************************************************************/

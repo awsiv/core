@@ -5,8 +5,6 @@
 
 #include <assert.h>
 
-static bool WebExportWriteChildPid(WebReportFileInfo *wr_info);
-
 /*****************************************************************************/
 
 WebReportFileInfo *NewWebReportFileInfo( int report_type, const char *report_path,
@@ -840,28 +838,6 @@ JsonElement *WebExportHostOnlyReport( Rlist *records_p, WebReportFileInfo *wr_in
     JsonElement *retval = JsonObjectCreate(1);
     JsonObjectAppendInteger( retval, "total_result", wr_info->total_lines );
     return retval;
-}
-
-/*****************************************************************************/
-
-static bool WebExportWriteChildPid(WebReportFileInfo *wr_info)
-{
-    assert(wr_info);
-
-    char pid_file[CF_MAXVARSIZE] = "\0";
-    snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
-
-    Writer *writer = FileWriter(fopen(pid_file, "w"));
-    assert(writer);
-    if(!writer)
-    {
-        return false;
-    }
-
-    WriterWriteF(writer, "%d", wr_info->child_pid);
-
-    WriterClose( writer );
-    return true;
 }
 
 /*****************************************************************************/

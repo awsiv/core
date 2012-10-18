@@ -3,6 +3,8 @@
 #include "scorecards.h"
 #include <bool.h>
 
+#define CHECKPOINT 1000
+
 bool ExportWebReportStatusInitialize( WebReportFileInfo *wr_info );
 bool ExportWebReportStatusFinalize( WebReportFileInfo *wr_info );
 bool ExportWebReportWriteStatusString( char *string, char *full_file_path_csv, bool create_file );
@@ -41,6 +43,7 @@ void ExportWebReportWriteHeader(Writer *writer,
                                 WebReportFileInfo *wr_info);
 
 void ExportWebReportCheckAbort(WebReportFileInfo *wr_info, Writer *w);
+bool WebExportWriteChildPid(WebReportFileInfo *wr_info);
 
 #define WEB_REPORT_EXPORT_START( wr_info, writer, cursor ) \
     if( wr_info && wr_info->write_data ) \
