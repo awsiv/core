@@ -71,7 +71,7 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
 JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op);
 static char *AsyncToken(const char *username, const char *query);
-JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, int status);
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status);
 
 static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
 bool ReadExporterPid(WebReportFileInfo *wr_info);
@@ -874,13 +874,14 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
 
 /******************************************************************/
 
-JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char * token, int status)
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status)
 {
     JsonElement *error = JsonObjectCreate(1);
     JsonObjectAppendInteger(error, "status", status);
     JsonObjectAppendInteger(error, "error_id", err_id);
     JsonObjectAppendString(error, "msg", err_msg);
     JsonObjectAppendString(error, "token", token);
+    JsonObjectAppendString(error, "link", file);
     assert(error);
 
     return error;
@@ -920,7 +921,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
     {
         err = async_err_start_proc;
 
-        return PackageAsyncQueryResult(async_err_start_proc, "Cannot start process", token, -1);
+        return PackageAsyncQueryResult(async_err_start_proc, "Cannot start process", token, "", -1);
     }
 
     WebReportFileInfo *wr_info = NULL;
@@ -974,7 +975,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 
     DeleteWebReportFileInfo(wr_info);
 
-    return PackageAsyncQueryResult(async_err_success, "CSV exporter process started", token, 0);
+    return PackageAsyncQueryResult(async_err_success, "CSV exporter process started", token, wr_info->csv_path, 0);
 }
 
 /******************************************************************/
@@ -1140,17 +1141,17 @@ JsonElement *AsyncQueryStatus(const char *token, int report_type)
 
     if(!IsExporterProcRunning(wr_info))
     {
-        return PackageAsyncQueryResult(async_err_unexpected_child_exit, "Process exited unexpectedly", token, -1);
+        return PackageAsyncQueryResult(async_err_unexpected_child_exit, "Process exited unexpectedly", token, wr_info->csv_path, -1);
     }
 
     int status = ReadExportStatus(wr_info);
 
     if(status < 0)
     {
-        return PackageAsyncQueryResult(async_err_io, "IO error", token, status);
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, status);
     }
 
-    return PackageAsyncQueryResult(async_err_success, "Success", token, status);
+    return PackageAsyncQueryResult(async_err_success, "Success", token, wr_info->csv_path, status);
 }
 
 /******************************************************************/
@@ -1239,14 +1240,14 @@ JsonElement *AsyncQueryAbort(const char *token)
     FILE *fin = fopen(wr_info->abort_file, "w");
     if (fin == NULL)
     {
-        return PackageAsyncQueryResult(async_err_io, "IO error", token, -1);
+        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, -1);
     }
 
     fclose(fin);
 
     // TODO: check if the child has actually exit for robustness
     // status is not important here
-    return PackageAsyncQueryResult(async_err_success, "Query aborted", token, -1);
+    return PackageAsyncQueryResult(async_err_success, "Query aborted", token, wr_info->csv_path, -1);
 }
 
 /******************************************************************/
