@@ -97,6 +97,16 @@ static void test_get_column_count(void **state)
 
 static void test_validate_column_names(void **state)
 {
+    EnterpriseDB conn[1];
+
+    if (!CFDB_Open(conn))
+    {
+        printf("Connection to mongod failed - couldn't proceed with testing\n");
+        return;
+    }
+
+    CFDB_Close(conn);
+
     const char *tables[] = {
                             SQL_TABLE_HOSTS,
                             SQL_TABLE_FILECHANGES,
