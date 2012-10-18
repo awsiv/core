@@ -14,6 +14,10 @@
 #include "conf.h"
 #include "log.h"
 
+#include "db-export-csv.h"
+#include "csv_writer.h"
+#include "files_interfaces.h"
+
 /******************************************************************/
 
 enum re_async_errid{
@@ -58,6 +62,15 @@ bool GenerateAllTables(sqlite3 *db);
 static void SetVirtualNameSpace(const char *handle, const char *namespace,
                                 char *buffer, size_t buffer_size);
 
+/* Asynchronous query */
+int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
+void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
+static char *AsyncToken(const char *username, const char *query);
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, int status);
+
+static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
+bool ReadExporterPid(WebReportFileInfo *wr_info);
+int ReadExportStatus(WebReportFileInfo *wr_info);
 /******************************************************************/
 
 char *TABLES[SQL_TABLE_COUNT] =
@@ -830,6 +843,258 @@ static void SetVirtualNameSpace(const char *handle, const char *namespace,
             snprintf(buffer, buffer_size, "%s", "");
         }
     }
+}
+
+/******************************************************************/
+
+int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
+{
+    assert(out);
+    //assert( wr_info->total_lines >= 0 );
+
+    WebReportFileInfo *wr_info = (WebReportFileInfo *) out;
+
+    if( !wr_info->write_data )
+    {
+        wr_info->total_lines++;
+        return 0;
+    }
+
+    Writer *writer = FileWriter( fopen( wr_info->csv_path, "a+" ) );
+
+    // TODO: handle sqlite3 db close
+    ExportWebReportCheckAbort(wr_info, writer);
+
+    assert( writer );
+    assert( wr_info->lines_written >= 0 );
+    assert( wr_info->lines_since_last_update >= 0 );
+
+    if (wr_info->report_type & REPORT_FORMAT_CSV)
+    {
+        CsvWriter *c = CsvWriterOpen(writer);
+
+        for(int i=0; i<argc; i++)
+        {
+            CsvWriterField(c, argv[i] ? argv[i] : "NULL");
+        }
+        CsvWriterNewRecord(c);
+        CsvWriterClose(c);
+    }
+    else
+    {
+        // support for other formats later
+        WriterClose(writer);
+        return 0;
+    }
+
+    wr_info->lines_written++;
+
+    if( wr_info->lines_since_last_update++ >= CHECKPOINT )
+    {
+        wr_info->lines_since_last_update = 0;
+
+        if( !ExportWebReportUpdateStatus( wr_info ))
+        {
+            WriterClose(writer);
+            return 0;
+        }
+    }
+
+    WriterClose(writer);
+    return 0;
+}
+
+/******************************************************************/
+
+JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char * token, int status)
+{
+    JsonElement *error = JsonObjectCreate(1);
+    JsonObjectAppendInteger(error, "status", status);
+    JsonObjectAppendInteger(error, "error_id", err_id);
+    JsonObjectAppendString(error, "msg", err_msg);
+    JsonObjectAppendString(error, "token", token);
+    assert(error);
+
+    return error;
+}
+
+/******************************************************************/
+
+static char *AsyncToken(const char *username, const char *query)
+{
+    char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
+
+    HashString(username, strlen(username), digest, cf_md5);
+    HashString(query, strlen(query), digest, cf_md5);
+
+    char time_str[CF_SMALLBUF] = {0};
+    snprintf(time_str, CF_SMALLBUF - 1, "%ld", time(NULL));
+
+    HashString(time_str, CF_SMALLBUF - 1, digest, cf_md5);
+
+    return HashPrint(cf_md5, digest);
+}
+
+/******************************************************************/
+void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info)
+{
+    /* Query sqlite and print table contents */
+    char *err_msg = 0;
+
+    //count
+    wr_info->total_lines = 0;
+    wr_info->write_data = false;
+
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    {
+        Sqlite3_FreeString(err_msg);
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error counting result");
+    }
+
+    if(wr_info->total_lines <= 0)
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Query returned empty results");
+        return;
+    }
+
+    // export
+    wr_info->write_data = true;
+    if( !ExportWebReportStatusInitialize( wr_info ) )
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error initializing status");
+        return;
+    }
+
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    {
+        Sqlite3_FreeString(err_msg);
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error executing SQL");
+        return;
+    }
+
+    if (!ExportWebReportStatusFinalize(wr_info))
+    {
+        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error finalizing status");
+        return;
+    }
+}
+
+/******************************************************************/
+/******************************************************************/
+bool ExportSQLCSVReportUpdate( Writer *writer, char *csv_line, WebReportFileInfo *wr_info)
+{
+    assert( wr_info );
+    assert( wr_info->total_lines >= 0 );
+
+    if( !wr_info->write_data )
+    {
+        wr_info->total_lines++;
+        return true;
+    }
+
+    ExportWebReportCheckAbort(wr_info, writer);
+
+    assert( writer );
+    assert( wr_info->lines_written >= 0 );
+    assert( wr_info->lines_since_last_update >= 0 );
+
+    if (wr_info->report_type & REPORT_FORMAT_CSV)
+    {
+        CsvWriter *c = CsvWriterOpen(writer);
+
+        CsvWriterField(c, csv_line);
+        CsvWriterNewRecord(c);
+        CsvWriterClose(c);
+    }
+    else
+    {
+        // support for other formats later
+        return false;
+    }
+
+    wr_info->lines_written++;
+
+    if( wr_info->lines_since_last_update++ >= CHECKPOINT )
+    {
+        wr_info->lines_since_last_update = 0;
+
+        if( !ExportWebReportUpdateStatus( wr_info ))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/******************************************************************/
+
+static bool IsExporterProcRunning(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    if (wr_info->child_pid <= 0)
+    {
+        ReadExporterPid(wr_info);
+    }
+
+    assert(wr_info->child_pid > 0);
+
+    if( kill(wr_info->child_pid, 0) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/******************************************************************/
+
+bool ReadExporterPid(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char pid_file[CF_MAXVARSIZE] = {0};
+    snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
+
+    FILE *fin = fopen(pid_file, "r");
+    if (fin == NULL)
+    {
+        return false;
+    }
+
+    int pid = -1;
+    fscanf(fin,"%d",&pid);
+
+    fclose(fin);
+
+    wr_info->child_pid = (pid_t) pid;
+
+    return wr_info->child_pid > 0;
+}
+
+/******************************************************************/
+
+int ReadExportStatus(WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+
+    char status_file[CF_MAXVARSIZE] = {0};
+    snprintf(status_file, CF_MAXVARSIZE - 1, "%s.status", wr_info->csv_path);
+
+    FILE *fin = fopen(status_file, "r");
+    if (fin == NULL)
+    {
+        return -1;
+    }
+
+    int status = -1;
+    fscanf(fin,"%d",&status);
+    fclose(fin);
+
+    return status;
 }
 
 /******************************************************************/
