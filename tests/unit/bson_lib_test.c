@@ -65,7 +65,7 @@ static void test_conversion_between_json_and_bson_object(void **state)
     Writer *writer_in = StringWriter();
     JsonElementPrint(writer_in, json_in, 1);
 
-    bson buffer;
+    bson buffer = {0};
     if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
@@ -115,7 +115,7 @@ static void test_conversion_between_json_and_bson_array_complex(void **state)
     Writer *writer_in = StringWriter();
     JsonElementPrint(writer_in, json_in, 1);
 
-    bson buffer;
+    bson buffer = {0};
     if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
@@ -155,7 +155,7 @@ static void test_conversion_between_json_and_bson_array_simple(void **state)
     Writer *writer_in = StringWriter();
     JsonElementPrint(writer_in, json_in, 1);
 
-    bson buffer;
+    bson buffer = {0};
     if (!BsonInitFromJsonStringF(&buffer, StringWriterData(writer_in)))
     {
         assert_false(true);
