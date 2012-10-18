@@ -62,9 +62,14 @@ bool GenerateAllTables(sqlite3 *db);
 static void SetVirtualNameSpace(const char *handle, const char *namespace,
                                 char *buffer, size_t buffer_size);
 
+
+JsonElement *EnterpriseExecuteSync(const char *username, const char *select_op);
+bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *select_op_expanded);
+
 /* Asynchronous query */
 int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op);
 static char *AsyncToken(const char *username, const char *query);
 JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, int status);
 
@@ -163,53 +168,16 @@ static JsonElement *PackageReportingEngineResult(const char *query,
     return result;
 }
 
-JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op)
-{
-    sqlite3 *db;
-
-    char *select_op_expanded = SqlVariableExpand(select_op);
-
-    if (!Sqlite3_DBOpen(&db))
+JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op, bool async)
+{    
+    if (async)
     {
-        /* TODO: better error handling */
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
+        return EnterpriseExecuteSQLAsync(username, select_op);
     }
-
-    if (!GenerateAllTables(db))
+    else
     {
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
+        return EnterpriseExecuteSync(username, select_op);
     }
-
-
-    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
-    if(!tables)
-    {
-        Sqlite3_DBClose(db);
-        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
-        free(select_op_expanded);
-        return result;
-    }
-
-    LoadSqlite3Tables(db, tables, username);
-
-    DeleteRlist(tables);
-
-    LogPerformanceTimer timer = LogPerformanceStart();
-
-    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
-    assert(out);
-
-    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
-
-    free(select_op_expanded);
-    Sqlite3_DBClose(db);
-    return out;
 }
 
 /******************************************************************/
@@ -936,6 +904,81 @@ static char *AsyncToken(const char *username, const char *query)
 }
 
 /******************************************************************/
+
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op)
+{
+    assert( username && select_op );
+
+    char token[CF_BUFSIZE] = {0};
+    snprintf(token, CF_BUFSIZE - 1, "%s", AsyncToken(username, select_op));
+
+    enum re_async_errid err = async_err_success;
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+        err = async_err_start_proc;
+
+        return PackageAsyncQueryResult(async_err_start_proc, "Cannot start process", token, -1);
+    }
+
+    WebReportFileInfo *wr_info = NULL;
+    wr_info = NewWebReportFileInfo(REPORT_FORMAT_CSV, "/tmp", token, "");
+
+    if (pid == 0)
+    {
+        ALARM_PID = -1;
+
+        char *select_op_expanded = SqlVariableExpand(select_op);
+
+        sqlite3 *db;
+        if (!Sqlite3_DBOpen(&db))
+        {
+            free(select_op_expanded);
+            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_connect, "Cannot connect to temporary DB");
+            _exit(0);
+        }
+
+        if (!EnterpriseQueryPrepare(db, username, select_op_expanded))
+        {
+            Sqlite3_DBClose(db);
+            free(select_op_expanded);
+
+            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_prepare, "Cannot load temporary DB");
+            _exit(0);
+        }        
+
+        Writer *writer = NULL;
+        struct stat s;
+        if (stat(wr_info->csv_path, &s) == -1)
+        {
+            writer = FileWriter( fopen( wr_info->csv_path, "w" ) );
+        }
+
+        WriterClose(writer);
+
+        AsyncQueryExportResult(db, select_op, wr_info);
+
+        DeleteWebReportFileInfo(wr_info);
+
+        Sqlite3_DBClose(db);
+        free(select_op_expanded);
+        _exit(0);
+    }
+    else
+    {
+        wr_info->child_pid = pid;
+        WebExportWriteChildPid(wr_info);
+    }
+
+    DeleteWebReportFileInfo(wr_info);
+
+    return PackageAsyncQueryResult(async_err_success, "CSV exporter process started", token, 0);
+}
+
+/******************************************************************/
+
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info)
 {
     /* Query sqlite and print table contents */
@@ -980,6 +1023,64 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
 }
 
 /******************************************************************/
+
+bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *select_op_expanded)
+{
+    if (!GenerateAllTables(db))
+    {
+        return false;
+    }
+
+
+    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
+    if(!tables)
+    {
+        return false;
+    }
+
+    LoadSqlite3Tables(db, tables, username);
+
+    DeleteRlist(tables);
+
+    return true;
+}
+
+/******************************************************************/
+
+JsonElement *EnterpriseExecuteSync(const char *username, const char *select_op)
+{
+    char *select_op_expanded = SqlVariableExpand(select_op);
+
+    sqlite3 *db;
+
+    if (!Sqlite3_DBOpen(&db))
+    {
+        Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return result;
+    }
+
+    if (!EnterpriseQueryPrepare(db, username, select_op_expanded))
+    {
+        Sqlite3_DBClose(db);
+        JsonElement *result = PackageReportingEngineResult(select_op_expanded, JsonArrayCreate(0), JsonArrayCreate(0));
+        free(select_op_expanded);
+        return result;
+    }
+
+    LogPerformanceTimer timer = LogPerformanceStart();
+
+    JsonElement *out = EnterpriseQueryPublicDataModel(db, select_op_expanded);
+    Sqlite3_DBClose(db);
+
+    assert(out);
+
+    LogPerformanceStop(&timer, "Reporting Engine select operation time for %s", select_op_expanded);
+
+    free(select_op_expanded);
+    return out;
+}
 /******************************************************************/
 bool ExportSQLCSVReportUpdate( Writer *writer, char *csv_line, WebReportFileInfo *wr_info)
 {
