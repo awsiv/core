@@ -139,6 +139,21 @@ void NovaWin_PrintWmiError(char *str)
 
 /*****************************************************************************/
 
+/* Safe to call even when not initialized */
+
+static void NovaWin_WmiDeInitialize(void)
+{
+    CfDebug("NovaWin_WmiDeInitialize()\n");
+
+    if (wmiSvc != NULL)
+    {
+        SAFE_RELEASE(wmiSvc);
+        dhUninitialize(TRUE);
+    }
+
+    wmiSvc = NULL;
+}
+
 int NovaWin_WmiInitialize(void)
 /*
  * Initialize WMI for this thread, safe to call when already initialized.
@@ -170,23 +185,7 @@ int NovaWin_WmiInitialize(void)
         return false;
     }
 
-    return true;
-}
-
-/*****************************************************************************/
-
-int NovaWin_WmiDeInitialize(void)
-/* Safe to call even when not initialized */
-{
-    CfDebug("NovaWin_WmiDeInitialize()\n");
-
-    if (wmiSvc != NULL)
-    {
-        SAFE_RELEASE(wmiSvc);
-        dhUninitialize(TRUE);
-    }
-
-    wmiSvc = NULL;
+    atexit(&NovaWin_WmiDeInitialize);
 
     return true;
 }

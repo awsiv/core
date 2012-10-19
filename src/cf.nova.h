@@ -1201,7 +1201,6 @@ FnCallResult FnCallGroupExists(FnCall *fp, Rlist *finalargs);
 int NovaWin_PackageListInstalledFromAPI(PackageItem ** pkgList, Attributes a, Promise *pp);
 void NovaWin_PrintWmiError(char *str);
 int NovaWin_WmiInitialize(void);
-int NovaWin_WmiDeInitialize(void);
 
 #endif /* MINGW */
 
