@@ -70,6 +70,22 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
+typedef enum
+{
+    REPORTING_ENGINE_ASYNC_ERROR_UNKNOWN = -1,
+    REPORTING_ENGINE_ASYNC_SUCCESS = 0,
+
+    REPORTING_ENGINE_ASYNC_ERROR_START_PROC,
+    REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT,
+    REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_CONNECT,
+    REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE,
+    REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
+    REPORTING_ENGINE_ASYNC_ERROR_IO,
+    REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT,
+
+    REPORTING_ENGINE_ASYNC_ERROR_MAX
+} ReportingEngineAsyncError;
+
 JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op, bool async);
 JsonElement *AsyncQueryStatus(const char *token, int report_type);
 JsonElement *AsyncQueryAbort(const char *token);

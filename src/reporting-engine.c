@@ -20,19 +20,6 @@
 
 /******************************************************************/
 
-enum re_async_errid{
-    async_err_unknown = -1,
-    async_err_success = 0,
-    async_err_start_proc,
-    async_err_enterprise_db_connect,
-    async_err_sqlite3_connect,
-    async_err_sqlite3_prepare,
-    async_err_sqlite3_query,
-    async_err_io,
-    async_err_unexpected_child_exit
-};
-
-
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
@@ -71,7 +58,7 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
 JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op);
 static char *AsyncToken(const char *username, const char *query);
-JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status);
+JsonElement *PackageAsyncQueryResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file, int status);
 
 static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
 bool ReadExporterPid(WebReportFileInfo *wr_info);
@@ -874,7 +861,7 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
 
 /******************************************************************/
 
-JsonElement *PackageAsyncQueryResult(enum re_async_errid err_id, const char *err_msg, const char *token, const char *file, int status)
+JsonElement *PackageAsyncQueryResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file, int status)
 {
     JsonElement *error = JsonObjectCreate(1);
     JsonObjectAppendInteger(error, "status", status);
@@ -913,15 +900,15 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
     char token[CF_BUFSIZE] = {0};
     snprintf(token, CF_BUFSIZE - 1, "%s", AsyncToken(username, select_op));
 
-    enum re_async_errid err = async_err_success;
+    ReportingEngineAsyncError err = REPORTING_ENGINE_ASYNC_SUCCESS;
 
     pid_t pid = fork();
 
     if (pid == -1)
     {
-        err = async_err_start_proc;
+        err = REPORTING_ENGINE_ASYNC_ERROR_START_PROC;
 
-        return PackageAsyncQueryResult(async_err_start_proc, "Cannot start process", token, "", -1);
+        return PackageAsyncQueryResult(err, "Cannot start process", token, "", -1);
     }
 
     WebReportFileInfo *wr_info = NULL;
@@ -937,7 +924,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
         if (!Sqlite3_DBOpen(&db))
         {
             free(select_op_expanded);
-            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_connect, "Cannot connect to temporary DB");
+            syslog(LOG_ERR, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_CONNECT, "Cannot connect to temporary DB");
             _exit(0);
         }
 
@@ -946,7 +933,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
             Sqlite3_DBClose(db);
             free(select_op_expanded);
 
-            syslog(LOG_ERR, "code %d, message: %s", async_err_sqlite3_prepare, "Cannot load temporary DB");
+            syslog(LOG_ERR, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE, "Cannot load temporary DB");
             _exit(0);
         }        
 
@@ -975,7 +962,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 
     DeleteWebReportFileInfo(wr_info);
 
-    return PackageAsyncQueryResult(async_err_success, "CSV exporter process started", token, wr_info->csv_path, 0);
+    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "CSV exporter process started", token, wr_info->csv_path, 0);
 }
 
 /******************************************************************/
@@ -992,12 +979,12 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
     if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
     {
         Sqlite3_FreeString(err_msg);
-        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error counting result");
+        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error counting result");
     }
 
     if(wr_info->total_lines <= 0)
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Query returned empty results");
+        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Query returned empty results");
         return;
     }
 
@@ -1005,20 +992,20 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
     wr_info->write_data = true;
     if( !ExportWebReportStatusInitialize( wr_info ) )
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error initializing status");
+        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Error initializing status");
         return;
     }
 
     if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
     {
         Sqlite3_FreeString(err_msg);
-        syslog(LOG_DEBUG, "code %d, message: %s", async_err_sqlite3_query, "Error executing SQL");
+        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error executing SQL");
         return;
     }
 
     if (!ExportWebReportStatusFinalize(wr_info))
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", async_err_io, "Error finalizing status");
+        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Error finalizing status");
         return;
     }
 }
@@ -1095,17 +1082,17 @@ JsonElement *AsyncQueryStatus(const char *token, int report_type)
 
     if(!IsExporterProcRunning(wr_info))
     {
-        return PackageAsyncQueryResult(async_err_unexpected_child_exit, "Process exited unexpectedly", token, wr_info->csv_path, -1);
+        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT, "Process exited unexpectedly", token, wr_info->csv_path, -1);
     }
 
     int status = ReadExportStatus(wr_info);
 
     if(status < 0)
     {
-        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, status);
+        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token, wr_info->csv_path, status);
     }
 
-    return PackageAsyncQueryResult(async_err_success, "Success", token, wr_info->csv_path, status);
+    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Success", token, wr_info->csv_path, status);
 }
 
 /******************************************************************/
@@ -1194,14 +1181,14 @@ JsonElement *AsyncQueryAbort(const char *token)
     FILE *fin = fopen(wr_info->abort_file, "w");
     if (fin == NULL)
     {
-        return PackageAsyncQueryResult(async_err_io, "IO error", token, wr_info->csv_path, -1);
+        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token, wr_info->csv_path, -1);
     }
 
     fclose(fin);
 
     // TODO: check if the child has actually exit for robustness
     // status is not important here
-    return PackageAsyncQueryResult(async_err_success, "Query aborted", token, wr_info->csv_path, -1);
+    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Query aborted", token, wr_info->csv_path, -1);
 }
 
 /******************************************************************/
