@@ -1,7 +1,80 @@
 <?php
 
 /**
- * @uri /query
+ * @uri /query/async/:token 2
+ */
+class QueryAsyncId extends Resource
+{
+    function get($request, $token)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+
+        $href_prefix = '';
+
+        $payload = cfapi_query_async_get($user, $token, $href_prefix);
+        if ($payload)
+        {
+            $response->code = Response::OK;
+            $response->body = $payload;
+        }
+        else
+        {
+            $response->code = Response::NOTFOUND;
+        }
+
+        return $response;
+    }
+
+    function delete($request, $token)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+
+        if (cfapi_host_delete($user, $token))
+        {
+            $response->code = Response::NOCONTENT;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /query/async 1
+ */
+class QueryAsync extends Resource
+{
+    function post($request)
+    {
+        $username = $_SERVER['PHP_AUTH_USER'];
+
+        $data = json_decode($request->data);
+
+        if (!$data->query)
+        {
+            $response = new Response($request);
+            $response->code = Response::BADREQUEST;
+            $response->body = "'query' field is required";
+            return $response;
+        }
+
+        $response = new Response($request);
+        $response->body = cfapi_query_async_post($username, $data->query);
+        $response->code = Response::OK;
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /query 0
  */
 class Query extends Resource
 {

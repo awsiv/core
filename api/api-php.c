@@ -57,6 +57,9 @@ static zend_function_entry cfapi_functions[] =
 
     // query
     PHP_FE(cfapi_query_post, NULL)
+    PHP_FE(cfapi_query_async_get, NULL)
+    PHP_FE(cfapi_query_async_post, NULL)
+    PHP_FE(cfapi_query_async_delete, NULL)
 
     {NULL, NULL, NULL}          /* Must be the last line in cfapi_functions[] */
 };

@@ -63,9 +63,10 @@ PHP_FUNCTION(cfapi_host_vital_get);
 PHP_FUNCTION(cfapi_promise_list);
 PHP_FUNCTION(cfapi_promise_get);
 
-/**
-  Reporting engine
-  */
+// reporting engine
 PHP_FUNCTION(cfapi_query_post);
+PHP_FUNCTION(cfapi_query_async_get);
+PHP_FUNCTION(cfapi_query_async_post);
+PHP_FUNCTION(cfapi_query_async_delete);
 
 #endif

@@ -27,8 +27,10 @@ typedef enum
     REPORTING_ENGINE_ASYNC_ERROR_MAX
 } ReportingEngineAsyncError;
 
-JsonElement *EnterpriseExecuteSQL(const char *username, const char *select_op, bool async);
-JsonElement *AsyncQueryStatus(const char *token, int report_type);
+JsonElement *EnterpriseExecuteSQLSync(const char *username, const char *select_op);
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op, const char *href_static);
+
+JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *href_static);
 JsonElement *AsyncQueryAbort(const char *token);
 
 bool Sqlite3_DBOpen(sqlite3 **db);

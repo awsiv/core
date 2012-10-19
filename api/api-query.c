@@ -122,7 +122,7 @@ PHP_FUNCTION(cfapi_query_post)
         }
         else
         {
-            table = EnterpriseExecuteSQL(username, query, false);
+            table = EnterpriseExecuteSQLSync(username, query);
             assert(table);
             Writer *writer = StringWriter();
             JsonElementPrint(writer, table, 0);
@@ -176,6 +176,84 @@ PHP_FUNCTION(cfapi_query_post)
 
     JsonElement *data = JsonArrayCreate(1);
     JsonArrayAppendObject(data, table);
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
+PHP_FUNCTION(cfapi_query_async_post)
+{
+    syslog(LOG_DEBUG, "Requesting POST /api/query/async");
+
+    const char *username = NULL; int username_len = 0;
+    const char *query = NULL; int query_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &query, &query_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(query_len, "query");
+
+    JsonElement *payload = EnterpriseExecuteSQLAsync(username, query, NULL);
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, payload);
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
+PHP_FUNCTION(cfapi_query_async_get)
+{
+    syslog(LOG_DEBUG, "Requesting GET /api/query/async/:token");
+
+    const char *username = NULL; int username_len = 0;
+    const char *token = NULL; int token_len = 0;
+    char *href_prefix = NULL; int href_prefix_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
+                              &username, &username_len,
+                              &token, &token_len,
+                              &href_prefix, &href_prefix_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(token_len, "token");
+    //ARGUMENT_CHECK_CONTENTS(href_prefix_len, "href_prefix_len");
+
+    JsonElement *payload = AsyncQueryStatus(token, REPORT_FORMAT_CSV, NULLStringToEmpty(href_prefix));
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, payload);
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
+PHP_FUNCTION(cfapi_query_async_delete)
+{
+    syslog(LOG_DEBUG, "Requesting GET /api/query/async/:token");
+
+    const char *username = NULL; int username_len = 0;
+    const char *token = NULL; int token_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &token, &token_len) == FAILURE)
+    {
+        THROW_ARGS_MISSING();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len, "username");
+    ARGUMENT_CHECK_CONTENTS(token_len, "token");
+
+    JsonElement *payload = AsyncQueryAbort(token);
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, payload);
 
     RETURN_JSON(PackageResult(data, 1, 1));
 }

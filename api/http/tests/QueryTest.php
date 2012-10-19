@@ -4,8 +4,10 @@ require_once "APIBaseTest.php";
 
 class QueryTest extends APIBaseTest
 {
-    public function testHostsTableQuery(){
-         try
+
+    public function testHostsTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "SELECT * FROM Hosts ORDER BY HostKey"
@@ -45,8 +47,9 @@ class QueryTest extends APIBaseTest
         }
     }
 
-    public function testFileChangesTableQuery(){
-         try
+    public function testFileChangesTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "SELECT * FROM FileChanges ORDER BY HostKey"
@@ -55,7 +58,6 @@ class QueryTest extends APIBaseTest
             $this->assertValidJson($response);
 
             // todo check result meta
-
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('FileName', $response['data'][0]['header'][1]);
@@ -74,7 +76,6 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283', $response['data'][0]['rows'][1][0]);
             $this->assertEquals('/etc/passwd', $response['data'][0]['rows'][1][1]);
             $this->assertEquals('1234567', $response['data'][0]['rows'][1][2]);
-
         }
         catch (Pest_Exception $e)
         {
@@ -82,8 +83,9 @@ class QueryTest extends APIBaseTest
         }
     }
 
-    public function testContextsTableQuery(){
-         try
+    public function testContextsTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "SELECT * FROM Contexts ORDER BY HostKey LIMIT 2"
@@ -92,7 +94,6 @@ class QueryTest extends APIBaseTest
             $this->assertValidJson($response);
 
             // todo check result meta
-
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('ContextName', $response['data'][0]['header'][1]);
@@ -111,7 +112,6 @@ class QueryTest extends APIBaseTest
             $this->assertEquals('305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283', $response['data'][0]['rows'][1][0]);
             $this->assertEquals('ubuntu_10_4', $response['data'][0]['rows'][1][1]);
             $this->assertEquals('1327653377', $response['data'][0]['rows'][1][2]);
-
         }
         catch (Pest_Exception $e)
         {
@@ -119,17 +119,17 @@ class QueryTest extends APIBaseTest
         }
     }
 
-    public function testVariablesTableQuery(){
-         try
+    public function testVariablesTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "' . "SELECT * FROM Variables WHERE VariableType='string' OR VariableType='string list' ORDER BY VariableType LIMIT 4" . '"' .
-                '}');
+                    '}');
             $this->assertEquals(200, $this->pest->lastStatus());
             $this->assertValidJson($response);
 
             // todo check result meta
-
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('NameSpace', $response['data'][0]['header'][1]);
@@ -180,8 +180,9 @@ class QueryTest extends APIBaseTest
         }
     }
 
-    public function testSoftwareTableQuery(){
-         try
+    public function testSoftwareTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "SELECT * FROM Software ORDER BY SoftwareName LIMIT 4"
@@ -190,7 +191,6 @@ class QueryTest extends APIBaseTest
             $this->assertValidJson($response);
 
             // todo check result meta
-
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('SoftwareName', $response['data'][0]['header'][1]);
@@ -231,8 +231,9 @@ class QueryTest extends APIBaseTest
         }
     }
 
-    public function testPromiseStatusLastTableQuery(){
-         try
+    public function testPromiseStatusLastTableQuery()
+    {
+        try
         {
             $response = $this->pest->post('/query', '{
                 "query": "SELECT * FROM  PromiseStatusLast ORDER BY PromiseHandle LIMIT 2"
@@ -241,7 +242,6 @@ class QueryTest extends APIBaseTest
             $this->assertValidJson($response);
 
             // todo check result meta
-
             // check result table schema
             $this->assertEquals('HostKey', $response['data'][0]['header'][0]);
             $this->assertEquals('PromiseHandle', $response['data'][0]['header'][1]);
@@ -269,4 +269,30 @@ class QueryTest extends APIBaseTest
             $this->fail($e);
         }
     }
+
+    public function testHostsTableQueryAsync()
+    {
+        try
+        {
+            $response = $this->pest->post('/query/async', '{
+                "query": "SELECT * FROM Hosts ORDER BY HostKey"
+                }');
+            $this->assertEquals(200, $this->pest->lastStatus());
+            $this->assertValidJson($response);
+
+            $token = $response['data'][0]['id'];
+            $this->assertNotNull($token);
+
+            $response = $this->pest->get('/query/async/' . $token);
+            $this->assertEquals(200, $this->pest->lastStatus);
+
+            $response = $this->post->delete('/query/async/' . $token);
+            $this->assertEquals(204, $this->pest->lastStatus);
+        }
+        catch (Pest_Exception $e)
+        {
+            $this->fail($e);
+        }
+    }
+
 }
