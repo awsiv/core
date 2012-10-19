@@ -14,7 +14,7 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/src -I$(srcdir)/../sqlite3
 
-noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la
+noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la libcfagent.la
 
 libcfnova_la_LDFLAGS = -no-undefined
 
@@ -47,8 +47,7 @@ libcfnova_la_SOURCES += \
         win_service_exec.c \
         win_services.c \
         win_sysinfo.c \
-        win_user.c \
-        win_wmi.c
+        win_user.c
 else
 libcfnova_la_SOURCES += \
         services.c
@@ -92,6 +91,9 @@ else # !MONGO
 libcfnova_la_SOURCES += \
 	stubs.c
 endif
+
+libcfagent_la_SOURCES = \
+	win_wmi.c
 
 libcfmonitord_la_SOURCES = \
         probes.c \
