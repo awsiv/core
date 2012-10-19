@@ -14,6 +14,8 @@
 
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
 
+static void NovaWin_PrintWmiError(char *str);
+static int NovaWin_WmiInitialize(void);
 static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
@@ -128,7 +130,7 @@ static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Pr
 
 /****************************************************************************/
 
-void NovaWin_PrintWmiError(char *str)
+static void NovaWin_PrintWmiError(char *str)
 {
     char dhErrMsg[CF_BUFSIZE];
 
@@ -154,7 +156,7 @@ static void NovaWin_WmiDeInitialize(void)
     wmiSvc = NULL;
 }
 
-int NovaWin_WmiInitialize(void)
+static int NovaWin_WmiInitialize(void)
 /*
  * Initialize WMI for this thread, safe to call when already initialized.
  */
