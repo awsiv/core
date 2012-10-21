@@ -11,9 +11,9 @@ class QueryAsyncId extends Resource
 
         $response = new Response($request);
 
-        $href_prefix = '';
+        $static_files_uri = 'sbc';
 
-        $payload = cfapi_query_async_get($user, $token, $href_prefix);
+        $payload = cfapi_query_async_get($user, $token, $static_files_uri);
         if ($payload)
         {
             $response->code = Response::OK;
@@ -33,7 +33,7 @@ class QueryAsyncId extends Resource
 
         $response = new Response($request);
 
-        if (cfapi_host_delete($user, $token))
+        if (cfapi_query_async_delete($user, $token))
         {
             $response->code = Response::NOCONTENT;
         }

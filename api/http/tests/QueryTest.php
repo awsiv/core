@@ -284,10 +284,10 @@ class QueryTest extends APIBaseTest
             $this->assertNotNull($token);
 
             $response = $this->pest->get('/query/async/' . $token);
-            $this->assertEquals(200, $this->pest->lastStatus);
+            $this->assertEquals(200, $this->pest->lastStatus());
 
-            $response = $this->post->delete('/query/async/' . $token);
-            $this->assertEquals(204, $this->pest->lastStatus);
+            $response = $this->pest->delete('/query/async/' . $token);
+            $this->assertEquals(204, $this->pest->lastStatus());
         }
         catch (Pest_Exception $e)
         {

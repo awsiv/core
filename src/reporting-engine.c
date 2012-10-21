@@ -116,7 +116,9 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
 
 static char *AsyncToken(const char *username, const char *query);
-JsonElement *PackageAsyncQueryResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file, size_t percentage_complete, const char *href_static);
+static JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *query, const char *token);
+static JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, const char *token);
+static JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file, size_t percentage_complete, const char *href_static);
 
 static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
 bool ReadExporterPid(WebReportFileInfo *wr_info);
@@ -934,7 +936,7 @@ static const char *ReportingEngineAsyncErrorToString(ReportingEngineAsyncError e
     }
 }
 
-JsonElement *PackageAsyncQueryResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file,
+JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file,
                                      size_t percentage_complete, const char *href_static)
 {
     JsonElement *payload = JsonObjectCreate(1);
@@ -968,6 +970,38 @@ JsonElement *PackageAsyncQueryResult(ReportingEngineAsyncError err_id, const cha
     return payload;
 }
 
+JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *query, const char *token)
+{
+    JsonElement *payload = JsonObjectCreate(1);
+
+    if (err_id == REPORTING_ENGINE_ASYNC_SUCCESS)
+    {
+        JsonObjectAppendString(payload, "id", token);
+    }
+    else
+    {
+        JsonObjectAppendString(payload, "error", ReportingEngineAsyncErrorToString(err_id));
+    }
+
+    return payload;
+}
+
+JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, const char *token)
+{
+    JsonElement *payload = JsonObjectCreate(1);
+
+    if (err_id == REPORTING_ENGINE_ASYNC_SUCCESS)
+    {
+        JsonObjectAppendString(payload, "id", token);
+    }
+    else
+    {
+        JsonObjectAppendString(payload, "error", ReportingEngineAsyncErrorToString(err_id));
+    }
+
+    return payload;
+}
+
 /******************************************************************/
 
 static char *AsyncToken(const char *username, const char *query)
@@ -987,7 +1021,7 @@ static char *AsyncToken(const char *username, const char *query)
 
 /******************************************************************/
 
-JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op, const char *href_static)
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op)
 {
     assert( username && select_op );
 
@@ -1002,7 +1036,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
     {
         err = REPORTING_ENGINE_ASYNC_ERROR_START_PROC;
 
-        return PackageAsyncQueryResult(err, "Cannot start process", token, "", -1, href_static);
+        return PackageAsyncQueryCreateResult(err, "Cannot start process", select_op, token);
     }
 
     WebReportFileInfo *wr_info = NULL;
@@ -1056,8 +1090,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 
     DeleteWebReportFileInfo(wr_info);
 
-    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "CSV exporter process started", token,
-                                   wr_info->csv_path, 0, href_static);
+    return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_SUCCESS, "CSV exporter process started", select_op, token);
 }
 
 /******************************************************************/
@@ -1167,7 +1200,7 @@ JsonElement *EnterpriseExecuteSQLSync(const char *username, const char *select_o
 
 /******************************************************************/
 
-JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *href_static)
+JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *static_files_uri)
 {
     assert(token);
 
@@ -1177,20 +1210,20 @@ JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *hr
 
     if(!IsExporterProcRunning(wr_info))
     {
-        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT, "Process exited unexpectedly",
-                                       token, wr_info->csv_path, -1, href_static);
+        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT, "Process exited unexpectedly",
+                                       token, wr_info->csv_path, -1, static_files_uri);
     }
 
     int status = ReadExportStatus(wr_info);
 
     if(status < 0)
     {
-        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token,
-                                       wr_info->csv_path, status, href_static);
+        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token,
+                                       wr_info->csv_path, status, static_files_uri);
     }
 
-    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Success", token,
-                                   wr_info->csv_path, status, href_static);
+    return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Success", token,
+                                   wr_info->csv_path, status, static_files_uri);
 }
 
 /******************************************************************/
@@ -1279,14 +1312,14 @@ JsonElement *AsyncQueryAbort(const char *token)
     FILE *fin = fopen(wr_info->abort_file, "w");
     if (fin == NULL)
     {
-        return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token, wr_info->csv_path, -1, NULL);
+        return PackageAsyncQueryAbortResult(REPORTING_ENGINE_ASYNC_ERROR_IO, token);
     }
 
     fclose(fin);
 
     // TODO: check if the child has actually exit for robustness
     // status is not important here
-    return PackageAsyncQueryResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Query aborted", token, wr_info->csv_path, -1, NULL);
+    return PackageAsyncQueryAbortResult(REPORTING_ENGINE_ASYNC_SUCCESS, token);
 }
 
 /******************************************************************/

@@ -197,7 +197,7 @@ PHP_FUNCTION(cfapi_query_async_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(query_len, "query");
 
-    JsonElement *payload = EnterpriseExecuteSQLAsync(username, query, NULL);
+    JsonElement *payload = EnterpriseExecuteSQLAsync(username, query);
 
     JsonElement *data = JsonArrayCreate(1);
     JsonArrayAppendObject(data, payload);
@@ -211,21 +211,24 @@ PHP_FUNCTION(cfapi_query_async_get)
 
     const char *username = NULL; int username_len = 0;
     const char *token = NULL; int token_len = 0;
-    char *href_prefix = NULL; int href_prefix_len = 0;
+    char *static_files_uri = NULL; int static_files_uri_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
                               &username, &username_len,
                               &token, &token_len,
-                              &href_prefix, &href_prefix_len) == FAILURE)
+                              &static_files_uri, &static_files_uri_len) == FAILURE)
     {
         THROW_ARGS_MISSING();
     }
 
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(token_len, "token");
-    //ARGUMENT_CHECK_CONTENTS(href_prefix_len, "href_prefix_len");
+    ARGUMENT_CHECK_CONTENTS(static_files_uri_len, "static_files_uri");
 
-    JsonElement *payload = AsyncQueryStatus(token, REPORT_FORMAT_CSV, NULLStringToEmpty(href_prefix));
+    syslog(LOG_DEBUG, "Looking up status for async query %s", token);
+
+    JsonElement *payload = AsyncQueryStatus(token, REPORT_FORMAT_CSV, NULLStringToEmpty(static_files_uri));
+    assert(payload);
 
     JsonElement *data = JsonArrayCreate(1);
     JsonArrayAppendObject(data, payload);
@@ -235,7 +238,7 @@ PHP_FUNCTION(cfapi_query_async_get)
 
 PHP_FUNCTION(cfapi_query_async_delete)
 {
-    syslog(LOG_DEBUG, "Requesting GET /api/query/async/:token");
+    syslog(LOG_DEBUG, "Requesting DELETE /api/query/async/:token");
 
     const char *username = NULL; int username_len = 0;
     const char *token = NULL; int token_len = 0;

@@ -28,9 +28,9 @@ typedef enum
 } ReportingEngineAsyncError;
 
 JsonElement *EnterpriseExecuteSQLSync(const char *username, const char *select_op);
-JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op, const char *href_static);
+JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_op);
 
-JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *href_static);
+JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *static_files_uri);
 JsonElement *AsyncQueryAbort(const char *token);
 
 bool Sqlite3_DBOpen(sqlite3 **db);
