@@ -284,6 +284,7 @@ class QueryTest extends APIBaseTest
             $this->assertNotNull($token);
 
             $response = $this->pest->get('/query/async/' . $token);
+            var_dump($response);
             $this->assertEquals(200, $this->pest->lastStatus());
 
             $response = $this->pest->delete('/query/async/' . $token);

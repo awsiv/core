@@ -118,7 +118,7 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
 static char *AsyncToken(const char *username, const char *query);
 static JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *query, const char *token);
 static JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, const char *token);
-static JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file, size_t percentage_complete, const char *href_static);
+static JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *token, size_t percentage_complete, const char *href_static);
 
 static bool IsExporterProcRunning(WebReportFileInfo *wr_info);
 bool ReadExporterPid(WebReportFileInfo *wr_info);
@@ -936,9 +936,12 @@ static const char *ReportingEngineAsyncErrorToString(ReportingEngineAsyncError e
     }
 }
 
-JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *token, const char *file,
-                                     size_t percentage_complete, const char *href_static)
+JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *token,
+                                           size_t percentage_complete, const char *href_static)
 {
+    assert(token);
+    assert(href_static);
+
     JsonElement *payload = JsonObjectCreate(1);
 
     if (err_id == REPORTING_ENGINE_ASYNC_SUCCESS)
@@ -950,16 +953,10 @@ JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, con
         if (percentage_complete >= 100)
         {
             assert(percentage_complete == 100);
-            if (href_static)
-            {
-                char *href = StringConcatenate(2, href_static, file);
-                JsonObjectAppendString(payload, "href", href);
-                free(href);
-            }
-            else
-            {
-                JsonObjectAppendString(payload, "href", file);
-            }
+
+            char *href = StringConcatenate(3, href_static, token, ".csv");
+            JsonObjectAppendString(payload, "href", href);
+            free(href);
         }
     }
     else
@@ -1210,20 +1207,20 @@ JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *st
 
     if(!IsExporterProcRunning(wr_info))
     {
-        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT, "Process exited unexpectedly",
-                                       token, wr_info->csv_path, -1, static_files_uri);
+        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT,
+                                             token, -1, static_files_uri);
     }
 
     int status = ReadExportStatus(wr_info);
 
     if(status < 0)
     {
-        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_IO, "IO error", token,
-                                       wr_info->csv_path, status, static_files_uri);
+        return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_ERROR_IO, token,
+                                             status, static_files_uri);
     }
 
-    return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_SUCCESS, "Success", token,
-                                   wr_info->csv_path, status, static_files_uri);
+    return PackageAsyncQueryStatusResult(REPORTING_ENGINE_ASYNC_SUCCESS, token,
+                                         status, static_files_uri);
 }
 
 /******************************************************************/

@@ -11,7 +11,7 @@ class QueryAsyncId extends Resource
 
         $response = new Response($request);
 
-        $static_files_uri = 'sbc';
+        $static_files_uri = Utils::baseUri() . 'static/';
 
         $payload = cfapi_query_async_get($user, $token, $static_files_uri);
         if ($payload)

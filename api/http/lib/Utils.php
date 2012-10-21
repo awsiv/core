@@ -20,6 +20,20 @@ class Utils
     const ERRID_ACCESS_DENIED = 15;
     const ERRID_ACCESS_DENIED_EXTERNAL = 16;
 
+    public static function baseUri()
+    {
+        if ($_SERVER['HTTPS'])
+        {
+            $prot = 'https://';
+        }
+        else
+        {
+            $prot = 'http://';
+        }
+
+        return $prot . $_SERVER['SERVER_ADDR'] . '/api/';
+    }
+
     public static function queryParam($name, $defaultValue = NULL)
     {
         if (!array_key_exists($name, $_GET))
