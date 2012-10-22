@@ -1,0 +1,5 @@
+<IfModule mod_mime.c>
+AddType text/csv .csv
+AddType application/pdf .pdf
+AddType application/json .json
+</IfModule>
