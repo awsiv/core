@@ -755,7 +755,7 @@ bundle agent cfe_internal_policysrv
                 comment => "Extract system timezone to use later on",
                  handle => "cfe_internal_policysrv_classes_extract_system_timezone";
 
-  (ubuntu_8|ubuntu_10|debian_5|debian_6).am_policy_hub::
+  (ubuntu_8|ubuntu_10|ubuntu_12|debian_5|debian_6).am_policy_hub::
 
    "no_backup_apache2_default"     not => fileexists("$(sys.workdir)/software_updates/apache2-default"),
                                comment => "Check if there is a backup of apache2 default config or not",
