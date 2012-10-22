@@ -6630,10 +6630,11 @@ cfapi_errid CFDB_QueryLicense(EnterpriseDB *conn, JsonElement **license_out)
                 JsonElement *license_usage_json = BsonContainerToJsonContainer(&license_usage_object, BSON_OBJECT, true);
                 JsonObjectAppendObject(*license_out, cfr_license_usage, license_usage_json);
             }
-            else
-            {
-                 return ERRID_ITEM_NONEXISTING;
-            }
+        }
+        else
+        {
+            bson_destroy(&record);
+            return ERRID_ITEM_NONEXISTING;
         }
 
         bson_destroy(&record);
