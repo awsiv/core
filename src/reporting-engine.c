@@ -931,6 +931,8 @@ static const char *ReportingEngineAsyncErrorToString(ReportingEngineAsyncError e
         return "I/O error";
     case REPORTING_ENGINE_ASYNC_ERROR_UNEXPECTED_CHILD_EXIT:
         return "Unexpected child process exit";
+    case REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND:
+        return "Document root cannot be found";
     default:
         return "Unknown";
     }
@@ -1034,10 +1036,33 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
         err = REPORTING_ENGINE_ASYNC_ERROR_START_PROC;
 
         return PackageAsyncQueryCreateResult(err, "Cannot start process", select_op, token);
+    }    
+
+    char docroot[CF_MAXVARSIZE] = {0};
+
+    EnterpriseDB conn[1];
+
+    if (!CFDB_Open(conn))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT;
+
+        return PackageAsyncQueryCreateResult(err, "Cannot connect to Enterprise database", select_op, token);
     }
 
+    if (!CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND;
+
+        return PackageAsyncQueryCreateResult(err, "Document root cannot be found", select_op, token);
+    }
+
+    CFDB_Close(conn);
+
+    char path_to_file[CF_MAXVARSIZE] = {0};
+    snprintf(path_to_file, CF_MAXVARSIZE, "%s/api/static", docroot);
+
     WebReportFileInfo *wr_info = NULL;
-    wr_info = NewWebReportFileInfo(REPORT_FORMAT_CSV, "/tmp", token, "");
+    wr_info = NewWebReportFileInfo(REPORT_FORMAT_CSV, path_to_file, token, "");
 
     if (pid == 0)
     {
@@ -1201,9 +1226,33 @@ JsonElement *AsyncQueryStatus(const char *token, int report_type, const char *st
 {
     assert(token);
 
-    //TODO: directory must be configurable
+    ReportingEngineAsyncError err = REPORTING_ENGINE_ASYNC_SUCCESS;
+
+    //TODO: directory must be configurable       
+    char docroot[CF_MAXVARSIZE] = {0};
+    EnterpriseDB conn[1];
+
+    if (!CFDB_Open(conn))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT;
+
+        return PackageAsyncQueryStatusResult(err, token, -1, static_files_uri);
+    }
+
+    if (!CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND;
+
+        return PackageAsyncQueryStatusResult(err, token, -1, static_files_uri);
+    }
+
+    CFDB_Close(conn);
+
+    char path_to_file[CF_MAXVARSIZE] = {0};
+    snprintf(path_to_file, CF_MAXVARSIZE, "%s/api/static", docroot);
+
     WebReportFileInfo *wr_info = NULL;
-    wr_info = NewWebReportFileInfo(report_type, "/tmp", token, "");
+    wr_info = NewWebReportFileInfo(report_type, path_to_file, token, "");
 
     if(!IsExporterProcRunning(wr_info))
     {
