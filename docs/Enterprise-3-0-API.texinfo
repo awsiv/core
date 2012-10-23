@@ -46,7 +46,7 @@ Copyright @copyright{} 2012 CFEngine AS
 @node Introduction::
 @chapter Introduction
 
-The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CFEngine Enterprise 3.0 installation. With the Enterprise API, you can
+The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CFEngine Enterprise 3.0 installation. With the Enterprise API, you can..
 
 @itemize
 @item Check installation status
@@ -58,9 +58,79 @@ The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CF
 
 The Enterprise API is a REST API, but a central part of interacting with the API involves using SQL. This is new in 3.0 and was done to provide users with maximal flexibility for crafting custom reports based on the wealth of data residing on the Hub.
 
+@subsection Basic Properties of the API
+
+@subsubsection HTTP + JSON
+The Enterprise API is a conventional REST API in the sense that it has a number of URI resources that support one or more GET, PUT, POST, or DELETE operations. While reporting is done using SQL, this query is always wrapped in a JSON request.
+
+@subsubsection Requests
+@b{GET} requests are one of @b{listing} or @b{getting}. @b{Listing} resources means that a number of results will be returned, but each entry may contain limited information. An example of a @b{listing} query is @i{/api/user} to list users. Notice that URI components are always non-plural. An exception to this is @i{/api/settings}, which returns the singleton resource for settings. @b{Getting} a resource specifies an individual resource to return, e.g. @i{/api/user/homer}. @b{PUT} request typically create a new resource, e.g. a user. @b{POST} requests typically updates an existing resource. @b{DELETE} requests are also supported in some cases.
+
+@subsubsection Responses
+3.0 responses are always of the following format, consisting of a @b{meta} object and a @b{data} array.
+@verbatim
+{
+  ``meta'': {
+    ``page'': 1,
+    ``count'': 1,
+    ``total'': 1,
+    ``timestamp'': 1350922925
+  },
+  ``data'': [
+     ... 
+  ]
+}
+@end verbatim
+
+@b{page} refers to the current page number of the request. @b{count} is the number of results in the current page, equaling the length of the @b{data} array. @b{total} is the number of results in all available pages combined. @b{timestamp} is the time the request was processed by the API. The @b{data} array is resource dependent, but will always contain objects. Response objects typically do not contain error codes. If the response is not @i{200 OK}, the appropriate HTTP error code returned along with a (possibly non-JSON) payload.
+
+@subsubsection Pagination
+Pagination is handled by @b{page} and @b{count} query parameters to a @b{GET} request, e.g. @i{/api/user?page=5&count=30} to get the 5th page of pages of 30 entries each. The default @b{page} is 1 and the default @b{count} is 50 if these are not specified explicitly.
+
+@subsubsection Time
+All timestamps are reported in @i{Unix Time}, i.e. seconds since 1970.
+
+@subsubsection Authentication
+The API supports both internal and external authentication. The internal users table will always be consulted first, followed by an external source specified in the settings. External sources are @i{OpenLDAP} or @i{Active Directory} servers configurable through @i{POST /api/settings}.
+
+@subsubsection Authorization
+Some resources require that the request user is a member of the @i{admin} role. Roles are managed with @i{/api/role}. @b{Role-Based Access Control (RBAC)} is configurable through settings. Users typically have permission to access their own resources, e.g. their own scheduled reports.
+
 @subsection Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API.
 
-The CFEngine Nova 2.2 API provided an alternative access to a set of pre-defined reports available in the Mission Portal (The Hub Web UI). 
+@subsubsection Read vs. Read/Write
+The 2.2 API was read-only and users, roles and settings was managed by the Mission Portal. By contrast, the 3.0 API is read/write and completely standalone from the Mission Portal. In the CFEngine Enterprise 3.0, users, roles and settings belong in the API, and the Mission Portal uses this to determine access to data. Additionally, some other resources support PUT, POST and DELETE, but most data collected from agents are read-only.
+
+@subsubsection Built-in Reports vs. Reporting Engine
+The 2.2 API provided an almost one-to-one correspondance between the reports in the Mission Portal and the API. One of the big changes in CFEngine Enterprise 3.0 is the advent of SQL reports. This is provided to the Mission Portal through the API, and you can use it too. You may issue both synchronous and asynchronous reporting requests, and optionally schedule reports to be received by email.
+
+@subsubsection Content-Type
+The 2.2 API has a HTTP content-type @code{application/vnd.cfengine.nova-v1+json}. In the 3.0 API the content-type is @code{application/vnd.cfengine.enterprise-v1+json}. This reflects a branding change away from Nova to Enterprise.
+
+@subsubsection New Users
+The 2.2 API used credentials from the Mission Portal database to authenticate and authorize users. These users have been moved into the Hub database and security has been strengthened. We are now using salted SHA256 passwords for the user table. Unfortunately, this means that internal users need to be recreated. The Mission Portal now relies on the API for authentication and authorization. This was partially done to support multi-hub installations.
+
+@subsubsection Base Path
+The 2.2 API had a base path @code{/rest}. In the 3.0 API the base path is @code{/api}.
+
+@subsubsection Still available
+In 3.0, the old 2.2 API is still available along side the new 3.0 API, so you can keep calling the old API if needed.
+
+@subsubsection Mission Portal
+Starting in 3.0, most of the API is exercised by the Mission Portal web-UI.
+
+@chapter Checking Status
+You can get basic info about the API by issuing @i{GET /api}. 
+
+
+
+
+@chapter Managing Settings
+Most of the settings configurable in the API relate to LDAP authentication of users. Settings support two operations, @b{GET} and @b{POST}.
+
+
+
+
 
 @c *****************************************************
 @c * CHAPTER
