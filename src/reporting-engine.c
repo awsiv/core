@@ -116,7 +116,7 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
 
 static char *AsyncToken(const char *username, const char *query);
-static JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *query, const char *token);
+static JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *query, const char *token);
 static JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, const char *token);
 static JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *token, size_t percentage_complete, const char *href_static);
 
@@ -933,6 +933,8 @@ static const char *ReportingEngineAsyncErrorToString(ReportingEngineAsyncError e
         return "Unexpected child process exit";
     case REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND:
         return "Document root cannot be found";
+    case REPORTING_ENGINE_ASYNC_ERROR_WRITING:
+        return "Error writing report file";
     default:
         return "Unknown";
     }
@@ -969,9 +971,9 @@ JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, con
     return payload;
 }
 
-JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *err_msg, const char *query, const char *token)
+JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *query, const char *token)
 {
-    JsonElement *payload = JsonObjectCreate(1);
+    JsonElement *payload = JsonObjectCreate(2);
 
     if (err_id == REPORTING_ENGINE_ASYNC_SUCCESS)
     {
@@ -981,6 +983,7 @@ JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, con
     {
         JsonObjectAppendString(payload, "error", ReportingEngineAsyncErrorToString(err_id));
     }
+    JsonObjectAppendString(payload, "query", query);
 
     return payload;
 }
@@ -1027,15 +1030,11 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
     char token[CF_BUFSIZE] = {0};
     snprintf(token, CF_BUFSIZE - 1, "%s", AsyncToken(username, select_op));
 
-    ReportingEngineAsyncError err = REPORTING_ENGINE_ASYNC_SUCCESS;
-
     pid_t pid = fork();
 
     if (pid == -1)
     {
-        err = REPORTING_ENGINE_ASYNC_ERROR_START_PROC;
-
-        return PackageAsyncQueryCreateResult(err, "Cannot start process", select_op, token);
+        return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_ERROR_START_PROC, select_op, token);
     }    
 
     char docroot[CF_MAXVARSIZE] = {0};
@@ -1044,16 +1043,12 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 
     if (!CFDB_Open(conn))
     {
-        err = REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT;
-
-        return PackageAsyncQueryCreateResult(err, "Cannot connect to Enterprise database", select_op, token);
+        return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT, select_op, token);
     }
 
     if (!CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH))
     {
-        err = REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND;
-
-        return PackageAsyncQueryCreateResult(err, "Document root cannot be found", select_op, token);
+        return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND, select_op, token);
     }
 
     CFDB_Close(conn);
@@ -1107,12 +1102,15 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
     else
     {
         wr_info->child_pid = pid;
-        WebExportWriteChildPid(wr_info);
+        if (!WebExportWriteChildPid(wr_info))
+        {
+            return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_ERROR_WRITING, select_op, token);
+        }
     }
 
     DeleteWebReportFileInfo(wr_info);
 
-    return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_SUCCESS, "CSV exporter process started", select_op, token);
+    return PackageAsyncQueryCreateResult(REPORTING_ENGINE_ASYNC_SUCCESS, select_op, token);
 }
 
 /******************************************************************/

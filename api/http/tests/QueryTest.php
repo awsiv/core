@@ -281,6 +281,7 @@ class QueryTest extends APIBaseTest
             $this->assertValidJson($response);
 
             $token = $response['data'][0]['id'];
+            var_dump($response);
             $this->assertNotNull($token);
 
             $response = $this->pest->get('/query/async/' . $token);

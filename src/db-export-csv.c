@@ -901,7 +901,14 @@ bool WebExportWriteChildPid(WebReportFileInfo *wr_info)
     char pid_file[CF_MAXVARSIZE] = "\0";
     snprintf(pid_file, CF_MAXVARSIZE - 1, "%s.pid", wr_info->csv_path);
 
-    Writer *writer = FileWriter(fopen(pid_file, "w"));
+    FILE *stream = fopen(pid_file, "w");
+    if (!stream)
+    {
+        syslog(LOG_ERR, "Canot open report file for writing: %s", pid_file);
+        return false;
+    }
+
+    Writer *writer = FileWriter(stream);
     assert(writer);
     if(!writer)
     {

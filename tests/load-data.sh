@@ -34,5 +34,6 @@ load_data cfreport roles
 load_data cfreport settings
 load_data cfreport monitoring_mg
 load_data cfreport promises_unexp
+load_data cfreport scratch
 
 echo "Importing data complete"
