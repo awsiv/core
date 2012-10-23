@@ -1348,7 +1348,31 @@ JsonElement *AsyncQueryAbort(const char *token)
 
     //TODO: directory must be configurable
     WebReportFileInfo *wr_info = NULL;
-    wr_info = NewWebReportFileInfo(0, "/tmp", token, "");
+    char docroot[CF_MAXVARSIZE] = {0};
+    EnterpriseDB conn[1];
+
+    ReportingEngineAsyncError err = REPORTING_ENGINE_ASYNC_SUCCESS;
+
+    if (!CFDB_Open(conn))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_ENTERPRISE_DB_CONNECT;
+
+        return PackageAsyncQueryAbortResult(err, token);
+    }
+
+    if (!CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH))
+    {
+        err = REPORTING_ENGINE_ASYNC_ERROR_DOCROOT_NOT_FOUND;
+
+        return PackageAsyncQueryAbortResult(err, token);
+    }
+
+    CFDB_Close(conn);
+
+    char path_to_file[CF_MAXVARSIZE] = {0};
+    snprintf(path_to_file, CF_MAXVARSIZE, "%s/api/static", docroot);
+
+    wr_info = NewWebReportFileInfo(0, path_to_file, token, "");
 
     assert(wr_info);
     assert(wr_info->abort_file);
@@ -1363,7 +1387,7 @@ JsonElement *AsyncQueryAbort(const char *token)
 
     // TODO: check if the child has actually exit for robustness
     // status is not important here
-    return PackageAsyncQueryAbortResult(REPORTING_ENGINE_ASYNC_SUCCESS, token);
+    return PackageAsyncQueryAbortResult(err, token);
 }
 
 /******************************************************************/
