@@ -850,6 +850,57 @@ static void SetVirtualNameSpace(const char *handle, const char *namespace,
 
 /******************************************************************/
 
+static ReportingEngineAsyncError ExportColumnNamesCSV(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info)
+{
+    assert(wr_info);
+    assert(select_op);
+    assert(db);
+
+    ReportingEngineAsyncError error = REPORTING_ENGINE_ASYNC_SUCCESS;
+    sqlite3_stmt *statement;
+
+    int rc = sqlite3_prepare_v2(db, select_op, -1, &statement, 0);
+
+    if (rc == SQLITE_OK)
+    {
+        int column_count = sqlite3_column_count(statement);
+
+        if (column_count > 0)
+        {
+            Writer *writer = FileWriter(fopen(wr_info->csv_path, "w"));
+
+            if (wr_info->report_type & REPORT_FORMAT_CSV)
+            {
+                CsvWriter *c = CsvWriterOpen(writer);
+                for (int i = 0; i < column_count; i++)
+                {
+                    CsvWriterField(c, sqlite3_column_name(statement, i));
+                }
+
+                CsvWriterNewRecord(c);
+                CsvWriterClose(c);
+            }
+            WriterClose(writer);
+        }
+        else
+        {
+            // NOTE: since the rows count are > 0 before this method is called
+            // this has to be an error
+            error = REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY;
+        }
+
+        sqlite3_finalize(statement);
+    }
+    else
+    {
+        error = REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE;
+    }
+
+    return error;
+}
+
+/******************************************************************/
+
 int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
 {
     assert(out);
@@ -1139,6 +1190,14 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
 
     // export
     wr_info->write_data = true;
+
+    // write csv header
+    if (ExportColumnNamesCSV(db, select_op, wr_info) != REPORTING_ENGINE_ASYNC_SUCCESS)
+    {
+        // TODO: handle error condition
+        return;
+    }
+
     if( !ExportWebReportStatusInitialize( wr_info ) )
     {
         syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Error initializing status");
