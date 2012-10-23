@@ -904,7 +904,7 @@ bool WebExportWriteChildPid(WebReportFileInfo *wr_info)
     FILE *stream = fopen(pid_file, "w");
     if (!stream)
     {
-        syslog(LOG_ERR, "Canot open report file for writing: %s", pid_file);
+        syslog(LOG_ERR, "Cannot open report file for writing: %s", pid_file);
         return false;
     }
 
