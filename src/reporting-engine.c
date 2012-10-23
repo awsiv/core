@@ -1128,6 +1128,7 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
     {
         Sqlite3_FreeString(err_msg);
         syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error counting result");
+        return;
     }
 
     if(wr_info->total_lines <= 0)
