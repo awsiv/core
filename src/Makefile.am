@@ -92,8 +92,11 @@ libcfnova_la_SOURCES += \
 	stubs.c
 endif
 
-libcfagent_la_SOURCES = \
+libcfagent_la_SOURCES =
+if NT
+libcfagent_la_SOURCES += \
 	win_wmi.c
+endif
 
 libcfmonitord_la_SOURCES = \
         probes.c \
