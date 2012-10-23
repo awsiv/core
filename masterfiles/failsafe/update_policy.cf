@@ -131,7 +131,7 @@ bundle agent update_policy
 
   !windows.am_policy_hub.start_mongod::
 
-   "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --logappend --dbpath $(update_policy.mongodb_dir) --bind_ip 127.0.0.1 --nohttpinterface --nojournal > /dev/null < /dev/null 2>&1"
+   "/var/cfengine/bin/mongod --quiet --fork --logpath /var/log/mongod.log --logappend --dbpath $(update_policy.mongodb_dir) --bind_ip 127.0.0.1 --nohttpinterface --nojournal > /dev/null < /dev/null 2>&1"
       contain => u_in_shell,
        action => u_mongod_bg,
       comment => "Start mongod process",
