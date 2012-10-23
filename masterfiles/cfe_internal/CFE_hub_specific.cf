@@ -86,7 +86,7 @@ bundle agent cfe_internal_update_folders
 #  - setup/prepare build-in php modules (CFEngine 3 Enterprise)
 #    * cfmod   (ALL)
 #    * mongo   (ALL)
-#    * svn     (DEBIAN/UBUNTU)
+#    * svn     (Not in Enterprise 3.0)
 #    * json    (RHEL)
 #    * mcrypt  (RHEL)
 #
@@ -104,11 +104,11 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
-   "/etc/php.d/svn.ini"
-        comment => "Put svn.ini to its place",
-         handle => "cfe_internal_php_mod_files_svn_ini_redhat5",
-      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-          perms => mo("644","root");
+   # "/etc/php.d/svn.ini"
+   #      comment => "Put svn.ini to its place",
+   #       handle => "cfe_internal_php_mod_files_svn_ini_redhat5",
+   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
+   #        perms => mo("644","root");
 
    "/etc/php.d/json.ini"
          comment => "Put json.ini to its place",
@@ -165,21 +165,21 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
 
-   "/usr/lib/php/modules/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-         handle => "cfe_internal_php_mod_files_svn_so_redhat5_32",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-        classes => if_repaired("restart_webserver");
+   # "/usr/lib/php/modules/svn.so"
+   #       comment => "Prepare svn.so for 32-bit system",
+   #       handle => "cfe_internal_php_mod_files_svn_so_redhat5_32",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "i686",
+   #      classes => if_repaired("restart_webserver");
 
-   "/usr/lib64/php/modules/svn.so"
-         comment => "Prepare svn.so for 64-bit system",
-         handle => "cfe_internal_php_mod_files_svn_so_redhat5_64",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "x86_64",
-        classes => if_repaired("restart_webserver");
+   # "/usr/lib64/php/modules/svn.so"
+   #       comment => "Prepare svn.so for 64-bit system",
+   #       handle => "cfe_internal_php_mod_files_svn_so_redhat5_64",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "x86_64",
+   #      classes => if_repaired("restart_webserver");
 
    "/usr/lib/php/modules/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
@@ -311,11 +311,11 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
-   "/etc/php5/conf.d/svn.ini"
-        comment => "Put svn.ini to its place",
-         handle => "cfe_internal_php_mod_files_svn_ini_ubuntu10",
-      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-          perms => mo("644","root");
+   # "/etc/php5/conf.d/svn.ini"
+   #      comment => "Put svn.ini to its place",
+   #       handle => "cfe_internal_php_mod_files_svn_ini_ubuntu10",
+   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
+   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -351,21 +351,21 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
 
-   "/usr/lib/php5/20090626+lfs/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_32",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-         classes => if_repaired("restart_webserver");
- 
-   "/usr/lib/php5/20090626/svn.so"
-         comment => "Prepare svn.so for 64-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_64",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "x86_64",
-         classes => if_repaired("restart_webserver");
+   # "/usr/lib/php5/20090626+lfs/svn.so"
+   #       comment => "Prepare svn.so for 32-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_32",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "i686",
+   #       classes => if_repaired("restart_webserver");
+   #  
+   # "/usr/lib/php5/20090626/svn.so"
+   #       comment => "Prepare svn.so for 64-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_64",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "x86_64",
+   #       classes => if_repaired("restart_webserver");
 
    "/usr/lib/php5/20090626+lfs/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
@@ -423,11 +423,11 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
-   "/etc/php5/conf.d/svn.ini"
-        comment => "Put svn.ini to its place",
-         handle => "cfe_internal_php_mod_files_svn_ini_ubuntu8",
-      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-          perms => mo("644","root");
+   # "/etc/php5/conf.d/svn.ini"
+   #      comment => "Put svn.ini to its place",
+   #       handle => "cfe_internal_php_mod_files_svn_ini_ubuntu8",
+   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
+   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -463,21 +463,21 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
 
-   "/usr/lib/php5/20060613+lfs/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_32",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-         classes => if_repaired("restart_webserver");
- 
-   "/usr/lib/php5/20060613/svn.so"
-         comment => "Prepare svn.so for 64-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_64",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "x86_64",
-         classes => if_repaired("restart_webserver");
+   # "/usr/lib/php5/20060613+lfs/svn.so"
+   #       comment => "Prepare svn.so for 32-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_32",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "i686",
+   #       classes => if_repaired("restart_webserver");
+   #  
+   # "/usr/lib/php5/20060613/svn.so"
+   #       comment => "Prepare svn.so for 64-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_64",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "x86_64",
+   #       classes => if_repaired("restart_webserver");
 
    "/usr/lib/php5/20060613+lfs/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
@@ -535,11 +535,11 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
-   "/etc/php5/conf.d/svn.ini"
-        comment => "Put svn.ini to its place",
-         handle => "cfe_internal_php_mod_files_svn_ini_suse",
-      copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-          perms => mo("644","root");
+   # "/etc/php5/conf.d/svn.ini"
+   #      comment => "Put svn.ini to its place",
+   #       handle => "cfe_internal_php_mod_files_svn_ini_suse",
+   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
+   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -575,21 +575,21 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
 
-   "/usr/lib/php5/extensions/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_suse_32",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-         classes => if_repaired("restart_webserver");
-
-   "/usr/lib64/php5/extensions/svn.so"
-         comment => "Prepare svn.so for 64-bit system",
-          handle => "cfe_internal_php_mod_files_svn_so_suse_64",
-       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "x86_64",
-         classes => if_repaired("restart_webserver");
+   # "/usr/lib/php5/extensions/svn.so"
+   #       comment => "Prepare svn.so for 32-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_suse_32",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "i686",
+   #       classes => if_repaired("restart_webserver");
+   # 
+   # "/usr/lib64/php5/extensions/svn.so"
+   #       comment => "Prepare svn.so for 64-bit system",
+   #        handle => "cfe_internal_php_mod_files_svn_so_suse_64",
+   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
+   #         perms => mo("755","root"),
+   #    ifvarclass => "x86_64",
+   #       classes => if_repaired("restart_webserver");
 
    "/usr/lib/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
@@ -685,7 +685,7 @@ bundle agent cfe_internal_policysrv
                              "php5-json",
                              "php5-pear",
                              "php5-mcrypt",
-                             "subversion",
+#                             "subversion",
                             },
                  comment => "Define a list of packages to be installed on SuSE",
                   handle => "cfe_internal_policysrv_vars_match_package_suse";
@@ -700,7 +700,7 @@ bundle agent cfe_internal_policysrv
                              "httpd",
                              "mod_ssl",
                              "php",
-                             "subversion",
+#                             "subversion",
                              "php-bcmath",
                              "php-pear",
                             },
@@ -713,7 +713,7 @@ bundle agent cfe_internal_policysrv
                              "httpd",
                              "mod_ssl",
                              "php",
-                             "subversion",
+#                             "subversion",
                              "php-bcmath",
                              "php-pear",
                              "php-mcrypt"
@@ -729,7 +729,7 @@ bundle agent cfe_internal_policysrv
                               "ssl-cert",
                               "php5-cli",
                               "php-pear",
-                              "subversion",
+#                              "subversion",
                               "php5-mcrypt"
                             },
                   comment => "Define a list of packages to be installed on Debian/Ubuntu",
