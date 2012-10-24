@@ -16,7 +16,7 @@
 @c
 @c ***********************************************************************@c 
 @c %** start of header
-@setfilename ArchiveEnterprise-2-2-OwnersManual.info
+@setfilename Enterprise-2-2-OwnersManual.info
 @settitle CFEngine 3 Enterprise 2.2 Owner's Manual
 @setchapternewpage odd
 @c %** end of header
