@@ -94,7 +94,7 @@ Updated 23. October 2012
 @node  Introduction, Requirements, Top, Top
 @chapter Introduction
 
-Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine 3 Enterprise 3.0 up and running whether you are a beginner or an experienced CFEngine user. The following links will take you to communly used sections, see above for a complete table of contents:
+Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine 3 Enterprise 3.0 up and running whether you are a beginner or an experienced CFEngine user. The following links will take you to commonly used sections, see above for a complete table of contents:
 
 @itemize -
 @item @ref{Requirements}
@@ -104,6 +104,7 @@ Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configur
 @item @ref{Role Based Access Control (RBAC)}
 @item @ref{Virtualization and Cloud}
 @c Compliance
+@item @ref{Windows-specific features in CFEngine 3 Enterprise}
 @item @ref{REST API}
 @item @ref{Upgrading CFEngine 3 Enterprise}
 @end itemize
@@ -386,6 +387,18 @@ of user interaction with CFEngine 3 Enterprise. It can be accessed by connecting
 @item Compliance - Overview of the current state and history of compliance across your system, through the lens of different compliance standards
 @end itemize
 
+In addition all Mission Portal apps have a top menu containing at least the @i{App Selector} on the left and the @i{Settings Menu} on the right:
+
+@sp 1
+@center @image{img-top-menu-3-0,15cm,,Top Menu}
+@center Figure: Top Menu
+@sp 1
+
+@itemize -
+@item App Selector - A shortcut to other available apps in the Mission Portal (no need to pass through the Mission Portal home page)
+@item Settings Menu - Log out, access to Mission Portal settings, user management and roles (see separate sections)
+@end itemize
+
 The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. The apps that are shown is configurable through the @ref{Mission Portal Settings}, the admin user can choose to not display the apps that are not relevant for everyday use.
 
 If you go directly to explore the different apps, please note that some of the displays in the Mission Portal may be blank when you log in just after installation. It may also take some time for the system to fully converge, do not get troubled if initially there are some promises repaired or not kept (yellow and red colors).
@@ -401,7 +414,7 @@ If you go directly to explore the different apps, please note that some of the d
 @section Hosts App
 
 @menu
-* Top Menu::
+* Policy Context Selector::
 * Navigation Tree::
 * Status tab::
 * Reports tab::
@@ -420,11 +433,7 @@ The Hosts App illustrates the state of the system in relation to the desired sta
 @noindent The app has three main areas of user interaction:
 
 @itemize
-@item Top menu:
-@itemize -
-@item App Selector: Shortcut to other available apps (no need to pass through the Mission Portal home page)
-@item Policy Context Selector: Choose between three different policy contexts to see the state of All, User or System (internal CFEngine) promises
-@end itemize
+@item Policy Context Selector: In addition to the @i{App Selector} and @i{Settings Menu}, the top menu contains the @i{Policy Context Selector}. Use this to choose between three different policy contexts and see information for @i{@{All@}}, @i{@{User@}} or @i{@{System@}} (internal CFEngine) promises.
 @item Navigation Tree: Hosts can be grouped and organized in a hierarchy defined by classes
 @item Content Area: Context sensitive area (effected by the selection made in the @i{Policy Context Selector} and @i{Navigation Tree}). The header/title shows the selected context from the navigation tree and underneath you will find five different content tabs:
 @itemize -
@@ -438,34 +447,34 @@ The Hosts App illustrates the state of the system in relation to the desired sta
 
 @noindent In general we use colors to show the status of host compliance and operational status:
 @itemize -
-@item Red if more than 20% of promises were not kept
-@item Yellow if 20% or more of promises were repaired and host is now compliant
-@item Green if more than 80% of promises are kept
-@item Blue if there has not been any contact between the hub and the client within a set time interval (host unreachable; default value is set to 15 minutes, see @ref{Mission Portal Settings}). 
-@item Black if CFEngine's scheduling daemon, @code{cf-execd}, is not running (the hub will still able to contact the client to collect reports but the client will return stale data since it has not been running at regular intervals).
+@item Red: If less than 80% of promises were kept
+@item Yellow: If 20% or more of promises were repaired and host is now compliant
+@item Green: If more than 80% of promises are kept
+@item Blue: If there has not been any contact between the hub and the client within a set time interval (host unreachable; default value is set to 15 minutes, see @ref{Mission Portal Settings}). 
+@item Black: If CFEngine's scheduling daemon, @code{cf-execd}, is not running (the hub will still able to contact the client to collect reports but the client will return stale data since it has not been running at regular intervals).
 @end itemize
 
 
 @c -----------------------------------------------------
-@node Top Menu, Navigation Tree, Hosts App, Hosts App
-@subsection Top Menu
+@node Policy Context Selector, Navigation Tree, Hosts App, Hosts App
+@subsection Policy Context Selector
 
-The Top Menu consists of the @i{App Selector} (a shortcut to other apps available on the Mission Portal home page) and the @i{Policy Context Selector}. The selected policy context effects all content related to host and promise status in the @i{Hosts App}. There are three alternatives:
+The @i{Policy Context Selector} effects all content related to host and promise status in the @i{Hosts App}. There are three alternatives:
 
 @sp 1
-@image{img-top-menu-3-0,15cm,,Top Menu}
-@center Figure: Top Menu
+@center @image{img-policy-context-selector-3-0,5cm,,Policy Context Selector}
+@center Figure: Policy Context Selector
 @sp 1
 
 @itemize -
-@item All: Navigation Tree, graphs and reports will contain data from all promises in you policy.
-@item User: Navigation Tree, graphs and reports will contain data from promises that users have added.
-@item System: Navigation Tree, graphs and reports will contain data from CFEngine system promises (labelled with a promise handle prefix @i{cfe_interal_} in the default policies).
+@item All: Navigation Tree, graphs, reports and events will contain data from all promises in you policy.
+@item User: Navigation Tree, graphs, reports and events will contain data from promises that users have added.
+@item System: Navigation Tree, graphs, reports and events will contain data from CFEngine system promises (labelled with a promise handle prefix @i{cfe_interal_} in the default policies).
 @end itemize
 
 
 @c -----------------------------------------------------
-@node Navigation Tree, Status tab, Top Menu, Hosts App
+@node Navigation Tree, Status tab, Policy Context Selector, Hosts App
 @subsection Navigation Tree
 
 The Navigation Tree allows the user to group and organize hosts in a hierarchy defined by CFEngine classes (boolean classifiers that describe context). 
@@ -611,7 +620,7 @@ The @i{Events tab} allows you to create trackers to follow selected promises or 
 @node Vitals tab, Host Info tab, Events tab, Hosts App
 @subsection Vitals tab
 
-CFEngine has integrated monitoring capability where several parameters are measured on each client. These are presented visually in the @i{Vitals tab}. All parameters are listed if a single host is selected, otherwise the hosts are ranked according to a selected parameter.
+CFEngine has integrated monitoring capability where many parameters are measured on each client. These are presented visually in the @i{Vitals tab}. All parameters are listed if a single host is selected, otherwise the hosts are ranked according to a selected parameter.
 
 @sp 1
 @center @image{img-vitals-tab-3-0,13cm,,Vitals tab}
@@ -652,21 +661,25 @@ There are two main areas of interaction in this app:
 @center Figure: SQL Reports
 @sp 1
 
-Items in the content area are used to create a query and generate a report according to the following description:
+Items in the content area are used to create a query and generate reports according to the following description:
 @itemize -
 @item Fields - Define your table columns (mandatory field)
 @item Filters - Filter the results of you query (use valid SQLite syntax)
 @item Group - Group your results according to selected criteria
 @item Sort - Sort your results according to a selected criteria
 @item Limit - Limit the number of entries in your report
-@item Show me the query - View and edit the SQL query directly
+@item Show me the query - View and edit the SQL query directlyIf you choose to run the query directly
 @end itemize
 
 @cartouche
 Please note that any queries containing the PromiseDefinitions table in combination with any other table in the schema will produce erroneous output without an intermediate join to the PromiseStatusLast table. See @ref{SQLite Database Schema}.
 @end cartouche
 
-Once the query is defined you can run it to see the result, optionally save it for later use or schedule it to be emailed at a chosen interval. The report will appear below the query form:
+@cartouche
+Please note that manual edits of the SQL query in the @i{Show me the query} field will invalidate input from the UI wizard. Conversely, any manual edit will be overwritten if you make changes in the UI wizard.
+@end cartouche
+
+Once the query is defined you can run it to see the result, optionally save it for later use or schedule it to be emailed at a chosen interval. The report will appear below the UI wizard if you choose to run the query directly:
 
 @sp 1
 @center @image{img-sql-report-result-3-0,15cm,,SQL Report Result}
@@ -678,7 +691,7 @@ Once the query is defined you can run it to see the result, optionally save it f
 @node Docs App, Services App, SQL Reports App, Quickstart - The Mission Portal
 @section Docs App
 
-The @i{Docs} app gives access to both offline and online CFEngine documentation. The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}), look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilites in CFEngine.
+The @i{Docs} app gives access to both offline and online CFEngine documentation. The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}). Look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilites in CFEngine.
 
 The left side shows an overview of all bundled documents, divided into categories that expand once clicked. The selected document is displayed in the main content area to the right.
 
@@ -692,8 +705,9 @@ The left side shows an overview of all bundled documents, divided into categorie
 @node Services App, Policies App, Docs App, Quickstart - The Mission Portal
 @section Services App
 
-@menu
-@end menu
+@cartouche
+Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
+@end cartouche
 
 The @i{Services} app allows the user to browse current host capacity providing services in your environment. Get an overview of open ports, CPU usage, network connections, capacity of storage devices and other job services. View their utilization and trends. Relate measurable data to your technical and organizational service catalogues for capacity planning and supply-demand analysis.
 
@@ -723,8 +737,9 @@ The landing page for the @i{Services} app shows an overview of common services a
 @node Policies App, Knowledge App, Services App, Quickstart - The Mission Portal
 @section Policies App
 
-@menu
-@end menu
+@cartouche
+Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
+@end cartouche
 
 The @i{Policies} app shows the promises that the system is currently trying to keep, with links to CFEngine's smart indexing and documentation. Show statistics about the quality and success of the intended state. Stay close to the intended
 state of your system, by knowing what, where, when, how and why your infrastructure is defined, deployed and configured.
@@ -734,13 +749,15 @@ state of your system, by knowing what, where, when, how and why your infrastruct
 @center Figure: Policies
 @sp 1
 
+@c todo
 
 @c -----------------------------------------------------
 @node Knowledge App, Goals App, Policies App, Quickstart - The Mission Portal
 @section Knowledge App
 
-@menu
-@end menu
+@cartouche
+Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
+@end cartouche
 
 The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers and document references and reports. Use CFEngine's automated analysis of policy, collected data and local knowledge to comprehend your tools and infrastructure with greater authority.
 
@@ -749,13 +766,15 @@ The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers 
 @center Figure: Knowledge App
 @sp 1
 
+@c todo
 
 @c -----------------------------------------------------
 @node Goals App, Compliance App, Knowledge App, Quickstart - The Mission Portal
 @section Goals App
 
-@menu
-@end menu
+@cartouche
+Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
+@end cartouche
 
 The @i{Goals} app allows the user to compare high level organizational goals to persons and promises. Maintain a dialogue with management around these goals to showcase your value to the business. Help management to see how IT is responsive to its needs.
 
@@ -764,13 +783,15 @@ The @i{Goals} app allows the user to compare high level organizational goals to 
 @center Figure: Goals
 @sp 1
 
+@c todo
 
 @c -----------------------------------------------------
 @node Compliance App, User Management, Goals App, Quickstart - The Mission Portal
 @section Compliance App
 
-@menu
-@end menu
+@cartouche
+Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
+@end cartouche
 
 The @i{Compliance} app gives a view over the current state and history of compliance across your system, through the lens of different compliance standards. Demonstrate how IT infrastructure monitors, repairs and maintains promises about regulatory requirements.
 
@@ -779,6 +800,7 @@ The @i{Compliance} app gives a view over the current state and history of compli
 @center Figure: Compliance
 @sp 1
 
+@c todo
 
 @c ----------------------------------------------------
 @node User Management, Mission Portal Settings, Compliance App, Quickstart - The Mission Portal
@@ -863,7 +885,24 @@ Time after which a host is defined as unreachable (blue host; the hub is unable 
 @node  Quickstart - CFEngine Policies, Role Based Access Control (RBAC), Quickstart - The Mission Portal, Top
 @chapter Quickstart - CFEngine Policies
 
-Standard CFEngine policies consist of a declarative language that describes the desired state of a system. Individual statements are called @i{promises}, they can be grouped in @i{bundles} and have parametrized @i{body} templates. @c (@samp{bundle} and @samp{body} are keywords in CFEngine that correspond to these). 
+CFEngine policies consist of a declarative language that describes the desired state of a system. This means that when you write policies, you say where you want go, not how to get there (CFEngine will take care of that). Examples include:
+
+@itemize -
+@item Ensure that the httpd process is running
+@item Ensure that web servers have Apache installed and configured
+@item Ensure that you have 10 VMs configured as web servers
+@end itemize
+
+CFEngine is based on Promise Theory and, without going into detail, this means a that an object can only make promises about itself and its own state. It can request other objects to comply to certain rules, but ultimately each object decides whether to accept or reject the request. These objects are called @i{promisers} in the CFEngine language, they work together through voluntary cooperation and can be abstracted to almost any level. 
+
+@i{Promises} are individual statements about intended state (they make things happen on an atomic level in CFEngine). They can be grouped in @i{bundles} and have parametrized @i{body} templates (@i{bundle} and @i{body} can be thought of as containers for @i{promises} at different levels of abstraction).
+
+To summarize:
+@itemize -
+@item A promiser makes promises about its intended state
+@item A promise is an individual statement about intended state 
+@item Promises can be grouped in bundles and bodies
+@end itemize
 
 @menu
 * Simple Policy::
@@ -1007,17 +1046,16 @@ the @code{roles} promise-type that can be used by @code{cf-runagent}
 and @code{cf-serverd}.
 
 @sp 1
-@image{img-user-roles-2-2,15cm,,User Roles}
+@image{img-user-roles-3-0,15cm,,User Roles}
 @center Figure: User Roles
 @sp 1
 
 @noindent Click the @b{Add Role} button to add a new user role to the Mission Portal:
 
 @sp 1
-@image{img-add-role-2-2,15cm,,Add Role}
+@image{img-add-role-3-0,15cm,,Add Role}
 @center Figure: Add Role
 @sp 1
-
 
 Roles can be defined on either classes or bundles and involves setting permissions through an include and exclude list for each. The effective permissions of a user is the cumulative set of permission granted or denied by his roles, and is used to filter the information displayed in the following way: 
 
@@ -4355,7 +4393,7 @@ If you wish to use RBAC in combination with LDAP, we recommend that you wait to 
 @node SQLite Database Schema, , Configuration of external authentication, Top
 @appendix SQLite Database Schema
 
-The following figure shows the database schema used in the @ref{SQL Reports App}:
+The following figure shows the database schema used in the @i{SQL Reports App} (@ref{SQL Reports App}):
 
 @sp 1
 @center @image{img-sql-db-schema-3-0,15cm,,SQLite Database Schema}
