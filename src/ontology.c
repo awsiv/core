@@ -461,8 +461,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
     }
     else
     {
-        fprintf(fp, "   comment => \"(Uncommented \\\"%s\\\" promise by: %.25s..)\";\n", pp->agentsubtype,
-                NovaEscape(pp->promiser));
+        fprintf(fp, "   comment => \"Uncommented \\\"%s\\\" promise\";\n", pp->agentsubtype);
     }
 
     fprintf(fp, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,
