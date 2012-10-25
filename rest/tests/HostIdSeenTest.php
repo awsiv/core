@@ -6,16 +6,19 @@ class HostIdSeenTest extends RestBaseTest
 {
 
     /**
-     * Check for valid json data 
+     * Check for valid json data
      */
     public function testhostIdSeen()
     {
         try
         {
-            $jsonArray = $this->getResults("/host/$this->hostA/seen");
-            $this->assertValidJson($jsonArray);
-            $this->assertEquals(1, sizeof($jsonArray));
-            $this->assertEquals($this->hostB, $jsonArray[0]['hostkey']);
+            $response = $this->pest->get("/host/$this->hostA/seen");
+            $this->assertValidJson($response);
+            $this->assertValidJson($response['data']);
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals($response['meta']['count'], sizeof($response['data']));
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals($this->hostB, $response['data'][0]['hostkey']);
         }
         catch (Pest_NotFound $e)
         {

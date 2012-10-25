@@ -169,11 +169,26 @@ PHP_FUNCTION(cfmod_resource_host_id)
 
 /************************************************************************************/
 
-static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
+static size_t CountLastSeenRecordsByDirection(const Rlist *records, LastSeenDirection direction)
+{
+    size_t count = 0;
+    for (const Rlist *rp = records; rp != NULL; rp = rp->next)
+    {
+        HubLastSeen *record = (HubLastSeen *) rp->item;
+
+        if (record->direction == direction)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+static JsonElement *HostsLastSeen(const Rlist *records, LastSeenDirection direction)
 {
     JsonElement *output = JsonArrayCreate(100);
 
-    for (Rlist *rp = records; rp != NULL; rp = rp->next)
+    for (const Rlist *rp = records; rp != NULL; rp = rp->next)
     {
         HubLastSeen *record = (HubLastSeen *) rp->item;
 
@@ -231,7 +246,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
     }
     assert(result);
 
-    int total = RlistLen(result->records);
+    int total = CountLastSeenRecordsByDirection(result->records, LAST_SEEN_DIRECTION_OUTGOING);
     PageRecords(&result->records, &page, DeleteHubLastSeen);
 
     JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
@@ -279,7 +294,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
     }
     assert(result);
 
-    int total = RlistLen(result->records);
+    int total = CountLastSeenRecordsByDirection(result->records, LAST_SEEN_DIRECTION_INCOMING);
     PageRecords(&result->records, &page, DeleteHubLastSeen);
 
     JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
