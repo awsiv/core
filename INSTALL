@@ -1,6 +1,6 @@
 CFENGINE 3 ENTERPRISE 3.0
-RELEASE DATE: September 2012
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 (successor to CFEngine Nova 2.2.x)
+RELEASE DATE: October 2012
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 beta
 
 -----------------------------------------------------------
  TABLE OF CONTENTS:
@@ -12,7 +12,7 @@ SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 (succ
 
 For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "Release Notes CFEngine 3 Enterprise.txt" file that comes with this package.
 
-As always, test thoroughly in your lab before upgrading production environments!
+This is a beta version for testing, not intended for production environments!
 
 
 REQUIREMENTS:
@@ -62,66 +62,7 @@ If you wish to manually install cfmod to the machine, you'll need to do the foll
 
 
 UPGRADE PROCEDURE:
-The following is a general procedure to upgrade from CFEngine 3 Nova 2.1.x to CFEngine 3 Enterprise, see Enterprise 3.0 Owner's Manual for upgrading from other versions. 
-
-Start with the hub (policy server):
-1. Stop all CFE processes (/etc/init.d/cfengine3 stop)
-2. Upgrade the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
-   [RedHat/CentOS/SUSE]
-     $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm cfengine-nova-expansion-3.0.x-y.x86_64.rpm
-   [Debian/Ubuntu]
-     $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb cfengine-nova-expansion_3.0.x-y_x86_64.deb
-3. Remove Mongodb lock if present:
-     $ rm -f /var/cfengine/state/mongod.lock
-4. CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated):
-     $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
-5. Copy the new CFE_ prefixed policy files to $(sys.workdir)/masterfiles (the files with a prefix "CFE_" are maintained by CFEngine, do not make changes to these, they are there to ensure that the Mission Portal works properly).
-     $ cd /var/cfengine/share/NovaBase
-     $ cp CFE_cfengine.cf CFE_knowledge.cf CFE_hub_specific.cf /var/cfengine/masterfiles
-6. If you run any Windows machines under CFEngine management, replace the packages promises in /var/cfengine/masterfiles/update.cf to ensure automatic upgrade of CFEngine clients. The modified version should look like this (modified package_version number and added separate section for windows):
-   packages:
-     # update packages after all CFEngine have been killed
-     stopped_cfprocs.!windows::
-      "$(novapkg)" 
-                     comment => "Update Nova package to a newer version",
-                      handle => "update_bins_packages_nova_update_all",
-              package_policy => "update",
-              package_select => ">=",           # picks the newest Nova available
-       package_architectures => { "$(pkgarch)" },
-             package_version => "9.9.9",        # Install new Nova anyway
-              package_method => u_generic( "$(local_software_dir)" ),
-                  ifvarclass => "nova_edition",
-                     classes => u_if_else("bin_update_success", "bin_update_fail");
-
-     stopped_cfprocs.windows::
-      "$(novapkg)" 
-                     comment => "Update Nova package to a newer version",
-                      handle => "update_bins_packages_nova_update_all",
-              package_policy => "update",
-              package_select => ">=",           # picks the newest Nova available
-       package_architectures => { "$(pkgarch)" },
-             package_version => "9.9.9.9",      # Install new Nova anyway
-              package_method => u_generic( "$(local_software_dir)" ),
-                  ifvarclass => "nova_edition",
-                     classes => u_if_else("bin_update_success", "bin_update_fail");
-7. Modify one line in /var/cfengine/masterfiles/update.cf (line 298; approximate location, please verify that you change the corresponding content)
-   Change to run mongod without journaling (replace line with the following)
-     "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $(sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
-8. Copy the modified update.cf to the inputs directory:
-     $ cp /var/cfengine/masterfiles/update.cf /var/cfengine/inputs/update.cf
-9. Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
-     $ rm -rf /var/www/*
-10. Restart CFEngine processes
-     $ /etc/init.d/cfengine3 start
-
-For client upgrades there are 2 approaches: manual or automatic upgrade.
-* Manual: Update cfengine-nova on each client by rpm, dpkg or corresponding Windows command. For Linux/UNIX systems, update cf-twin as described in step 4 in the upgrade procedure for the hub (i.e. overwrite the old cf-twin). For Windows systems copy/overwrite the content of 
-      C:\Program Files\Cfengine\bin
-   to 
-      C:\Program Files\Cfengine\bin-twin
-* Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in /var/cfengine/master_software_updates and CFEngine 3 Enterprise will take care of the rest.
-
-CFEngine should now be up and running on your system. See Enterprise 3.0 Owner's Manual for more detailed installation instructions and troubleshooting tips.
+Upgrade is not supported for the CFEngine 3 Enterprise 3.0 beta release, please use Enterprise 3.0 clients only.
 
 
 SOFTWARE DEPENDENCIES (specific to CFEngine 3 Enterprise)
