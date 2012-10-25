@@ -6,15 +6,20 @@ class HostIdSeenbyTest extends RestBaseTest
 {
 
     /**
-     * Test if the returned data is correct 
+     * Test if the returned data is correct
      */
     public function testhostIdSeenBy()
     {
         try
         {
-            $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-            $jsonArray = $this->getResults("/host/$id/seen-by");
-            $this->assertValidJson($jsonArray);
+            $response = $this->pest->get('/host/' . $this->hostB . '/seen-by');
+            $this->assertValidJson($response);
+            $this->assertValidJson($response['data']);
+            $this->assertEquals(1, $response['meta']['total']);
+            $this->assertEquals($response['meta']['count'], sizeof($response['data']));
+            $this->assertEquals(1, sizeof($response['data']));
+            $this->assertEquals("SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df",
+                    $response['data'][0]['hostkey']);
         }
         catch (Pest_NotFound $e)
         {
@@ -23,7 +28,7 @@ class HostIdSeenbyTest extends RestBaseTest
     }
 
     /**
-     * Test for the invalid key 
+     * Test for the invalid key
      */
     public function testhostIdSeenByWithInvalidKey()
     {
