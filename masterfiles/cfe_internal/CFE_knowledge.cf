@@ -252,12 +252,18 @@ bundle agent cfe_internal_setup_knowledge
        file_select => plain,
       depth_search => recurse("inf"),
              perms => m("644");
+
+   "$(cfe_internal_hub_vars.docroot)/api"
+           comment => "Ensure permissions for $(cfe_internal_hub_vars.docroot)/api (writing exported reports PDF/CSV)",
+            handle => "cfe_internal_setup_knowledge_files_doc_root_api",
+      depth_search => recurse_basedir("inf"),
+             perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
  
    "$(cfe_internal_hub_vars.docroot)"
            comment => "Make sure knowledge files are accessible to webserver",
             handle => "cfe_internal_setup_knowledge_files_doc_root_docs_2",
              perms => mo("644","root"),
-      depth_search => recurse_exclude("inf",".cfagent", "policies");
+      depth_search => recurse_exclude("inf",".cfagent", "policies"); # more folders in the body.
 
 #
 
@@ -326,7 +332,7 @@ body depth_search recurse_basedir(d)
 body depth_search recurse_exclude(d,folder1,folder2)
 {
  depth => "$(d)";
- exclude_dirs => { ".*$(folder1)$", "$(folder2)", "hub" , "graphs", "scripts", "tmp", "logs" };
+ exclude_dirs => { ".*$(folder1)$", "$(folder2)", "hub" , "graphs", "scripts", "tmp", "logs", "api" };
 }
 
 ############################################################################
