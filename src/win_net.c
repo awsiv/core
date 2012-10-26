@@ -222,7 +222,6 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
  **/
 {
     int res;
-    long arg;
     struct sockaddr_in emptyCin = { 0 };
     u_long nonBlock;
 

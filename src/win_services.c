@@ -39,7 +39,6 @@ void VerifyWindowsService(Attributes a, Promise *pp)
     Rlist *dep;
     char *srvName;
     int onlyCheckDeps;
-    int result = false;
 
     srvName = pp->promiser;
 
