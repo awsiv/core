@@ -32,7 +32,7 @@ void MakeLog(Item *mess, enum cfreport level)
     WORD eventType;
     DWORD eventId;
     char *strMsg;
-    char *insertStrings[4] = { 0 };
+    const char *insertStrings[4] = { 0 };
 
     if (logHandle == NULL)      // OpenLog not called or failed
     {
@@ -240,7 +240,7 @@ void CloseLog(void)
 void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, Item *mess)
 {
     char *strMsg, *strPromisee;
-    char *insertStrings[6] = { 0 };
+    const char *insertStrings[6] = { 0 };
     char peeBuf[CF_BUFSIZE];
     WORD eventType;
     DWORD eventId;
