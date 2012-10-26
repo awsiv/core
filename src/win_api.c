@@ -19,6 +19,8 @@
 
 #include "files_interfaces.h"
 
+static pthread_once_t network_close_once = PTHREAD_ONCE_INIT;
+
 // always returns 0 (assumes process is run by root/Administrator)
 uid_t getuid(void)
 {
@@ -159,6 +161,14 @@ int NovaWin_stat(const char *path, struct stat *statBuf)
 
 /*****************************************************************************/
 
+static void RegisterNetworkCloseHandler(void)
+{
+    if (atexit(&CloseNetwork) != 0)
+    {
+        CfOut(cf_error, "atexit", "Unable to register network cleanup handler. Expect program to hang at shutdown.");
+    }
+}
+
 /* Start up Winsock */
 void OpenNetwork(void)
 {
@@ -170,6 +180,8 @@ void OpenNetwork(void)
     if (nCode == 0)
     {
         CfOut(cf_verbose, "", "Windows sockets successfully initialized.\n");
+
+        pthread_once(&network_close_once, &RegisterNetworkCloseHandler);
     }
     else
     {
