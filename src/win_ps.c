@@ -28,7 +28,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 static int EnableDebugPriv(void);
 
 //static int GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz);
-static void GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGER *timeCpuInt, char *timeCpuStr);
+static bool GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGER *timeCpuInt, char *timeCpuStr);
 static void FormatCpuTime(FILETIME *timeKernel, FILETIME *timeUser, ULARGE_INTEGER *timeCpuInt, char *timeCpuStr);
 static void FormatCreationTime(FILETIME *timeCreate, char *timeCreateStr);
 static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhysMemB);
@@ -275,7 +275,10 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
         return NULL;
     }
 
-    GetProcessTime(procHandle, timeCreateStr, &newTimeStamp, timeCpuStr);
+    if (!GetProcessTime(procHandle, timeCreateStr, &newTimeStamp, timeCpuStr))
+    {
+        return NULL;
+    }
 
     GetProcessUserName(procHandle, false, userName, sizeof(userName));
 
@@ -371,19 +374,21 @@ static int EnableDebugPriv(void)
 
 /*****************************************************************************/
 
-static void GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGER *timeCpuInt, char *timeCpuStr)
+static bool GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGER *timeCpuInt, char *timeCpuStr)
 {
     FILETIME timeCreate, timeExit, timeKernel, timeUser;
 
     if (!GetProcessTimes(procHandle, &timeCreate, &timeExit, &timeKernel, &timeUser))
     {
         CfOut(cf_error, "GetProcessTimes", "!! Could not obtain process times");
-        return;
+        return false;
     }
 
     FormatCreationTime(&timeCreate, timeCreateStr);
 
     FormatCpuTime(&timeKernel, &timeUser, timeCpuInt, timeCpuStr);
+
+    return true;
 }
 
 /*****************************************************************************/
