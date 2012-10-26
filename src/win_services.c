@@ -29,7 +29,7 @@ static int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
 static QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
 
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
-char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs",
+static const char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs",
     "PlugPlay", "gpsvc", "DcomLaunch",
     "WdiServiceHost", NULL
 };
