@@ -9,6 +9,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "atexit.h"
 
 #include "win_disphelper.h"
 
@@ -187,7 +188,7 @@ static int NovaWin_WmiInitialize(void)
         return false;
     }
 
-    atexit(&NovaWin_WmiDeInitialize);
+    RegisterAtExitFunction(&NovaWin_WmiDeInitialize);
 
     return true;
 }

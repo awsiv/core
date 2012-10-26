@@ -24,6 +24,9 @@ SERVICE_STATUS_HANDLE statusHandle;
 void NovaWin_ServiceMain(int argc, char *argv[]);
 void NovaWin_ControlHandler(DWORD request);
 
+/* core/src/atexit.c */
+void CallAtExitFunctions(void);
+
 void StartServer(int argc, char **argv);
 
 void NovaWin_StartExecService(void)

@@ -17,6 +17,7 @@
 #include "cf.nova.h"
 #include "item_lib.h"
 #include "conversion.h"
+#include "atexit.h"
 
 static int CheckRegistryLogKey(void);
 
@@ -99,10 +100,7 @@ void MakeLog(Item *mess, enum cfreport level)
 
 static void RegisterCloseLog(void)
 {
-    if (atexit(&CloseLog) != 0)
-    {
-        CfOut(cf_error, "atexit", "Unable to register log cleanup hander: delivery of log entries before shutdown is not guaranteed");
-    }
+    RegisterAtExitFunction(&CloseLog);
 }
 
 void OpenLog(int facility)
