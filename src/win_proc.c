@@ -179,7 +179,7 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
     char buf[CF_BUFSIZE];
     char cmdPath[CF_BUFSIZE];
     char *binary;
-    const char *binaryParams;
+    char *binaryParams;
 
     if (useshell)
     {
@@ -202,12 +202,12 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
         strcat(cmdPath, "\\cmd.exe");
 
         binary = cmdPath;
-        binaryParams = buf;
+        binaryParams = xstrdup(buf);
     }
     else
     {
         binary = NULL;
-        binaryParams = comm;
+        binaryParams = xstrdup(comm);
     }
 
     // use empty startupinfo struct if it is unspecified
@@ -222,10 +222,12 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
 
     if (!CreateProcess(binary, binaryParams, NULL, NULL, inheritHandles, 0, NULL, startDir, si, &pi))
     {
+        free(binaryParams);
         CfOut(cf_error, "CreateProcess", "!! Failed to start process");
         return false;
     }
 
+    free(binaryParams);
     CloseHandle(pi.hThread);
     *procHandle = pi.hProcess;
 
