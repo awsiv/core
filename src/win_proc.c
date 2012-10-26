@@ -65,18 +65,18 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
             {
                 if (!GracefulTerminate(pid))
                 {
-                    cfPS(cf_verbose, CF_FAIL, "", pp, a, " !! Couldn't terminate process with pid %d\n", pid);
+                    cfPS(cf_verbose, CF_FAIL, "", pp, a, " !! Couldn't terminate process with pid %jd\n", (intmax_t)pid);
                     continue;
                 }
                 else
                 {
-                    cfPS(cf_inform, CF_CHG, "", pp, a, " -> Terminated process with pid %d\n", pid);
+                    cfPS(cf_inform, CF_CHG, "", pp, a, " -> Terminated process with pid %jd\n", (intmax_t)pid);
                     break;
                 }
             }
             else
             {
-                CfOut(cf_error, "", " -> Need to terminate process with pid %d", pid);
+                CfOut(cf_error, "", " -> Need to terminate process with pid %jd", (intmax_t)pid);
             }
         }
     }

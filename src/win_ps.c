@@ -263,7 +263,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
     if (pid == 0 || pid == 4)
     {
-        CfDebug("Skipped process info query from special process (pid=%d)", pid);
+        CfDebug("Skipped process info query from special process (pid=%jd)", (intmax_t)pid);
         return NULL;
     }
 
@@ -465,8 +465,8 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
 
     // virtual memory info: the process' "private bytes" (Commit Size in Win2008 Task Manager, VM Size in XP)
 
-    sprintf(memSzStr, "%4.1f %8lu %8lu", (memInfo.WorkingSetSize * 100.0) / totalPhysMemB, memInfo.PrivateUsage / 1024,
-            memInfo.WorkingSetSize / 1024);
+    sprintf(memSzStr, "%4.1f %8ju %8ju", (memInfo.WorkingSetSize * 100.0) / totalPhysMemB, (uintmax_t) memInfo.PrivateUsage / 1024,
+            (uintmax_t) memInfo.WorkingSetSize / 1024);
 }
 
 /*****************************************************************************/
@@ -480,7 +480,7 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
     // skip "idle process" and nt kernel process
     if (pid == 0 || pid == 4)
     {
-        CfDebug("Skipped cpu time query from special process (pid=%d)", pid);
+        CfDebug("Skipped cpu time query from special process (pid=%jd)", (intmax_t)pid);
         timeCpuInt->QuadPart = 0;
         return;
     }
