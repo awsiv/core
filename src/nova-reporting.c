@@ -2624,7 +2624,6 @@ void Nova_ImportReports(const char *input_file)
         if (!CFDB_Open(&dbconn))
         {
             CfOut(cf_error, "", "!! Could not connect to database -- skipping import");
-            GenericDeInitialize();
             exit(0);
         }
 
@@ -2632,12 +2631,10 @@ void Nova_ImportReports(const char *input_file)
 
         if (Nova_ImportHostReports(&dbconn, input_file))
         {
-            GenericDeInitialize();
             exit(0);
         }
         else
         {
-            GenericDeInitialize();
             exit(1);
         }
     }
