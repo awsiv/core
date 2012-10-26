@@ -22,8 +22,8 @@
 static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 
 // last measured CPU ticks
-ULARGE_INTEGER ticksWorkLast = { 0 };
-ULARGE_INTEGER ticksTotalLast = { 0 };
+ULARGE_INTEGER ticksWorkLast;
+ULARGE_INTEGER ticksTotalLast;
 
 void GatherCPUData(double *CF_THIS)
 {
