@@ -24,6 +24,8 @@ static HANDLE logHandle = NULL;
 
 extern int FACILITY;
 
+static pthread_once_t log_shutdown_once = PTHREAD_ONCE_INIT;
+
 /* We use Event Logging on widows. */
 void MakeLog(Item *mess, enum cfreport level)
 {
@@ -95,8 +97,17 @@ void MakeLog(Item *mess, enum cfreport level)
 
 /*****************************************************************************/
 
+static void RegisterCloseLog(void)
+{
+    if (atexit(&CloseLog) != 0)
+    {
+        CfOut(cf_error, "atexit", "Unable to register log cleanup hander: delivery of log entries before shutdown is not guaranteed");
+    }
+}
+
 void OpenLog(int facility)
 {
+    pthread_once(&log_shutdown_once, &RegisterCloseLog);
 
     if (!CheckRegistryLogKey())
     {
