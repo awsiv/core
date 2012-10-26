@@ -1264,7 +1264,7 @@ bundle agent cfe_internal_editor
 
   !windows.am_policy_hub::
 
-   "$(cfe_internal_hub_vars.docroot)/policies/." -> "CEnngine 3 Enterprise Editor",
+   "$(cfe_internal_hub_vars.docroot)/policies/." -> "CFEngine 3 Enterprise Editor",
        create => "true",
         perms => mog("700","$(web_owner)","$(web_group)"),
       comment => "Make sure web server has permission to create working directories for editor users",
