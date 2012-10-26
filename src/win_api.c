@@ -160,7 +160,7 @@ int NovaWin_stat(const char *path, struct stat *statBuf)
 /*****************************************************************************/
 
 /* Start up Winsock */
-void NovaWin_OpenNetwork()
+void OpenNetwork(void)
 {
     struct WSAData wsaData;
     int nCode;
@@ -179,7 +179,7 @@ void NovaWin_OpenNetwork()
 
 /*****************************************************************************/
 
-void NovaWin_CloseNetwork()
+void CloseNetwork(void)
 {
     int res;
 
