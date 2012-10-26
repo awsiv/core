@@ -40,7 +40,6 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
 int Nova_CopyRegistryValue(char *key, char *value, char *buffer);
 void Nova_DeleteRegistryKey(Attributes a, Promise *pp);
 static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, char *valueStr, bool *outCmp);
-static int CheckRegistrySanity(Attributes a, Promise *pp);
 
 /*****************************************************************************/
 
