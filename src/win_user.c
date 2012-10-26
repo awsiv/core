@@ -183,7 +183,7 @@ int NovaWin_StringToSid(char *string_sid, SID *sid, int sid_sz)
 
 /*******************************************************************/
 
-UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp)
+UidList *NovaWin_Rlist2SidList(Rlist *uidnames)
 {
     UidList *uidlist = NULL, *curr_el = NULL;
     Rlist *rp;

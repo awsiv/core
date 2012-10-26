@@ -1187,7 +1187,7 @@ int NovaWin_NameToSid(char *name, SID *sid, DWORD sidSz);
 int NovaWin_SidToName(SID *sid, char *name, int nameSz);
 int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
 int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
-UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp);
+UidList *NovaWin_Rlist2SidList(Rlist *uidnames);
 
 # if defined(__MINGW32__)
 FnCallResult FnCallUserExists(FnCall *fp, Rlist *finalargs);
