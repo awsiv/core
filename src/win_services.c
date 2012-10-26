@@ -133,7 +133,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
         if (argStr)
         {
             argv = ArgSplitCommand(argStr);
-            argc = CountArgs(argv);
+            argc = CountArgs((const char **)argv); /* C type system is unable to convert it automatically */
         }
 
         result =
