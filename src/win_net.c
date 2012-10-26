@@ -227,7 +227,7 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
     if (!cinp)
     {
-        cinp = &emptyCin;
+        cinp = (struct sockaddr*)&emptyCin;
         cinpSz = sizeof(emptyCin);
     }
 
