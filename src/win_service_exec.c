@@ -86,7 +86,10 @@ void NovaWin_ControlHandler(DWORD request)
     case SERVICE_CONTROL_SHUTDOWN:
         CfOut(cf_log, "", "Terminating service %s: received stop request (%lu)", WINSERVICE_NAME, request);
 
-        SelfTerminatePrelude();
+        /* Windows service does not call atexit(3)-registered functions on
+         * shutdown, so call them explicitely */
+
+        CallAtExitFunctions();
 
         serviceStatus.dwWin32ExitCode = 0;
         serviceStatus.dwCurrentState = SERVICE_STOPPED;
