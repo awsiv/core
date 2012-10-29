@@ -56,10 +56,10 @@ bundle agent update_policy
 
   am_policy_hub::
   
-   "mongod"      restart_class => "start_mongod",
-                       comment => "Monitor mongodb process",
-                        handle => "cfe_internal_update_policy_processes_mongod",
-                    ifvarclass => "nova_edition|constellation_edition";
+   "$(sys.workdir)/bin/mongod"      restart_class => "start_mongod",
+                                    comment => "Monitor mongodb process",
+                                    handle => "cfe_internal_update_policy_processes_mongod",
+                                    ifvarclass => "nova_edition|constellation_edition";
 
   files_ok::
 
