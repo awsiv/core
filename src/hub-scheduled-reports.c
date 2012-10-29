@@ -73,8 +73,8 @@ void RunScheduledEnterpriseReports(void)
     {
         REPORT_SCHEDULER_CHILD_PID = pid;
 
-        CfOut(cf_verbose, "", " -> Started new Enterprise Report Scheduler process (pid = %d)", pid);
-        Nova_HubLog("-> Started new Enterprise Report Scheduler process (pid = %d)\n", pid);
+        CfOut(cf_verbose, "", " -> Started new Enterprise Report Scheduler process (pid = %jd)", (intmax_t) pid);
+        Nova_HubLog("-> Started new Enterprise Report Scheduler process (pid = %jd)\n", (intmax_t) pid);
     }
 }
 
@@ -119,8 +119,8 @@ bool IsSchedulerProcRunning(void)
 {
     bool running = waitpid(REPORT_SCHEDULER_CHILD_PID, NULL, WNOHANG) == 0;
 
-    Nova_HubLog( "Checking if Enterprise Report Scheduler process %d is running: %s\n",
-                pid, running ? "yes" : "no" );
+    Nova_HubLog("Checking if Enterprise Report Scheduler process %jd is running: %s\n",
+                (intmax_t) REPORT_SCHEDULER_CHILD_PID, running ? "yes" : "no");
 
     return running;
 }
