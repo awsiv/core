@@ -21,7 +21,6 @@
 static pid_t REPORT_SCHEDULER_CHILD_PID = -1;
 
 static void ScheduleRunScheduledReports(void);
-static bool IsProcRunning(pid_t pid);
 static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn);
 
 static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query_ids );
@@ -45,13 +44,13 @@ void RunScheduledEnterpriseReports(void)
 
     if (REPORT_SCHEDULER_CHILD_PID != -1)
     {
-        if (IsProcRunning(REPORT_SCHEDULER_CHILD_PID))
+        if (!IsSchedulerProcRunning())
         {
-            return;
+            REPORT_SCHEDULER_CHILD_PID = -1;
         }
         else
         {
-            REPORT_SCHEDULER_CHILD_PID = -1;
+            return;
         }
     }
 
@@ -116,9 +115,9 @@ static void ScheduleRunScheduledReports(void)
 
 /*******************************************************************/
 
-static bool IsProcRunning( pid_t pid )
+bool IsSchedulerProcRunning(void)
 {
-    bool running = waitpid( pid, NULL, WNOHANG ) == 0;
+    bool running = waitpid(REPORT_SCHEDULER_CHILD_PID, NULL, WNOHANG) == 0;
 
     Nova_HubLog( "Checking if Enterprise Report Scheduler process %d is running: %s\n",
                 pid, running ? "yes" : "no" );

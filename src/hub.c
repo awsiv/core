@@ -26,6 +26,8 @@
 #include "hub-scheduled-reports.h"
 #include "scope.h"
 
+#include <assert.h>
+
 /*******************************************************************/
 
 static const int BIG_UPDATES = 6;
@@ -60,6 +62,7 @@ static void SplayLongUpdates(void);
 static void Nova_UpdateMongoHostList(Item **list);
 static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
+static void CollectSchedulerChildAndSleep(int wait_seconds);
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -700,6 +703,8 @@ static void StartHub(void)
     {
         time_t start = time( NULL );
 
+        RunScheduledEnterpriseReports();
+
         if (ScheduleRun())
         {
             CfOut(cf_verbose, "", " -> Wake up");
@@ -711,15 +716,15 @@ static void StartHub(void)
             }
         }
 
-        RunScheduledEnterpriseReports();
+        int time_taken = time(NULL) - start;
+        int sleep_time = 0;
 
-        int sleep_time = CFPULSETIME - ( time(NULL) - start );
-
-        if( sleep_time > 0 )
+        if (time_taken > 0 && time_taken < CFPULSETIME)
         {
-            CfOut(cf_verbose, "", "Sleeping...");
-            sleep(sleep_time);
+            sleep_time = CFPULSETIME - time_taken;
         }
+
+        CollectSchedulerChildAndSleep(sleep_time);
     }
 
     YieldCurrentLock(thislock); // Never get here
@@ -1089,16 +1094,32 @@ void Nova_HubLog(const char *fmt, ...)
 }
 
 /*********************************************************************/
+
+static void CollectSchedulerChildAndSleep(int wait_seconds)
 {
+    assert(wait_seconds >= 0);
 
+    // Poll for scheduler process every second for wait_seconds
+    // if process has already terminated, sleep for the remaining time
 
+    while (wait_seconds > 0)
     {
+        if (!IsSchedulerProcRunning())
         {
+            CfOut(cf_verbose, "", "Sleeping...");
+            sleep(wait_seconds);
+            return;
         }
 
+        if (--wait_seconds < 1)
         {
+            break;
         }
 
+        sleep(1);
     }
 
+    IsSchedulerProcRunning();
 }
+
+/*********************************************************************/
