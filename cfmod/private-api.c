@@ -4137,7 +4137,6 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
     buffer[0] = '\0';
 
-    printf("promise_context: %s\n", promise_context);
     PromiseContextMode promise_context_mode = PromiseContextModeFromString(promise_context);
 
     Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer),
