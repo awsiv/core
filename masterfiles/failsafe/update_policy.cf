@@ -38,6 +38,10 @@ bundle agent update_policy
                        comment => "Directory where MongoDB files will be stored on hub - if changed: requires DB shutdown and move of files",
                         handle => "cfe_internal_update_policy_mongodb_dir";
 
+   "mongodb_conf_file"  string => translatepath("$(inputs_dir)/failsafe/mongod.conf"),
+                        comment => "Path to MongoDB configuration file",
+                        handle => "cfe_internal_update_policy_mongodb_conf_file";
+
 #
 
  classes:
@@ -105,10 +109,10 @@ bundle agent update_policy
 
   !windows.am_policy_hub.start_mongod::
 
-   "/var/cfengine/bin/mongod --quiet --fork --logpath /var/log/mongod.log --logappend --dbpath $(update_policy.mongodb_dir) --bind_ip 127.0.0.1 --nohttpinterface --nojournal > /dev/null < /dev/null 2>&1"
-      contain => u_in_shell,
+   "/var/cfengine/bin/mongod --dbpath $(update_policy.mongodb_dir) --config $(update_policy.mongodb_conf_file) > /dev/null < /dev/null 2>&1"
+       contain => u_in_shell,
        action => u_mongod_bg,
-      comment => "Start mongod process",
+       comment => "Start mongod process",
        handle => "cfe_internal_update_policy_commands_start_mongod";
 
   start_server::
@@ -257,7 +261,7 @@ body file_select u_cf3_files
 
 body file_select u_input_files
 {
- leaf_name => { ".*.cf",".*.dat",".*.txt" };
+ leaf_name => { ".*.cf",".*.dat",".*.txt", ".*.conf" };
  file_result => "leaf_name";
 }
 
