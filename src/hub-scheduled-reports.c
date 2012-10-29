@@ -14,12 +14,15 @@
 #include "hub-scheduled-reports.h"
 #include "db_query.h"
 #include "conversion.h"
+#include "files_interfaces.h"
+
 #include <assert.h>
 
 static pid_t REPORT_SCHEDULER_CHILD_PID = -1;
 
 static void ScheduleRunScheduledReports(void);
 static bool IsProcRunning(pid_t pid);
+static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn);
 
 static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query_ids );
 static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const char *email,
@@ -85,6 +88,11 @@ static void ScheduleRunScheduledReports(void)
     EnterpriseDB conn[1];
 
     if( !CFDB_Open( conn ) )
+    {
+        return;
+    }
+
+    if (SetDefaultPathsForSchedulingReports(conn))
     {
         return;
     }
@@ -447,4 +455,62 @@ static void CFDB_SaveScheduledRunHistory( EnterpriseDB *conn, const char *user,
     MongoCheckForError( conn, "Record scheduled run history", "CFDB_SaveScheduledRunHistory", NULL );
 }
 
+/*******************************************************************/
+/* Stores default paths for  MP install dir and php */
+static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
+{
+    assert(conn);
+
+    char path_db[CF_MAXVARSIZE] = {0};
+
+    if( !CFDB_HandleGetValue( cfr_mp_install_dir, path_db, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        Rval ret;
+        if( GetVariable( "sys", "doc_root", &ret ) != cf_notype )
+        {
+            char docroot[CF_MAXVARSIZE] = {0};
+            snprintf( docroot, CF_MAXVARSIZE - 1, "%s", ( char * ) ret.item );
+
+            if( !CFDB_PutValue( conn, cfr_mp_install_dir, docroot, MONGO_SCRATCH) )
+            {
+                CfOut( cf_error, "", "!! Couldn't set default path for mp_install_dir");
+                return false;
+            }
+        }
+    }
+
+    path_db[0] = '\0';
+
+    if( !CFDB_HandleGetValue( cfr_php_bin_dir, path_db, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
+    {
+        const char *path_env = getenv( "PATH" );
+
+        Rlist *path_list = SplitStringAsRList( path_env, ':' );
+
+        char path_str[CF_MAXVARSIZE] = {0};
+
+        for( Rlist *path_itr = path_list; path_itr != NULL; path_itr = path_itr->next )
+        {
+            char path_php[CF_MAXVARSIZE] = {0};
+            snprintf( path_php, CF_MAXVARSIZE - 1, "%s/php", (char *) path_itr->item );
+
+            struct stat stat_buf;
+            if( cfstat( path_php, &stat_buf ) == 0)
+            {
+                strncpy( path_str, (char *) path_itr->item, CF_MAXVARSIZE - 1 );
+                break;
+            }
+        }
+
+        DeleteRlist( path_list );
+
+        if( !CFDB_PutValue( conn, cfr_php_bin_dir, path_str, MONGO_SCRATCH) )
+        {
+            CfOut( cf_error, "", "!! Couldn't set default path for php_bin_dir");
+            return false;
+        }
+    }
+
+    return true;
+}
 /*******************************************************************/
