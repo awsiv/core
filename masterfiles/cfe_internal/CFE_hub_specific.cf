@@ -685,6 +685,7 @@ bundle agent cfe_internal_policysrv
                              "php5-json",
                              "php5-pear",
                              "php5-mcrypt",
+                             "php5-pdo",
 #                             "subversion",
                             },
                  comment => "Define a list of packages to be installed on SuSE",
@@ -703,6 +704,7 @@ bundle agent cfe_internal_policysrv
 #                             "subversion",
                              "php-bcmath",
                              "php-pear",
+                             "php-pdo",
                             },
                  comment => "Define a list of packages to be installed on RedHat",
                   handle => "cfe_internal_policysrv_vars_match_package_redhat";
@@ -716,7 +718,8 @@ bundle agent cfe_internal_policysrv
 #                             "subversion",
                              "php-bcmath",
                              "php-pear",
-                             "php-mcrypt"
+                             "php-mcrypt",
+                             "php-pdo",
                             },
                  comment => "Define a list of packages to be installed on CentOS/Fedora",
                   handle => "cfe_internal_policysrv_vars_match_package_centos";
@@ -730,7 +733,8 @@ bundle agent cfe_internal_policysrv
                               "php5-cli",
                               "php-pear",
 #                              "subversion",
-                              "php5-mcrypt"
+                              "php5-mcrypt",
+                              "php5-sqlite",
                             },
                   comment => "Define a list of packages to be installed on Debian/Ubuntu",
                    handle => "cfe_internal_policysrv_vars_match_package_debian";
