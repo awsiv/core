@@ -303,7 +303,7 @@ redhat|SuSE::
  package_noverify_regex     => ".*[^\s].*";
 
  redhat::
-  package_list_update_command => "/usr/bin/yum check-update";
+  package_list_update_command => "/usr/bin/yum --quiet check-update";
  SuSE::
   package_list_update_command => "/usr/bin/zypper list-updates";
 
