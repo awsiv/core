@@ -346,7 +346,7 @@ const char *Nova_Version(void)
 
 const char *Nova_NameVersion(void)
 {
-    return "CFEngine Nova " NOVA_VERSION;
+    return "CFEngine Enterprise " NOVA_VERSION;
 }
 
 /***************************************************************/
