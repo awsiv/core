@@ -45,12 +45,8 @@ libcfnova_la_SOURCES += \
         win_proc.c \
         win_ps.c \
         win_service_exec.c \
-        win_services.c \
         win_sysinfo.c \
         win_user.c
-else
-libcfnova_la_SOURCES += \
-        services.c
 endif
 
 if MONGO
@@ -95,7 +91,11 @@ endif
 libcfagent_la_SOURCES =
 if NT
 libcfagent_la_SOURCES += \
-	win_wmi.c
+	win_wmi.c \
+	win_services.c
+else
+libcfagent_la_SOURCES += \
+	services.c
 endif
 
 libcfmonitord_la_SOURCES = \
