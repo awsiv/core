@@ -1474,6 +1474,13 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                             }
                         }
 
+                        if(!rrval)
+                        {
+                            CfOut(cf_inform, "", " !! Possible data-corruption in variables report: %s.%s.%s "
+                                  "(skipping...)", rns, rbundle, rlval);
+                            continue;
+                        }
+
                         // Now do selection
 
                         match_type = match_ns = match_bundle = match_lval = match_rval = match_time = true;

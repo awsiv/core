@@ -864,7 +864,6 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
         rval[0] = '\0';  // rval may be empty
 
         sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
-            sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
 
             t = (time_t) tl;
 
@@ -874,13 +873,19 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
                 continue;
             }
 
-            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
+            char scope_canonified[CF_MAXVARSIZE] = {0};
+            ReplaceChar(scope, scope_canonified, sizeof(scope_canonified), '.', '_');
+
+            char lval_canonified[CF_MAXVARSIZE] = {0};
+            ReplaceChar(lval, lval_canonified, sizeof(lval_canonified), '.', '_');
+
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_type);
             bson_append_string(&set_op, varName, type);
 
-            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_time);
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_time);
             bson_append_int(&set_op, varName, t);
 
-            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_rval);
 
             if (IsCfList(type))
             {
@@ -891,7 +896,11 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
                 for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
                 {
                     snprintf(iStr, sizeof(iStr), "%d", i);
-                    bson_append_string(&set_op, iStr, rp->item);
+
+                    char rval_canonified[CF_BUFSIZE] = {0};
+                    ReplaceChar(rp->item, rval_canonified, sizeof(rval_canonified), '.', '_');
+
+                    bson_append_string(&set_op, iStr, rval_canonified);
                 }
 
                 DeleteRlist(list);
@@ -900,6 +909,9 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
             }
             else
             {
+                char rval_canonified[CF_BUFSIZE] = {0};
+                ReplaceChar(rval, rval_canonified, sizeof(rval_canonified), '.', '_');
+
                 bson_append_string(&set_op, varName, rval);
             }
         }
