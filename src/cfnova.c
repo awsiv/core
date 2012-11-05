@@ -100,7 +100,7 @@ void EnterpriseModuleTrick()
 
 const char *GetConsolePrefix(void)
 {
-    return "nova";
+    return "enterprise";
 }
 
 /*****************************************************************************/
