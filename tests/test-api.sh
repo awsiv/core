@@ -51,6 +51,8 @@ NGINX_PID=$!
 # Load Mongo state
 #./load-data.sh data/rest
 
+mkdir -p /tmp/api/static
+
 # Run tests
 php -c conf/php.ini -d extension=mongo.so /usr/bin/phpunit ../api/http/tests
 
