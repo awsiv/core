@@ -864,7 +864,6 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
         rval[0] = '\0';  // rval may be empty
 
         sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
-            sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
 
             t = (time_t) tl;
 
