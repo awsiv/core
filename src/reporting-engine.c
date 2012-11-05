@@ -1137,7 +1137,16 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
         struct stat s;
         if (stat(wr_info->csv_path, &s) == -1)
         {
-            writer = FileWriter( fopen( wr_info->csv_path, "w" ) );
+            FILE *write_file = fopen(wr_info->csv_path, "w");
+            if (!write_file)
+            {
+                Sqlite3_DBClose(db);
+                free(select_op_expanded);
+                syslog(LOG_ERR, "code %d, message: %s, os errno: %d, path: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Could not open write file for writing", errno, wr_info->csv_path);
+                _exit(0);
+            }
+
+            writer = FileWriter(write_file);
         }
 
         WriterClose(writer);
