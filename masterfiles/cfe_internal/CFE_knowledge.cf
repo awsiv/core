@@ -94,9 +94,20 @@ bundle agent cfe_internal_setup_knowledge
 
 #
 
+ processes:
+
+  am_policy_hub::
+
+   "$(sys.workdir)/bin/mongod"
+            comment => "Check for mongod process. If not running, don't setup HUB",
+             handle => "cfe_internal_setup_knowledge_processes_var_cfengine_bin_mongod",
+      process_count => check_process("mongod_started","mongod_not_started_yet");
+
+#
+
  files:
 
-  mongo_init::
+  mongo_init.mongod_started::
 
    "$(cfe_internal_hub_vars.docroot)/mongo_stamp"
        create => "true",
@@ -104,7 +115,7 @@ bundle agent cfe_internal_setup_knowledge
       comment => "Create a time stamp file for 1st time installation",
        handle => "cfe_internal_setup_knowledge_files_mongo_stamp";     
 
-  kn_init::
+  kn_init.mongod_started::
 
    "$(cfe_internal_hub_vars.docroot)/db_stamp"
        create => "true",
@@ -112,14 +123,14 @@ bundle agent cfe_internal_setup_knowledge
       comment => "Create a time stamp file for checking for the last update",
        handle => "cfe_internal_setup_knowledge_files_db_stamp";
 
-  kn_update::
+  kn_update.mongod_started::
 
    "$(cfe_internal_hub_vars.docroot)/db_stamp"
         touch => "true",
       comment => "Record the time of last update",
        handle => "cfe_internal_setup_knowledge_files_touch_db_stamp";
 
-  SuSE.am_policy_hub::
+  SuSE.am_policy_hub.mongod_started::
 
 #   "/tmp/mysql.sock"
 #        comment => "Create a temp link to mysql.sock",
@@ -133,7 +144,7 @@ bundle agent cfe_internal_setup_knowledge
              perms => mog("700","$(owner[SuSE])","$(group[SuSE])"),
             create => "true";
 
-  debian.am_policy_hub::
+  debian.am_policy_hub.mongod_started::
 
 #   "/tmp/mysql.sock"
 #        comment => "Create a temp link to mysql.sock",
@@ -153,7 +164,7 @@ bundle agent cfe_internal_setup_knowledge
       depth_search => recurse_basedir("inf"),
              perms => mog("700","$(owner[debian])","$(group[debian])");
 	
-  redhat.am_policy_hub::
+  redhat.am_policy_hub.mongod_started::
 
 #   "/tmp/mysql.sock"
 #        comment => "Create a temp link to mysql.sock",
@@ -173,7 +184,7 @@ bundle agent cfe_internal_setup_knowledge
       depth_search => recurse_basedir("inf"),
              perms => mog("700","$(owner[redhat])","$(group[redhat])");
 	
-  !windows.am_policy_hub::
+  !windows.am_policy_hub.mongod_started::
 
    "$(cfe_internal_hub_vars.docroot)/docs"
            comment => "Copy the basic knowledge base configuration from the installation to doc root",
@@ -277,6 +288,18 @@ bundle agent cfe_internal_setup_knowledge
              perms => mo("644","root"),
       depth_search => recurse_exclude("inf",".cfagent", "policies"); # more folders in the body.
 
+  mongod_not_started_yet::
+
+   "$(cfe_internal_hub_vars.docroot)/mongo_stamp"
+      comment => "Delete mongo_stamp if mongod is not running",
+       handle => "cfe_internal_setup_knowledge_files_delete_mongo_stamp",
+       delete => tidy;
+
+   "$(cfe_internal_hub_vars.docroot)/db_stamp"
+      comment => "Delete db_stamp if mongod is not running",
+       handle => "cfe_internal_setup_knowledge_files_delete_db_stamp",
+       delete => tidy;
+
 #
 
  commands:
@@ -361,4 +384,13 @@ bundle edit_line rest_htaccess
 </IfModule>"
    comment => "REST's htaccess file content",
     handle => "cfe_internal_rest_htaccess_insert_lines";
+}
+
+############################################################################
+
+body process_count check_process(in,out)
+{
+match_range => "1,1";
+in_range_define => { "$(in)" };
+out_of_range_define => { "$(out)" };
 }
