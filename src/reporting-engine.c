@@ -115,7 +115,8 @@ bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *selec
 int ExportCSVOutput(void *out, int argc, char **argv, char **azColName);
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info);
 
-static char *AsyncToken(const char *username, const char *query);
+#define MD5_HEX_LENGTH 32
+static void AsyncToken(const char *username, const char *query, char token_out[MD5_HEX_LENGTH + 1]);
 static JsonElement *PackageAsyncQueryCreateResult(ReportingEngineAsyncError err_id, const char *query, const char *token);
 static JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, const char *token);
 static JsonElement *PackageAsyncQueryStatusResult(ReportingEngineAsyncError err_id, const char *token, size_t percentage_complete, const char *href_static);
@@ -1057,7 +1058,7 @@ JsonElement *PackageAsyncQueryAbortResult(ReportingEngineAsyncError err_id, cons
 
 /******************************************************************/
 
-static char *AsyncToken(const char *username, const char *query)
+static void AsyncToken(const char *username, const char *query, char token_out[MD5_HEX_LENGTH + 1])
 {
     char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
@@ -1069,7 +1070,11 @@ static char *AsyncToken(const char *username, const char *query)
 
     HashString(time_str, CF_SMALLBUF - 1, digest, cf_md5);
 
-    return HashPrint(cf_md5, digest);
+    char prefixed_hash[EVP_MAX_MD_SIZE * 4] = { 0 };
+    HashPrintSafe(cf_md5, digest, prefixed_hash);
+
+    strncpy(token_out, prefixed_hash + 4, MD5_HEX_LENGTH);
+    token_out[32] = '\0';
 }
 
 /******************************************************************/
@@ -1078,9 +1083,8 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 {
     assert( username && select_op );
 
-    char token[CF_BUFSIZE] = {0};
-    snprintf(token, CF_BUFSIZE - 1, "%s", AsyncToken(username, select_op));
-
+    char token[MD5_HEX_LENGTH + 1] = { 0 };
+    AsyncToken(username, select_op, token);
     pid_t pid = fork();
 
     if (pid == -1)
