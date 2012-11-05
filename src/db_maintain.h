@@ -30,4 +30,7 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName);
 */
 void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey, PromiseContextMode promise_context_mode);
 
+/* CFEngine Enterprise database validation methods */
+bool CFDB_CFDB_ValidateVariablesReport(EnterpriseDB *conn, const char *keyHash);
+
 #endif
