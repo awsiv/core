@@ -50,7 +50,7 @@ class SettingsTest extends APIBaseTest
                 }');
             $this->fail('Should not get here');
         }
-        catch (Pest_NotAcceptable $e)
+        catch (Pest_BadRequest $e)
         {
             // pass
             return;
@@ -202,7 +202,7 @@ class SettingsTest extends APIBaseTest
 
             $this->fail('Should not get here');
         }
-        catch (Pest_NotAcceptable $e)
+        catch (Pest_BadRequest $e)
         {
             //pass
         }

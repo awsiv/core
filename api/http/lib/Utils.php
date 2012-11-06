@@ -133,7 +133,7 @@ class Utils
                 return 404;
             case Utils::ERRID_ARGUMENT_MISSING:
             case Utils::ERRID_ARGUMENT_WRONG:
-                return 406;
+                return 400;
             case Utils::ERRID_ITEM_EXISTS:
                 return 409;
             case Utils::ERRID_RBAC_ACCESS_DENIED:
