@@ -10,6 +10,10 @@
 #include <assert.h>
 
 /*****************************************************************************/
+static void ConvertUnixTimeToDateString(time_t *timestamp,char *buffer,int bufsize)
+{
+    strftime (buffer, bufsize, "%FT%H:%M:%S", gmtime(timestamp));
+}
 
 bool ExportWebReportStatusInitialize( WebReportFileInfo *wr_info )
 {
@@ -163,12 +167,14 @@ void HubClassToCSV( void *data, Writer *w )
     assert(hc->hh);
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hc->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hc->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hc->class));
     CsvWriterFieldF(c, "%f", hc->prob * 100.0);
     CsvWriterFieldF(c, "%f", hc->dev * 100.0);
-    CsvWriterFieldF(c, "%ld", hc->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
 }
@@ -195,12 +201,14 @@ void HubSoftwareToCSV( void *data, Writer *w )
     HubSoftware *hs = (HubSoftware *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hs->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->name));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->version));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->arch));
-    CsvWriterFieldF(c, "%ld", hs->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
 }
@@ -278,12 +286,14 @@ void HubVariablesToCSV( void *data, Writer *w)
 
     CsvWriter *c = CsvWriterOpen(w);
 
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hv->t, time_buffer, CF_SMALLBUF);
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hv->hh->hostname));
     CsvWriterFieldF(c, "%s", scope);
     CsvWriterFieldF(c, "%s", DataTypeShortToType(hv->dtype));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hv->lval));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(rval));
-    CsvWriterFieldF(c, "%ld", hv->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
 }
@@ -312,13 +322,15 @@ void HubTotalComplianceToCSV(void *data, Writer *w)
     HubTotalCompliance *ht = (HubTotalCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&ht->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(ht->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(ht->version));
     CsvWriterFieldF(c, "%d", ht->kept);
     CsvWriterFieldF(c, "%d", ht->repaired);
     CsvWriterFieldF(c, "%d", ht->notkept);
-    CsvWriterFieldF(c, "%ld", ht->t);
+    CsvWriterFieldF(c, "%s",time_buffer);
 
     CsvWriterClose(c);
 }
@@ -347,13 +359,15 @@ void HubPromiseComplianceToCSV( void *data, Writer *w)
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hp->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(Nova_LongState(hp->status)));
     CsvWriterFieldF(c, "%f", hp->e);
     CsvWriterFieldF(c, "%f", hp->d);
-    CsvWriterFieldF(c, "%ld", hp->t);
+    CsvWriterFieldF(c, "%s",time_buffer);
 
     CsvWriterClose(c);
 }
@@ -383,13 +397,15 @@ void HubPromiseComplianceWeightedToCSV( void *data, Writer *w)
     HubPromiseCompliance *hp = (HubPromiseCompliance *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hp->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(Nova_LongState(hp->status)));
     CsvWriterFieldF(c, "%f", hp->e);
     CsvWriterFieldF(c, "%f", hp->d);
-    CsvWriterFieldF(c, "%ld", hp->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
     CsvWriterFieldF(c, "%s", Nova_HostColourToString(hp->hh->colour));
 
     CsvWriterClose(c);
@@ -433,12 +449,14 @@ void HubLastseenToCSV( void *data, Writer *w)
     }
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hl->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(inout));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->ipaddr));
-    CsvWriterFieldF(c, "%ld", hl->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
     CsvWriterFieldF(c, "%f", hl->hrsago);
     CsvWriterFieldF(c, "%f", hl->hrsavg);
     CsvWriterFieldF(c, "%f", hl->hrsdev);
@@ -472,12 +490,14 @@ void HubPerformanceToCSV( void *data, Writer *w)
 
     CsvWriter *c = CsvWriterOpen(w);
 
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hp->t, time_buffer, CF_SMALLBUF);
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->event));
     CsvWriterFieldF(c, "%f", hp->q);
     CsvWriterFieldF(c, "%f", hp->e);
     CsvWriterFieldF(c, "%f", hp->d);
-    CsvWriterFieldF(c, "%ld", hp->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
 }
@@ -531,11 +551,13 @@ void HubFileChangesToCSV( void *data, Writer *w)
     HubFileChanges *hC = (HubFileChanges *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hC->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->path));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hC->msg));
-    CsvWriterFieldF(c, "%ld", hC->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
 }
@@ -595,11 +617,13 @@ void HubPromiseLogToCSV( void *data, Writer *w)
     HubPromiseLog *hp = (HubPromiseLog *) data;
 
     CsvWriter *c = CsvWriterOpen(w);
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hp->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->handle));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->cause));
-    CsvWriterFieldF(c, "%ld", hp->t);
+    CsvWriterFieldF(c, "%s",time_buffer);
 
     CsvWriterClose(c);
 }
@@ -660,13 +684,15 @@ void HubFileDiffToCSV( void *data, Writer *w)
 
     CsvWriter *c = CsvWriterOpen(w);
 
-    char tline[CF_BUFSIZE] = { 0 };    
+    char tline[CF_BUFSIZE] = { 0 };
     for (const char *sp = diff_str; *sp != '\0'; sp += strlen(tline) + 1)
     {
         int line = 0;
         char pm[2] = { 0 };
 
         char diff[CF_BUFSIZE] = { 0 };
+        char time_buffer[CF_SMALLBUF] = {0};
+        ConvertUnixTimeToDateString(&hd->t, time_buffer, CF_SMALLBUF);
         sscanf(sp, "%c,%d,%2047[^\n]", pm, &line, diff);
         sscanf(sp, "%2047[^\n]", tline);
 
@@ -674,7 +700,7 @@ void HubFileDiffToCSV( void *data, Writer *w)
 
         CsvWriterFieldF(c, "%s", NULLStringToEmpty(hd->hh->hostname));
         CsvWriterFieldF(c, "%s", NULLStringToEmpty(hd->path));
-        CsvWriterFieldF(c, "%ld", hd->t);
+        CsvWriterFieldF(c, "%s", time_buffer);
         CsvWriterFieldF(c, "%s", NULLStringToEmpty(pm));
         CsvWriterFieldF(c, "%d", line);
         CsvWriterFieldF(c, "%s", NULLStringToEmpty(diff));
@@ -708,11 +734,13 @@ void HubBundleSeenToCSV( void *data, Writer *w)
 
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
+    char time_buffer[CF_SMALLBUF] = {0};
     CsvWriter *c = CsvWriterOpen(w);
+    ConvertUnixTimeToDateString(&hb->t, time_buffer, CF_SMALLBUF);
 
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->bundle));
-    CsvWriterFieldF(c, "%ld", hb->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
     CsvWriterFieldF(c, "%f", hb->bundlecomp);
     CsvWriterFieldF(c, "%f", hb->bundleavg);
     CsvWriterFieldF(c, "%f", hb->bundledev);
@@ -746,9 +774,11 @@ void HubBundleSeenWeightedToCSV( void *data, Writer *w)
 
     CsvWriter *c = CsvWriterOpen(w);
 
+    char time_buffer[CF_SMALLBUF] = {0};
+    ConvertUnixTimeToDateString(&hb->t, time_buffer, CF_SMALLBUF);
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->bundle));
-    CsvWriterFieldF(c, "%ld", hb->t);
+    CsvWriterFieldF(c, "%s", time_buffer);
     CsvWriterFieldF(c, "%f", hb->bundlecomp);
     CsvWriterFieldF(c, "%f", hb->bundleavg);
     CsvWriterFieldF(c, "%f", hb->bundledev);
