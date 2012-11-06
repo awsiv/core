@@ -34,7 +34,7 @@ class RoleTest extends APIBaseTest
 
             $this->assertValidJson($roles);
             $this->assertEquals('Jersey Shore Role', $roles[0]['description']);
-            $this->assertEquals('jersey', $roles[0]['name']);
+            $this->assertEquals('jersey', $roles[0]['id']);
             $this->assertEquals('linux', $roles[0]['includeContext']);
             $this->assertEquals('windows', $roles[0]['excludeContext']);
             $this->assertEquals('bundle_1', $roles[0]['includeBundles']);
@@ -58,7 +58,7 @@ class RoleTest extends APIBaseTest
             // check role was added
             $roles = $this->getResults('/role');
             $this->assertValidJson($roles);
-            $this->assertEquals('admin', $roles[0]['name']);
+            $this->assertEquals('admin', $roles[0]['id']);
             $this->assertEquals('admin modified', $roles[0]['description']);
         }
         catch (Pest_Exception $e)

@@ -10,7 +10,7 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
 
     JsonElement *obj = JsonObjectCreate(8);
     JsonObjectAppendString(obj, "id", scheduled_report->query_id);
-    JsonObjectAppendString(obj, "username", scheduled_report->username);
+    JsonObjectAppendString(obj, "userId", scheduled_report->username);
     JsonObjectAppendString(obj, "to", scheduled_report->email);
     JsonObjectAppendString(obj, "query", scheduled_report->query);
     JsonObjectAppendString(obj, "schedule", scheduled_report->schedule);
@@ -48,7 +48,7 @@ JsonElement *HubUserToJson(const HubUser *user)
     assert(user);
 
     JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "username", user->username);
+    JsonObjectAppendString(obj, "id", user->username);
 
     JsonObjectAppendBool(obj, "external", user->external);
 
@@ -81,7 +81,7 @@ JsonElement *HubRoleToJson(const HubRole *role)
     assert(role);
 
     JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "name", role->name);
+    JsonObjectAppendString(obj, "id", role->name);
 
     if (role->description)
     {

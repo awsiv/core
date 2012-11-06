@@ -189,9 +189,8 @@ class UserList extends Resource
     function get($request)
     {
         $user = $_SERVER['PHP_AUTH_USER'];
-        $pass = $_SERVER['PHP_AUTH_PW'];
 
-        $username_rx = Utils::queryParam('username');
+        $username_rx = Utils::queryParam('id');
         $external = Utils::checkBoolean(Utils::queryParam('external'), 'external');
 
         $response = new Response($request);

@@ -19,15 +19,15 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testListUsersUsernameRegex()
+    public function testListUsersUserIdRegex()
     {
         try
         {
-            $users = $this->getResults('/user?username=jw.*');
+            $users = $this->getResults('/user?id=jw.*');
             $this->assertValidJson($users);
             $this->assertEquals(1, sizeof($users));
 
-            $this->assertEquals('jwow', $users[0]['username']);
+            $this->assertEquals('jwow', $users[0]['id']);
         }
         catch (Pest_Exception $e)
         {
@@ -81,7 +81,7 @@ class UserTest extends APIBaseTest
             // check user was added
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
             $this->assertEquals(false, $users[0]['external']);
@@ -112,7 +112,7 @@ class UserTest extends APIBaseTest
             // check user was added
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
             $this->assertEquals(false, $users[0]['external']);
@@ -168,7 +168,7 @@ class UserTest extends APIBaseTest
             // check only email was updated and nothing other
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
 
             //test if only email was edited
@@ -201,7 +201,7 @@ class UserTest extends APIBaseTest
             // check only name was updated and nothing other
             $users = $this->getResults('/user');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('Snookie2', $users[0]['name']);
 
             //test if only name was edited
@@ -234,7 +234,7 @@ class UserTest extends APIBaseTest
             // check roles was updated
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('jersey', $users[0]['roles'][0]);
             $this->assertEquals('wenches', $users[0]['roles'][1]);
 
@@ -268,7 +268,7 @@ class UserTest extends APIBaseTest
             // check roles was updated
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($users);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals(0, sizeof($users[0]['roles']));
 
             //test only roles was edited
@@ -297,7 +297,7 @@ class UserTest extends APIBaseTest
             $this->pest->setupAuth("snookie", "pass");
             $users = $this->getResults('/user/snookie');
 
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals(false, $users[0]['external']);
             $this->assertEquals('snookie@cfengine.com', $users[0]['email']);
         }
@@ -513,14 +513,14 @@ class UserTest extends APIBaseTest
         }
     }
 
-    public function testListExternalUsersUsernameRegex()
+    public function testListExternalUsersUserIdRegex()
     {
         try
         {
             $this->pest->post('/settings', $this->ldapSettings);
             $this->assertEquals(204, $this->pest->lastStatus());
 
-            $users = $this->getResults('/user?username=user50.*');
+            $users = $this->getResults('/user?id=user50.*');
             $this->assertValidJson($users);
             $this->assertEquals(11, sizeof($users));
         }
@@ -539,8 +539,8 @@ class UserTest extends APIBaseTest
 
             $this->pest->setupAuth("snookie", "pass");
             $users = $this->getResults('/user/snookie');
-            $this->assertValidJson($response);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertValidJson($users);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals(null, $users[0]['email']);
             $this->assertEquals(true, $users[0]['external']);
 
@@ -552,7 +552,7 @@ class UserTest extends APIBaseTest
             // check only email was updated and nothing other
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($response);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals('snookie2@cfengine.com', $users[0]['email']);
             $this->assertEquals(true, $users[0]['external']);
 
@@ -577,7 +577,7 @@ class UserTest extends APIBaseTest
             $this->pest->setupAuth("snookie", "pass");
             $users = $this->getResults('/user/snookie');
             $this->assertValidJson($response);
-            $this->assertEquals('snookie', $users[0]['username']);
+            $this->assertEquals('snookie', $users[0]['id']);
             $this->assertEquals(null, $users[0]['email']);
             $this->assertEquals(true, $users[0]['external']);
 
