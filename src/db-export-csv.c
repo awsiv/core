@@ -288,6 +288,8 @@ void HubVariablesToCSV( void *data, Writer *w)
 
     char time_buffer[CF_SMALLBUF] = {0};
     ConvertUnixTimeToDateString(&hv->t, time_buffer, CF_SMALLBUF);
+
+
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hv->hh->hostname));
     CsvWriterFieldF(c, "%s", scope);
     CsvWriterFieldF(c, "%s", DataTypeShortToType(hv->dtype));
@@ -452,6 +454,7 @@ void HubLastseenToCSV( void *data, Writer *w)
     char time_buffer[CF_SMALLBUF] = {0};
     ConvertUnixTimeToDateString(&hl->t, time_buffer, CF_SMALLBUF);
 
+
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(inout));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hl->rhost->hostname));
@@ -492,6 +495,7 @@ void HubPerformanceToCSV( void *data, Writer *w)
 
     char time_buffer[CF_SMALLBUF] = {0};
     ConvertUnixTimeToDateString(&hp->t, time_buffer, CF_SMALLBUF);
+
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hp->event));
     CsvWriterFieldF(c, "%f", hp->q);
@@ -691,8 +695,10 @@ void HubFileDiffToCSV( void *data, Writer *w)
         char pm[2] = { 0 };
 
         char diff[CF_BUFSIZE] = { 0 };
+
         char time_buffer[CF_SMALLBUF] = {0};
         ConvertUnixTimeToDateString(&hd->t, time_buffer, CF_SMALLBUF);
+
         sscanf(sp, "%c,%d,%2047[^\n]", pm, &line, diff);
         sscanf(sp, "%2047[^\n]", tline);
 
@@ -735,6 +741,7 @@ void HubBundleSeenToCSV( void *data, Writer *w)
     HubBundleSeen *hb = (HubBundleSeen *) data;
 
     char time_buffer[CF_SMALLBUF] = {0};
+
     CsvWriter *c = CsvWriterOpen(w);
     ConvertUnixTimeToDateString(&hb->t, time_buffer, CF_SMALLBUF);
 
@@ -776,6 +783,7 @@ void HubBundleSeenWeightedToCSV( void *data, Writer *w)
 
     char time_buffer[CF_SMALLBUF] = {0};
     ConvertUnixTimeToDateString(&hb->t, time_buffer, CF_SMALLBUF);
+
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hb->bundle));
     CsvWriterFieldF(c, "%s", time_buffer);
