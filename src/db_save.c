@@ -785,7 +785,7 @@ void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, Item *data)
     char iStr[32];
     long tl;
     time_t t;
-    Rlist *rp, *list;
+    Rlist *rp = NULL, *list = NULL;
     char type[CF_SMALLBUF], lval[CF_MAXVARSIZE], rval[CF_BUFSIZE], scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
 
 // find right host
@@ -817,13 +817,19 @@ void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, Item *data)
             continue;
         }
 
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
+        char scope_canonified[CF_MAXVARSIZE] = {0};
+        ReplaceChar(scope, scope_canonified, sizeof(scope_canonified), '.', '_');
+
+        char lval_canonified[CF_MAXVARSIZE] = {0};
+        ReplaceChar(lval, lval_canonified, sizeof(lval_canonified), '.', '_');
+
+        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_type);
         bson_append_string(setObj, varName, type);
 
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_time);
+        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_time);
         bson_append_int(setObj, varName, t);
 
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
+        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope_canonified, lval_canonified, cfr_rval);
 
         if (IsCfList(type))
         {

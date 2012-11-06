@@ -22,6 +22,10 @@ check_PROGRAMS += scorecards_test
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
 
+check_PROGRAMS += db_maintain_test
+db_maintain_test_SOURCES = $(MOCKERY_SOURCES) db_maintain_test.c
+db_maintain_test_LDADD = $(top_builddir)/src/libpromises.la
+
 endif
 
 TESTS = $(check_PROGRAMS)
