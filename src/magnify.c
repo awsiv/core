@@ -23,7 +23,7 @@
 
 bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, const char *hostkey, const char *vitalId)
 {
- double rq, rs;
+    double rq, rs;
     double q[CF_MAGDATA], e[CF_MAGDATA], d[CF_MAGDATA], g[CF_MAGDATA];
     int i;
     bool hasData = false;
@@ -42,6 +42,8 @@ bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, const char *host
         }
 
         // Num() resets negative numbers to zero
+        cfv->data_E[i] = Num(e[i]);
+        cfv->data_dq[i] = Num(g[i]);
         rq = cfv->data_q[i] = Num(q[i]);
         rs = cfv->bars[i] = Num(d[i]);
 
