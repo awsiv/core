@@ -896,11 +896,7 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
                 for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
                 {
                     snprintf(iStr, sizeof(iStr), "%d", i);
-
-                    char rval_canonified[CF_BUFSIZE] = {0};
-                    ReplaceChar(rp->item, rval_canonified, sizeof(rval_canonified), '.', '_');
-
-                    bson_append_string(&set_op, iStr, rval_canonified);
+                    bson_append_string(&set_op, iStr, rp->item);
                 }
 
                 DeleteRlist(list);
@@ -909,9 +905,6 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
             }
             else
             {
-                char rval_canonified[CF_BUFSIZE] = {0};
-                ReplaceChar(rval, rval_canonified, sizeof(rval_canonified), '.', '_');
-
                 bson_append_string(&set_op, varName, rval);
             }
         }
