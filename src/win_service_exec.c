@@ -17,6 +17,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "cf-execd-runner.h"
+#include "reporting.h"
+
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE statusHandle;
 
@@ -27,7 +30,8 @@ void NovaWin_ControlHandler(DWORD request);
 /* core/src/atexit.c */
 void CallAtExitFunctions(void);
 
-void StartServer(int argc, char **argv);
+void StartServer(Policy *policy, ExecConfig *config, const ReportContext *report_context);
+void KeepPromises(Policy *policy, ExecConfig *config);
 
 void NovaWin_StartExecService(void)
 {
@@ -69,10 +73,29 @@ void NovaWin_ServiceMain(int argc, char *argv[])
     serviceStatus.dwCurrentState = SERVICE_RUNNING;
     SetServiceStatus(statusHandle, &serviceStatus);
 
+    GenericAgentConfig config = GenericAgentDefaultConfig(cf_executor);
+
+    ReportContext *report_context = OpenReports("executor");
+    Policy *policy = GenericInitialize("executor", config, report_context);
+
+    ExecConfig exec_config = {
+        .scheduled_run = true,
+        .exec_command = SafeStringDuplicate(""),
+        .mail_server = SafeStringDuplicate(""),
+        .mail_from_address = SafeStringDuplicate(""),
+        .mail_to_address = SafeStringDuplicate(""),
+        .mail_max_lines = 30,
+        .fq_name = VFQNAME,
+        .ip_address = VIPADDRESS,
+    };
+
+    KeepPromises(policy, &exec_config);
+
     CfOut(cf_log, "", "Started service %s", WINSERVICE_NAME);
 
     // worker function (loop)
-    StartServer(argc, argv);
+    StartServer(policy, &exec_config, report_context);
+    ReportContextDestroy(report_context);
 }
 
 /*******************************************************************/
