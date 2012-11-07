@@ -48,11 +48,6 @@ static char *CF_CODEBOOK[] =
 
 static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    time_t t;
-    char eventname[CF_MAXVARSIZE];
-    double measure = 0, average = 0, dev = 0;
-
     CfOut(cf_verbose, "", " -> Performance data ...................");
 
     if (dbconn)
@@ -60,12 +55,20 @@ static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SavePerformance(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        eventname[0] = '\0';
-        sscanf(ip->name, "%ld,%lf,%lf,%lf,%255[^\n]\n", &t, &measure, &average, &dev, eventname);
-        CfDebug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s\n", eventname, measure, average,
-                dev, cf_ctime(&t));
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            time_t t;
+            char eventname[CF_MAXVARSIZE] = "\0";
+            double measure = 0,
+                    average = 0,
+                    dev = 0;
+
+            sscanf(ip->name, "%ld,%lf,%lf,%lf,%255[^\n]\n", &t, &measure, &average, &dev, eventname);
+            CfDebug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s\n", eventname, measure, average,
+                    dev, cf_ctime(&t));
+        }
     }
 }
 
@@ -73,11 +76,6 @@ static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char name[CF_MAXVARSIZE];
-    time_t t;
-    double q = 0, dev = 0;
-
     CfOut(cf_verbose, "", " -> Class data .................");
 
     if (dbconn)
@@ -85,11 +83,19 @@ static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveClasses(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract records
-        sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &q, &dev);
-        CfDebug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s\n", name, q, dev, cf_ctime(&t));
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char name[CF_MAXVARSIZE] = "\0";
+            time_t t;
+            double q = 0,
+                   dev = 0;
+
+            // Extract records
+            sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &q, &dev);
+            CfDebug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s\n", name, q, dev, cf_ctime(&t));
+        }
     }
 }
 
@@ -97,8 +103,6 @@ static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> setuid data ......................");
 
     if (dbconn)
@@ -106,9 +110,12 @@ static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveSetUid(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("Set-uid program: %s", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("Set-uid program: %s", ip->name);
+        }
     }
 }
 
@@ -116,11 +123,6 @@ static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char name[CF_MAXVARSIZE];
-    long date;
-    time_t then;
-
     CfOut(cf_verbose, "", " -> Old File change data....................");
 
     if (dbconn)
@@ -128,12 +130,19 @@ static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data
         CFDB_SaveFileChangesOld(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract records
-        sscanf(ip->name, "%ld,%255[^\n]", &date, name);
-        then = (time_t) date;
-        CfDebug("Old File-change event: in \"%s\" at %ld\n", name, then);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char name[CF_MAXVARSIZE] = "\0";
+            long date;
+            time_t then;
+
+            // Extract records
+            sscanf(ip->name, "%ld,%255[^\n]", &date, name);
+            then = (time_t) date;
+            CfDebug("Old File-change event: in \"%s\" at %ld\n", name, then);
+        }
     }
 }
 
@@ -141,12 +150,6 @@ static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data
 
 static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char name[CF_MAXVARSIZE];
-    char handle[CF_MAXVARSIZE];
-    long date;
-    time_t then;
-
     CfOut(cf_verbose, "", " -> File change data....................");
 
     if (dbconn)
@@ -154,13 +157,21 @@ static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveFileChanges(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract records
-        sscanf(ip->name, "%ld,%255[^,],%255[^\n]", &date, handle, name);
-        then = (time_t) date;
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char name[CF_MAXVARSIZE] = "\0";
+            char handle[CF_MAXVARSIZE] = "\0";
+            long date;
+            time_t then;
 
-        CfDebug("File-change event: in \"%s\" at %ld (by promise: %s)\n", name, then, handle);
+            // Extract records
+            sscanf(ip->name, "%ld,%255[^,],%255[^\n]", &date, handle, name);
+            then = (time_t) date;
+
+            CfDebug("File-change event: in \"%s\" at %ld (by promise: %s)\n", name, then, handle);
+        }
     }
 }
 
@@ -168,12 +179,6 @@ static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char name[CF_MAXVARSIZE], change[CF_BUFSIZE];
-    char handle[CF_MAXVARSIZE];
-    long t;
-    char *sp;
-
     CfOut(cf_verbose, "", " -> File diff data...................");
 
     if (dbconn)
@@ -181,37 +186,42 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveFileDiffs(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract records
-        change[0] = '\0';
-        name[0] = '\0';
-        handle[0] = '\0';
-        bool is_handle = false;
-
-        /* protocol for  Enterprise 3.0.0 */
-        if (strncmp(ip->name, "300", strlen("300")) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            sscanf(ip->name, "300|%ld|%255[^|]|%255[^|]|%2047[^\n]",
-                   &t, name, handle, change);
+            // Extract records
+            char name[CF_MAXVARSIZE] = "\0",
+                    change[CF_BUFSIZE] = "\0",
+                    handle[CF_MAXVARSIZE] = "\0";
 
-            is_handle = true;
-        }
-        else /* protocol for Enterpise 2.x.x */
-        {
-            sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
-        }
+            bool is_handle = false;
+            long t;
 
-        for (sp = change; *sp != '\0'; sp++)
-        {
-            if (*sp == CF_N_CODE)
+            /* protocol for  Enterprise 3.0.0 */
+            if (strncmp(ip->name, "300", strlen("300")) == 0)
             {
-                *sp = '\n';
-            }
-        }
+                sscanf(ip->name, "300|%ld|%255[^|]|%255[^|]|%2047[^\n]",
+                       &t, name, handle, change);
 
-        CfDebug("Change-diff: in file %s at %ld for promise handle: %s\nbegin\n%s\nend\n",
-                name, t, (is_handle)? handle : "undefined", change);
+                is_handle = true;
+            }
+            else /* protocol for Enterpise 2.x.x */
+            {
+                sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+            }
+
+            for (char *sp = change; *sp != '\0'; sp++)
+            {
+                if (*sp == CF_N_CODE)
+                {
+                    *sp = '\n';
+                }
+            }
+
+            CfDebug("Change-diff: in file %s at %ld for promise handle: %s\nbegin\n%s\nend\n",
+                    name, t, (is_handle)? handle : "undefined", change);
+        }
     }
 }
 
@@ -219,11 +229,6 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    int observable, slot;
-    double q, e, dev, dq;
-    char t[CF_TIME_SIZE];
-
     CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier -- skipped");
 
@@ -234,34 +239,39 @@ static void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
     }
 #endif
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract time stamp
-
-        if (strncmp(ip->name, "T: ", 3) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            memset(t, 0, CF_TIME_SIZE);
-            sscanf(ip->name + 3, "%31[^,],%d", t, &slot);
-            continue;
+            int slot;
+            char t[CF_TIME_SIZE] = "\0";
+
+            // Extract time stamp
+            if (strncmp(ip->name, "T: ", 3) == 0)
+            {
+                memset(t, 0, CF_TIME_SIZE);
+                sscanf(ip->name + 3, "%31[^,],%d", t, &slot);
+                continue;
+            }
+
+            // Extract records
+            double q = 0,
+                   e = 0,
+                   dev = 0,
+                   dq = 0;
+
+            int observable = 0;
+
+            sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
+            CfDebug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf,%.2lf\n", observable, slot, q, e, dev, dq);
         }
-
-        // Extract records
-
-        q = e = dev = dq = 0;
-        sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
-        CfDebug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf,%.2lf\n", observable, slot, q, e, dev, dq);
     }
-
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    int observable, slot;
-    double q, e, dev, dq;
-
     CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier -- skipped");
 
@@ -272,19 +282,28 @@ static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
     }
 #endif
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract time stamp
-        if (strncmp(ip->name, "T: ", 3) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            sscanf(ip->name + 3, "%d", &slot);
-            continue;
-        }
+            int slot = 0;
+            // Extract time stamp
+            if (strncmp(ip->name, "T: ", 3) == 0)
+            {
+                sscanf(ip->name + 3, "%d", &slot);
+                continue;
+            }
 
-        // Extract records
-        q = e = dev = dq = 0;
-        sscanf(ip->name, "%d %lf %lf %lf %lf", &observable, &q, &e, &dev, &dq);
-        CfDebug("Mag-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured for slot %d\n", observable, q, e, dev, dq, slot);
+            // Extract records
+            int observable = 0;
+            double q = 0,
+                   e = 0,
+                   dev = 0,
+                   dq = 0;
+
+            sscanf(ip->name, "%d %lf %lf %lf %lf", &observable, &q, &e, &dev, &dq);
+            CfDebug("Mag-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured for slot %d\n", observable, q, e, dev, dq, slot);
+        }
     }
 }
 
@@ -292,10 +311,6 @@ static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    int observable, slot = 0;
-    double q, e, dev, dq;
-
     CfOut(cf_verbose, "", " -> Monitor year data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier -- skipped");
 
@@ -306,19 +321,29 @@ static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
     }
 #endif
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        // Extract time stamp
-        if (strncmp(ip->name, "T: ", 3) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            sscanf(ip->name + 3, "%d", &slot);  // 3*12
-            continue;
-        }
+            int slot = 0;
 
-        // Extract records
-        q = e = dev = dq = 0;
-        sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
-        CfDebug("Year-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured at slot %d\n", observable, q, e, dev, dq, slot);
+            // Extract time stamp
+            if (strncmp(ip->name, "T: ", 3) == 0)
+            {
+                sscanf(ip->name + 3, "%d", &slot);  // 3*12
+                continue;
+            }
+
+            // Extract records
+            int observable = 0;
+            double q = 0,
+                   e = 0,
+                   dev = 0,
+                   dq = 0;
+
+            sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
+            CfDebug("Year-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured at slot %d\n", observable, q, e, dev, dq, slot);
+        }
     }
 }
 
@@ -326,8 +351,6 @@ static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Monitor histogram data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
 
@@ -338,9 +361,12 @@ static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
     }
 #endif
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("OLDHist-obs %s\n", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("OLDHist-obs %s\n", ip->name);
+        }
     }
 }
 
@@ -348,8 +374,6 @@ static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Monitor histogram data.....................");
 
     if (dbconn)
@@ -357,9 +381,12 @@ static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveMonitorHistograms(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("Hist-obs %s\n", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("Hist-obs %s\n", ip->name);
+        }
     }
 }
 
@@ -367,8 +394,6 @@ static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
 
     if (dbconn)
@@ -376,9 +401,12 @@ static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_mag, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("Mag-obs %s\n", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("Mag-obs %s\n", ip->name);
+        }
     }
 }
 
@@ -386,8 +414,6 @@ static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
 
     if (dbconn)
@@ -395,19 +421,19 @@ static void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_week, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("Week-obs %s\n", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("Week-obs %s\n", ip->name);
+        }
     }
-
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Monitor year data.....................");
 
     if (dbconn)
@@ -415,9 +441,12 @@ static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_yr, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("Year-obs %s\n", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("Year-obs %s\n", ip->name);
+        }
     }
 }
 
@@ -425,11 +454,6 @@ static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    time_t then;
-    double av, dev;
-    char type, eventname[CF_MAXVARSIZE];
-
     CfOut(cf_verbose, "", " -> Promise Compliance data..............");
 
     if (dbconn)
@@ -437,25 +461,33 @@ static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SavePromiseCompliance(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%ld,%255[^,],%c,%lf,%lf\n", &then, eventname, &type, &av, &dev);
-
-        switch (type)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-        case 'c':
-            CfDebug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s\n", eventname, av, dev, cf_ctime(&then));
-            break;
-        case 'r':
-            CfDebug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s\n", eventname, av, dev, cf_ctime(&then));
-            break;
-        case 'n':
-            CfDebug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s\n", eventname, av, dev,
-                    cf_ctime(&then));
-            break;
-        default:
-            CfDebug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)\n", type, eventname, av, dev,
-                    cf_ctime(&then));
+            time_t then;
+            double av, dev;
+            char type,
+                 eventname[CF_MAXVARSIZE] = "\0";
+
+            sscanf(ip->name, "%ld,%255[^,],%c,%lf,%lf\n", &then, eventname, &type, &av, &dev);
+
+            switch (type)
+            {
+            case 'c':
+                CfDebug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s\n", eventname, av, dev, cf_ctime(&then));
+                break;
+            case 'r':
+                CfDebug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s\n", eventname, av, dev, cf_ctime(&then));
+                break;
+            case 'n':
+                CfDebug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s\n", eventname, av, dev,
+                        cf_ctime(&then));
+                break;
+            default:
+                CfDebug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)\n", type, eventname, av, dev,
+                        cf_ctime(&then));
+            }
         }
     }
 }
@@ -464,9 +496,6 @@ static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE], arch;
-
     CfOut(cf_verbose, "", " -> Installed software data...............");
 
     if (dbconn)
@@ -474,13 +503,20 @@ static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveSoftware(dbconn, sw_rep_installed, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char name[CF_MAXVARSIZE] = "\0",
+                 version[CF_MAXVARSIZE] = "\0",
+                 arch;
 
-        // architcure coding, see Nova_ShortArch
+            sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
 
-        CfDebug("Installed software: %s version (%s on %c)\n", name, version, arch);
+            // architcure coding, see Nova_ShortArch
+
+            CfDebug("Installed software: %s version (%s on %c)\n", name, version, arch);
+        }
     }
 }
 
@@ -488,9 +524,6 @@ static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
-
     CfOut(cf_verbose, "", " -> Available patch data...................");
 
     if (dbconn)
@@ -498,23 +531,27 @@ static void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveSoftware(dbconn, sw_rep_patch_avail, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char arch;
+            char name[CF_MAXVARSIZE] = "\0",
+                    version[CF_MAXVARSIZE] = "\0";
 
-        // architcure coding, see Nova_ShortArch
+            sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
 
-        CfDebug("Patch available: %s version (%s on %c)\n", name, version, arch);
+            // architcure coding, see Nova_ShortArch
+
+            CfDebug("Patch available: %s version (%s on %c)\n", name, version, arch);
+        }
     }
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
-{
-    Item *ip;
-    char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
-
+{    
     CfOut(cf_verbose, "", " -> Patches installed data.......................");
 
     if (dbconn)
@@ -522,13 +559,20 @@ static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveSoftware(dbconn, sw_rep_patch_installed, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char arch;
+            char name[CF_MAXVARSIZE] = "\0",
+                 version[CF_MAXVARSIZE] = "\0";
 
-        // architcure coding, see Nova_ShortArch
+            sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
 
-        CfDebug("Patch applied: %s version (%s on %c)\n", name, version, arch);
+            // architcure coding, see Nova_ShortArch
+
+            CfDebug("Patch applied: %s version (%s on %c)\n", name, version, arch);
+        }
     }
 }
 
@@ -536,13 +580,14 @@ static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-
     CfOut(cf_verbose, "", " -> Expanded private promise data.............");
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        CfDebug("POLICY: %s", ip->name);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            CfDebug("POLICY: %s", ip->name);
+        }
     }
 }
 
@@ -550,10 +595,6 @@ static void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, It
 
 static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    double kept, notkept, repaired;
-    char date[CF_SMALLBUF];
-
     CfOut(cf_verbose, "", " -> Value data..............................");
 
     if (dbconn)
@@ -561,11 +602,17 @@ static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveValueReport(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%[^,],%lf,%lf,%lf\n", date, &kept, &repaired, &notkept);
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            double kept, notkept, repaired;
+            char date[CF_SMALLBUF] = "\0";
 
-        CfDebug("Business value: (%.0lf,%.0lf,%.0lf) from %s\n", kept, repaired, notkept, date);
+            sscanf(ip->name, "%[^,],%lf,%lf,%lf\n", date, &kept, &repaired, &notkept);
+
+            CfDebug("Business value: (%.0lf,%.0lf,%.0lf) from %s\n", kept, repaired, notkept, date);
+        }
     }
 }
 
@@ -574,9 +621,6 @@ static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 static void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.4 */
 {
-    Item *ip;
-    char type[CF_SMALLBUF], name[CF_MAXVARSIZE], value[CF_BUFSIZE], scope[CF_MAXVARSIZE];
-
     CfOut(cf_verbose, "", " -> Variable data...........................");
     CfOut(cf_inform, "",
           "!! Deprecated variable data format - response from Nova 2.0.4 or earlier (some features unavailible)");
@@ -586,32 +630,34 @@ static void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveVariables(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        if (strncmp(ip->name, "S: ", 3) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            scope[0] = '\0';
-            sscanf(ip->name + 3, "%254[^\n]", scope);
-            CfDebug("SCOPE: %s\n", scope);
-            continue;
+            char type[CF_SMALLBUF] = "\0",
+                    name[CF_MAXVARSIZE] = "\0",
+                    value[CF_BUFSIZE] = "\0",
+                    scope[CF_MAXVARSIZE] = "\0";
+
+            if (strncmp(ip->name, "S: ", 3) == 0)
+            {
+                sscanf(ip->name + 3, "%254[^\n]", scope);
+                CfDebug("SCOPE: %s\n", scope);
+                continue;
+            }
+
+            sscanf(ip->name, "%4[^,], %255[^,], %2040[^\n]", type, name, value);
+
+            CfDebug("line is \"%s\"\n", ip->name);
+            CfDebug("var: (%s) \"%s\"=\"%s\"\n", type, name, value);
         }
-
-        sscanf(ip->name, "%4[^,], %255[^,], %2040[^\n]", type, name, value);
-
-        CfDebug("line is \"%s\"\n", ip->name);
-        CfDebug("var: (%s) \"%s\"=\"%s\"\n", type, name, value);
     }
-
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char type[CF_SMALLBUF], name[CF_MAXVARSIZE], value[CF_BUFSIZE], scope[CF_MAXVARSIZE];
-    time_t t;
-
     CfOut(cf_verbose, "", " -> Variable data with date stamp...........");
 
     if (dbconn)
@@ -619,34 +665,34 @@ static void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveVariables2(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        if (strncmp(ip->name, "S:", 2) == 0)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            scope[0] = '\0';
-            sscanf(ip->name + 2, "%254[^\n]", scope);
-            CfDebug("SCOPE: %s\n", scope);
-            continue;
+            char type[CF_SMALLBUF] = "\0",
+                    name[CF_MAXVARSIZE] ="\0",
+                    value[CF_BUFSIZE] = "\0",
+                    scope[CF_MAXVARSIZE] = "\0";
+
+            if (strncmp(ip->name, "S:", 2) == 0)
+            {
+                sscanf(ip->name + 2, "%254[^\n]", scope);
+                CfDebug("SCOPE: %s\n", scope);
+                continue;
+            }
+
+            time_t t;
+            sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &t, name, value);
+
+            CfDebug("var: (%s) at %s \"%s\"=\"%s\"\n", type, cf_ctime(&t), name, value);
         }
-
-        value[0] = '\0';
-
-        sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &t, name, value);
-
-        CfDebug("var: (%s) at %s \"%s\"=\"%s\"\n", type, cf_ctime(&t), name, value);
     }
-
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char inout, asserted[CF_MAXVARSIZE], dns[CF_MAXVARSIZE], hash[CF_MAXVARSIZE];
-    double ago, average, dev;
-    long fthen;
-
     CfOut(cf_verbose, "", " -> Last-seen data..........................");
 
     if (dbconn)
@@ -654,21 +700,30 @@ static void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveLastSeen(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%c %128s %25s %15s %ld %lf %lf %lf\n",
-               &inout, hash, asserted, dns, &fthen, &ago, &average, &dev);
-
-        // map our own address
-        if (IsInterfaceAddress(asserted))
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            snprintf(asserted, sizeof(asserted), "%s", VFQNAME);
+            char inout;
+            char asserted[CF_MAXVARSIZE] = "\0",
+                    dns[CF_MAXVARSIZE] = "\0",
+                    hash[CF_MAXVARSIZE] = "\0";
+            double ago, average, dev;
+            long fthen;
+
+            sscanf(ip->name, "%c %128s %25s %15s %ld %lf %lf %lf\n",
+                   &inout, hash, asserted, dns, &fthen, &ago, &average, &dev);
+
+            // map our own address
+            if (IsInterfaceAddress(asserted))
+            {
+                snprintf(asserted, sizeof(asserted), "%s", VFQNAME);
+            }
+
+            CfDebug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s", inout, hash, asserted, dns, ago,
+                    average, dev, cf_ctime(&fthen));
         }
-
-        CfDebug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s", inout, hash, asserted, dns, ago,
-                average, dev, cf_ctime(&fthen));
     }
-
 }
 
 /*****************************************************************************/
@@ -743,11 +798,6 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
 
 static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char handle[CF_MAXVARSIZE];
-    long then;
-    time_t tthen;
-
     CfOut(cf_verbose, "", " -> Repair log data........................");
 
     if (dbconn)
@@ -755,12 +805,18 @@ static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_REPAIRED, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
-        tthen = (time_t) then;
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char handle[CF_MAXVARSIZE] = "\0";
+            long then;
 
-        CfDebug("Repair: of promise \"%s\" at %lu\n", handle, tthen);
+            sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
+            time_t tthen = (time_t) then;
+
+            CfDebug("Repair: of promise \"%s\" at %lu\n", handle, tthen);
+        }
     }
 }
 
@@ -768,11 +824,6 @@ static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char handle[CF_MAXVARSIZE];
-    time_t tthen;
-    long then;
-
     CfOut(cf_verbose, "", " -> Not kept data...........................");
 
     if (dbconn)
@@ -780,23 +831,24 @@ static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_NOTKEPT, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
-        tthen = (time_t) then;
-        CfDebug("Failure: of promise \"%s\" at %lu\n", handle, tthen);
-    }
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char handle[CF_MAXVARSIZE] = "\0";
+            long then;
 
+            sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
+            time_t tthen = (time_t) then;
+            CfDebug("Failure: of promise \"%s\" at %lu\n", handle, tthen);
+        }
+    }
 }
 
 /*****************************************************************************/
 
 static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char type;
-    double kept, repaired;
-
     CfOut(cf_verbose, "", " -> Meter data...........................");
 
     if (dbconn)
@@ -805,51 +857,57 @@ static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveScore(dbconn, id, data, HOST_RANK_METHOD_COMPLIANCE);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%c: %lf %lf", &type, &kept, &repaired);
-
-        switch (type)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-        case cfmeter_week:
-            CfDebug("Meter week compliance: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_week_user:
-            CfDebug("Meter week compliance by user promises: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_week_internal:
-            CfDebug("Meter week compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_day:
-            CfDebug("Meter daily compliance: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_day_user:
-            CfDebug("Meter daily compliance by user promises: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_day_internal:
-            CfDebug("Meter daily compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_hour:
-            CfDebug("Meter hourly compliance: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_hour_user:
-            CfDebug("Meter hourly compliance by user: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_hour_internal:
-            CfDebug("Meter hourly compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_perf:
-            CfDebug("Meter performance: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_other:
-            CfDebug("Meter licenses: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_comms:
-            CfDebug("Meter comms: %lf, %lf\n", kept, repaired);
-            break;
-        case cfmeter_anomaly:
-            CfDebug("Meter anomalies: %lf, %lf\n", kept, repaired);
-            break;
+            char type;
+            double kept, repaired;
+
+            sscanf(ip->name, "%c: %lf %lf", &type, &kept, &repaired);
+
+            switch (type)
+            {
+            case cfmeter_week:
+                CfDebug("Meter week compliance: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_week_user:
+                CfDebug("Meter week compliance by user promises: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_week_internal:
+                CfDebug("Meter week compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_day:
+                CfDebug("Meter daily compliance: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_day_user:
+                CfDebug("Meter daily compliance by user promises: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_day_internal:
+                CfDebug("Meter daily compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_hour:
+                CfDebug("Meter hourly compliance: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_hour_user:
+                CfDebug("Meter hourly compliance by user: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_hour_internal:
+                CfDebug("Meter hourly compliance by CFE internal promises: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_perf:
+                CfDebug("Meter performance: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_other:
+                CfDebug("Meter licenses: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_comms:
+                CfDebug("Meter comms: %lf, %lf\n", kept, repaired);
+                break;
+            case cfmeter_anomaly:
+                CfDebug("Meter anomalies: %lf, %lf\n", kept, repaired);
+                break;
+            }
         }
     }
 }
@@ -858,9 +916,6 @@ static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char type;
-
     CfOut(cf_verbose, "", " -> Software dates data...........................");
 
     if (dbconn)
@@ -868,17 +923,21 @@ static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveSoftwareDates(dbconn, id, data);
     }
 
-    time_t t;
-
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        sscanf(ip->name, "%c:%ld", &type, &t);
-
-        switch (type)
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-        case 'S':
-            CfDebug("Software installed date: %ld", t);
-            break;
+            char type;
+            time_t t;
+
+            sscanf(ip->name, "%c:%ld", &type, &t);
+
+            switch (type)
+            {
+            case 'S':
+                CfDebug("Software installed date: %ld", t);
+                break;
+            }
         }
     }
 }
@@ -887,7 +946,6 @@ static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    Item *ip;
     CfOut(cf_verbose, "", " -> Bundle data...........................");
 
     if (dbconn)
@@ -895,17 +953,20 @@ static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
         CFDB_SaveBundles(dbconn, id, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    if(DEBUG)
     {
-        char bundle_name[CF_SMALLBUF] = { 0 }, bundle_namespace[CF_SMALLBUF] = { 0 };
-        double compliance = 0.0, average = 0.0, dev = 0.0;
-        long fthen = 0;
+        for (Item *ip = data; ip != NULL; ip = ip->next)
+        {
+            char bundle_name[CF_SMALLBUF] = { 0 }, bundle_namespace[CF_SMALLBUF] = { 0 };
+            double compliance = 0.0, average = 0.0, dev = 0.0;
+            long fthen = 0;
 
-        sscanf(ip->name, "%127s %ld %lf %lf %lf %127s\n", bundle_name, &fthen, &compliance, &average, &dev, bundle_namespace);
+            sscanf(ip->name, "%127s %ld %lf %lf %lf %127s\n", bundle_name, &fthen, &compliance, &average, &dev, bundle_namespace);
 
-        CfDebug("Bundle: $%s.%s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",
-                !NULL_OR_EMPTY(bundle_namespace) ? bundle_namespace : "default",
-                bundle_name, compliance, average, dev, cf_ctime(&fthen));
+            CfDebug("Bundle: $%s.%s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",
+                    !NULL_OR_EMPTY(bundle_namespace) ? bundle_namespace : "default",
+                    bundle_name, compliance, average, dev, cf_ctime(&fthen));
+        }
     }
 }
 
