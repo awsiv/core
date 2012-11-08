@@ -17,7 +17,9 @@ int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int o
 
 int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);
 int Nova2Txt_software_report(char *key, char *name, char *value, char *arch, bool regex, char *type, char *classreg);
-int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg);
+int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle,
+                         const char *lval, const char *rval, const char *type,
+                         bool regex, char *classreg);
 int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                char *classreg);
 int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool regex, char *classreg);
