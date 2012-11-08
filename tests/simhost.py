@@ -46,6 +46,13 @@ class SimHost:
         else:
             return None
 
+    def get_logs_repaired(self):
+        host_entry = self.conn.cfreport.hosts.find_one({"kH": self.hostkey}, {"logs_rep": 1})
+        if host_entry and 'logs_rep' in host_entry:
+            return host_entry['logs_rep']
+        else:
+            return None
+
     def update_logs_notkept(self, entries):
         """
         entries is a dict of log enties, e.g.
@@ -53,6 +60,23 @@ class SimHost:
         """
         self.conn.cfreport.hosts.update({ "kH": self.hostkey },
                                         { "$set": { "logs_nk": entries } }, upsert = True)
+
+    def update_logs_repaired(self, entries):
+        """
+        entries is a dict of log enties, e.g.
+        entries["handle" + "@" + "cause"] = { "h": "handle", "ca": "cause", t: [1, 2, 3] }
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "logs_rep": entries } }, upsert = True)
+
+    def update_software(self, entries):
+        """
+        entries is a list of software entries, e.g.
+        entries = [ { "n": "name", "v": "v1", "a": "x" } ]
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "sw": entries } }, upsert = True)
+
 
     @abc.abstractmethod
     def update(self):
@@ -150,10 +174,25 @@ class PredictableSimHost(SimHost):
         entries[key] = { "e": 1.0, "d": 0.0, "t": self.timestamp }
         SimHost.update_contexts(self, entries)
 
+    def __update_logs_repaired(self):
+        entries = dict()
+        handle = "repaired_handle"
+        cause = "repaired_cause"
+        key = handle + "@" + cause
+        existing_logs = self.get_logs_repaired()
+        if not existing_logs:
+            record = { "ha": handle, "ca": cause, "t": [] }
+        else:
+            record = existing_logs[key]
+        record['t'].append(self.timestamp)
+        entries[key] = record
+        SimHost.update_logs_repaired(self, entries)
+
+
     def __update_logs_notkept(self):
         entries = dict()
-        handle = "foo"
-        cause = "bar"
+        handle = "notkept_handle"
+        cause = "notkept_cause"
         key = handle + "@" + cause
         existing_logs = self.get_logs_notkept()
         if not existing_logs:
@@ -164,10 +203,21 @@ class PredictableSimHost(SimHost):
         entries[key] = record
         SimHost.update_logs_notkept(self, entries)
 
+    def __update_software(self):
+        entries = []
+        name = 'software1'
+        version = 'v1'
+        arch = 'x'
+        entries.append({ "n": name, "v": version, "a": arch })
+        SimHost.update_software(self, entries)
+
+
     def update(self):
         SimHost.update(self)
         self.__update_contexts()
         self.__update_logs_notkept()
+        self.__update_logs_repaired()
+        self.__update_software()
 
 
 if __name__ == '__main__':
