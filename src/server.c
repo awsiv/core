@@ -23,6 +23,7 @@
 #include "datapack.h"
 #include "lastseen.h"
 #include "sysinfo.h"
+#include "cf-serverd-functions.h"
 
 // These are needed for the collect calls, integrating with hub
 
@@ -459,6 +460,16 @@ int Nova_PlaceCollectCall(AgentConnection *conn)
 /********************************************************************/
 /* Level                                                            */
 /********************************************************************/
+
+int SetServerListenState(size_t queue_size)
+{
+    if (SERVER_LISTEN || IsDefinedClass("am_policy_hub", NULL))
+    {
+        return InitServer(queue_size);
+    }
+
+    return -1;
+}
 
 void TryCollectCall(void)
 {
