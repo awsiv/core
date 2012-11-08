@@ -18,6 +18,7 @@
 #include "conversion.h"
 #include "reporting.h"
 #include "datapack.h"
+#include "scope.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -2572,24 +2573,33 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
     else if (strcmp(lsdata, "vars") == 0)
     {
         char lval[CF_MAXVARSIZE] = { 0 };
-        char scope[CF_MAXVARSIZE] = { 0 }, *sp;
+        char scope[CF_MAXVARSIZE] = { 0 };
+        char *sp = NULL;
 
         if (name && (sp = strchr(name, '.')))
         {
             if (*(sp + 1) == '*')       // If it looks like a regex, don't split on .
             {
-                Nova2Txt_vars_report(hostkey, NULL, name, NULL, NULL, true, classregex);
+                Nova2Txt_vars_report(hostkey, NULL, NULL, name, NULL, NULL, true, classregex);
                 return;
             }
             else
             {
                 sscanf(name, "%[^.].%s", scope, lval);
-                Nova2Txt_vars_report(hostkey, scope, lval, NULL, NULL, true, classregex);
+
+                char ns[CF_MAXVARSIZE] = { 0 };
+                char bundle[CF_MAXVARSIZE] = { 0 };
+                if (scope)
+                {
+                    SplitScopeName(scope, ns, bundle);
+                }
+
+                Nova2Txt_vars_report(hostkey, ns, bundle, lval, NULL, NULL, true, classregex);
                 return;
             }
         }
 
-        Nova2Txt_vars_report(hostkey, NULL, NULL, NULL, NULL, true, NULL);
+        Nova2Txt_vars_report(hostkey, NULL, NULL, NULL, NULL, NULL, true, NULL);
         return;
     }
     else if (strcmp(lsdata, "file_changes") == 0)

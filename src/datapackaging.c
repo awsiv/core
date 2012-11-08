@@ -1551,7 +1551,10 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cf
 
             dtypeStr = Dtype2Str(var.dtype);
 
-            snprintf(buf, sizeof(buf), "%s,%ld,%s,%s\n", dtypeStr, var.e.t, lval, var.rval);
+            char rval_without_newline[CF_MAXTRANSSIZE] = "\0";
+            ReplaceChar(var.rval, rval_without_newline, sizeof(rval_without_newline), '\n', CF_N_CODE);
+
+            snprintf(buf, sizeof(buf), "%s,%ld,%s,%s\n", dtypeStr, var.e.t, lval, rval_without_newline);
             AppendItem(reply, buf, NULL);
         }
     }

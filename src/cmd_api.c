@@ -14,6 +14,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "db_query.h"
 #include "conversion.h"
 #include "bson_lib.h"
+#include "scope.h"
 
 /*****************************************************************************/
 
@@ -235,7 +236,9 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
 }
 
 
-int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle, const char *lval, const char *rval, const char *type, bool regex, char *classreg)
+int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle,
+                         const char *lval, const char *rval, const char *type,
+                         bool regex, char *classreg)
 {
     char rvalBuf[CF_MAXVARSIZE];
     HubVariable *hv;
@@ -294,16 +297,19 @@ int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle
         }
         else
         {
-            snprintf(rvalBuf, sizeof(rvalBuf), "%s", (char *) hv->rval.item);
+            ReplaceChar(hv->rval.item, rvalBuf, CF_MAXVARSIZE, '\n', ' ');
         }
+
+        char scope[CF_MAXVARSIZE] = { 0 };
+        JoinScopeName(hv->ns, hv->bundle, scope);
 
         if (CSV)
         {
-            printf("%s,%s,%s:%s.%s,%s\n", hv->hh->hostname, typestr, hv->ns, hv->bundle, hv->lval, rvalBuf);
+            printf("%s,%s,%s.%s,%s\n", hv->hh->hostname, typestr, scope, hv->lval, rvalBuf);
         }
         else
         {
-            printf("%25s %14s %s:%s.%-25s %s\n", hv->hh->hostname, typestr, hv->ns, hv->bundle, hv->lval, rvalBuf);
+            printf("%25s %14s %s.%-25s %s\n", hv->hh->hostname, typestr, scope, hv->lval, rvalBuf);
         }
     }
 
