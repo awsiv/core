@@ -292,7 +292,7 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
         }
         else
         {
-            snprintf(rvalBuf, sizeof(rvalBuf), "%s", (char *) hv->rval.item);
+            ReplaceChar(hv->rval.item, rvalBuf, CF_MAXVARSIZE, '\n', ' ');
         }
 
         if (CSV)
