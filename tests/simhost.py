@@ -39,6 +39,13 @@ class SimHost:
 
         self.conn.cfreport.hosts.update({ "kH": self.hostkey }, {"$set":{ "ck": entries.keys(), "cl": entries }})
 
+    def get_logs_notkept(self):
+        host_entry = self.conn.cfreport.hosts.find_one({"kH": self.hostkey}, {"logs_nk": 1})
+        if host_entry and 'logs_nk' in host_entry:
+            return host_entry['logs_nk']
+        else:
+            return None
+
     def update_logs_notkept(self, entries):
         """
         entries is a dict of log enties, e.g.
@@ -51,7 +58,7 @@ class SimHost:
     def update(self):
         self.conn.cfreport.hosts.update({ "kH": self.hostkey },
                                         {"$set":{ "kH": self.hostkey,
-                                          "ha": [ self.hostname ], 
+                                          "ha": [ self.hostname ],
                                           "ip": [ self.ip ],
                                           "t": self.timestamp
                                         }},
@@ -59,18 +66,18 @@ class SimHost:
 
 
 class RealisticSimHost(SimHost):
-    
+
     def __init__(self, mongo_connection, hostkey, hostname, ip, timestamp):
         SimHost.__init__(self, mongo_connection, hostkey, hostname, ip, timestamp)
-       
+
     def __update_contexts(self):
         ck_catalog = [ "x86_64", "users_high", "redhat",  "otherprocs_high", "nova_edition", 
                        "nova_2_3_0_a1_4c17320", "nova_2_3_0_a1", "nova_2_3_0", "nova_2_3", "nova_2", 
                        "nova", "net_iface_eth0", "mem_total_high_normal", "mem_swap_high_normal",
                        "mem_freeswap_high_normal", "loadavg_high_ldt", "mem_cached_high_normal", 
-                       "mac_52_54_00_14_3a_29", "loghost", "cpu0_high_ldt", 
+                       "mac_52_54_00_14_3a_29", "loghost", "cpu0_high_ldt",
                        "linux_x86_64_2_6_18_274_17_1_el5__1_SMP_Tue_Jan_10_17_25_58_EST_2012", 
-                       "linux_x86_64_2_6_18_274_17_1_el5", "linux_x86_64", 
+                       "linux_x86_64_2_6_18_274_17_1_el5", "linux_x86_64",
                        "linux_2_6_18_274_17_1_el5", "linux", "ipv4_172_20", "ipv4_172", 
                        "entropy_postgresql_out_low", "entropy_postgresql_in_low", "entropy_misc_out_low",
                        "entropy_misc_in_low", "enterprise_edition", "enterprise_2_3_0_a1_4c17320",
@@ -93,9 +100,9 @@ class RealisticSimHost(SimHost):
                        "mem_free_low_microanomaly", "io_writes_high_dev1", "cfengine_out_high", "cpu_high_dev1", "cpu0_high_dev1",
                        "io_reads_low", "cfengine_in_high_ldt", "entropy_cfengine_in_high", "mem_free_normal",
                        "service_databaseserver", "location_paris", "centos5_12", "centos5_12_stage_cfengine_com" ]
-        
+
         sample = random.sample(ck_catalog, min(len(ck_catalog), random.gauss(float(len(ck_catalog)), 10.0)))
-        
+
         cl = {}
         for context in sample:
             cl[context] = { "e": random.gauss(0.5, 0.3),
@@ -104,7 +111,6 @@ class RealisticSimHost(SimHost):
                           }
 
         SimHost.update_contexts(self, cl)
-        
 
     def __update_logs_notkept(self):
         nk_data = {};
@@ -125,7 +131,7 @@ class RealisticSimHost(SimHost):
             nk_value["t"] = time_array;
 
             nk_data[nk_key] = nk_value;
-        
+
         SimHost.update_logs_notkept(self, nk_data)
 
     def update(self):
@@ -137,6 +143,31 @@ class PredictableSimHost(SimHost):
 
     def __init__(self, mongo_connection, hostkey, hostname, ip, timestamp):
         SimHost.__init__(self, mongo_connection, hostkey, hostname, ip, timestamp)
+
+    def __update_contexts(self):
+        key = canonify("time_" + str(self.timestamp))
+        entries = dict()
+        entries[key] = { "e": 1.0, "d": 0.0, "t": self.timestamp }
+        SimHost.update_contexts(self, entries)
+
+    def __update_logs_notkept(self):
+        entries = dict()
+        handle = "foo"
+        cause = "bar"
+        key = handle + "@" + cause
+        existing_logs = self.get_logs_notkept()
+        if not existing_logs:
+            record = { "ha": handle, "ca": cause, "t": [] }
+        else:
+            record = existing_logs[key]
+        record['t'].append(self.timestamp)
+        entries[key] = record
+        SimHost.update_logs_notkept(self, entries)
+
+    def update(self):
+        SimHost.update(self)
+        self.__update_contexts()
+        self.__update_logs_notkept()
 
 
 if __name__ == '__main__':
@@ -151,7 +182,7 @@ if __name__ == '__main__':
     parser.add_argument('--predictable', help='Use the predictable host simulation', action='store_true', dest='predictable', default=False)
 
     args = parser.parse_args()
-    
+
     conn = pymongo.Connection(args.db_host, args.db_port)
     if args.predictable:
         host = PredictableSimHost(conn, args.hostkey, args.hostname, args.ip, args.time)
@@ -159,4 +190,3 @@ if __name__ == '__main__':
         host = RealisticSimHost(conn, args.hostkey, args.hostname, args.ip, args.time)
 
     host.update()
-    
