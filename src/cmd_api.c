@@ -297,7 +297,7 @@ int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle
         }
         else
         {
-            snprintf(rvalBuf, sizeof(rvalBuf), "%s", (char *) hv->rval.item);
+            ReplaceChar(hv->rval.item, rvalBuf, CF_MAXVARSIZE, '\n', ' ');
         }
 
         char scope[CF_MAXVARSIZE] = { 0 };
