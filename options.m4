@@ -1,5 +1,5 @@
 define([novarevision], esyscmd([sh -c "cd nova && (git rev-list -1 --abbrev-commit HEAD || echo unknown) | tr -d '\n'" 2>/dev/null]))dnl
-define([novaversion], [2.2.5a1.novarevision])
+define([novaversion], [2.2.4])
 
 dnl Define shell variable as well to make it easier for buildsystem to pick up
 NOVA_VERSION=novaversion
