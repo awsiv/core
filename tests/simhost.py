@@ -7,26 +7,63 @@
 #
 ###############################################################################
 
-import sys
 import time
 import pymongo
 import random
 import re
+import argparse
+import abc
 
 def canonify(string):
     return re.sub("[\W\.]", '_', string)
 
 class SimHost:
-    
-    def __init__(self, mongo_connection, hostkey, hostname, ip):
+
+    def __init__(self, mongo_connection, hostkey, hostname, ip, timestamp):
         self.conn = mongo_connection
         self.hostkey = hostkey
         self.hostname = hostname
         self.ip = ip
+        self.timestamp = timestamp
 
+    def update_contexts(self, extra_entries):
+        """
+        extra_entries is a dict of 'cl' entries, e.g.
+        extra_entries[context] = { "e": 0.8, "d": 0.5, "t": 124 }
+        """
+        entries = dict()
+        entries["PK_" + canonify(self.hostkey)] = { "e": 1.0, "d": 0.0, "t": self.timestamp }
+        entries[canonify(self.ip)] = { "e": 1.0, "d": 0.0, "t": self.timestamp }
+        entries["ipv4_" + canonify(self.ip)] = { "e": 1.0, "d": 0.0, "t": self.timestamp }
+        entries.update(extra_entries)
+
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey }, {"$set":{ "ck": entries.keys(), "cl": entries }})
+
+    def update_logs_notkept(self, entries):
+        """
+        entries is a dict of log enties, e.g.
+        entries["handle" + "@" + "cause"] = { "h": "handle", "ca": "cause", t: [1, 2, 3] }
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "logs_nk": entries } }, upsert = True)
+
+    @abc.abstractmethod
+    def update(self):
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        {"$set":{ "kH": self.hostkey,
+                                          "ha": [ self.hostname ], 
+                                          "ip": [ self.ip ],
+                                          "t": self.timestamp
+                                        }},
+                                        upsert = True)
+
+
+class RealisticSimHost(SimHost):
+    
+    def __init__(self, mongo_connection, hostkey, hostname, ip, timestamp):
+        SimHost.__init__(self, mongo_connection, hostkey, hostname, ip, timestamp)
        
-
-    def __update_classes(self):
+    def __update_contexts(self):
         ck_catalog = [ "x86_64", "users_high", "redhat",  "otherprocs_high", "nova_edition", 
                        "nova_2_3_0_a1_4c17320", "nova_2_3_0_a1", "nova_2_3_0", "nova_2_3", "nova_2", 
                        "nova", "net_iface_eth0", "mem_total_high_normal", "mem_swap_high_normal",
@@ -57,22 +94,17 @@ class SimHost:
                        "io_reads_low", "cfengine_in_high_ldt", "entropy_cfengine_in_high", "mem_free_normal",
                        "service_databaseserver", "location_paris", "centos5_12", "centos5_12_stage_cfengine_com" ]
         
-        sample = random.sample(ck_catalog, min(len(ck_catalog), random.gauss(len(ck_catalog), 10.0)))
-        sample.append("PK_" + canonify(self.hostkey));
-        sample.append(canonify(ip))
-        sample.append("ipv4_" + canonify(ip))
+        sample = random.sample(ck_catalog, min(len(ck_catalog), random.gauss(float(len(ck_catalog)), 10.0)))
         
         cl = {}
         for context in sample:
             cl[context] = { "e": random.gauss(0.5, 0.3),
                             "d": random.gauss(0.5, 0.1),
-                            "t": int(time.time())
+                            "t": self.timestamp
                           }
+
+        SimHost.update_contexts(self, cl)
         
-        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
-                                        {"$set":{ "ck": sample,
-                                          "cl": cl 
-                                        }})
 
     def __update_logs_notkept(self):
         nk_data = {};
@@ -80,7 +112,7 @@ class SimHost:
             handle = 'cfengine_limit_robot_agents_processes_kill_cf_monitord_' + str(1);
             cause = " !! Couldn't send promised signal 'kill' (9) to pid 17409 (might be dead) " + str(i);
             nk_key = handle + "@" + cause;
-            t = int(time.time());
+            t = self.timestamp
 
             nk_value = {};
             nk_value["h"] = handle;
@@ -93,52 +125,38 @@ class SimHost:
             nk_value["t"] = time_array;
 
             nk_data[nk_key] = nk_value;
-
-            self.conn.cfreport.hosts.update({ "kH": self.hostkey },
-                                        {"$set":{
-                                            "logs_nk": nk_data
-                                        }},
-                                        upsert = True)
+        
+        SimHost.update_logs_notkept(self, nk_data)
 
     def update(self):
-        # update host id
-        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
-                                        {"$set":{ "kH": self.hostkey,
-                                          "ha": [ self.hostname ], 
-                                          "ip": [ self.ip ],
-                                          "t": int(time.time())
-                                        }},
-                                        upsert = True)
-        self.__update_classes()
+        SimHost.update(self)
+        self.__update_contexts()
         self.__update_logs_notkept()
-        
-                                        
 
+class PredictableSimHost(SimHost):
 
+    def __init__(self, mongo_connection, hostkey, hostname, ip, timestamp):
+        SimHost.__init__(self, mongo_connection, hostkey, hostname, ip, timestamp)
 
-def print_usage():
-    print 'Usage: simhost.py <db-host> <db-port> <host-key> <host-name> <host-ip>'
-    sys.exit()
 
 if __name__ == '__main__':
-    
-    if len(sys.argv) != 6:
-        print_usage()
-        sys.exit()
 
-    db_host = sys.argv[1]
-    db_port = 0
-    try:
-        db_port = int(sys.argv[2])
-    except ValueError:
-        print 'Invalid port number'
-        sys.exit()
-    
-    hostkey = sys.argv[3]
-    hostname = sys.argv[4]
-    ip = sys.argv[5]
+    parser = argparse.ArgumentParser(description = 'Simulate a CFEngine host update to the database')
+    parser.add_argument('hostkey', help='ID of host to simulate')
+    parser.add_argument('hostname', help='Hostname of host to simulate')
+    parser.add_argument('ip', help='IPv4 address of host to simulate')
+    parser.add_argument('--time', help='Override update time written to DB (Unix time)', action='store', dest='time', type=int, default=int(time.time()))
+    parser.add_argument('--db_host', help='Hostname of DB to connect to', action='store', dest='db_host', default='localhost')
+    parser.add_argument('--db_port', help='Port of DB to connect to', action='store', dest='db_port', type=int, default=27017)
+    parser.add_argument('--predictable', help='Use the predictable host simulation', action='store_true', dest='predictable', default=False)
 
-    conn = pymongo.Connection(db_host, db_port)
-    host = SimHost(conn, hostkey, hostname, ip)
+    args = parser.parse_args()
+    
+    conn = pymongo.Connection(args.db_host, args.db_port)
+    if args.predictable:
+        host = PredictableSimHost(conn, args.hostkey, args.hostname, args.ip, args.time)
+    else:
+        host = RealisticSimHost(conn, args.hostkey, args.hostname, args.ip, args.time)
+
     host.update()
     
