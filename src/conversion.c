@@ -28,6 +28,8 @@
 
 #include <assert.h>
 
+#define CF_NO_ARCH_SHORT "-"
+
 // no static - used in tests
 char *SqlVariableExpandNumeric(const char *query, const char *key, long value);
 
@@ -55,7 +57,7 @@ const char *Nova_ShortArch(const char *arch)
 
     if (strcmp(arch, "noarch") == 0)
     {
-        return "";
+        return CF_NO_ARCH_SHORT;
     }
 
     if (strcmp(arch, "x86_64") == 0)
@@ -108,7 +110,7 @@ const char *Nova_LongArch(const char *arch)
         return "i686";
     }
 
-    if (strcmp(arch, "") == 0)
+    if (strcmp(arch, CF_NO_ARCH_SHORT) == 0)
     {
         return "noarch";
     }
