@@ -915,7 +915,17 @@ int ExportCSVOutput(void *out, int argc, char **argv, char **azColName)
         return 0;
     }
 
-    Writer *writer = FileWriter( fopen( wr_info->csv_path, "a+" ) );
+    Writer *writer = NULL;
+    {
+        FILE *stream = fopen(wr_info->csv_path, "a+");
+        if (!stream)
+        {
+            syslog(LOG_ERR, "Opening csv report path for append-read (a+), path %s, errno: %d", wr_info->csv_path, errno);
+            return -1;
+        }
+        writer = FileWriter(stream);
+    }
+    assert(writer);
 
     // TODO: handle sqlite3 db close
     ExportWebReportCheckAbort(wr_info, writer);
@@ -1191,7 +1201,7 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
     if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
     {
         Sqlite3_FreeString(err_msg);
-        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error counting result");
+        syslog(LOG_DEBUG, "code %d, message: %s (%s)", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error counting result", err_msg);
         return;
     }
 
