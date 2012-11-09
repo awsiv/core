@@ -87,7 +87,7 @@ const char *Nova_LongArch(const char *arch)
 {
     if (arch == NULL)
     {
-        return "*";
+        return "unknown";
     }
 
     if (strcmp(arch, "3") == 0)
@@ -117,7 +117,12 @@ const char *Nova_LongArch(const char *arch)
 
     if (strcmp(arch, "\n") == 0)
     {
-        return "*";
+        return "unknown";
+    }
+
+    if (strcmp(arch, "") == 0)
+    {
+        return "unknown";
     }
 
     if (strcmp(arch, "x") == 0)
