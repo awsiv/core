@@ -24,7 +24,8 @@ check_PROGRAMS += scorecards_test \
         scheduled_reports_test \
         db_query_test \
         web_rbac_test \
-        db_maintain_test
+        db_maintain_test \
+        db_software_unpack_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
@@ -46,6 +47,9 @@ web_rbac_test_LDADD = $(top_builddir)/src/libpromises.la
 
 db_maintain_test_SOURCES = $(MOCKERY_SOURCES) db_maintain_test.c
 db_maintain_test_LDADD = $(top_builddir)/src/libpromises.la
+
+db_software_unpack_test_SOURCES = $(MOCKERY_SOURCES) db_software_unpack_test.c
+db_software_unpack_test_LDADD = $(top_builddir)/src/libpromises.la
 
 endif
 
