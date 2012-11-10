@@ -316,9 +316,9 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
 
 /****************************************************************************/
 
-JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view)
+JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username)
 {
-    return Nova_PlotTopicCosmos(pid, view);
+ return Nova_PlotTopicCosmos(pid, view, username);
 }
 
 /****************************************************************************/
@@ -3344,11 +3344,13 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic(int id)
+JsonElement *Nova2PHP_show_topic(int id, char *username)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char bundle[CF_BUFSIZE], description[CF_BUFSIZE];
     JsonElement *json_out = NULL;
+
+    // RBAC username
 
     if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context, bundle))
     {
@@ -3369,11 +3371,13 @@ JsonElement *Nova2PHP_show_topic(int id)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
+JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *username)
 {
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
     int id;
+
+    // RBAC username
 
     JsonElement *json_array_out = JsonArrayCreate(100);
 
@@ -3391,7 +3395,7 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
         snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
         id = Nova_GetTopicIdForTopic(reconstructed);
 
-        JsonElement *json_array_topic = Nova2PHP_show_topic_leads(id);
+        JsonElement *json_array_topic = Nova2PHP_show_topic_leads(id, username);
         JsonObjectAppendArray(json_obj, "leads", json_array_topic);
 
         JsonArrayAppendObject(json_array_out, json_obj);
@@ -3404,9 +3408,12 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic_leads(int id)
+JsonElement *Nova2PHP_show_topic_leads(int id, char *username)
 {
     Item *ip;
+
+    // RBAC username
+    
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
 
     JsonElement *json_array_out = JsonArrayCreate(100);
@@ -3459,9 +3466,9 @@ JsonElement *Nova2PHP_show_topic_leads(int id)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic_hits(int id)
+JsonElement *Nova2PHP_show_topic_hits(int id, char *username)
 {
-    return Nova_ScanOccurrences(id);
+ return Nova_ScanOccurrences(id, username);
 }
 
 /*****************************************************************************/

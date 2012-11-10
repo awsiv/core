@@ -89,7 +89,7 @@ void EnterpriseModuleTrick()
         Nova2PHP_get_notes(NULL, NULL, NULL, NULL, -1, -1, NULL, NULL, 10000);
         Nova2PHP_get_host_noteid(NULL, NULL, 4096);
 
-        Nova2PHP_get_knowledge_view(0, NULL);
+        Nova2PHP_get_knowledge_view(0, NULL, NULL);
 
         CfLDAPAuthenticate(NULL, NULL, NULL, NULL, NULL, 0, false);
     }

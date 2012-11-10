@@ -3970,7 +3970,7 @@ PHP_FUNCTION(cfpr_show_topic)
     }
 
     JsonElement *out = NULL;
-    out = Nova2PHP_show_topic((int) id);
+    out = Nova2PHP_show_topic((int) id, username);
 
     RETURN_JSON(out);
 }
@@ -4000,7 +4000,7 @@ PHP_FUNCTION(cfpr_show_topic_leads)
     }
 
     JsonElement *out = NULL;
-    out = Nova2PHP_show_topic_leads((int) id);
+    out = Nova2PHP_show_topic_leads((int) id, username);
 
     RETURN_JSON(out);
 }
@@ -4032,11 +4032,10 @@ PHP_FUNCTION(cfpr_show_all_context_leads)
     }
 
     JsonElement *out = NULL;
-    out = Nova2PHP_show_all_context_leads(unqualified_topic);
+    out = Nova2PHP_show_all_context_leads(unqualified_topic, username);
 
     RETURN_JSON(out);
 }
-
 
 /******************************************************************************/
 
@@ -4063,7 +4062,7 @@ PHP_FUNCTION(cfpr_show_topic_hits)
     }
 
     JsonElement *out = NULL;
-    out = Nova2PHP_show_topic_hits((int) id);
+    out = Nova2PHP_show_topic_hits((int) id, username);
 
     RETURN_JSON(out);
 }
@@ -5612,7 +5611,7 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
     }
 
     JsonElement *out = NULL;
-    out = Nova2PHP_get_knowledge_view(pid, view);
+    out = Nova2PHP_get_knowledge_view(pid, view, username);
 
     RETURN_JSON(out);
 }

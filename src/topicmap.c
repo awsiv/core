@@ -405,13 +405,14 @@ void Nova_ShowTopic(char *qualified_topic)
     printf("Found (%d): \"%s::%s = %s\" in bundle %s \n", id, topic_context, topic_name, topic_id, bundle);
 
     writer = StringWriter();
-    json = Nova2PHP_show_all_context_leads(topic_name);
+    json = Nova2PHP_show_all_context_leads(topic_name, "dummy_user");
     JsonElementPrint(writer, json, 1);
     JsonElementDestroy(json);
     printf("\nAssociations: %s\n", StringWriterData(writer));
     WriterClose(writer);
 
-    json = Nova_ScanOccurrences(id);
+    json = Nova_ScanOccurrences(id, "dummy_user");
+    
     if (json)
     {
         writer = NULL;
@@ -746,7 +747,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 /*****************************************************************************/
 
-JsonElement *Nova_ScanOccurrences(int this_id)
+JsonElement *Nova_ScanOccurrences(int this_id, char *username)
 {
     enum representations locator_type;
     char topic_name[CF_BUFSIZE] = { 0 },
@@ -757,6 +758,8 @@ JsonElement *Nova_ScanOccurrences(int this_id)
     EnterpriseDB conn;
     Hit *hits = NULL, *hp;
 
+// RBAC
+    
 // Do we want to prune using the topic context?
 
 /* Match occurrences that could overlap with the current context.
@@ -1763,8 +1766,10 @@ char *Nova_StripString(char *source, char *substring)
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
-JsonElement *Nova_PlotTopicCosmos(int topic, char *view)
+JsonElement *Nova_PlotTopicCosmos(int topic, char *view, char *user)
+    
 /* This assumes that we have the whole graph in a matrix */
+    
 {
     GraphNode tribe_nodes[CF_TRIBE_SIZE] = { { 0 } };
     int tribe_id[CF_TRIBE_SIZE] = { 0 },
@@ -1772,6 +1777,8 @@ JsonElement *Nova_PlotTopicCosmos(int topic, char *view)
     double tribe_evc[CF_TRIBE_SIZE] = { 0 };
     double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE] = { { 0 } };
 
+// RBAC
+    
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */
 
     if ((tribe_size = Nova_GetTribe(tribe_id, tribe_nodes, tribe_adj, topic, view)))
