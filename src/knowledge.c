@@ -151,7 +151,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             for (rp2 = op->about_topics; rp2 != NULL; rp2 = rp2->next)
             {
             CfDebug("Add occurrence (topic,context,locator,locator_type,subtype) values ('%s','%s','%s','%d','%s')\n",
-                   rp2->item, op->occurrence_context, op->locator, op->rep_type, (const char *) rp1->item);
+                    (char *)rp2->item, op->occurrence_context, op->locator, op->rep_type, (const char *) rp1->item);
 
             bson insert_op;
             bson_init(&insert_op);
