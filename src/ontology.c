@@ -1326,6 +1326,8 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
 void DeClassifyTopic(char *classified_topic, char *topic, char *context)
 {
+    char *spm, *sp;
+    int classified = true;
     context[0] = '\0';
     topic[0] = '\0';
 
@@ -1334,17 +1336,24 @@ void DeClassifyTopic(char *classified_topic, char *topic, char *context)
         return;
     }
 
-    if (*classified_topic == ':')
+    // Unqualified names may contain ":" but we assume the first "::" means a qualified context
+    // as long as the context is a valid identifier
+    
+    if (spm = strstr(classified_topic, "::"))
     {
-        sscanf(classified_topic, "::%255[^\n]", topic);
-    }
-    else if (strstr(classified_topic, "::"))
-    {
-        sscanf(classified_topic, "%255[^:]::%255[^\n]", context, topic);
-
-        if (strlen(topic) == 0)
+        for (sp = classified_topic; *sp != '\0'; sp++)
         {
-            sscanf(classified_topic, "::%255[^\n]", topic);
+            if (strncmp(sp, "::", 2) == 0)
+            {
+                sscanf(classified_topic, "%255[^:]::%255[^\n]", context, topic);
+                break;
+            }
+            else if (!isalnum(*sp) && *sp != '_')
+            {
+                classified = false;
+                strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
+                break;
+            }
         }
     }
     else
