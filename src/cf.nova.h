@@ -1069,7 +1069,7 @@ void Nova_SearchClasses(Item **l, char *search, int type, char *user);
 void Nova_SearchVariables(Item **l, char *search, int type, char *user);
 void Nova_SearchReports(Item **l, char *search);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
-JsonElement *Nova_ScanOccurrences(int this_id);
+JsonElement *Nova_ScanOccurrences(int this_id, char *username);
 int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, int bufsize);
 
 int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type, char *buffer);
@@ -1090,7 +1090,7 @@ JsonElement *Nova_GetServiceHistogram(void);
 JsonElement *Nova_GetServiceLevels(char *service);
 Item *Nova_GetHandlesForGoal(int referred);
 Item *Nova_GetStakeHolders(int topic_id);
-JsonElement *Nova_PlotTopicCosmos(int topic, char *view);
+JsonElement *Nova_PlotTopicCosmos(int topic, char *view, char *username);
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
                   char *v);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE], double *v, int dim);
@@ -1411,6 +1411,8 @@ enum knowledgecertainty
 #define MONITORING_HISTORY_LENGTH_WEEKS (3*52)
 /* Not a real year, but a "monitoring year" */
 #define MONITORING_WEEKS_PER_YEAR 52
+
+#define RBAC_ERROR_MSG "This result is not available to you with your current credentials"
 
 /***************************************************************************/
 

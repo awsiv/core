@@ -316,9 +316,9 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
 
 /****************************************************************************/
 
-JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view)
+JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username)
 {
-    return Nova_PlotTopicCosmos(pid, view);
+ return Nova_PlotTopicCosmos(pid, view, username);
 }
 
 /****************************************************************************/
@@ -3344,7 +3344,7 @@ void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic(int id)
+JsonElement *Nova2PHP_show_topic(int id, char *username)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char bundle[CF_BUFSIZE], description[CF_BUFSIZE];
@@ -3354,10 +3354,21 @@ JsonElement *Nova2PHP_show_topic(int id)
     {
         Nova_GetTopicComment(topic_name, topic_context, description, CF_BUFSIZE);
         json_out = JsonObjectCreate(4);
-        JsonObjectAppendString(json_out, "topic", topic_name);
-        JsonObjectAppendString(json_out, "context", topic_context);
-        JsonObjectAppendString(json_out, "description", description);
-        JsonObjectAppendString(json_out, "bundle", bundle);
+
+        if (RBACPruneKnowledge(topic_name, topic_context, username))
+        {
+            JsonObjectAppendString(json_out, "topic", topic_name);
+            JsonObjectAppendString(json_out, "context", topic_context);
+            JsonObjectAppendString(json_out, "description", RBAC_ERROR_MSG);
+            JsonObjectAppendString(json_out, "bundle", bundle);
+        }
+        else
+        {
+            JsonObjectAppendString(json_out, "topic", topic_name);
+            JsonObjectAppendString(json_out, "context", topic_context);
+            JsonObjectAppendString(json_out, "description", description);
+            JsonObjectAppendString(json_out, "bundle", bundle);
+        }
     }
     else
     {
@@ -3369,7 +3380,7 @@ JsonElement *Nova2PHP_show_topic(int id)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
+JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *username)
 {
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
@@ -3391,7 +3402,7 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
         snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
         id = Nova_GetTopicIdForTopic(reconstructed);
 
-        JsonElement *json_array_topic = Nova2PHP_show_topic_leads(id);
+        JsonElement *json_array_topic = Nova2PHP_show_topic_leads(id, username);
         JsonObjectAppendArray(json_obj, "leads", json_array_topic);
 
         JsonArrayAppendObject(json_array_out, json_obj);
@@ -3404,26 +3415,40 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic_leads(int id)
+JsonElement *Nova2PHP_show_topic_leads(int id, char *username)
 {
     Item *ip;
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
-
+    char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     JsonElement *json_array_out = JsonArrayCreate(100);
+    
     if (list == NULL)
     {
         return json_array_out;
     }
 
-// name contains the association
-// classes contains the related topic
-// counter contains the topic id
+    Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context, NULL);
 
-// Aggregate all contexts
+    if (RBACPruneKnowledge(topic_name, topic_context, username))
+    {
+        return json_array_out;
+    }
+
+   // name contains the association
+   // classes contains the related topic
+   // counter contains the topic id
+
+   // Aggregate all contexts
 
     char *last_name = NULL;
+    
     for (ip = list; ip != NULL; ip = ip->next)
     {
+        if (RBACPruneKnowledge(ip->name, ip->classes, username))
+        {
+            continue;
+        }
+    
         if (StringSafeCompare(ip->name, last_name) == 0)
         {
             last_name = ip->name;
@@ -3459,9 +3484,9 @@ JsonElement *Nova2PHP_show_topic_leads(int id)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_show_topic_hits(int id)
+JsonElement *Nova2PHP_show_topic_hits(int id, char *username)
 {
-    return Nova_ScanOccurrences(id);
+ return Nova_ScanOccurrences(id, username);
 }
 
 /*****************************************************************************/

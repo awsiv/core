@@ -97,6 +97,11 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
 /* First the bundle container */
 
+    WriterWriteF(writer, "promises::\n\n");
+    WriterWriteF(writer, "  \"%s\"\n", promise_id);
+    WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
+            "has promise");
+
     WriterWriteF(writer, "promisers::\n\n");
     WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
     WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
@@ -440,7 +445,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                           if (strcmp(rp3->item, rp->item) != 0)
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
-                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
                                      WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
@@ -458,7 +463,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                           if (strcmp(rp3->item, rp->item) != 0)
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
-                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
                                      WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
@@ -1317,8 +1322,12 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
     DeleteRlist(impacted);
 }
 
-void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
+/*****************************************************************************/
+
+void DeClassifyTopic(char *classified_topic, char *topic, char *context)
 {
+    char *spm, *sp;
+    int classified = true;
     context[0] = '\0';
     topic[0] = '\0';
 
@@ -1327,17 +1336,24 @@ void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
         return;
     }
 
-    if (*classified_topic == ':')
+    // Unqualified names may contain ":" but we assume the first "::" means a qualified context
+    // as long as the context is a valid identifier
+    
+    if (spm = strstr(classified_topic, "::"))
     {
-        sscanf(classified_topic, "::%255[^\n]", topic);
-    }
-    else if (strstr(classified_topic, "::"))
-    {
-        sscanf(classified_topic, "%255[^:]::%255[^\n]", context, topic);
-
-        if (strlen(topic) == 0)
+        for (sp = classified_topic; *sp != '\0'; sp++)
         {
-            sscanf(classified_topic, "::%255[^\n]", topic);
+            if (strncmp(sp, "::", 2) == 0)
+            {
+                sscanf(classified_topic, "%255[^:]::%255[^\n]", context, topic);
+                break;
+            }
+            else if (!isalnum(*sp) && *sp != '_')
+            {
+                classified = false;
+                strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
+                break;
+            }
         }
     }
     else

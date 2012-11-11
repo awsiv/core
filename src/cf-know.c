@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     GenericAgentConfig config = CheckOpts(argc, argv);
     ReportContext *report_context = OpenReports("knowledge");
     Policy *policy = NULL;
-    
+
     if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
     {    
         policy = GenericInitialize("knowledge", config, report_context);
@@ -1371,6 +1371,39 @@ int GetTopicPid(char *classified_topic)
     }
 
     return 0;
+}
+
+/*****************************************************************************/
+
+Topic *GetTopic(Topic *list, char *topic_name)
+{
+    Topic *tp;
+    char context[CF_MAXVARSIZE], name[CF_MAXVARSIZE];
+
+    strncpy(context, topic_name, CF_MAXVARSIZE - 1);
+    name[0] = '\0';
+
+    DeClassifyTopic(topic_name, name, context);
+
+    for (tp = list; tp != NULL; tp = tp->next)
+    {
+        if (strlen(context) == 0)
+        {
+            if (strcmp(topic_name, tp->topic_name) == 0)
+            {
+                return tp;
+            }
+        }
+        else
+        {
+            if (((strcmp(name, tp->topic_name)) == 0) && (strcmp(context, tp->topic_context) == 0))
+            {
+                return tp;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 /*****************************************************************************/

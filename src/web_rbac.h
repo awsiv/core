@@ -36,4 +36,8 @@ HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 
 bool HubSettingsValidate(const HubSettings *settings, char error_out[CF_BUFSIZE]);
 bool RBACFilterSuccess(cfapi_errid errid);
+
+int RBACPruneKnowledge(char *topic, char *context, char *username);
+int RBACBundleIsAllowed(char *qualified_bundle, char *username);
+
 #endif

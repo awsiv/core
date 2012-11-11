@@ -112,7 +112,7 @@ JsonElement *Nova2PHP_get_service_histogram(void);
 JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_goal_progress(char *handle);
-JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
+JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username);
 JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
@@ -263,10 +263,10 @@ JsonElement *Nova2PHP_list_knowledge_bundles(void);
 void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize);
 JsonElement *Nova2PHP_search_topics(char *search, bool regex);
 Item *Nova2PHP_search(char *search, bool regex, char *user);
-JsonElement *Nova2PHP_show_topic(int id);
-JsonElement *Nova2PHP_show_topic_leads(int id);
-JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic);
-JsonElement *Nova2PHP_show_topic_hits(int id);
+JsonElement *Nova2PHP_show_topic(int id, char *user);
+JsonElement *Nova2PHP_show_topic_leads(int id, char *user);
+JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *user);
+JsonElement *Nova2PHP_show_topic_hits(int id, char *user);
 JsonElement *Nova2PHP_show_topic_category(int id);
 void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour,
                                    HostClassFilter *host_class_filter, PageInfo *page,
