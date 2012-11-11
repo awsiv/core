@@ -97,6 +97,11 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
 /* First the bundle container */
 
+    WriterWriteF(writer, "promises::\n\n");
+    WriterWriteF(writer, "  \"%s\"\n", promise_id);
+    WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
+            "has promise");
+
     WriterWriteF(writer, "promisers::\n\n");
     WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
     WriterWriteF(writer, "      association => a(\"%s\",\"bundles::%s\",\"%s\");\n", KM_PARTOF_CERT_F, pp->bundle,
