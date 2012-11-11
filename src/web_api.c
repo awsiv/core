@@ -3350,16 +3350,25 @@ JsonElement *Nova2PHP_show_topic(int id, char *username)
     char bundle[CF_BUFSIZE], description[CF_BUFSIZE];
     JsonElement *json_out = NULL;
 
-    // RBAC username
-
     if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context, bundle))
     {
         Nova_GetTopicComment(topic_name, topic_context, description, CF_BUFSIZE);
         json_out = JsonObjectCreate(4);
-        JsonObjectAppendString(json_out, "topic", topic_name);
-        JsonObjectAppendString(json_out, "context", topic_context);
-        JsonObjectAppendString(json_out, "description", description);
-        JsonObjectAppendString(json_out, "bundle", bundle);
+
+        if (RBACPruneKnowledge(topic_name, topic_context, username))
+        {
+            JsonObjectAppendString(json_out, "topic", topic_name);
+            JsonObjectAppendString(json_out, "context", topic_context);
+            JsonObjectAppendString(json_out, "description", RBAC_ERROR_MSG);
+            JsonObjectAppendString(json_out, "bundle", bundle);
+        }
+        else
+        {
+            JsonObjectAppendString(json_out, "topic", topic_name);
+            JsonObjectAppendString(json_out, "context", topic_context);
+            JsonObjectAppendString(json_out, "description", description);
+            JsonObjectAppendString(json_out, "bundle", bundle);
+        }
     }
     else
     {
@@ -3376,8 +3385,6 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *user
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
     int id;
-
-    // RBAC username
 
     JsonElement *json_array_out = JsonArrayCreate(100);
 
@@ -3411,26 +3418,37 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *user
 JsonElement *Nova2PHP_show_topic_leads(int id, char *username)
 {
     Item *ip;
-
-    // RBAC username
-    
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
-
+    char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     JsonElement *json_array_out = JsonArrayCreate(100);
+    
     if (list == NULL)
     {
         return json_array_out;
     }
 
-// name contains the association
-// classes contains the related topic
-// counter contains the topic id
+    Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context, NULL);
 
-// Aggregate all contexts
+    if (RBACPruneKnowledge(topic_name, topic_context, username))
+    {
+        return json_array_out;
+    }
+
+   // name contains the association
+   // classes contains the related topic
+   // counter contains the topic id
+
+   // Aggregate all contexts
 
     char *last_name = NULL;
+    
     for (ip = list; ip != NULL; ip = ip->next)
     {
+        if (RBACPruneKnowledge(ip->name, ip->classes, username))
+        {
+            continue;
+        }
+    
         if (StringSafeCompare(ip->name, last_name) == 0)
         {
             last_name = ip->name;

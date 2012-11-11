@@ -63,7 +63,6 @@ static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufs
 static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist *services, const int type);
 static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l1, int *l2, int *l3, int *normal);
 
-
 /*****************************************************************************/
 /* SEARCH workers                                                            */
 /*****************************************************************************/
@@ -758,7 +757,6 @@ JsonElement *Nova_ScanOccurrences(int this_id, char *username)
     EnterpriseDB conn;
     Hit *hits = NULL, *hp;
 
-// RBAC
     
 // Do we want to prune using the topic context?
 
@@ -776,9 +774,9 @@ JsonElement *Nova_ScanOccurrences(int this_id, char *username)
     Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context, NULL);
 
     if (strlen(topic_name) == 0)
-        {
-            return JsonArrayCreate(1);
-        }
+    {
+        return JsonArrayCreate(1);
+    }
     
     // Using a regex here is greedy, but it helps to brainstorm
     bson query;
@@ -854,20 +852,27 @@ JsonElement *Nova_ScanOccurrences(int this_id, char *username)
             }
         }
 
-        char topic_short[CF_BUFSIZE],tc[CF_BUFSIZE];
-        Nova_DeClassifyTopic(topic, topic_short, tc);
-        snprintf(text,CF_BUFSIZE,"%s -- about %s",represents,topic_short);
-        NewHit(&hits,context, locator, locator_type, text);
+        if (RBACPruneKnowledge(topic, NULL, username))
+        {
+            NewHit(&hits, "RBAC settings", RBAC_ERROR_MSG, cfk_literal, topic);
+        }
+        else
+        {
+            char topic_short[CF_BUFSIZE],tc[CF_BUFSIZE];
+            Nova_DeClassifyTopic(topic, topic_short, tc);
+            snprintf(text,CF_BUFSIZE,"%s -- about %s",represents,topic_short);
+            NewHit(&hits,context, locator, locator_type, text);
+        }
     }
 
     JsonElement *json_array = JsonArrayCreate(10);
 
     for (hp = hits; hp != NULL; hp= hp->next)
-       {
-       JsonArrayAppendObject(json_array, Nova_AddOccurrenceBuffer(hp->occurrence_context,
+    {
+        JsonArrayAppendObject(json_array, Nova_AddOccurrenceBuffer(hp->occurrence_context,
                                                                  hp->locator, hp->rep_type,
                                                                  hp->represents));
-       }
+    }
 
     DeleteHitList(hits);
 
@@ -1777,7 +1782,7 @@ JsonElement *Nova_PlotTopicCosmos(int topic, char *view, char *user)
     double tribe_evc[CF_TRIBE_SIZE] = { 0 };
     double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE] = { { 0 } };
 
-// RBAC
+// RBAC - not so important here as the actual content will be blocked later
     
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */
 
