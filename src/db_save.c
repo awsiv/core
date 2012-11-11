@@ -2319,7 +2319,7 @@ int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
 
         bson empty;
 
-        MongoUpdate(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL); // Note: Upsert Necessary?
+        MongoUpdate(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_BASIC, NULL);       
 
         bson_destroy(&set_op);
 
