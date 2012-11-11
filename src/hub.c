@@ -25,6 +25,7 @@
 #include "nova-reporting.h"
 #include "hub-scheduled-reports.h"
 #include "scope.h"
+#include "keyring.h"
 
 #include <assert.h>
 
@@ -602,14 +603,28 @@ static void Nova_UpdateMongoHostList(Item **list)
 
     if (deleted_hosts)
     {
-        bool removed = true;
+        bool removed = false;
 
         for (ip = deleted_hosts; ip != NULL; ip = ip->next)
         {
-            // remove from the local lastseen db
-            // TODO: remove the public keys also?
+            if (!(RemoveHostFromLastSeen(ip->name)))
+            {
+                CfOut(cf_error, "", "Lastseen entry for host %s could not be removed\n", ip->name);
+            }
+            else
+            {
+                CfOut(cf_verbose, "", "Lastseen entry for host %s successfully removed\n", ip->name);
 
-            removed = (removed && RemoveHostFromLastSeen(ip->name));
+                if (RemovePublicKey(ip->name) != -1)
+                {
+                    removed = true;
+                    CfOut(cf_verbose, "", "Public key for host %s successfully removed\n", ip->name);
+                }
+                else
+                {
+                    CfOut(cf_error, "", "Public key for host %s could not be removed\n", ip->name);
+                }
+            }
         }
 
         // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
