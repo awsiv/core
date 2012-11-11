@@ -1375,6 +1375,39 @@ int GetTopicPid(char *classified_topic)
 
 /*****************************************************************************/
 
+Topic *GetTopic(Topic *list, char *topic_name)
+{
+    Topic *tp;
+    char context[CF_MAXVARSIZE], name[CF_MAXVARSIZE];
+
+    strncpy(context, topic_name, CF_MAXVARSIZE - 1);
+    name[0] = '\0';
+
+    DeClassifyTopic(topic_name, name, context);
+
+    for (tp = list; tp != NULL; tp = tp->next)
+    {
+        if (strlen(context) == 0)
+        {
+            if (strcmp(topic_name, tp->topic_name) == 0)
+            {
+                return tp;
+            }
+        }
+        else
+        {
+            if (((strcmp(name, tp->topic_name)) == 0) && (strcmp(context, tp->topic_context) == 0))
+            {
+                return tp;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+/*****************************************************************************/
+
 static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, char *bwd)
 {
     TopicAssociation *ta;

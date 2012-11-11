@@ -773,7 +773,7 @@ if (!CFDB_Open(&conn))
 
 if (!NULL_OR_EMPTY(typed_topic))
    {
-   Nova_DeClassifyTopic(typed_topic,topic,context);
+   DeClassifyTopic(typed_topic,topic,context);
 
    bson_init(&query);
    bson_append_regex(&query,cfk_topicname,topic,"");
@@ -908,7 +908,7 @@ for (ip = nn; ip != NULL; ip=ip->next)
 
 //   printf("   %d NN gave (%s,%s,%d)\n",depth,ip->name,ip->classes,ip->counter);
    
-   Nova_DeClassifyTopic(ip->classes,topic,context);
+   DeClassifyTopic(ip->classes,topic,context);
    assoc = ip->name;
 
    if (AlreadySaidThis((*story_topic)->history,new_topic_id))
@@ -1402,7 +1402,7 @@ int Nova_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char
   StoryLine *allstories = NULL;
   Chapter *episode;
   
-Nova_DeClassifyTopic(typed_topic,topic,context);
+DeClassifyTopic(typed_topic,topic,context);
 topic_id = Nova_GetTopicIdForTopic(typed_topic);
 
 if (!topic_id)

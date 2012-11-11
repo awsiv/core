@@ -445,7 +445,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                           if (strcmp(rp3->item, rp->item) != 0)
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
-                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
                                      WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
@@ -463,7 +463,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                           if (strcmp(rp3->item, rp->item) != 0)
                              {
                                  char t[CF_BUFSIZE], c[CF_BUFSIZE];
-                                 Nova_DeClassifyTopic((char *)rp3->item, t, c);
+                                 DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
                                      WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
@@ -1322,7 +1322,9 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
     DeleteRlist(impacted);
 }
 
-void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
+/*****************************************************************************/
+
+void DeClassifyTopic(char *classified_topic, char *topic, char *context)
 {
     context[0] = '\0';
     topic[0] = '\0';

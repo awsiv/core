@@ -1765,7 +1765,7 @@ int RBACPruneKnowledge(char *topic, char *context, char *username)
         snprintf(topic_qualified, CF_BUFSIZE, "%s::%s", context, topic);
     }
 
-    Nova_DeClassifyTopic(topic_qualified, topic_short, ctx);
+    DeClassifyTopic(topic_qualified, topic_short, ctx);
 
     if (strcmp(ctx, "bundles") == 0 && !RBACBundleIsAllowed(topic_short, username))
     {

@@ -208,7 +208,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
 
     bson_init(&query);
 
-    Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
+    DeClassifyTopic(search_topic, topic_name, topic_context);
 
     if (search_type == CF_SEARCH_REGEX)
        {
@@ -389,7 +389,7 @@ void Nova_ShowTopic(char *qualified_topic)
     Writer *writer = NULL;
     JsonElement *json = NULL;
 
-    Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
+    DeClassifyTopic(qualified_topic, topic_name, topic_context);
     id = Nova_GetTopicIdForTopic(qualified_topic);
 
     printf("Search: %s\n",topic_name);
@@ -434,7 +434,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     EnterpriseDB conn;
     int topic_id = 0;
 
-    Nova_DeClassifyTopic(ToLowerStr(typed_topic), topic, type); // Linker trouble - copy this from core
+    DeClassifyTopic(ToLowerStr(typed_topic), topic, type); // Linker trouble - copy this from core
 
     if (!CFDB_Open(&conn))
     {
@@ -859,7 +859,7 @@ JsonElement *Nova_ScanOccurrences(int this_id, char *username)
         else
         {
             char topic_short[CF_BUFSIZE],tc[CF_BUFSIZE];
-            Nova_DeClassifyTopic(topic, topic_short, tc);
+            DeClassifyTopic(topic, topic_short, tc);
             snprintf(text,CF_BUFSIZE,"%s -- about %s",represents,topic_short);
             NewHit(&hits,context, locator, locator_type, text);
         }
@@ -1062,7 +1062,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
         }
 
         char topic[CF_BUFSIZE],context[CF_BUFSIZE];
-        Nova_DeClassifyTopic(topic_name, topic, context);
+        DeClassifyTopic(topic_name, topic, context);
         
         if (referred != 0 && !IsItemIn(check,topic))
         {
