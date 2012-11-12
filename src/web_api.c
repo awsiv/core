@@ -5040,7 +5040,7 @@ JsonElement *Nova2PHP_get_service_level_histogram(char *srv)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_get_goal_progress(char *handle)
+JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
 {
     char name[CF_MAXVARSIZE];
     snprintf(name, CF_MAXVARSIZE, "handles::%s", handle);
@@ -5100,12 +5100,25 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle)
             total_compliance += average_compliance;
         }
 
-        JsonElement *promise = JsonObjectCreate(3);
-        JsonObjectAppendString(promise, "name", ip->name);
-        JsonObjectAppendString(promise, "context", ip->classes);
-        JsonObjectAppendInteger(promise, "topic_id", ip->counter);
-        JsonObjectAppendInteger(promise, "compliance", average_compliance);
-        JsonArrayAppendObject(array_promises, promise);         
+        JsonElement *promise = JsonObjectCreate(4);
+
+        if (RBACPruneKnowledge(ip->name, ip->classes, username))
+           {
+           JsonObjectAppendString(promise, "name", RBAC_ERROR_MSG);
+           JsonObjectAppendString(promise, "context", ip->classes);
+           JsonObjectAppendInteger(promise, "topic_id", Nova_GetTopicIdForTopic(RBAC_ERROR_MSG));
+           JsonObjectAppendInteger(promise, "compliance", average_compliance);
+           }
+        else
+           {
+           JsonObjectAppendString(promise, "name", ip->name);
+           JsonObjectAppendString(promise, "context", ip->classes);
+           JsonObjectAppendInteger(promise, "topic_id", ip->counter);
+           JsonObjectAppendInteger(promise, "compliance", average_compliance);
+           }
+
+        JsonArrayAppendObject(array_promises, promise);
+
     }
 
     CFDB_Close(&dbconn);
@@ -5192,7 +5205,7 @@ JsonElement *Nova2PHP_list_service_ports()
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_list_promises_with_promisee(char *name)
+JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *username)
 {
  JsonElement *array_promises = JsonArrayCreate(20);
  int id = Nova_GetTopicIdForTopic(name);
@@ -5200,14 +5213,28 @@ JsonElement *Nova2PHP_list_promises_with_promisee(char *name)
  
  list = SortItemListNames(list);
 
+
+ // RBACPruneKnowledge()
+ 
   for (Item *ip = list; ip != NULL; ip = ip->next)
     {
     if (strcmp(ip->classes, "promises") == 0)
        {
        JsonElement *user = JsonObjectCreate(3);
-       JsonObjectAppendString(user, "handle", ip->name);
-       JsonObjectAppendString(user, "context", ip->classes);
-       JsonObjectAppendInteger(user, "topic_id", ip->counter);
+
+       if (RBACPruneKnowledge(ip->name, ip->classes, username))
+          {
+          JsonObjectAppendString(user, "handle", RBAC_ERROR_MSG);
+          JsonObjectAppendString(user, "context", ip->classes);
+          JsonObjectAppendInteger(user, "topic_id", ip->counter);
+          }
+       else
+          {
+          JsonObjectAppendString(user, "handle", ip->name);
+          JsonObjectAppendString(user, "context", ip->classes);
+          JsonObjectAppendInteger(user, "topic_id", ip->counter);
+          }
+       
        JsonArrayAppendObject(array_promises, user);         
        }
     }

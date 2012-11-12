@@ -105,13 +105,13 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year,
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 JsonElement *Nova2PHP_list_services(void);
 JsonElement *Nova2PHP_list_service_ports(void);
-JsonElement *Nova2PHP_list_promises_with_promisee(char *name);
+JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *promisee);
 JsonElement *Nova2PHP_list_types_in_bundle(char *name);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_service_histogram(void);
 JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
-JsonElement *Nova2PHP_get_goal_progress(char *handle);
+JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username);
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username);
 JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
