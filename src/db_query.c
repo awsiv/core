@@ -232,6 +232,59 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
+bool CFDB_QueryDeleteHostPending(void)
+{
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    bson field;
+
+    BsonSelectReportFields( &field, 1, cfr_deleted_hosts);
+
+    bson query;
+
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&field);
+
+    while (MongoCursorNext(cursor))
+    {
+        bson_iterator it1;
+
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        while (bson_iterator_next(&it1) != BSON_EOO)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfr_deleted_hosts) == 0)
+            {
+                bson_iterator it2;
+
+                bson_iterator_subiterator(&it1, &it2);
+
+                while (bson_iterator_next(&it2))
+                {
+                    if (strcmp((char*)bson_iterator_key(&it2), cfr_keyhash) == 0)
+                    {
+                        mongo_cursor_destroy(cursor);
+                        CFDB_Close(&conn);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
+    return false;
+}
+
+/*****************************************************************************/
+
 bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name)
 {
     bson empty;

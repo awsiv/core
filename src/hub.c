@@ -60,10 +60,11 @@ static void Nova_Scan(Item *masterlist);
 static pid_t Nova_ScanList(Item *list);
 static void Nova_ParallelizeScan(Item *masterlist);
 static void SplayLongUpdates(void);
-static void Nova_UpdateMongoHostList(Item **list);
+static void DBRefreshHostsListCache(Item *list);
 static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
 static void CollectSchedulerChildAndSleep(int wait_seconds);
+static int GetHubSleepSeconds(time_t start);
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -561,7 +562,7 @@ static int ScheduleRun(void)
 
 /*****************************************************************************/
 
-static void Nova_UpdateMongoHostList(Item **list)
+static void DBRefreshHostsListCache(Item *list)
 {
     Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen = NULL;
     Item *deleted_hosts = NULL;
@@ -571,7 +572,7 @@ static void Nova_UpdateMongoHostList(Item **list)
     lastseen = CFDB_GetLastseenCache();
 
 // add from the new list
-    for (ip = *list; ip != NULL; ip = ip->next)
+    for (ip = list; ip != NULL; ip = ip->next)
     {
         if (deleted_hosts && IsItemIn(deleted_hosts, ip->name))
         {
@@ -731,13 +732,12 @@ static void StartHub(void)
             }
         }
 
-        int time_taken = time(NULL) - start;
-        int sleep_time = 0;
-
-        if (time_taken > 0 && time_taken < CFPULSETIME)
+        if (CFDB_QueryDeleteHostPending())
         {
-            sleep_time = CFPULSETIME - time_taken;
+            DBRefreshHostsListCache(NULL);
         }
+
+        int sleep_time = GetHubSleepSeconds(start);
 
         CollectSchedulerChildAndSleep(sleep_time);
     }
@@ -1064,7 +1064,7 @@ static Item *Nova_ScanClients(void)
 
     Nova_RemoveExcludedHosts(&list, EXCLUDE_HOSTS);
 
-    Nova_UpdateMongoHostList(&list);
+    DBRefreshHostsListCache(list);
     DeleteItemList(list);
 
 // If there is a list in Mongo, this takes precedence, else populate one
@@ -1135,6 +1135,21 @@ static void CollectSchedulerChildAndSleep(int wait_seconds)
     }
 
     IsSchedulerProcRunning();
+}
+
+/*********************************************************************/
+
+static int GetHubSleepSeconds(time_t start)
+{
+    int time_taken = time(NULL) - start;
+    int sleep_time = 0;
+
+    if (time_taken >= 0 && time_taken < CFPULSETIME)
+    {
+        sleep_time = CFPULSETIME - time_taken;
+    }
+
+    return sleep_time;
 }
 
 /*********************************************************************/

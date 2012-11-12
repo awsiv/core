@@ -143,6 +143,7 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
 Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *ip,
                           time_t from, time_t to, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
+bool CFDB_QueryDeleteHostPending(void);
 Item *CFDB_GetLastseenCache(void);
 Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data);
 Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query);
