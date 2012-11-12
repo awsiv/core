@@ -189,7 +189,8 @@ static void test_variables_with_newline(void **state)
     DeleteItemList(data);
 
     HubQuery *hq = CFDB_QueryVariables(conn, keyhash, NULL, NULL, NULL, NULL, NULL,
-                             false, 0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
+                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                       QUERY_FLAG_DISABLE_ALL);
 
     assert(hq);
 

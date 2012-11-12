@@ -401,8 +401,10 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL),
-                                     false, hostClassFilter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, 0, time(NULL),
+                                     hostClassFilter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
 
     n = k = r = 0;
     n_av = k_av = r_av = 0;
@@ -535,9 +537,11 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
         status = "x";
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
-                                                       regex, 0, time(NULL), false,
-                                                       hostClassFilter, NULL, promise_context, NULL);
+                                                       0, time(NULL),  hostClassFilter, NULL,
+                                                       promise_context, NULL, db_options);
 
     int blue_hosts = 0,
         tot_hosts = 0,
@@ -612,9 +616,11 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
-                                                hostClassFilter, NULL, false,
-                                                promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle,
+                                                hostClassFilter, NULL,
+                                                promise_context, NULL, db_options);
 
     int tot_hosts = 0;
     int blue_hosts = 0,
@@ -1275,8 +1281,9 @@ JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true,
-                                         hostClassFilter, promise_context, NULL);
+    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year,
+                                         hostClassFilter, promise_context, NULL,
+                                         QUERY_FLAG_SORT_RESULT);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubValue);
@@ -1389,8 +1396,11 @@ JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value, ch
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
-                            hostClassFilter, true, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch,
+                            hostClassFilter, promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -1467,8 +1477,11 @@ JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
-                                     hostClassFilter, true, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, from, to,
+                                     hostClassFilter, promise_context, NULL, db_options);
 
     PageRecords(&(hq->records), page, DeleteHubClass);
     int related_host_cnt = RlistLen(hq->hosts);
@@ -1598,8 +1611,9 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const 
             SplitScopeName(scope, ns, bundle);
         }
 
+        int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
         hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                 regex, 0, time(NULL), hostClassFilter, promise_context, NULL);
+                                 0, time(NULL), hostClassFilter, promise_context, NULL, db_options);
     }
     assert(hq);
     if (!hq)
@@ -1718,7 +1732,7 @@ JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t fro
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
-                                             true, hostClassFilter, promise_context, NULL);
+                                             hostClassFilter, promise_context, NULL, QUERY_FLAG_SORT_RESULT);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
@@ -1795,16 +1809,22 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
         status = "x";
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     if(lastRunOnly)
     {
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
-                                                 regex, 0, time(NULL), false, hostClassFilter,
-                                                 hostColourFilter, promise_context, NULL);
+                                                 0, time(NULL), hostClassFilter,
+                                                 hostColourFilter, promise_context,
+                                                 NULL, db_options);
     }
     else
     {
-        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                         time(NULL), true, hostClassFilter, promise_context, NULL);
+        db_options |= QUERY_FLAG_SORT_RESULT;
+
+        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                         0, time(NULL), hostClassFilter,
+                                         promise_context, NULL, db_options);
     }
 
     int related_host_cnt = RlistLen(hq->hosts);
@@ -1880,8 +1900,11 @@ JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, c
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                                      0, time(NULL), true, hostClassFilter, promise_context, NULL);
+    int db_options = lregex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                                      hostClassFilter, promise_context, NULL, db_options);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
@@ -1971,8 +1994,11 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true,
-                                         hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, hostClassFilter,
+                                         promise_context, NULL, db_options);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPerformance);
@@ -2049,7 +2075,10 @@ JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, hostClassFilter,
+                                    promise_context, NULL, db_options);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSetUid);
@@ -2129,16 +2158,19 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
         return NULL;
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     HubQuery *hq;
     if(lastRunOnly)
     {        
-        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
-                                          hostColourFilter, false, promise_context, NULL);
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+                                          hostColourFilter, promise_context, NULL, db_options);
     }
     else
     {
-        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,
-                                  true, promise_context, NULL);
+        db_options |= QUERY_FLAG_SORT_RESULT;
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+                                  promise_context, NULL, db_options);
     }
 
     int skipped_host_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
@@ -2217,8 +2249,11 @@ JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex,
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to,
-                                         true, hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, from, to, hostClassFilter,
+                                         promise_context, NULL, db_options);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileChanges);
@@ -2274,9 +2309,12 @@ JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, b
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex,
-                                      from, to, true, hostClassFilter,
-                                      promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, from, to,
+                                      hostClassFilter, promise_context, NULL,
+                                      db_options);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
@@ -2486,7 +2524,8 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
     }
 
     HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year,
-                                         true, hostClassFilter, promise_context, NULL);
+                                         hostClassFilter, promise_context, NULL,
+                                         QUERY_FLAG_HOSTONLY);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2514,8 +2553,11 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
         return NULL;
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch,
-                                      regex, hostClassFilter, false, promise_context, NULL);
+                                      hostClassFilter, promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2543,8 +2585,11 @@ JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, from, to,
-                                     hostClassFilter, false, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, from, to,
+                                     hostClassFilter, promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2579,8 +2624,12 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
         SplitScopeName(scope, ns, bundle);
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
     HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                                       regex, 0, time(NULL), hostClassFilter, promise_context, NULL);
+                                       0, time(NULL), hostClassFilter, promise_context,
+                                       NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2609,8 +2658,8 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
     }
 
     HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to,
-                                             k, nk, rep, false, hostClassFilter,
-                                             promise_context, NULL);
+                                             k, nk, rep, hostClassFilter,
+                                             promise_context, NULL, QUERY_FLAG_HOSTONLY);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2645,20 +2694,23 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
         status = "x";
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
     HubQuery *hq = NULL;
 
     if(lastRunOnly)
     {
         hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
-                                                 regex, 0, time(NULL), false,
-                                                 hostClassFilter, hostColourFilter,
-                                                 promise_context, NULL);
+                                                 0, time(NULL), hostClassFilter,
+                                                 hostColourFilter, promise_context,
+                                                 NULL, db_options);
     }
     else
     {
-        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex,
-                                         0, time(NULL), false, hostClassFilter,
-                                         promise_context, NULL);
+        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                         0, time(NULL), hostClassFilter,
+                                         promise_context, NULL, db_options);
     }
 
     if (!CFDB_Close(&dbconn))
@@ -2687,9 +2739,11 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress,
-                                      lago, lregex, 0, time(NULL), false,
-                                      hostClassFilter, promise_context, NULL);
+    int db_options = lregex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                                      hostClassFilter, promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2717,8 +2771,11 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex,
-                                         false, hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QueryPerformance(&dbconn, hostkey, job, hostClassFilter,
+                                         promise_context, NULL, db_options);
 
 
     if (!CFDB_Close(&dbconn))
@@ -2747,8 +2804,11 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter,
-                                    promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QuerySetuid(&dbconn, hostkey, file, hostClassFilter,
+                                    promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -2778,18 +2838,21 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
         return NULL;
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
     HubQuery *hq;
 
     if(lastRunOnly)
     {
-        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex,
-                                          hostClassFilter, hostColourFilter, false,
-                                          promise_context, NULL);
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle,
+                                          hostClassFilter, hostColourFilter,
+                                          promise_context, NULL, db_options);
     }
     else
     {
-        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex,
-                                  hostClassFilter, true, promise_context, NULL);
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+                                  promise_context, NULL, db_options);
     }
 
     if (!CFDB_Close(&dbconn))
@@ -2827,8 +2890,11 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to,
-                                         false, hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, from, to, hostClassFilter,
+                                         promise_context, NULL, db_options);
 
     CFDB_Close(&dbconn);
 
@@ -2853,8 +2919,11 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
         return NULL;
     }
 
-    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from,
-                                      to, false, hostClassFilter, promise_context, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_HOSTONLY;
+
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, from, to,
+                                      hostClassFilter, promise_context, NULL, db_options);
 
     if (!CFDB_Close(&dbconn))
     {
@@ -4195,9 +4264,11 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
         return false;
     }
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     time_t now = time(NULL);
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)bluehost_threshold,
-                           now, hostClassFilter, false, promise_context, NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, now - (time_t)bluehost_threshold,
+                           now, hostClassFilter, promise_context, NULL, db_options);
 
     returnval[0] = '\0';
 
@@ -5002,11 +5073,10 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle)
         Rlist *rp;
         time_t now = time(NULL);
         char status[CF_MAXVARSIZE];
-         
-        //printf(" Involves promise %s::%s %d\n", ip->classes,ip->name,ip->counter);
-         
-        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', false, 0, now, false,
-                                                 NULL, NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
+
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, NULL, ip->name, 'x', 0, now,
+                                                 NULL, NULL, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                                 QUERY_FLAG_DISABLE_ALL);
 
         hosts = RlistLen(hq->hosts);
 

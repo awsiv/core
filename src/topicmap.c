@@ -1163,8 +1163,9 @@ static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct serv
     char *portname;
     int i;
 
-    hq = CFDB_QueryVariables(dbconn, NULL, NULL, NULL, variable, NULL, NULL, true,
-                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
+    hq = CFDB_QueryVariables(dbconn, NULL, NULL, NULL, variable, NULL, NULL,
+                             0, time(NULL), NULL, PROMISE_CONTEXT_MODE_ALL, NULL,
+                             QUERY_FLAG_IS_REGEX);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
@@ -1286,8 +1287,8 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
 
     snprintf(classname, CF_MAXVARSIZE-1, "%s_.*", srv);
 
-    hq = CFDB_QueryClasses(&dbconn, NULL, classname, true, now - (time_t)bluehost_threshold,
-                           now, NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
+    hq = CFDB_QueryClasses(&dbconn, NULL, classname, now - (time_t)bluehost_threshold,
+                           now, NULL, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

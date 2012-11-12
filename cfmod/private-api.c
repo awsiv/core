@@ -206,8 +206,8 @@ PHP_FUNCTION(cfpr_host_info)
     }
 
     HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL,
-                                           NULL, false, 0, time(NULL), NULL,
-                                           PROMISE_CONTEXT_MODE_ALL, NULL);
+                                           NULL, 0, time(NULL), NULL,
+                                           PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
     time_t last_report_update = -1;
     int last_update_size = 0;
@@ -4212,7 +4212,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         PromiseContextMode mode = PromiseContextModeFromString(promise_context_mode);
 
         result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1,
-                                           false, filter, mode, NULL);
+                                           filter, mode, NULL, QUERY_FLAG_DISABLE_ALL);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

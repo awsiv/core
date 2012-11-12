@@ -583,9 +583,9 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method,
 /*****************************************************************************/
 
 HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname,
-                             char *lver, const char *larch, bool regex,
-                             HostClassFilter *hostClassFilter, int sort,
-                             PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                             char *lver, const char *larch, HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context, WebReportFileInfo *wr_info,
+                             int db_options)
 {
     bool is_software_report = strcmp(type, cfr_software) == 0; // else patch report
 
@@ -705,7 +705,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
                     {
                         int match_name = true, match_version = true, match_arch = true;
 
-                        if (regex)
+                        if (db_options & QUERY_FLAG_IS_REGEX)
                         {
                             if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                             {
@@ -762,9 +762,9 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
                                 DeleteHubSoftware(hs);
                             }
-                            else
+                            else if (!(DBResultAddRecord(&record_list, hs, db_options)))
                             {
-                                PrependRlistAlienUnlocked(&record_list, hs);
+                                DeleteHubSoftware(hs);
                             }
                         }
                     }
@@ -794,10 +794,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortSoftware);
-    }
+    record_list = DBResultSortRecords(record_list, SortSoftware, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -805,9 +802,10 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
-                            const char *lclass, bool regex, time_t from, time_t to,
-                            HostClassFilter *hostClassFilter, int sort,
-                            PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                            const char *lclass, time_t from, time_t to,
+                            HostClassFilter *hostClassFilter,
+                            PromiseContextMode promise_context, WebReportFileInfo *wr_info,
+                            int db_options)
 {
     bson query;
     bson_init(&query);
@@ -905,7 +903,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
 
                     bool match_class = true;
 
-                    match_class &= CompareStringOrRegex(rclass, lclass, regex);
+                    match_class &= CompareStringOrRegex(rclass, lclass, (db_options & QUERY_FLAG_IS_REGEX));
                     match_class &= IsTimeWithinRange(from, to, timestamp);
 
                     if (match_class)
@@ -918,9 +916,9 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                             ExportWebReportUpdate( writer, (void *) hc, HubClassToCSV, wr_info );
                             DeleteHubClass(hc);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hc, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hc);
+                            DeleteHubClass(hc);
                         }
                     }
                 }
@@ -950,10 +948,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortClasses);
-    }
+    record_list = DBResultSortRecords(record_list, SortClasses, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -1084,10 +1079,9 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                                     char *lversion, time_t from, time_t to, int lkept,
-                                    int lnotkept, int lrepaired, int sort,
-                                    HostClassFilter *hostClassFilter,
+                                    int lnotkept, int lrepaired, HostClassFilter *hostClassFilter,
                                     PromiseContextMode promise_context_mode,
-                                    WebReportFileInfo *wr_info)
+                                    WebReportFileInfo *wr_info, int db_options)
 {
     bson_iterator it1, it2, it3;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -1251,9 +1245,9 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
                             ExportWebReportUpdate( writer, (void *) hc, HubTotalComplianceToCSV, wr_info);
                             DeleteHubTotalCompliance(hc);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hc, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hc);
+                            DeleteHubTotalCompliance(hc);
                         }
                     }
                 }
@@ -1277,10 +1271,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortTotalCompliance);
-    }
+    record_list = DBResultSortRecords(record_list, SortTotalCompliance, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -1382,9 +1373,9 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
 
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns,
                               const char *bundle, const char *llval, const char *lrval,
-                              const char *ltype, bool regex, time_t from, time_t to,
+                              const char *ltype, time_t from, time_t to,
                               const HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
-                              WebReportFileInfo *wr_info)
+                              WebReportFileInfo *wr_info, int db_options)
 {
     bson_iterator it1, it2, it3, it4, it5;
     Rlist *record_list = NULL, *host_list = NULL, *newlist = NULL;
@@ -1542,7 +1533,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                         match_type = match_ns = match_bundle = match_lval = match_rval = match_time = true;
 
-                        if (regex)
+                        if (db_options & QUERY_FLAG_IS_REGEX )
                         {
                             if (!NULL_OR_EMPTY(llval) && !StringMatchFull(llval, rlval))
                             {
@@ -1669,9 +1660,9 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                                 ExportWebReportUpdate( writer, (void *) hv, HubVariablesToCSV, wr_info);
                                 DeleteHubVariable(hv);
                             }
-                            else
+                            else if (!(DBResultAddRecord(&record_list, hv, db_options)))
                             {
-                                PrependRlistAlienUnlocked(&record_list, hv);
+                                DeleteHubVariable(hv);
                             }
                         }
                         else
@@ -1783,10 +1774,11 @@ const char *CFDB_QueryVariableValueStr(EnterpriseDB *conn, char *keyHash,
 /*********************************************************************************/
 
 HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
-                                      PromiseState lstatus, bool regex, time_t from,
-                                      time_t to, int sort, HostClassFilter *hostClassFilter,
+                                      PromiseState lstatus, time_t from,
+                                      time_t to, HostClassFilter *hostClassFilter,
                                       PromiseContextMode promise_context,
-                                      WebReportFileInfo *wr_info)
+                                      WebReportFileInfo *wr_info,
+                                      int db_options)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1852,10 +1844,10 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
         bson_iterator it;
         bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
-        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, lstatus,
                                                          from, to, blueHorizonTime, hh,
                                                          &record_list, promise_context,
-                                                         wr_info, writer);
+                                                         wr_info, writer, db_options);
 
 
         if (wr_info)
@@ -1880,20 +1872,18 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortPromiseCompliance);
-    }
+    record_list = DBResultSortRecords(record_list, SortPromiseCompliance, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle,
-                                              PromiseState lstatus, bool regex, time_t from,
-                                              time_t to, int sort, HostClassFilter *hostClassFilter,
-                                              HostColourFilter *hostColourFilter, PromiseContextMode promise_context,
-                                              WebReportFileInfo *wr_info)
+                                              PromiseState lstatus, time_t from, time_t to,
+                                              HostClassFilter *hostClassFilter,
+                                              HostColourFilter *hostColourFilter,
+                                              PromiseContextMode promise_context,
+                                              WebReportFileInfo *wr_info, int db_options)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     unsigned long blue_horizon;
@@ -1960,10 +1950,11 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
         bson_iterator_init(&it, mongo_cursor_bson( cursor ));
 
         Rlist *record_list_single_host = NULL;
-        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus,
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, lstatus,
                                                          from, to, blueHorizonTime, hh,
                                                          &record_list_single_host,
-                                                         promise_context, NULL, NULL);
+                                                         promise_context, NULL, NULL,
+                                                         (db_options & QUERY_FLAG_IS_REGEX));
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
 
@@ -2036,9 +2027,9 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
                             ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
                             DeleteHubPromiseCompliance(promise_compliance);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, promise_compliance, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, promise_compliance);
+                            DeleteHubPromiseCompliance(promise_compliance);
                         }
 
                         hostDataAdded = true;
@@ -2059,9 +2050,9 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
                         ExportWebReportUpdate( writer, (void *) promise_compliance, HubPromiseComplianceWeightedToCSV, wr_info);
                         DeleteHubPromiseCompliance(promise_compliance);
                     }
-                    else
+                    else if (!(DBResultAddRecord(&record_list, promise_compliance, db_options)))
                     {
-                        PrependRlistAlienUnlocked(&record_list, promise_compliance);
+                        DeleteHubPromiseCompliance(promise_compliance);
                     }
 
                     hostDataAdded = true;
@@ -2101,9 +2092,9 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
-                             char *laddr, time_t lago, bool regex, time_t from,
-                             time_t to, int sort, HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                             char *laddr, time_t lago, time_t from, time_t to,
+                             HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
+                             WebReportFileInfo *wr_info, int db_options)
 {
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
@@ -2215,7 +2206,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
                     match_host = match_addr = match_hash = match_ago = match_timestamp = true;
 
-                    if (regex)
+                    if (db_options & QUERY_FLAG_IS_REGEX)
                     {
                         if (!NULL_OR_EMPTY(lhost) && !StringMatchFull(lhost, rhost))
                         {
@@ -2278,9 +2269,9 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                             ExportWebReportUpdate( writer, (void *) hl, HubLastseenToCSV, wr_info);
                             DeleteHubLastSeen(hl);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hl, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hl);
+                            DeleteHubLastSeen(hl);
                         }
                     }
                 }
@@ -2304,10 +2295,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortLastSeen);
-    }
+    record_list = DBResultSortRecords(record_list, SortLastSeen, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -2411,8 +2399,8 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
-                                bool regex, int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
+                                WebReportFileInfo *wr_info, int db_options)
 {
     bson_iterator it1, it2, it3;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -2521,7 +2509,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
 
                     match_name = true;
 
-                    if (regex)
+                    if (db_options & QUERY_FLAG_IS_REGEX)
                     {
                         if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                         {
@@ -2551,9 +2539,9 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                             ExportWebReportUpdate( writer, (void *) hp, HubPerformanceToCSV, wr_info);
                             DeleteHubPerformance(hp);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hp, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hp);
+                            DeleteHubPerformance(hp);
                         }
                     }
                 }
@@ -2577,20 +2565,18 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortPerformance);
-    }
+    record_list = DBResultSortRecords(record_list, SortPerformance, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
+HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname,
                            HostClassFilter *hostClassFilter,
                            PromiseContextMode promise_context,
-                           WebReportFileInfo *wr_info)
+                           WebReportFileInfo *wr_info,
+                           int db_options)
 {
     bson_iterator it1, it2, it3;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -2661,7 +2647,7 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 
                     match_name = true;
 
-                    if (regex)
+                    if (db_options & QUERY_FLAG_IS_REGEX)
                     {
                         if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                         {
@@ -2691,9 +2677,9 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
                             ExportWebReportUpdate( writer, (void *) hu, HubSetuidToCSV, wr_info);
                             DeleteHubSetUid(hu);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hu, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hu);
+                            DeleteHubSetUid(hu);
                         }
                     }
                 }
@@ -2723,9 +2709,10 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
-                                bool regex, time_t from, time_t to,
-                                int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                time_t from, time_t to,
+                                HostClassFilter *hostClassFilter,
+                                PromiseContextMode promise_context,
+                                WebReportFileInfo *wr_info, int db_options)
 {
 /* BEGIN query document */
     bson query;
@@ -2844,7 +2831,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                     bool matched = true;
 
                     matched &= IsTimeWithinRange(from, to, timestamp);
-                    matched &= CompareStringOrRegex(rname, lname, regex);
+                    matched &= CompareStringOrRegex(rname, lname, (db_options & QUERY_FLAG_IS_REGEX));
 
                     if (matched)
                     {
@@ -2856,9 +2843,9 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                             ExportWebReportUpdate( writer, (void *) hC, HubFileChangesToCSV, wr_info);
                             DeleteHubFileChanges(hC);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hC, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hC);
+                            DeleteHubFileChanges(hC);
                         }
                     }
                 }
@@ -2887,10 +2874,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortFileChanges);
-    }
+    record_list = DBResultSortRecords(record_list, SortFileChanges, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -2898,9 +2882,10 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
-                             char *ldiff, bool regex, time_t from, time_t to,
-                             int sort, HostClassFilter *hostClassFilter,
-                             PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                             char *ldiff, time_t from, time_t to,
+                             HostClassFilter *hostClassFilter,
+                             PromiseContextMode promise_context,
+                             WebReportFileInfo *wr_info, int db_options)
 {
 /* BEGIN query document */
     bson query;
@@ -2940,6 +2925,8 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
     {
         ExportWebReportWriteHeader(writer, HubFileDiffToCSV, wr_info);
     }
+
+    int regex = (db_options & QUERY_FLAG_IS_REGEX);
 
     while (MongoCursorNext(cursor))
     {
@@ -3017,9 +3004,9 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
                             ExportWebReportUpdate( writer, (void *) hD, HubFileDiffToCSV, wr_info);
                             DeleteHubFileDiff(hD);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hD, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hD);
+                            DeleteHubFileDiff(hD);
                         }
                     }
                 }
@@ -3048,10 +3035,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortFileDiff);
-    }
+    record_list = DBResultSortRecords(record_list, SortFileDiff, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -3620,8 +3604,8 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth,
-                                char *lyear, int sort, HostClassFilter *hostClassFilter,
-                                PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                char *lyear, HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
+                                WebReportFileInfo *wr_info, int db_options)
 {
     bson_iterator it1, it2, it3;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -3757,9 +3741,9 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
                             ExportWebReportUpdate( writer, (void *) hV, HubValueToCSV, wr_info);
                             DeleteHubValue(hV);
                         }
-                        else
+                        else if (!(DBResultAddRecord(&record_list, hV, db_options)))
                         {
-                            PrependRlistAlienUnlocked(&record_list, hV);
+                            DeleteHubValue(hV);
                         }
                     }
                 }
@@ -3783,10 +3767,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortBusinessValue);
-    }
+    record_list = DBResultSortRecords(record_list, SortBusinessValue, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -4049,9 +4030,10 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
-                               HostClassFilter *hostClassFilter, int sort,
-                               PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
+                               HostClassFilter *hostClassFilter,
+                               PromiseContextMode promise_context,
+                               WebReportFileInfo *wr_info, int db_options)
 {
     unsigned long blue_horizon;
     CFDB_GetBlueHostThreshold(&blue_horizon);
@@ -4126,8 +4108,9 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
         bson_iterator it1;
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp,
-                                                    hh, &record_list, promise_context, wr_info, writer);
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, blueHorizonTimestamp,
+                                                    hh, &record_list, promise_context,
+                                                    wr_info, writer, db_options);
 
         if (wr_info)
         {
@@ -4151,10 +4134,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortBundleSeen);
-    }
+    record_list = DBResultSortRecords(record_list, SortBundleSeen, db_options);
 
     return NewHubQuery(host_list, record_list);
 }
@@ -4162,9 +4142,10 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
-                                       bool regex, HostClassFilter *hostClassFilter,
-                                       HostColourFilter *hostColourFilter, int sort,
-                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info)
+                                       HostClassFilter *hostClassFilter,
+                                       HostColourFilter *hostColourFilter,
+                                       PromiseContextMode promise_context,
+                                       WebReportFileInfo *wr_info, int db_options)
 {
     unsigned long blue_horizon;
     CFDB_GetBlueHostThreshold(&blue_horizon);
@@ -4242,9 +4223,10 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
         HubHost *hh = NewHubHost(NULL, keyhash, addresses, hostnames);
 
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTime,
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, blueHorizonTime,
                                                     hh, &record_list_single_host,
-                                                    promise_context, NULL, NULL);
+                                                    promise_context, NULL, NULL,
+                                                    (db_options & QUERY_FLAG_IS_REGEX));
 
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
@@ -4318,6 +4300,10 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
                             ExportWebReportUpdate( writer, (void *) bundle, HubBundleSeenWeightedToCSV, wr_info);
                             DeleteHubBundleSeen(bundle);
                         }
+                        else if (db_options & QUERY_FLAG_HOSTONLY)
+                        {
+                            DeleteHubBundleSeen(bundle);
+                        }
                         else
                         {
                             PrependRlistAlienUnlocked(&record_list, bundle);
@@ -4340,6 +4326,10 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
                         if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) bundle, HubBundleSeenWeightedToCSV, wr_info);
+                            DeleteHubBundleSeen(bundle);
+                        }
+                        else if (db_options & QUERY_FLAG_HOSTONLY)
+                        {
                             DeleteHubBundleSeen(bundle);
                         }
                         else

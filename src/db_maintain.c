@@ -1073,7 +1073,7 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
     time_t from = to - SECONDS_PER_SHIFT;
 
     HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1,
-                                                 false, NULL, promise_context_mode, NULL);
+                                                 NULL, promise_context_mode, NULL, QUERY_FLAG_DISABLE_ALL);
 
     if (!result->records)
     {

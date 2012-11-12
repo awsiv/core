@@ -46,8 +46,11 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool rege
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                     time(NULL), false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, 0,
+                                     time(NULL), filter, PROMISE_CONTEXT_MODE_ALL,
+                                     NULL, db_options);
     DeleteHostClassFilter(filter);
 
     n = k = r = 0;
@@ -203,8 +206,11 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
     }
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex,
-                            filter, true, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, filter,
+                            PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -254,8 +260,11 @@ int Nova2Txt_vars_report(const char *hostkey, const char *ns, const char *bundle
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type, regex,
-                             0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    hq = CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
+                             0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL,
+                             NULL, db_options);
 
     DeleteHostClassFilter(filter);
 
@@ -342,8 +351,8 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter,
-                                   PROMISE_CONTEXT_MODE_ALL, NULL);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, filter,
+                                   PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_SORT_RESULT);
 
     DeleteHostClassFilter(filter);
 
@@ -401,8 +410,11 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL),
-                                     true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, 0, time(NULL),
+                                     filter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -457,8 +469,11 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = lregex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                            filter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
 
     DeleteHostClassFilter(filter);
 
@@ -524,8 +539,11 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                            0, time(NULL), true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = lregex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                            filter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
 
     DeleteHostClassFilter(filter);
 
@@ -590,7 +608,9 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
+    hq = CFDB_QuerySetuid(&dbconn, hostkey, file, filter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -639,8 +659,11 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true,
-                               filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, from, to, filter,
+                               PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
 
     DeleteHostClassFilter(filter);
 
@@ -685,8 +708,11 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true,
-                            filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+    db_options |= QUERY_FLAG_SORT_RESULT;
+
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, from, to,
+                            filter, PROMISE_CONTEXT_MODE_ALL, NULL, db_options);
 
     DeleteHostClassFilter(filter);
 

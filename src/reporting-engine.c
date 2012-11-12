@@ -401,8 +401,9 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         return;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, NULL, NULL, false, 0, time(NULL),
-                                     filter, false, PROMISE_CONTEXT_MODE_ALL, NULL);
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, NULL, NULL, 0, time(NULL),
+                                     filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                     QUERY_FLAG_DISABLE_ALL);
 
     CFDB_Close(&dbconn);
 
@@ -439,7 +440,8 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     }
 
     HubQuery *hq = CFDB_QueryVariables(&dbconn, NULL, NULL, NULL, NULL, NULL, NULL,
-                                       false, 0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+                                       0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                       QUERY_FLAG_DISABLE_ALL);
     CFDB_Close(&dbconn);
 
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
@@ -510,9 +512,9 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         return;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, false, 0,
-                                         time(NULL), false, filter,
-                                         PROMISE_CONTEXT_MODE_ALL, NULL);
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, 0, time(NULL),
+                                         filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                         QUERY_FLAG_DISABLE_ALL);
 
     CFDB_Close(&dbconn);
 
@@ -549,7 +551,7 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
     }
 
     HubQuery *hq = CFDB_QuerySoftware(&dbconn, NULL, cfr_software, NULL,NULL,NULL,
-                                      false, filter, false, PROMISE_CONTEXT_MODE_ALL, NULL);
+                                      filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
     CFDB_Close(&dbconn);
 
@@ -609,8 +611,9 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
         return;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY, false,
-                                               0, time(NULL), false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, NULL, NULL, PROMISE_STATE_ANY,
+                                               0, time(NULL), filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                               QUERY_FLAG_DISABLE_ALL);
 
     CFDB_Close(&dbconn);
 

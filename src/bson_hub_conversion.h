@@ -8,15 +8,16 @@
 HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHost *hh, char *rhandle);
 HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rname);
 
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
-                                    time_t blueHorizonTime, HubHost *hh,
-                                    Rlist **record_list, PromiseContextMode promise_context,
-                                    WebReportFileInfo *wr_info, Writer *writer );
-bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex,
-                                         PromiseState lstatus, time_t from, time_t to,
-                                         time_t blueHorizonTime, HubHost *hh,
-                                         Rlist **record_list, PromiseContextMode promise_context,
-                                         WebReportFileInfo *wr_info, Writer *writer);
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, time_t blueHorizonTime,
+                                    HubHost *hh, Rlist **record_list,
+                                    PromiseContextMode promise_context, WebReportFileInfo *wr_info,
+                                    Writer *writer, int db_options );
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, PromiseState lstatus,
+                                         time_t from, time_t to, time_t blueHorizonTime,
+                                         HubHost *hh, Rlist **record_list,
+                                         PromiseContextMode promise_context,
+                                         WebReportFileInfo *wr_info, Writer *writer,
+                                         int db_options);
 void CFDB_ScanHubHost(bson_iterator *it1, char *keyhash, char *ipaddr, char *hostnames);
 
 /* utilities */
