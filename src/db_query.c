@@ -28,6 +28,10 @@ static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *
 static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter);
 static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter);
 static void GetOldClientVersions(Rlist **rp);
+static bool DBResultAddRecord(Rlist **list, void *record, int options);
+static Rlist *DBResultSortRecords(Rlist *list, int (*CompareItems) (), int options);
+
+/*****************************************************************************/
 
 Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
 {
@@ -7506,3 +7510,35 @@ bool CFDB_QueryValueFromHostKeyStr( EnterpriseDB *conn, const char *keyhash, con
 }
 
 /*********************************************************************************/
+
+static bool DBResultAddRecord(Rlist **list, void *record, int options)
+{
+    assert(list);
+    assert(record);
+    assert(options >= 0);
+
+    if (!(options & QUERY_FLAG_HOSTONLY))
+    {
+        PrependRlistAlienUnlocked(list, record);
+        return true;
+    }
+
+    return false;
+}
+
+/*****************************************************************************/
+
+static Rlist *DBResultSortRecords(Rlist *list, int (*CompareItems) (), int options)
+{
+    assert(CompareItems);
+    assert(options >= 0);
+
+    if (list && (options & QUERY_FLAG_SORT_RESULT))
+    {
+        list = SortRlist(list, CompareItems);
+    }
+
+    return list;
+}
+
+/*****************************************************************************/
