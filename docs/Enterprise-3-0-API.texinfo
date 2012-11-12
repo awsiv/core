@@ -95,7 +95,7 @@ Some resources require that the request user is a member of the @i{admin} role. 
 The 2.2 API was read-only and users, roles and settings was managed by the Mission Portal. By contrast, the 3.0 API is read/write and completely standalone from the Mission Portal. In the CFEngine Enterprise 3.0, users, roles and settings belong in the API, and the Mission Portal uses this to determine access to data. Additionally, some other resources support PUT, POST and DELETE, but most data collected from agents are read-only.
 
 @subsubsection Built-in Reports vs. Reporting Engine
-The 2.2 API provided an almost one-to-one correspondance between the reports in the Mission Portal and the API. One of the big changes in CFEngine Enterprise 3.0 is the advent of SQL reports. This is provided to the Mission Portal through the API, and you can use it too. You may issue both synchronous and asynchronous reporting requests, and optionally schedule reports to be received by email.
+The 2.2 API provided an almost one-to-one correspondence between the reports in the Mission Portal and the API. One of the big changes in CFEngine Enterprise 3.0 is the advent of SQL reports. This is provided to the Mission Portal through the API, and you can use it too. You may issue both synchronous and asynchronous reporting requests, and optionally schedule reports to be received by email.
 
 @subsubsection Content-Type
 The 2.2 API has a HTTP content-type @code{application/vnd.cfengine.nova-v1+json}. In the 3.0 API the content-type is @code{application/vnd.cfengine.enterprise-v1+json}. This reflects a branding change away from Nova to Enterprise.
@@ -199,7 +199,7 @@ curl --user admin:admin http://test.cfengine.com/api/settings
 @end verbatim
 
 @subsection Example: Configuring LDAP
-The setting @b{ldapEnabled} turns external authentication on or off. When turned on, the API will check to see that the other LDAP related settings make sense, and attempt to authenticate using the configured credentials. If it is not sucessful in doing this, no settings will be changed. The API will notify you with a return code an a message describing the error.
+The setting @b{ldapEnabled} turns external authentication on or off. When turned on, the API will check to see that the other LDAP related settings make sense, and attempt to authenticate using the configured credentials. If it is not successful in doing this, no settings will be changed. The API will notify you with a return code an a message describing the error.
 
 @b{Request}
 @verbatim
@@ -399,7 +399,7 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X DELETE
 @end verbatim
 
 @subsection Example: Creating a New Role
-Once you've learned how to manage users, managing roles is pretty much the same thing. Roles are defined by four fields that filter host data and policy data: @b{includeContext}, @b{excludeContext}, @b{includeBundles}, @b{excludeBundles}. Each field is a comma separated list of regular expressions. See the corresponding section on RBAC for an explnation of these fields. Updating, and deleting roles are similar to updating and deleting users, using POST and DELETE.
+Once you've learned how to manage users, managing roles is pretty much the same thing. Roles are defined by four fields that filter host data and policy data: @b{includeContext}, @b{excludeContext}, @b{includeBundles}, @b{excludeBundles}. Each field is a comma separated list of regular expressions. See the corresponding section on RBAC for an explanation of these fields. Updating, and deleting roles are similar to updating and deleting users, using POST and DELETE.
 @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/solaris-admins -X PUT -d
@@ -509,7 +509,7 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=172_20
 
 @subsection Example: Removing Host Data
 
-If a host has been decomissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request.
+If a host has been decommissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request.
 
 @b{Request}
 @verbatim
@@ -569,7 +569,7 @@ curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573
 
 @subsection Example: Retrieving Vital Sign Data
 
-Each vital sign has a collected timeseries of values for up to one week. Here we retrieve the timeseries for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT.
+Each vital sign has a collected time series of values for up to one week. Here we retrieve the time series for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT.
 
 @b{Request}
 @verbatim
@@ -856,7 +856,7 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{apiName} @i{(string)} Human-friendly API name.
 @item @b{apiVersion} @i{(string)} API version string.
 @item @b{enterpriseVersion} @i{(string)} Version of the CFEngine Enterprise build.
-@item @b{coreVersion} @i{(string)} The version of CFengine Core (Community) the Enterprise version was built against.
+@item @b{coreVersion} @i{(string)} The version of CFEngine Core (Community) the Enterprise version was built against.
 @item @b{databaseHostname} @i{(string)} Hostname (or IP) of the database the API is connected to.
 @item @b{databasePort} @i{(integer)} Port number of the database the API is connected to.
 @item @b{authenticated} @i{("internal", "external")}, Whether the request was authenticated using the internal users table or an external source.
@@ -959,8 +959,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @subsection Fields
 @itemize
 @item @b{id} @i{(string)} ID of a context (class name)
-@item @b{mean} @i{(real)} Occurance probability of the context in an agent run.
-@item @b{stdv} @i{(real)} Standard deviation of occurance probability.
+@item @b{mean} @i{(real)} Occurrence probability of the context in an agent run.
+@item @b{stdv} @i{(real)} Standard deviation of occurrence probability.
 @item @b{timestamp} @i{(integer}) Last time context was activated on agent.
 @end itemize
 
