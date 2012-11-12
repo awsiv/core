@@ -3963,12 +3963,6 @@ PHP_FUNCTION(cfpr_show_topic)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
-    {
-        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
     JsonElement *out = NULL;
     out = Nova2PHP_show_topic((int) id, username);
 
@@ -3992,12 +3986,6 @@ PHP_FUNCTION(cfpr_show_topic_leads)
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
-
-    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
-    {
-        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
 
     JsonElement *out = NULL;
     out = Nova2PHP_show_topic_leads((int) id, username);
@@ -4025,12 +4013,6 @@ PHP_FUNCTION(cfpr_show_all_context_leads)
     ARGUMENT_CHECK_CONTENTS(user_len);
     ARGUMENT_CHECK_CONTENTS(topic_len);
 
-    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
-    {
-        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
     JsonElement *out = NULL;
     out = Nova2PHP_show_all_context_leads(unqualified_topic, username);
 
@@ -4055,12 +4037,6 @@ PHP_FUNCTION(cfpr_show_topic_hits)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
-    {
-        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
     JsonElement *out = NULL;
     out = Nova2PHP_show_topic_hits((int) id, username);
 
@@ -4084,12 +4060,6 @@ PHP_FUNCTION(cfpr_show_topic_category)
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
-
-    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
-    {
-        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
 
     JsonElement *out = NULL;
     out = Nova2PHP_show_topic_category((int) id);
