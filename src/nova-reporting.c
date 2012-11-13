@@ -347,7 +347,7 @@ void SummarizeCompliance(int xml, int html, int csv, int embed, char *stylesheet
     Item *ip, *file = NULL;
     char start[32], end[32];
     char version[CF_MAXVARSIZE];
-    int kept, repaired, notrepaired;
+    double kept, repaired, notrepaired;
     int i = 0;
     double av_day_kept = 0, av_day_repaired = 0;
     double av_week_kept = 0, av_week_repaired = 0;
@@ -445,11 +445,11 @@ void SummarizeCompliance(int xml, int html, int csv, int embed, char *stylesheet
             continue;
         }
 
-        sscanf(strstr(ip->name, "Outcome of version") + strlen("Outcome of version"), "%31[^:]", version);
-        sscanf(strstr(ip->name, "to be kept") + strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d", &kept, &repaired,
-               &notrepaired);
+        sscanf(strstr(ip->name, "Outcome of version") + strlen("Outcome of version"), "%64[^:]", version);
 
-// replaces  sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
+        sscanf(strstr(ip->name, "Promises observed") + strlen("Promises observed"),
+               "%*[^0-9]%lf%*[^0-9]%lf%*[^0-9]%lf",
+               &kept, &repaired, &notrepaired);
 
         if (i < 12 * 24)
         {
