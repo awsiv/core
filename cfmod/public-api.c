@@ -241,8 +241,8 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false,
-                                    from, to, false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, from, to,
+                                    filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -289,8 +289,8 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from,
-                                    to, false, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, from, to,
+                                    filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
         DATABASE_CLOSE(&conn);
 
@@ -386,7 +386,8 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                             true, from, to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+                                             from, to, filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                             (QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT));
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -813,8 +814,8 @@ PHP_FUNCTION(cfmod_resource_variable)
             SplitScopeName(scope, ns, bundle);
 
             result = CFDB_QueryVariables(&conn, hostkey, ns, bundle, name, value,
-                                         SerializeRvalType(type), true, from, to,
-                                         filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+                                         SerializeRvalType(type), from, to, filter,
+                                         PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX);
         }
 
         DATABASE_CLOSE(&conn);
@@ -897,8 +898,8 @@ PHP_FUNCTION(cfmod_resource_context)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryClasses(&conn, hostkey, name, true, from, to, filter, false,
-                                   PROMISE_CONTEXT_MODE_ALL, NULL);
+        result = CFDB_QueryClasses(&conn, hostkey, name, from, to, filter,
+                                   PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX);
 
         DATABASE_CLOSE(&conn);
 
@@ -997,8 +998,9 @@ PHP_FUNCTION(cfmod_resource_software)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
-                                    Nova_ShortArch(arch), true, filter, true,
-                                    PROMISE_CONTEXT_MODE_ALL, NULL);
+                                    Nova_ShortArch(arch), filter,
+                                    PROMISE_CONTEXT_MODE_ALL, NULL,
+                                    QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
 
         DATABASE_CLOSE(&conn);
 
@@ -1095,7 +1097,7 @@ PHP_FUNCTION(cfmod_resource_setuid)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+        result = CFDB_QuerySetuid(&conn, hostkey, path, filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1223,10 +1225,12 @@ PHP_FUNCTION(cfmod_resource_file)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from,
-                                              (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
-        diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, (time_t)from,
-                                         (time_t)to, true, filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+        change_result = CFDB_QueryFileChanges(&conn, hostkey, path, (time_t)from, (time_t)to,
+                                              filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                              QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
+        diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, (time_t)from, (time_t)to,
+                                         filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                         QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
 
         DATABASE_CLOSE(&conn);
 

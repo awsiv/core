@@ -66,9 +66,11 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch, regex,
-                       filter, false, promise_context, wr_info);
+    CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch,
+                       filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -90,8 +92,8 @@ JsonElement *WebExportSoftwareReport( char *hostkey, char *name, char *version, 
         }
 
         wr_info->write_data = true;
-        CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch, regex,
-                           filter, false, promise_context, wr_info);
+        CFDB_QuerySoftware(&dbconn, hostkey, type, name, version, arch,
+                           filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -115,9 +117,12 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
 
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
+
+    int db_option = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QueryClasses(&dbconn, hostkey, context, regex, from, to,
-                      filter, false, promise_context, wr_info);
+    CFDB_QueryClasses(&dbconn, hostkey, context, from, to,
+                      filter, promise_context, wr_info, db_option);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -138,8 +143,8 @@ JsonElement *WebExportClassesReport( const char *hostkey, const char *context, b
         }
 
         wr_info->write_data = true;
-        CFDB_QueryClasses(&dbconn, hostkey, context, regex, from, to,
-                          filter, false, promise_context, wr_info);
+        CFDB_QueryClasses(&dbconn, hostkey, context, from, to,
+                          filter, promise_context, wr_info, db_option);
 
         CFDB_Close(&dbconn);
 
@@ -172,9 +177,12 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
+
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
     CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                        regex, 0, time(NULL), filter, promise_context, wr_info);
+                        0, time(NULL), filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -196,7 +204,7 @@ JsonElement *WebExportVariablesReport(const char *hostkey, const char *scope, co
 
         wr_info->write_data = true;
         CFDB_QueryVariables(&dbconn, hostkey, ns, bundle, lval, rval, type,
-                            regex, 0, time(NULL), filter, promise_context, wr_info);
+                            0, time(NULL), filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -222,7 +230,7 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
 
     wr_info->write_data = false;
     CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
-                              false, filter, promise_context, wr_info);
+                              filter, promise_context, wr_info, QUERY_FLAG_DISABLE_ALL);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -244,7 +252,7 @@ JsonElement *WebExportComplianceReport(char *hostkey, char *version, time_t from
 
         wr_info->write_data = true;
         CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep,
-                                  false, filter, promise_context, wr_info);
+                                  filter, promise_context, wr_info, QUERY_FLAG_DISABLE_ALL);
 
         CFDB_Close(&dbconn);
 
@@ -275,17 +283,21 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
     if(last_run_only)
     {
         CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
-                                            regex, 0, time(NULL), false, host_class_filter,
-                                            host_color_filter, promise_context, wr_info);
+                                            0, time(NULL), host_class_filter,
+                                            host_color_filter, promise_context,
+                                            wr_info, db_options);
     }
     else
     {
-        CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                    time(NULL), false, host_class_filter, promise_context, wr_info);
+        CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                    0, time(NULL), host_class_filter,
+                                    promise_context, wr_info, db_options);
     }
 
     DATABASE_CLOSE_WR(&dbconn);
@@ -310,13 +322,15 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
         if(last_run_only)
         {
             CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status,
-                                                regex, 0, time(NULL), false, host_class_filter,
-                                                host_color_filter, promise_context, wr_info);
+                                                0, time(NULL), host_class_filter,
+                                                host_color_filter, promise_context,
+                                                wr_info, db_options);
         }
         else
         {
-            CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0,
-                                        time(NULL), false, host_class_filter, promise_context, wr_info);
+            CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status,
+                                        0, time(NULL), host_class_filter,
+                                        promise_context, wr_info, db_options);
         }
 
         CFDB_Close(&dbconn);
@@ -343,16 +357,18 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
     if(last_run_only)
     {
-        CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, host_class_filter,
-                                     host_colour_filter, false, promise_context, wr_info);
+        CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+                                     host_colour_filter, promise_context, wr_info, db_options);
     }
     else
     {
-        CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, host_class_filter,
-                             false, promise_context, wr_info);
+        CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+                             promise_context, wr_info, db_options);
     }
 
     DATABASE_CLOSE_WR(&dbconn);
@@ -376,13 +392,13 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
         wr_info->write_data = true;
         if(last_run_only)
         {
-            CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, host_class_filter,
-                                         host_colour_filter, false, promise_context, wr_info);
+            CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+                                         host_colour_filter, promise_context, wr_info, db_options);
         }
         else
         {
-            CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, host_class_filter,
-                                 false, promise_context, wr_info);
+            CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+                                 promise_context, wr_info, db_options);
         }
 
         CFDB_Close(&dbconn);
@@ -408,9 +424,11 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = lregex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                       0, time(NULL), false, filter, promise_context, wr_info);
+    CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                       filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -431,8 +449,8 @@ JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, ch
         }
 
         wr_info->write_data = true;
-        CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex,
-                           0, time(NULL), false, filter, promise_context, wr_info);
+        CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, 0, time(NULL),
+                           filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -458,8 +476,10 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, promise_context, wr_info);
+    CFDB_QueryPerformance(&dbconn, hostkey, job, filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -480,7 +500,7 @@ JsonElement *WebExportPerformanceReport(char *hostkey, char *job, bool regex,
         }
 
         wr_info->write_data = true;
-        CFDB_QueryPerformance(&dbconn, hostkey, job, regex, false, filter, promise_context, wr_info);
+        CFDB_QueryPerformance(&dbconn, hostkey, job, filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -506,8 +526,10 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, promise_context, wr_info);
+    CFDB_QuerySetuid(&dbconn, hostkey, file, filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -528,7 +550,7 @@ JsonElement *WebExportSetuidReport(char *hostkey, char *file, bool regex,
         }
 
         wr_info->write_data = true;
-        CFDB_QuerySetuid(&dbconn, hostkey, file, regex, filter, promise_context, wr_info);
+        CFDB_QuerySetuid(&dbconn, hostkey, file, filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -553,8 +575,11 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, false, filter, promise_context, wr_info);
+    CFDB_QueryFileChanges(&dbconn, hostkey, file, from, to, filter,
+                          promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -575,7 +600,8 @@ JsonElement *WebExportFileChangesReport(char *hostkey, char *file, bool regex,
         }
 
         wr_info->write_data = true;
-        CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, false, filter, promise_context, wr_info);
+        CFDB_QueryFileChanges(&dbconn, hostkey, file, from, to, filter,
+                              promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 
@@ -601,7 +627,8 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
     DATABASE_OPEN_WR(&dbconn);
 
     wr_info->write_data = false;
-    CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, promise_context, wr_info);
+    CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, filter,
+                          promise_context, wr_info, QUERY_FLAG_DISABLE_ALL);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -622,7 +649,8 @@ JsonElement *WebExportValueReport(char *hostkey, char *day, char *month, char *y
         }
 
         wr_info->write_data = true;
-        CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, false, filter, promise_context, wr_info);
+        CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, filter,
+                              promise_context, wr_info, QUERY_FLAG_DISABLE_ALL);
 
         CFDB_Close(&dbconn);
 
@@ -742,9 +770,11 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
+
     wr_info->write_data = false;
-    CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex,
-                       from, to, false, filter, promise_context, wr_info);
+    CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, from, to,
+                       filter, promise_context, wr_info, db_options);
 
     DATABASE_CLOSE_WR(&dbconn);
 
@@ -765,8 +795,8 @@ JsonElement *WebExportFileDiffsReport(char *hostkey, char *file, char *diffs, bo
         }
 
         wr_info->write_data = true;
-        CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex,
-                           from, to, false, filter, promise_context, wr_info);
+        CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, from, to,
+                           filter, promise_context, wr_info, db_options);
 
         CFDB_Close(&dbconn);
 

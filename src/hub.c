@@ -962,8 +962,8 @@ static void Nova_CountMonitoredClasses(void)
     snprintf(work, CF_MAXVARSIZE - 1, "%s.*", MONITOR_CLASS_PREFIX);
 
     time_t now = time(NULL);
-    hq = CFDB_QueryClasses(&dbconn, NULL, work, true, now - CF_HUB_HORIZON, now,
-                           NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
+    hq = CFDB_QueryClasses(&dbconn, NULL, work, now - CF_HUB_HORIZON, now,
+                           NULL, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

@@ -100,11 +100,14 @@ HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *r
 
 /*****************************************************************************/
 
-bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex,
-                                         PromiseState lstatus, time_t from, time_t to,
-                                         time_t blueHorizonTime, HubHost *hh,
-                                         Rlist **record_list, PromiseContextMode promise_context,
-                                         WebReportFileInfo *wr_info, Writer *writer)
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle,
+                                         PromiseState lstatus,
+                                         time_t from, time_t to,
+                                         time_t blueHorizonTime,
+                                         HubHost *hh, Rlist **record_list,
+                                         PromiseContextMode promise_context,
+                                         WebReportFileInfo *wr_info, Writer *writer,
+                                         int db_options)
 {
     HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
     time_t last_report = 0;
@@ -162,7 +165,7 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
                 HubPromiseCompliance *hp = BsonIteratorGetPromiseCompliance(&it3, hh, rhandle);
 
                 bool matched = true;
-                matched &=  CompareStringOrRegex(hp->handle, lhandle, regex);
+                matched &=  CompareStringOrRegex(hp->handle, lhandle, (db_options & QUERY_FLAG_IS_REGEX));
                 matched &= IsTimeWithinRange(from, to, hp->t);
 
                 if (lstatus != PROMISE_STATE_ANY && lstatus != hp->status)
@@ -179,9 +182,13 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
                         ExportWebReportUpdate( writer, (void *) hp, HubPromiseComplianceToCSV, wr_info);
                         DeleteHubPromiseCompliance(hp);
                     }
-                    else
+                    else if (!(db_options & QUERY_FLAG_HOSTONLY))
                     {
                         PrependRlistAlien(record_list, hp);
+                    }
+                    else
+                    {
+                        DeleteHubPromiseCompliance(hp);
                     }
                 }
             }
@@ -197,10 +204,10 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
 }
 /*****************************************************************************/
 
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname,
                                     time_t blueHorizonTime, HubHost *hh,
                                     Rlist **record_list, PromiseContextMode promise_context,
-                                    WebReportFileInfo *wr_info, Writer *writer )
+                                    WebReportFileInfo *wr_info, Writer *writer, int db_options)
 {
     char rname[CF_MAXVARSIZE] = {0};
 
@@ -264,13 +271,17 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex,
                         break;
                 }
 
-                if(CompareStringOrRegex(hb->bundle, lname, regex))
+                if(CompareStringOrRegex(hb->bundle, lname, (db_options & QUERY_FLAG_IS_REGEX)))
                 {
                     found = true;
 
                     if( wr_info )
                     {
                         ExportWebReportUpdate( writer, (void *) hb, HubBundleSeenToCSV, wr_info);
+                        DeleteHubBundleSeen(hb);
+                    }
+                    else if (db_options & QUERY_FLAG_HOSTONLY)
+                    {
                         DeleteHubBundleSeen(hb);
                     }
                     else

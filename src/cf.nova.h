@@ -705,6 +705,14 @@ typedef struct
     int log_level;
 } HubSettings;
 
+typedef enum
+{
+  QUERY_FLAG_DISABLE_ALL = 0,
+  QUERY_FLAG_IS_REGEX = (1<<1),
+  QUERY_FLAG_SORT_RESULT = (1<<2),
+  QUERY_FLAG_HOSTONLY = (1<<3)
+}CFDBQueryOptions;
+
 #endif
 
 /*****************************************************************************/

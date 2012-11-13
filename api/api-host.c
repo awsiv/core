@@ -181,8 +181,9 @@ PHP_FUNCTION(cfapi_host_context_list)
         THROW_GENERIC(ERRID_DBCONNECT, "Unable to connect to database");
     }
 
-    HubQuery *result = CFDB_QueryClasses(conn, hostkey, NULL, false, 0, time(NULL),
-                                         NULL, false, PROMISE_CONTEXT_MODE_ALL, NULL);
+    HubQuery *result = CFDB_QueryClasses(conn, hostkey, NULL, 0, time(NULL),
+                                         NULL, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                         QUERY_FLAG_DISABLE_ALL);
 
     if (!EnterpriseDBRelease(conn))
     {

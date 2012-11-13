@@ -50,7 +50,7 @@ static void test_software_report_unpack_db(void **state)
     CFDB_SaveHostID(conn, MONGO_DATABASE, cfr_keyhash, keyhash, "10.0.0.79", "test_host");
 
     HubQuery *hq = CFDB_QuerySoftware(conn, keyhash, cfr_software, NULL, NULL, NULL, true,
-                                      NULL, true, PROMISE_CONTEXT_MODE_ALL, NULL);
+                                      NULL, true, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
 
     int total_matched = 0;
     int total_entries = 3;
