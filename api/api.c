@@ -47,6 +47,7 @@ PHP_FUNCTION(cfapi)
     JsonObjectAppendString(info, "coreVersion", VERSION);
     JsonObjectAppendString(info, "databaseHostname", DBHostname());
     JsonObjectAppendInteger(info, "databasePort", DBPort());
+    JsonObjectAppendBool(info, "databasePrimary", CFDB_QueryIsMaster());
     JsonObjectAppendString(info, "authenticated", authenticated_external ? "external" : "internal");
 
     if (conn)
