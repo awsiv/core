@@ -49,8 +49,8 @@ static void test_software_report_unpack_db(void **state)
     CFDB_SaveLastHostUpdate(conn, keyhash);
     CFDB_SaveHostID(conn, MONGO_DATABASE, cfr_keyhash, keyhash, "10.0.0.79", "test_host");
 
-    HubQuery *hq = CFDB_QuerySoftware(conn, keyhash, cfr_software, NULL, NULL, NULL, true,
-                                      NULL, true, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
+    HubQuery *hq = CFDB_QuerySoftware(conn, keyhash, cfr_software, NULL, NULL, NULL, NULL,
+                                      PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_IS_REGEX | QUERY_FLAG_SORT_RESULT);
 
     int total_matched = 0;
     int total_entries = 3;
@@ -78,7 +78,7 @@ static void test_software_report_unpack_db(void **state)
     bson_append_string(&host_key, cfr_keyhash, keyhash);
     bson_finish(&host_key);
 
-    mongo_remove(conn, MONGO_DATABASE, &host_key, NULL);
+//    mongo_remove(conn, MONGO_DATABASE, &host_key, NULL);
 
     bson_destroy(&host_key);
     assert_true(CFDB_Close(conn));
