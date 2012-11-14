@@ -13,9 +13,19 @@ import random
 import re
 import argparse
 import abc
+from datetime import datetime
 
 def canonify(string):
     return re.sub("[\W\.]", '_', string)
+
+def timekey(timestamp):
+    d = datetime.utcfromtimestamp(timestamp)
+
+    weekday = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ][d.weekday()]
+    hour = 'Hr' + str(d.hour).zfill(2)
+    measure = 'Min' + str(d.minute - (d.minute % 5)).zfill(2) + '_' + str(d.minute - (d.minute % 5) + 5).zfill(2)
+
+    return weekday + ':' + hour + ':' + measure
 
 class SimHost:
 
@@ -77,6 +87,44 @@ class SimHost:
         self.conn.cfreport.hosts.update({ "kH": self.hostkey },
                                         { "$set": { "sw": entries } }, upsert = True)
 
+    def update_variables(self, entries):
+        """
+        entries is a directory of variables  entries, e.g.
+        entries[bundle] = [ { "T": "variable", "V": "path", "t": "timestamp" } ]
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "vr": entries } }, upsert = True)
+
+    def get_total_compliance(self):
+        host_entry = self.conn.cfreport.hosts.find_one({"kH": self.hostkey}, {"tc": 1})
+        if host_entry and 'tc' in host_entry:
+            return host_entry['tc']
+        else:
+            return None
+
+    def update_total_compliance(self, entries):
+        """
+        entries is a directory of tc  entries, e.g.
+        entries[timekey] = [ { "t": 1234, "v": "policy version", "k": 80, "r": 10, "n": 10 } ]
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "tc": entries } }, upsert = True)
+
+    def update_last_seen(self, entries):
+        """
+        entries is a dictionary of either seen (+) or seen-by (-) entries, e.g.
+        entries["+SHA=seen-key"] = { "i": "ip", "a": 1.0, "v": 0.0, "d": 0.0, "t": 12345 }
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                        { "$set": { "ls": entries } }, upsert = True)
+
+    def update_su_programs(self, entries):
+        """
+        entries is an array of strings, e.g. [ "/usr/bin/program" ]
+        """
+        self.conn.cfreport.hosts.update({ "kH": self.hostkey },
+                                  { "$set": { "su": entries } }, upsert = True)
+
 
     @abc.abstractmethod
     def update(self):
@@ -137,24 +185,24 @@ class RealisticSimHost(SimHost):
         SimHost.update_contexts(self, cl)
 
     def __update_logs_notkept(self):
-        nk_data = {};
+        nk_data = {}
         for i in range(10):
-            handle = 'cfengine_limit_robot_agents_processes_kill_cf_monitord_' + str(1);
-            cause = " !! Couldn't send promised signal 'kill' (9) to pid 17409 (might be dead) " + str(i);
-            nk_key = handle + "@" + cause;
+            handle = 'cfengine_limit_robot_agents_processes_kill_cf_monitord_' + str(1)
+            cause = " !! Couldn't send promised signal 'kill' (9) to pid 17409 (might be dead) " + str(i)
+            nk_key = handle + "@" + cause
             t = self.timestamp
 
-            nk_value = {};
-            nk_value["h"] = handle;
-            nk_value["ca"] = cause;
-            time_array = [];
+            nk_value = {}
+            nk_value["h"] = handle
+            nk_value["ca"] = cause
+            time_array = []
 
             for j in range(100):
                 time_array.append( t - j)
 
-            nk_value["t"] = time_array;
+            nk_value["t"] = time_array
 
-            nk_data[nk_key] = nk_value;
+            nk_data[nk_key] = nk_value
 
         SimHost.update_logs_notkept(self, nk_data)
 
@@ -211,6 +259,53 @@ class PredictableSimHost(SimHost):
         entries.append({ "n": name, "v": version, "a": arch })
         SimHost.update_software(self, entries)
 
+    def __update_variables(self):
+        entries = dict()
+        bundle = 'bundle1'
+        entries[bundle] = dict()
+        entries[bundle]['string_var'] = { "T": "s", "V": "string value", "t": self.timestamp }
+        entries[bundle]['string_list_var'] = { "T": "sl", "V": ["string value", "string value1", "string value2" ], "t": self.timestamp }
+        entries[bundle]['int_var'] = { "T": "i", "V": 10, "t":self.timestamp }
+        SimHost.update_variables(self, entries)
+
+
+    def __update_total_compliance(self):
+        entries = self.get_total_compliance()
+        if not entries:
+            entries = dict()
+
+        entries[timekey(self.timestamp)] = {
+            "v": "Policy version",
+            "k": 90,
+            "r": 5,
+            "n": 5,
+            "t": self.timestamp
+        }
+        SimHost.update_total_compliance(self, entries)
+
+    def __update_last_seen(self):
+        entries = dict()
+        entries['+SHA=seen-host'] = {
+            "i": "seen-ip",
+            "a": 1.0,
+            "v": 0.0,
+            "d": 0.0,
+            "t": self.timestamp
+        }
+        entries['-SHA=seen-by-host'] = {
+            "i": "seen-by-ip",
+            "a": 1.0,
+            "v": 0.0,
+            "d": 0.0,
+            "t": self.timestamp
+        }
+        SimHost.update_last_seen(self, entries)
+
+    def __update_su_programs(self):
+        entries = []
+        entries.append("/usr/bin/suprogram")
+        SimHost.update_su_programs(self, entries)
+
 
     def update(self):
         SimHost.update(self)
@@ -218,6 +313,10 @@ class PredictableSimHost(SimHost):
         self.__update_logs_notkept()
         self.__update_logs_repaired()
         self.__update_software()
+        self.__update_variables()
+        self.__update_total_compliance()
+        self.__update_last_seen()
+        self.__update_su_programs()
 
 
 if __name__ == '__main__':
