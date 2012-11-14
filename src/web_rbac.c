@@ -1781,7 +1781,7 @@ int RBACPruneKnowledge(char *topic, char *context, char *username)
       relations from ontology.c are:
       
       bundles::  "BUNDLE"         association => a(KM_USES_CERT_F,edit_bundle,KM_USES_CERT_B);
-      "CHILD BUNDLE"   association => a(NOVA_IMPACTS, PARENT BUNDLE, NOVA_ISIMPACTED);
+                 "CHILD BUNDLE"   association => a(NOVA_IMPACTS, PARENT BUNDLE, NOVA_ISIMPACTED);
       promises:: "PROMISE HANDLE" association => a(KM_PARTOF_CERT_F, bundles::BUNDLE, "has promise");
       
       Conceal direct nearest neighbour relationships for now - then it is not possible
