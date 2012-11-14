@@ -78,7 +78,7 @@ static void test_software_report_unpack_db(void **state)
     bson_append_string(&host_key, cfr_keyhash, keyhash);
     bson_finish(&host_key);
 
-//    mongo_remove(conn, MONGO_DATABASE, &host_key, NULL);
+    mongo_remove(conn, MONGO_DATABASE, &host_key, NULL);
 
     bson_destroy(&host_key);
     assert_true(CFDB_Close(conn));
