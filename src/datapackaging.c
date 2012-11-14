@@ -832,11 +832,11 @@ static void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd
                     for (i = 0; i < CF_OBSERVABLES; i++)
                     {
                         // Data are stale because cf-monitord was not running, delete last measured value
-                        entry.Q[i].expect += det.Q[i].expect;
-                        entry.Q[i].var += det.Q[i].var;
-                        entry.Q[i].q = += 0;
-                        entry.Q[i].dq += det.Q[i].dq;
-                        havedata += entry.Q[i].expect;
+                        entry.Q[i].expect += det.Q[i].expect / (double) its;
+                        entry.Q[i].var += det.Q[i].var / (double) its;
+                        entry.Q[i].q += 0;
+                        entry.Q[i].dq += det.Q[i].dq / (double) its;
+                        
                     }
                 }
                 else
