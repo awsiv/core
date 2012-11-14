@@ -738,14 +738,29 @@ static void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd
 
         if (ReadDB(dbp, timekey, &det, sizeof(Averages)))
         {
-            for (i = 0; i < CF_OBSERVABLES; i++)
+            if (now > det.last_seen + SECONDS_PER_WEEK)
             {
-                entry.Q[i].expect += det.Q[i].expect;
-                entry.Q[i].var += det.Q[i].var;
-                entry.Q[i].q += det.Q[i].q;
-                entry.Q[i].dq += det.Q[i].dq;
-                havedata += entry.Q[i].expect;
-            }
+               for (i = 0; i < CF_OBSERVABLES; i++)
+               {
+                   // Data are stale because cf-monitord was not running, delete last measured value
+                   entry.Q[i].expect = det.Q[i].expect;
+                   entry.Q[i].var = det.Q[i].var;
+                   entry.Q[i].q = 0;
+                   entry.Q[i].dq = det.Q[i].dq;
+                   havedata += entry.Q[i].expect;
+               }
+           }
+           else
+           {
+               for (i = 0; i < CF_OBSERVABLES; i++)
+               {
+                   entry.Q[i].expect += det.Q[i].expect;
+                   entry.Q[i].var += det.Q[i].var;
+                   entry.Q[i].q += det.Q[i].q;
+                   entry.Q[i].dq += det.Q[i].dq;
+                   havedata += entry.Q[i].expect;
+               }
+           }
         }
 
         if (havedata != 0)
@@ -812,15 +827,30 @@ static void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd
 
             if (ReadDB(dbp, timekey, &det, sizeof(Averages)))
             {
-                for (i = 0; i < CF_OBSERVABLES; i++)
+                if (now > det.last_seen + SECONDS_PER_WEEK)
                 {
-                    entry.Q[i].expect += det.Q[i].expect / (double) its;
-                    entry.Q[i].var += det.Q[i].var / (double) its;
-                    entry.Q[i].q += det.Q[i].q / (double) its;
-                    entry.Q[i].dq += det.Q[i].dq / (double) its;
+                    for (i = 0; i < CF_OBSERVABLES; i++)
+                    {
+                        // Data are stale because cf-monitord was not running, delete last measured value
+                        entry.Q[i].expect += det.Q[i].expect;
+                        entry.Q[i].var += det.Q[i].var;
+                        entry.Q[i].q = += 0;
+                        entry.Q[i].dq += det.Q[i].dq;
+                        havedata += entry.Q[i].expect;
+                    }
+                }
+                else
+                {
+                    for (i = 0; i < CF_OBSERVABLES; i++)
+                    {
+                        entry.Q[i].expect += det.Q[i].expect / (double) its;
+                        entry.Q[i].var += det.Q[i].var / (double) its;
+                        entry.Q[i].q += det.Q[i].q / (double) its;
+                        entry.Q[i].dq += det.Q[i].dq / (double) its;
+                    }
                 }
             }
-
+            
             now += CF_MEASURE_INTERVAL;
         }
 
