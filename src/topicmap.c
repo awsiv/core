@@ -876,6 +876,9 @@ JsonElement *Nova_ScanOccurrences(int this_id, char *username)
 
     DeleteHitList(hits);
 
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
+
     return json_array;
 }
 
@@ -932,13 +935,15 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
         {
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
             {
-            strncpy(buffer, bson_iterator_string(&it1), bufsize - 1);
-            mongo_cursor_destroy(cursor);
-            return true;
+                strncpy(buffer, bson_iterator_string(&it1), bufsize - 1);
+                mongo_cursor_destroy(cursor);
+                CFDB_Close(&conn);
+                return true;
             }
         }
     }
     mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
     return false;
 }
 

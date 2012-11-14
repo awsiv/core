@@ -3287,6 +3287,7 @@ JsonElement *Nova2PHP_list_knowledge_bundles(void)
         }
     }
     mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
 
     results = SortItemListNames(results);
 
