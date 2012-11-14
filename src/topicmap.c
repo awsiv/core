@@ -1593,7 +1593,7 @@ JsonElement *Nova_GetMeasuredServices()
 Item *Nova_GetHandlesForGoal(int topic_id)
 
 {
-   return Nova_NearestNeighbours(topic_id,NOVA_GOAL_INV);
+    return Nova_NearestNeighbours(topic_id,NOVA_GOAL_INV);
 }
 
 /*************************************************************************/
