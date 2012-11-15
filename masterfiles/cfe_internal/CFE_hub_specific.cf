@@ -111,12 +111,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
 
-   # "/etc/php.d/svn.ini"
-   #      comment => "Put svn.ini to its place",
-   #       handle => "cfe_internal_php_mod_files_svn_ini_redhat5",
-   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-   #        perms => mo("644","root");
-
    "/etc/php.d/json.ini"
          comment => "Put json.ini to its place",
           handle => "cfe_internal_php_mod_files_json_ini_redhat5",
@@ -142,13 +136,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
-#   "/usr/lib/php/modules/json.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_json_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/json.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "(redhat_5|centos_5).i686";
-
    "/usr/lib64/php/modules/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
          handle => "cfe_internal_php_mod_files_json_so_redhat5_64",
@@ -156,45 +143,13 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "(redhat_5|centos_5).x86_64";
 
-#   "/usr/lib/php/modules/cfmod.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_cfmod_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
-
    "/usr/lib64/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
          handle => "cfe_internal_php_mod_files_cfmod_so_redhat5_64",
        copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
-        classes => if_repaired("restart_webserver");
-
-   # "/usr/lib/php/modules/svn.so"
-   #       comment => "Prepare svn.so for 32-bit system",
-   #       handle => "cfe_internal_php_mod_files_svn_so_redhat5_32",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "i686",
-   #      classes => if_repaired("restart_webserver");
-
-   # "/usr/lib64/php/modules/svn.so"
-   #       comment => "Prepare svn.so for 64-bit system",
-   #       handle => "cfe_internal_php_mod_files_svn_so_redhat5_64",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "x86_64",
-   #      classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php/modules/mongo.so"
-#        comment => "Prepare mongo.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_mongo_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
+	     classes => if_repaired("restart_webserver");
 
    "/usr/lib64/php/modules/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
@@ -202,15 +157,7 @@ bundle agent cfe_internal_php_mod
        copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
-        classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php/modules/curl.so"
-#         comment => "Prepare curl.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_curl_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
+	     classes => if_repaired("restart_webserver");
 
    "/usr/lib64/php/modules/curl.so"
          comment => "Prepare curl.so for 64-bit system",
@@ -218,15 +165,7 @@ bundle agent cfe_internal_php_mod
        copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
-        classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php/modules/cfengine-enterprise-api.so"
-#         comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_cfengine_enterprise_api_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
+	     classes => if_repaired("restart_webserver");
 
    "/usr/lib64/php/modules/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
@@ -244,14 +183,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mcrypt.ini"),
           perms => mo("644","root");
 
-#   "/usr/lib/php/modules/mcrypt.so"
-#         comment => "Prepare mcrypt.so for 32-bit system",
-#         handle => "cfe_internal_php_mod_files_mcrypt_so_redhat5_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mcrypt.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
-
    "/usr/lib64/php/modules/mcrypt.so"
          comment => "Prepare mcrypt.so for 64-bit system",
          handle => "cfe_internal_php_mod_files_mcrypt_so_redhat5_64",
@@ -260,56 +191,6 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
 
-#  redhat_4::
-#
-#   "/etc/php.d/cfmod.ini"
-#        comment => "Put cfmod.ini to its place",
-#         handle => "cfe_internal_php_mod_files_cfmod_ini_redhat4",
-#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
-#          perms => mo("644","root");
-#
-#   "/etc/php.d/json.ini"
-#        comment => "Put json.ini to its place",
-#         handle => "cfe_internal_php_mod_files_json_ini_redhat4",
-#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/json.ini"),
-#          perms => mo("644","root");
-#
-#   "/etc/php.d/mongo.ini"
-#        comment => "Put mongo.ini to its place",
-#         handle => "cfe_internal_php_mod_files_mongo_ini_redhat4",
-#      copy_from => no_backup_dcp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
-#          perms => mo("644","root");
-#
-#   "/usr/lib/php4/json.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_json_so_redhat4_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/32/json.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686";
-#
-#   "/usr/lib/php4/cfmod.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfmod_so_redhat4_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
-#
-#   "/usr/lib64/php4/json.so"
-#         comment => "Prepare cfmod.so for 64-bit system",
-#          handle => "cfe_internal_php_mod_files_json_so_redhat4_64",
-#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/json/64/json.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "x86_64";
-#
-#   "/usr/lib64/php4/cfmod.so"
-#         comment => "Prepare cfmod.so for 64-bit system",
-#          handle => "cfe_internal_php_mod_files_cfmod_so_redhat4_64",
-#       copy_from => no_backup_dcp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "x86_64",
-#        classes => if_repaired("restart_webserver");
-
   ubuntu_10|ubuntu_12|debian_squeeze_i386|debian_squeeze_amd64|debian_6::
 
    "/etc/php5/conf.d/cfmod.ini"
@@ -317,12 +198,6 @@ bundle agent cfe_internal_php_mod
          handle => "cfe_internal_php_mod_files_cfmod_ini_ubuntu10",
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
-
-   # "/etc/php5/conf.d/svn.ini"
-   #      comment => "Put svn.ini to its place",
-   #       handle => "cfe_internal_php_mod_files_svn_ini_ubuntu10",
-   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -342,14 +217,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
-#   "/usr/lib/php5/20090626+lfs/cfmod.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfmod_so_ubuntu10_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
-
    "/usr/lib/php5/20090626/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfe_internal_php_mod_files_cfmod_so_ubuntu10_64",
@@ -357,30 +224,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-   # "/usr/lib/php5/20090626+lfs/svn.so"
-   #       comment => "Prepare svn.so for 32-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_32",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "i686",
-   #       classes => if_repaired("restart_webserver");
-   #  
-   # "/usr/lib/php5/20090626/svn.so"
-   #       comment => "Prepare svn.so for 64-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu10_64",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "x86_64",
-   #       classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20090626+lfs/mongo.so"
-#         comment => "Prepare mongo.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_mongo_so_ubuntu10_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20090626/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
@@ -389,14 +232,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20090626+lfs/curl.so"
-#         comment => "Prepare curl.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_curl_so_ubuntu10_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20090626/curl.so"
          comment => "Prepare curl.so for 64-bit system",
@@ -405,14 +240,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20090626+lfs/cfengine-enterprise-api.so"
-#         comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_file_cfengine_enterprise_api_so_ubuntu10_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20090626/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
@@ -429,12 +256,6 @@ bundle agent cfe_internal_php_mod
          handle => "cfe_internal_php_mod_files_cfmod_ini_ubuntu8",
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
-
-   # "/etc/php5/conf.d/svn.ini"
-   #      comment => "Put svn.ini to its place",
-   #       handle => "cfe_internal_php_mod_files_svn_ini_ubuntu8",
-   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -454,14 +275,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
-#   "/usr/lib/php5/20060613+lfs/cfmod.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfmod_so_ubuntu8_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
-
    "/usr/lib/php5/20060613/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfe_internal_php_mod_files_cfmod_so_ubuntu8_64",
@@ -469,30 +282,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-   # "/usr/lib/php5/20060613+lfs/svn.so"
-   #       comment => "Prepare svn.so for 32-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_32",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "i686",
-   #       classes => if_repaired("restart_webserver");
-   #  
-   # "/usr/lib/php5/20060613/svn.so"
-   #       comment => "Prepare svn.so for 64-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_ubuntu8_64",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "x86_64",
-   #       classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20060613+lfs/mongo.so"
-#         comment => "Prepare mongo.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_mongo_so_ubuntu8_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20060613/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
@@ -501,14 +290,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20060613+lfs/curl.so"
-#         comment => "Prepare curl.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_curl_so_ubuntu8_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20060613/curl.so"
          comment => "Prepare curl.so for 64-bit system",
@@ -517,14 +298,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/20060613+lfs/cfengine-enterprise-api.so"
-#         comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfengine_enterprise_api_so_ubuntu8_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
  
    "/usr/lib/php5/20060613/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
@@ -541,12 +314,6 @@ bundle agent cfe_internal_php_mod
          handle => "cfe_internal_php_mod_files_cfmod_ini_suse",
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.ini"),
           perms => mo("644","root");
-
-   # "/etc/php5/conf.d/svn.ini"
-   #      comment => "Put svn.ini to its place",
-   #       handle => "cfe_internal_php_mod_files_svn_ini_suse",
-   #    copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.ini"),
-   #        perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -566,14 +333,6 @@ bundle agent cfe_internal_php_mod
       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.ini"),
           perms => mo("644","root");
 
-#   "/usr/lib/php5/extensions/cfmod.so"
-#         comment => "Prepare cfmod.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfmod_so_suse_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfmod.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
-
    "/usr/lib64/php5/extensions/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfe_internal_php_mod_files_cfmod_so_suse_64",
@@ -581,30 +340,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-   # "/usr/lib/php5/extensions/svn.so"
-   #       comment => "Prepare svn.so for 32-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_suse_32",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "i686",
-   #       classes => if_repaired("restart_webserver");
-   # 
-   # "/usr/lib64/php5/extensions/svn.so"
-   #       comment => "Prepare svn.so for 64-bit system",
-   #        handle => "cfe_internal_php_mod_files_svn_so_suse_64",
-   #     copy_from => no_backup_dcp("$(sys.workdir)/lib/php/svn.so"),
-   #         perms => mo("755","root"),
-   #    ifvarclass => "x86_64",
-   #       classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/extensions/mongo.so"
-#         comment => "Prepare mongo.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_mongo_so_suse_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/mongo.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
 
    "/usr/lib64/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
@@ -614,14 +349,6 @@ bundle agent cfe_internal_php_mod
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
 
-#   "/usr/lib/php5/extensions/curl.so"
-#         comment => "Prepare curl.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_curl_so_suse_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/curl.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
-
    "/usr/lib64/php5/extensions/curl.so"
          comment => "Prepare curl.so for 64-bit system",
           handle => "cfe_internal_php_mod_files_curl_so_suse_64",
@@ -629,14 +356,6 @@ bundle agent cfe_internal_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
-
-#   "/usr/lib/php5/extensions/cfengine-enterprise-api.so"
-#         comment => "Prepare cfengine-enterprise-api.so for 32-bit system",
-#          handle => "cfe_internal_php_mod_files_cfengine_enterprise_api_so_suse_32",
-#       copy_from => no_backup_dcp("$(sys.workdir)/lib/php/cfengine-enterprise-api.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#         classes => if_repaired("restart_webserver");
 
    "/usr/lib64/php5/extensions/cfengine-enterprise-api.so"
          comment => "Prepare cfengine-enterprise-api.so for 64-bit system",
@@ -652,21 +371,24 @@ bundle agent cfe_internal_php_mod
 
   restart_webserver.redhat::
 
-   "/etc/init.d/httpd restart" -> { "goal_availabilty" }
-      comment => "Restart httpd service on RedHat/CentOS/Fedora",
-       handle => "cfe_internal_php_mod_commands_httpd_redhat";
+   "/bin/sleep 1 && /etc/init.d/httpd restart" -> { "goal_availabilty" }
+      comment => "Restart httpd service on RedHat/CentOS",
+       handle => "cfe_internal_php_mod_commands_httpd_redhat",
+      contain => in_shell;
 
   restart_webserver.debian::
 
-   "/etc/init.d/apache2 restart" -> { "goal_availabilty" }
+   "/bin/sleep 1 && /etc/init.d/apache2 restart" -> { "goal_availabilty" }
       comment => "Restart apache2 service on Debian/Ubuntu",
-       handle => "cfe_internal_php_mod_commands_apache2_debian";
+       handle => "cfe_internal_php_mod_commands_apache2_debian",
+      contain => in_shell;
 
   restart_webserver.SuSE::
 
-   "/etc/init.d/apache2 restart"  -> { "goal_availabilty" }
+   "/bin/sleep 1 && /etc/init.d/apache2 restart"  -> { "goal_availabilty" }
       comment => "Restart apache2 service on SuSE",
-       handle => "cfe_internal_php_mod_commands_apache2_suse";
+       handle => "cfe_internal_php_mod_commands_apache2_suse",
+      contain => in_shell;
 
 }
 
@@ -702,7 +424,7 @@ bundle agent cfe_internal_policysrv
             comment => "Get the whole contents of the file to extract a timezone later on",
              handle => "cfe_internal_policysrv_vars_buffer_suse";
 
-  (redhat_5|redhat_6|centos_6|scientific_5|scientific_6).am_policy_hub::
+  (redhat_5|scientific_5).am_policy_hub::
 
    "match_package" slist => {
                              "httpd",
@@ -714,9 +436,22 @@ bundle agent cfe_internal_policysrv
                              "php-pdo",
                             },
                  comment => "Define a list of packages to be installed on RedHat",
-                  handle => "cfe_internal_policysrv_vars_match_package_redhat";
+                  handle => "cfe_internal_policysrv_vars_match_package_redhat_5";
 
-  (centos_5|fedora).am_policy_hub::
+  (redhat_6|centos_6|scientific_6).am_policy_hub::
+
+   "match_package" slist => {
+                             "httpd",
+                             "mod_ssl",
+                             "php",
+                             "php-bcmath",
+                             "php-pear",
+                             "php-pdo",
+                            },
+                 comment => "Define a list of packages to be installed on RedHat",
+                  handle => "cfe_internal_policysrv_vars_match_package_redhat_6";
+
+  centos_5.am_policy_hub::
 
    "match_package" slist => {
                              "httpd",
@@ -729,7 +464,7 @@ bundle agent cfe_internal_policysrv
                              "php-pdo",
                             },
                  comment => "Define a list of packages to be installed on CentOS/Fedora",
-                  handle => "cfe_internal_policysrv_vars_match_package_centos";
+                  handle => "cfe_internal_policysrv_vars_match_package_centos_5";
 
   debian.am_policy_hub::
 
@@ -1405,11 +1140,24 @@ bundle agent cfe_internal_selinux(condition)
                     comment => "Get SELinux status",
                      handle => "cfe_internal_selinux_vars_selinux_status";
 
+  redhat_6|centos_6|oracle_6|scientific_6::
+
+   "selinux_packages" slist => {
+                                "policycoreutils-python",
+                                "prelink",
+                               },
+                      comment => "List of packages to be installed for RHEL 6",
+                       handle => "cfe_internal_selinux_vars_selinux_packages";
+
 #
 
  classes:
 
   redhat::
+
+   "have_semanage"      expression => fileexists("/usr/sbin/semanage"),
+                           comment => "Install packages from the list",
+                            handle => "cfe_internal_selinux_classes_have_semanage";
 
    "fix_selinux"        expression => strcmp("$(condition)","fix"),
                            comment => "Check to allow SELinux rules for Mission Portal to function",
@@ -1423,15 +1171,29 @@ bundle agent cfe_internal_selinux(condition)
                            comment => "Check if SELinux is running",
                             handle => "cfe_internal_selinux_classes_selinux_enforcing";
 
-   "mongod_port_not_ok"        not => returnszero("/usr/sbin/semanage port -l | grep 27017 > /dev/null", "useshell"),
+  have_semanage::
+
+   "mongod_port_not_ok"        not => returnszero("/usr/sbin/semanage port -l | grep http_port_t | grep 27017 > /dev/null", "useshell"),
                            comment => "Check if a default mongod port is permitted",
                             handle => "cfe_internal_selinux_classes_mongod_prot_not_ok";
 
 #
 
+ packages:
+
+   redhat_6|centos_6|oracle_6|scientific_6::
+
+      "$(selinux_packages)"
+                comment => "Install packages from the list",
+                 handle => "cfe_internal_selinux_packages_install_selinux_packages",
+         package_policy => "add",
+         package_method => yum_rpm;
+    
+#
+
  commands:
 
-  selinux_enforcing.fix_selinux::
+  selinux_enforcing.fix_selinux.have_semanage::
 
    "/usr/bin/chcon -R -h -t httpd_sys_content_t /var/cfengine/lib"
       comment => "Allow apache to load CFEngine shared libraries with SELinux on",
@@ -1449,7 +1211,13 @@ bundle agent cfe_internal_selinux(condition)
 
    "/usr/sbin/semanage port -a -t http_port_t -p tcp 27017"
       comment => "Add mongod default port to SELinux",
-       handle => "cfe_internal_selinux_commands_allow_mongod_port";
+       handle => "cfe_internal_selinux_commands_allow_mongod_port_old_redhat",
+      ifvarclass => "!(redhat_6_3|centos_6_3|oracle_6_3|scientific_6_3)";
+
+   "/usr/sbin/semanage port -m -t http_port_t -p tcp 27017"
+      comment => "Add mongod default port to SELinux",
+       handle => "cfe_internal_selinux_commands_allow_mongod_port_new_redhat",
+      ifvarclass => "redhat_6_3|centos_6_3|oracle_6_3|scientific_6_3";
 
   disable_selinux::
 
