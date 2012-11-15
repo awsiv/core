@@ -23,6 +23,7 @@
 #include "constraints.h"
 #include "matching.h"
 #include "hashes.h"
+#include "attributes.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

@@ -37,6 +37,7 @@
 #include "scope.h"
 #include "hashes.h"
 #include "unix.h"
+#include "attributes.h"
 
 static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
