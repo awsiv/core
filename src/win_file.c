@@ -20,6 +20,7 @@
 #include "dir.h"
 #include "dir_priv.h"
 #include "files_names.h"
+#include "files_operators.h"
 
 /* _mkdir(3) */
 #include <direct.h>
