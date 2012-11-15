@@ -24,6 +24,7 @@
 #include "lastseen.h"
 #include "sysinfo.h"
 #include "cf-serverd-functions.h"
+#include "unix.h"
 
 // These are needed for the collect calls, integrating with hub
 

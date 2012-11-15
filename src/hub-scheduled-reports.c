@@ -16,6 +16,7 @@
 #include "conversion.h"
 #include "files_interfaces.h"
 #include "instrumentation.h"
+#include "unix.h"
 
 #include <assert.h>
 

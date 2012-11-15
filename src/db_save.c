@@ -11,6 +11,7 @@
 #include "conversion.h"
 #include "bson_lib.h"
 #include "matching.h"
+#include "unix.h"
 
 #include <assert.h>
 

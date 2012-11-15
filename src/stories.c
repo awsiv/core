@@ -14,6 +14,7 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "matching.h"
+#include "unix.h"
 
 #include "bson_lib.h"
 #include "db_query.h"

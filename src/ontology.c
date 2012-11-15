@@ -17,6 +17,7 @@
 #include "expand.h"
 #include "probes.h"
 #include "matching.h"
+#include "unix.h"
 
 #include <assert.h>
 

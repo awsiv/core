@@ -27,6 +27,7 @@
 #include "scope.h"
 #include "keyring.h"
 #include "instrumentation.h"
+#include "unix.h"
 
 #include <assert.h>
 
