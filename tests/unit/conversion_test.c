@@ -1,5 +1,6 @@
 #include "test.h"
 #include "conversion.h"
+#include "matching.h"
 
 char *SqlVariableExpandNumeric(const char *query, const char *key, long value);
 

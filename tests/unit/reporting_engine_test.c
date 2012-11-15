@@ -3,6 +3,8 @@
 #include "reporting-engine.c"
 #include "cf.nova.h"
 
+#include "matching.h"
+
 static void test_get_table_names(void **state)
 {
     const char *select_op_list[] = {

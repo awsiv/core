@@ -16,6 +16,7 @@
 #include "mod_files.h"
 #include "expand.h"
 #include "probes.h"
+#include "matching.h"
 
 #include <assert.h>
 

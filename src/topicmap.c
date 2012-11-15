@@ -12,6 +12,7 @@
 #include "bson_lib.h"
 #include "item_lib.h"
 #include "sort.h"
+#include "matching.h"
 
 #include <assert.h>
 

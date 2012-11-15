@@ -21,6 +21,7 @@
 #include "scope.h"
 #include "db-export-csv.h"
 #include "install.h"
+#include "matching.h"
 
 #include <assert.h>
 

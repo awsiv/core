@@ -10,6 +10,7 @@
 #include "sort.h"
 #include "conversion.h"
 #include "bson_lib.h"
+#include "matching.h"
 
 #include <assert.h>
 

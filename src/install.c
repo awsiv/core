@@ -22,6 +22,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "conversion.h"
 #include "sequence.h"
 #include "granules.h"
+#include "matching.h"
 
 #include <assert.h>
 

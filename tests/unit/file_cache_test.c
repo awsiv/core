@@ -2,6 +2,8 @@
 #include "cf.nova.h"
 #include "file-cache.h"
 
+#include "matching.h"
+
 #include <utime.h>
 
 static void test_new_destroy(void **state)

@@ -27,6 +27,7 @@
 #include "rlist.h"
 #include "item_lib.h"
 #include "log.h"
+#include "matching.h"
 
 #include <assert.h>
 

@@ -8,6 +8,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "files_names.h"
 #include "item_lib.h"
 #include "json.h"
+#include "matching.h"
 
 #include <assert.h>
 

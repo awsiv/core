@@ -12,6 +12,7 @@
 #include "cf.nova.h"
 #include "files_names.h"
 #include "item_lib.h"
+#include "matching.h"
 
 #ifdef HAVE_LIBLDAP
 

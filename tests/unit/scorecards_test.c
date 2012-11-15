@@ -1,6 +1,7 @@
 #include "platform.h"
 #include "test.h"
 #include "scorecards.h"
+#include "matching.h"
 
 #ifdef HAVE_LIBMONGOC
 static void test_host_compliance_score(void **state)

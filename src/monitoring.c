@@ -22,6 +22,7 @@
 #include "conversion.h"
 #include "reporting.h"
 #include "scope.h"
+#include "matching.h"
 
 /* Structs */
 

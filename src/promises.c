@@ -21,6 +21,7 @@
 #include "files_names.h"
 #include "assert.h"
 #include "constraints.h"
+#include "matching.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
