@@ -26,6 +26,7 @@
 #include "hub-scheduled-reports.h"
 #include "scope.h"
 #include "keyring.h"
+#include "instrumentation.h"
 
 #include <assert.h>
 

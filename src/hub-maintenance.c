@@ -13,6 +13,7 @@
 #include "db_save.h"
 #include "db_query.h"
 #include "granules.h"
+#include "instrumentation.h"
 
 static void ScheduleRunMaintenanceJobs(void);
 

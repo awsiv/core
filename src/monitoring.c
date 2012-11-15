@@ -23,6 +23,7 @@
 #include "reporting.h"
 #include "scope.h"
 #include "matching.h"
+#include "instrumentation.h"
 
 /* Structs */
 

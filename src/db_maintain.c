@@ -18,6 +18,7 @@
 #include "granules.h"
 #include "item_lib.h"
 #include "conversion.h"
+#include "instrumentation.h"
 
 #include <assert.h>
 
