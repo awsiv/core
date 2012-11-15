@@ -12,6 +12,7 @@
 #include "files_lib.h"
 #include "files_names.h"
 #include "files_interfaces.h"
+#include "files_operators.h"
 
 #ifdef HAVE_ZONE_H
 # include <zone.h>
