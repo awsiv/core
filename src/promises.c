@@ -22,6 +22,7 @@
 #include "assert.h"
 #include "constraints.h"
 #include "matching.h"
+#include "hashes.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

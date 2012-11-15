@@ -23,6 +23,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "sequence.h"
 #include "granules.h"
 #include "matching.h"
+#include "hashes.h"
 
 #include <assert.h>
 

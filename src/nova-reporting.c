@@ -19,6 +19,7 @@
 #include "reporting.h"
 #include "datapack.h"
 #include "scope.h"
+#include "hashes.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
