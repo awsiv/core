@@ -10,6 +10,7 @@
 #include "files_operators.h"
 
 #include "cfstream.h"
+#include "pipes.h"
 
 // links pipe descriptors to process handles
 typedef struct
