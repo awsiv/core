@@ -11,6 +11,7 @@
 #include "item_lib.h"
 #include "datapack.h"
 #include "cfstream.h"
+#include "fncall.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
