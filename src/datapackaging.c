@@ -1729,7 +1729,7 @@ static Item* ReadTotalComplianceLog(void)
         fgets(line, CF_BUFSIZE - 1, fin);
 
         intmax_t start_i, end_i;
-        sscanf(line, "%jd,%jd", &start_i, &end_i);
+        sscanf(line, "%" SCNdMAX ",%" SCNdMAX "", &start_i, &end_i);
 
         if(start_i > end_i)
         {
@@ -1854,7 +1854,7 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from,
                               { -1, -1, -1, -1 }};
 
         intmax_t start_i, end_i;
-        sscanf(ip->name, "%jd,%jd", &start_i, &end_i);
+        sscanf(ip->name, "%" SCNdMAX ",%" SCNdMAX "", &start_i, &end_i);
 
         time_t start = (time_t)start_i;
         time_t end = (time_t)end_i;
@@ -1889,7 +1889,7 @@ static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from,
             char sversion[CF_MAXVARSIZE];
 
             sversion[0] = '\0';
-            sscanf(ip->classes, "%jd,%jd", &start_i, &end_i);
+            sscanf(ip->classes, "%" SCNdMAX ",%" SCNdMAX "", &start_i, &end_i);
 
             start = (time_t)start_i;
             end = (time_t)end_i;

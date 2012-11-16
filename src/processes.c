@@ -143,7 +143,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
 
     pos = Nova_GetFirstChangePosition(file, destination);
 
-    fprintf(fout, "%ld;File changed size from %jd to %jd, first difference at byte position %d/%jd of old\n",
+    fprintf(fout, "%ld;File changed size from %" PRIdMAX " to %" PRIdMAX ", first difference at byte position %d/%" PRIdMAX " of old\n",
             (long) now, (intmax_t) dsb.st_size, (intmax_t) sb.st_size, pos, (intmax_t) dsb.st_size);
 
     if (Nova_FileIsBinary(destination, dsb.st_size, NOVA_MAXDIFFSIZE))

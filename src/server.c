@@ -142,7 +142,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 
     intmax_t from_i, time0_i;
 
-    sscanf(menu, "%255s %jd %jd", menu_name, &from_i, &time0_i);
+    sscanf(menu, "%255s %" SCNdMAX " %" SCNdMAX "", menu_name, &from_i, &time0_i);
     from = (time_t)from_i;
     time0 = (time_t)time0_i;
 
