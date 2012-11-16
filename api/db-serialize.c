@@ -12,11 +12,15 @@ JsonElement *HubScheduledReportToJson(const HubScheduledReport *scheduled_report
     JsonElement *obj = JsonObjectCreate(8);
     JsonObjectAppendString(obj, "id", scheduled_report->query_id);
     JsonObjectAppendString(obj, "userId", scheduled_report->username);
-    JsonObjectAppendString(obj, "to", scheduled_report->email);
     JsonObjectAppendString(obj, "query", scheduled_report->query);
     JsonObjectAppendString(obj, "schedule", scheduled_report->schedule);
     JsonObjectAppendBool(obj, "enabled", scheduled_report->enabled);
     JsonObjectAppendInteger(obj, "lastRun", scheduled_report->last_run);
+
+    if (scheduled_report->email)
+    {
+        JsonObjectAppendString(obj, "to", scheduled_report->email);
+    }
 
     if (scheduled_report->title)
     {
