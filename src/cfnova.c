@@ -12,6 +12,7 @@
 #include "promises.h"
 #include "crypto.h"
 #include "cfstream.h"
+#include "client_code.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"

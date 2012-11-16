@@ -21,6 +21,7 @@
 #include "cf-serverd-functions.h"
 #include "unix.h"
 #include "cfstream.h"
+#include "client_code.h"
 
 // These are needed for the collect calls, integrating with hub
 
