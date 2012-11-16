@@ -1171,7 +1171,7 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 
         WriterClose(writer);
 
-        AsyncQueryExportResult(db, select_op, wr_info);
+        AsyncQueryExportResult(db, select_op_expanded, wr_info);
 
         DeleteWebReportFileInfo(wr_info);
 
