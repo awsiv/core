@@ -22,6 +22,7 @@
 #include "unix.h"
 #include "cfstream.h"
 #include "client_code.h"
+#include "communication.h"
 
 // These are needed for the collect calls, integrating with hub
 

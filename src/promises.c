@@ -4,12 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: promises.c                                                          */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -26,6 +20,7 @@
 #include "attributes.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "communication.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

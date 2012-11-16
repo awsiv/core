@@ -16,6 +16,7 @@
 #include "matching.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "communication.h"
 
 #include <assert.h>
 

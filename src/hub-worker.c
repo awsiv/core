@@ -16,6 +16,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "client_code.h"
+#include "communication.h"
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostkey, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);

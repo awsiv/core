@@ -22,6 +22,7 @@
 #include "hashes.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "communication.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
