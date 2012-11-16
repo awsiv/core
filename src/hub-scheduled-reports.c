@@ -18,6 +18,7 @@
 #include "instrumentation.h"
 #include "unix.h"
 #include "cfstream.h"
+#include "pipes.h"
 
 #include <assert.h>
 

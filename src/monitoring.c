@@ -25,6 +25,7 @@
 #include "matching.h"
 #include "instrumentation.h"
 #include "cfstream.h"
+#include "pipes.h"
 
 typedef struct
 {

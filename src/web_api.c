@@ -25,6 +25,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cfstream.h"
 #include "string_lib.h"
 #include "communication.h"
+#include "pipes.h"
 
 #include <assert.h>
 
