@@ -1,7 +1,14 @@
+/*
+
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
+
+*/
+
 #include "cf.nova.h"
 
 #include "db_common.h"
 #include "bson_lib.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

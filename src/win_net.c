@@ -4,17 +4,11 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_net.c                                                           */
-/*                                                                           */
-/* Created: Tue Nov 17 14:09:11 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "cfstream.h"
 #include "files_names.h"
 #include "env_context.h"
 #include "item_lib.h"

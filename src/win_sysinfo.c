@@ -8,6 +8,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "cfstream.h"
+
 int NovaWin_GetWinDir(char *winDir, int winDirSz)
 // NOTE: winDirSz should be MAX_PATH
 // Example winDir: "C:\WINDOWS"

@@ -13,6 +13,8 @@
 #include "files_names.h"
 #include "files_interfaces.h"
 #include "files_operators.h"
+#include "files_repository.h"
+#include "cfstream.h"
 
 #ifdef HAVE_ZONE_H
 # include <zone.h>

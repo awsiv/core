@@ -4,14 +4,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: install.c                                                           */
-/*                                                                           */
-/* Created: Wed Jul 21 07:17:44 2010                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -24,6 +16,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "granules.h"
 #include "matching.h"
 #include "hashes.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

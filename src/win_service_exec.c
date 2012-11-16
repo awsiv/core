@@ -17,6 +17,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "cfstream.h"
 #include "cf-execd-runner.h"
 #include "reporting.h"
 

@@ -1,12 +1,8 @@
-/*****************************************************************************/
-/*                                                                           */
-/* File: db_maintain.c                                                       */
-/*                                                                           */
-/* Created: Wed Sept  29 14:47:33 2010                                       */
-/*                                                                           */
-/* MongoDB implementation of database maintenance functions                  */
-/*                                                                           */
-/*****************************************************************************/
+/*
+
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
+
+*/
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -19,6 +15,7 @@
 #include "item_lib.h"
 #include "conversion.h"
 #include "instrumentation.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

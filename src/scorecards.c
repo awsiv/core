@@ -7,12 +7,14 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "scorecards.h"
+
 #include "bson_lib.h"
 #include "string_lib.h"
 #include "granules.h"
 #include "files_names.h"
 #include "conversion.h"
 #include "bson_hub_conversion.h"
+#include "cfstream.h"
 
 #include "db_query.h"
 

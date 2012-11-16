@@ -24,8 +24,7 @@
 #include "scope.h"
 #include "matching.h"
 #include "instrumentation.h"
-
-/* Structs */
+#include "cfstream.h"
 
 typedef struct
 {

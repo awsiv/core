@@ -4,17 +4,11 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_proc.c                                                          */
-/*                                                                           */
-/* Created: Tue Sep 15 13:27:55 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "cfstream.h"
 #include "item_lib.h"
 #include "conversion.h"
 

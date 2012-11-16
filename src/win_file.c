@@ -4,14 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_file.c                                                          */
-/*                                                                           */
-/* Created: Fri Sep 11 13:13:29 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -21,6 +13,7 @@
 #include "dir_priv.h"
 #include "files_names.h"
 #include "files_operators.h"
+#include "cfstream.h"
 
 /* _mkdir(3) */
 #include <direct.h>

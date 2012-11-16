@@ -17,6 +17,7 @@
 #include "files_interfaces.h"
 #include "instrumentation.h"
 #include "unix.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

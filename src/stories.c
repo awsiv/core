@@ -15,6 +15,7 @@
 #include "sort.h"
 #include "matching.h"
 #include "unix.h"
+#include "cfstream.h"
 
 #include "bson_lib.h"
 #include "db_query.h"

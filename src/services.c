@@ -5,17 +5,12 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: services.c                                                          */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
 #include "promises.h"
+#include "cfstream.h"
 
 /* !__MINGW32__ */
 void VerifyWindowsService(Attributes a, Promise *pp)

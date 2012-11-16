@@ -14,6 +14,7 @@
 #include "db_query.h"
 #include "granules.h"
 #include "instrumentation.h"
+#include "cfstream.h"
 
 static void ScheduleRunMaintenanceJobs(void);
 

@@ -15,6 +15,7 @@
 #include "sort.h"
 #include "conversion.h"
 #include "nova-reporting.h"
+#include "cfstream.h"
 
 #define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
 

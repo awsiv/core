@@ -4,19 +4,13 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_ps.c                                                            */
-/*                                                                           */
-/* Created: Tue Sep 15 13:13:10 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 /* Implementation of process table query functions */
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "cfstream.h"
 #include "item_lib.h"
 
 /* defines */

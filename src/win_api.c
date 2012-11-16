@@ -4,17 +4,11 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_api.c                                                           */
-/*                                                                           */
-/* Created: Fri Sep 11 13:13:29 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "cfstream.h"
 #include "files_interfaces.h"
 
 #include "atexit.h"
