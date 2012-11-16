@@ -568,6 +568,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (!IsDefinedClass("am_policy_hub", NULL))
     {
+        DeletePromise(pp);
         return;
     }
 
