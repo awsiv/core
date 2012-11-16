@@ -4,14 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: acl_nt.c                                                            */
-/*                                                                           */
-/* Created: Fri Oct 09 11:50:33 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -19,6 +11,7 @@
 #include "acl.h"
 #include "promises.h"
 #include "files_names.h"
+#include "cfstream.h"
 
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
