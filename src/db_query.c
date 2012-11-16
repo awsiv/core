@@ -22,6 +22,7 @@
 #include "db-export-csv.h"
 #include "install.h"
 #include "matching.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

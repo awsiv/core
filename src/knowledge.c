@@ -10,6 +10,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "datapack.h"
+#include "cfstream.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"

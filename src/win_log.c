@@ -4,20 +4,14 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_log.c                                                           */
-/*                                                                           */
-/* Created: Fri Oct 30 11:41:12 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
 #include "item_lib.h"
 #include "conversion.h"
 #include "atexit.h"
+#include "cfstream.h"
 
 static int CheckRegistryLogKey(void);
 

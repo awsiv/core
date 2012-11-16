@@ -1,10 +1,12 @@
 #include "platform.h"
 #include "test.h"
 #include "cf.nova.h"
+
 #include "db_save.h"
 #include "db_query.h"
 #include "item_lib.c"
 #include "bson_lib.h"
+#include "cfstream.h"
 
 #include <setjmp.h>
 #include <cmockery.h>

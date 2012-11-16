@@ -4,12 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: server.c                                                            */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "server.h"
 #include "cf.nova.h"
 #include "client_protocol.h"
@@ -25,6 +19,7 @@
 #include "sysinfo.h"
 #include "cf-serverd-functions.h"
 #include "unix.h"
+#include "cfstream.h"
 
 // These are needed for the collect calls, integrating with hub
 

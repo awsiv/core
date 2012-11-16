@@ -28,6 +28,7 @@
 #include "keyring.h"
 #include "instrumentation.h"
 #include "unix.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

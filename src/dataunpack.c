@@ -9,6 +9,7 @@
 
 #include "sysinfo.h"
 #include "db_save.h"
+#include "cfstream.h"
 
 static char *CF_CODEBOOK[] =
 {

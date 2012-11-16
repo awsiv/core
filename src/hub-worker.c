@@ -12,7 +12,7 @@
 #include "files_names.h"
 #include "db_query.h"
 #include "db_save.h"
-
+#include "cfstream.h"
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostkey, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);

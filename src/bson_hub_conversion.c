@@ -4,21 +4,12 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: bson_hub_conversion.c                                               */
-/*                                                                           */
-/* Created: Fri May 04 11:43:22 2012                                         */
-/*                                                                           */
-/* Conversion functions from bson_iterator to CFE data structures            */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "bson_hub_conversion.h"
 
 #include "bson_lib.h"
 #include "files_names.h"
 #include "db-export-csv.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

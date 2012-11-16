@@ -5,6 +5,7 @@
 */
 
 #include "reporting-engine.h"
+
 #include "db_common.h"
 #include "db_query.h"
 #include "web_rbac.h"
@@ -13,7 +14,7 @@
 #include "assert.h"
 #include "conf.h"
 #include "log.h"
-
+#include "cfstream.h"
 #include "db-export-csv.h"
 #include "csv_writer.h"
 #include "files_interfaces.h"

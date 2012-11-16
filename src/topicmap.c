@@ -13,6 +13,7 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "matching.h"
+#include "cfstream.h"
 
 #include <assert.h>
 

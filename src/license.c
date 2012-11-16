@@ -5,16 +5,9 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: license.c                                                           */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
-#include <assert.h>
 
 #include "env_context.h"
 #include "promises.h"
@@ -28,6 +21,9 @@
 #include "license.h"
 #include "files_interfaces.h"
 #include "unix.h"
+#include "cfstream.h"
+
+#include <assert.h>
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

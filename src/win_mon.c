@@ -4,20 +4,14 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_mon.c                                                           */
-/*                                                                           */
-/* Created: Mon Sep 28 13:36:09 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 /* Functions related to windows performance monitoring (cf-monitord
    for windows). */
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "cfstream.h"
 
 static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 

@@ -1,11 +1,3 @@
-/*****************************************************************************/
-/*                                                                           */
-/* File: client_code.c<2>                                                    */
-/*                                                                           */
-/* Created: Wed Jun 16 18:22:22 2010                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -16,6 +8,7 @@
 #include "item_lib.h"
 #include "bson_lib.h"
 #include "datapack.h"
+#include "cfstream.h"
 
 static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);

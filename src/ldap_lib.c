@@ -13,6 +13,7 @@
 #include "files_names.h"
 #include "item_lib.h"
 #include "matching.h"
+#include "cfstream.h"
 
 #ifdef HAVE_LIBLDAP
 

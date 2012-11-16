@@ -4,18 +4,12 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_pipe.c                                                          */
-/*                                                                           */
-/* Created: Fri Sep 24 13:48:44 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "files_operators.h"
+
+#include "cfstream.h"
 
 // links pipe descriptors to process handles
 typedef struct
