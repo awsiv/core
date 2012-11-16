@@ -473,9 +473,9 @@ void SummarizeCompliance(int xml, int html, int csv, int embed, char *stylesheet
             fprintf(fout, "%s %s %s", NRX[cfx_date][cfb], start, NRX[cfx_date][cfe]);
             fprintf(fout, "%s %s %s", NRX[cfx_end][cfb], end, NRX[cfx_end][cfe]);
             fprintf(fout, "%s %s %s", NRX[cfx_version][cfb], version, NRX[cfx_version][cfe]);
-            fprintf(fout, "%s %d %s", NRX[cfx_kept][cfb], kept, NRX[cfx_kept][cfe]);
-            fprintf(fout, "%s %d %s", NRX[cfx_repaired][cfb], repaired, NRX[cfx_repaired][cfe]);
-            fprintf(fout, "%s %d %s", NRX[cfx_notrepaired][cfb], notrepaired, NRX[cfx_notrepaired][cfe]);
+            fprintf(fout, "%s %d %s", NRX[cfx_kept][cfb], (int)(kept + 0.5), NRX[cfx_kept][cfe]);
+            fprintf(fout, "%s %d %s", NRX[cfx_repaired][cfb], (int)(repaired + 0.5), NRX[cfx_repaired][cfe]);
+            fprintf(fout, "%s %d %s", NRX[cfx_notrepaired][cfb], (int)(notrepaired + 0.5), NRX[cfx_notrepaired][cfe]);
             fprintf(fout, "%s", NRX[cfx_entry][cfe]);
         }
         else if (html)
@@ -484,14 +484,15 @@ void SummarizeCompliance(int xml, int html, int csv, int embed, char *stylesheet
             fprintf(fout, "%s %s %s", NRH[cfx_date][cfb], start, NRH[cfx_date][cfe]);
             fprintf(fout, "%s %s %s", NRH[cfx_end][cfb], end, NRH[cfx_end][cfe]);
             fprintf(fout, "%s %s %s", NRH[cfx_version][cfb], version, NRH[cfx_version][cfe]);
-            fprintf(fout, "%s %d%% %s", NRH[cfx_kept][cfb], kept, NRH[cfx_kept][cfe]);
-            fprintf(fout, "%s %d%% %s", NRH[cfx_repaired][cfb], repaired, NRH[cfx_repaired][cfe]);
-            fprintf(fout, "%s %d%% %s", NRH[cfx_notrepaired][cfb], notrepaired, NRH[cfx_notrepaired][cfe]);
+            fprintf(fout, "%s %d%% %s", NRH[cfx_kept][cfb], (int)(kept + 0.5), NRH[cfx_kept][cfe]);
+            fprintf(fout, "%s %d%% %s", NRH[cfx_repaired][cfb], (int)(repaired + 0.5), NRH[cfx_repaired][cfe]);
+            fprintf(fout, "%s %d%% %s", NRH[cfx_notrepaired][cfb], (int)(notrepaired + 0.5), NRH[cfx_notrepaired][cfe]);
             fprintf(fout, "%s", NRH[cfx_entry][cfe]);
         }
         else if (csv)
         {
-            fprintf(fout, "%s,%s,%s,%d,%d,%d", start, end, version, kept, repaired, notrepaired);
+            fprintf(fout, "%s,%s,%s,%d,%d,%d", start, end, version,
+                    (int)(kept + 0.5), (int)(repaired + 0.5), (int)(notrepaired + 0.5));
         }
         else
         {
