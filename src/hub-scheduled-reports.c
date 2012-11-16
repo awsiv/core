@@ -93,7 +93,7 @@ static void ScheduleRunScheduledReports(void)
         return;
     }
 
-    if (SetDefaultPathsForSchedulingReports(conn))
+    if (!SetDefaultPathsForSchedulingReports(conn))
     {
         return;
     }
