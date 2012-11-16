@@ -194,9 +194,11 @@ bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_ca
     int rc = sqlite3_exec(db, sql, fn_ptr, arg_to_callback, &err_msg);
 
     if( rc != SQLITE_OK )
-    {
-        CfOut(cf_error, "", "SQL error: %s\n", err_msg);
-        //sqlite3_free(err_msg);
+    {        
+        syslog(LOG_ERR, "Error executing query - message: %s, sql: \"%s\"",
+               err_msg,
+               sql);
+
         return false;
     }
 
@@ -1206,14 +1208,19 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
 
     if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
     {
+        syslog(LOG_ERR, "Error calculating query result count - code: %d, message: %s, sql: \"%s\"",
+               REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
+               err_msg,
+               select_op);
         Sqlite3_FreeString(err_msg);
-        syslog(LOG_DEBUG, "code %d, message: %s (%s)", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error counting result", err_msg);
         return;
     }
 
     if(wr_info->total_lines <= 0)
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Query returned empty results");
+        syslog(LOG_ERR, "Query returned empty results - code %d, sql \"%s\"",
+               REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
+               select_op);
         return;
     }
 
@@ -1221,28 +1228,42 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
     wr_info->write_data = true;
 
     // write csv header
-    if (ExportColumnNamesCSV(db, select_op, wr_info) != REPORTING_ENGINE_ASYNC_SUCCESS)
+    int write_header_status = ExportColumnNamesCSV(db, select_op, wr_info);
+
+    if (write_header_status != REPORTING_ENGINE_ASYNC_SUCCESS)
     {
-        // TODO: handle error condition
+        syslog(LOG_ERR, "Error writing CSV header - code %d, sql \"%s\"",
+               write_header_status,
+               select_op);
+
         return;
     }
 
     if( !ExportWebReportStatusInitialize( wr_info ) )
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Error initializing status");
+        syslog(LOG_ERR, "Error initializing status - code %d, os errno: %d sql \"%s\"",
+               REPORTING_ENGINE_ASYNC_ERROR_IO,
+               errno,
+               select_op);
         return;
     }
 
     if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
     {
+        syslog(LOG_ERR, "Error executing SQL - code %d, sql \"%s\"",
+               REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
+               select_op);
+
         Sqlite3_FreeString(err_msg);
-        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY, "Error executing SQL");
         return;
     }
 
     if (!ExportWebReportStatusFinalize(wr_info))
     {
-        syslog(LOG_DEBUG, "code %d, message: %s", REPORTING_ENGINE_ASYNC_ERROR_IO, "Error finalizing status");
+        syslog(LOG_ERR, "Error finalizing status - code %d, os errno: %d, sql \"%s\"",
+               REPORTING_ENGINE_ASYNC_ERROR_IO,
+               errno,
+               select_op);
         return;
     }
 }
