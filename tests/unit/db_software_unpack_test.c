@@ -1,8 +1,10 @@
 #include "platform.h"
 #include "test.h"
 #include "cf.nova.h"
+
 #include "item_lib.h"
 #include "conversion.h"
+#include "string_lib.h"
 
 #include <setjmp.h>
 #include <cmockery.h>

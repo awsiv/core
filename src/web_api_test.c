@@ -2,6 +2,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
+
+#include "string_lib.h"
 #include "files_names.h"
 
 #define WORD_LEN  10

@@ -7,6 +7,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
 #include "files_names.h"
 #include "db_query.h"
 #include "bson_lib.h"
@@ -14,6 +15,7 @@
 #include "sort.h"
 #include "matching.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

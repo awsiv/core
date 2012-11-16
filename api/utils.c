@@ -8,6 +8,7 @@
 #include "cf.nova.h"
 #include "db_common.h"
 #include "install.h"
+#include "string_lib.h"
 
 static JsonElement *PackageResultMeta(size_t page, size_t count, size_t total);
 

@@ -25,6 +25,7 @@
 #include "conversion.h"
 
 #include "env_context.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

@@ -8,6 +8,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
+
 #include "scorecards.h"
 #include "bson_lib.h"
 #include "db_save.h"
@@ -22,6 +23,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "web-report-export.h"
 #include "matching.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

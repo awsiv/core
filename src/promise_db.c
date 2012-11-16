@@ -13,6 +13,7 @@
 #include "files_names.h"
 #include "db_common.h"
 #include "bson_lib.h"
+#include "string_lib.h"
 
 static void BsonAppendPromisee(bson *b, const Rval *promisee);
 static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body);

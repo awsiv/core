@@ -7,6 +7,7 @@
 #include "db_save.h"
 #include "conversion.h"
 #include "sort.h"
+#include "string_lib.h"
 
 static bool _KeepInternal(void *_user, void *_data)
 {

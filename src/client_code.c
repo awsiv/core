@@ -10,6 +10,7 @@
 #include "bson_lib.h"
 #include "datapack.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);

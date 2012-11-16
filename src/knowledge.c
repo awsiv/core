@@ -7,11 +7,13 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
 #include "files_names.h"
 #include "item_lib.h"
 #include "datapack.h"
 #include "cfstream.h"
 #include "fncall.h"
+#include "string_lib.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"

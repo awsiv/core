@@ -25,6 +25,7 @@
 #include "hashes.h"
 #include "attributes.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

@@ -14,6 +14,7 @@
 #include "install.h"
 #include "sort.h"
 #include "hashes.h"
+#include "string_lib.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"

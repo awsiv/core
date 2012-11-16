@@ -1,7 +1,9 @@
 #include "web-report-export.h"
+
 #include "db-export-csv.h"
 #include "db_query.h"
 #include "scope.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

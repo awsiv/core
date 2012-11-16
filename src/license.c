@@ -22,6 +22,7 @@
 #include "license.h"
 #include "unix.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

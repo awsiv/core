@@ -7,6 +7,7 @@
 #include "item_lib.c"
 #include "bson_lib.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <setjmp.h>
 #include <cmockery.h>

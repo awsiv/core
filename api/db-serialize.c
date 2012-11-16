@@ -1,6 +1,7 @@
 #include "db-serialize.h"
 
 #include "log.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

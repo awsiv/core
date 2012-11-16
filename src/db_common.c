@@ -9,6 +9,7 @@
 #include "db_common.h"
 #include "bson_lib.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

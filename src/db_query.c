@@ -23,6 +23,7 @@
 #include "install.h"
 #include "matching.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

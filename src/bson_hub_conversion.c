@@ -10,6 +10,7 @@
 #include "files_names.h"
 #include "db-export-csv.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

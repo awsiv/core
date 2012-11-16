@@ -29,6 +29,7 @@
 #include "item_lib.h"
 #include "log.h"
 #include "matching.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

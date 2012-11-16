@@ -11,6 +11,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "json.h"
 #include "matching.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

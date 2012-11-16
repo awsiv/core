@@ -7,6 +7,7 @@
 #include "crypto.h"
 #include "reporting-engine.h"
 #include "files_hashes.h"
+#include "string_lib.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(cfapi);
 

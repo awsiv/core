@@ -6,6 +6,7 @@
 #include "db_query.h"
 #include "scope.h"
 #include "csv_writer.h"
+#include "string_lib.h"
 
 #include <assert.h>
 

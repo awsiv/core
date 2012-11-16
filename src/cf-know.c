@@ -39,6 +39,7 @@
 #include "unix.h"
 #include "attributes.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
