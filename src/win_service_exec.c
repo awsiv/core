@@ -20,6 +20,7 @@
 #include "cfstream.h"
 #include "cf-execd-runner.h"
 #include "reporting.h"
+#include "string_lib.h"
 
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE statusHandle;
