@@ -18,6 +18,7 @@
 #include "db-export-csv.h"
 #include "csv_writer.h"
 #include "files_interfaces.h"
+#include "files_hashes.h"
 
 #define SQL_TABLE_COUNT 8
 

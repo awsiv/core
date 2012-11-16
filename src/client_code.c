@@ -2,6 +2,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "files_hashes.h"
 #include "db_save.h"
 #include "db_query.h"
 #include "crypto.h"

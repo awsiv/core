@@ -18,8 +18,8 @@
 #include "conversion.h"
 #include "files_lib.h"
 #include "files_interfaces.h"
+#include "files_hashes.h"
 #include "license.h"
-#include "files_interfaces.h"
 #include "unix.h"
 #include "cfstream.h"
 
