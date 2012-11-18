@@ -428,6 +428,21 @@ void Nova_ShowTopic(char *qualified_topic)
 
         WriterClose(writer);
     }
+
+    json = Nova2PHP_list_promises_with_promisee(qualified_topic, "admin");
+
+    if (json)
+    {
+        writer = NULL;
+        writer = StringWriter();
+
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\nPromisee/stakeholders: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
+    }
+    
 }
 
 /*****************************************************************************/
