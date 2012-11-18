@@ -351,11 +351,6 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     {
     case CF_SCALAR:
         WriterWriteF(writer, "promisees::\n\n");
-        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser), NOVA_GIVES_PR);
-        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
-        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, NovaEscape(pp->promiser), NOVA_STAKEHOLDER);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
@@ -407,10 +402,9 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         for (rp = (Rlist *) pp->promisee.item; rp != NULL; rp = rp->next)
         {
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
-            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
-                    NOVA_GIVES_PR);
+            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER, NovaEscape(pp->promiser), NOVA_STAKEHOLDER_INV);
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
-            WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+            WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER, promise_id, NOVA_STAKEHOLDER_INV);
 
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
             WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
