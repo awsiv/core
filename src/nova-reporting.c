@@ -2597,7 +2597,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
 
                 char ns[CF_MAXVARSIZE] = { 0 };
                 char bundle[CF_MAXVARSIZE] = { 0 };
-                if (scope)
+                if (strlen(scope) > 0)
                 {
                     SplitScopeName(scope, ns, bundle);
                 }
