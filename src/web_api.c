@@ -5214,41 +5214,49 @@ JsonElement *Nova2PHP_list_service_ports()
 
 JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *username)
 {
- JsonElement *array_promises = JsonArrayCreate(20);
- int id = Nova_GetTopicIdForTopic(name);
- Item *list = Nova_NearestNeighbours(id, NOVA_USES_PR);
- 
- list = SortItemListNames(list);
+    JsonElement *array_promises = JsonArrayCreate(20);
+    char qualified[CF_BUFSIZE];
 
-
- // RBACPruneKnowledge()
- 
-  for (Item *ip = list; ip != NULL; ip = ip->next)
+    if (strstr(name, "::"))
     {
-    if (strcmp(ip->classes, "promises") == 0)
-       {
-       JsonElement *user = JsonObjectCreate(3);
-
-       if (RBACPruneKnowledge(ip->name, ip->classes, username))
-          {
-          JsonObjectAppendString(user, "handle", RBAC_ERROR_MSG);
-          JsonObjectAppendString(user, "context", ip->classes);
-          JsonObjectAppendInteger(user, "topic_id", ip->counter);
-          }
-       else
-          {
-          JsonObjectAppendString(user, "handle", ip->name);
-          JsonObjectAppendString(user, "context", ip->classes);
-          JsonObjectAppendInteger(user, "topic_id", ip->counter);
-          }
-       
-       JsonArrayAppendObject(array_promises, user);         
-       }
+        strncpy(qualified, name, CF_BUFSIZE-1);
+    }
+    else
+    {
+        snprintf(qualified, CF_BUFSIZE, "promisees::%s", name);
     }
 
- DeleteItemList(list);
+    int id = Nova_GetTopicIdForTopic(qualified);
 
- return array_promises;
+    Item *list = Nova_NearestNeighbours(id, NOVA_STAKEHOLDER);
+
+    list = SortItemListNames(list);
+
+    for (Item *ip = list; ip != NULL; ip = ip->next)
+    {
+        if (strcmp(ip->classes, "promises") == 0)
+        {
+            JsonElement *user = JsonObjectCreate(3);
+
+            if (RBACPruneKnowledge(ip->name, ip->classes, username))
+            {
+                JsonObjectAppendString(user, "handle", RBAC_ERROR_MSG);
+                JsonObjectAppendString(user, "context", ip->classes);
+                JsonObjectAppendInteger(user, "topic_id", ip->counter);
+            }
+            else
+            {
+                JsonObjectAppendString(user, "handle", ip->name);
+                JsonObjectAppendString(user, "context", ip->classes);
+                JsonObjectAppendInteger(user, "topic_id", ip->counter);
+            }
+
+            JsonArrayAppendObject(array_promises, user);
+        }
+    }
+
+    DeleteItemList(list);
+    return array_promises;
 }
 
 
