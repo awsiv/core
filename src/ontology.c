@@ -445,7 +445,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                                  DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
-                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
+                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
                                  }
                              }
                        }
