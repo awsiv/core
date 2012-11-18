@@ -513,14 +513,14 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
 //DeleteRlist(depends_on);
 
+    WriterWriteF(writer," class_contexts::\n");
+
     for (rp = class_list; rp != NULL; rp = rp->next)
     {
         WriterWriteF(writer, "  \"%s\"\n", promise_id);
         WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_USES_PR,
                 NovaEscape(rp->item), NOVA_GIVES_PR);
     }
-
-    WriterWriteF(writer," class_contexts::\n");
 
     // Register which classes affect class expressions
     
