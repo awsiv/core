@@ -518,8 +518,8 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     for (rp = class_list; rp != NULL; rp = rp->next)
     {
         WriterWriteF(writer, "  \"%s\"\n", promise_id);
-        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_USES_PR,
-                NovaEscape(rp->item), NOVA_GIVES_PR);
+        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATED,
+                NovaEscape(rp->item), NOVA_ACTIVATES);
     }
 
     // Register which classes affect class expressions
@@ -1324,7 +1324,6 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 void DeClassifyTopic(char *classified_topic, char *topic, char *context)
 {
     char *spm, *sp;
-    int classified = true;
     context[0] = '\0';
     topic[0] = '\0';
 
@@ -1347,7 +1346,6 @@ void DeClassifyTopic(char *classified_topic, char *topic, char *context)
             }
             else if (!isalnum(*sp) && *sp != '_')
             {
-                classified = false;
                 strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
                 break;
             }
