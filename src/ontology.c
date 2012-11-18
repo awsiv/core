@@ -87,7 +87,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     {
         return;
     }
-    
+
     strcpy(promise_id, PromiseID(pp));
 
     WriterWriteF(writer, "\ntopics:\n\n");
@@ -351,9 +351,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     {
     case CF_SCALAR:
         WriterWriteF(writer, "promisees::\n\n");
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, NovaEscape(pp->promiser), NOVA_STAKEHOLDER);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER, NovaEscape(pp->promiser), NOVA_STAKEHOLDER_INV);
+        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
+        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER, promise_id, NOVA_STAKEHOLDER_INV);
 
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
