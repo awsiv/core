@@ -87,7 +87,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     {
         return;
     }
-    
+
     strcpy(promise_id, PromiseID(pp));
 
     WriterWriteF(writer, "\ntopics:\n\n");
@@ -352,13 +352,9 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     case CF_SCALAR:
         WriterWriteF(writer, "promisees::\n\n");
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser), NOVA_GIVES_PR);
+        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER, NovaEscape(pp->promiser), NOVA_STAKEHOLDER_INV);
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
-        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, NovaEscape(pp->promiser), NOVA_STAKEHOLDER);
-        WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
-        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER_INV, promise_id, NOVA_STAKEHOLDER);
+        WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER, promise_id, NOVA_STAKEHOLDER_INV);
 
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", KM_AFFECTS_CERT_B, promise_id,
@@ -407,10 +403,9 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         for (rp = (Rlist *) pp->promisee.item; rp != NULL; rp = rp->next)
         {
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
-            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, NovaEscape(pp->promiser),
-                    NOVA_GIVES_PR);
+            WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER, NovaEscape(pp->promiser), NOVA_STAKEHOLDER_INV);
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
-            WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+            WriterWriteF(writer, "      association => a(\"%s\",\"promises::%s\",\"%s\");\n", NOVA_STAKEHOLDER, promise_id, NOVA_STAKEHOLDER_INV);
 
             WriterWriteF(writer, "  \"%s\"\n", (const char *) rp->item);
             WriterWriteF(writer, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
@@ -451,7 +446,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                                  DeClassifyTopic((char *)rp3->item, t, c);
                                  if (strcmp(t, rp->item) != 0)
                                  {
-                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"handles::%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
+                                     WriterWriteF(writer, "%s:: \"%s\"  association => a(\"%s\",\"%s\",\"%s\");\n", c, t, NOVA_STAKEHOLDER_INV,(const char *) rp->item, NOVA_STAKEHOLDER);
                                  }
                              }
                        }
@@ -519,14 +514,14 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
 //DeleteRlist(depends_on);
 
+    WriterWriteF(writer," class_contexts::\n");
+
     for (rp = class_list; rp != NULL; rp = rp->next)
     {
         WriterWriteF(writer, "  \"%s\"\n", promise_id);
-        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_USES_PR,
-                NovaEscape(rp->item), NOVA_GIVES_PR);
+        WriterWriteF(writer, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATED,
+                NovaEscape(rp->item), NOVA_ACTIVATES);
     }
-
-    WriterWriteF(writer," class_contexts::\n");
 
     // Register which classes affect class expressions
     
@@ -1330,7 +1325,6 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 void DeClassifyTopic(char *classified_topic, char *topic, char *context)
 {
     char *spm, *sp;
-    int classified = true;
     context[0] = '\0';
     topic[0] = '\0';
 
@@ -1342,7 +1336,7 @@ void DeClassifyTopic(char *classified_topic, char *topic, char *context)
     // Unqualified names may contain ":" but we assume the first "::" means a qualified context
     // as long as the context is a valid identifier
     
-    if (spm = strstr(classified_topic, "::"))
+    if ((spm = strstr(classified_topic, "::")))
     {
         for (sp = classified_topic; *sp != '\0'; sp++)
         {
@@ -1353,7 +1347,6 @@ void DeClassifyTopic(char *classified_topic, char *topic, char *context)
             }
             else if (!isalnum(*sp) && *sp != '_')
             {
-                classified = false;
                 strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
                 break;
             }

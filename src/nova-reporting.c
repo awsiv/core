@@ -23,6 +23,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "communication.h"
+#include "promises.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -2359,7 +2360,9 @@ void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const
 
     if (context->report_writers[REPORT_OUTPUT_TYPE_KNOWLEDGE])
     {
-        Nova_MapPromiseToTopic(context, pp, version);
+        Promise *exp = DeRefCopyPromise(pp->bundle, pp);
+        Nova_MapPromiseToTopic(context, exp, version);
+        DeletePromise(exp);
     }
 #else
     ShowPromiseInReport(context, type, version, pp, indent);
@@ -2594,7 +2597,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
 
                 char ns[CF_MAXVARSIZE] = { 0 };
                 char bundle[CF_MAXVARSIZE] = { 0 };
-                if (scope)
+                if (strlen(scope) > 0)
                 {
                     SplitScopeName(scope, ns, bundle);
                 }

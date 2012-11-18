@@ -928,7 +928,6 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
 
 char *Name2Id(char *s);
 void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *inferences);
-
 void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *pp, const char *version);
 void Nova_BundleReference(FILE *fp, char *bundle);
 void Nova_TypeNode(FILE *fp, char *type);
