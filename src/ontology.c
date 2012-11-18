@@ -1335,7 +1335,7 @@ void DeClassifyTopic(char *classified_topic, char *topic, char *context)
     // Unqualified names may contain ":" but we assume the first "::" means a qualified context
     // as long as the context is a valid identifier
     
-    if (spm = strstr(classified_topic, "::"))
+    if ((spm = strstr(classified_topic, "::")))
     {
         for (sp = classified_topic; *sp != '\0'; sp++)
         {
