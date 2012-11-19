@@ -855,18 +855,16 @@ static bool Sqlite3_CommitTransaction(sqlite3 *db)
 
 int BuildCSVOutput(void *out, int argc, char **argv, char **azColName)
 {
-    char csv_row[CF_BUFSIZE] = "";
-
-    for(int i=0; i<argc; i++)
-    {        
-        strncat(csv_row, argv[i] ? argv[i] : "NULL", CF_BUFSIZE - 2);
-        strcat(csv_row, ",");
-    }
-
-    ReplaceTrailingChar(csv_row, ',', '\n');
-
     Writer *writer = (Writer *) out;
-    WriterWriteF(writer, "%s", csv_row);
+
+    CsvWriter *c = CsvWriterOpen(writer);
+
+    for (int i = 0; i < argc; i++)
+    {
+        CsvWriterField(c, argv[i] ? argv[i] : "NULL");
+    }
+    CsvWriterNewRecord(c);
+    CsvWriterClose(c);
 
     return 0;
 }
