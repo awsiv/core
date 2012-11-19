@@ -407,6 +407,18 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                 }
 
                 Writer *writer = FileWriter(fp);
+                assert(writer);
+
+                int column_count = WriteColumnNamesCsv(db, query, writer);
+
+                if (column_count < 0)
+                {
+                    CfOut(cf_error, "DBScheduledCSVReportGeneration", "Error writing CSV header - sql: \"%s\"", query);
+
+                    WriterClose(writer);
+                    Sqlite3_DBClose(db);
+                    return false;
+                }
 
                 if (!(Sqlite3_Execute(db, query, (void *) BuildCSVOutput, (void *) writer, err_msg)))
                 {
