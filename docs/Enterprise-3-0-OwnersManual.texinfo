@@ -366,7 +366,7 @@ Please see @ref{Frequently Asked Questions} or @ref{Troubleshooting} if you have
 @c * Goals App::                   
 @c * Compliance App::              
 * User Management::             
-* Mission Portal Settings::     
+* Settings::     
 @end menu
 
 The Mission Portal is the centerpiece
@@ -375,7 +375,7 @@ of user interaction with CFEngine 3 Enterprise. It can be accessed by connecting
 @image{img-mission-portal-3-0-rc,15cm,,Mission Portal}
 @center Figure: The Mission Portal
 
-@noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} and @i{Knowledge} apps, these can be made visible by enabling them in @ref{Mission Portal Settings}). Each app offers insight into different aspects of operations:
+@noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} and @i{Knowledge} apps, these can be made visible by enabling them in @ref{Settings}). Each app offers insight into different aspects of operations:
 
 @itemize -
 @item Hosts - A place to see the current state of system repair @c (@ref{Hosts App})
@@ -400,7 +400,7 @@ In addition all Mission Portal apps have a top menu containing at least the @i{A
 @item Settings Menu - Log out, access to Mission Portal settings, user management and roles (see separate sections)
 @end itemize
 
-The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. The apps that are shown is configurable through the @ref{Mission Portal Settings}, the admin user can choose to not display the apps that are not relevant for everyday use.
+The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. The apps that are shown is configurable through the @ref{Settings}, the admin user can choose to not display the apps that are not relevant for everyday use.
 
 If you go directly to explore the different apps, please note that some of the displays in the Mission Portal may be blank when you log in just after installation. It may also take some time for the system to fully converge, do not get troubled if initially there are some promises repaired or not kept (yellow and red colors).
 
@@ -814,8 +814,8 @@ The @i{Compliance} app gives a view over the current state and history of compli
 @c todo
 
 @c ----------------------------------------------------
-@c @node User Management, Mission Portal Settings, Compliance App, Quickstart - The Mission Portal
-@node User Management, Mission Portal Settings, Knowledge App, Quickstart - The Mission Portal
+@c @node User Management, Settings, Compliance App, Quickstart - The Mission Portal
+@node User Management, Settings, Knowledge App, Quickstart - The Mission Portal
 @section User Management
 
 On a fresh install the default user @i{admin} belongs to the @i{admin} user group and has access everything in the Mission Portal. The @i{admin} user can add users to the internal database, set up external authentication and define roles to limit access.
@@ -845,8 +845,19 @@ information. User-authentication is carried out when users log on to the Mission
 
 
 @c ----------------------------------------------------
-@node Mission Portal Settings,  , User Management, Quickstart - The Mission Portal
-@section Mission Portal Settings
+@node Settings, , User Management, Quickstart - The Mission Portal
+@section Settings
+
+@menu
+* Mission Portal Settings::
+* Manage Apps::
+* Hub Replication Status::
+* System Identifier::
+@end menu
+
+@c ----------------------------------------------------
+@node Mission Portal Settings, Manage Apps, Settings, Settings
+@subsection Mission Portal Settings
 
 Mission Portal settings allow the user to set or edit the administrative email, administrative role, authentication method, activation of role based access control (RBAC), show/hide the Business and Planning rooms on the Mission Portal front page, and the unreachable (blue host) threshold.
 
@@ -879,18 +890,43 @@ User group that will be able to access the Mission Portal through internal datab
 CFEngine 3 Enterprise 2.2.0 introduces Role-Based Access Control (RBAC) for all hosts, reports and promises shown in the Mission Portal. RBAC does not cover access control for making policy changes. If you wish to use RBAC in combination with external authentication (LDAP or AD), we recommend that you wait to turn on RBAC until you log on with the LDAP or AD user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged in with an internal database user in this case). RBAC can be globally switched on or off, but see also @ref{User Management} for more details.
 
 @sp 1
-@noindent @b{Show Business Room}@*
-Set whether the Business room should be visible or not on the Mission Portal main page. This is a global setting that affects all users.
-
-@sp 1
-@noindent @b{Show Planning Room}@*
-Set whether the planning room should be visible or not on the Mission Portal main page. This is a global setting that affects all users.
-
-@sp 1
-@noindent @b{Unreachable host threshold}
+@noindent @b{Unreachable host threshold}@*
 Time after which a host is defined as unreachable (blue host; the hub is unable to reach this host due to connection problems). Default threshold is 15 minutes.
 
+@sp 1
+@noindent @b{Upload you company logo}@*
+Image that will be shown on the top of PDF reports that are exported from the Mission Portal. Browse, choose and upload a file from your computer.
 
+
+@c ----------------------------------------------------
+@node Manage Apps, Hub Replication Status, Mission Portal Settings, Settings
+@subsection Manage Apps
+
+Determine which apps should be active (on) or inactive (off) in the Mission Portal. The @i{Policy} and @i{Knowledge} apps are turned off by default. These are global settings that affect all users.
+
+@sp 1
+@image{img-manage-apps-3-0,15cm,,Manage Apps}
+@center Figure: Manage Apps
+@sp 1
+
+
+@c ----------------------------------------------------
+@node Hub Replication Status, System Identifier, Manage Apps, Settings
+@subsection Hub Replication Status
+
+Shows status of hub replication if it has been set through policy. Contact your sales representative if you wish help with setting this up.
+
+
+@c ----------------------------------------------------
+@node System Identifier, , Hub Replication Status, Settings
+@subsection System Identifier
+
+The system identifier is used to choose what attribute of a host will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT)). See @ref{Call-Collect}.
+
+@sp 1
+@image{img-system-identifier-3-0,15cm,,System Identifier}
+@center Figure: System Identifier
+@sp 1
 
 
 @c *****************************************************
@@ -2871,7 +2907,7 @@ access:
 
 You also have to make sure that any firewalls allow these connections to pass.
 
-In addition you should choose a system identifier in the Mission Portal, see @ref{Mission Portal Settings}. This is the attribute by which the hosts will be identified in views and reports.
+In addition you should choose a system identifier in the Mission Portal, see @ref{System Identifier}. This is the attribute by which the hosts will be identified in views and reports.
 
 
 @c *****************************************************
@@ -4941,7 +4977,7 @@ Note that almost all of the @code{cfreport} database is recreated with data coll
 
 External authentication is available for CFEngine 3 Nova 2.1 and later versions, but by default the Mission Portal will use the embedded database to store user information (default user name and password on the Mission Portal login page are "admin" and "admin"). Note that users in the default database will be locked out of the Mission Portal upon configuration of external authentication. They will regain access if external authentication is deactivated by selecting the Database button on the Mission Portal Settings page (see below).
 
-To enable external authentication on a fresh install, log on to the Mission Portal with the default user and password and go to "User Settings and Preferences" (see @ref{Mission Portal Settings}). Click "Mission Portal Settings" and enter the appropriate configuration for LDAP or Active Directory as described below. Note that the actual setup of LDAP or Active Directory (definition of users, directory hierarchy, etc.) has to be done independently and is not covered in this document.
+To enable external authentication on a fresh install, log on to the Mission Portal with the default user and password and go to @ref{Settings}). Click "Mission Portal Settings" and enter the appropriate configuration for LDAP or Active Directory as described below. Note that the actual setup of LDAP or Active Directory (definition of users, directory hierarchy, etc.) has to be done independently and is not covered in this document.
 
 
 @menu
