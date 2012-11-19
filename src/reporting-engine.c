@@ -85,7 +85,7 @@
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
-static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op);
+static JsonElement *GetColumnNamesJson(sqlite3 *db, const char *select_op);
 
 /* Conversion functions */
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
@@ -258,10 +258,12 @@ static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *sele
         return PackageReportingEngineResult(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    return PackageReportingEngineResult(select_op, GetColumnNames(db, select_op), rows);
+    return PackageReportingEngineResult(select_op, GetColumnNamesJson(db, select_op), rows);
 }
 
-static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
+/******************************************************************/
+
+static JsonElement *GetColumnNamesJson(sqlite3 *db, const char *select_op)
 {
     sqlite3_stmt *statement;
     JsonElement *columns = JsonArrayCreate(5);
