@@ -454,17 +454,18 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
             return false;
         }
 
-        /* copy file to web root */
+        /* copy file to (web_root)/tmp - not configurable for now */
+        char dest_dir[CF_MAXVARSIZE] = {0};
+        snprintf(dest_dir, CF_MAXVARSIZE, "%s/tmp", docroot);
 
-        struct stat dest_dir;
+        struct stat dest_stat;
+        stat(dest_dir, &dest_stat);
 
-        stat(docroot, &dest_dir);
-
-        if (!S_ISDIR(dest_dir.st_mode))
+        if (!S_ISDIR(dest_stat.st_mode))
         {
             CfOut(cf_error, "DBScheduledCSVReportGeneration",
                   "!! Invalid destination dir: \"%s\" ",
-                  docroot);
+                  dest_dir);
 
             return false;
         }
@@ -481,7 +482,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
 
         // change ownership to be the same as "docroot"
         // this file needs to be read by web-user for pdf generation / download
-        if (chown(path_dest, dest_dir.st_uid, dest_dir.st_gid) == -1)
+        if (chown(path_dest, dest_stat.st_uid, dest_stat.st_gid) == -1)
         {
             CfOut(cf_error, "DBScheduledCSVReportGeneration",
                   "!! Cannot set ownership on file \"%s\", os errno: %d ",
