@@ -85,7 +85,7 @@
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
 static bool Sqlite3_CommitTransaction(sqlite3 *db);
 static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op);
-static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op);
+static JsonElement *GetColumnNamesJson(sqlite3 *db, const char *select_op);
 
 /* Conversion functions */
 static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter);
@@ -258,10 +258,12 @@ static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *sele
         return PackageReportingEngineResult(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
 
-    return PackageReportingEngineResult(select_op, GetColumnNames(db, select_op), rows);
+    return PackageReportingEngineResult(select_op, GetColumnNamesJson(db, select_op), rows);
 }
 
-static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
+/******************************************************************/
+
+static JsonElement *GetColumnNamesJson(sqlite3 *db, const char *select_op)
 {
     sqlite3_stmt *statement;
     JsonElement *columns = JsonArrayCreate(5);
@@ -284,6 +286,40 @@ static JsonElement *GetColumnNames(sqlite3 *db, const char *select_op)
     }
 
     return columns;
+}
+
+/******************************************************************/
+
+int WriteColumnNamesCsv(sqlite3 *db, const char *select_op, Writer *writer)
+{
+    assert(writer);
+
+    sqlite3_stmt *statement;
+
+    int rc = sqlite3_prepare_v2(db, select_op, -1, &statement, 0);
+
+    if (rc != SQLITE_OK)
+    {
+        return -1;
+    }
+
+    int column_count = sqlite3_column_count(statement);
+
+    if (column_count > 0)
+    {
+        CsvWriter *c = CsvWriterOpen(writer);
+
+        for (int i = 0; i < column_count; i++)
+        {
+            CsvWriterField(c, sqlite3_column_name(statement, i));
+        }
+
+        CsvWriterClose(c);
+    }
+
+    sqlite3_finalize(statement);
+
+    return column_count;
 }
 
 /******************************************************************/
@@ -819,18 +855,16 @@ static bool Sqlite3_CommitTransaction(sqlite3 *db)
 
 int BuildCSVOutput(void *out, int argc, char **argv, char **azColName)
 {
-    char csv_row[CF_BUFSIZE] = "";
-
-    for(int i=0; i<argc; i++)
-    {        
-        strncat(csv_row, argv[i] ? argv[i] : "NULL", CF_BUFSIZE - 2);
-        strcat(csv_row, ",");
-    }
-
-    ReplaceTrailingChar(csv_row, ',', '\n');
-
     Writer *writer = (Writer *) out;
-    WriterWriteF(writer, "%s", csv_row);
+
+    CsvWriter *c = CsvWriterOpen(writer);
+
+    for (int i = 0; i < argc; i++)
+    {
+        CsvWriterField(c, argv[i] ? argv[i] : "NULL");
+    }
+    CsvWriterNewRecord(c);
+    CsvWriterClose(c);
 
     return 0;
 }
@@ -865,47 +899,29 @@ static ReportingEngineAsyncError ExportColumnNamesCSV(sqlite3 *db, const char *s
     assert(select_op);
     assert(db);
 
-    ReportingEngineAsyncError error = REPORTING_ENGINE_ASYNC_SUCCESS;
-    sqlite3_stmt *statement;
-
-    int rc = sqlite3_prepare_v2(db, select_op, -1, &statement, 0);
-
-    if (rc == SQLITE_OK)
+    FILE *fout = fopen(wr_info->csv_path, "w");
+    if (!fout)
     {
-        int column_count = sqlite3_column_count(statement);
-
-        if (column_count > 0)
-        {
-            Writer *writer = FileWriter(fopen(wr_info->csv_path, "w"));
-
-            if (wr_info->report_type & REPORT_FORMAT_CSV)
-            {
-                CsvWriter *c = CsvWriterOpen(writer);
-                for (int i = 0; i < column_count; i++)
-                {
-                    CsvWriterField(c, sqlite3_column_name(statement, i));
-                }
-
-                CsvWriterNewRecord(c);
-                CsvWriterClose(c);
-            }
-            WriterClose(writer);
-        }
-        else
-        {
-            // NOTE: since the rows count are > 0 before this method is called
-            // this has to be an error
-            error = REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY;
-        }
-
-        sqlite3_finalize(statement);
-    }
-    else
-    {
-        error = REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE;
+        return REPORTING_ENGINE_ASYNC_ERROR_IO;
     }
 
-    return error;
+    Writer *writer = FileWriter(fout);
+    assert(writer);
+
+    int column_count = WriteColumnNamesCsv(db, select_op, writer);
+
+    if (column_count < 0)
+    {
+        return REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE;
+    }
+    else  if (column_count == 0)
+    {
+        // NOTE: since the rows count are > 0 before this method is called
+        // this has to be an error
+        return REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY;
+    }
+
+    return REPORTING_ENGINE_ASYNC_SUCCESS;
 }
 
 /******************************************************************/
