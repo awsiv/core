@@ -23,7 +23,7 @@
 @titlepage
 @title CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 16. November 2012 @c also update in ifnottex section below
+@subtitle Updated 19. November 2012 @c also update in ifnottex section below
 @author CFEngine
 @c @smallbook
 @fonttextsize 10
@@ -48,7 +48,7 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 16. November 2012
+Updated 19. November 2012
 @node Top, Introduction, (dir), (dir)
 @top CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
 @end ifnottex
@@ -93,7 +93,7 @@ Updated 16. November 2012
 @node  Introduction, Requirements, Top, Top
 @chapter Introduction
 
-Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine 3 Enterprise 3.0 up and running whether you are a beginner or an experienced CFEngine user. The following links will take you to commonly used sections, see above for a complete table of contents:
+Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine 3 Enterprise 3.0 up and running and show additional features of CFEngine Enterprise compared to CFEngine Community. The following links will take you to commonly used sections, see above for a complete table of contents:
 
 @itemize -
 @item @ref{Requirements}
@@ -108,9 +108,9 @@ Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configur
 @item @ref{Upgrading CFEngine 3 Enterprise}
 @end itemize
 
-We have made big changes to the Mission Portal to accomodate the needs of infrastructure engineers and IT managers alike. The front page consists of a list of applications, or apps, that give insight into different aspects of your infrastructure. Focus on a more intuitive UI with enhanced help functions has made the Mission Portal both easier and more powerful to use.
+We have made big changes to the Mission Portal to accommodate the needs of infrastructure engineers and IT managers alike. The front page consists of a list of applications, or apps, that give insight into different aspects of your infrastructure. Focus on a more intuitive UI with enhanced help functions has made the Mission Portal both easier and more powerful to use.
 
-CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. The product is described in full detail at @url{http://cfengine.com/25free}. Please note that CFEngine 3 Enterprise should not be installed as an upgrade to CFEngine Community. I that case uninstall CEngine Community, do a clean install of CFEngine 3 Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
+CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. This product is described in full detail at @url{http://cfengine.com/25free}. Please note that CFEngine 3 Enterprise should not be installed as an upgrade to CFEngine Community. In that case uninstall CEngine Community, do a clean install of CFEngine 3 Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
 
 @menu
 * About CFEngine 3 Enterprise::  
@@ -125,11 +125,7 @@ CFEngine 3 Enterprise is a commercially licensed version of the core CFEngine
 software@footnote{Major version 3} with enterprise library extensions. All of
 the documentation for CFEngine 3 applies to CFEngine 3 Enterprise. 
 
-The aim of CFEngine 3 Enterprise is to offer a knowledge-enhanced framework for configuration man-
-agement that goes beyond mere technical configuration to support the needs of businesses. Features
-include compliance management, reporting and business integration, and tools for handling necessary
-complexity. CFEngine 3 Enterprise has features to support Cloud Computing for public and private clouds, as
-well as greater integration facilities with database resources.
+The aim of CFEngine 3 Enterprise is to offer a knowledge-enhanced framework for configuration management that goes beyond mere technical configuration to support the needs of businesses. Features include compliance management, reporting and business integration, and tools for handling necessary complexity. CFEngine 3 Enterprise has features to support Cloud Computing for public and private clouds, as well as greater integration facilities with database resources.
 
 
 @c *****************************************************
@@ -152,9 +148,9 @@ different parts of your organization independently. The CFEngine technology is n
 nature. Most users choose to centralize updating of policy and report aggregation for convenience
 however.
 
-The default architecture and configuration skeleton of CFEngine 3 Enterprise is expected to scale to a few thousand hosts with a
-dedicated policy hub. In such a case, your hub machine should have at least 2 GB of memory and a modern processor.
-For machines under CFEngine's management (clients), a full installation of CFEngine 3 Enterprise requires about 20 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have 256 MB available memory on the clients.
+The default architecture and configuration skeleton of CFEngine 3 Enterprise is expected to scale to a few thousand hosts with a dedicated policy hub. For the hub (policy server) we recommend that you have at least 2 GB of memory and a modern processor. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub. Please contact your sales representative if you have any questions regarding these numbers.
+
+For machines under CFEngine's management (clients), a full installation of CFEngine 3 Enterprise requires about 20 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have at least 256 MB available memory on the clients.
 
 
 @c --------------------------------------------------
@@ -165,9 +161,13 @@ CFEngine can be made to run on most operating systems. For efficiency
 CFEngine only supports packages for a number of recent popular operating systems,
 which should be up to date with patches. If we don't have packages for
 your particular operating systems we can usually make packages by
-special arrangement please contact your sales representative.
+special arrangement, please contact your sales representative.
 
-CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the following Operating Systems.
+CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{Release Notes CFEngine 3 Enterprise.txt}.
+
+@cartouche
+@noindent See @file{Release Notes CFEngine 3 Enterprise.txt} for details on supported architectures.
+@end cartouche
 
 The hub (policy server) is only available for derivatives of the
 top GNU/Linux distributions (Debian, Red Hat, SuSE, Ubuntu), as these make available
@@ -190,7 +190,6 @@ Solaris 8, 9, 10, Ubuntu 8.04, 8.10, 9.04, 9.10, 10.04, 10.10,
 11.04, 11.10, 12.04, Windows XP, Vista, 7, Server 2003, Server 2008
 @end example
 @end ignore
-@noindent See @file{Release Notes CFEngine 3 Enterprise.txt} for details on supported architectures.
 
 CFEngine 3 Enterprise provides a version of CFEngine running natively on Windows, with support for registry management, Windows services and file security, @xref{Windows-specific features in CFEngine 3 Enterprise}. Support for Solaris zones has been added through automated zone detection and process model adaptation.
 
@@ -214,7 +213,7 @@ A working package manager is required on the hub/policy server to install an Apa
 CFEngine 3 Enterprise is designed to be simple to install in its default configuration. The installation
 process has two phases (or three phases for commercial customers who need to obtain a license):
 
-@itemize
+@itemize -
 @item Unpack the software
 @item For commercial customers (skip for CFEngine 3 Free Enterprise): Obtain a license 
 @item Bootstrap the agents to a hub (the hub serves as a policy server and report collector)
@@ -226,8 +225,20 @@ You should start from a blank system (see also @ref{Hardware requirements}). If 
 already developed a policy, set aside this policy during the installation process. You will be able
 to integrate it back later.
 
-CFEngine 3 Enterprise is provided in two packages, @file{cfengine-nova_<VERSION NUMBER>} and @file{cfengine-nova-expansion_<VERSION NUMBER>}. The main software package 
-must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
+@c CFEngine 3 Enterprise is provided in two packages, @file{cfengine-nova_<VERSION NUMBER>} and @file{cfengine-nova-expansion_<VERSION NUMBER>}. The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
+
+@cartouche
+CFEngine 3 Enterprise is provided in three packages (hub and client packages are located in separate download directories, please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
+@end cartouche
+
+@noindent These are the three packages:
+@itemize -
+@item @file{cfengine-nova_<VERSION NUMBER>} for the hub (policy server)
+@item @file{cfengine-nova-expansion_<VERSION NUMBER>} for the hub (policy server)
+@item @file{cfengine-nova_<VERSION NUMBER>} for the hub/policy server
+@end itemize
+
+The difference between the two @file{cfengine-nova_<VERSION NUMBER>} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
 
 References to package managers assume that additional packages might need to be installed on the hub (policy server). Root privilege is required for the installation.
 
@@ -239,12 +250,12 @@ repository on the hub, please see @ref{How do I install the prerequisites for th
 
 @item Copy the CFEngine 3 Enterprise packages to the system. On the hub (policy server):
 @example
-cfengine-nova_3.0.@var{xxx.[rpm|deb]}
+cfengine-nova_3.0.@var{xxx.[rpm|deb]} (NOTE: use hub package)
 cfengine-nova-expansion_3.0.@var{xxx.[rpm|deb]}
 @end example
 @noindent On all other machines:
 @example
-cfengine-nova_3.0.@var{xxx.[rpm|deb]}
+cfengine-nova_3.0.@var{xxx.[rpm|deb]} (NOTE: use client package)
 @end example
 
 @item Unpack the software:
@@ -308,10 +319,10 @@ CFEngine will output diagnostic information upon bootstrap (written to command l
 Commercial customers: Did you bootstrap before obtaining a license? See @ref{I did bootstrap the hub before obtaining a license file - what should I do?}
 @end cartouche
 
-@item CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait 10-15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
+@item CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
 
 @item Skip this step for installation of CFEngine 3 Free Enterprise. To complete licensing setup, you should make a promise to accept the license
-terms by editing @file{/var/cfengine/masterfiles/promises.cf} and @file{/var/cfengine/masterfiles/failsafe/failsafe.cf}
+terms by editing @file{/var/cfengine/masterfiles/promises.cf} and @* @file{/var/cfengine/masterfiles/failsafe/failsafe.cf}
 on the hub (policy server), changing the line @samp{host_licenses_paid => "<NUMBER>";}
 in @samp{body common control} to reflect the correct number of licenses that you have subscribed to.
 
@@ -400,10 +411,11 @@ In addition all Mission Portal apps have a top menu containing at least the @i{A
 @item Settings Menu - Log out, access to Mission Portal settings, user management and roles (see separate sections)
 @end itemize
 
-The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. The apps that are shown is configurable through the @ref{Settings}, the admin user can choose to not display the apps that are not relevant for everyday use.
+The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. A Mission Portal administrator can configure which apps will be available to other users through @ref{Settings}.
 
-If you go directly to explore the different apps, please note that some of the displays in the Mission Portal may be blank when you log in just after installation. It may also take some time for the system to fully converge, do not get troubled if initially there are some promises repaired or not kept (yellow and red colors).
+If you go on directly to explore the different apps, please note that some of the displays in the Mission Portal may be blank when you log in just after installation. It may take some time for the system to fully converge, do not get troubled if initially there are some promises repaired or not kept (yellow and red colors).
 
+The following will take you through the different Mission Portal apps and settings.
 
 @c --------------------------------------------------
 @c @node  Mission Portal Apps, Finders, Mission Portal, Mission Portal
@@ -434,15 +446,25 @@ The Hosts App illustrates the state of the system in relation to the desired sta
 @noindent The app has three main areas of user interaction:
 
 @itemize
-@item Policy Context Selector: In addition to the @i{App Selector} and @i{Settings Menu}, the top menu contains the @i{Policy Context Selector}. Use this to choose between three different policy contexts and see information for @i{@{All@}}, @i{@{User@}} or @i{@{System@}} (internal CFEngine) promises.
-@item Navigation Tree: Hosts can be grouped and organized in a hierarchy defined by classes
-@item Content Area: Context sensitive area (effected by the selection made in the @i{Policy Context Selector} and @i{Navigation Tree}). The header/title shows the selected context from the navigation tree and underneath you will find five different content tabs:
+@item Policy Context Selector: In addition to the @i{App Selector} and @i{Settings Menu}, the top menu contains the @i{Policy Context Selector}. Use this to choose between three different policy contexts and see information for @i{@{All@}}, @i{@{User@}} or @i{@{System@}} (internal CFEngine) promises (@ref{Policy Context Selector})
+@sp 1
+@center @image{img-policy-context-selector-3-0,5cm,,Policy Context Selector}
+@center Figure: Policy Context Selector
+@sp 1
+
+@item Navigation Tree: Hosts can be grouped and organized in a hierarchy defined by classes (@ref{Navigation Tree})
+@sp 1
+@center @image{img-navigation-tree-3-0,5cm,,Navigation Tree}
+@center Figure: Navigation Tree
+@sp 1
+
+@item Content Area: Context sensitive area (affected by the selection made in the @i{Policy Context Selector} and @i{Navigation Tree}). The header/title shows the selected context from the navigation tree and underneath you will find five different content tabs:
 @itemize -
-@item Status: Overview of host compliance and operational status
-@item Reports: Access to default reports
-@item Events: Track events based on (patterns in) promise handles
-@item Vitals: Monitor host parameters
-@item Hosts info: Detailed information about each host (inventory)
+@item Status: Overview of host compliance and operational status (@ref{Status tab})
+@item Reports: Access to default reports (@ref{Reports tab})
+@item Events: Track events based on (patterns in) promise handles (@ref{Events tab})
+@item Vitals: Monitor host parameters (@ref{Vitals tab})
+@item Host Info: Detailed information about each host (inventory) (@ref{Host Info tab})
 @end itemize
 @end itemize
 
@@ -450,17 +472,18 @@ The Hosts App illustrates the state of the system in relation to the desired sta
 @itemize -
 @item Red: If less than 80% of promises were kept
 @item Yellow: If 20% or more of promises were repaired and host is now compliant
-@item Green: If more than 80% of promises are kept
+@item Green: If more than 80% of promises were kept
 @item Blue: If there has not been any contact between the hub and the client within a set time interval (host unreachable; default value is set to 15 minutes, see @ref{Mission Portal Settings}). 
-@item Black: If CFEngine's scheduling daemon, @code{cf-execd}, is not running (the hub will still able to contact the client to collect reports but the client will return stale data since it has not been running at regular intervals).
+@item Black: If @code{cf-agent} has not executed policy normally for the last three runs. This could be due to CFEngine's scheduling daemon, @code{cf-execd}, not running or an error in policy which aborts execution. The hub will still able to contact the client to collect reports but the client will return stale data since it has not completed runs at regular intervals.
 @end itemize
 
 
+@page
 @c -----------------------------------------------------
 @node Policy Context Selector, Navigation Tree, Hosts App, Hosts App
 @subsection Policy Context Selector
 
-The @i{Policy Context Selector} effects all content related to host and promise status in the @i{Hosts App}. There are three alternatives:
+The @i{Policy Context Selector} affects all content related to host and promise status in the @i{Hosts App}. There are three alternatives:
 
 @sp 1
 @center @image{img-policy-context-selector-3-0,5cm,,Policy Context Selector}
@@ -470,7 +493,7 @@ The @i{Policy Context Selector} effects all content related to host and promise 
 @itemize -
 @item All: Navigation Tree, graphs, reports and events will contain data from all promises in you policy.
 @item User: Navigation Tree, graphs, reports and events will contain data from promises that users have added.
-@item System: Navigation Tree, graphs, reports and events will contain data from CFEngine system promises (labelled with a promise handle prefix @i{cfe_interal_} in the default policies).
+@item System: Navigation Tree, graphs, reports and events will contain data from CFEngine system promises (labeled with a promise handle prefix @i{cfe_internal_} in the default policies located under @file{/var/cfengine/inputs/cfe_internal/}).
 @end itemize
 
 
@@ -517,6 +540,7 @@ The tree consists of two main parts:
 Click on any host in the tree to get a quick overview of that host in the @i{Status}, @i{Vitals} or @i{Hosts Info} tabs.
 
 
+@page
 @c -----------------------------------------------------
 @node Status tab, Reports tab, Navigation Tree, Hosts App
 @subsection Status tab
@@ -531,7 +555,7 @@ The Status tab shows the overall status of the hosts selected in the @i{Navigati
 This section contains: 
 
 @itemize
-@item @i{Graph}: The row of bars shows the compliance of all registered hosts in blocks of six hours for the last week or in blocks of five minutes for the last six hours@footnote{Blue or black hosts will not appear here}. The hosts are classified into red, yellow and green according to the status of their compliance. The height of a bar corresponds to the number of registered hosts. Note that the last column may have a lower height than the others in the six hour view (i.e. show information for fewer hosts)@footnote{This is because hosts check in at different times and some hosts may not yet be accounted for at the time of generation of the graph.}. Click on a bar to see which promises were repaired or not kept.
+@item @i{Time series graph}: The row of bars shows the compliance of all registered hosts in blocks of six hours for the last week or in blocks of five minutes for the last six hours@footnote{Blue or black hosts will not appear here}. The hosts are classified into red, yellow and green according to the status of their compliance. The height of a bar corresponds to the number of registered hosts. Note that the last column may have a lower height than the others in the six hour view (i.e. show information for fewer hosts)@footnote{This is because hosts check in at different times and some hosts may not yet be accounted for at the time of generation of the graph.}. Click on a bar to see which promises were repaired or not kept.
 @item @i{Host Compliance} and @i{Host Operations}: The hosts are classified into red, yellow and green according to the status of their compliance over the last hour as well as blue and black according to their operational status (host unreachable and host with scheduling deviation, respectively).
 @item Clicking a link in any of the above categories (red/yellow/green/blue/black) produces a list of the hosts in that category (in the above mentioned context).
 @end itemize
@@ -554,11 +578,12 @@ Example, Compliant hosts: Click the link next to the green box under @i{Host Com
 @end ignore
 
 
+@page
 @c -----------------------------------------------------
 @node Reports tab, Events tab, Status tab, Hosts App
 @subsection Reports tab
 
-Reports are sorted into five main categories that contain drop down menus to select default reports. Clicking a report will bring up a search filter specific to that report.
+Reports are sorted into five main categories that contain drop down menus to select default reports. All reports except @i{Accounting > Benchmarks} and @i{Accounting > Business value} are context sensitive, i.e. will change based on your selection in the navigation tree and the policy context selector. Clicking a report will bring up a search filter specific to that report.
 
 @sp 1
 @center @image{img-reports-tab-3-0,8cm,,Reports tab}
@@ -586,7 +611,7 @@ Reports are updated at different intervals, the default values are every 5 minut
 @item System
 @itemize -
     @item Context classes: User defined classes observed on the system
-    @item Last saw neighbours: Log of when neighboring hosts were last observed online
+    @item Last saw neighbors: Log of when neighboring hosts were last observed online
     @item Variables: Table of variable values last observed (6 hrs)
     @item Weakest hosts: Ranking of hosts according to the compliance over the last hour
 @end itemize
@@ -609,7 +634,7 @@ Reports are updated at different intervals, the default values are every 5 minut
 @node Events tab, Vitals tab, Reports tab, Hosts App
 @subsection Events tab
 
-The @i{Events tab} allows you to create trackers to follow selected promises or classes in near real time. The trackers are in real time and shows data as it is written to the database. They represent an easy way to monitor specific promises or trace the impact of policy changes and roll outs at a more detailed level. A classes tracker will list the hosts that satisfy the selected class.
+The @i{Events tab} allows you to create trackers to follow selected promises or classes. The trackers are in real time and shows data as it is written to the database. They represent an easy way to monitor specific promises or trace the impact of policy changes and roll outs at a more detailed level. A classes tracker will list the hosts that satisfy the selected class.
 
 @sp 1
 @center @image{img-events-tab-3-0,6cm,,Events tab}
@@ -628,7 +653,10 @@ CFEngine has integrated monitoring capability where many parameters are measured
 @center Figure: Vitals tab
 @sp 1
 
+@noindent See also @ref{Monitoring extensions}.
 
+
+@page
 @c -----------------------------------------------------
 @node Host Info tab,  , Vitals tab, Hosts App
 @subsection Host Info tab
@@ -650,17 +678,17 @@ The @i{Host Info tab} is an inventory listing of discovered properties about a h
 
 The @i{SQL Reports} app gives the user full flexibility to create reports based on a simple customizable SQL interface. The workflow consists in choosing what fields you want to see in the report and how to filter them. You also have the option to save queries for later use or schedule queries to email reports to stakeholders. Be ready for instantaneous audits and inspections at low cost by reducing the time and work to gather reports.
 
+@sp 1
+@center @image{img-sql-reports-3-0,15cm,,SQL Reports}
+@center Figure: SQL Reports
+@sp 1
+
 There are two main areas of interaction in this app:
 
 @itemize -
 @item Left menu: List of saved and scheduled searches
 @item Content area: Choose parameters for the report, view the result and save or schedule a query.
 @end itemize
-
-@sp 1
-@center @image{img-sql-reports-3-0,15cm,,SQL Reports}
-@center Figure: SQL Reports
-@sp 1
 
 Items in the content area are used to create a query and generate reports according to the following description:
 @itemize -
@@ -680,7 +708,7 @@ Please note that any queries containing the PromiseDefinitions table in combinat
 Please note that manual edits of the SQL query in the @i{Show me the query} field will invalidate input from the UI wizard. Conversely, any manual edit will be overwritten if you make changes in the UI wizard.
 @end cartouche
 
-Once the query is defined you can run it to see the result, optionally save it for later use or schedule it to be emailed at a chosen interval. The report will appear below the UI wizard if you choose to run the query directly:
+Once the query is defined you can run it to see the result, optionally save it for later use or schedule it to be emailed at a chosen interval. The report will appear below the UI wizard if you choose to run the query directly (limited to the number of entries chosen in the @i{Limit} field):
 
 @sp 1
 @center @image{img-sql-report-result-3-0,15cm,,SQL Report Result}
@@ -693,7 +721,7 @@ Once the query is defined you can run it to see the result, optionally save it f
 @node Docs App, Policies App, SQL Reports App, Quickstart - The Mission Portal
 @section Docs App
 
-The @i{Docs} app gives access to both offline and online CFEngine documentation. The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}). Look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilites in CFEngine.
+The @i{Docs} app gives access to both offline and online CFEngine documentation. The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}). Look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilities in CFEngine.
 
 The left side shows an overview of all bundled documents, divided into categories that expand once clicked. The selected document is displayed in the main content area to the right.
 
@@ -712,7 +740,7 @@ The left side shows an overview of all bundled documents, divided into categorie
 Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
 @end cartouche
 
-The @i{Services} app allows the user to browse current host capacity providing services in your environment. Get an overview of open ports, CPU usage, network connections, capacity of storage devices and other job services. View their utilization and trends. Relate measurable data to your technical and organizational service catalogues for capacity planning and supply-demand analysis.
+The @i{Services} app allows the user to browse current host capacity providing services in your environment. Get an overview of open ports, CPU usage, network connections, capacity of storage devices and other job services. View their utilization and trends. Relate measurable data to your technical and organizational service catalogs for capacity planning and supply-demand analysis.
 
 @sp 1
 @center @image{img-services-3-0,15cm,,Services}
@@ -771,6 +799,9 @@ The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers 
 @center Figure: Knowledge App
 @sp 1
 
+@c See also @url{https://cfengine.com/manuals/st-knowledge}
+
+
 @c todo
 @ignore
 @c -----------------------------------------------------
@@ -781,7 +812,7 @@ The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers 
 Please note that this is a beta app: it is under development and has basic intended functionality, but may have bugs and an incomplete functionality set.
 @end cartouche
 
-The @i{Goals} app allows the user to compare high level organizational goals to persons and promises. Maintain a dialogue with management around these goals to showcase your value to the business. Help management to see how IT is responsive to its needs.
+The @i{Goals} app allows the user to compare high level organizational goals to persons and promises. Maintain a dialog with management around these goals to showcase your value to the business. Help management to see how IT is responsive to its needs.
 
 @sp 1
 @center @image{img-goals-3-0,15cm,,Goals}
@@ -859,7 +890,7 @@ information. User-authentication is carried out when users log on to the Mission
 @node Mission Portal Settings, Manage Apps, Settings, Settings
 @subsection Mission Portal Settings
 
-Mission Portal settings allow the user to set or edit the administrative email, administrative role, authentication method, activation of role based access control (RBAC), show/hide the Business and Planning rooms on the Mission Portal front page, and the unreachable (blue host) threshold.
+Mission Portal settings allow the user to set and configure authentication method, activation of role based access control (RBAC), the unreachable (blue host) threshold, and upload a company logo that will be displayed in exported PDF reports.
 
 @sp 1
 @center @image{img-mission-portal-settings-3-0,15cm,,Mission Portal Settings}
@@ -882,12 +913,8 @@ By default the Mission Portal will use the internal database to store user infor
 External authentication (LDAP or Active Directory) is available for CFEngine 3 Nova 2.1 and later versions. See @ref{Configuration of external authentication} for how to set this up.
 
 @sp 1
-@noindent @b{Fall-back role}@*
-User group that will be able to access the Mission Portal through internal database authentication if external authentication is down or misconfigured.
-
-@sp 1
 @noindent @b{Role-Based Access Control}@*
-CFEngine 3 Enterprise 2.2.0 introduces Role-Based Access Control (RBAC) for all hosts, reports and promises shown in the Mission Portal. RBAC does not cover access control for making policy changes. If you wish to use RBAC in combination with external authentication (LDAP or AD), we recommend that you wait to turn on RBAC until you log on with the LDAP or AD user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged in with an internal database user in this case). RBAC can be globally switched on or off, but see also @ref{User Management} for more details.
+CFEngine 3 Enterprise 2.2.0 introduced Role-Based Access Control (RBAC) for all hosts, reports and promises shown in the Mission Portal. RBAC does not cover access control for making policy changes. If you wish to use RBAC in combination with external authentication (LDAP or AD), we recommend that you wait to turn on RBAC until you log on with the LDAP or AD user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged in with an internal database user in this case). RBAC can be globally switched on or off, but see also @ref{User Management} for more details.
 
 @sp 1
 @noindent @b{Unreachable host threshold}@*
@@ -921,7 +948,7 @@ Shows status of hub replication if it has been set through policy. Contact your 
 @node System Identifier, , Hub Replication Status, Settings
 @subsection System Identifier
 
-The system identifier is used to choose what attribute of a host will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT)). See @ref{Call-Collect}.
+The system identifier is used to choose what attribute will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT) or where two-way initialization of communication is generally denied). See @ref{Call-Collect}.
 
 @sp 1
 @image{img-system-identifier-3-0,15cm,,System Identifier}
@@ -1576,7 +1603,7 @@ mode.
 
 The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CFEngine Enterprise 3.0 installation. With the Enterprise API, you can..
 
-@itemize
+@itemize -
 @item Check installation status
 @item Manage users, groups and settings
 @item Browse host (agent) information and policy
@@ -1616,7 +1643,7 @@ The Enterprise API is a conventional REST API in the sense that it has a number 
 @c ----------------------------------------------------
 @node Responses, Pagination, Requests, Basic Properties of the API
 @subsection Responses
-3.0 responses are always of the following format, consisting of a @b{meta} object and a @b{data} array.
+Enterprise 3.0 API responses are always of the following format, consisting of a @b{meta} object and a @b{data} array.
 @verbatim
 {
   "meta": {
@@ -1655,7 +1682,7 @@ The API supports both internal and external authentication. The internal users t
 @c ----------------------------------------------------
 @node Authorization,  , Authentication, Basic Properties of the API
 @subsection Authorization
-Some resources require that the request user is a member of the @i{admin} role. Roles are managed with @i{/api/role}. @b{Role-Based Access Control (RBAC)} is configurable through settings. Users typically have permission to access their own resources, e.g. their own scheduled reports.
+Some resources require that the request user is a member of the @i{admin} role. Roles are managed with @i{/api/role}. @ref{Role Based Access Control (RBAC)} is configurable through settings. Users typically have permission to access their own resources, e.g. their own scheduled reports.
 
 
 @c ----------------------------------------------------
@@ -1791,7 +1818,8 @@ Most of the settings configurable in the API relate to LDAP authentication of us
 curl --user admin:admin http://test.cfengine.com/api/settings
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -1828,7 +1856,8 @@ curl --user admin:admin http://test.cfengine.com/api/settings
 @subsection Example: Configuring LDAP
 The setting @b{ldapEnabled} turns external authentication on or off. When turned on, the API will check to see that the other LDAP related settings make sense, and attempt to authenticate using the configured credentials. If it is not successful in doing this, no settings will be changed. The API will notify you with a return code an a message describing the error.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 {
@@ -1844,9 +1873,12 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
   "ldapUsersDirectory": "ou",
 }
 @end verbatim
-@b{Response}
+
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
+
 @end verbatim
 
 
@@ -1882,7 +1914,8 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 @subsection Example: Changing The Log Level
 The API uses standard Unix syslog to log a number of events. Additionally, log events are sent to stderr, which means they may also end up in your Apache log. Log events are filtered based on the log level in settings. Suppose you wanted to have greater visibility into the processing done at the backend. The standard log level is @i{error}. Changing it to @i{info} is done as follows.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 {
@@ -1890,7 +1923,8 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
@@ -1919,12 +1953,14 @@ Users and Roles determine who has access to what data from the API. Roles are de
 @subsection Example: Listing Users
 
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -1959,7 +1995,9 @@ curl --user admin:admin http://test.cfengine.com/api/user
 @node Example - Creating a New User, Example - Updating an Existing User, Example - Listing Users, Managing Users and Roles
 @subsection Example: Creating a New User
 All users will be created for the internal user table. The API will never attempt to write to an external LDAP server.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X PUT -d
 {
@@ -1970,10 +2008,12 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X PUT -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 201 Created
 }
+
 @end verbatim
 
 
@@ -1981,7 +2021,9 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X PUT -d
 @node Example - Updating an Existing User, Example - Retrieving a User, Example - Creating a New User, Managing Users and Roles
 @subsection Example: Updating an Existing User
 Both internal and external users may be updated. When updating an external users, the API will essentially annotate metadata for the user, it will never write to LDAP. Consequently, passwords may only be updated for internal users. Users may only update their own records, as authenticated by their user credentials.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/calvin -X POST -d
 {
@@ -1989,7 +2031,8 @@ curl --user admin:admin http://test.cfengine.com/api/user/calvin -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 }
@@ -2000,12 +2043,15 @@ curl --user admin:admin http://test.cfengine.com/api/user/calvin -X POST -d
 @node Example - Retrieving a User, Example - Adding a User to a Role, Example - Updating an Existing User, Managing Users and Roles
 @subsection Example: Retrieving a User
 It is possible to retrieve data on a single user instead of listing everything. The following query is similar to issuing @i{GET /api/user?id=calvin}, with the exception that the previous query accepts a regular expression for @i{id}.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/calvin
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2032,7 +2078,9 @@ curl --user admin:admin http://test.cfengine.com/api/user/calvin
 @node Example - Adding a User to a Role, Example - Deleting a User, Example - Retrieving a User, Managing Users and Roles
 @subsection Example: Adding a User to a Role
 Adding a user to a role is just an update operation on the user. The full role-set is updated, so if you are only appending a role, you may want to fetch the user data first, append the role and then update. The same approach is used to remove a user from a role.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X POST -d
 {
@@ -2042,7 +2090,8 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 }
@@ -2053,12 +2102,15 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X POST -d
 @node Example - Deleting a User, Example - Creating a New Role, Example - Adding a User to a Role, Managing Users and Roles
 @subsection Example: Deleting a User
 Users can only be deleted from the internal users table.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
@@ -2068,7 +2120,9 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X DELETE
 @node Example - Creating a New Role,  , Example - Deleting a User, Managing Users and Roles
 @subsection Example: Creating a New Role
 Once you've learned how to manage users, managing roles is pretty much the same thing. Roles are defined by four fields that filter host data and policy data: @b{includeContext}, @b{excludeContext}, @b{includeBundles}, @b{excludeBundles}. Each field is a comma separated list of regular expressions. See the corresponding section on RBAC for an explanation of these fields. Updating, and deleting roles are similar to updating and deleting users, using POST and DELETE.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/solaris-admins -X PUT -d
 {
@@ -2080,7 +2134,8 @@ curl --user admin:admin http://test.cfengine.com/api/user/solaris-admins -X PUT 
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
@@ -2106,12 +2161,14 @@ A resource @i{/api/host} is added as an alternative interface for browsing host 
 @node Example - Listing Hosts With A Given Context, Example - Looking Up Hosts By Hostname, Browsing Host Information, Browsing Host Information
 @subsection Example: Listing Hosts With A Given Context
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/host?context-include=windows.*
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2140,14 +2197,17 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=window
 @node Example - Looking Up Hosts By Hostname, Example - Looking Up Hosts By IP, Example - Listing Hosts With A Given Context, Browsing Host Information
 @subsection Example: Looking Up Hosts By Hostname
 
-Contexts are powerful, as you can use them to categorize hosts according to a rich set of tags. For example, each host is automatically tagged with a canonicalized version of its hostname and IP-address. So we could lookup the host with hostname @i{windows2003-2.test.cfengine.com} as follows.
+Contexts are powerful, as you can use them to categorize hosts according to a rich set of tags. For example, each host is automatically tagged with a canonicalized version of its hostname and IP-address. So we could lookup the host with hostname @i{windows2003-2.test.cfengine.com} as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host?context-include=windows2003_2_stage_cfengine_com
+curl --user admin:admin http://test.cfengine.com/api/host?context-include=
+   windows2003_2_stage_cfengine_com
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2171,14 +2231,17 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=window
 @node Example - Looking Up Hosts By IP, Example - Removing Host Data, Example - Looking Up Hosts By Hostname, Browsing Host Information
 @subsection Example: Looking Up Hosts By IP
 
-Similarly we can lookup the host with hostname @i{windows2008-2.test.cfengine.com} by IP as follows.
+Similarly we can lookup the host with hostname @i{windows2008-2.test.cfengine.com} by IP as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host?context-include=172_20_100_43
+curl --user admin:admin http://test.cfengine.com/api/host?
+   context-include=172_20_100_43
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2202,14 +2265,17 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=172_20
 @node Example - Removing Host Data, Example - Listing Available Vital Signs For A Host, Example - Looking Up Hosts By IP, Browsing Host Information
 @subsection Example: Removing Host Data
 
-If a host has been decommissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request.
+If a host has been decommissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/1c8fafe478e05eec60fe08d2934415c81a51d2075aac27c9936e19012d625cb8 -X DELETE
+curl --user admin:admin http://test.cfengine.com/api/host/
+   1c8fafe478e05eec60fe08d2934415c81a51d2075aac27c9936e19012d625cb8 -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
@@ -2219,14 +2285,17 @@ curl --user admin:admin http://test.cfengine.com/api/host/1c8fafe478e05eec60fe08
 @node Example - Listing Available Vital Signs For A Host, Example - Retrieving Vital Sign Data, Example - Removing Host Data, Browsing Host Information
 @subsection Example: Listing Available Vital Signs For A Host
 
-Each host record on the Hub has a set of vital signs collected by cf-monitord on the agent. We can view the list of vitals signs from as host as follows.
+Each host record on the Hub has a set of vital signs collected by cf-monitord on the agent. We can view the list of vitals signs from as host as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital
+curl --user admin:admin http://test.cfengine.com/api/host/
+   4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2268,14 +2337,18 @@ curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573
 @node Example - Retrieving Vital Sign Data,  , Example - Listing Available Vital Signs For A Host, Browsing Host Information
 @subsection Example: Retrieving Vital Sign Data
 
-Each vital sign has a collected time series of values for up to one week. Here we retrieve the time series for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT.
+Each vital sign has a collected time series of values for up to one week. Here we retrieve the time series for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital/mem_free?from=1350994800&to=1350996300
+curl --user admin:admin http://test.cfengine.com/api/host/
+   4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/
+   vital/mem_free?from=1350994800&to=1350996300
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 "meta": {
     "page": 1,
@@ -2349,15 +2422,18 @@ Issuing a synchronous query is the most straight forward way of running an SQL q
 
 @subsubsection Example: Listing Hostname and IP for Ubuntu Hosts
 
-@b{Request}
+@sp 1
+@noindent @b{Request} (lines split and indented for presentability)
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/query -X POST -d
 {
-  "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
+  "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts 
+     ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2368,7 +2444,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/query -X POST -d
   },
   "data": [
     {
-      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\"",
+      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON 
+          Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\"",
       "header": [
         "HostName",
         "IPAddress"
@@ -2420,7 +2497,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response} (lines split and indented for presentability)
 @verbatim
 {
   "meta": {
@@ -2432,12 +2510,15 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async -X POST -d
   "data": [
     {
       "id": "32ecb0a73e735477cc9b1ea8641e5552",
-      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
+      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON 
+          Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
     }
   ]
 ]
 @end verbatim
 
+
+@page
 @subsubsection Checking Status
 
 @b{Request}
@@ -2445,7 +2526,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async -X POST -d
 curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2466,12 +2548,14 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 
 This is the same API call as checking the status. Eventually, the @b{percentageComplete} field will reach 100 and there will be a link to the completed report available for downloading.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2501,9 +2585,11 @@ Subscribed queries happen in the context of a user. Any user can create a query 
 
 Here we create a new query to count file changes by name and have the result sent to us by email. The schedule field is any CFEngine context expression. The backend polls subscriptions in a loop and checks whether it's time to generate a report and send it out. In the following example, user @i{milton} creates a new subscription to a report which he names @i{file-changes-report}, which will be sent out every Monday night. His boss will get an email with a link to a PDF version of the report.
 
-@b{Request}
+@sp 1
+@noindent @b{Request} (lines split and indented for presentability)
 @verbatim
-curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query/file-changes-report -X PUT -d
+curl -k --user admin:admin https://test.cfengine.com/api/user/milton/
+   subscription/query/file-changes-report -X PUT -d
 {
   "to": "boss@megaco.com",
   "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
@@ -2514,23 +2600,26 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
+
 @end verbatim
+
 
 @subsubsection Example: Listing Report Subscriptions
 
 Milton can list all his current subscriptions by issuing the following.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query
 @end verbatim
 
-@b{Response}
-@verbatim
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -2554,12 +2643,14 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 
 @subsubsection Example: Removing A Report Subscription
 
-@b{Request}
+@b{Request} (lines split and indented for presentability)
 @verbatim
-curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query/file-changes-report -X DELETE
+curl -k --user admin:admin https://test.cfengine.com/api/user/milton/
+   subscription/query/file-changes-report -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
@@ -2591,9 +2682,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api, /api/settings, API Reference, API Reference
 @subsection /api
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{apiName} @i{(string)} Human-friendly API name.
 @item @b{apiVersion} @i{(string)} API version string.
@@ -2619,9 +2711,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/settings, /api/user, /api, API Reference
 @subsection /api/settings
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}, @b{POST}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{rbacEnabled} @i{(boolean)} Whether RBAC is applied to requests.
 @item @b{ldapEnabled} @i{(boolean)} Whether external authentication is activated.
@@ -2644,9 +2737,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/user, /api/user/id, /api/settings, API Reference
 @subsection /api/user
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{id} @i{(regex string)} Regular expression for filtering usernames.
 @item @b{external} @i{("true", "false")} Returns only internal users (false) or only external (true), or all if not specified.
@@ -2656,9 +2750,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/user/id, /api/role, /api/user, API Reference
 @subsection /api/user/:id
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}, @b{PUT}, @b{POST}, @b{DELETE}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of a user.
 @item @b{password} @i{(string)} Password of a user. (Never returned from API).
@@ -2671,16 +2766,17 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/role, /api/role/id, /api/user/id, API Reference
 @subsection /api/role
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
 
 
 @c ----------------------------------------------------
 @node /api/role/id, /api/host, /api/role, API Reference
 @subsection /api/role/:id
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}, @b{PUT}, @b{POST}, @b{DELETE}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize 
 @item @b{id} @i{(string)} ID of a role.
 @item @b{description} @i{(string)} Arbitrary text describing the role
@@ -2694,9 +2790,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/host, /api/host/host-id, /api/role/id, API Reference
 @subsection /api/host
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{include-context} @i{(comma delimited string of regular expression strings)} Includes hosts having context matching the expression.
 @item @b{exclude-context} @i{(comma delimited string of regular expression strings)} Excludes hosts having context matching the expression.
@@ -2716,16 +2813,17 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/host/host-id/context, /api/host/host-id/context/context-id, /api/host/host-id, API Reference
 @subsection /api/host/:host-id/context
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
 
 
 @c ----------------------------------------------------
 @node /api/host/host-id/context/context-id, /api/host/host-id/vital, /api/host/host-id/context, API Reference
 @subsection /api/host/:host-id/context/:context-id
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of a context (class name)
 @item @b{mean} @i{(real)} Occurrence probability of the context in an agent run.
@@ -2737,18 +2835,20 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/host/host-id/vital, /api/promise, /api/host/host-id/context/context-id, API Reference
 @subsection /api/host/:host-id/vital
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
 
 @subsubsection /api/host/:host-id/vital/:vital-id
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{from} @i{(integer)} Timestamp marking the start of the interval for which to fetch data. Data is only available going back one week.
 @item @b{to} @i{(integer)} End of data interval to be fetched.
 @end itemize
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of vital sign.
 @item @b{description} @i{(string)} Description of vital sign.
@@ -2761,16 +2861,17 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @c ----------------------------------------------------
 @node /api/promise, /api/promise/promise-id, /api/host/host-id/vital, API Reference
 @subsection /api/promise
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
 
 
 @c ----------------------------------------------------
 @node /api/promise/promise-id, /api/query, /api/promise, API Reference
 @subsection /api/promise/:promise-id
-@subsubsection Supported Operations
+@i{Supported Operations}:@*
 @b{GET}
-@subsubsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} Promise handle.
 @item @b{type} @i{(string)} Promise type.
@@ -2832,7 +2933,7 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @node Call-Collect, Monitoring extensions, REST API, Top
 @chapter Call-Collect
 
-CFEngine Enterprise 3.0 includes functionlity to allow report collection from hosts that are not directly addressable from a hub data-aggregation process.  For example, if some of the clients of a policy hub are behind a network address translator (NAT) then the hub is not able to open a channel to address them directly. The effect is to place a 'collect call' with the policy hub.
+CFEngine Enterprise 3.0 includes functionality to allow report collection from hosts that are not directly addressable from a hub data-aggregation process. For example, if some of the clients of a policy hub are behind a network address translator (NAT) then the hub is not able to open a channel to address them directly. Another example is if a firewall denies a two-way initiation of communication between a satellite client and the hub. To remedy this problem the clients can place a 'collect call' with the policy hub.
 
 What happens is that the client's @code{cf-serverd} will 'peer' with the server daemon on a policy hub. This means that @code{cf-serverd} on an unreachable (e.g. NATed) host will attempt to report in to the @code{cf-serverd} on its assigned policy hub and offer it a short time window in which to download reports over the established connection. The effect is to establish a temporary secure tunnel between hosts, initiated from the satellite host end. The connection is made in such a way that host autonomy is not compromised. Either the hub may refuse or decline to play their role at any time, in the usual way (avoiding DOS attacks). Normal access controls must be set for communication in both directions.
 
@@ -2842,12 +2943,12 @@ The sequence of events is this:
 
 @itemize -
 @item Satellite @code{cf-serverd} connects to its registered policy hub
-@item The satellite indentifies itself to authentication and access control
+@item The satellite identifies itself to authentication and access control
 and sends a collect-call 'pull' request to the hub
-@item The hub might honour this, if the access control grants access.
+@item The hub might honor this, if the access control grants access.
 @item If access is granted, the hub has @code{collect_window} seconds
 to initiate a query to the satellite for its reports.
-@item The policy hub indentifies itself to authentication and access control
+@item The policy hub identifies itself to authentication and access control
 and sends a query request to the satellite to collect the reports.
 @item When finished the satellite closes the tunnel.
 @end itemize
@@ -2951,7 +3052,7 @@ reports.
 
 
 @menu
-* Integration of monitoring with knowledge base::  
+* Vital Signs Time Series::  
 * Long term trends::            
 * Custom promises to measure::  
 * Uses for custom monitoring::  
@@ -2959,14 +3060,8 @@ reports.
 
 
 @c ----------------------------------------------------
-@node  Integration of monitoring with knowledge base, Long term trends, Monitoring extensions, Monitoring extensions
-@section Integration of monitoring with knowledge base
-
-CFEngine 3 Enterprise integrates monitoring reports with the automated base
-knowledge to provide self-analysis and simple summary reporting;
-the Mission Portal shows important status summaries and allow users to drill down to specific reporting data.
-
-@center @image{img-status,15cm,,Integrated Monitoring,png}
+@node  Vital Signs Time Series, Long term trends, Monitoring extensions, Monitoring extensions
+@section Vital Signs Time Series
 
 Detailed time-series views can be collected and collated, providing
 honest and accurate data that allow you to gauge your own confidence
@@ -2977,15 +3072,19 @@ systems to the knowledge console. That time also provides information
 about system performance. CFEngine always promises to tell you how old
 data are and how confident it is in the values.
 
-@image{img-vitalsviewer,15cm,,Integrated Monitoring,png}
+@sp 1
+@center @image{img-vitals-tab-3-0,15cm,,Vital Signs Time Series,png}
+@center Figure: Vitals Signs Time Series
+@sp 1
+
+Clicking on a view brings up a more detailed picture, including the possibility to view long term trends (see below).
 
 
 @c ------------------------------------------------------
-@node  Long term trends, Custom promises to measure, Integration of monitoring with knowledge base, Monitoring extensions
+@node  Long term trends, Custom promises to measure, Vital Signs Time Series, Monitoring extensions
 @section Long term trends
 
-CFEngine normally operates with time-series data represented
-in two forms:
+CFEngine normally operates with vital sign data represented in two forms:
 
 @itemize
 @item A weekly average, plotted on a periodogram, showing performance now in relation
@@ -2994,7 +3093,7 @@ to ensure a sufficient rate of adaptation to new patterns.
 @item The past four hours in high resolution.
 @end itemize
 
-CFEngine 3 Enterprise adds quarter day averages of recorded time-series which go back three
+In addition, CFEngine 3 Enterprise adds quarter day averages of recorded time-series which go back three
 years in time. Three years is considered to be the lifetime of a computer.
 Summaries of the detailed performance are summarized by flat averages for
 a four-shift day:
@@ -3011,11 +3110,18 @@ a four-shift day:
 @node  Custom promises to measure, Uses for custom monitoring, Long term trends, Monitoring extensions
 @section Custom promises to measure
 
-CFEngine 3 Enterprise adds a new promise type in bundles for the monitoring
+@menu
+* Extraction strings and logging::  
+* Extracting one-off numerical data::  
+* Extraction to list variable::  
+@end menu
+
+CFEngine 3 Enterprise incorporates a promise type in bundles for the monitoring
 agent. These are written just like all other promises within a bundle
 destined for the agent concerned. In this case:
 
 @verbatim
+
 bundle monitor watch
 
 {
@@ -3027,11 +3133,7 @@ measurements:
 
 @end verbatim
 
-@menu
-* Extraction strings and logging::  
-* Extracting one-off numerical data::  
-* Extraction to list variable::  
-@end menu
+See example usage in the following sections.
 
 
 @c ------------------------------------------------------
@@ -4253,7 +4355,7 @@ environment-specific rules.
 Workflows are implemented easily with CFEngine 3 Enterprise, administrator starts with
 defining necessary set of environments (usually those are
 `development', `testing' and 'production'), then develops new
-configuration in one enviroment, and promotes rules first to testing
+configuration in one environment, and promotes rules first to testing
 and then to production environment.
 
 Promotion of rules is performed by copying rules from one
@@ -4457,7 +4559,7 @@ or
    expansion_3.0.x-y_x86_64.deb
 @end verbatim
 
-@item Remove Mongodb lock if present
+@item Remove MongoDB lock if present
 @verbatim
    $ rm -f /var/cfengine/state/mongod.lock
 @end verbatim
@@ -4489,7 +4591,7 @@ Comments (for your information, no need to verify anything):
     - all necessary bundles to build the CFEngine 3 Enterprise HUB (policy server) is in this file
 @item cfengine_stdlib.cf
     - the latest standard CFEngine bodies and bundles
-@item If you are using CFEngine 3 Nova 2.0.1 or older: package_method has been updated, the Nova/Enterprise self-upgrade will not work properly on some systems. We strongly recommended to synchronise contents of the file before rolling out new packages to clients. (Please contact your sales representative or file a ticket in the CFEngine support system to help you out.)
+@item If you are using CFEngine 3 Nova 2.0.1 or older: package_method has been updated, the Nova/Enterprise self-upgrade will not work properly on some systems. We strongly recommended to synchronize contents of the file before rolling out new packages to clients. (Please contact your sales representative or file a ticket in the CFEngine support system to help you out.)
 @end itemize
 
 @item Upgrade from Nova 2.0.x (skip this step if you run 2.1.x or higher): Modify contents in @file{/var/cfengine/masterfiles/promises.cf}
@@ -4502,7 +4604,7 @@ Comments (for your information, no need to verify anything):
 @item Change cfengine.cf to CFE_cfengine.cf
 @item Change knowledge.cf to CFE_knowledge.cf
 @item Add CFE_hub_specific.cf
-@item "inputs" should look similiar to this after changes:
+@item "inputs" should look similar to this after changes:
 @verbatim
    inputs => {
               "CFE_cfengine.cf",
@@ -4993,7 +5095,7 @@ To enable external authentication on a fresh install, log on to the Mission Port
 Select the LDAP button and enter the appropriate configuration settings for your system.
 
 @sp 1
-@center @image{img-config-ldap-2-2,15cm,,Configure LDAP}
+@center @image{img-config-ldap-3-0,10cm,,Configure LDAP}
 @center Figure: Configure LDAP
 @sp 1
 
@@ -5005,14 +5107,11 @@ Select the LDAP button and enter the appropriate configuration settings for your
 @item Login attribute: Field name used to match user name, e.g. uid.
 @item User directory: Directory name where user names are stored, e.g. cn=users or ou=people
 @item Encryption: Chose the encryption protocol to be used for authentication
-@item External admin user name: Enter the LDAP user name of the person that is supposed to have admin rights
-@item Fall-back role: User group that will be able to access the Mission Portal through internal database authentication if external authentication is down or misconfigured. 
-@c @item Member attribute: Field name used to match user group (only needed for OPENLDAP), e.g. memberUid
+@item LDAP user name: Enter the LDAP user name of the person that is supposed to have admin rights
+@item LDAP password: Enter the LDAP password of the above user
 @end itemize
 
-Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid user name and password in the popup to test LDAP bind. Submitting an incorrect configuration will put LDAP down and lock out all users, CFEngine 3 Enterprise therefore comes with a fallback solution. Select a fallback administrator group in the database from the dropbox, CFEngine 3 Enterprise will look for users in this group when an incorrect configuration has been passed. A member of this group will then be able to log on to the Mission Portal using his internal database user name and password and restart the external authentication configuration.
-
-If you wish to use RBAC in combination with LDAP, we recommend that you wait to turn on RBAC until you log on with the LDAP user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged on with an internal database user in this case).
+If you wish to use RBAC in combination with external authentication, we recommend that you wait to turn on RBAC until you log on with the LDAP user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged on with an internal database user in this case).
 
 
 @c ----------------------------------------------------------
@@ -5022,26 +5121,24 @@ If you wish to use RBAC in combination with LDAP, we recommend that you wait to 
 Select the Active Directory button and enter the appropriate configuration settings for you system.
 
 @sp 1
-@center @image{img-config-active-directory-2-2,15cm,,Configure Active Directory}
+@center @image{img-config-active-directory-3-0,10cm,,Configure Active Directory}
 @center Figure: Configure Active Directory
 @sp 1
 
 @noindent Form fields:
 
 @itemize -
-@item LDAP host: Address of the LDAP machine
+@item LDAP host: Address of the Active Directory machine
 @item Base dn: LDAP root, the top entry (starting point) in the directory
 @item Login attribute: Field name used to match user name, e.g. uid.
 @item User directory: Directory name where user names are stored, e.g. cn=users or ou=people
 @item Active directory domain: Field name used to match directory domain on Windows machines, e.g. windows1.test.cfengine.com
 @item Encryption: Chose the encryption protocol to be used for authentication
-@item External admin user name: Enter the AD user name of the person that is supposed to have admin rights
-@item Fall-back role: User group that will be able to access the Mission Portal through internal database authentication if external authentication is down or misconfigured.
+@item LDAP user name: Enter the LDAP user name of the person that is supposed to have admin rights
+@item LDAP password: Enter the LDAP password of the above user
 @end itemize
 
-Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid user name and password in the popup to test LDAP bind. Submitting an incorrect configuration will put LDAP down and lock out all users, CFEngine 3 Enterprise therefore comes with a fallback solution. Select a fallback administrator group in the database from the dropbox, CFEngine 3 Enterprise will look for users in this group when an incorrect configuration has been passed. A member of this group will then be able to log on to the Mission Portal using his internal database user name and password and restart the external authentication configuration.
-
-If you wish to use RBAC in combination with LDAP, we recommend that you wait to turn on RBAC until you log on with the LDAP user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged on with an internal database user in this case).
+If you wish to use RBAC in combination with external authentication, we recommend that you wait to turn on RBAC until you log on with the AD user that has been designated a Mission Portal admin (i.e do not turn RBAC on while logged on with an internal database user in this case).
 
 
 @c *****************************************************
