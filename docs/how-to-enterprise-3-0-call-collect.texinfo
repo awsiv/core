@@ -1,0 +1,221 @@
+\input texinfo-altfont
+\input texinfo-logo
+\input texinfo
+@selectaltfont{cmbright}
+@setlogo{CFEngineFrontPage}
+@c *********************************************************************
+@c
+@c  This is a TEXINFO file. It generates both TEX documentation and
+@c  the "on line" documentation "info" files.
+@c
+@c  The file is structured like a programming language. Each chapter
+@c  starts with a chapter comment.
+@c
+@c  Menus list the subsections so that an online info-reader can parse
+@c  the file hierarchically.
+@c
+@c ***********************************************************************@c 
+@c %** start of header
+@setfilename how-to-enterprise-3-0-call-collect.info
+@settitle How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@setchapternewpage odd
+@c %** end of header
+@titlepage
+@title How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@subtitle CFEngine Enterprise Documentation
+@subtitle Updated 19. November 2012 @c also update in ifnottex section below
+@author CFEngine
+@c @smallbook
+@fonttextsize 10
+@page
+@cartouche
+This document is related to CFEngine 3 Enterprise 3.0.
+@end cartouche
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2012 CFEngine AS.
+The features described herein are in provided for user convenience and imply no warranty whatsoever
+to the extent of applicable law.
+@end titlepage
+@c *************************** File begins here ************************
+@ifinfo
+@dircategory CFEngine Training
+@direntry
+* CFEngine Reference:
+                        CFEngine is a language based framework
+                        designed for configuring and maintaining
+                        Unix-like operating systems attached
+                        to a TCP/IP network.
+@end direntry
+@end ifinfo
+@ifnottex
+Updated 19. November 2012
+@node Top, Call-Collect, (dir), (dir)
+@top How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@end ifnottex
+@ifhtml
+@html
+<a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+<h2>Summary of contents</h2>
+@end html
+@end ifhtml
+
+@iftex
+@contents
+@end iftex
+
+
+
+@menu
+* Call-Collect::
+@end menu
+
+
+@c *****************************************************
+@c * CHAPTER
+@c *****************************************************
+@node Call-Collect
+@chapter Call-Collect
+
+@menu
+* Introduction::
+* How Does Call-Collect Work?::
+* Example Configuration::
+* Viewing Call-Collected Reports in the Mission Portal::
+@end menu
+
+@c -----------------------------------------------------
+@node Introduction
+@section Introduction
+
+CFEngine Enterprise 3.0 includes functionlity to allow report collection from hosts that are not directly addressable from a hub data-aggregation process.  For example, if some of the clients of a policy hub are behind a network address translator (NAT) then the hub is not able to open a channel to address them directly. The effect is to place a 'collect call' with the policy hub.
+
+
+@c -----------------------------------------------------
+@node How Does Call-Collect Work?
+@section How Does Call-Collect Work?
+
+What happens is that the client's @code{cf-serverd} will 'peer' with the server daemon on a policy hub. This means that @code{cf-serverd} on an unreachable (e.g. NATed) host will attempt to report in to the @code{cf-serverd} on its assigned policy hub and offer it a short time window in which to download reports over the established connection. The effect is to establish a temporary secure tunnel between hosts, initiated from the satellite host end. The connection is made in such a way that host autonomy is not compromised. Either the hub may refuse or decline to play their role at any time, in the usual way (avoiding DOS attacks). Normal access controls must be set for communication in both directions.
+
+Collect calling cannot be as efficient as data collection by the @code{cf-hub} component, as the hub is not able to load balance.  Hosts that use this approach should exclude themselves from the @code{cf-hub} data collection.
+
+@nodindent The sequence of events is this:
+
+@itemize -
+@item Satellite @code{cf-serverd} connects to its registered policy hub
+@item The satellite indentifies itself to authentication and access control
+and sends a collect-call 'pull' request to the hub
+@item The hub might honour this, if the access control grants access.
+@item If access is granted, the hub has @code{collect_window} seconds
+to initiate a query to the satellite for its reports.
+@item The policy hub indentifies itself to authentication and access control
+and sends a query request to the satellite to collect the reports.
+@item When finished the satellite closes the tunnel.
+@end itemize
+
+Call-collect is put in action if @code{call_collect_interval} is set. It causes the server daemon to attempt a connection to its policy hub at regular intervals equal to the value of the parameter in minutes:
+
+@verbatim
+
+   call_collect_interval => "5";
+
+@end verbatim
+
+
+@c -----------------------------------------------------
+@node Example Configuration
+@section Example Configuration
+
+The full configuration would look something like this:
+
+@verbatim
+
+#########################################################
+# Server config
+#########################################################
+
+body server control
+
+{
+  allowconnects         => { "10.10.10" , "::1" };
+  allowallconnects      => { "10.10.10" , "::1" };
+  trustkeysfrom         => { "10.10.10" , "::1" };
+
+  call_collect_interval => "5";
+}
+
+#########################################################
+
+bundle server access_rules()
+
+{
+access:
+
+  policy_hub::
+
+    "collect_calls"
+       resource_type => "query",
+             admit   => { "10.10.10" }; # the apparent NAT address of the satellite
+
+  satellite_hosts::
+
+    "delta"
+            comment => "Grant access to cfengine hub to collect report deltas",
+      resource_type => "query",
+            admit   => { "policy_hub" };
+
+    "full"
+            comment => "Grant access to cfengine hub to collect full report dump",
+      resource_type => "query",
+            admit   => { "policy_hub"  };
+}
+
+@end verbatim
+
+You also have to make sure that any firewalls allow these connections to pass.
+
+In addition you should choose a system identifier in the Mission Portal, see System Identifier. This is the attribute by which the hosts will be identified in views and reports.
+
+
+@c -----------------------------------------------------
+@node Viewing Call-Collected Reports in the Mission Portal
+@section Viewing Call-Collected Reports in the Mission Portal
+
+To view a Call-Collected report in the CFEngine Enterprise Mission Portal you need to set a system variable by which to define host or system identifiers. This will allow the Mission Portal to select hosts from a customizable parameter (the @i{System Identifier}), whichever is most appropriate for your setup. Go to the Mission Portal Settings and select @i{System Identifier} from the left menu:
+
+@sp 1
+@image{img-system-identifier-3-0,15cm,,System Identifier}
+@center Figure: System Identifier
+@sp 1
+
+
+@c =========================================================================
+@c @node Index,  , CFEngine Methods, Top
+@c @unnumbered Concept Index
+@c @printindex cp
+@c =========================================================================
+@ifhtml
+@html
+<a name="Contents">
+@contents
+@end html
+@end ifhtml
+
+@c  The file is structured like a programming language. Each chapter
+@c  starts with a chapter comment.
+@c
+@c  Menus list the subsections so that an online info-reader can parse
+@c  the file hierarchically.
+@ifhtml
+@html
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-2576171-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+@end html
+@end ifhtml
+@bye
