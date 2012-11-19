@@ -298,6 +298,13 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     bool retval = CreateScheduledReportCSV( conn, user, query_id, query, copy_to_webroot, path_to_csv, CF_MAXVARSIZE - 1 );
 
+    if (!copy_to_webroot)
+    {
+        // no need to proceed further
+        // csv report is already generated at CFWORKDIR/reports
+        return retval;
+    }
+
     if( pdf && retval )
     {
         if( csv )
