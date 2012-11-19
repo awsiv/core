@@ -250,6 +250,8 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query
         const char *query = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_query, &query );
 
+        char *query_expanded = SqlVariableExpand(query);
+
         const char *title = NULL;
         BsonStringGet( mongo_cursor_bson( cursor ), cfr_title, &title );
 
@@ -259,11 +261,13 @@ static void CFDB_QueryGenerateScheduledReports( EnterpriseDB *conn, Rlist *query
         int output_type = REPORT_FORMAT_CSV;
         BsonIntGet( mongo_cursor_bson( cursor ), cfr_report_output_type, &output_type );
 
-        if( CreateScheduledReport( conn, user, email, query_id, query, title, description, output_type ) )
+        if (CreateScheduledReport(conn, user, email, query_id, query_expanded, title, description, output_type))
         {
             CFDB_SaveScheduledRunHistory( conn, user, query_id, time( NULL ) );
             CFDB_SaveAlreadyRun( conn, user, query_id, true );
         }
+
+        free(query_expanded);
     }
 
     mongo_cursor_destroy( cursor );
@@ -294,6 +298,13 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     bool retval = CreateScheduledReportCSV( conn, user, query_id, query, copy_to_webroot, path_to_csv, CF_MAXVARSIZE - 1 );
 
+    if (!copy_to_webroot)
+    {
+        // no need to proceed further
+        // csv report is already generated at CFWORKDIR/reports
+        return retval;
+    }
+
     if( pdf && retval )
     {
         if( csv )
@@ -318,17 +329,14 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if( !CFDB_HandleGetValue(cfr_php_bin_dir, php_path, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
+        CfOut(cf_error, "DBScheduledReportGeneration", "!! Cannot find php" );
         return false;
     }
-
-    char *query_expanded = SqlVariableExpand(query);
 
     snprintf(cmd, CF_BUFSIZE - 1,
              "%s/php %s/index.php advancedreports generatescheduledreport "
              "\"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"",
-             php_path, docroot, user, query_id, query_expanded, report_format, title, description, email, path_to_csv );
-
-    free(query_expanded);
+             php_path, docroot, user, query_id, query, report_format, title, description, email, path_to_csv );
 
     Nova_HubLog( "DBScheduledReportGeneration: command = %s", cmd );
     FILE *pp;
@@ -367,7 +375,6 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
     assert( query_id );
 
     sqlite3 *db;
-    bool retval = true;
     char filename[CF_MAXVARSIZE] = {0};
     char path_origin[CF_MAXVARSIZE] = { 0 };
 
@@ -387,23 +394,45 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                 snprintf( filename, CF_MAXVARSIZE - 1, "%s-%s-%ld.csv", user, query_id, time( NULL ) );
                 snprintf( path_origin, CF_MAXVARSIZE - 1, "%s/reports/%s", CFWORKDIR, filename );
 
-                Writer *writer = FileWriter( fopen( path_origin, "w" ) );
-
-                if ( !Sqlite3_Execute( db, query, ( void * ) BuildCSVOutput, ( void * ) writer, err_msg ) )
+                FILE *fp = fopen(path_origin, "w");
+                if (!fp)
                 {
-                    CfOut( cf_error, "DBScheduledCSVReportGeneration", "%s", err_msg );
-                    retval = false;
+                    CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                          "Error opening csv report path for writing, path: %s, errno: %d",
+                          path_origin,
+                          errno);
+
+                    Sqlite3_DBClose(db);
+                    return false;
                 }
 
-                WriterClose( writer );
-                Sqlite3_FreeString( err_msg );
+                Writer *writer = FileWriter(fp);
+
+                if (!(Sqlite3_Execute(db, query, (void *) BuildCSVOutput, (void *) writer, err_msg)))
+                {
+                    CfOut( cf_error, "DBScheduledCSVReportGeneration",
+                           "Error executing sql, message: %s, sql: \"%s\"",
+                           err_msg,
+                           query);
+
+                    Sqlite3_FreeString(err_msg);
+                    WriterClose(writer);
+                    Sqlite3_DBClose(db);
+                    return false;
+                }
+
+                WriterClose(writer);
             }
         }
 
         Sqlite3_DBClose( db );
     }
+    else
+    {
+        return false;
+    }
 
-    if( copy_to_webdir && retval )
+    if (copy_to_webdir)
     {
         char docroot[CF_MAXVARSIZE] = {0};
 
@@ -414,6 +443,20 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         }
 
         /* copy file to web root */
+
+        struct stat dest_dir;
+
+        stat(docroot, &dest_dir);
+
+        if (!S_ISDIR(dest_dir.st_mode))
+        {
+            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                  "!! Invalid destination dir: \"%s\" ",
+                  docroot);
+
+            return false;
+        }
+
         char path_dest[CF_MAXVARSIZE] = {0};
         snprintf( path_dest, CF_MAXVARSIZE - 1, "%s/tmp/%s", docroot, filename );
         if( !CopyRegularFileDisk(path_origin, path_dest, false) )
@@ -423,9 +466,29 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         }
 
         snprintf( path_buffer, bufsize, "%s", path_dest );
+
+        // change ownership to be the same as "docroot"
+        // this file needs to be read by web-user for pdf generation / download
+        if (chown(path_dest, dest_dir.st_uid, dest_dir.st_gid) == -1)
+        {
+            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                  "!! Cannot set ownership on file \"%s\", os errno: %d ",
+                  path_dest,
+                  errno);
+            return false;
+        }
+
+        // remove source file after successful copy
+        if (unlink(path_origin) == -1)
+        {
+            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                  "!! Cannot remove source file \"%s\", os errno: %d ",
+                  path_origin,
+                  errno);
+        }
     }
 
-    return retval;
+    return true;
 }
 
 /*******************************************************************/
