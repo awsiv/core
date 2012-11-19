@@ -471,6 +471,14 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
             return false;
         }
 
+        // remove source file after successful copy
+        if (unlink(path_origin) == -1)
+        {
+            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                  "!! Cannot remove source file \"%s\", os errno: %d ",
+                  path_origin,
+                  errno);
+        }
     }
 
     return true;
