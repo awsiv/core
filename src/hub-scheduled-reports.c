@@ -318,6 +318,7 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if( !CFDB_HandleGetValue(cfr_php_bin_dir, php_path, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
+        CfOut(cf_error, "DBScheduledReportGeneration", "!! Cannot find php" );
         return false;
     }
 
@@ -367,7 +368,6 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
     assert( query_id );
 
     sqlite3 *db;
-    bool retval = true;
     char filename[CF_MAXVARSIZE] = {0};
     char path_origin[CF_MAXVARSIZE] = { 0 };
 
@@ -387,23 +387,45 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                 snprintf( filename, CF_MAXVARSIZE - 1, "%s-%s-%ld.csv", user, query_id, time( NULL ) );
                 snprintf( path_origin, CF_MAXVARSIZE - 1, "%s/reports/%s", CFWORKDIR, filename );
 
-                Writer *writer = FileWriter( fopen( path_origin, "w" ) );
-
-                if ( !Sqlite3_Execute( db, query, ( void * ) BuildCSVOutput, ( void * ) writer, err_msg ) )
+                FILE *fp = fopen(path_origin, "w");
+                if (!fp)
                 {
-                    CfOut( cf_error, "DBScheduledCSVReportGeneration", "%s", err_msg );
-                    retval = false;
+                    CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                          "Error opening csv report path for writing, path: %s, errno: %d",
+                          path_origin,
+                          errno);
+
+                    Sqlite3_DBClose(db);
+                    return false;
                 }
 
-                WriterClose( writer );
-                Sqlite3_FreeString( err_msg );
+                Writer *writer = FileWriter(fp);
+
+                if (!(Sqlite3_Execute(db, query, (void *) BuildCSVOutput, (void *) writer, err_msg)))
+                {
+                    CfOut( cf_error, "DBScheduledCSVReportGeneration",
+                           "Error executing sql, message: %s, sql: \"%s\"",
+                           err_msg,
+                           query);
+
+                    Sqlite3_FreeString(err_msg);
+                    WriterClose(writer);
+                    Sqlite3_DBClose(db);
+                    return false;
+                }
+
+                WriterClose(writer);
             }
         }
 
         Sqlite3_DBClose( db );
     }
+    else
+    {
+        return false;
+    }
 
-    if( copy_to_webdir && retval )
+    if (copy_to_webdir)
     {
         char docroot[CF_MAXVARSIZE] = {0};
 
@@ -425,7 +447,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         snprintf( path_buffer, bufsize, "%s", path_dest );
     }
 
-    return retval;
+    return true;
 }
 
 /*******************************************************************/
