@@ -48,4 +48,5 @@ int BuildCSVOutput(void *out, int argc, char **argv, char **azColName);
 
 bool GenerateAllTables(sqlite3 *db);
 Rlist *GetTableNamesInQuery(const char *select_op);
+int WriteColumnNamesCsv(sqlite3 *db, const char *select_op, Writer *writer);
 #endif
