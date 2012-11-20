@@ -11,5 +11,5 @@ COMMON_GUIDES += \
     ../../nova/docs/cf3-constellation-mission-obs
 
 PDF_ONLY_GUIDES += \
-    ../../nova/docs/cf3-nova-mission-portal \
-    ../../nova/docs/cf3-nova-2-1-supplement
+#    ../../nova/docs/cf3-nova-mission-portal \
+#    ../../nova/docs/cf3-nova-2-1-supplement
