@@ -283,7 +283,7 @@ static bool _UserIsAdmin(EnterpriseDB *conn, bool ldap_enabled, const char *user
     {
         if (ldap_enabled)
         {
-            if (_GetUserRecord(conn, false, username, &user) != ERRID_SUCCESS)
+            if (_GetUserRecord(conn, true, username, &user) != ERRID_SUCCESS)
             {
                 return false;
             }
