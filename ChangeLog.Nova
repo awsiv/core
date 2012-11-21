@@ -29,6 +29,11 @@
 	This complements the Nova classes and the sys.nova_version variable,
 	which will eventually be deprecated.
 
+    File diff log (nova_diff.log) have been extended with promise handle name.
+
+    Total compliance output in cf-agent verbose mode and promise_summary.log
+    have been extended with user and cfengine internal compliance level.
+
 	Created a variable update_policy.mongodb_dir, for cases where MongoDB
 	should not run out of /var/cfengine/state (could grow to tens of gigabytes).
 
