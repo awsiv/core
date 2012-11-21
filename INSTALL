@@ -1,6 +1,6 @@
-CFENGINE 3 ENTERPRISE 3.0
-RELEASE DATE: October 2012
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 beta
+CFENGINE 3 ENTERPRISE 3.0 Release Candidate
+RELEASE DATE: November 2012
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 Release Candidate
 
 -----------------------------------------------------------
  TABLE OF CONTENTS:
@@ -10,15 +10,17 @@ SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 beta
  SOFTWARE DEPENDENCIES
 -----------------------------------------------------------
 
-For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "Release Notes CFEngine 3 Enterprise.txt" file that comes with this package.
+For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "Release-Notes-CFEngine-3-Enterprise.txt" file that comes with this package.
 
-This is a beta version for testing, not intended for production environments!
+This is a release candidate for testing, not intended for production environments!
 
 
 REQUIREMENTS:
-CFEngine recommends that your hub machine should have at least 2 GB of memory and a modern processor. CFEngine recommends to have 256 MB available memory on the clients. For machines under CFEngine’s management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting.
+CFEngine recommends that your hub machine should have at least 2 GB of memory and a modern processor. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub (not applicable to CFEngine 3 Free Enterprise). Please contact your sales representative if you have any questions regarding these numbers. 
 
-Verify that the machine’s network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, subversion, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
+CFEngine recommends to have 256 MB available memory on the clients. For machines under CFEngine’s management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting.
+
+Verify that the machine’s network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
 
 Requirements specific to MongoDB:
 1. Filesystem type:
@@ -33,24 +35,36 @@ For those running databases on ext4 filesystems, a 2.6.23 kernel is required for
 
 
 INSTALLATION INSTRUCTIONS (CLEAN INSTALL):
-* Clean install is tested, upgrade from previous versions of CFEngine 3 Nova tested (see previous section)
+* Clean install is tested, upgrade from previous versions of CFEngine 3 Nova not tested (use only Enterprise 3.0 Release Candidate packages for testing)
 * As always, install HUB first, then client(s).
 * For large systems (> 1000 hosts) we recommend increasing the memory limit in php.conf on the HUB (for instance to 128 MB)
 
-CFEngine 3 Enterprise is provided in two packages, cfengine-nova_3.0.x and cfengine-nova-expansion_3.0.x (the nova name remains in the packages to ensure backwards compatibility with package managers). The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
+CFEngine 3 Enterprise is provided in three packages (hub and client packages are located in separate download directories, please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients). These are the three packages:
+    cfengine-nova_<VERSION NUMBER> for the hub (policy server)
+    cfengine-nova-expansion_<VERSION NUMBER> for the hub (policy server)
+    cfengine-nova_<VERSION NUMBER> for the hub/policy server 
+The difference between the two cfengine-nova_<VERSION NUMBER> packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes. The expansion package is only installed on the policy hub. You should install and set up the hub first.
 
 The general installation steps are as follows:
 1. Copy the CFEngine 3 Enterprise packages to the system.
-2. Unpack the cfengine-nova and cfengine-nova-expansion packages (in that order or simultaneously as below):
+2. On the hub/policy server:
+   a) Unpack the cfengine-nova and cfengine-nova-expansion packages (in that order):
+      [RedHat/CentOS/SUSE]
+        $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm (NOTE: use hub package)
+        $ rpm -Uvh cfengine-nova-expansion-3.0.x-y.x86_64.rpm
+      [Debian/Ubuntu]
+        $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb (NOTE: use hub package)
+        $ dpkg --install cfengine-nova-expansion_3.0.x-y_x86_64.deb
+   b)(Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
+   c)(Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
+3. On the clients: Unpack the cfengine-nova package:
    [RedHat/CentOS/SUSE]
-     $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm cfengine-nova-expansion-3.0.x-y.x86_64.rpm
+     $ rpm -Uvh cfengine-nova-3.0.x-y.x86_64.rpm (NOTE: use client package)
    [Debian/Ubuntu]
-     $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb cfengine-nova-expansion_3.0.x-y_x86_64.deb
-3. (Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
-4. (Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
+     $ dpkg --install cfengine-nova_3.0.x-y_x86_64.deb (NOTE: use client package)
 5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
      $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
-6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait 10-15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
+6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
 
 See Enterprise 3.0 Owner's Manual for more detailed installation instructions and troubleshooting tips.
 
@@ -62,7 +76,7 @@ If you wish to manually install cfmod to the machine, you'll need to do the foll
 
 
 UPGRADE PROCEDURE:
-Upgrade is not supported for the CFEngine 3 Enterprise 3.0 beta release, please use Enterprise 3.0 clients only.
+Upgrade is not supported for the CFEngine 3 Enterprise 3.0 Release Candidate, please use Enterprise 3.0 Release Candidate clients only.
 
 
 SOFTWARE DEPENDENCIES (specific to CFEngine 3 Enterprise)

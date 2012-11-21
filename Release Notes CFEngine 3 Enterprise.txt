@@ -1,6 +1,8 @@
-CFENGINE 3 ENTERPRISE 3.0 Beta1
-RELEASE DATE: October 2012
-SCOPE 3.0.0 beta1: First beta release of CFEngine 3 Enterprise 3.0.0
+CFENGINE 3 ENTERPRISE 3.0 Release Candidate
+RELEASE DATE: November 2012
+SCOPE 3.0.0 Release Candidate: First release of CFEngine 3 Enterprise 3.0.0 Release Candidate
+
+This is a release candidate for testing, not intended for production environments!
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
@@ -11,7 +13,7 @@ SCOPE 3.0.0 beta1: First beta release of CFEngine 3 Enterprise 3.0.0
  BUGFIXES SINCE 2.2.x
  INSTALLATION AND UPGRADE (see separate INSTALL file)
  KNOWN ISSUES
- IMPORTANT NOTICE FOR NEXT MAJOR RELEASE (CFENGINE 3 ENTERPRISE 3.0)
+ IMPORTANT NOTICE FOR THIS RELEASE
 ----------------------------------------------------------------------------
 
 
@@ -36,11 +38,9 @@ Community version base: 3.4.0
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
 3.0.0	3.0.0		Yes		Yes
-3.0.0	2.2.x		No		No		Beta testing should only be done with current version
-3.0.0	2.1.x		No		No		Beta testing should only be done with current version
-3.0.0	2.0.x		No		No		Beta testing should only be done with current version
-
-This is a beta version for testing, not intended for production environments!
+3.0.0	2.2.x		No		No		Testing should only be done with current version
+3.0.0	2.1.x		No		No		Testing should only be done with current version
+3.0.0	2.0.x		No		No		Testing should only be done with current version
 
 
 CHANGE LOG FROM 2.2.x:
@@ -48,16 +48,13 @@ CHANGE LOG FROM 2.2.x:
    - New visual appearance
    - New navigation concepts with shorter paths to different views
    - Rooms renamed to Apps
-   - New Apps with additional functionality (see below)
 * New Functionality in Mission Portal
    - SQL Reporting App: Build customizable reports through SQL queries. Schedule reports to send by email.
    - Hosts App: Ability to select policy context for graphs and reports. Choose between viewing data from All, User or System (CFEngine internal) promises.
-   - Services App: Browse current host capacity providing services in your environment
-   - Policies App: Show the promises that the system is currently trying to keep
-   - Goals App: Connect promises to high level organizational goals and key performance indicators
-   - Compliance App: Overview of the current state and history of compliance across your system, through the lens of different compliance standards
+   - New Policies App (beta) to view current policy
+   - Ability to select policy context for host compliance graphs and reports. The user can view host/promise/bundle compliance for ALL, USER or SYSTEM (CFEngine specific) promises. SYSTEM promises reside in bundles whos name is prefixed by "cfe_internal_" and their handle names are also prefixed by "cfe_internal_". Bundles/promise handles that do not have this prefix will be categorized as USER bundles/promises. ALL shows the union of USER and SYSTEM bundles/promises.
 * Redesign of default policy schema, see separate section below.
-* REST API v2
+* New Enterprise API (REST v2). The old REST API can be used in paralell.
 * Support for collecting reports from hosts behind a NAT boundary/inside a DMZ
 * New classes enterprise: enterprise_X, enterprise_X_Y, enterprise_X_Y_Z on CFEngine Enterprise, to reflect the version running. 
 * New variable sys.enterprise_version that holds the CFEngine Enterprise version. This complements the Nova classes and the sys.nova_version variable, which will eventually be deprecated.
@@ -71,13 +68,13 @@ CHANGE LOG FROM 2.2.x:
 
 NEW DEFAULT POLICY SCHEMA:
 * promises.cf now only contains the body common control (with the bundle sequence and input file list) and an example agent bundle. All other parts of policy have moved into separate subdirectories (see below).
-* New directory structure:
-   - cfe_internal/: CFEngine specific policies that ensure system integrity and example policy for visualizing goals in the Mission Portal
+* New directory structure (under /var/cfengine/masterfiles/ and /var/cfengine/inputs/):
+   - cfe_internal/: CFEngine specific policies that ensure system integrity
    - failsafe/: Houses the main failsafe that will be run before each execution of promises.cf (to check for policy and binary updates).
    - controls/: Contains the control bodies for all CFEngine agents
    - services/: Example policy for file watch
-* failsafe.cf in /var/cfengine/inputs/ represents a hard coded backup of /var/cfengine/inputs/failsafe/failsafe.cf. NEVER CHANGE THIS FILE, it is there to avoid that policy updates will not be fetched if the user breaks the /var/cfengine/inputs/failsafe/failsafe.cf policy (which would require manually logging in to each affected node to fix).
-
+* failsafe.cf in /var/cfengine/inputs/: Represents a hard coded backup similar to /var/cfengine/inputs/failsafe/failsafe.cf. NEVER CHANGE THIS FILE, it is there to avoid that policy updates will not be fetched if the user breaks the /var/cfengine/inputs/failsafe/failsafe.cf policy (which would require manually logging in to each affected node to fix).
+* CFEngine will not overwrite any existing policy in /var/cfengine/masterfiles/. You will have to migrate manually to the new schema if you already have a policy in place.
 
 BUGFIXES SINCE 2.2.x (TODO):
 * ...
@@ -91,8 +88,17 @@ KNOWN ISSUES (TODO):
 * Policy context selection will not work unless the 
 * Verbose output in command line interface (CLI) still indicates that you are using CFEngine 3 Nova (i.e. the CLI prefixes the verbose output with "nova> [MESSAGE]". See message for next release below.
 * A change in hub maintenance process interval from the default 6 hours will effect the time series graph on the Engineering page (may have blanks or other display problems).
+* The bundled CFEngine 3 Owner's Manual (found in /var/www/html/docs/ and linked in the Mission Portal) is older than the current version (found in the download directory on cfengine.com). Please use the most recent version.
 
 
-IMPORTANT NOTICE FOR NEXT MAJOR RELEASE (CFENGINE 3 ENTERPRISE 3.0):
-CFEngine will change the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" for the next version of CFEngine 3 Enterprise. Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
+IMPORTANT NOTICE FOR THIS RELEASE:
+CFEngine has changed the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" in this release. In addition, the verbose output of promise compliance has changed format to accomodate the new policy context feature. 
+
+Old style verbose output:
+nova> Outcome of version Promises.cf 2.2.3 (agent-0): Promises observed to be kept 100%, Promises repaired 0%, Promises not repaired 0%
+
+New style verbose output:
+enterprise> Outcome of version Promises.cf 3.0.0 (agent-0): Promises observed - Total promise compliance: 100% kept, 0% repaired, 0% not kept (out of 6418 events). User promise compliance: 100% kept, 0% repaired, 0% not kept (out of 29 events). CFEngine system compliance: 100% kept, 0% repaired, 0% not kept (out of 6389 events).
+
+Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
 
