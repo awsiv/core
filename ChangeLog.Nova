@@ -1,4 +1,29 @@
-3.0.0	New classes enterprise, enterprise_X, enterprise_X_Y, enterprise_X_Y_Z
+3.0.0	New Reporting Engine: A SQL interface to reports collected by hub.
+
+        Enterprise API:
+                Read + write REST interface for
+                - report querying(utilizes unterlying reporting engine)
+                - user management
+                - backward compatible with REST API v1
+
+        Configurable hostnames(host/system identifier) in reports
+                - can take any of the sys variables(eg.$(sys.fqhost))
+
+        Ability to delete multiple hosts from the mission portal
+
+        Improvements on the hub maintenance process
+                - less resource intensive and configurable
+
+        Fixes on database connections problems
+                - If you were seeing "connection refused because too many open connections",
+                  in database log please consider upgrading
+
+        Changed "nova>" to "enterprise>" in agent verbose output
+                - Please update email filters
+
+        Removed internal CFE promises from reporting
+
+        New classes enterprise, enterprise_X, enterprise_X_Y, enterprise_X_Y_Z
 	on CFEngine Enterprise, to reflect the version running. New variable
 	sys.enterprise_version that holds the CFEngine Enterprise version.
 	This complements the Nova classes and the sys.nova_version variable,
