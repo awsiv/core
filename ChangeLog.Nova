@@ -2,17 +2,21 @@
 
         Enterprise API:
                 Read + write REST interface for
-                - report querying(utilizes unterlying reporting engine)
+                - report querying(utilizes underlying reporting engine)
                 - user management
-                - backward compatible with REST API v1
+                - can be used with REST API v1 in parallel
 
         Configurable hostnames(host/system identifier) in reports
                 - can take any of the sys variables(eg.$(sys.fqhost))
+
+        When decommissioning (deleting a host) from the Mission Portal/Enterprise API,
+        the public keys of the clients are also removed
 
         Ability to delete multiple hosts from the mission portal
 
         Improvements on the hub maintenance process
                 - less resource intensive and configurable
+                - New option for cf-hub added (-m) for Enterprise database maintenance
 
         Fixes on database connections problems
                 - If you were seeing "connection refused because too many open connections",
@@ -29,10 +33,22 @@
 	This complements the Nova classes and the sys.nova_version variable,
 	which will eventually be deprecated.
 
-    File diff log (nova_diff.log) have been extended with promise handle name.
+        Fix file change report containing warning message as filename for new/deleted files
 
-    Total compliance output in cf-agent verbose mode and promise_summary.log
-    have been extended with user and cfengine internal compliance level.
+        File diff log (nova_diff.log) have been extended with promise handle name.
+
+        Total compliance output in cf-agent verbose mode and promise_summary.log
+        have been extended with user and cfengine internal compliance level.
+
+        System variables are collected by hub in every delta query
+
+        Fix software reports showing "(never)" in the "Last seen" column
+
+        Fix "blue hosts" list being empty for clients that don't have class keys
+
+        Sendmail is installed by default on the hub - required for emailing of reports
+
+        32-bit hub installations no longer supported
 
 	Created a variable update_policy.mongodb_dir, for cases where MongoDB
 	should not run out of /var/cfengine/state (could grow to tens of gigabytes).
