@@ -165,7 +165,7 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
                                           bool lastRunOnly, PageInfo *page,
                                           PromiseContextMode promise_context);
 JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost,
-                                      char *laddr, time_t lago, int lregex,
+                                      char *laddr, double lago, int lregex,
                                       HostClassFilter *hostClassFilter, PageInfo *page,
                                       PromiseContextMode promise_context);
 JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
@@ -216,7 +216,7 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                     bool lastRunOnly, PageInfo *page,
                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
-                                     char *laddress, time_t lago, int lregex,
+                                     char *laddress, double lago, int lregex,
                                      HostClassFilter *hostClassFilter, PageInfo *page,
                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,

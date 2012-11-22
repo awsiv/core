@@ -452,7 +452,7 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool
 
 /*****************************************************************************/
 
-int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
+int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress, double lago, int lregex,
                              char *classreg)
 {
     HubLastSeen *hl;
@@ -521,7 +521,7 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 
 /*****************************************************************************/
 
-int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
+int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *laddress, double lago, int lregex,
                                char *classreg)
 {
     HubLastSeen *hl;

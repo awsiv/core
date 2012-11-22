@@ -1897,7 +1897,7 @@ JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *sta
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddress,
-                                      time_t lago, int lregex, HostClassFilter *hostClassFilter,
+                                      double lago, int lregex, HostClassFilter *hostClassFilter,
                                       PageInfo *page, PromiseContextMode promise_context)
 {
     EnterpriseDB dbconn;
@@ -2734,7 +2734,7 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
-                                     char *laddress, time_t lago, int lregex,
+                                     char *laddress, double lago, int lregex,
                                      HostClassFilter *hostClassFilter, PageInfo *page,
                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {

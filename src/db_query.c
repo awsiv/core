@@ -2095,7 +2095,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost,
-                             char *laddr, time_t lago, time_t from, time_t to,
+                             char *laddr, double lago, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PromiseContextMode promise_context,
                              WebReportFileInfo *wr_info, int db_options)
 {

@@ -1723,15 +1723,14 @@ PHP_FUNCTION(cfpr_report_lastseen)
             *context_excludes = NULL,
             *report_file_info_array = NULL;
     int user_len, hk_len, h_len, a_len, h2_len;
-    long ago;
-    time_t tago;
+    double ago = 0.0;
     zend_bool regex;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssslbaasbll|a",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssdbaasbll|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,
@@ -1754,8 +1753,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     WebReportFileInfo *report_file_info = NULL;
     PHP_ARRAY_GET_WEBREPORT_INFO( report_file_info_array, report_file_info );
 
-    tago = (time_t) ago;
-
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhash = (h2_len == 0) ? NULL : hash;
     char *fhost = (h_len == 0) ? NULL : host;
@@ -1774,14 +1771,14 @@ PHP_FUNCTION(cfpr_report_lastseen)
     JsonElement *payload = NULL;
     if( report_file_info )
     {
-        payload = WebExportLastseenReport( fhostkey, fhash, fhost, faddress, tago, (bool) regex,
+        payload = WebExportLastseenReport( fhostkey, fhash, fhost, faddress, ago, (bool) regex,
                                           filter, promise_context_mode, report_file_info );
 
         DeleteWebReportFileInfo( report_file_info );
     }
     else
     {
-        payload = Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago, (bool) regex,
+        payload = Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, ago, (bool) regex,
                                            filter, &page, promise_context_mode);
     }
 
@@ -3361,11 +3358,11 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     zval *context_includes = NULL,
             *context_excludes = NULL,
             *report_file_info_array = NULL;
-    long ago;
+    double ago = 0.0;
     zend_bool regex;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssslbaall|a",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssdbaall|a",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &promise_context, &pc_len,

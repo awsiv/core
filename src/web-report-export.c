@@ -418,7 +418,7 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
 /*****************************************************************************/
 
 JsonElement *WebExportLastseenReport(char *hostkey, char *lhash, char *lhost, char *laddress,
-                                     time_t lago, int lregex, HostClassFilter *filter,
+                                     double lago, int lregex, HostClassFilter *filter,
                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info)
 {
     assert( filter && wr_info );

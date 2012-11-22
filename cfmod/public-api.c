@@ -241,7 +241,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, from, to,
+        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0.0, from, to,
                                     filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -289,7 +289,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
         EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, from, to,
+        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0.0, from, to,
                                     filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
         DATABASE_CLOSE(&conn);
