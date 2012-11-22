@@ -21,16 +21,15 @@ PLATFORMS SUPPORTED:
 CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the following Operating Systems:
 
 Hub:
-NAME		VERSION					ARCHITECTURE
-Ubuntu 		10.04		 			i686,x86-64
-RHEL 		5					i686,x86-64
-(CentOS		5					i686,x86-64)
+NAME		VERSION					ARCHITECTURE	COMMENT
+RHEL 		5, 6					i686,x86-64
+(CentOS		5, 6					i686,x86-64	Use RHEL packages)
 
 Clients:
-NAME:		VERSION					ARCHITECTURE
-(CentOS		5 					i686,x86-64)
-RHEL 		5	 				i686,x86-64
-Ubuntu 		10.04					i686,x86-64
+NAME:		VERSION					ARCHITECTURE	COMMENT
+RHEL 		5, 6	 				i686,x86-64
+(CentOS		5, 6 					i686,x86-64	Use RHEL packages)
+Solaris		10					i86pc, sparc
 
 Community version base: 3.4.0
 
@@ -50,13 +49,13 @@ CHANGE LOG FROM 2.2.x:
    - Rooms renamed to Apps
 * New Functionality in Mission Portal
    - SQL Reporting App: Build customizable reports through SQL queries. Schedule reports to send by email (sends link to report). Scheduled reports will be in PDF or CSV format.
-   - Hosts App: Ability to select policy context for graphs and reports. Choose between viewing data from All, User or System (CFEngine internal) promises.
    - New Policies App (beta) to view current policy (disabled by default, see following item)
    - Ability to disable any Mission Portal App. The Knowledge and Policies Apps are disabled by default (changeable in the Mission Portal Settings)
    - Ability to select policy context for host compliance graphs and reports. The user can view host/promise/bundle compliance for ALL, USER or SYSTEM (CFEngine specific) promises. SYSTEM promises reside in bundles whos name is prefixed by "cfe_internal_" and promise handle names are also prefixed by "cfe_internal_". Bundles/promise handles that do not have this prefix will be categorized as USER bundles/promises. ALL shows the union of USER and SYSTEM bundles/promises.
 * Redesign of default policy schema, see separate section below.
 * New Enterprise API (REST v2). The old REST API can be used in parallel.
 * Support for collecting reports from hosts behind a NAT boundary/inside a DMZ ("call-collect")
+* Ability to delete multiple hosts at the same time.
 * Analytics functionality for collecting clicks coordinates, visited pages and software details. This is disabled by default but is possible to activate from the Mission Portal Settings.
 * New classes enterprise: enterprise_X, enterprise_X_Y, enterprise_X_Y_Z on CFEngine Enterprise, to reflect the version running. 
 * New variable sys.enterprise_version that holds the CFEngine Enterprise version. This complements the Nova classes and the sys.nova_version variable, which will eventually be deprecated.
@@ -66,8 +65,16 @@ CHANGE LOG FROM 2.2.x:
 * promise_summary.log adapted to include USER and SYSTEM policy context.
 * New performance report events: DBPurgeHostsAll, DBMaintenance, DBMaintenanceTimestampsSingleHost, DBCacheCompliance, DBReportCollectAll.
 * License verification is made more robust by not relying on the last-seen database anymore. This means you do not need to bootstrap a client to verify the license. See the cf-key --install-license option.
-* Pagination of user list, search users.
+* Pagination of user list, search users (but see known issues).
 * Set a system variable by which to identify hosts in the Mission Portal (previously only IP address could be used).
+* Deleting a host from the Mission Portal or with the Enterprise API now also removes the host's public key from the database.
+* Improvements to the hub maintenance process (less resource intensive and configurable).
+* New option (-m) added for cf-hub for Enterprise database maintenance.
+* System variables are collected by hub in every delta query
+* Fix software reports showing "(never)" in the "Last seen" column
+* Fix "blue hosts" list being empty for clients that don't have class keys
+* Sendmail is installed by default on the hub - required for emailing of reports (but see also known issues)
+* 32-bit hub installations no longer supported
 
 
 NEW DEFAULT POLICY SCHEMA:
@@ -80,12 +87,18 @@ NEW DEFAULT POLICY SCHEMA:
 * failsafe.cf in /var/cfengine/inputs/: Represents a hard coded backup similar to /var/cfengine/inputs/failsafe/failsafe.cf. NEVER CHANGE THIS FILE, it is there to avoid that policy updates will not be fetched if the user breaks the /var/cfengine/inputs/failsafe/failsafe.cf policy (which would require manually logging in to each affected node to fix).
 * CFEngine will not overwrite any existing policy in /var/cfengine/masterfiles/. You will have to migrate manually to the new schema if you already have a policy in place.
 
+
 BUGFIXES SINCE 2.2.3:
 * Fix local tcdb storage of variables that were truncated in reporting due to size (> 1024 bytes).
 * Fix incorrect structure of variable report causing apache problems when using REST API.
 * Fix listing of users from external authentication (mismatch in user attributes (empty field was populated with data from next user))
 * Fixe/remove limit in number of entries listed in user list (previously 100 users by default).
 * Fix blank listing of externally authenticated users if the database contained more than 1000 entries.
+* Fix file change report containing warning message as filename for new/deleted files
+* Fix truncation of downloaded reports
+* Fix software installed and patches available reports for Ubuntu (now includes CFEngine packages)
+
+For fixes to CFEngine Community see separate change log (/var/cfengine/share/doc/ChangeLog).
 
 
 INSTALLATION AND UPGRADE:
@@ -98,13 +111,12 @@ KNOWN ISSUES:
 * A change in hub maintenance process interval from the default 6 hours will effect the time series graph on the Engineering page (may have blanks or other display problems).
 * Bug in display of license information for CFEngine 3 Free Enterprise (can show negative number of days, license expired)
 * Several CSS bugs in Mission Portal display
-* Upload of logo image in Mission Portal Settings has size limit of 1MB or 1024x500 pixels
 * There are known problems with sending email reports, sendmail might not be configured correctly
-* Renaming of users does not work when using internal authentication
 * Reset of user password will not send new password if email configuration is wrong. Password will be reset, but user cannot access new password and hence will not be able to log in.
-* Deleted usernames cannot be re-used when using internal authentication (get message that user already exists).
-* Knowledge app (beta): Left list expands to empty bullet points (no content)
-* The bundled CFEngine 3 Owner's Manual (found in /var/www/html/docs/ and linked in the Mission Portal) is older than the current version (found in the download directory on cfengine.com). Please use the most recent version.
+* Some operating systems have PHP configured to not accept short tags by default. The Policies app will be blank and left menu in Knowledge app will be incomplete if this is disabled.
+* The internal package version for CFEngine will contain SHA string.
+* Using RHEL packages for CentOS, the agents will connect to the RHN repository to download additional packages.
+* Search users in User Management does not work.
 
 
 IMPORTANT NOTICE FOR THIS RELEASE:
