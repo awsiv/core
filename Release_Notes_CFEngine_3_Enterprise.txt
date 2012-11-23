@@ -1,8 +1,8 @@
-CFENGINE 3 ENTERPRISE 3.0 Release Candidate
+CFENGINE 3 ENTERPRISE 3.0 Release Candidate 1
 RELEASE DATE: November 2012
-SCOPE 3.0.0 Release Candidate: First release of CFEngine 3 Enterprise 3.0.0 Release Candidate
+SCOPE: Release of CFEngine 3 Enterprise 3.0.0 Release Candidate 1
 
-This is a release candidate for testing, not intended for production environments!
+This is a release candidate for testing, not intended for production environments! The commercial version with packages for all regularly supported platforms will be available in December.
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
@@ -11,7 +11,7 @@ This is a release candidate for testing, not intended for production environment
  CHANGE LOG FROM 2.2.x
  NEW DEFAULT POLICY SCHEMA
  BUGFIXES SINCE 2.2.x
- INSTALLATION AND UPGRADE (see separate INSTALL file)
+ INSTALLATION AND UPGRADE (see separate file 3.0.0RC1-INSTALLATION.TXT)
  KNOWN ISSUES
  IMPORTANT NOTICE FOR THIS RELEASE
 ----------------------------------------------------------------------------
@@ -22,16 +22,15 @@ CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both h
 
 Hub:
 NAME		VERSION					ARCHITECTURE	COMMENT
-RHEL 		5, 6					i686,x86-64
-(CentOS		5, 6					i686,x86-64	Use RHEL packages)
+RHEL 		5, 6					x86-64
+(CentOS		5, 6					x86-64		Use RHEL packages)
 
 Clients:
 NAME:		VERSION					ARCHITECTURE	COMMENT
 RHEL 		5, 6	 				i686,x86-64
 (CentOS		5, 6 					i686,x86-64	Use RHEL packages)
-Solaris		10					i86pc, sparc
 
-Community version base: 3.4.0
+Community version base: 3.4.0beta3
 
 
 COMPATIBILITY MATRIX: 
@@ -71,8 +70,6 @@ CHANGE LOG FROM 2.2.x:
 * Improvements to the hub maintenance process (less resource intensive and configurable).
 * New option (-m) added for cf-hub for Enterprise database maintenance.
 * System variables are collected by hub in every delta query
-* Fix software reports showing "(never)" in the "Last seen" column
-* Fix "blue hosts" list being empty for clients that don't have class keys
 * Sendmail is installed by default on the hub - required for emailing of reports (but see also known issues)
 * 32-bit hub installations no longer supported
 
@@ -92,17 +89,19 @@ BUGFIXES SINCE 2.2.3:
 * Fix local tcdb storage of variables that were truncated in reporting due to size (> 1024 bytes).
 * Fix incorrect structure of variable report causing apache problems when using REST API.
 * Fix listing of users from external authentication (mismatch in user attributes (empty field was populated with data from next user))
-* Fixe/remove limit in number of entries listed in user list (previously 100 users by default).
+* Fix/remove limit in number of entries listed in user list (previously 100 users by default).
 * Fix blank listing of externally authenticated users if the database contained more than 1000 entries.
 * Fix file change report containing warning message as filename for new/deleted files
 * Fix truncation of downloaded reports
 * Fix software installed and patches available reports for Ubuntu (now includes CFEngine packages)
+* Fix software reports showing "(never)" in the "Last seen" column
+* Fix "blue hosts" list being empty for clients that don't have class keys
 
 For fixes to CFEngine Community see separate change log (/var/cfengine/share/doc/ChangeLog).
 
 
 INSTALLATION AND UPGRADE:
-See separate INSTALL file for instructions.
+See separate 3.0.0RC1-INSTALLATION.TXT for instructions.
 
 
 KNOWN ISSUES:

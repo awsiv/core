@@ -1,6 +1,6 @@
-CFENGINE 3 ENTERPRISE 3.0 Release Candidate
+CFENGINE 3 ENTERPRISE 3.0 Release Candidate 1
 RELEASE DATE: November 2012
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 Release Candidate
+SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 Release Candidate 1
 
 -----------------------------------------------------------
  TABLE OF CONTENTS:
@@ -10,7 +10,7 @@ SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0 Relea
  SOFTWARE DEPENDENCIES
 -----------------------------------------------------------
 
-For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "Release-Notes-CFEngine-3-Enterprise.txt" file that comes with this package.
+For information about supported platforms, compatible hub/client configurations for this release and an overview of changes, please see the "3.0.0RC1-Release-Notes-CFEngine-3-Enterprise.txt" file that comes with this package.
 
 This is a release candidate for testing, not intended for production environments!
 

@@ -2,8 +2,7 @@
 \input texinfo-logo
 \input texinfo
 @selectaltfont{cmbright}
-@setlogo{CFEngineFrontPage} 
-
+@setlogo{CFEngineFrontPage}
 @c *********************************************************************
 @c
 @c  This is a TEXINFO file. It generates both TEX documentation and
@@ -15,33 +14,81 @@
 @c  Menus list the subsections so that an online info-reader can parse
 @c  the file hierarchically.
 @c
-@c ***********************************************************************
+@c ***********************************************************************@c 
 @c %** start of header
-@setfilename st-coredev.info
+@setfilename Enterprise-3-0-API.info
 @settitle CFEngine Enterprise 3.0 API
 @setchapternewpage odd
 @c %** end of header
-
 @titlepage
 @title CFEngine Enterprise 3.0 API
+@subtitle CFEngine Enterprise Documentation
+@subtitle Updated 23. November 2012 @c also update in ifnottex section below
 @author CFEngine AS
-
+@c @smallbook
+@fonttextsize 10
+@page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2012 CFEngine AS
-
+Copyright @copyright{} 2012 CFEngine AS.
+The features described herein are in provided for user convenience and imply no warranty whatsoever
+to the extent of applicable law.
 @end titlepage
+@c *************************** File begins here ************************
+@ifinfo
+@dircategory CFEngine Training
+@direntry
+* CFEngine Reference:
+                        CFEngine is a language based framework
+                        designed for configuring and maintaining
+                        Unix-like operating systems attached
+                        to a TCP/IP network.
+@end direntry
+@end ifinfo
+@ifnottex
+Updated 23. November 2012
+@node Top, REST API, (dir), (dir)
+@top CFEngine Enterprise 3.0 API
+@end ifnottex
+@ifhtml
+@html
+<a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+<h2>Summary of contents</h2>
+@end html
+@end ifhtml
 
+@iftex
 @contents
+@end iftex
+
+
+
+@menu
+* REST API::                
+@end menu
+
 
 @c **************************************************
 @c CHAPTER
 @c **************************************************
+@node REST API, , Top, Top
+@chapter REST API
 
-@chapter Introduction
+
+@menu
+* Basic Properties of the API::  
+* Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API::  
+* Checking Status::             
+* Managing Settings::           
+* Managing Users and Roles::    
+* Browsing Host Information::   
+* SQL Queries::                 
+* API Reference::               
+@end menu
+
 
 The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CFEngine Enterprise 3.0 installation. With the Enterprise API, you can..
 
-@itemize
+@itemize -
 @item Check installation status
 @item Manage users, groups and settings
 @item Browse host (agent) information and policy
@@ -51,16 +98,37 @@ The CFEngine Enterprise API allows HTTP clients to interact with the Hub of a CF
 
 The Enterprise API is a REST API, but a central part of interacting with the API involves using SQL. This is new in 3.0 and was done to provide users with maximal flexibility for crafting custom reports based on the wealth of data residing on the Hub.
 
-@subsection Basic Properties of the API
 
-@subsubsection HTTP + JSON
+@c ----------------------------------------------------
+@node Basic Properties of the API, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API, REST API, REST API
+@section Basic Properties of the API
+
+@menu
+* HTTP + JSON::                 
+* Requests::                    
+* Responses::                   
+* Pagination::                  
+* Time::                        
+* Authentication::              
+* Authorization::               
+@end menu
+
+@c ----------------------------------------------------
+@node HTTP + JSON, Requests, Basic Properties of the API, Basic Properties of the API
+@subsection HTTP + JSON
 The Enterprise API is a conventional REST API in the sense that it has a number of URI resources that support one or more GET, PUT, POST, or DELETE operations. While reporting is done using SQL, this query is always wrapped in a JSON request.
 
-@subsubsection Requests
+
+@c ----------------------------------------------------
+@node Requests, Responses, HTTP + JSON, Basic Properties of the API
+@subsection Requests
 @b{GET} requests are one of @b{listing} or @b{getting}. @b{Listing} resources means that a number of results will be returned, but each entry may contain limited information. An example of a @b{listing} query is @i{/api/user} to list users. Notice that URI components are always non-plural. An exception to this is @i{/api/settings}, which returns the singleton resource for settings. @b{Getting} a resource specifies an individual resource to return, e.g. @i{/api/user/homer}. @b{PUT} request typically create a new resource, e.g. a user. @b{POST} requests typically updates an existing resource. @b{DELETE} requests are also supported in some cases.
 
-@subsubsection Responses
-3.0 responses are always of the following format, consisting of a @b{meta} object and a @b{data} array.
+
+@c ----------------------------------------------------
+@node Responses, Pagination, Requests, Basic Properties of the API
+@subsection Responses
+Enterprise 3.0 API responses are always of the following format, consisting of a @b{meta} object and a @b{data} array.
 @verbatim
 {
   "meta": {
@@ -77,42 +145,96 @@ The Enterprise API is a conventional REST API in the sense that it has a number 
 
 @b{page} refers to the current page number of the request. @b{count} is the number of results in the current page, equaling the length of the @b{data} array. @b{total} is the number of results in all available pages combined. @b{timestamp} is the time the request was processed by the API. The @b{data} array is resource dependent, but will always contain objects. Response objects typically do not contain error codes. If the response is not @i{200 OK}, the appropriate HTTP error code returned along with a (possibly non-JSON) payload.
 
-@subsubsection Pagination
+
+@c ----------------------------------------------------
+@node Pagination, Time, Responses, Basic Properties of the API
+@subsection Pagination
 Pagination is handled by @b{page} and @b{count} query parameters to a @b{GET} request, e.g. @i{/api/user?page=5&count=30} to get the 5th page of pages of 30 entries each. The default @b{page} is 1 and the default @b{count} is 50 if these are not specified explicitly.
 
-@subsubsection Time
+
+@c ----------------------------------------------------
+@node Time, Authentication, Pagination, Basic Properties of the API
+@subsection Time
 All timestamps are reported in @i{Unix Time}, i.e. seconds since 1970.
 
-@subsubsection Authentication
+
+@c ----------------------------------------------------
+@node Authentication, Authorization, Time, Basic Properties of the API
+@subsection Authentication
 The API supports both internal and external authentication. The internal users table will always be consulted first, followed by an external source specified in the settings. External sources are @i{OpenLDAP} or @i{Active Directory} servers configurable through @i{POST /api/settings}.
 
-@subsubsection Authorization
-Some resources require that the request user is a member of the @i{admin} role. Roles are managed with @i{/api/role}. @b{Role-Based Access Control (RBAC)} is configurable through settings. Users typically have permission to access their own resources, e.g. their own scheduled reports.
 
-@subsection Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API.
+@c ----------------------------------------------------
+@node Authorization,  , Authentication, Basic Properties of the API
+@subsection Authorization
+Some resources require that the request user is a member of the @i{admin} role. Roles are managed with @i{/api/role}. Role Based Access Control (RBAC) is configurable through the settings. Users typically have permission to access their own resources, e.g. their own scheduled reports. See the Enterprise 3.0 Owner's Manual for more information on RBAC.
 
-@subsubsection Read vs. Read/Write
+
+@c ----------------------------------------------------
+@node Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API, Checking Status, Basic Properties of the API, REST API
+@section Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+
+@menu
+* Read vs. Read/Write::         
+* Built-in Reports vs. Reporting Engine::  
+* Content-Type::                
+* New Users::                   
+* Base Path::                   
+* Still available::             
+* Mission Portal::              
+@end menu
+
+@c ----------------------------------------------------
+@node Read vs. Read/Write, Built-in Reports vs. Reporting Engine, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Read vs. Read/Write
 The 2.2 API was read-only and users, roles and settings was managed by the Mission Portal. By contrast, the 3.0 API is read/write and completely standalone from the Mission Portal. In the CFEngine Enterprise 3.0, users, roles and settings belong in the API, and the Mission Portal uses this to determine access to data. Additionally, some other resources support PUT, POST and DELETE, but most data collected from agents are read-only.
 
-@subsubsection Built-in Reports vs. Reporting Engine
+
+@c ----------------------------------------------------
+@node Built-in Reports vs. Reporting Engine, Content-Type, Read vs. Read/Write, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Built-in Reports vs. Reporting Engine
+
 The 2.2 API provided an almost one-to-one correspondence between the reports in the Mission Portal and the API. One of the big changes in CFEngine Enterprise 3.0 is the advent of SQL reports. This is provided to the Mission Portal through the API, and you can use it too. You may issue both synchronous and asynchronous reporting requests, and optionally schedule reports to be received by email.
 
-@subsubsection Content-Type
+
+@c ----------------------------------------------------
+@node Content-Type, New Users, Built-in Reports vs. Reporting Engine, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Content-Type
 The 2.2 API has a HTTP content-type @code{application/vnd.cfengine.nova-v1+json}. In the 3.0 API the content-type is @code{application/vnd.cfengine.enterprise-v1+json}. This reflects a branding change away from Nova to Enterprise.
 
-@subsubsection New Users
+
+@c ----------------------------------------------------
+@node New Users, Base Path, Content-Type, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection New Users
 The 2.2 API used credentials from the Mission Portal database to authenticate and authorize users. These users have been moved into the Hub database and security has been strengthened. We are now using salted SHA256 passwords for the user table. Unfortunately, this means that internal users need to be recreated. The Mission Portal now relies on the API for authentication and authorization. This was partially done to support multi-hub installations.
 
-@subsubsection Base Path
+
+@c ----------------------------------------------------
+@node Base Path, Still available, New Users, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Base Path
 The 2.2 API had a base path @code{/rest}. In the 3.0 API the base path is @code{/api}.
 
-@subsubsection Still available
+
+@c ----------------------------------------------------
+@node Still available, Mission Portal, Base Path, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Still available
+
 In 3.0, the old 2.2 API is still available along side the new 3.0 API, so you can keep calling the old API if needed.
 
-@subsubsection Mission Portal
+
+@c ----------------------------------------------------
+@node Mission Portal,  , Still available, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API
+@subsection Mission Portal
 Starting in 3.0, most of the API is exercised by the Mission Portal web-UI.
 
-@chapter Checking Status
+
+@c ----------------------------------------------------
+@node Checking Status, Managing Settings, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API, REST API
+@section Checking Status
+
+@menu
+@end menu
+
 You can get basic info about the API by issuing @i{GET /api}. This status information may also be useful if you contact support, as it gives some basic diagnostics.
 
 @b{Request}
@@ -158,16 +280,31 @@ curl -k --user admin:admin https://test.cfengine.com/api/
 }
 @end verbatim
 
-@chapter Managing Settings
+
+@c ----------------------------------------------------
+@node Managing Settings, Managing Users and Roles, Checking Status, REST API
+@section Managing Settings
+
+@menu
+* Viewing settings::            
+* Example - Configuring LDAP::  
+* Example - Configuring Active Directory::  
+* Example - Changing The Log Level::  
+@end menu
+
 Most of the settings configurable in the API relate to LDAP authentication of users. Settings support two operations, @b{GET} (view settings) and @b{POST} (update settings). When settings are updated, they are sanity checked individually and as a whole. All or no settings will be updated for a request.
 
+
+@c ----------------------------------------------------
+@node Viewing settings, Example - Configuring LDAP, Managing Settings, Managing Settings
 @subsection Viewing settings
 @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/settings
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -198,10 +335,14 @@ curl --user admin:admin http://test.cfengine.com/api/settings
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Configuring LDAP, Example - Configuring Active Directory, Viewing settings, Managing Settings
 @subsection Example: Configuring LDAP
 The setting @b{ldapEnabled} turns external authentication on or off. When turned on, the API will check to see that the other LDAP related settings make sense, and attempt to authenticate using the configured credentials. If it is not successful in doing this, no settings will be changed. The API will notify you with a return code an a message describing the error.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 {
@@ -217,11 +358,17 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
   "ldapUsersDirectory": "ou",
 }
 @end verbatim
-@b{Response}
+
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
+
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Configuring Active Directory, Example - Changing The Log Level, Example - Configuring LDAP, Managing Settings
 @subsection Example: Configuring Active Directory
 Active Directory is configured in much the same way as OpenLDAP, but the additional field @b{ldapActiveDirectoryDomain} is required. @b{ldapMode} is also changed from @i{standard} to @i{activeDirectory}.
 
@@ -246,10 +393,14 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 204 No Content
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Changing The Log Level,  , Example - Configuring Active Directory, Managing Settings
 @subsection Example: Changing The Log Level
 The API uses standard Unix syslog to log a number of events. Additionally, log events are sent to stderr, which means they may also end up in your Apache log. Log events are filtered based on the log level in settings. Suppose you wanted to have greater visibility into the processing done at the backend. The standard log level is @i{error}. Changing it to @i{info} is done as follows.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 {
@@ -257,24 +408,44 @@ curl --user admin:admin http://test.cfengine.com/api/settings -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
 
 
-@chapter Managing Users and Roles
+
+@c ----------------------------------------------------
+@node Managing Users and Roles, Browsing Host Information, Managing Settings, REST API
+@section Managing Users and Roles
+
+@menu
+* Example - Listing Users::     
+* Example - Creating a New User::  
+* Example - Updating an Existing User::  
+* Example - Retrieving a User::  
+* Example - Adding a User to a Role::  
+* Example - Deleting a User::   
+* Example - Creating a New Role::  
+@end menu
+
 Users and Roles determine who has access to what data from the API. Roles are defined by regular expressions that determine which hosts the user can see, and what policy outcomes are restricted. 
 
+
+@c ----------------------------------------------------
+@node Example - Listing Users, Example - Creating a New User, Managing Users and Roles, Managing Users and Roles
 @subsection Example: Listing Users
 
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -304,9 +475,14 @@ curl --user admin:admin http://test.cfengine.com/api/user
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Creating a New User, Example - Updating an Existing User, Example - Listing Users, Managing Users and Roles
 @subsection Example: Creating a New User
 All users will be created for the internal user table. The API will never attempt to write to an external LDAP server.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X PUT -d
 {
@@ -317,15 +493,22 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X PUT -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 201 Created
 }
+
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Updating an Existing User, Example - Retrieving a User, Example - Creating a New User, Managing Users and Roles
 @subsection Example: Updating an Existing User
 Both internal and external users may be updated. When updating an external users, the API will essentially annotate metadata for the user, it will never write to LDAP. Consequently, passwords may only be updated for internal users. Users may only update their own records, as authenticated by their user credentials.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/calvin -X POST -d
 {
@@ -333,20 +516,27 @@ curl --user admin:admin http://test.cfengine.com/api/user/calvin -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Retrieving a User, Example - Adding a User to a Role, Example - Updating an Existing User, Managing Users and Roles
 @subsection Example: Retrieving a User
 It is possible to retrieve data on a single user instead of listing everything. The following query is similar to issuing @i{GET /api/user?id=calvin}, with the exception that the previous query accepts a regular expression for @i{id}.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/calvin
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -368,9 +558,14 @@ curl --user admin:admin http://test.cfengine.com/api/user/calvin
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Adding a User to a Role, Example - Deleting a User, Example - Retrieving a User, Managing Users and Roles
 @subsection Example: Adding a User to a Role
 Adding a user to a role is just an update operation on the user. The full role-set is updated, so if you are only appending a role, you may want to fetch the user data first, append the role and then update. The same approach is used to remove a user from a role.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X POST -d
 {
@@ -380,27 +575,39 @@ curl --user admin:admin http://test.cfengine.com/api/user/snookie -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Deleting a User, Example - Creating a New Role, Example - Adding a User to a Role, Managing Users and Roles
 @subsection Example: Deleting a User
 Users can only be deleted from the internal users table.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/snookie -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Creating a New Role,  , Example - Deleting a User, Managing Users and Roles
 @subsection Example: Creating a New Role
 Once you've learned how to manage users, managing roles is pretty much the same thing. Roles are defined by four fields that filter host data and policy data: @b{includeContext}, @b{excludeContext}, @b{includeBundles}, @b{excludeBundles}. Each field is a comma separated list of regular expressions. See the corresponding section on RBAC for an explanation of these fields. Updating, and deleting roles are similar to updating and deleting users, using POST and DELETE.
-@b{Request}
+
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/user/solaris-admins -X PUT -d
 {
@@ -412,22 +619,41 @@ curl --user admin:admin http://test.cfengine.com/api/user/solaris-admins -X PUT 
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
 
-@chapter Browsing Host Information
+
+@c ----------------------------------------------------
+@node Browsing Host Information, SQL Queries, Managing Users and Roles, REST API
+@section Browsing Host Information
+
+@menu
+* Example - Listing Hosts With A Given Context::  
+* Example - Looking Up Hosts By Hostname::  
+* Example - Looking Up Hosts By IP::  
+* Example - Removing Host Data::  
+* Example - Listing Available Vital Signs For A Host::  
+* Example - Retrieving Vital Sign Data::  
+@end menu
+
 A resource @i{/api/host} is added as an alternative interface for browsing host information. For full flexibility we recommend using SQL reports via @i{/api/query} for this, however, currently vital signs (data gathered from cf-monitord) is not part of the SQL reports data model.
 
+
+@c ----------------------------------------------------
+@node Example - Listing Hosts With A Given Context, Example - Looking Up Hosts By Hostname, Browsing Host Information, Browsing Host Information
 @subsection Example: Listing Hosts With A Given Context
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl --user admin:admin http://test.cfengine.com/api/host?context-include=windows.*
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -451,16 +677,22 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=window
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Looking Up Hosts By Hostname, Example - Looking Up Hosts By IP, Example - Listing Hosts With A Given Context, Browsing Host Information
 @subsection Example: Looking Up Hosts By Hostname
 
-Contexts are powerful, as you can use them to categorize hosts according to a rich set of tags. For example, each host is automatically tagged with a canonicalized version of its hostname and IP-address. So we could lookup the host with hostname @i{windows2003-2.test.cfengine.com} as follows.
+Contexts are powerful, as you can use them to categorize hosts according to a rich set of tags. For example, each host is automatically tagged with a canonicalized version of its hostname and IP-address. So we could lookup the host with hostname @i{windows2003-2.test.cfengine.com} as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host?context-include=windows2003_2_stage_cfengine_com
+curl --user admin:admin http://test.cfengine.com/api/host?context-include=
+   windows2003_2_stage_cfengine_com
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -479,16 +711,22 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=window
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Looking Up Hosts By IP, Example - Removing Host Data, Example - Looking Up Hosts By Hostname, Browsing Host Information
 @subsection Example: Looking Up Hosts By IP
 
-Similarly we can lookup the host with hostname @i{windows2008-2.test.cfengine.com} by IP as follows.
+Similarly we can lookup the host with hostname @i{windows2008-2.test.cfengine.com} by IP as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host?context-include=172_20_100_43
+curl --user admin:admin http://test.cfengine.com/api/host?
+   context-include=172_20_100_43
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -507,30 +745,42 @@ curl --user admin:admin http://test.cfengine.com/api/host?context-include=172_20
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Removing Host Data, Example - Listing Available Vital Signs For A Host, Example - Looking Up Hosts By IP, Browsing Host Information
 @subsection Example: Removing Host Data
 
-If a host has been decommissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request.
+If a host has been decommissioned from a Hub, we can explicitly remove data associated with the host from the Hub, by issuing a DELETE request (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/1c8fafe478e05eec60fe08d2934415c81a51d2075aac27c9936e19012d625cb8 -X DELETE
+curl --user admin:admin http://test.cfengine.com/api/host/
+   1c8fafe478e05eec60fe08d2934415c81a51d2075aac27c9936e19012d625cb8 -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Listing Available Vital Signs For A Host, Example - Retrieving Vital Sign Data, Example - Removing Host Data, Browsing Host Information
 @subsection Example: Listing Available Vital Signs For A Host
 
-Each host record on the Hub has a set of vital signs collected by cf-monitord on the agent. We can view the list of vitals signs from as host as follows.
+Each host record on the Hub has a set of vital signs collected by cf-monitord on the agent. We can view the list of vitals signs from as host as follows (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital
+curl --user admin:admin http://test.cfengine.com/api/host/
+   4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -567,16 +817,23 @@ curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573
 }
 @end verbatim
 
+
+@c ----------------------------------------------------
+@node Example - Retrieving Vital Sign Data,  , Example - Listing Available Vital Signs For A Host, Browsing Host Information
 @subsection Example: Retrieving Vital Sign Data
 
-Each vital sign has a collected time series of values for up to one week. Here we retrieve the time series for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT.
+Each vital sign has a collected time series of values for up to one week. Here we retrieve the time series for the @i{mem_free} vital sign at host @i{4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a} for October 23rd 2012 12:20pm to 12:45pm GMT (lines split and indented for presentability).
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
-curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/vital/mem_free?from=1350994800&to=1350996300
+curl --user admin:admin http://test.cfengine.com/api/host/
+   4e913e2f5ccf0c572b9573a83c4a992798cee170f5ee3019d489a201bc98a1a/
+   vital/mem_free?from=1350994800&to=1350996300
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 "meta": {
     "page": 1,
@@ -621,7 +878,17 @@ curl --user admin:admin http://test.cfengine.com/api/host/4e913e2f5ccf0c572b9573
 
 @end verbatim
 
-@chapter SQL Queries
+
+
+@c ----------------------------------------------------
+@node SQL Queries, API Reference, Browsing Host Information, REST API
+@section SQL Queries
+
+@menu
+* Synchronous Queries::         
+* Asynchronous Queries::        
+* Subscribed Queries::          
+@end menu
 
 The standard way of creating reports in CFEngine Enterprise 3.0 is with SQL queries. See the chapter on SQL queries for an explanation. The API has a few ways of creating a report.
 
@@ -631,21 +898,27 @@ The standard way of creating reports in CFEngine Enterprise 3.0 is with SQL quer
 @item Subscribed query, where we specify a query to be run on a schedule and have the result emailed to someone.
 @end itemize
 
-@section Synchronous Queries
+
+@c ----------------------------------------------------
+@node Synchronous Queries, Asynchronous Queries, SQL Queries, SQL Queries
+@subsection Synchronous Queries
 
 Issuing a synchronous query is the most straight forward way of running an SQL query. We simply issue the query and wait for a result to come back.
 
-@subsection Example: Listing Hostname and IP for Ubuntu Hosts
+@subsubsection Example: Listing Hostname and IP for Ubuntu Hosts
 
-@b{Request}
+@sp 1
+@noindent @b{Request} (lines split and indented for presentability)
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/query -X POST -d
 {
-  "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
+  "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts 
+     ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -656,7 +929,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/query -X POST -d
   },
   "data": [
     {
-      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\"",
+      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON 
+          Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\"",
       "header": [
         "HostName",
         "IPAddress"
@@ -685,7 +959,10 @@ curl -k --user admin:admin https://test.cfengine.com/api/query -X POST -d
 
 The @b{cached} and @b{sortDescending} fields here mean that the the result was not retrieved from cache, and that post-processing sorting was not applied. It is also possible to specify @b{skip} and @b{limit} fields that will be applied to the result set after it is returned by the SQL engine. These fields are mainly used by the Mission Portal to paginate quickly on already processed queries.
 
-@section Asynchronous Queries
+
+@c ----------------------------------------------------
+@node Asynchronous Queries, Subscribed Queries, Synchronous Queries, SQL Queries
+@subsection Asynchronous Queries
 
 Because some queries may take some time to compute, it is possible to fire off a query and check the status of it later. This is useful for dumping a lot of data into CSV files for example. The sequence consists of three steps.
 
@@ -695,7 +972,7 @@ Because some queries may take some time to compute, it is possible to fire off a
 @item When the query is completed, get a download link using the id
 @end enumerate
 
-@subsection Issuing The Query
+@subsubsection Issuing The Query
 
 @b{Request}
 @verbatim
@@ -705,7 +982,8 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async -X POST -d
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response} (lines split and indented for presentability)
 @verbatim
 {
   "meta": {
@@ -717,20 +995,24 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async -X POST -d
   "data": [
     {
       "id": "32ecb0a73e735477cc9b1ea8641e5552",
-      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
+      "query": "SELECT Hosts.HostName, Hosts.IPAddress FROM Hosts JOIN Contexts ON 
+          Hosts.Hostkey = Contexts.HostKey WHERE Contexts.ContextName = \"ubuntu\""
     }
   ]
 ]
 @end verbatim
 
-@subsection Checking Status
+
+@page
+@subsubsection Checking Status
 
 @b{Request}
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -747,16 +1029,18 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 }
 @end verbatim
 
-@subsection Getting The Completed Report
+@subsubsection Getting The Completed Report
 
 This is the same API call as checking the status. Eventually, the @b{percentageComplete} field will reach 100 and there will be a link to the completed report available for downloading.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -775,17 +1059,22 @@ curl -k --user admin:admin https://test.cfengine.com/api/query/async/:id
 }
 @end verbatim
 
-@section Subscribed Queries
+
+@c ----------------------------------------------------
+@node Subscribed Queries,  , Asynchronous Queries, SQL Queries
+@subsection Subscribed Queries
 
 Subscribed queries happen in the context of a user. Any user can create a query on a schedule and have it email to someone.
 
-@subsection Example: Creating A Subscribed Query
+@subsubsection Example: Creating A Subscribed Query
 
 Here we create a new query to count file changes by name and have the result sent to us by email. The schedule field is any CFEngine context expression. The backend polls subscriptions in a loop and checks whether it's time to generate a report and send it out. In the following example, user @i{milton} creates a new subscription to a report which he names @i{file-changes-report}, which will be sent out every Monday night. His boss will get an email with a link to a PDF version of the report.
 
-@b{Request}
+@sp 1
+@noindent @b{Request} (lines split and indented for presentability)
 @verbatim
-curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query/file-changes-report -X PUT -d
+curl -k --user admin:admin https://test.cfengine.com/api/user/milton/
+   subscription/query/file-changes-report -X PUT -d
 {
   "to": "boss@megaco.com",
   "query": "SELECT Name Count(1) FROM FileChanges GROUP BY Name",
@@ -796,23 +1085,26 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 }
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
+
 @end verbatim
 
-@subsection Example: Listing Report Subscriptions
+
+@subsubsection Example: Listing Report Subscriptions
 
 Milton can list all his current subscriptions by issuing the following.
 
-@b{Request}
+@sp 1
+@noindent @b{Request}
 @verbatim
 curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query
 @end verbatim
 
-@b{Response}
-@verbatim
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 {
   "meta": {
@@ -834,24 +1126,51 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 ]
 @end verbatim
 
-@subsection Example: Removing A Report Subscription
+@subsubsection Example: Removing A Report Subscription
 
-@b{Request}
+@b{Request} (lines split and indented for presentability)
 @verbatim
-curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscription/query/file-changes-report -X DELETE
+curl -k --user admin:admin https://test.cfengine.com/api/user/milton/
+   subscription/query/file-changes-report -X DELETE
 @end verbatim
 
-@b{Response}
+@sp 1
+@noindent @b{Response}
 @verbatim
 204 No Content
 @end verbatim
 
-@chapter API Reference
 
-@section /api
-@subsection Supported Operations
+@c ----------------------------------------------------
+@node API Reference,  , SQL Queries, REST API
+@section API Reference
+
+@menu
+* /api::                        
+* /api/settings::               
+* /api/user::                   
+* /api/user/id::                
+* /api/role::                   
+* /api/role/id::                
+* /api/host::                   
+* /api/host/host-id::           
+* /api/host/host-id/context::   
+* /api/host/host-id/context/context-id::  
+* /api/host/host-id/vital::     
+* /api/promise::                
+* /api/promise/promise-id::     
+* /api/query::                  
+* /api/query/async::            
+* /api/query/async/async-query-id::  
+@end menu
+
+@c ----------------------------------------------------
+@node /api, /api/settings, API Reference, API Reference
+@subsection /api
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{apiName} @i{(string)} Human-friendly API name.
 @item @b{apiVersion} @i{(string)} API version string.
@@ -873,10 +1192,14 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{license.licenseUsage.usedToday} @i{(integer)} Total number of host licenses observed used today.
 @end itemize
 
-@section /api/settings
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/settings, /api/user, /api, API Reference
+@subsection /api/settings
+@i{Supported Operations}:@*
 @b{GET}, @b{POST}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{rbacEnabled} @i{(boolean)} Whether RBAC is applied to requests.
 @item @b{ldapEnabled} @i{(boolean)} Whether external authentication is activated.
@@ -895,19 +1218,27 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{logLevel} @i{("emergency", "alert", "critical", "error", "warning", "notice", "info", "debug")} Syslog filter specifying the severity level at which messages produced by the API should be emitted to syslog and apache.log. (default: error).
 @end itemize
 
-@section /api/user
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/user, /api/user/id, /api/settings, API Reference
+@subsection /api/user
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{id} @i{(regex string)} Regular expression for filtering usernames.
 @item @b{external} @i{("true", "false")} Returns only internal users (false) or only external (true), or all if not specified.
 @end itemize
 
-@section /api/user/:id
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/user/id, /api/role, /api/user, API Reference
+@subsection /api/user/:id
+@i{Supported Operations}:@*
 @b{GET}, @b{PUT}, @b{POST}, @b{DELETE}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of a user.
 @item @b{password} @i{(string)} Password of a user. (Never returned from API).
@@ -916,14 +1247,21 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{external} @i{(boolean)} Whether or not the user was found externally (LDAP).
 @end itemize
 
-@section /api/role
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/role, /api/role/id, /api/user/id, API Reference
+@subsection /api/role
+@i{Supported Operations}:@*
 @b{GET}
 
-@section /api/role/:id
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/role/id, /api/host, /api/role, API Reference
+@subsection /api/role/:id
+@i{Supported Operations}:@*
 @b{GET}, @b{PUT}, @b{POST}, @b{DELETE}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize 
 @item @b{id} @i{(string)} ID of a role.
 @item @b{description} @i{(string)} Arbitrary text describing the role
@@ -933,30 +1271,44 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{excludeBundles} @i{(comma delimited string of regular expression strings)} Excludes bundles visible to the users in the role.
 @end itemize
 
-@section /api/host
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/host, /api/host/host-id, /api/role/id, API Reference
+@subsection /api/host
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{include-context} @i{(comma delimited string of regular expression strings)} Includes hosts having context matching the expression.
 @item @b{exclude-context} @i{(comma delimited string of regular expression strings)} Excludes hosts having context matching the expression.
 @end itemize
 
-@section /api/host/:host-id
+
+@c ----------------------------------------------------
+@node /api/host/host-id, /api/host/host-id/context, /api/host, API Reference
+@subsection /api/host/:host-id
 @itemize
 @item @b{id} @i{(string)} ID of a host.
 @item @b{hostname} @i{(string)} Hostname of a host.
 @item @b{ip} @i{(string)} IP address of a host.
 @end itemize
 
-@section /api/host/:host-id/context
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/host/host-id/context, /api/host/host-id/context/context-id, /api/host/host-id, API Reference
+@subsection /api/host/:host-id/context
+@i{Supported Operations}:@*
 @b{GET}
 
-@section /api/host/:host-id/context/:context-id
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/host/host-id/context/context-id, /api/host/host-id/vital, /api/host/host-id/context, API Reference
+@subsection /api/host/:host-id/context/:context-id
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of a context (class name)
 @item @b{mean} @i{(real)} Occurrence probability of the context in an agent run.
@@ -964,19 +1316,24 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{timestamp} @i{(integer}) Last time context was activated on agent.
 @end itemize
 
-@section /api/host/:host-id/vital
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/host/host-id/vital, /api/promise, /api/host/host-id/context/context-id, API Reference
+@subsection /api/host/:host-id/vital
+@i{Supported Operations}:@*
 @b{GET}
 
-@subsection /api/host/:host-id/vital/:vital-id
-@subsection Supported Operations
+@subsubsection /api/host/:host-id/vital/:vital-id
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Query Parameters
+@sp 1
+@noindent @i{Query Parameters}:
 @itemize
 @item @b{from} @i{(integer)} Timestamp marking the start of the interval for which to fetch data. Data is only available going back one week.
 @item @b{to} @i{(integer)} End of data interval to be fetched.
 @end itemize
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of vital sign.
 @item @b{description} @i{(string)} Description of vital sign.
@@ -985,14 +1342,21 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{values} @i{(array of [ t, y ], where t is the sample timestamp)} Vital sign data. 
 @end itemize
 
-@section /api/promise
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/promise, /api/promise/promise-id, /api/host/host-id/vital, API Reference
+@subsection /api/promise
+@i{Supported Operations}:@*
 @b{GET}
 
-@section /api/promise/:promise-id
-@subsection Supported Operations
+
+@c ----------------------------------------------------
+@node /api/promise/promise-id, /api/query, /api/promise, API Reference
+@subsection /api/promise/:promise-id
+@i{Supported Operations}:@*
 @b{GET}
-@subsection Fields
+@sp 1
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} Promise handle.
 @item @b{type} @i{(string)} Promise type.
@@ -1002,10 +1366,14 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{comment} @i{(string)} Associated comment for the promise.
 @end itemize
 
-@section /api/query
-@subsection Supported Operations
-@b{POST}
-@subsection Fields
+
+@c ----------------------------------------------------
+@node /api/query, /api/query/async, /api/promise/promise-id, API Reference
+@subsection /api/query
+@i{Supported Operations}:@*
+@indent @b{POST}
+
+@noindent @i{Fields}:
 @itemize
 @item @b{query} @i{(string)} SQL query string.
 @item @b{sortColumn} @i{(string)} Column on which to sort results. This is applied to the result of the SQL query and can be considered post processing. The Mission Portal uses this to sort cached reports.
@@ -1014,20 +1382,28 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @item @b{limit} @i{(integer)} Limit the number of results in the processed query.
 @end itemize
 
-@section /api/query/async
-@subsection Supported Operations
-@b{POST}
-@subsection Fields
+
+@c ----------------------------------------------------
+@node /api/query/async, /api/query/async/async-query-id, /api/query, API Reference
+@subsection /api/query/async
+@i{Supported Operations}:@*
+@indent @b{POST}
+
+@noindent @i{Fields}:
 @itemize
 @item @b{query} @i{(string)} SQL query string.
 @item @b{id} @i{(string)} ID of the query job.
 @item @b{error} @i{(string)} Error if anything went wrong.
 @end itemize
 
-@section /api/query/async/:async-query-id
-@subsection Supported Operations
-@b{GET}, @b{DELETE}
-@subsection Fields
+
+@c ----------------------------------------------------
+@node /api/query/async/async-query-id,  , /api/query/async, API Reference
+@subsection /api/query/async/:async-query-id
+@i{Supported Operations}:@*
+@indent @b{GET}, @b{DELETE}
+
+@noindent @i{Fields}:
 @itemize
 @item @b{id} @i{(string)} ID of the query job.
 @item @b{percentageComplete} @i{(integer)} Processing status for the query.
@@ -1036,4 +1412,30 @@ curl -k --user admin:admin https://test.cfengine.com/api/user/milton/subscriptio
 @end itemize
 
 
+@c ***********************************************************************
+@ifhtml
+@html
+<a name="Contents">
+@contents
+@end html
+@end ifhtml
+
+@c  The file is structured like a programming language. Each chapter
+@c  starts with a chapter comment.
+@c
+@c  Menus list the subsections so that an online info-reader can parse
+@c  the file hierarchically.
+@ifhtml
+@html
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-2576171-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+@end html
+@end ifhtml
 @bye
