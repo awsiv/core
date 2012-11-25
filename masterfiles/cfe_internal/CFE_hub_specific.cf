@@ -1071,7 +1071,7 @@ processes:
 
 ##################################################################
 #
-# cfe_internal_disable_selinux
+# cfe_internal_disable_selinux ***OBSOLETE***
 #  - Ensure everything will work smoothly. Put SELinux to
 # Permissive mode by now
 #
@@ -1174,9 +1174,9 @@ bundle agent cfe_internal_selinux(condition)
 
   have_semanage::
 
-   "mongod_port_not_ok"        not => returnszero("/usr/sbin/semanage port -l | grep http_port_t | grep 27017 > /dev/null", "useshell"),
-                           comment => "Check if a default mongod port is permitted",
-                            handle => "cfe_internal_selinux_classes_mongod_prot_not_ok";
+   "httpd_can_network_connect" not => returnszero("/usr/sbin/getsebool -a | grep \"httpd_can_network_connect --> on\" > /dev/null", "useshell"),
+                           comment => "Check if httpd_can_network_connect is permitted",
+                            handle => "cfe_internal_selinux_classes_httpd_can_network_connect";
 
 #
 
@@ -1198,27 +1198,24 @@ bundle agent cfe_internal_selinux(condition)
 
    "/usr/bin/chcon -R -h -t httpd_sys_content_t /var/cfengine/lib"
       comment => "Allow apache to load CFEngine shared libraries with SELinux on",
-       handle => "cfe_internal_selinux_commands_allow_httpd_sys_content_t";
+       handle => "cfe_internal_selinux_commands_allow_httpd_sys_content_t_cfengine_lib";
+
+   "/usr/bin/chcon -R -h -t httpd_sys_content_t /var/cfengine/policy_server.dat"
+      comment => "Fix problem with SELinux",
+       handle => "cfe_internal_selinux_commands_allow_httpd_sys_content_t_policy_server_dat";
 
    "/usr/bin/execstack -c /var/cfengine/lib/*.so.*"
       comment => "Make shared libraries not to require executable stack",
        handle => "cfe_internal_selinux_commands_fix_shared_libraries",
       contain => in_shell;
 
- # Add mongod default port to http_port_t module.
- # Create a new mongo one seems a lot of work to do.
+ # Allow httpd_can_network_connect so HTTPD will be able to talk with MongoDB
 
-  mongod_port_not_ok.fix_selinux::
+  httpd_can_network_connect.fix_selinux::
 
-   "/usr/sbin/semanage port -a -t http_port_t -p tcp 27017"
-      comment => "Add mongod default port to SELinux",
-       handle => "cfe_internal_selinux_commands_allow_mongod_port_old_redhat",
-      ifvarclass => "!(redhat_6_3|centos_6_3|oracle_6_3|scientific_6_3)";
-
-   "/usr/sbin/semanage port -m -t http_port_t -p tcp 27017"
-      comment => "Add mongod default port to SELinux",
-       handle => "cfe_internal_selinux_commands_allow_mongod_port_new_redhat",
-      ifvarclass => "redhat_6_3|centos_6_3|oracle_6_3|scientific_6_3";
+   "/usr/sbin/setsebool -P httpd_can_network_connect 1"
+      comment => "SELinux allows HTTPD to use files on the host",
+       handle => "cfe_internal_selinux_commands_allow_httpd_can_network_connect";
 
   disable_selinux::
 
