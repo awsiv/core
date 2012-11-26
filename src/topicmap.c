@@ -1491,18 +1491,20 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubClass *hc = (HubClass *) rp->item;
+
+        // Must preserve this order so that we don't classify incorrectly
         
-        if (strcmp(hc->class+offset, h1n) == 0)
+        if (strcmp(hc->class+offset, h3n) == 0)
         {
-            (*h1)++;
+            (*h3)++;
         }
         else if (strcmp(hc->class+offset, h2n) == 0)
         {
             (*h2)++;
         }
-        else if (strcmp(hc->class+offset, h3n) == 0)
+        else if (strcmp(hc->class+offset, h1n) == 0)
         {
-            (*h3)++;
+            (*h1)++;
         }
         else if (strcmp(hc->class+offset, n) == 0 ||
                  strcmp(hc->class+offset, h) == 0 ||
@@ -1512,32 +1514,20 @@ static void GetClassHostFrequencies(char *srv, int *h1, int *h2, int *h3, int *l
         {
             (*normal)++;
         }
-        else if (strcmp(hc->class+offset, l1n) == 0)
+        else if (strcmp(hc->class+offset, l3n) == 0)
         {
-            (*l1)++;
+            (*l3)++;
         }
         else if (strcmp(hc->class+offset, l2n) == 0)
         {
             (*l2)++;
         }
-        else if (strcmp(hc->class+offset, l3n) == 0)
+        else if (strcmp(hc->class+offset, l1n) == 0)
         {
-            (*l3)++;
+            (*l1)++;
         }
 
     }
-
-    // Since dev1 is defined if dev2 etc, we have to correct the counts
-    // One of these groups will do nothing
-
-    *normal = *normal - *h1;
-    *h1 = *h1 - *h2;
-    *h2 = *h2 - *h3;
-
-    *normal = *normal - *l1;
-    *l1 = *l1 - *l2;
-    *l2 = *l2 - *l3;
-
     
     CFDB_Close(&dbconn);
 }
