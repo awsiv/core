@@ -5214,7 +5214,7 @@ PHP_FUNCTION(cfpr_list_promises_with_promisee)
 }
 /******************************************************************************/
 
-PHP_FUNCTION(agent_bundle_type_histogram)
+PHP_FUNCTION(cfpr_agent_bundle_type_histogram)
 {
     char *name;
     int n_len;
