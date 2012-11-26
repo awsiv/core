@@ -429,7 +429,8 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-    json = Nova2PHP_list_promises_with_promisee(qualified_topic, "admin");
+//    json = Nova2PHP_list_promises_with_promisee(qualified_topic, "admin");
+    json = Nova2PHP_summarize_all_goals("admin");
 
     if (json)
     {
@@ -1232,6 +1233,7 @@ JsonElement *Nova_summarize_all_goals(char *username)
 
         if (referred != 0 && !IsItemIn(check,topic))
         {
+            PrependItem(&check, topic, NULL);
             JsonObjectAppendString(json_obj, "description", description);
             JsonObjectAppendString(json_obj, "name", refer);
             JsonObjectAppendString(json_obj, "handle", topic);
@@ -1298,11 +1300,11 @@ JsonElement *Nova_summarize_all_goals(char *username)
             JsonObjectAppendInteger(json_obj, "total_compliance", (int)(total_compliance / count + 0.5));
             JsonObjectAppendInteger(json_obj, "people", (int)count_people);
             JsonObjectAppendInteger(json_obj, "hosts", (int)host_count);
+            JsonArrayAppendObject(json_array_out, json_obj);
         }
-
-        JsonArrayAppendObject(json_array_out, json_obj);
     }
 
+    DeleteItemList(check);
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
 
