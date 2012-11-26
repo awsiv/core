@@ -196,21 +196,19 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
 static void CFDB_DropAllIndices(EnterpriseDB *conn)
 {
-    char *indexedCollections[] = { MONGO_HOSTS_COLLECTION,
-        MONGO_LOGS_REPAIRED_COLL,
-        MONGO_LOGS_NOTKEPT_COLL,
-        MONGO_MON_MG_COLLECTION,
-        MONGO_MON_WK_COLLECTION,
-        MONGO_MON_YR_COLLECTION,
-        MONGO_ARCHIVE_COLLECTION,
-        NULL
-    };
+    const char *indexed_collections[] = { MONGO_HOSTS_COLLECTION,
+                                          MONGO_LOGS_REPAIRED_COLL,
+                                          MONGO_LOGS_NOTKEPT_COLL,
+                                          MONGO_MON_MG_COLLECTION,
+                                          MONGO_MON_WK_COLLECTION,
+                                          MONGO_MON_YR_COLLECTION,
+                                          MONGO_ARCHIVE_COLLECTION,
+                                          NULL
+                                        };
 
-    int i;
-
-    for (i = 0; indexedCollections[i] != NULL; i++)
+    for (int i = 0; indexed_collections[i] != NULL; i++)
     {
-        char *collection = indexedCollections[i];
+        const char *collection = indexed_collections[i];
 
         bson dropAllCommand;
         bson_init(&dropAllCommand);
