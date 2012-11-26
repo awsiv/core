@@ -106,12 +106,12 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value);
 /*! \brief A histogram of bundle types
  */
 // port plan: (further investigate)
-PHP_FUNCTION(agent_bundle_type_histogram);
+PHP_FUNCTION(cfpr_agent_bundle_type_histogram);
 
 /*! \brief A list of handles with a named promisee
  */
 // port plan: (further investigate)
-PHP_FUNCTION(list_promises_with_promisee);
+PHP_FUNCTION(cfpr_list_promises_with_promisee);
 
 
 /*! \brief A histogram of open ports
