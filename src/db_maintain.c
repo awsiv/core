@@ -22,6 +22,7 @@
 static void CFDB_DropAllIndices(EnterpriseDB *conn);
 static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey);
 static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostkey, char *promiseLogKey);
+static bool CollectionNeedsReindexing(EnterpriseDB *conn, const char* coll);
 
 // WHAT: CFDB_PurgeSoftwareInvalidTimestamp
 //       removes software reports from all hosts with 0 timestamp
@@ -209,6 +210,11 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
     for (int i = 0; indexed_collections[i] != NULL; i++)
     {
         const char *collection = indexed_collections[i];
+
+        if (!CollectionNeedsReindexing(conn, collection))
+        {
+            continue;
+        }
 
         bson dropAllCommand;
         bson_init(&dropAllCommand);
@@ -1129,4 +1135,26 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn)
     MongoCheckForError(conn, "PurgeSoftwareInvalidTimestamp", NULL, NULL);
 }
 
+/*****************************************************************************/
+
+static bool CollectionNeedsReindexing(EnterpriseDB *conn, const char* coll)
+{
+    const char *deprecated_collections[] = { MONGO_LOGS_REPAIRED_COLL,
+                                             MONGO_LOGS_NOTKEPT_COLL,
+                                             NULL
+                                           };
+
+    for (int i = 0; deprecated_collections[i] != NULL; i++)
+    {
+        const char *old_collection = deprecated_collections[i];
+
+        if ((strcmp(old_collection, coll) == 0)
+                && (!CFDB_CollectionHasData(conn, old_collection)))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 /*****************************************************************************/
