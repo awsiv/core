@@ -3027,94 +3027,6 @@ JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter)
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize)
-{
-    EnterpriseDB dbconn;
-    char work[CF_BUFSIZE];
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return false;
-    }
-
-    HubQuery *hqBundles = CFDB_QueryPromiseBundles(&dbconn, filter, PROMISE_CONTEXT_MODE_ALL);
-
-    if (CountRecords(hqBundles) == 0)
-    {
-        DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
-        CFDB_Close(&dbconn);
-        return false;
-    }
-
-    HubQuerySortPromiseBundles(hqBundles);
-
-    snprintf(buffer, bufsize,
-             "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
-             "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
-             "\"\":4" "}},\"data\":[");
-
-    for (Rlist *rp = hqBundles->records; rp != NULL; rp = rp->next)
-    {
-        HubPromiseBundle *bundle = rp->item;
-
-        Item *ip2, *bundleGoals = Nova_GetBusinessGoals(bundle->bundleName);
-        char goals[CF_BUFSIZE];
-        char colour[CF_SMALLBUF];
-
-        if (bundleGoals)
-        {
-            snprintf(goals, sizeof(goals), "[");
-
-            for (ip2 = bundleGoals; ip2 != NULL; ip2 = ip2->next)
-            {
-                snprintf(work, sizeof(work), "[%d,\"%s\",\"%s\"],", ip2->counter, ip2->name, ip2->classes);
-
-                if (!Join(goals, work, CF_BUFSIZE))
-                {
-                    break;
-                }
-            }
-
-            ReplaceTrailingChar(goals, ',', '\0');
-            EndJoin(goals, "]", sizeof(goals));
-
-            snprintf(colour, CF_SMALLBUF, "green");
-        }
-        else
-        {
-            snprintf(goals, CF_MAXVARSIZE, "[[-1,\"Unknown\",\"Unknown\"]]");
-            snprintf(colour, CF_SMALLBUF, "yellow");
-        }
-
-        char bundlename_lower[CF_BUFSIZE];
-        strlcpy(bundlename_lower, bundle->bundleName, CF_BUFSIZE);
-        ToLowerStrInplace(bundlename_lower);
-
-        snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",
-                 bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(bundlename_lower), goals,
-                 colour);
-
-        if (!Join(buffer, work, bufsize))
-        {
-            break;
-        }
-
-        DeleteItemList(bundleGoals);
-    }
-
-    ReplaceTrailingChar(buffer, ',', '\0');
-
-    EndJoin(buffer, "]}\n", bufsize);
-
-    DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
-
-    CFDB_Close(&dbconn);
-
-    return true;
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize)
 {
     EnterpriseDB dbconn;
@@ -5053,10 +4965,10 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
     snprintf(name, CF_MAXVARSIZE, "handles::%s", handle);
     int goal_id = Nova_GetTopicIdForTopic(name);
     Item *ip, *handles = Nova_GetHandlesForGoal(goal_id);
-    int hosts = 0;
+    int hosts = 0, count_people = 0;
     double have_people = false;
     EnterpriseDB dbconn;
-    double average_compliance = 0, total_compliance = 0;
+    double average_compliance = 0, total_compliance = 0, count = 0;
          
     // The number of people who seem to be involved - some of these are people, some are not people:: or "@" address
     Item *people = Nova_GetStakeHolders(goal_id);
@@ -5068,7 +4980,7 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
 
     handles = SortItemListNames(handles);
 
-    JsonElement *json = JsonObjectCreate(4);
+    JsonElement *json = JsonObjectCreate(6);
     JsonElement *array_promises = JsonArrayCreate(100);
     JsonElement *array_users = JsonArrayCreate(10);
     JsonElement *array_stakeholders = JsonArrayCreate(10);
@@ -5094,34 +5006,46 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
         else
         {
             average_compliance = 0;
-            
+            double host_count = 0;
+
+            // Average over all hosts
+
             for (rp = hq->records; rp != NULL; rp = rp->next)
             {
                 hp = (HubPromiseCompliance *) rp->item;
-               
-                //printf("Host %s has tried to keep this promise\n", hp->hh->hostname);
-
                 average_compliance += hp->e;
+                host_count++;
             }
 
-            total_compliance += average_compliance;
+            if (host_count)
+            {
+                total_compliance += average_compliance / host_count;
+            }
+
+            count++;
+
         }
 
         JsonElement *promise = JsonObjectCreate(4);
+
+        if (count == 0)
+           {
+           count++;
+           }
 
         if (RBACPruneKnowledge(ip->name, ip->classes, username))
            {
            JsonObjectAppendString(promise, "name", RBAC_ERROR_MSG);
            JsonObjectAppendString(promise, "context", ip->classes);
            JsonObjectAppendInteger(promise, "topic_id", Nova_GetTopicIdForTopic(RBAC_ERROR_MSG));
-           JsonObjectAppendInteger(promise, "compliance", average_compliance);
+           JsonObjectAppendInteger(promise, "compliance", average_compliance / count);
            }
         else
            {
            JsonObjectAppendString(promise, "name", ip->name);
            JsonObjectAppendString(promise, "context", ip->classes);
            JsonObjectAppendInteger(promise, "topic_id", ip->counter);
-           JsonObjectAppendInteger(promise, "compliance", average_compliance);
+           JsonObjectAppendInteger(promise, "compliance", average_compliance / count);
            }
 
         JsonArrayAppendObject(array_promises, promise);
@@ -5139,6 +5063,7 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
             //printf(" Person responsible %s::%s %d\n", ip->classes,ip->name, ip->counter);
             have_people = true;
             PrependFullItem(&users, ip->name, ip->classes, ip->counter, 0);
+            count_people++;
         }
         else
         {
@@ -5171,12 +5096,15 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username)
 
     DeleteItemList(users);
     DeleteItemList(stake);
-  
-    double goal_score = (total_compliance + 100.0*have_people)/2.0;
+
+    // Define a simple score as a service
+    double goal_score = (total_compliance / count + 100.0*have_people)/2.0;
     
     JsonObjectAppendArray(json, "promises", array_promises);
     JsonObjectAppendArray(json, "users", array_users);
     JsonObjectAppendArray(json, "stakeholders", array_stakeholders);
+    JsonObjectAppendInteger(json, "total_compliance", (int)(total_compliance / count + 0.5));
+    JsonObjectAppendInteger(json, "people", (int)count_people);
     JsonObjectAppendInteger(json, "score", (int)goal_score);
     
     return json;
@@ -5194,6 +5122,14 @@ int Nova2PHP_list_all_goals(char *buffer, int bufsize)
     {
         return false;
     }
+}
+
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_summarize_all_goals(char *username)
+
+{
+ return Nova_summarize_all_goals(username);
 }
 
 /*****************************************************************************/

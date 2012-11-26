@@ -71,7 +71,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_promise_list_by_promise_type, NULL)
     PHP_FE(cfpr_promise_details, NULL)
     PHP_FE(cfpr_bundle_list_all, NULL)
-    PHP_FE(cfpr_bundle_agent_goals, NULL)
     PHP_FE(cfpr_bundle_for_topic, NULL)
     PHP_FE(cfpr_goal_progress, NULL)
     PHP_FE(cfpr_bundle_arguments, NULL)
@@ -86,6 +85,7 @@ static zend_function_entry cfmod_functions[] =
         /* END POLICY */
     PHP_FE(cfpr_getlastupdate, NULL)
     PHP_FE(cfpr_list_business_goals, NULL)
+    PHP_FE(cfpr_summarize_goals, NULL)
     PHP_FE(cfpr_list_services, NULL)
     PHP_FE(cfpr_list_service_ports, NULL)
     PHP_FE(cfpr_list_knowledge_bundles, NULL)

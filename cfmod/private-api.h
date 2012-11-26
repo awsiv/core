@@ -208,6 +208,10 @@ PHP_FUNCTION(cfpr_goal_progress);
  */
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_list_business_goals);
+/*! \brief Summary of business goals
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(cfpr_summarize_goals);
 
 /*! \brief List tree of knowledge
  */
@@ -870,12 +874,6 @@ PHP_FUNCTION(cfpr_host_info);
  */
 // port plan: /policy
 PHP_FUNCTION(cfpr_promise_details);
-
-/*! \brief Goals for agent bundles
- * \param bundleType
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_bundle_agent_goals);
 
 /*! \brief A list of all bundles
  */

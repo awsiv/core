@@ -105,6 +105,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year,
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 JsonElement *Nova2PHP_list_services(void);
 JsonElement *Nova2PHP_list_service_ports(void);
+JsonElement *Nova2PHP_summarize_all_goals(char *username);
 JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *promisee);
 JsonElement *Nova2PHP_list_types_in_bundle(char *name);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
@@ -289,7 +290,6 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
 
 char *Nova2PHP_GetPromiseComment(char *handle);
 JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter);
-int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize);
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced,
                                          char *buffer, int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer, int bufsize);

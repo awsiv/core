@@ -5047,38 +5047,6 @@ PHP_FUNCTION(cfpr_bundle_list_all)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_bundle_agent_goals)
-{
-    char buffer[CF_WEBBUFFER];
-    char *userName;
-    int user_len;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &userName, &user_len) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
-
-    PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
-
-    PromiseFilterAddBundleType(filter, "agent");
-
-    buffer[0] = '\0';
-    Nova2PHP_bundle_agent_goals(filter, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_get_bundle_type)
 // FIXME: this function inherently wrong - a bundle is not unique by its name -
 //        e.g. there may be a "bundle monitor test" and a "bundle agent test"
@@ -5169,6 +5137,29 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
     Nova2PHP_list_all_goals(buffer, bufsize);
     RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_summarize_goals)
+{
+ char *username;
+ int user_len;
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &username, &user_len) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ JsonElement *out = Nova2PHP_summarize_all_goals(username);
+ 
+ if (!out)
+    {
+    out = JsonObjectCreate(0);
+    }
+ 
+ RETURN_JSON(out);
 }
 
 /******************************************************************************/
