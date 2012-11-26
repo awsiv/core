@@ -875,12 +875,6 @@ PHP_FUNCTION(cfpr_host_info);
 // port plan: /policy
 PHP_FUNCTION(cfpr_promise_details);
 
-/*! \brief Goals for agent bundles
- * \param bundleType
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_bundle_agent_goals);
-
 /*! \brief A list of all bundles
  */
 // port plan: /policy
