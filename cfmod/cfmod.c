@@ -55,8 +55,8 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_analyse_histogram, NULL)
     PHP_FE(cfpr_hosts_sorted_by_last_vital_value, NULL)
 
-    PHP_FE(agent_bundle_type_histogram, NULL)
-    PHP_FE(list_promises_with_promisee, NULL)
+    PHP_FE(cfpr_agent_bundle_type_histogram, NULL)
+    PHP_FE(cfpr_list_promises_with_promisee, NULL)
     
     PHP_FE(cfpr_service_histogram, NULL)
     PHP_FE(cfpr_service_level_histogram, NULL)

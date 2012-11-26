@@ -5192,7 +5192,7 @@ PHP_FUNCTION(cfpr_list_service_ports)
 
 /******************************************************************************/
 
-PHP_FUNCTION(list_promises_with_promisee)
+PHP_FUNCTION(cfpr_list_promises_with_promisee)
 {
     char *name, *username;
     int n_len, user_len;
