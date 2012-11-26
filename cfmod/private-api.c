@@ -5173,6 +5173,29 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_summarize_goals)
+{
+ char *username;
+ int user_len;
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &username, &user_len) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ JsonElement *out = Nova2PHP_summarize_all_goals(username);
+ 
+ if (!out)
+    {
+    out = JsonObjectCreate(0);
+    }
+ 
+ RETURN_JSON(out);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_list_services)
 {
  JsonElement *out = Nova2PHP_list_services();

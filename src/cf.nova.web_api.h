@@ -105,6 +105,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year,
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 JsonElement *Nova2PHP_list_services(void);
 JsonElement *Nova2PHP_list_service_ports(void);
+JsonElement *Nova2PHP_summarize_all_goals(char *username);
 JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *promisee);
 JsonElement *Nova2PHP_list_types_in_bundle(char *name);
 JsonElement *Nova2PHP_get_open_port_histograms(void);

@@ -208,6 +208,10 @@ PHP_FUNCTION(cfpr_goal_progress);
  */
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_list_business_goals);
+/*! \brief Summary of business goals
+ */
+// port plan: (further investigate)
+PHP_FUNCTION(cfpr_summarize_goals);
 
 /*! \brief List tree of knowledge
  */
