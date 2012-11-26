@@ -442,7 +442,6 @@ void Nova_ShowTopic(char *qualified_topic)
 
         WriterClose(writer);
     }
-    
 }
 
 /*****************************************************************************/
@@ -1137,6 +1136,178 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     return true;
 }
 
+/*************************************************************************/
+
+JsonElement *Nova_summarize_all_goals(char *username)
+{
+    // Based on Nova_GetUniqueBusinessGoals(buffer, bufsize))
+    Rlist *rp;
+    bson_iterator it1;
+    char topic_name[CF_MAXVARSIZE] = { 0 };
+    int topic_id = 0;
+    char work[CF_BUFSIZE] = { 0 };
+    char searchstring[CF_BUFSIZE] = { 0 };
+    Rlist *goal_patterns = NULL;
+    char db_goal_patterns[CF_BUFSIZE] = { 0 };
+
+    EnterpriseDB conn;
+
+    if (!CFDB_Open(&conn))
+    {
+        return false;
+    }
+
+    if ( CFDB_GetValue( &conn, "goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH ) )
+    {
+        goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
+    }
+
+    for (rp = goal_patterns; rp != NULL; rp = rp->next)
+    {
+        snprintf(work, CF_MAXVARSIZE - 1, "handles::%s|goals::.*|", (char *) rp->item);
+        strcat(searchstring, work);
+    }
+
+    if (strlen(searchstring) > 1)
+    {
+        searchstring[strlen(searchstring) - 1] = '\0';
+    }
+    else
+    {
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "handles::goal_.*|goals::.*");
+    }
+
+/* BEGIN query document */
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_occurtopic, searchstring, "");
+    BsonFinish(&query);
+
+/* BEGIN RESULT DOCUMENT */
+    bson fields;
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurrep,
+                           cfk_occurtopic);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = MongoFind(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    JsonElement *json_array_out = JsonArrayCreate(100);
+    char description[CF_BUFSIZE] = {0};
+    char refer[CF_BUFSIZE] = {0};
+    int referred = false;
+    Item *check = NULL;
+
+    while (MongoCursorNext(cursor))   // loops over documents
+    {
+        JsonElement *json_obj = JsonObjectCreate(7);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
+
+        topic_id = 0;
+
+        while (BsonIsTypeValid(bson_iterator_next(&it1)) > 0)
+        {
+            if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
+            {
+                snprintf(description,CF_BUFSIZE-1,"%s", bson_iterator_string(&it1));
+            }
+            else if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
+            {
+                snprintf(topic_name, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
+                topic_id = Nova_GetTopicIdForTopic(topic_name);
+                referred = Nova_GetTopicIdForPromiseHandle(topic_id,refer,CF_BUFSIZE);
+            }
+        }
+
+        char topic[CF_BUFSIZE],context[CF_BUFSIZE];
+        DeClassifyTopic(topic_name, topic, context);
+
+        if (referred != 0 && !IsItemIn(check,topic))
+        {
+            JsonObjectAppendString(json_obj, "description", description);
+            JsonObjectAppendString(json_obj, "name", refer);
+            JsonObjectAppendString(json_obj, "handle", topic);
+            JsonObjectAppendInteger(json_obj, "pid", referred);
+
+            // Now get the compliance / involvement summary for this
+
+            char name[CF_MAXVARSIZE];
+            snprintf(name, CF_MAXVARSIZE, "handles::%s", topic);
+            Item *ip, *handles = Nova_GetHandlesForGoal(referred);
+            int count_people = 0;
+            double average_compliance = 0, total_compliance = 0, count = 0;
+            double host_count = 0;
+            Item *people = Nova_GetStakeHolders(referred);
+            handles = SortItemListNames(handles);
+
+            for (ip = handles; ip != NULL; ip = ip->next)
+            {
+                HubPromiseCompliance *hp;
+                HubQuery *hq;
+                Rlist *rp;
+                time_t now = time(NULL);
+
+                hq = CFDB_QueryWeightedPromiseCompliance(&conn, NULL, ip->name, 'x', 0, now,
+                                                         NULL, NULL, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                                         QUERY_FLAG_DISABLE_ALL);
+                average_compliance = 0;
+                host_count = 0;
+
+                // Average over all hosts
+
+                for (rp = hq->records; rp != NULL; rp = rp->next)
+                {
+                    hp = (HubPromiseCompliance *) rp->item;
+                    average_compliance += hp->e;
+                    host_count++;
+                }
+
+                if (host_count)
+                {
+                    total_compliance += average_compliance / host_count;
+                }
+
+                count++;
+            }
+
+            DeleteItemList(handles);
+
+            for (ip = people; ip != NULL; ip = ip->next)
+            {
+                if (strstr(ip->name, "@") || strcmp(ip->classes, "users") == 0)
+                {
+                    count_people++;
+                }
+            }
+
+            DeleteItemList(people);
+
+            if (count == 0)
+            {
+                count++;
+            }
+
+            JsonObjectAppendInteger(json_obj, "total_compliance", (int)(total_compliance / count + 0.5));
+            JsonObjectAppendInteger(json_obj, "people", (int)count_people);
+            JsonObjectAppendInteger(json_obj, "hosts", (int)host_count);
+        }
+
+        JsonArrayAppendObject(json_array_out, json_obj);
+    }
+
+    mongo_cursor_destroy(cursor);
+    CFDB_Close(&conn);
+
+    return json_array_out;
+}
 
 /*************************************************************************/
 
