@@ -119,7 +119,7 @@ KNOWN ISSUES:
 
 
 IMPORTANT NOTICE FOR THIS RELEASE:
-CFEngine has changed the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" in this release. In addition, the verbose output of promise compliance has changed format to accomodate the new policy context feature. 
+CFEngine has changed the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise> [MESSAGE]" in this release. In addition, the verbose output of promise compliance has changed format to accomodate the new policy context feature. 
 
 Old style verbose output:
 nova> Outcome of version Promises.cf 2.2.3 (agent-0): Promises observed to be kept 100%, Promises repaired 0%, Promises not repaired 0%

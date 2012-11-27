@@ -23,8 +23,8 @@
 @titlepage
 @title CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 19. November 2012 @c also update in ifnottex section below
-@author CFEngine
+@subtitle Updated 23. November 2012 @c also update in ifnottex section below
+@author CFEngine AS
 @c @smallbook
 @fonttextsize 10
 @page
@@ -48,7 +48,7 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 19. November 2012
+Updated 23. November 2012
 @node Top, Introduction, (dir), (dir)
 @top CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
 @end ifnottex
@@ -148,9 +148,9 @@ different parts of your organization independently. The CFEngine technology is n
 nature. Most users choose to centralize updating of policy and report aggregation for convenience
 however.
 
-The default architecture and configuration skeleton of CFEngine 3 Enterprise is expected to scale to a few thousand hosts with a dedicated policy hub. For the hub (policy server) we recommend that you have at least 2 GB of memory and a modern processor. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub. Please contact your sales representative if you have any questions regarding these numbers.
+The default architecture and configuration skeleton of CFEngine 3 Enterprise is expected to scale to a few thousand hosts with a dedicated policy hub. For the hub (policy server) we recommend that you have at least 2 GB of memory and a modern 64 bit cpu. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub. Please contact your sales representative if you have any questions regarding these numbers.
 
-For machines under CFEngine's management (clients), a full installation of CFEngine 3 Enterprise requires about 20 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have at least 256 MB available memory on the clients.
+For machines under CFEngine's management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have at least 256 MB available memory on the clients.
 
 
 @c --------------------------------------------------
@@ -163,10 +163,10 @@ which should be up to date with patches. If we don't have packages for
 your particular operating systems we can usually make packages by
 special arrangement, please contact your sales representative.
 
-CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{Release Notes CFEngine 3 Enterprise.txt}.
+CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt}.
 
 @cartouche
-@noindent See @file{Release Notes CFEngine 3 Enterprise.txt} for details on supported architectures.
+@noindent See @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} for details on supported architectures.
 @end cartouche
 
 The hub (policy server) is only available for derivatives of the
@@ -193,7 +193,7 @@ Solaris 8, 9, 10, Ubuntu 8.04, 8.10, 9.04, 9.10, 10.04, 10.10,
 
 CFEngine 3 Enterprise provides a version of CFEngine running natively on Windows, with support for registry management, Windows services and file security, @xref{Windows-specific features in CFEngine 3 Enterprise}. Support for Solaris zones has been added through automated zone detection and process model adaptation.
 
-A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, subversion, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package. 
+A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package. 
 
 
 @c *****************************************************
@@ -228,34 +228,34 @@ to integrate it back later.
 @c CFEngine 3 Enterprise is provided in two packages, @file{cfengine-nova_<VERSION NUMBER>} and @file{cfengine-nova-expansion_<VERSION NUMBER>}. The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
 
 @cartouche
-CFEngine 3 Enterprise is provided in three packages (hub and client packages are located in separate download directories, please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
+CFEngine 3 Enterprise is provided in three packages (two hub packages and one client package), please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
 @end cartouche
 
 @noindent These are the three packages:
 @itemize -
-@item @file{cfengine-nova_<VERSION NUMBER>} for the hub (policy server)
-@item @file{cfengine-nova-expansion_<VERSION NUMBER>} for the hub (policy server)
-@item @file{cfengine-nova_<VERSION NUMBER>} for the hub/policy server
+@item @file{cfengine-nova-3.0.0RC1-1-HUB.x86_64.rpm} for the hub (policy server)
+@item @file{cfengine-nova-expansion-3.0.0RC1-1-HUB.x86_64.rpm} for the hub (policy server)
+@item @file{cfengine-nova-3.0.0RC1-1.x86_64.rpm} for the client
 @end itemize
 
-The difference between the two @file{cfengine-nova_<VERSION NUMBER>} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
+The difference between the hub and client @file{cfengine-nova-3.0.0RC1-1} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
 
 References to package managers assume that additional packages might need to be installed on the hub (policy server). Root privilege is required for the installation.
 
 @enumerate
 @item Verify that the machine's network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. On the hub, verify that package managers @code{yum},
 @code{zypper} or @code{apt-get} are working. They will be used to
-install a web server, database, php server and subversion. If you are not able to set up a package manager and
+install a web server, database and php server. If you are not able to set up a package manager and
 repository on the hub, please see @ref{How do I install the prerequisites for the hub manually?}
 
 @item Copy the CFEngine 3 Enterprise packages to the system. On the hub (policy server):
 @example
-cfengine-nova_3.0.@var{xxx.[rpm|deb]} (NOTE: use hub package)
-cfengine-nova-expansion_3.0.@var{xxx.[rpm|deb]}
+cfengine-nova-3.0.@var{xxx.[rpm|deb]} (NOTE: use hub package)
+cfengine-nova-expansion-3.0.@var{xxx.[rpm|deb]}
 @end example
 @noindent On all other machines:
 @example
-cfengine-nova_3.0.@var{xxx.[rpm|deb]} (NOTE: use client package)
+cfengine-nova-3.0.@var{xxx.[rpm|deb]} (NOTE: use client package)
 @end example
 
 @item Unpack the software:
@@ -495,6 +495,24 @@ The @i{Policy Context Selector} affects all content related to host and promise 
 @item User: Navigation Tree, graphs, reports and events will contain data from promises that users have added.
 @item System: Navigation Tree, graphs, reports and events will contain data from CFEngine system promises (labeled with a promise handle prefix @i{cfe_internal_} in the default policies located under @file{/var/cfengine/inputs/cfe_internal/}).
 @end itemize
+
+@i{System} promises reside in bundles whos name is prefixed by @code{cfe_internal_}. Their promise handle names are also prefixed by @code{cfe_internal_}. Bundles/promise handles that do not have this prefix will be categorized as @i{User} bundles/promises. @i{All} shows the union of @i{User} and @i{System} bundles/promises.
+
+In addition, the @code{cf-agent} verbose output of promise compliance has changed format to accomodate the policy context feature:
+
+@itemize -
+@item Old style verbose output:
+@verbatim
+nova> Outcome of version Promises.cf 2.2.3 (agent-0): Promises observed to be kept 100%, Promises repaired 0%, Promises not repaired 0%
+@end verbatim
+
+@item New style verbose output:
+@verbatim
+enterprise> Outcome of version Promises.cf 3.0.0 (agent-0): Promises observed - Total promise compliance: 100% kept, 0% repaired, 0% not kept (out of 6418 events). User promise compliance: 100% kept, 0% repaired, 0% not kept (out of 29 events). CFEngine system compliance: 100% kept, 0% repaired, 0% not kept (out of 6389 events).
+@end verbatim
+@end itemize
+
+The promise_summary.log file has undergone similar format changes to include results for the different policy contexts.
 
 
 @c -----------------------------------------------------
@@ -4837,7 +4855,13 @@ Please see @ref{Troubleshooting} if you have any problems.
 @node How do I install the prerequisites for the hub manually?, I did bootstrap the hub before obtaining a license file - what should I do?, Frequently Asked Questions, Frequently Asked Questions
 @section How do I install the prerequisites for the hub manually?
 
-See the bundled INSTALL file for a list of dependencies for the hub (can also be found on the CFEngine software download page: @url{https://cfengine.com/software/}). 
+See INSTALLATION.TXT for a list of dependencies for the hub (can found on the CFEngine software download page:
+@table @i
+@item Commercial customers
+@url{https://cfengine.com/software/}
+@item CFEngine Free Enterprise
+@url{https://cfengine.com/25free/downloads}
+@end table
 
 To install the packages you might want to use @code{yum} on Red Hat/CentOS/Fedora, 
 @code{zypper} on SUSE or @code{apt} on Debian/Ubuntu.
