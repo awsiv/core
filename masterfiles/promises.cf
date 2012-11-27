@@ -13,6 +13,8 @@ body common control
                   # Common bundle first (Best Practice)
                     "def",
                     "cfe_internal_hub_vars",
+                  # Design Center
+                    "cfsketch_run",
 
                   # Agent bundle
                     "cfe_internal_management",   # See cfe_internal/CFE_cfengine.cf
@@ -25,6 +27,10 @@ body common control
 
                   # File definition for global variables and classes
                     "def.cf",
+
+                  # Design Center
+                  # MARKER FOR CF-SKETCH INPUT INSERTION
+                    "cf-sketch-runfile.cf",
 
                   # CFEngine internal processes for Mission Portal mostly
                     "cfe_internal/CFE_cfengine.cf",
