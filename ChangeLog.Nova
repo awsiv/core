@@ -1,5 +1,10 @@
 3.0.0	New Reporting Engine: A SQL interface to reports collected by hub.
 
+	We allow all standardised SQL SELECT constructs to query the SQL reports database, with the following additions:
+		- TIMESTAMP_UNIX() - seconds elapsed since 1970
+		- TIMESTAMP_UNIX_DAYS() - days elapsed since 1970
+	These are added to avoid use of non-portable SQL date/time functions.
+
         Enterprise API:
                 Read + write REST interface for
                 - report querying(utilizes underlying reporting engine)
