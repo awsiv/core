@@ -1060,8 +1060,8 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
 
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            long then;
-            char handle[CF_MAXVARSIZE], reason[CF_BUFSIZE];
+            long then = -1;
+            char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
 
             sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
             time_t tthen = (time_t) then;

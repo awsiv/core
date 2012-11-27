@@ -810,8 +810,8 @@ static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
     {
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            char handle[CF_MAXVARSIZE] = "\0";
-            long then;
+            long then = -1;
+            char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
 
             sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
             time_t tthen = (time_t) then;
@@ -836,8 +836,9 @@ static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
     {
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            char handle[CF_MAXVARSIZE] = "\0";
-            long then;
+            long then = -1;
+            char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
+
 
             sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
             time_t tthen = (time_t) then;
