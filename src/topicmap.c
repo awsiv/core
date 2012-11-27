@@ -429,8 +429,7 @@ void Nova_ShowTopic(char *qualified_topic)
         WriterClose(writer);
     }
 
-//    json = Nova2PHP_list_promises_with_promisee(qualified_topic, "admin");
-    json = Nova2PHP_summarize_all_goals("admin");
+    json = Nova2PHP_list_promises_with_promisee(qualified_topic, "admin");
 
     if (json)
     {
