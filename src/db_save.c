@@ -1064,6 +1064,21 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
             char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
 
             sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
+
+            if (NULL_OR_EMPTY(handle)
+                    || NULL_OR_EMPTY(reason)
+                    || (then < 0))
+            {
+                /* Data seems to be corrupted before/during the transfer
+                 * or parsed incorrectly by the hub,
+                 * skip silently as this might fill up the logs.
+
+                 * The debug log will show this information
+                 * if something needs to be diagnosed
+                 */
+                continue;
+            }
+
             time_t tthen = (time_t) then;
 
             char newKey[CF_BUFSIZE] = { 0 };
