@@ -1840,6 +1840,11 @@ int RBACBundleIsAllowed(char *qualified_bundle, char *username)
     if (rbac->bundleRxInclude && FullTextMatch(rbac->bundleRxInclude, qualified_bundle) == false)
     {
         DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
+        return true;
+    }
+    else if (rbac->bundleRxInclude)
+    {
+        DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
         return false;
     }
 
