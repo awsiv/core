@@ -161,12 +161,29 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
             }
         }
     }
-
+    
 /* Look for bundles used as promises through methods  -- these are service bundles */
+    
+    if (strcmp(pp->agentsubtype, "meta") == 0)
+       {
+       for (cp = pp->conlist; cp != NULL; cp = cp->next)
+          {
+          char buffer[CF_BUFSIZE];
+
+          PrintRval(buffer, sizeof(buffer), cp->rval);
+          WriterWriteF(writer, "occurrences: \n\n");
+          WriterWriteF(writer, "  \"%s\"  representation => \"literal\",\n", buffer);
+          WriterWriteF(writer, "  about_topics => { \"bundles::%s\"},", pp->bundle);
+          WriterWriteF(writer, "   represents => { \"%s\" }; \n", pp->promiser);
+          }
+       }
+
 
     if (strcmp(pp->agentsubtype, "methods") == 0)
     {
         FnCall *fnp;
+
+        WriterWriteF(writer, "topics: \n\n");
 
         // Look at the unexpanded promise to see the variable refs
 
@@ -333,7 +350,8 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         }
     }
 
-
+    WriterWriteF(writer, "topics: \n\n");
+    
     for (cp = pp->conlist; cp != NULL; cp = cp->next)
     {
        
@@ -496,8 +514,8 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
     WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,
             pp->classes, NOVA_ACTIVATES);
-    WriterWriteF(writer, "\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n", promise_id,
-            pp->agentsubtype);
+    WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", promise_id, NOVA_TYPE,
+                 pp->agentsubtype, NOVA_TYPE_INV);
 
     for (rp = depends_on; rp != NULL; rp = rp->next)
     {
