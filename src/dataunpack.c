@@ -810,13 +810,13 @@ static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
     {
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            char handle[CF_MAXVARSIZE] = "\0";
-            long then;
+            long then = -1;
+            char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
 
-            sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
+            sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
             time_t tthen = (time_t) then;
 
-            CfDebug("Repair: of promise \"%s\" at %lu\n", handle, tthen);
+            CfDebug("Repair: of promise \"%s\" at %lu, message: \"%s\"\n", handle, tthen, reason);
         }
     }
 }
@@ -836,12 +836,13 @@ static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
     {
         for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            char handle[CF_MAXVARSIZE] = "\0";
-            long then;
+            long then = -1;
+            char handle[CF_MAXVARSIZE] = "\0", reason[CF_BUFSIZE] = "\0";
 
-            sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
+            sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
+
             time_t tthen = (time_t) then;
-            CfDebug("Failure: of promise \"%s\" at %lu\n", handle, tthen);
+            CfDebug("Failure: of promise \"%s\" at %lu, message: \"%s\"\n", handle, tthen, reason);
         }
     }
 }
