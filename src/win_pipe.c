@@ -362,3 +362,31 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
     ThreadUnlock(cft_count);
     return true;
 }
+
+/*****************************************************************************/
+
+bool PipeToPid(pid_t *pid, FILE *pp)
+{
+    if (!ThreadLock(cft_count))
+    {
+        return false;
+    }
+
+    i = 0;
+    while (PIPES[i].pipe != pipe)
+    {
+        i++;
+        if (i == MAX_PIPES)
+        {
+            ThreadUnlock(cft_count);
+            CfOut(cf_error, "", "!! Pipe descriptor was not found");
+            return false;
+        }
+    }
+    HANDLE procHandle = PIPES[i].procHandle;
+    ThreadUnlock(cft_count);
+
+    *pid = GetProcessId(procHandle);
+
+    return *pid != 0;
+}

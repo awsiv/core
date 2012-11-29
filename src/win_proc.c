@@ -112,6 +112,13 @@ int NovaWin_GracefulTerminate(pid_t pid)
 
 /*****************************************************************************/
 
+void ProcessSignalTerminate(pid_t pid)
+{
+    GracefulTerminate(pid);
+}
+
+/*****************************************************************************/
+
 int NovaWin_IsProcessRunning(pid_t pid)
 {
     DWORD ret;
