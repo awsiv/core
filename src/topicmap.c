@@ -88,7 +88,7 @@ void Nova_SearchHosts(Item **list, char *search, int type, char *username)
 
     if (strncmp(search, "SHA=", 4) == 0)
        {
-       printf("Lookfor hosts by key %s\n", search);
+       printf("Look for hosts by key %s\n", search);
 
        hq = CFDB_QueryHostByHostKey(&conn, search);
        }
@@ -408,6 +408,10 @@ void Nova_ShowTopic(char *qualified_topic)
     Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context,bundle);
     printf("Found (%d): \"%s::%s = %s\" in bundle %s \n", id, topic_context, topic_name, topic_id, bundle);
 
+    char buffer[CF_BUFSIZE];
+    Nova_GetTopicComment(topic_name, topic_context, buffer, CF_BUFSIZE);
+    printf("Description: %s\n", buffer);
+    
     writer = StringWriter();
     json = Nova2PHP_show_all_context_leads(topic_name, "dummy_user");
     JsonElementPrint(writer, json, 1);
@@ -932,9 +936,8 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-    BsonSelectReportFields(&fields, 3,
+    BsonSelectReportFields(&fields, 2,
                            cfk_occurtopic,
-                           cfk_occurcontext,
                            cfk_occurlocator);
 
 /* BEGIN SEARCH */

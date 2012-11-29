@@ -166,12 +166,30 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             bson_append_string(&insert_op, cfk_occurrep, rp1->item);
             bson_append_string(&insert_op, cfk_occurtopic, rp2->item);
             bson_append_string(&insert_op, cfk_bundle, op->bundle);
-
             BsonFinish(&insert_op);
-
+            
             MongoInsert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
-
             bson_destroy(&insert_op);
+
+            if (strcmp(op->occurrence_context, "any") != 0)
+               {
+               char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], qualified[CF_BUFSIZE];
+               DeClassifyTopic(rp2->item, topic_name, topic_context);
+               snprintf(qualified, CF_BUFSIZE, "%s::%s", op->occurrence_context, topic_name);
+               
+               bson insert_op;
+               bson_init(&insert_op);
+               bson_append_new_oid(&insert_op, "_id");
+               bson_append_string(&insert_op, cfk_occurlocator, op->locator);
+               bson_append_string(&insert_op, cfk_occurcontext, topic_context);
+               bson_append_int(&insert_op, cfk_occurtype, op->rep_type);
+               bson_append_string(&insert_op, cfk_occurrep, rp1->item);
+               bson_append_string(&insert_op, cfk_occurtopic, qualified);
+               bson_append_string(&insert_op, cfk_bundle, op->bundle);
+               BsonFinish(&insert_op);
+               MongoInsert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
+               bson_destroy(&insert_op);
+               }
             }
         }
     }
