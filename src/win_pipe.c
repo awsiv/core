@@ -368,7 +368,7 @@ bool PipeToPid(pid_t *pid, FILE *pp)
         return false;
     }
 
-    i = 0;
+    int i = 0;
     while (PIPES[i].pipe != pipe)
     {
         i++;
