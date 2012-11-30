@@ -365,7 +365,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
 
 /*****************************************************************************/
 
-bool PipeToPid(pid_t *pid, FILE *pp)
+bool PipeToPid(pid_t *pid, FILE *pipe)
 {
     if (!ThreadLock(cft_count))
     {
