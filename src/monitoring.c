@@ -631,7 +631,7 @@ void LoadSlowlyVaryingObservations()
     void *stored;
     int ksize, vsize;
 
-    if (THIS_AGENT_TYPE == cf_executor || LOOKUP)
+    if (THIS_AGENT_TYPE == AGENT_TYPE_EXECUTOR || LOOKUP)
     {
         return;
     }
@@ -1586,7 +1586,7 @@ void HistoryUpdate(Averages newvals)
     NewScope("control_monitor");
     NewScope("control_common");
     GetNameInfo3();
-    GetInterfacesInfo(cf_monitor);
+    GetInterfacesInfo(AGENT_TYPE_MONITOR);
     Get3Environment();
     BuiltinClasses();
     OSClasses();

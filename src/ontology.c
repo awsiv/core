@@ -1327,7 +1327,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
         }
     }
 
-    if (!found && THIS_AGENT_TYPE == cf_common)
+    if (!found && THIS_AGENT_TYPE == AGENT_TYPE_COMMON)
     {
         CfOut(cf_verbose, "",
               "Classes activated by the outcomes of promise ref \"%s\" did not occur in any promise proposal, so they are nullpotent",

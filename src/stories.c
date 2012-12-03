@@ -709,7 +709,7 @@ void Nova_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
 
   // Check for location descriptors - we need this categorization for hierarchy view / spanning tree
 
-  for (cp = ControlBodyConstraints(policy, cf_common); cp != NULL; cp = cp->next)
+  for (cp = ControlBodyConstraints(policy, AGENT_TYPE_COMMON); cp != NULL; cp = cp->next)
     {
     if (IsExcluded(cp->classes, NULL))
        {

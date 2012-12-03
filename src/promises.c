@@ -516,7 +516,7 @@ void LastSawBundle(const Bundle *bundle, double compliance)
 
     newe.t = now;
     
-    if (THIS_AGENT_TYPE == cf_agent)
+    if (THIS_AGENT_TYPE == AGENT_TYPE_AGENT)
     {
         char *fqname = BundleQualifiedName(bundle);
         WriteDB(dbp, fqname, &newe, sizeof(newe));

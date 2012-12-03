@@ -67,7 +67,7 @@ int EnterpriseExpiry(void)
 #endif
     char u_day[16], u_month[16], u_year[16];
 
-    if (THIS_AGENT_TYPE == cf_keygen)
+    if (THIS_AGENT_TYPE == AGENT_TYPE_KEYGEN)
     {
         return false;
     }
@@ -216,7 +216,7 @@ int EnterpriseExpiry(void)
     NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
-    if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
+    if (am_policy_server && THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
     {
         EnterpriseDB conn;
         if (CFDB_Open(&conn))
@@ -505,7 +505,7 @@ void CheckLicenses(void)
         CfOut(cf_verbose, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
         NewScalar("sys", "licenses_promised", retval.item, cf_int);
 #ifdef HAVE_LIBMONGOC
-        if (THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
+        if (THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
         {
             EnterpriseDB conn;
             if (CFDB_Open(&conn))
@@ -521,14 +521,14 @@ void CheckLicenses(void)
     if (licenses == 0)
     {
         // using bootstrap_mode to avoid cf-promises complaining during bootstrap also (gets defined)
-        if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != cf_know)
-            && (THIS_AGENT_TYPE != cf_keygen))
+        if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
+            && (THIS_AGENT_TYPE != AGENT_TYPE_KEYGEN))
         {
             CfOut(cf_error, "", " !! Your configuration promises no host_licenses_paid in common control");
             CfOut(cf_error, "", " !! By doing this, you confirm that the terms of the contract are legally binding");
         }
     }
-    else if (licenses > LICENSES && THIS_AGENT_TYPE != cf_know)
+    else if (licenses > LICENSES && THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
     {
         CfOut(cf_error, "",
               " !! You have promised that %d license(s) have been paid for, but CFEngine has only promised to honour %d in the agreement. ",

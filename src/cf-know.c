@@ -278,7 +278,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     extern char *optarg;
     int optindex = 0;
     int c;
-    GenericAgentConfig config = GenericAgentDefaultConfig(cf_know);
+    GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_KNOW);
 
     LOOKUP = false;
 
@@ -434,7 +434,7 @@ static void KeepKnowControlPromises(Policy *policy)
     Constraint *cp;
     Rval retval;
 
-    for (cp = ControlBodyConstraints(policy, cf_know); cp != NULL; cp = cp->next)
+    for (cp = ControlBodyConstraints(policy, AGENT_TYPE_KNOW); cp != NULL; cp = cp->next)
     {
     if (IsExcluded(cp->classes, NULL))
         {
@@ -648,7 +648,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 
             for (pp = sp->promiselist; pp != NULL; pp = pp->next)
             {
-                ExpandPromise(cf_know, bp->name, pp, KeepKnowledgePromise, report_context);
+                ExpandPromise(AGENT_TYPE_KNOW, bp->name, pp, KeepKnowledgePromise, report_context);
             }
         }
     }

@@ -139,7 +139,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     extern char *optarg;
     int optindex = 0;
     int c;
-    GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
+    GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_HUB);
 
     EnterpriseDB dbconn;
 
@@ -290,7 +290,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig config)
     Constraint *cp;
     Rval retval;
 
-    for (cp = ControlBodyConstraints(policy, cf_hub); cp != NULL; cp = cp->next)
+    for (cp = ControlBodyConstraints(policy, AGENT_TYPE_HUB); cp != NULL; cp = cp->next)
     {
         if (IsExcluded(cp->classes, NULL))
         {
@@ -542,7 +542,7 @@ static int ScheduleRun(void)
     NewScope("sys");
     NewScope("match");
 
-    GetInterfacesInfo(cf_executor);
+    GetInterfacesInfo(AGENT_TYPE_EXECUTOR);
     Get3Environment();
     OSClasses();
     BuiltinClasses();
