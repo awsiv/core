@@ -910,6 +910,8 @@ static ReportingEngineAsyncError ExportColumnNamesCSV(sqlite3 *db, const char *s
 
     int column_count = WriteColumnNamesCsv(db, select_op, writer);
 
+    WriterClose(writer);
+
     if (column_count < 0)
     {
         return REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_PREPARE;
