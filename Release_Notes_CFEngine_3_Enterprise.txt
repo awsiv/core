@@ -116,6 +116,7 @@ KNOWN ISSUES:
 * The internal package version for CFEngine will contain SHA string.
 * Using RHEL packages for CentOS, the agents will connect to the RHN repository to download additional packages.
 * Search users in User Management does not work.
+* If a promiser is split across multiple lines, only the first line is recorded by the hub
 
 
 IMPORTANT NOTICE FOR THIS RELEASE:

@@ -715,7 +715,7 @@ Items in the content area are used to create a query and generate reports accord
 @item Group - Group your results according to selected criteria
 @item Sort - Sort your results according to a selected criteria
 @item Limit - Limit the number of entries in your report
-@item Show me the query - View and edit the SQL query directlyIf you choose to run the query directly
+@item Show me the query - View and edit the SQL query directly
 @end itemize
 
 @cartouche
@@ -902,6 +902,7 @@ information. User-authentication is carried out when users log on to the Mission
 * Manage Apps::
 * Hub Replication Status::
 * System Identifier::
+* Other Settings::
 @end menu
 
 @c ----------------------------------------------------
@@ -963,7 +964,7 @@ Shows status of hub replication if it has been set through policy. Contact your 
 
 
 @c ----------------------------------------------------
-@node System Identifier, , Hub Replication Status, Settings
+@node System Identifier, Other Settings, Hub Replication Status, Settings
 @subsection System Identifier
 
 The system identifier is used to choose what attribute will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT) or where two-way initialization of communication is generally denied). See @ref{Call-Collect}.
@@ -972,6 +973,28 @@ The system identifier is used to choose what attribute will be used to identify 
 @image{img-system-identifier-3-0,15cm,,System Identifier}
 @center Figure: System Identifier
 @sp 1
+
+
+@c ----------------------------------------------------
+@node Other Settings, , System Identifier, Settings
+@subsection Other Settings
+
+These settings are not availble through the Mission Portal, but can be accessed through files in the web document root on the hub.
+They are related to default save path for CSV/PDF reports, timeout for exported report generation, Mission Portal email configuration, URL for the Enterprise REST API and default title for scheduled reports.
+
+@itemize
+@item Reports and Enterprise REST API (@file{<DOCROOT>/application/config/appsettings.php}, section labelled "@code{User defined constants}"). You can specify:
+@itemize - 
+@item Path to save CSV and PDF files from reports on hosts page
+@item Path to save CSV and PDF files from scheduled reports
+@item Default FROM email address
+@item Default TITLE for scheduled reports
+@item Max allowed time for PDF generation in seconds
+@item URL for Enterprise REST API server
+@end itemize
+
+@item Email settings (@file{<DOCROOT>/application/config/email.php}). CFEngine will install sendmail on your server if it is not detected during installation process. By editing this file you can specify custom email settings adapted to your setup.
+@end itemize
 
 
 @c *****************************************************
@@ -1127,7 +1150,7 @@ demand, often as an on-line service.
 
 In this document, virtualization support refers specifically to
 hypervisor technologies supported by the open source library layer @i{libvirt}
-project, which includes interfaces for Xen, KVM, Vmware-ESX, and more.
+project, which includes interfaces for Xen, KVM, VMware-ESX, and more.
 CFEngine thus integrates freely with other tools based on this library, such
 as @i{virsh} and the @i{Virtual Manager} graphical user interface.
 
