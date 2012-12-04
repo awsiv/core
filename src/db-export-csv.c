@@ -208,7 +208,7 @@ void HubSoftwareToCSV( void *data, Writer *w )
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->name));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->version));
-    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->arch));
+    CsvWriterFieldF(c, "%s", Nova_LongArch(hs->arch));
     CsvWriterFieldF(c, "%s", time_buffer);
 
     CsvWriterClose(c);
@@ -239,7 +239,7 @@ void HubPatchesToCSV( void *data, Writer *w )
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->hh->hostname));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->name));
     CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->version));
-    CsvWriterFieldF(c, "%s", NULLStringToEmpty(hs->arch));
+    CsvWriterFieldF(c, "%s", Nova_LongArch(hs->arch));
 
     CsvWriterClose(c);
 }
