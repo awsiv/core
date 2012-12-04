@@ -415,7 +415,6 @@ bundle agent cfe_internal_policysrv
                              "php5-pear",
                              "php5-mcrypt",
                              "php5-pdo",
-                             "sendmail",
                             },
                  comment => "Define a list of packages to be installed on SuSE",
                   handle => "cfe_internal_policysrv_vars_match_package_suse";
@@ -430,7 +429,6 @@ bundle agent cfe_internal_policysrv
                              "httpd",
                              "mod_ssl",
                              "php",
-                             "sendmail",
                              "php-bcmath",
                              "php-pear",
                              "php-pdo",
@@ -447,7 +445,6 @@ bundle agent cfe_internal_policysrv
                              "php-bcmath",
                              "php-pear",
                              "php-pdo",
-                             "sendmail",
                             },
                  comment => "Define a list of packages to be installed on RedHat",
                   handle => "cfe_internal_policysrv_vars_match_package_redhat_6";
@@ -458,7 +455,6 @@ bundle agent cfe_internal_policysrv
                              "httpd",
                              "mod_ssl",
                              "php",
-                             "sendmail",
                              "php-bcmath",
                              "php-pear",
                              "php-mcrypt",
@@ -472,7 +468,6 @@ bundle agent cfe_internal_policysrv
    "match_package"  slist => {
                               "apache2",
                               "php5",
-                              "sendmail",
                               "ssl-cert",
                               "php5-cli",
                               "php-pear",
