@@ -695,7 +695,7 @@ static void StartHub(void)
     if ((!NO_FORK) && (fork() != 0))
     {
         CfOut(cf_inform, "", "cf-hub starting %.24s\n", cf_ctime(&now));
-        exit(0);
+        _exit(0);
     }
 
     if (!NO_FORK)
