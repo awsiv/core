@@ -89,19 +89,6 @@ bool BsonInitFromJsonStringF(bson *bson_ret, const char *fmt, ...);
 int BsonSelectReportFields( bson *fields, int fieldCount, ... );
 
 /**
- * Allocates bson object in the heap
- * and initializes the allocated object
- *
- * IMPORTANT: Use BsonObjectDelete to cleanup memory
- */
-bson *BsonObjectCreate(void);
-
-/**
- * Must be used for objects created with BsonObjectCreate
- */
-void BsonObjectDelete(bson *b);
-
-/**
  * usage:
  *  - NULL bson objects not allowed
  *  - Finished bson objects not allowed

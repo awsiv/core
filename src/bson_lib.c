@@ -1561,28 +1561,6 @@ int BsonIsTypeValid(bson_type type)
 
 /*****************************************************************************/
 
-bson *BsonObjectCreate(void)
-{
-    bson *b = bson_create();
-    bson_init(b);
-
-    return b;
-}
-
-/*****************************************************************************/
-
-void BsonObjectDelete(bson *b)
-{
-    bson_destroy(b);
-
-    if(b)
-    {
-        bson_dispose(b);
-    }
-}
-
-/*****************************************************************************/
-
 void BsonFinish( bson *b )
 {
     assert( b && !b->finished );
