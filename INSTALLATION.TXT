@@ -20,7 +20,9 @@ CFEngine recommends that your hub machine should have at least 2 GB of memory an
 
 CFEngine recommends to have 256 MB available memory on the clients. For machines under CFEngine’s management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting.
 
-Verify that the machine’s network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. A working package manager is required on the hub/policy server to install an Apache Web Server, php module, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
+Verify that the machine’s network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. A common problem is that iptables are active by default on some operating systems. Remember to stop this service or adapt it to allow for communication on the above ports. If applicable, typing the following two commands: "/etc/init.d/iptables stop" and "chkconfig iptables off".
+
+A working package manager is required on the hub/policy server to install an Apache Web Server, php module, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package (see also SOFTWARE DEPENDENCIES below).
 
 Requirements specific to MongoDB:
 1. Filesystem type:
@@ -60,6 +62,9 @@ The general installation steps are as follows:
 5. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
      $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
 6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
+7. Skip this step for installation of CFEngine 3 Free Enterprise. To complete licensing setup, you should make a promise to accept the license terms by editing "/var/cfengine/masterfiles/promises.cf" and "/var/cfengine/masterfiles/failsafe/failsafe.cf" on the hub (policy server), changing the line 
+  host_licenses_paid => "<NUMBER>";
+in "body common control" to reflect the correct number of licenses that you have subscribed to.
 
 See Enterprise 3.0 Owner's Manual for more detailed installation instructions and troubleshooting tips.
 

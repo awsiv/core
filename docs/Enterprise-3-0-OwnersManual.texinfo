@@ -17,20 +17,17 @@
 @c ***********************************************************************@c 
 @c %** start of header
 @setfilename Enterprise-3-0-OwnersManual.info
-@settitle CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
+@settitle CFEngine 3 Enterprise 3.0 Owner's Manual
 @setchapternewpage odd
 @c %** end of header
 @titlepage
-@title CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
+@title CFEngine 3 Enterprise 3.0 Owner's Manual
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 23. November 2012 @c also update in ifnottex section below
+@subtitle Updated 5. December 2012 @c also update in ifnottex section below
 @author CFEngine AS
 @c @smallbook
 @fonttextsize 10
 @page
-@cartouche
-Please note that this is a release candidate of CFEngine 3 Enterprise, do not use in production environments. Some features may change slightly and this document will be subject to change for the final product release.
-@end cartouche
 @vskip 0pt plus 1filll
 Copyright @copyright{} 2012 CFEngine AS.
 The features described herein are in provided for user convenience and imply no warranty whatsoever
@@ -48,9 +45,9 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 23. November 2012
+Updated 5. December 2012
 @node Top, Introduction, (dir), (dir)
-@top CFEngine 3 Enterprise 3.0 Release Candidate Owner's Manual
+@top CFEngine 3 Enterprise 3.0 Owner's Manual
 @end ifnottex
 @ifhtml
 @html
@@ -79,7 +76,6 @@ Updated 23. November 2012
 * Monitoring extensions::       
 * File Access Control Lists::   
 * Server extensions::           @c * Environments and workflows::  
-* Content-Driven Policies::     
 * Upgrading CFEngine 3 Enterprise::  
 * Frequently Asked Questions::  
 * Troubleshooting::             
@@ -163,10 +159,10 @@ which should be up to date with patches. If we don't have packages for
 your particular operating systems we can usually make packages by
 special arrangement, please contact your sales representative.
 
-CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt}.
+CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} (found in the software download directory on @url{cfengine.com}).
 
 @cartouche
-@noindent See @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} for details on supported architectures.
+@noindent See @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} (found in the software download directory on @url{cfengine.com}) for details on supported architectures.
 @end cartouche
 
 The hub (policy server) is only available for derivatives of the
@@ -225,25 +221,32 @@ You should start from a blank system (see also @ref{Hardware requirements}). If 
 already developed a policy, set aside this policy during the installation process. You will be able
 to integrate it back later.
 
-@c CFEngine 3 Enterprise is provided in two packages, @file{cfengine-nova_<VERSION NUMBER>} and @file{cfengine-nova-expansion_<VERSION NUMBER>}. The main software package must be installed on every host (including the hub). The expansion package is only installed on the policy hub. You should install and set up the hub first.
-
 @cartouche
 CFEngine 3 Enterprise is provided in three packages (two hub packages and one client package), please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
 @end cartouche
 
-@noindent These are the three packages:
+@noindent These are the three packages (inside the respective hub and client directories found under each platform in the software download directory):
 @itemize -
-@item @file{cfengine-nova-3.0.0RC1-1-HUB.x86_64.rpm} for the hub (policy server)
-@item @file{cfengine-nova-expansion-3.0.0RC1-1-HUB.x86_64.rpm} for the hub (policy server)
-@item @file{cfengine-nova-3.0.0RC1-1.x86_64.rpm} for the client
+@item @file{hub/cfengine-nova-3.0.xxx.[rpm|deb]}
+@item @file{hub/cfengine-nova-expansion-3.0.xxx.[rpm|deb]}
+@item @file{client/cfengine-nova-3.0.xxx.[rpm|deb]}
 @end itemize
 
-The difference between the hub and client @file{cfengine-nova-3.0.0RC1-1} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
+The difference between the hub and client @file{cfengine-nova-3.0.xxx} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
 
 References to package managers assume that additional packages might need to be installed on the hub (policy server). Root privilege is required for the installation.
 
 @enumerate
-@item Verify that the machine's network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. On the hub, verify that package managers @code{yum},
+@item Verify that the machine's network connection is working and that port 5308 (used by CFEngine) and port 80 (used for the Mission Portal) is open for both incoming and outgoing connections. 
+@cartouche
+A common problem is that iptables are active by default on some operating systems. Remember to stop this service or adapt it to allow for communication on the above ports. If applicable:
+@verbatim
+ $ /etc/init.d/iptables stop
+ $ chkconfig iptables off
+@end verbatim
+@end cartouche
+
+On the hub, verify that package managers @code{yum},
 @code{zypper} or @code{apt-get} are working. They will be used to
 install a web server, database and php server. If you are not able to set up a package manager and
 repository on the hub, please see @ref{How do I install the prerequisites for the hub manually?}
@@ -383,7 +386,7 @@ Please see @ref{Frequently Asked Questions} or @ref{Troubleshooting} if you have
 The Mission Portal is the centerpiece
 of user interaction with CFEngine 3 Enterprise. It can be accessed by connecting to the hub (policy server) with your web browser (from the installation example: http://123.456.789.123, replace with your real IP address). You should see a login page, the default user name and password is @i{admin} and @i{admin}. @footnote{Make sure to change the password to prevent unauthorized access; see also Appendix A on configuration of external authentication.} Once you have logged in you will see the Mission Portal home page:
 
-@image{img-mission-portal-3-0-rc,15cm,,Mission Portal}
+@image{img-mission-portal-3-0,15cm,,Mission Portal}
 @center Figure: The Mission Portal
 
 @noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} and @i{Knowledge} apps, these can be made visible by enabling them in @ref{Settings}). Each app offers insight into different aspects of operations:
@@ -529,7 +532,7 @@ The Navigation Tree allows the user to group and organize hosts in a hierarchy d
 The tree consists of two main parts:
 
 @itemize -
-@item The Tree Selector: Choose between default trees or custom trees defined by the user. Each tree can have a different subset of nodes. Type a name in the @i{Add Tree} text field at the bottom of dropdown menu and press enter to add your own tree. Click @code{X} next to a tree name to delete it.
+@item The Tree Selector (top drop down menu): Choose between default trees or custom trees defined by the user. Each tree can have a different subset of nodes. Type a name in the @i{Add Tree} text field at the bottom of dropdown menu and press enter to add your own tree. Click @code{X} next to a tree name to delete it.
 @item The tree itself, grouped by classes. The user can add up to four sublevels in the Navigation Tree and edit or delete existing nodes.
 
 @sp 1
@@ -744,7 +747,7 @@ The @i{Docs} app gives access to both offline and online CFEngine documentation.
 The left side shows an overview of all bundled documents, divided into categories that expand once clicked. The selected document is displayed in the main content area to the right.
 
 @sp 1
-@center @image{img-docs-3-0,15cm,,Docs}
+@center @image{img-docs-app-3-0,15cm,,Docs}
 @center Figure: Docs
 @sp 1
 
@@ -795,11 +798,19 @@ The @i{Policies} app shows the promises that the system is currently trying to k
 state of your system, by knowing what, where, when, how and why your infrastructure is defined, deployed and configured.
 
 @sp 1
-@center @image{img-policies-3-0,15cm,,Policies}
+@center @image{img-policies-app-3-0,15cm,,Policies}
 @center Figure: Policies
 @sp 1
 
-@c todo
+@noindent The four tabs on the right content side give further insight into what the bundles on the left contain:
+
+@itemize -
+@item Info: General information about what classes are used in the selected bundle, other affected bundles, and hosts affected by the bundle.
+@item Stats: Overview of the number of promises made in the bundle and what promise types.
+@item Compliance: Compliance of the selected bundle on the affected hosts.
+@item Variables: List of variables used in the bundle.
+@end itemize
+
 
 @c -----------------------------------------------------
 @c @node Knowledge App, Goals App, Policies App, Quickstart - The Mission Portal
@@ -817,7 +828,8 @@ The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers 
 @center Figure: Knowledge App
 @sp 1
 
-@c See also @url{https://cfengine.com/manuals/st-knowledge}
+On the left you find a search field and a menu with foldable generic categories and list of documents and their content titles/headers. The right side presents the map itself, with references to the selected topic underneath. The map displays visual relations to other topics and is clickable, navigate and learn how topics are connected. The @i{See also} tab presents semantic links to other topics that might be related, as well as references to the selected topic.
+@c See also @url{https://cfengine.com/manuals/st-knowledge}.
 
 
 @c todo
@@ -893,6 +905,7 @@ roles, each which may grant and deny access to certain
 information. User-authentication is carried out when users log on to the Mission Portal, see also @ref{Role Based Access Control (RBAC)}.
 
 
+@page
 @c ----------------------------------------------------
 @node Settings, , User Management, Quickstart - The Mission Portal
 @section Settings
@@ -901,7 +914,7 @@ information. User-authentication is carried out when users log on to the Mission
 * Mission Portal Settings::
 * Manage Apps::
 * Hub Replication Status::
-* System Identifier::
+* Host Identifier::
 * Other Settings::
 @end menu
 
@@ -909,21 +922,12 @@ information. User-authentication is carried out when users log on to the Mission
 @node Mission Portal Settings, Manage Apps, Settings, Settings
 @subsection Mission Portal Settings
 
-Mission Portal settings allow the user to set and configure authentication method, activation of role based access control (RBAC), the unreachable (blue host) threshold, and upload a company logo that will be displayed in exported PDF reports.
-
 @sp 1
 @center @image{img-mission-portal-settings-3-0,15cm,,Mission Portal Settings}
 @center Figure: Mission Portal Settings
 @sp 1
 
-@ignore
-@noindent @b{Administrative email:}@*
-This is the email address that the Mission Portal uses to send reports.
-
-@sp 1
-@noindent @b{Administrative role:}@*
-Select which user group will have general administrator privileges in the Mission Portal. This group will be able to access the Mission Portal settings and configuration tools.
-@end ignore
+@noindent Mission Portal settings allow the user to set and configure the following items:
 
 @sp 1
 @noindent @b{Authentication method}@*
@@ -938,6 +942,13 @@ CFEngine 3 Enterprise 2.2.0 introduced Role-Based Access Control (RBAC) for all 
 @sp 1
 @noindent @b{Unreachable host threshold}@*
 Time after which a host is defined as unreachable (blue host; the hub is unable to reach this host due to connection problems). Default threshold is 15 minutes.
+
+@sp 1
+@noindent @b{Turn on/off the Analytics feature}@*
+Learn more about how users interact with the Mission Portal. This is completely anonymous and stored locally, you have to actively download and send the report to CFEngine if you whish to share it with us.
+
+@sp 1
+@noindent @b{Set the Enterprise API log level} - Corresponds to the standard syslog levels.
 
 @sp 1
 @noindent @b{Upload you company logo}@*
@@ -957,26 +968,26 @@ Determine which apps should be active (on) or inactive (off) in the Mission Port
 
 
 @c ----------------------------------------------------
-@node Hub Replication Status, System Identifier, Manage Apps, Settings
+@node Hub Replication Status, Host Identifier, Manage Apps, Settings
 @subsection Hub Replication Status
 
 Shows status of hub replication if it has been set through policy. Contact your sales representative if you wish help with setting this up.
 
 
 @c ----------------------------------------------------
-@node System Identifier, Other Settings, Hub Replication Status, Settings
-@subsection System Identifier
+@node Host Identifier, Other Settings, Hub Replication Status, Settings
+@subsection Host Identifier
 
-The system identifier is used to choose what attribute will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT) or where two-way initialization of communication is generally denied). See @ref{Call-Collect}.
+The @i{Host Identifier} is used to choose what attribute will be used to identify hosts that are not directly addressable from the hub (e.g. hosts behind a network address translator (NAT) or where two-way initialization of communication is generally denied). See @ref{Call-Collect}.
 
 @sp 1
-@image{img-system-identifier-3-0,15cm,,System Identifier}
-@center Figure: System Identifier
+@image{img-host-identifier-3-0,15cm,,Host Identifier}
+@center Figure: Host Identifier
 @sp 1
 
 
 @c ----------------------------------------------------
-@node Other Settings, , System Identifier, Settings
+@node Other Settings, , Host Identifier, Settings
 @subsection Other Settings
 
 These settings are not availble through the Mission Portal, but can be accessed through files in the web document root on the hub.
@@ -993,7 +1004,7 @@ They are related to default save path for CSV/PDF reports, timeout for exported 
 @item URL for Enterprise REST API server
 @end itemize
 
-@item Email settings (@file{<DOCROOT>/application/config/email.php}). CFEngine will install sendmail on your server if it is not detected during installation process. By editing this file you can specify custom email settings adapted to your setup.
+@item Email settings (@file{<DOCROOT>/application/config/email.php}). By editing this file you can specify custom email settings adapted to your setup.
 @end itemize
 
 
@@ -3049,7 +3060,7 @@ access:
 
 You also have to make sure that any firewalls allow these connections to pass.
 
-In addition you should choose a system identifier in the Mission Portal, see @ref{System Identifier}. This is the attribute by which the hosts will be identified in views and reports.
+In addition you should choose a @i{Host Identifier} in the Mission Portal, see @ref{Host Identifier}. This is the attribute by which the hosts will be identified in views and reports.
 
 
 @c *****************************************************
@@ -4204,7 +4215,7 @@ specify_inherit_aces => {"user:Administrator:r"};
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node  Server extensions, Content-Driven Policies, File Access Control Lists, Top
+@node  Server extensions, Upgrading CFEngine 3 Enterprise, File Access Control Lists, Top
 @chapter Server extensions
 
 CFEngine 3 Enterprise adds a simple server extension to the Community Edition
@@ -4404,146 +4415,16 @@ environment's subdirectory to next one.
 @end ignore
 
 
-@c *****************************************************
-@c * CHAPTER
-@c *****************************************************
-@node  Content-Driven Policies, Upgrading CFEngine 3 Enterprise, Server extensions, Top
-@chapter Content-Driven Policies
-
-In CFEngine 3 Nova 2.0, Content-Driven Policies (CDP) were introduced to make
-policy management easier. In contrast to policies written in the
-CFEngine language, these are semi-colon separated fields in a text
-file that the user just fills with content. All the underlying
-enforcement and reporting are taken care of automatically by CFEngine 3 Enterprise.
-
-For example, to manage three Windows services, the following
-services-CDP will suffice.
-
-@verbatim
-# masterfiles/cdp_inputs/service_list.txt
-
-Dnscache;stop;fix;windows
-ALG;start;warn;windows
-RemoteRegistry;start;fix;Windows_Server_2008
-
-@end verbatim
-
-The meanings of the fields are different depending of the CDP-type,
-but explained in the file header. With these three lines, we ensure
-the correct status of three services on all our Windows machines and
-are given specialized reports on the outcome. 
-
-@c The Content-Driven Policy services report is shown below.
-
-@c @image{cdp_services_report,15cm,,The Content-Driven Policy services report,png}
-
-
-@section Benefits of Content-Driven Policies
-
-As seen in the example above, Content-Driven Policies are easy to
-write and maintain, especially for users unfamiliar with the CFEngine
-language. They are designed to capture the essence of a specific,
-popular use of CFEngine, and make it easier. For example, the services
-Content-Driven Policy above has the following equivalent in the
-CFEngine language.
-
-@smallexample
-
-bundle agent service_example
-@{
-services:
-
-  "Dnscache"
-    comment            => "Check services status of Dnscache",
-    handle             => "srv_Dnscache_windows",
-    service_policy     => "stop",
-    service_method     => force_deps,
-    action             => policy("fix"),
-    ifvarclass         => "windows";
-
-  "ALG"
-    comment            => "Check services status of ALG",
-    handle             => "srv_ALG_windows",
-    service_policy     => "start",
-    service_method     => force_deps,
-    action             => policy("warn"),
-    ifvarclass         => "windows";
-
-  "RemoteRegistry"
-    comment            => "Check services status of ALG",
-    handle             => "srv_ALG_windows",
-    service_policy     => "start",
-    service_method     => force_deps,
-    action             => policy("fix"),
-    ifvarclass         => "Windows_Server_2008";
-
-@}
-
-@end smallexample
-
-Writing this policy is clearly more time-consuming and error-prone. On
-the other hand, it allows for much more flexibility than Content-Driven
-Policies, when that is needed.
-
-CFEngine provides Content-Driven Policies to cover mainstream
-management tasks like the following.
-
-@itemize
-@item File change/difference management
-@item Service management
-@item Database management
-@item Application / script management
-@end itemize
-
-
-@section Getting started
-All the CDP input files are located in
-@code{/var/cfengine/masterfiles/cdp_inputs} on your policy hub. CFEngine 3 Enterprise
-is bundled with some examples, but ensure to @emph{edit the examples
-before enabling them}.
-
-To enable all the CDPs located in @code{cdp_inputs/}, open
-@code{promises.cf} in your masterfiles directory. Remove the comment
-(@code{#}) in front of the cdp entries in @code{bundlesequence} and
-@code{inputs}, to make it look like the following.
-
-@verbatim
-bundlesequence => {
-                  "def",
-                  "cfengine_management",
-                  "service_catalogue",
-                  "cdp",
-...
-
-        inputs => {
-...
-                  "cdp_lib/cdp.cf",
-                  "cdp_lib/cdp_acls.cf",
-                  "cdp_lib/cdp_registry.cf",
-                  "cdp_lib/cdp_file_changes.cf",
-                  "cdp_lib/cdp_file_diffs.cf",
-                  "cdp_lib/cdp_services.cf",
-                  "cdp_lib/cdp_commands.cf",
-...
-@end verbatim
-
-@c When the hosts start reporting back on the outcome of these policies (usually within 10 minutes), you can view the reports in the CDP reports viewer or from your Knowledge Map on the policy hub. 
-
-@c Go to the @code{Status} tab, find the
-@c Content-Driven Policies drop-down, select the CDP type
-@c (e.g. @code{Services}) and click @code{Generate}.
-
-@c @image{cdp_reports_generate,15cm,,Generating Content-Driven Policy reports,png}
 
 
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node  Upgrading CFEngine 3 Enterprise, Frequently Asked Questions, Content-Driven Policies, Top
+@node  Upgrading CFEngine 3 Enterprise, Frequently Asked Questions, Server extensions, Top
 @chapter Upgrading CFEngine 3 Enterprise
 
 @cartouche
-This is a release candidate not intended for production and no upgrade procedure is provided. Please try out in a clean test environment.
+Please see INSTALLATION.TXT for how to upgrade (found on the CFEngine software download page)
 @end cartouche
 @ignore
 Please follow the following instructions to the point to ensure a smooth upgrade. When upgrading the software from an earlier version, you should
@@ -4878,7 +4759,7 @@ Please see @ref{Troubleshooting} if you have any problems.
 @node How do I install the prerequisites for the hub manually?, I did bootstrap the hub before obtaining a license file - what should I do?, Frequently Asked Questions, Frequently Asked Questions
 @section How do I install the prerequisites for the hub manually?
 
-See INSTALLATION.TXT for a list of dependencies for the hub (can found on the CFEngine software download page:
+See INSTALLATION.TXT for a list of dependencies for the hub (found on the CFEngine software download page):
 @table @i
 @item Commercial customers
 @url{https://cfengine.com/software/}
