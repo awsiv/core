@@ -32,7 +32,7 @@ bundle common cfe_internal_hub_vars
 
   SuSE::
 
-   "docroot" string => "/var/www/htdocs",
+   "docroot" string => "/srv/www/htdocs",
             comment => "Root directory of Enterprise Web interface",
              handle => "cfe_internal_hub_vars_docroot_suse";
 
