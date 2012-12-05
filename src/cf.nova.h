@@ -1127,8 +1127,6 @@ unsigned int sleep(unsigned int seconds);
 int chown(const char *path, uid_t owner, gid_t group);
 int NovaWin_chmod(const char *path, mode_t mode);
 int fchmod(int fildes, mode_t mode);
-long int random(void);
-void srandom(unsigned int seed);
 int NovaWin_stat(const char *path, struct stat *buf);
 time_t NovaWin_FileTimeToTimet(FILETIME *ft);
 int NovaWin_uname(struct utsname *buf);

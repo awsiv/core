@@ -104,20 +104,6 @@ int fchmod(int fildes, mode_t mode)
 
 /*****************************************************************************/
 
-long int random(void)
-{
-    return rand();
-}
-
-/*****************************************************************************/
-
-void srandom(unsigned int seed)
-{
-    srand(seed);
-}
-
-/*****************************************************************************/
-
 int NovaWin_stat(const char *path, struct stat *statBuf)
 /* Implementation of stat() which gives better times and correct nlinks */
 {
