@@ -4519,20 +4519,6 @@ void FreeEnvironmentsList(EnvironmentsList *list)
 }
 
 /*****************************************************************************/
-
-void FreeHostsList(HostsList *list)
-{
-    while (list)
-    {
-        HostsList *next = list->next;
-
-        free(list->keyhash);
-        free(list);
-        list = next;
-    }
-}
-
-/*****************************************************************************/
 /* for commenting functionality */
 /*****************************************************************************/
 
