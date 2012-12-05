@@ -1956,50 +1956,6 @@ int SortBundleSeen(void *p1, void *p2)
 
 /*****************************************************************************/
 
-int SortPromisePopularAscending(void *p1, void *p2)
-/**
- * For SortRlist() - sorts least popular promises first.
- **/
-{
-    HubPromise *hp1, *hp2;
-
-    hp1 = (HubPromise *) p1;
-    hp2 = (HubPromise *) p2;
-
-    if (hp1->popularity < hp2->popularity)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*****************************************************************************/
-
-int SortPromisePopularDescending(void *p1, void *p2)
-/**
- * For SortRlist() - sorts most popular promises first.
- **/
-{
-    HubPromise *hp1, *hp2;
-
-    hp1 = (HubPromise *) p1;
-    hp2 = (HubPromise *) p2;
-
-    if (hp1->popularity > hp2->popularity)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*****************************************************************************/
-
 int SortPromiseBundle(void *p1, void *p2)
 /**
  * For SortRlist() - sorts bundles from policy definition by type.
