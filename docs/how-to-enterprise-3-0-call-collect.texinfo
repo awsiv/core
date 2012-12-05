@@ -17,13 +17,13 @@
 @c ***********************************************************************@c 
 @c %** start of header
 @setfilename how-to-enterprise-3-0-call-collect.info
-@settitle How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@settitle How-To for CFEngine 3 Enterprise 3.0 Call-Collect
 @setchapternewpage odd
 @c %** end of header
 @titlepage
-@title How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@title How-To for CFEngine 3 Enterprise 3.0 Call-Collect
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 19. November 2012 @c also update in ifnottex section below
+@subtitle Updated 2. December 2012 @c also update in ifnottex section below
 @author CFEngine
 @c @smallbook
 @fonttextsize 10
@@ -48,9 +48,9 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 19. November 2012
+Updated 2. December 2012
 @node Top, Call-Collect, (dir), (dir)
-@top How-To CFEngine 3 Enterprise 3.0 Call-Collect
+@top How-To for CFEngine 3 Enterprise 3.0 Call-Collect
 @end ifnottex
 @ifhtml
 @html
@@ -98,7 +98,7 @@ What happens is that the client's @code{cf-serverd} will 'peer' with the server 
 
 Collect calling cannot be as efficient as data collection by the @code{cf-hub} component, as the hub is not able to load balance.  Hosts that use this approach should exclude themselves from the @code{cf-hub} data collection.
 
-@nodindent The sequence of events is this:
+@noindent The sequence of events is this:
 
 @itemize -
 @item Satellite @code{cf-serverd} connects to its registered policy hub
@@ -121,6 +121,7 @@ Call-collect is put in action if @code{call_collect_interval} is set. It causes 
 @end verbatim
 
 
+@page
 @c -----------------------------------------------------
 @node Example Configuration
 @section Example Configuration
@@ -171,22 +172,23 @@ access:
 
 @end verbatim
 
-You also have to make sure that any firewalls allow these connections to pass.
+@noindent You also have to make sure that any firewalls allow these connections to pass.
 
 In addition you should choose a system identifier in the Mission Portal, see System Identifier. This is the attribute by which the hosts will be identified in views and reports.
 
-
+@page
 @c -----------------------------------------------------
 @node Viewing Call-Collected Reports in the Mission Portal
 @section Viewing Call-Collected Reports in the Mission Portal
 
-To view a Call-Collected report in the CFEngine Enterprise Mission Portal you need to set a system variable by which to define host or system identifiers. This will allow the Mission Portal to select hosts from a customizable parameter (the @i{System Identifier}), whichever is most appropriate for your setup. Go to the Mission Portal Settings and select @i{System Identifier} from the left menu:
+To view a Call-Collected report in the CFEngine Enterprise Mission Portal you need to set a system variable by which to define a host identifier. This will allow the Mission Portal to select hosts from a configurable parameter, whichever is most appropriate for your setup. Go to the Mission Portal Settings and select @i{Host Identifier} from the left menu:
 
 @sp 1
 @image{img-system-identifier-3-0,15cm,,System Identifier}
 @center Figure: System Identifier
 @sp 1
 
+Reports should then be accessible in a normal fashion (in the Host app or the SQL Reports app).
 
 @c =========================================================================
 @c @node Index,  , CFEngine Methods, Top
