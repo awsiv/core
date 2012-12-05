@@ -2081,7 +2081,6 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
     if ((fout = fopen("value_report.html", "w")) == NULL)
     {
         CfOut(cf_error, "fopen", " !! Unable to write value report");
-        CloseDB(dbp);
         return;
     }
 
