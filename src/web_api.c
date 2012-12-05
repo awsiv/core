@@ -4909,24 +4909,6 @@ bool IsEnvMissionPortalTesting()
 #endif // NDEBUG
 
 /*****************************************************************************/
-/* Service page                                                              */
-/*****************************************************************************/
-
-void Nova2PHP_get_service_activity_for(char *hostkey)
-{
-/*    JsonElement *jsonRetval = JsonObjectCreate(6);
-    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
-    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
-    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
-    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
-    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
-    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
-
-    return jsonRetval;
-*/
-}
-
-/*****************************************************************************/
 
 JsonElement *Nova2PHP_get_service_histogram()
 {
