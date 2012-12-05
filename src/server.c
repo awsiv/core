@@ -33,7 +33,6 @@
 #include "db_common.h" 
 #endif
 
-Rlist *SERVER_KEYRING = NULL;
 static int HailPeerCollect(char *host, Attributes a, Promise *pp);
 static Promise *MakeCollectCallPromise(void);
 
