@@ -922,7 +922,6 @@ HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot
 #endif
 
 int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ());
-void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count, int *end_count);
 
 /* knowledge.c */
 
