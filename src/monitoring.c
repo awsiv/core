@@ -117,7 +117,6 @@ static const char *UNITS[CF_OBSERVABLES] =
 /* Variables */
 
 int MONITOR_RESTARTED = true;
-char *MEASUREMENTS[CF_DUNBAR_WORK];
 CustomMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 
 static time_t slots_load_time = 0;
