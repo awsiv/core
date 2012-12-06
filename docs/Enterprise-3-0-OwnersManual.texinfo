@@ -898,6 +898,9 @@ The following shows how to add, edit and delete users from the internal database
 Enter the user information as requested in the fields. If user roles have been defined (see @ref{Role Based Access Control (RBAC)}), you can also choose to assign one or more roles to the user by selecting an available group and clicking the '@b{<}' button located between the list of assigned and available roles. Finish by clicking @i{Create User}.
 
 Users can be edited in the same way as above by clicking the @i{Pencil} button next to his or her user name.
+@cartouche
+For resetting user passwords, please note that the Mission Portal will attempt to email the new password to the user. If this fails, the Mission Portal will display the new password on screen after the email server has given the fail message. Please note that this might take a while, you should verify that the recipient has gotten the email before moving on. If the password is displayed on the screen you will need to convey it to the user manually and check your Mission Portal email settings (see @ref{Other Settings}).
+@end cartouche
 
 The information a user is authorized to see is determined from his or her
 role memberships. A user may be member of an arbitrary number of
@@ -1006,6 +1009,70 @@ They are related to default save path for CSV/PDF reports, timeout for exported 
 
 @item Email settings (@file{<DOCROOT>/application/config/email.php}). By editing this file you can specify custom email settings adapted to your setup.
 @end itemize
+
+@noindent The complete list of options for @file{<DOCROOT>/application/config/email.php} are as follows:
+
+@sp 1
+@verbatim
+<pre>
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+/*
+* method used to send email
+*/
+
+$config['useragent'] = 'cfengine'; // The "user agent".
+$config['protocol'] = 'mail'; // The mail sending protocol. Values: mail, sendmail,
+                               or smtp.
+$config['mailpath'] = ''; // The server path to Sendmail.
+
+$config['smtp_host'] = ''; // SMTP Server Address.
+$config['smtp_user'] = ''; // SMTP Username.
+$config['smtp_pass'] = ''; // SMTP Password.
+$config['smtp_port'] = ''; // SMTP Port, f.e. 25
+$config['smtp_timeout'] = ''; // SMTP Timeout (in seconds). f.e. 5
+
+$config['wordwrap'] = TRUE; // Enable word-wrap. Values: TRUE or FALSE (boolean).
+$config['wrapchars'] = 76; // Character count to wrap at. f.e. 76
+$config['mailtype'] = 'text'; // Type of mail. values: text or html
+$config['charset'] = 'utf-8'; // Character set (utf-8, iso-8859-1, etc.).
+$config['validate'] = TRUE; // Whether to validate the email address. Values: TRUE
+                            // or FALSE (boolean)
+$config['priority'] = 3; // Email Priority. 1 = highest. 5 = lowest. 3 = normal. 
+                         // Values: 1, 2, 3, 4, 5
+$config['crlf'] = '\r\n'; // Newline character. (Use "\r\n" to comply with RFC 822). 
+                          // Values: "\r\n" or "\n" or "\r"
+$config['newline'] = '\r\n'; // Newline character. (Use "\r\n" to comply 
+                             // with RFC 822). Values: \r\n" or "\n" or "\r"
+
+$config['bcc_batch_mode'] = FALSE; // Enable BCC Batch Mode. Values: TRUE or
+                                   // FALSE (boolean)
+$config['bcc_batch_size'] = ''; // Number of emails in each BCC batch. f.e. 200
+
+?>
+</pre> 
+@end verbatim
+@sp 2
+
+@noindent Email configuration example:
+
+@sp 1
+@verbatim
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+/*
+ * method used to send email
+ */
+$config['protocol'] = 'smtp';
+$config['smtp_port'] = '25';
+$config['user_agent']='cfengine';
+$config['smtp_host']='10.10.10.10';
+$config['smtp_user'] = 'user';
+$config['smtp_pass'] = 'password';
+$config['smtp_crypto'] = 'tls';
+$config['charset'] = 'iso-8859-1';
+$config['wordwrap'] = TRUE;
+
+?>
+@end verbatim
 
 
 @c *****************************************************
