@@ -116,7 +116,7 @@ JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username);
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username);
 JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
-void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
+JsonElement *Nova2PHP_GetPromiseBody(char *name, char *type);
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize);
 char *Nova_LongState(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);

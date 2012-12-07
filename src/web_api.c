@@ -3747,59 +3747,61 @@ char *Nova2PHP_GetPromiseComment(char *handle)
 
 /*****************************************************************************/
 
-void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize)
+JsonElement *Nova2PHP_GetPromiseBody(char *name, char *type)
 {
-    char work[CF_BUFSIZE];
     EnterpriseDB dbconn;
     HubBody *hb;
 
     if (!CFDB_Open(&dbconn))
     {
-        return;
+        return NULL;
     }
 
     hb = CFDB_QueryBody(&dbconn, type, name);
 
-    if (hb)
+    if (!hb)
     {
-        snprintf(returnval, CF_MAXVARSIZE - 1, "{");
+        CFDB_Close(&dbconn);
+        return NULL;
+    }
 
-        snprintf(work, CF_MAXVARSIZE - 1, "\"Type\":\"%s\",", hb->bodyType);
-        Join(returnval, work, bufsize);
-
-        snprintf(work, CF_MAXVARSIZE - 1, "\"Name\":\"%s\",", hb->bodyName);
-        Join(returnval, work, bufsize);
+    JsonElement *payload = JsonObjectCreate(3);
+    {
+        JsonObjectAppendString(payload, "Type", NULLStringToEmpty(hb->bodyType));
+        JsonObjectAppendString(payload, "Name", NULLStringToEmpty(hb->bodyName));
 
         if (hb->bodyArgs)
         {
-            snprintf(work, CF_MAXVARSIZE - 1, "\"Arguments\":\"%s\",", hb->bodyArgs);
-            Join(returnval, work, bufsize);
+            JsonObjectAppendString(payload, "Arguments", NULLStringToEmpty(hb->bodyArgs));
         }
 
         if (hb->attr)
         {
             HubBodyAttr *ha;
+            JsonElement *attributes = JsonArrayCreate(5);
 
-            Join(returnval, "\"attributes\":[", bufsize);
             for (ha = hb->attr; ha != NULL; ha = ha->next)
             {
-                snprintf(work, CF_MAXVARSIZE - 1, "{\"lval\":\"%s\",\"rval\":\"%s\",\"class_context\":\"%s\"},",
-                         ha->lval, ha->rval, ha->classContext);
-                Join(returnval, work, bufsize);
+                JsonElement *entry = JsonObjectCreate(3);
+                JsonObjectAppendString(entry, "lval", NULLStringToEmpty(ha->lval));
+                JsonObjectAppendString(entry, "rval", NULLStringToEmpty(ha->rval));
+                JsonObjectAppendString(entry, "class_context", NULLStringToEmpty(ha->classContext));
+
+                JsonArrayAppendArray(attributes, entry);
             }
 
-            ReplaceTrailingChar(returnval, ',', '\0');
-            EndJoin(returnval, "]", bufsize);
+            JsonObjectAppendArray(payload, "attributes", attributes);
         }
 
         DeleteHubBody(hb);
-        EndJoin(returnval, "}", bufsize);
     }
 
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
+
+    return payload;
 }
 
 /*****************************************************************************/
