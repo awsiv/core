@@ -5406,7 +5406,6 @@ PHP_FUNCTION(cfpr_body_details)
 {
     char *bodyType, *bodyName;
     int btype_len, bname_len;
-    char buffer[1000000];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &bodyType, &btype_len, &bodyName, &bname_len) == FAILURE)
     {
@@ -5416,10 +5415,15 @@ PHP_FUNCTION(cfpr_body_details)
 
     ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
 
-    buffer[0] = '\0';
-    Nova2PHP_GetPromiseBody(bodyName, bodyType, buffer, sizeof(buffer));
 
-    RETURN_STRING(buffer, 1);
+    JsonElement *out = Nova2PHP_GetPromiseBody(bodyName, bodyType);
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
+
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
