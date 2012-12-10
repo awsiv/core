@@ -748,6 +748,7 @@ JsonElement *Nova2PHP_vitals_list(char *hostkey)
             JsonObjectAppendString(entry, "id", NULLStringToEmpty(vital->id));
             JsonObjectAppendString(entry, "units", NULLStringToEmpty(vital->units));
             JsonObjectAppendString(entry, "desc", NULLStringToEmpty(vital->description));
+            JsonArrayAppendArray(observations, entry);
         }
 
         DeleteHubQuery(result, DeleteHubVital);
