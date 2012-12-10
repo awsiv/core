@@ -3884,16 +3884,16 @@ static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, c
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize)
+JsonElement *Nova2PHP_promise_details(PromiseFilter *filter)
 {
     EnterpriseDB dbconn;
     char promiseeText[CF_MAXVARSIZE];
     char commentText[CF_MAXVARSIZE];
-    char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
+
 
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
     HubQuery *hqPromise = CFDB_QueryPromisesUnexpanded(&dbconn, filter,
@@ -3901,26 +3901,25 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
 
     if (CountRecords(hqPromise) == 0)
     {
-        snprintf(returnval, bufsize, " Promise was not found in the database.");
         DeleteHubQuery(hqPromise, DeleteHubPromise);
         CFDB_Close(&dbconn);
-        return false;
+        return NULL;
     }
+
+    JsonElement *payload = JsonObjectCreate(10);
+    {
 
     HubPromise *hp = HubQueryGetFirstRecord(hqPromise);
 
-    returnval[0] = '\0';
+    JsonObjectAppendString(payload, "bundletype", NULLStringToEmpty(hp->bundleType));
+    JsonObjectAppendString(payload, "bundlename", NULLStringToEmpty(hp->bundleName));
+    JsonObjectAppendString(payload, "handle", NULLStringToEmpty(hp->handle));
+    JsonObjectAppendString(payload, "promiser", NULLStringToEmpty(hp->promiser));
 
-    strcat(returnval, "{");
 
-    snprintf(work, sizeof(work), "\"bundletype\":\"%s\",\"bundlename\":\"%s\",", hp->bundleType, hp->bundleName);
-    Join(returnval, work, bufsize);
 
-    snprintf(work, sizeof(work), "\"handle\":\"%s\",", hp->handle);
-    Join(returnval, work, bufsize);
 
-    snprintf(work, sizeof(work), "\"promiser\":\"%s\",", EscapeJson(hp->promiser, escaped, sizeof(escaped)));
-    Join(returnval, work, bufsize);
+
 
     if (RlistLen(hp->promisees) == 0)
     {
@@ -3931,8 +3930,8 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
         PrintRlist(promiseeText, sizeof(promiseeText), hp->promisees);
     }
 
-    snprintf(work, sizeof(work), "\"promisee\":\"%s\",", promiseeText);
-    Join(returnval, work, bufsize);
+    JsonObjectAppendString(payload, "promisee", NULLStringToEmpty(promiseeText));
+
 
     if (NULL_OR_EMPTY(hp->comment))
     {
@@ -3943,22 +3942,17 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
         snprintf(commentText, sizeof(commentText), "%s", hp->comment);
     }
 
-    snprintf(work, sizeof(work), "\"comment\":\"%s\",", EscapeJson(commentText, escaped, sizeof(escaped)));
-    Join(returnval, work, bufsize);
-
-    snprintf(work, sizeof(work), "\"promise_type\":\"%s\",", hp->promiseType);
-    Join(returnval, work, bufsize);
-
-    snprintf(work, sizeof(work), "\"class_context\":\"%s\",", hp->classContext);
-    Join(returnval, work, bufsize);
-
-    snprintf(work, sizeof(work), "\"file\":\"%s\",\"line_num\":%d,", hp->file, hp->lineNo);
-    Join(returnval, work, bufsize);
+    JsonObjectAppendString(payload, "comment", NULLStringToEmpty(commentText));
+    JsonObjectAppendString(payload, "promise_type", NULLStringToEmpty(hp->promiseType));
+    JsonObjectAppendString(payload, "class_context", NULLStringToEmpty(hp->classContext));
+    JsonObjectAppendString(payload, "file", NULLStringToEmpty(hp->file));
+    JsonObjectAppendInteger(payload, "line_num", hp->lineNo);
 
     if (hp->constraints)
     {
-        snprintf(work, sizeof(work), "\"body\":[");
-        Join(returnval, work, bufsize);
+
+
+        JsonElement *body = JsonArrayCreate(5);
 
         for (Rlist *rp = hp->constraints; rp != NULL; rp = rp->next)
         {
@@ -3966,38 +3960,39 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
 
             args[0] = '\0';
             sscanf(ScalarValue(rp), "%255s => %1023[^(,;]%[^\n]", lval, rval, args);
-
+            JsonElement *entry = JsonObjectCreate(4);
             if (strcmp(lval, "usebundle") == 0)
             {
-                snprintf(work, sizeof(work),
-                         "{\"constraint_type\":\"bundle\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},", lval,
-                         rval, args);
+
+                JsonObjectAppendString(entry, "constraint_type", "bundle");
             }
             else
             {
-                snprintf(work, sizeof(work),
-                         "{\"constraint_type\":\"body\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},", lval, rval,
-                         args);
+
+                 JsonObjectAppendString(entry, "constraint_type", "body");
             }
 
-            Join(returnval, work, bufsize);
+            JsonObjectAppendString(entry, "type", NULLStringToEmpty(lval));
+            JsonObjectAppendString(entry, "name", NULLStringToEmpty(rval));
+            JsonObjectAppendString(entry, "args", NULLStringToEmpty(args));
+            JsonArrayAppendArray(body, entry);
+
         }
 
-        ReplaceTrailingChar(returnval, ',', '\0');
-        strcat(returnval, "]");
+        JsonObjectAppendArray(payload, "body", body);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    strcat(returnval, "}");
+
 
     DeleteHubQuery(hqPromise, DeleteHubPromise);
+    }
 
     if (!CFDB_Close(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    return payload;
 }
 
 /*****************************************************************************/

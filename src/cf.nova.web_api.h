@@ -286,7 +286,7 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle, char *btype,
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize,
                           PageInfo *page, PromiseContextMode promise_context);
 
-int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize);
+JsonElement *Nova2PHP_promise_details(PromiseFilter *filter);
 
 char *Nova2PHP_GetPromiseComment(char *handle);
 JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter);
