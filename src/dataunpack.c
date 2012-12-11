@@ -648,11 +648,6 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
 
 void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char handle[CF_MAXVARSIZE];
-    long then;
-    time_t tthen;
-
     CfOut(cf_verbose, "", " -> Repair log data........................");
 
     if (dbconn)
@@ -660,12 +655,16 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_REPAIRED, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    for (Item *ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
-        tthen = (time_t) then;
+        long then = -1;
+        char handle[CF_MAXVARSIZE] = "\0",
+                reason[CF_BUFSIZE] = "\0";
 
-        CfDebug("Repair: of promise \"%s\" at %lu\n", handle, tthen);
+        sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
+        time_t tthen = (time_t) then;
+
+        CfDebug("Repair: of promise \"%s\" at %lu, message: \"%s\"\n", handle, tthen, reason);
     }
 }
 
@@ -673,11 +672,6 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
 
 void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
 {
-    Item *ip;
-    char handle[CF_MAXVARSIZE];
-    time_t tthen;
-    long then;
-
     CfOut(cf_verbose, "", " -> Not kept data...........................");
 
     if (dbconn)
@@ -685,11 +679,15 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_NOTKEPT, data);
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    for (Item *ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%ld,%127[^\n]", &then, handle);
-        tthen = (time_t) then;
-        CfDebug("Failure: of promise \"%s\" at %lu\n", handle, tthen);
+        long then = -1;
+        char handle[CF_MAXVARSIZE] = "\0",
+                reason[CF_BUFSIZE] = "\0";
+
+        sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
+        time_t tthen = (time_t) then;
+        CfDebug("Failure: of promise \"%s\" at %lu, message: \"%s\"\n", handle, tthen, reason);
     }
 
 }
