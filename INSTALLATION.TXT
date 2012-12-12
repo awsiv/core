@@ -46,6 +46,8 @@ CFEngine 3 Enterprise is provided in three packages (two hub and one client pack
     client/cfengine-nova-3.0.xxx.x86_64.rpm 
 The difference between the two cfengine-nova-3.0.xxx packages (for hub and client) is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes. The expansion package is only installed on the policy hub. You should install and set up the hub first.
 
+RedHat 6 Users: RedHat has split their main repository into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have that repository configured before installing CFEngine Enterprise 3.0
+
 The general installation steps are as follows:
 1. Copy the CFEngine 3 Enterprise packages to the system.
 2. On the hub/policy server:
@@ -98,8 +100,8 @@ RHEL 6:
 - Apache HTTP Server (httpd, version 2.2.15-9.el6)
 - PHP5 Core Files (php, version 5.3.2-6.el6)
 - PHP5 Extension Module
-	(php-bcmath, version 5.3.2-6.el6)
-	(php-pear, version 1:1.9.0-2.el6)
+	(php, php-bcmath, php-pear, php-pdo)
+- mod_ssl
 
 DEBIAN 6:
 - The Apache Web Server Version 2.0 (apache2, version 2.2.16-6+squeeze1)

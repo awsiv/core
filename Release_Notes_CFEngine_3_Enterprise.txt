@@ -43,7 +43,7 @@ Debian		5					i686,x86-64
 RHEL 		4	 				i686,x86-64		
 Solaris 	9 					i86pc, sparc 		No libvirt.
 
-For AIX, BSD, Mac OSX, older Windows, SLES/OpenSUSE, and Ubuntu contact your sales representative for more information.
+For AIX, BSD, Mac OSX, older Windows, SLES/OpenSUSE, and Ubuntu contact your sales representative for more information. Please also get in touch if your platform is not listed in the above, to explore possibilities.
 
 CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client).
 
@@ -138,6 +138,8 @@ KNOWN ISSUES:
 * If a promiser is split across multiple lines, only the first line is recorded by the hub
 * On Solaris, XML editing is limited to files in ASCII and UTF8 encoding
 * RPM package post-install script does not re-start CFEngine agents after manual upgrade (not an issue with CFEngine's automatic upgrade)
+* Package management will not work on Windows if "WMI Installer Provider" is not installed
+* RedHat 6 Users: RedHat has split their repositories into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have that repository configured before installing CFEngine Enterprise 3.0
 
 ----------------------------------------------------------------------------
 

@@ -14,10 +14,13 @@ ALWAYS TEST UPGRADE IN A TEST ENVIRONMENT PRIOR TO UPGRADING PRODUCTION ENVIRONM
 
 If you have any questions, please do not hesitate to contact your sales representative, or our support engineers through the support channel (https://cfengine.com/otrs/customer.pl)
 
+THE UPGRADE SCRIPT IS AVAILABLE AT https://cfengine.com/software/?dir=Enterprise-3.0.0/.upgrade_script
+or in the document listing for CFEngine Enterprise Free 25.
+
 ----------------------------------------------------------------------------
 
 UPGRADE PROCEDURE FOR THE HUB (THE UPGRADE SCRIPT STEP BY STEP)
-ALSO APPLICABLE TO MANUAL UPGRADES (but you do not need to do all of them)
+ALSO APPLICABLE TO MANUAL UPGRADES (but you do not need to do all of the following steps)
 
 PREREQUISITE:
  * CFEngine 3 Enterprise HUB version 2.1.x/2.2.x
@@ -181,7 +184,7 @@ WHAT SHOULD I DO NEXT WHEN THE SCRIPT IS DONE?
 
 ----------------------------------------------------------------------------
 
-THERE IS SOMETHING WRONG. HOW CAN I ROOLBACK MY BINARY VERSION AND CONFIGURATION?
+THERE IS SOMETHING WRONG. HOW CAN I ROLLBACK MY BINARY VERSION AND CONFIGURATION?
 
  * remove /var/cfengine/masterfiles and /var/cfengine/inputs directories
  * rename /var/cfengine/masterfiles_$(date) to /var/cfengine/masterfiles
