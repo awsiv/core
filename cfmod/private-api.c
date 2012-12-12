@@ -2071,7 +2071,6 @@ PHP_FUNCTION(cfpr_promise_details)
 {
     char *userName, *handle;
     int user_len, handle_len;
-    char buffer[CF_WEBBUFFER];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &handle, &handle_len) == FAILURE)
     {
@@ -2089,12 +2088,17 @@ PHP_FUNCTION(cfpr_promise_details)
 
     PromiseFilterAddPromiseBody(filter, handle, NULL);
 
-    buffer[0] = '\0';
-    Nova2PHP_promise_details(filter, buffer, sizeof(buffer));
+
+    JsonElement *out = Nova2PHP_promise_details(filter);
+
+    if (!out)
+    {
+        out = JsonObjectCreate(0);
+    }
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
