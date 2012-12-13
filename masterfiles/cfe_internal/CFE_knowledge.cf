@@ -316,6 +316,11 @@ bundle agent cfe_internal_setup_knowledge
       comment => "Initialise mongo cfreport database",
        handle => "cfe_internal_setup_knowledge_commands_mongo_mongoinitializejs";
 
+   "$(sys.workdir)/bin/mongo phpcfengine $(sys.workdir)/share/GUI/phpcfenginenova/sql_reports.js"
+      contain => silent_in_dir("$(sys.workdir)"),
+      comment => "Initialise mongo phpcfengine sql saved search query",
+       handle => "cfe_internal_setup_knowledge_commands_mongo_sql_reportsjs";
+
   init_knowledge|(am_policy_hub.kn_update)::
 
    "$(sys.cf_promises) -r"
