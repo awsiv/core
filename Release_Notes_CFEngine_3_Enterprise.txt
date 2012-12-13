@@ -1,5 +1,5 @@
 CFENGINE 3 ENTERPRISE 3.0.0
-RELEASE DATE: December 2012
+RELEASE DATE: December 2012 (this document was amended on December 13th 2012)
 SCOPE: Official release of CFEngine 3 Enterprise 3.0.0
 
 ----------------------------------------------------------------------------
@@ -84,7 +84,8 @@ CHANGE LOG FROM 2.2.3:
 * New classes enterprise: enterprise_X, enterprise_X_Y, enterprise_X_Y_Z on CFEngine Enterprise, to reflect the version running. 
 * New variable sys.enterprise_version that holds the CFEngine Enterprise version. This complements the Nova classes and the sys.nova_version variable, which will eventually be deprecated.
 * Improvements to the hub maintenance process (less resource intensive and configurable).
-* New option (-m) added for cf-hub for Enterprise database maintenance.
+* New option (-m) added for cf-hub for manually triggered Enterprise database maintenance. Type "cf-hub --help" for more information.
+* cf-hub -m process is now launched every 6 hrs (by default) from policy, not hard coded (see /var/cfengine/CFE_hub_specific.cf)
 * 32-bit hub installations no longer supported
 * Separate hub and client packages: now use 2 hub specific packages and 1 client specific package for installation (previously only cfengine-nova-expansion-<version number> was hub specific). These are clearly separated in different download sub-directories.
 * Redesign of default policy schema, see separate section below.
@@ -132,19 +133,24 @@ See separate 3.0.0-INSTALLATION.TXT and 3.0.0-UPGRADE.TXT for instructions.
 KNOWN ISSUES:
 * While using CFEngine's packages promises with package managers (such as: yum/apt etc.), please make sure that valid package names are supplied. Currently there is a problem with evaluating the return codes of the package managers when the package name doesn't exist in the repository. This will eventually result in cf-hub not collecting software reports even if some valid packages are installed/removed/modified.
 * Policy context selection will not work unless the policy is updated to the latest schema (using the "cfe_internal_" prefix for bundle names and promise handles).
-* A change in hub maintenance process interval from the default 6 hours will effect the time series graph on the Engineering page (may have blanks or other display problems).
+* If you change the hub maintenance process interval to higher than the default 6 hours, the time series graph in the Hosts app may have blanks or other display problems.
 * Reset of user password will not send new password if email configuration is wrong. Password will be reset, but user cannot access new password and hence will not be able to log in.
-* Using RHEL packages for CentOS, the agents will connect to the RHN repository to download additional packages.
 * If a promiser is split across multiple lines, only the first line is recorded by the hub
 * On Solaris, XML editing is limited to files in ASCII and UTF8 encoding
 * RPM package post-install script does not re-start CFEngine agents after manual upgrade (not an issue with CFEngine's automatic upgrade)
 * Package management will not work on Windows if "WMI Installer Provider" is not installed
-* RedHat 6 Users: RedHat has split their repositories into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have that repository configured before installing CFEngine Enterprise 3.0
+* CFEngine auto-upgrade does not work out of the box on Windows clients (You need to modify both policy and package file name. Commercial customers can contact support for more information.
+* RedHat 6 Users: RedHat has split their repositories into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have the necessary dependencies available in your repository of choice before installing CFEngine Enterprise 3.0.
+* License information displayed in the Mission Portal can be inaccurate for CFEngine Enterprise 25 Free (i.e. when no license file exists). License enforcement (maximum 25 managed nodes) still remains accurate.
+
+* Existing customers can contact CFEngine through the usual channels (support/sales contact). Help is also available on our Google Groups forums:
+ - Free 25: https://groups.google.com/forum/?hl=en&fromgroups#!forum/cfengine-enterprise-free-25
+ - help-cfengine: https://groups.google.com/forum/?hl=en&fromgroups#!forum/help-cfengine
 
 ----------------------------------------------------------------------------
 
 IMPORTANT NOTICE FOR THIS RELEASE:
-* CFEngine has activated the "depends_on" attribute in policy language. This was previously only used for documentation purposes, now constitutes a way to implicitly order a promise that depends on another. Please update with care if you have previously used the "depends_on" attribute in your policy!
+* CFEngine has activated the "depends_on" attribute in policy language. This was previously only used for documentation purposes, now constitutes a way to implicitly order a promise that depends on another. Please update with care if you have the depends_on attribute active in your policy! For more in formation, see http://cfengine.com/manuals/cf3-Reference#depends_005fon-in-_002a
 
 * CFEngine has changed the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise> [MESSAGE]" in this release. In addition, the verbose output of promise compliance has changed format to accomodate the new policy context feature. 
 

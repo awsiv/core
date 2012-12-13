@@ -1,5 +1,5 @@
 CFENGINE 3 ENTERPRISE 3.0.0
-RELEASE DATE: December 2012
+RELEASE DATE: December 2012 (this document was amended on 13 December 2012)
 SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0.0
 
 For information about supported platforms, compatible hub/client configurations and an overview of changes, please see the "3.0.0-Release-Notes-CFEngine-3-Enterprise.txt" file (available in the cfengine.com software download directory).
@@ -89,33 +89,35 @@ CFEngine 3 Enterprise will automatically detect if the necessary packages are al
 
 Note that these mandatory packages may have additional dependencies on their own, and hence additional packages may be installed during the installation process. This process will be handled automatically by CFEngine bootstrap. We do not recommend configuring every component on your own, please contact your CFEngine sales representative in case you cannot use CFEngine's bootstrap procedure.
 
-RHEL 5:
-- Apache HTTP Server (httpd, version 2.2.3-45.el5)
-- PHP5 Core Files (php, version 5.1.6-27.el5)
-- PHP5 Extension Module
-	(php-bcmath, version 5.1.6-27.el5)
-	(php-pear, version 5.1.6-27.el5)
-
-RHEL 6:
-- Apache HTTP Server (httpd, version 2.2.15-9.el6)
-- PHP5 Core Files (php, version 5.3.2-6.el6)
-- PHP5 Extension Module
-	(php, php-bcmath, php-pear, php-pdo)
-- mod_ssl
+CFEngine uses the latest versions of the following packages:
 
 DEBIAN 6:
-- The Apache Web Server Version 2.0 (apache2, version 2.2.16-6+squeeze1)
-- PHP5 Core Files (php5, version 5.3.3-7+squeeze3)
-- PHP5 Extension Module
-	(php5-cli, version 5.3.3-7+squeeze3)
-	(php5-mcrypt, version 5.3.3-7+squeeze3)
-	(php-pear, version 5.3.3-7+squeeze3)
+- Apache HTTP Server (apache2)
+- Apache Module (ssl-cert)
+- PHP5 Core Files (php5)
+- PHP5 Extension Module (php5-cli, php-pear, php5-mcrypt, php5-sqlite)
 
-UBUNTU 10:
-- The Apache Web Server Version 2.0 (apache2, version 2.2.14-5ubuntu8.4)
-- PHP5 Core Files (php5, version 5.3.2-1ubuntu4.9)
-- PHP5 Extension Module
-	(php5-cli, version 5.3.2-1ubuntu4.9)
-	(php5-mcrypt, version 5.3.2-0ubuntu1)
-	(php-pear, version version 5.3.2-1ubuntu4.9)
+RHEL 5:
+- Apache HTTP Server (httpd)
+- Apache Module (mod_ssl)
+- PHP5 Core Files (php)
+- PHP5 Extension Module (php, php-bcmath, php-pear, php-pdo)
+
+RHEL 6:
+- Apache HTTP Server (httpd)
+- Apache Module (mod_ssl)
+- PHP5 Core Files (php)
+- PHP5 Extension Module (php-bcmath, php-pear, php-pdo)
+
+SLES 11
+- Apache HTTP Server (apache2)
+- Apache modules (apache2-mod_php5, apache2-prefork)
+- PHP5 Core Files (php5)
+- PHP5 Extension Module (php5-json, php5-pear, php5-mcrypt, php5-pdo)
+
+UBUNTU 10 and UBUNTU 12:
+- Apache HTTP Server (apache2)
+- Apache Module (ssl-cert)
+- PHP5 Core Files (php5)
+- PHP5 Extension Module (php5-cli, php-pear, php5-mcrypt, php5-sqlite)
 
