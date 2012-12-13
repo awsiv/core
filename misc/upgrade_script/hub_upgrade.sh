@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # hub_upgrade.sh
-# version 0.0.8
+# version 0.0.9
 #
 #
 # Created by Nakarin Phooripoom on 11/29/12.
@@ -18,7 +18,7 @@ if [ $# -eq 0 ] ; then
  echo "-> [target_version] in 3-digit format: 3.0.0"
  echo "-> [directory] in full path without an ending slash: /path/to/the/packages/directory"
  echo "For Example:" 
- echo "-> $ sh $(basename $0) 3.0.0 /tmp/my_packages  <---- without an ending \"/\" (slash)"
+ echo "-> $ sh $(basename $0) 3.0.0 /tmp  <---- without an ending \"/\" (slash)"
  exit 0
 fi
 
@@ -27,7 +27,7 @@ if [ -f /etc/debian_version ]; then
  # case 1 
  ls $2/cfengine-nova*$1*deb > /dev/null 2>&1
  if [ $? = "2" ]; then
-  echo "No valid $1 packages in place. Upgrade process terminated."
+  echo "No valid CFEngine $1 packages in place. Upgrade process terminated."
   exit 0
  fi
  # case 2
@@ -43,7 +43,7 @@ if [ -f /etc/redhat-release -o -f /etc/SuSE-release ]; then
  # case 1
  ls $2/cfengine-nova*$1*rpm > /dev/null 2>&1
  if [ $? = "2" ]; then
-  echo "No valid $1 packages in place. Upgrade process terminated."
+  echo "No valid CFEngine $1 packages in place. Upgrade process terminated."
   exit 0
  fi
  # case 2
@@ -78,14 +78,14 @@ fi
 echo "*****  YOU ARE RUNNING A CFENGINE UPGRADE SCRIPT     *****"
 echo "*****    THIS MIGHT CAUSE UNEXPECTED INCIDENTS       *****"
 echo "***** DO YOU WANT TO CONTINUE? PLEASE TYPE [yes/no]  *****"
-echo -n "answer: "
+echo -n "ANSWER: "
 read XXX
 case $XXX in
 yes)
  clear
  echo "**** ARE YOU REALLY SURE ABOUT THAT? PLEASE TYPE [Yes, I am.] *****"
  echo "**** USE IT AT YOUR OWN RISK!"
- echo -n "answer: "
+ echo -n "ANSWER: "
  read YYY
  case $YYY in
  "Yes, I am.")
@@ -130,7 +130,9 @@ sleep 1
 echo ""
 echo "-> Ensure that no CFEngine and MongoDB processes are running."
 echo "/etc/init.d/cfengine3 stop"
+if [ -f /etc/init.d/cfengine3 ]; then
  /etc/init.d/cfengine3 stop
+fi
 
 # Backup is really important. Do it first.
 sleep 1
@@ -143,7 +145,14 @@ sleep 1
 echo ""
 echo "-> Upgrade cfengine-nova and cfengine-nova-expansion packages."
 if [ -f /etc/redhat-release -o -f /etc/SuSE-release ]; then
- rpm -Uvh $2/cfengine-nova*$1*.rpm
+ rpm -Fvh $2/cfengine-nova*$1*.rpm
+ rpm -q cfengine-nova > /dev/null 2>&1
+ if [ $? = "1" ]; then
+  echo ""
+  echo "***** TROUBLE - You don't have CFEngine 3 Enterprise installed. *****"
+  echo "*****                 SCRIPT TERMINATED                         *****"
+  exit 0
+ fi
 elif [ -f /etc/debian_version ]; then
  dpkg --install $2/cfengine-nova_*$1*.deb $2/cfengine-nova-*$1*.deb
 fi
@@ -243,18 +252,14 @@ echo -n "-> Have you ever added your custom-built promises to /var/cfengine/mast
 read ANS
 case $ANS in
 yes)
+ echo ""
  echo "-> Prepare a new mongod.conf only."
  mkdir -p $WORKDIR/masterfiles/failsafe
  cp -vf $WORKDIR/share/NovaBase/failsafe/mongod.conf $WORKDIR/masterfiles/failsafe
  UPDATE=1
- echo ""
- echo "-> $WORKDIR/bin/mongod might not be started gracefully."
- echo "-> Please sync up contents from $WORKDIR/share/NovaBase/failsafe"
- echo "   to your failsafe/update manually."
- echo "-> Feel free to register a ticket if you need supports."
- echo "   https://cfengine.com/otrs/customer.pl"
  ;;
 no)
+ echo ""
  echo "-> Copy a new FAILSAFE files to masterfiles."
  cp -rv $WORKDIR/share/NovaBase/failsafe $WORKDIR/masterfiles
  rm -f $WORKDIR/masterfiles/failsafe.cf
@@ -262,6 +267,7 @@ no)
  UPDATE=0
  ;;
 *)
+ echo ""
  echo "-> UNABLE to COMPILE. Skip the whole process."
  exit 0
  ;;
@@ -438,6 +444,17 @@ if [ $UPDATE = "0" ]; then
  echo "-> Please run "
  echo " $ $WORKDIR/bin/cf-agent -f $WORKDIR/masterfiles/failsafe.cf -IK"
  echo "   to finish up the $1 upgrade."
+fi
+
+if [ $UPDATE = "1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Your HUB is partial upgraded."
+ echo "-> Please sync up contents from $WORKDIR/share/NovaBase/failsafe"
+ echo "   to your failsafe/update files manually."
+ echo "-> $WORKDIR/bin/mongod might not be started gracefully."
+ echo "-> Feel free to register a ticket if you need any supports."
+ echo "   here: https://cfengine.com/otrs/customer.pl"
 fi
 
 sleep 1
