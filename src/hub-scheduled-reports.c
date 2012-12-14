@@ -343,7 +343,7 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if ((pp = cf_popen(cmd, "r")) == NULL)
     {
-        CfOut( cf_error, "DBScheduledReportGeneration", "!! Could not run command \"%s\": %s \n", cmd, GetErrorStr() );
+        CfOut( cf_error, "DBScheduledReportGeneration", "!! Could not run command \"%s\"", cmd);
         return false;
     }
 
