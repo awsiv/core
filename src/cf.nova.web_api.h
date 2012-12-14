@@ -298,9 +298,6 @@ int Nova2PHP_report_description(char *reportName, char *returnval, int bufsize);
 void Nova2PHP_GetLibraryDocuments(char *pth, char *buffer, int bufsize);
 int Nova_AddReportHeader(char *header, int truncated, char *buffer, int bufsize);
 
-/* svn helper functions */
-int Nova2PHP_validate_policy(char *file, char *buffer, int bufsize);
-
 /*
  * commenting
  */

@@ -968,15 +968,6 @@ PHP_FUNCTION(cfpr_environment_list);
 PHP_FUNCTION(cfpr_replica_status);
 
 /*
- * SVN helper
- */
-/*! \brief Check if a policy file is valid
- * \param file
- */
-// port plan: (further investigate), possibly /policy
-PHP_FUNCTION(cfpr_validate_policy);
-
-/*
  * Commenting
  */
 

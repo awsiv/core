@@ -5482,36 +5482,6 @@ PHP_FUNCTION(cfpr_network_speed)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_validate_policy)
-{
-    char *file;
-    int f_len, ret;
-    const int bufsize = 100000;
-    char buffer[bufsize];
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &file, &f_len) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    buffer[0] = '\0';
-    ret = Nova2PHP_validate_policy(file, buffer, bufsize);
-    switch (ret)
-    {
-    case 0:
-        RETURN_STRING("SUCCESS", 1);
-        break;
-    case -1:                   // error
-    case 1:
-    default:
-        break;
-    }
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_environment_list)
 {
     char *userName;

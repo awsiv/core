@@ -83,8 +83,6 @@ void EnterpriseModuleTrick()
         Nova2PHP_get_host_colour(NULL, buffer, 3, PROMISE_CONTEXT_MODE_ALL);
         Nova2PHP_meter(NULL, NULL, 0, PROMISE_CONTEXT_MODE_ALL);
 
-        /* svn helper */
-        Nova2PHP_validate_policy(NULL, NULL, 10000);
         /*
          * commenting
          */

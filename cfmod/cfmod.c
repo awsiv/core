@@ -160,10 +160,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_get_reverse_ip_lookup_name, NULL)
 
         /*
-         * SVN helper
-         */
-    PHP_FE(cfpr_validate_policy, NULL)
-        /*
          * Commenting
          */
     PHP_FE(cfpr_add_note, NULL)

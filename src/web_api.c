@@ -4298,39 +4298,6 @@ JsonElement *Nova_FormatDiff(const char *diffStr)
 
 /*****************************************************************************/
 
-int Nova2PHP_validate_policy(char *file, char *buffer, int bufsize)
-{
-    char cmd[CF_BUFSIZE];
-    char tmp[CF_MAXVARSIZE];
-    int retVal;
-    FILE *pp;
-
-    // NOTE: this is run as the web user
-
-    snprintf(cmd, CF_BUFSIZE, "/var/cfengine/bin/cf-promises -n -f \"%s\"", file);
-
-    if ((pp = cf_popen(cmd, "r")) == NULL)
-    {
-        snprintf(buffer, bufsize, "Could not run command \"%s\": %s", cmd, GetErrorStr());
-        return -1;
-    }
-
-    buffer[0] = '\0';
-
-    while (!feof(pp))
-    {
-        if (fgets(tmp, sizeof(tmp), pp))
-        {
-            Join(buffer, tmp, bufsize);
-        }
-    }
-
-    retVal = cf_pclose(pp);
-    return retVal;              // 0 on success
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_delete_host(char *keyHash)
 {
     EnterpriseDB dbconn;
