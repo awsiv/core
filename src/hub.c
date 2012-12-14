@@ -735,7 +735,7 @@ static void StartHub(void)
     CFDB_ConnectAndEnsureIndices();
 
 
-    while (true)
+    while (!IsPendingTermination())
     {
         time_t start = time( NULL );
 
@@ -761,8 +761,6 @@ static void StartHub(void)
 
         CollectSchedulerChildAndSleep(sleep_time);
     }
-
-    YieldCurrentLock(thislock); // Never get here
 }
 
 /********************************************************************/
@@ -1137,7 +1135,7 @@ static void CollectSchedulerChildAndSleep(int wait_seconds)
     // Poll for scheduler process every second for wait_seconds
     // if process has already terminated, sleep for the remaining time
 
-    while (wait_seconds > 0)
+    while (wait_seconds > 0 && !IsPendingTermination())
     {
         if (!IsSchedulerProcRunning())
         {
