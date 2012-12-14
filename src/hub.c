@@ -29,6 +29,7 @@
 #include "instrumentation.h"
 #include "unix.h"
 #include "cfstream.h"
+#include "signals.h"
 
 #include <assert.h>
 
