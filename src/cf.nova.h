@@ -1127,6 +1127,7 @@ int fchmod(int fildes, mode_t mode);
 int NovaWin_stat(const char *path, struct stat *buf);
 time_t NovaWin_FileTimeToTimet(FILETIME *ft);
 int NovaWin_uname(struct utsname *buf);
+const char *GetErrorStr(void);
 
 /* win_file.c */
 
