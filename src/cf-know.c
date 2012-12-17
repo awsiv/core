@@ -41,6 +41,8 @@
 #include "cfstream.h"
 #include "string_lib.h"
 
+#include <assert.h>
+
 static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
 
@@ -1112,7 +1114,14 @@ static Topic *IdempInsertTopic(char *bundle, char *classified_name)
 
 static Topic *InsertTopic(char *bundle, char *name, char *context)
 {
-    int slot = GetHash(ToLowerStr(name));
+    assert(name);
+
+    char *name_lower = xstrdup(name);
+    ToLowerStrInplace(name_lower);
+
+    int slot = GetHash(name_lower);
+
+    free(name_lower);
 
     return AddTopic(&(TOPICHASH[slot]), bundle, name, context);
 }
@@ -1121,9 +1130,9 @@ static Topic *InsertTopic(char *bundle, char *name, char *context)
 
 static Topic *AddTopic(Topic **list, char *bundle, char *name, char *context)
 {
-    Topic *tp;
+    Topic *tp = TopicExists(name, context);
 
-    if ((tp = TopicExists(name, context)))
+    if (tp)
     {
         CfOut(cf_verbose, "", " -> Topic %s already defined, ok\n", name);
     }
@@ -1282,7 +1291,8 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
     {
         op = xcalloc(1, sizeof(Occurrence));
 
-        op->occurrence_context = xstrdup(ToLowerStr(context));
+        op->occurrence_context = xstrdup(context);
+        ToLowerStrInplace(op->occurrence_context);
         op->locator = xstrdup(reference);
         op->bundle = xstrdup(bundle);
         op->rep_type = rtype;
@@ -1306,8 +1316,13 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
 
     for (rp = about_topics; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&(op->about_topics), ToLowerStr(rp->item), rp->type);
-        IdempInsertTopic(bundle, ToLowerStr(rp->item));
+        char *topic_lowercase = xstrdup(rp->item);
+        ToLowerStrInplace(topic_lowercase);
+
+        IdempPrependRScalar(&(op->about_topics), topic_lowercase, rp->type);
+        IdempInsertTopic(bundle, topic_lowercase);
+
+        free(topic_lowercase);
     }
 
 }
@@ -1333,12 +1348,14 @@ void AddInference(Inference **list, char *result, char *pre, char *qual)
 
 static Topic *TopicExists(char *topic_name, char *topic_context)
 {
-    Topic *tp;
-    int slot;
+    char *topic_name_lowercase = xstrdup(topic_name);
+    ToLowerStrInplace(topic_name_lowercase);
 
-    slot = GetHash(ToLowerStr(topic_name));
+    int slot = GetHash(topic_name_lowercase);
 
-    for (tp = TOPICHASH[slot]; tp != NULL; tp = tp->next)
+    free(topic_name_lowercase);
+
+    for (Topic *tp = TOPICHASH[slot]; tp != NULL; tp = tp->next)
     {
         if (strcmp(tp->topic_name, NormalizeTopic(topic_name)) == 0)
         {        
@@ -1361,16 +1378,19 @@ static Topic *TopicExists(char *topic_name, char *topic_context)
 
 int GetTopicPid(char *classified_topic)
 {
-    Topic *tp;
-    int slot;
-    char context[CF_MAXVARSIZE], name[CF_MAXVARSIZE];
-
-    name[0] = '\0';
+    char context[CF_MAXVARSIZE] = "\0",
+            name[CF_MAXVARSIZE] = "\0";
 
     DeClassifyTopic(classified_topic, name, context);
-    slot = GetHash(ToLowerStr(name));
 
-    if ((tp = GetTopic(TOPICHASH[slot], classified_topic)))
+    char *name_lowercase = xstrdup(name);
+
+    int slot = GetHash(name_lowercase);
+
+    free(name_lowercase);
+
+    Topic *tp = GetTopic(TOPICHASH[slot], classified_topic);
+    if (tp)
     {
         return tp->id;
     }
@@ -1417,7 +1437,6 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 {
     TopicAssociation *ta;
     int yfwd = false, ybwd = false;
-    char l[CF_BUFSIZE], r[CF_BUFSIZE];
 
     if (fwd == NULL || (fwd && strlen(fwd) == 0))
     {
@@ -1439,8 +1458,11 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
         }
         else if (fwd && ta->fwd_name)
         {
-            strncpy(l, ToLowerStr(fwd), CF_MAXVARSIZE);
-            strncpy(r, ToLowerStr(ta->fwd_name), CF_MAXVARSIZE);
+            char *l = xstrdup(fwd);
+            ToLowerStrInplace(l);
+
+            char *r = xstrdup(ta->fwd_name);
+            ToLowerStrInplace(r);
 
             if (strcmp(l, r) == 0)
             {
@@ -1452,6 +1474,9 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
             {
                 yfwd = false;
             }
+
+            free(l);
+            free(r);
         }
         else
         {
@@ -1465,14 +1490,20 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
         }
         else if (bwd && ta->bwd_name)
         {
-            strncpy(l, ToLowerStr(bwd), CF_MAXVARSIZE);
-            strncpy(r, ToLowerStr(ta->bwd_name), CF_MAXVARSIZE);
+            char *l = xstrdup(bwd);
+            ToLowerStrInplace(l);
+
+            char *r = xstrdup(ta->bwd_name);
+            ToLowerStrInplace(r);
 
             if (strcmp(l, r) == 0)
             {
                 CfOut(cf_inform, "", " ! Association \"%s\" exists with different capitalization \"%s\"\n", bwd,
                       ta->bwd_name);
             }
+
+            free(l);
+            free(r);
 
             ybwd = true;
         }

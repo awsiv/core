@@ -457,12 +457,17 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     EnterpriseDB conn;
     int topic_id = 0;
 
-    DeClassifyTopic(ToLowerStr(typed_topic), topic, type); // Linker trouble - copy this from core
-
     if (!CFDB_Open(&conn))
     {
         return false;
     }
+
+    char *typed_topic_lowercase = xstrdup(typed_topic);
+    ToLowerStrInplace(typed_topic_lowercase);
+
+    DeClassifyTopic(typed_topic_lowercase, topic, type); // Linker trouble - copy this from core
+
+    free(typed_topic_lowercase);
 
 /* BEGIN query document */
     bson query;
@@ -2566,7 +2571,8 @@ static void NewHit(Hit **list,char *context, char *locator, enum representations
     {
         hp = xcalloc(1, sizeof(Hit));
 
-        hp->occurrence_context = xstrdup(ToLowerStr(context));
+        hp->occurrence_context = xstrdup(context);
+        ToLowerStrInplace(hp->occurrence_context);
         hp->locator = xstrdup(locator);
         hp->represents = xstrdup(represents);
         hp->rep_type = locator_type;
