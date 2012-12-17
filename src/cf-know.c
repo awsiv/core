@@ -55,7 +55,7 @@ static void VerifyInferencePromise(Promise *pp);
 static void WriteKMDB(void);
 static void ShowSingletons(void);
 static void ShowWords(void);
-static char *NormalizeTopic(char *s);
+static void NormalizeTopic(char *topic, char topic_normalized[]);
 static void AddInference(Inference **list, char *result, char *pre, char *qual);
 static Topic *IdempInsertTopic(char *bundle, char *classified_name);
 static Topic *InsertTopic(char *bundle, char *name, char *context);
@@ -1138,13 +1138,18 @@ static Topic *AddTopic(Topic **list, char *bundle, char *name, char *context)
     }
     else
     {
+        char name_normalized[CF_BUFSIZE]="\0";
+        char context_normalized[CF_BUFSIZE]="\0";
+
         tp = xmalloc(sizeof(Topic));
 
-        tp->topic_name = xstrdup(NormalizeTopic(name));
+        NormalizeTopic(name, name_normalized);
+        tp->topic_name = xstrdup(name_normalized);
 
         if (context && strlen(context) > 0)
         {
-            tp->topic_context = xstrdup(NormalizeTopic(context));
+            NormalizeTopic(context, context_normalized);
+            tp->topic_context = xstrdup(context_normalized);
         }
         else
         {
@@ -1171,11 +1176,14 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
     char fwd_context[CF_MAXVARSIZE];
     Rlist *rp;
     Topic *new_tp;
-    char contexttopic[CF_BUFSIZE], ntopic[CF_BUFSIZE], ncontext[CF_BUFSIZE];
+    char contexttopic[CF_BUFSIZE] = {0},
+            ntopic[CF_BUFSIZE] = {0},
+            ncontext[CF_BUFSIZE] = {0};
 
-    strncpy(ntopic, NormalizeTopic(from_topic), CF_BUFSIZE - 1);
-    strncpy(ncontext, NormalizeTopic(from_context), CF_BUFSIZE - 1);
-    snprintf(contexttopic, CF_MAXVARSIZE, "%s::%s", ncontext, ntopic);
+    NormalizeTopic(from_topic, ntopic);
+    NormalizeTopic(from_context, ncontext);
+
+    snprintf(contexttopic, CF_BUFSIZE, "%s::%s", ncontext, ntopic);
     strncpy(fwd_context, CanonifyName(fwd_name), CF_MAXVARSIZE - 1);
 
     if (passociates == NULL || passociates->item == NULL)
@@ -1222,7 +1230,8 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
     {
         char normalform[CF_BUFSIZE] = { 0 };
 
-        strncpy(normalform, NormalizeTopic(rp->item), CF_BUFSIZE - 1);
+        NormalizeTopic(rp->item, normalform);
+
         new_tp = IdempInsertTopic(this_tp->bundle, normalform);
 
         if (strcmp(contexttopic, normalform) == 0)
@@ -1357,9 +1366,15 @@ static Topic *TopicExists(char *topic_name, char *topic_context)
 
     for (Topic *tp = TOPICHASH[slot]; tp != NULL; tp = tp->next)
     {
-        if (strcmp(tp->topic_name, NormalizeTopic(topic_name)) == 0)
-        {        
-            if (strlen(topic_context) > 0 && strcmp(tp->topic_context, NormalizeTopic(topic_context)) == 0)
+        char topic_normalized[CF_BUFSIZE] = "\0";
+
+        NormalizeTopic(topic_name, topic_normalized);
+        if (strcmp(tp->topic_name, topic_normalized) == 0)
+        {
+            char context_normalized[CF_BUFSIZE] = "\0";
+            NormalizeTopic(topic_context, context_normalized);
+
+            if (strlen(topic_context) > 0 && strcmp(tp->topic_context, context_normalized) == 0)
             {
                 return tp;
             }
@@ -1552,12 +1567,14 @@ static Occurrence *OccurrenceExists(Occurrence *list, char *locator, enum repres
 
 /*****************************************************************************/
 
-static char *NormalizeTopic(char *s)
+static void NormalizeTopic(char *topic, char topic_normalized[CF_BUFSIZE])
 {
+    assert(topic);
+
     char *sp;
     int special = false;
 
-    for (sp = s; *sp != '\0'; sp++)
+    for (sp = topic; *sp != '\0'; sp++)
     {
         if (strchr("/\\&|=$@", *sp))
         {
@@ -1566,14 +1583,12 @@ static char *NormalizeTopic(char *s)
         }
     }
 
-    if (special)
+    strncpy(topic_normalized, topic, CF_BUFSIZE);
+
+    if (!special)
     {
-        return s;
-    }
-    else
-    {
-        return ToLowerStr(s);
-    }
+        ToLowerStrInplace(topic_normalized);
+    }    
 }
 
 /*******************************************************************/
