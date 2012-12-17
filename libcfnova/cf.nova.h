@@ -1467,6 +1467,7 @@ typedef struct
 #define cfr_license_granted "granted"
 #define cfr_license_promised "promised"
 #define cfr_license_usage "licenseUsage"
+#define cfr_license_type "licenseType"
 #define cfr_license_usage_last_measured "lastMeasured"
 #define cfr_license_usage_samples "samples"
 #define cfr_license_usage_max_observed_level "maxObservedLevel"
