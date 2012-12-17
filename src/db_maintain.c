@@ -41,20 +41,14 @@ static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
 {
-    struct timespec maintenance_start = BeginMeasure();
-
     CFDB_EnsureIndices(dbconn);
 
     Item *hosts = CFDB_GetAllHostKeys(dbconn);
-
-    struct timespec purge_hosts_start = BeginMeasure();
 
     for(Item *ip = hosts; ip != NULL; ip = ip->next)
     {
         CFDB_PurgeHostReports(dbconn, ip->name);
     }
-
-    EndMeasure("DBPurgeHostsAll", purge_hosts_start);
 
     DeleteItemList(hosts);
 
@@ -62,9 +56,7 @@ void CFDB_Maintenance(EnterpriseDB *dbconn)
     CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
-    CFDB_PurgeDeprecatedVitals(dbconn);
-
-    EndMeasure("DBMaintenance", maintenance_start);
+    CFDB_PurgeDeprecatedVitals(dbconn);    
 }
 
 /*****************************************************************************/
@@ -286,8 +278,6 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     char keyHash[CF_MAXVARSIZE];
     time_t now;
 
-    struct timespec maintenance_timestamp_start = BeginMeasure();
-
     CfOut(cf_verbose, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
@@ -383,8 +373,6 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     }
 
     mongo_cursor_destroy(cursor);
-
-    EndMeasure("DBMaintenanceTimestampsSingleHost", maintenance_timestamp_start);
 }
 
 /*****************************************************************************/

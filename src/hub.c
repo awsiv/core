@@ -41,6 +41,8 @@ static const int BIG_UPDATES = 6;
 
 static bool NO_FORK = false;
 static bool CONTINUOUS = false;
+static bool PERFORM_DB_MAINTENANCE = false;
+static bool DB_CACHE_COMPLIANCE = false;
 
 static bool LOGGING = false;
 static Item *SCHEDULE = NULL;
@@ -123,6 +125,33 @@ int main(int argc, char *argv[])
 
     ReportContext *report_context = OpenReports("hub");
     Policy *policy = GenericInitialize("hub", config, report_context);
+
+    if (DB_CACHE_COMPLIANCE)
+    {
+        EnterpriseDB dbconn;
+
+        if (CFDB_Open(&dbconn))
+        {
+            Nova_CacheTotalCompliance(&dbconn, true);
+
+            CFDB_Close(&dbconn);
+        }
+        else
+        {
+            CfOut(cf_error, "", "Unable to connect to enterprise database");
+        }
+
+        ReportContextDestroy(report_context);
+        return 0;
+    }
+
+    if (PERFORM_DB_MAINTENANCE)
+    {
+        Nova_Maintain();
+        ReportContextDestroy(report_context);
+        return 0;
+    }
+
     ThisAgentInit();
     KeepPromises(policy, config);
     StartHub();
@@ -142,24 +171,12 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_HUB);
 
-    EnterpriseDB dbconn;
-
     while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnsVv", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
         case 'a':
-            if (!CFDB_Open(&dbconn))
-            {
-                CfOut(cf_error, "", "Unable to connect to enterprise database");
-                exit(0);
-            }
-
-            Nova_CacheTotalCompliance(&dbconn, true);
-
-            CFDB_Close(&dbconn);
-
-            exit(0);
+            DB_CACHE_COMPLIANCE = true;
             break;
 
         case 'c':
@@ -197,7 +214,6 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
         case 'i':
             CFDB_ReIndexAll();
             exit(0);
-            break;
 
         case 'K':
             IGNORELOCK = true;
@@ -212,8 +228,8 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             exit(0);
 
         case 'm':
-            Nova_Maintain();
-            exit(0);
+            PERFORM_DB_MAINTENANCE = true;
+            break;
 
         case 'n':
             DONTDO = true;
