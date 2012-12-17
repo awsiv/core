@@ -22,8 +22,11 @@ static void ScheduleRunMaintenanceJobs(void);
 
 void Nova_Maintain(void)
 {
+    struct timespec maintenance_start = BeginMeasure();
 
     ScheduleRunMaintenanceJobs();
+
+    EndMeasure("DBMaintenance", maintenance_start);
 }
 
 /*******************************************************************/

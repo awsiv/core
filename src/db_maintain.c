@@ -41,8 +41,6 @@ static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
 {
-    struct timespec maintenance_start = BeginMeasure();
-
     CFDB_EnsureIndices(dbconn);
 
     Item *hosts = CFDB_GetAllHostKeys(dbconn);
@@ -58,9 +56,7 @@ void CFDB_Maintenance(EnterpriseDB *dbconn)
     CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
-    CFDB_PurgeDeprecatedVitals(dbconn);
-
-    EndMeasure("DBMaintenance", maintenance_start);
+    CFDB_PurgeDeprecatedVitals(dbconn);    
 }
 
 /*****************************************************************************/
