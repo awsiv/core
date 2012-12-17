@@ -705,12 +705,12 @@ static void StartHub(void)
     }
 
     WritePID("cf-hub.pid");
-    signal(SIGINT, HandleSignals);
-    signal(SIGTERM, HandleSignals);
+    signal(SIGINT, HandleSignalsForDaemon);
+    signal(SIGTERM, HandleSignalsForDaemon);
     signal(SIGHUP, SIG_IGN);
     signal(SIGPIPE, SIG_IGN);
-    signal(SIGUSR1, HandleSignals);
-    signal(SIGUSR2, HandleSignals);
+    signal(SIGUSR1, HandleSignalsForDaemon);
+    signal(SIGUSR2, HandleSignalsForDaemon);
 
     umask(077);
 
