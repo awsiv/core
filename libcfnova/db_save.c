@@ -2444,9 +2444,13 @@ void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, c
         bson_append_start_object(&set_op, "$set");
         {
             bson_append_start_object(&set_op, cfr_license);
-
             bson_append_long(&set_op, cfr_license_expires, expires);
-            bson_append_long(&set_op, cfr_license_install_time, install_time);
+
+            if (install_time > 0)
+            {
+                bson_append_long(&set_op, cfr_license_install_time, install_time);
+            }
+
             bson_append_string(&set_op, cfr_license_owner, owner);
             bson_append_int(&set_op, cfr_license_granted, num_granted);
             bson_append_int(&set_op, cfr_day, time(NULL));

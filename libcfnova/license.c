@@ -113,7 +113,7 @@ int EnterpriseExpiry(void)
     strcpy(u_year, INTERNAL_EXPIRY_YEAR);
 
     char *license_file_path = LicenseFilePath();
-    EnterpriseLicense license;
+    EnterpriseLicense license = {0};
     bool license_found = false;
 
     if(license_file_path)
@@ -174,6 +174,9 @@ int EnterpriseExpiry(void)
             LICENSES = 0;
             return false;       // Want to be able to bootstrap
         }
+
+        snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
+        NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
     }
     else
     {
@@ -217,8 +220,6 @@ int EnterpriseExpiry(void)
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
 
-    snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
-    NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
     if (am_policy_server && THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
