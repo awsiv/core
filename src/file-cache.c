@@ -72,8 +72,8 @@ void FileCachePut(FileCache *cache, const char *key, const void *value, size_t v
 
     if (bytes_written != value_size)
     {
-        syslog(LOG_ERR, "Bytes written for file cache entry (%ld) differs from size specified (%ld)",
-               bytes_written, value_size);
+        syslog(LOG_ERR, "Bytes written for file cache entry (%ju) differs from size specified (%ju)",
+               (uintmax_t) bytes_written, (uintmax_t) value_size);
         if (unlink(tmp_path) == 0)
         {
             syslog(LOG_DEBUG, "Removed temporary file cache entry %s", tmp_path);
@@ -152,8 +152,8 @@ FileCacheEntry FileCacheGet(FileCache *cache, const char *key)
     }
     else
     {
-        syslog(LOG_ERR, "Bytes read from cache entry %s is %lu, expected %lu", entry_path,
-               bytes_read, bytes_expected);
+        syslog(LOG_ERR, "Bytes read from cache entry %s is %ju, expected %ju", entry_path,
+               (uintmax_t) bytes_read, (uintmax_t) bytes_expected);
         free(entry.value);
         entry.value = NULL;
         return entry;
