@@ -30,6 +30,7 @@
 #include "unix.h"
 #include "cfstream.h"
 #include "signals.h"
+#include "transaction.h"
 
 #include <assert.h>
 

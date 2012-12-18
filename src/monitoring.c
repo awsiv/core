@@ -26,6 +26,7 @@
 #include "instrumentation.h"
 #include "cfstream.h"
 #include "pipes.h"
+#include "transaction.h"
 
 typedef struct
 {
