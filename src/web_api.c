@@ -59,12 +59,6 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
 JsonElement *JSONErrorFromId(cfapi_errid errid);
 
 /*****************************************************************************/
-
-#ifndef NDEBUG
-static bool IsEnvMissionPortalTesting(void);
-#endif
-
-/*****************************************************************************/
 /* Helper functions                                                          */
 /*****************************************************************************/
 
@@ -1214,13 +1208,6 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
                                          HostClassFilter *hostClassFilter, PageInfo *page,
                                          PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_promiselog_summary_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page);
-    }
-# endif
-
     EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
     {
@@ -3532,13 +3519,6 @@ void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host
 int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter, PageInfo *page, char *buf,
                         int bufsize)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_show_hosts_test(hostNameRegex, ipRegex, NULL, page, buf, bufsize);
-    }
-# endif
-
     HubQuery *hq;
     HubHost *hh;
     Rlist *rp;
@@ -4659,13 +4639,6 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize,
                           PageInfo *page, PromiseContextMode promise_context)
 {
-# ifndef NDEBUG
-    if (IsEnvMissionPortalTesting())
-    {
-        return Nova2PHP_promise_list_test(promiseFilter, returnval, bufsize);
-    }
-# endif
-
     EnterpriseDB dbconn;
     char work[CF_MAXVARSIZE] = { 0 };
     char promiserJson[CF_MAXVARSIZE];
@@ -4830,21 +4803,6 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid)
 
     return out;
 }
-
-/*****************************************************************************/
-#ifndef NDEBUG
-bool IsEnvMissionPortalTesting()
-{
-    const char *total_env = getenv("CFENGINE_TEST_MISSION_PORTAL");
-
-    if (total_env == NULL)
-    {
-        return false;
-    }
-
-    return (atoi(total_env));
-}
-#endif // NDEBUG
 
 /*****************************************************************************/
 

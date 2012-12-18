@@ -344,45 +344,4 @@ void FreeEnvironmentsList(EnvironmentsList *list);
 const char *GetErrorDescription(cfapi_errid errid);
 char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid);
 
-/* For volume testing Mission portal */
-#ifndef NDEBUG
-
-int Nova2PHP_promise_list_test(PromiseFilter *promiseFilter, char *returnval, int bufsize);
-int Nova2PHP_classes_report_test(char *hostkey, char *name, bool regex,
-                                 HostClassFilter *hostClassFilter, PageInfo *page,
-                                 char *returnval, int bufsize);
-int Nova2PHP_classes_summary_test(char **classes, char *buf, int bufsize);
-int Nova2PHP_show_hosts_test(char *hostNameRegex, char *ipRegex, char *classRegex,
-                             PageInfo *page, char *buf, int bufsize);
-int Nova2PHP_bundle_report_test(char *hostkey, char *bundle, bool regex,
-                                HostClassFilter *hostClassFilter,
-                                PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLogState state,
-                             time_t from, time_t to, HostClassFilter *hostClassFilter,
-                             PageInfo *page, char *returnval, int bufsize);
-JsonElement *Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause,
-                                              PromiseLogState state, time_t from, time_t to,
-                                              HostClassFilter *hostClassFilter,
-                                              PageInfo *page);
-int Nova2PHP_value_report_test(char *hostkey, char *day, char *month, char *year,
-                               HostClassFilter *hostClassFilter, PageInfo *page,
-                               char *returnval, int bufsize);
-int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *arch,
-                                  bool regex, char *type, HostClassFilter *hostClassFilter,
-                                  PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_vars_report_test(const char *hostkey, const char *scope, const char *lval,
-                              const char *rval, const char *type, bool regex,
-                              const HostClassFilter *hostClassFilter, PageInfo *page,
-                              char *returnval, int bufsize);
-int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k,
-                                    int nk, int rep, HostClassFilter *hostClassFilter,
-                                    PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_compliance_promises_test(char *hostkey, char *handle, char *status, bool regex,
-                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                      char *returnval, int bufsize);
-
-
-
-#endif // NDEBUG
-
 #endif

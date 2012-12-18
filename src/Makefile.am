@@ -78,10 +78,6 @@ libcfnova_la_SOURCES += \
         weekly.c \
         yearly.c
 
-if !NDEBUG
-libcfnova_la_SOURCES += \
-        web_api_test.c
-endif
 libcfnova_la_LIBADD = ../sqlite3/libsqlite3.la
 else # !MONGO
 libcfnova_la_SOURCES += \
