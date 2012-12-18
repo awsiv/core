@@ -89,6 +89,7 @@ void NovaWin_ServiceMain(int argc, char *argv[])
         .mail_max_lines = 30,
         .fq_name = VFQNAME,
         .ip_address = VIPADDRESS,
+        .agent_expireafter = 10080,
     };
 
     KeepPromises(policy, &exec_config);
