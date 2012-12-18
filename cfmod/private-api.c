@@ -3864,10 +3864,6 @@ PHP_FUNCTION(cfpr_search_topics)
     }
 
     fsearch = (s_len == 0) ? NULL : search;
-
-    //Deprecated
-    //JsonElement *out = NULL;
-    //out = Nova2PHP_search_topics(fsearch, (bool) regex);
     
     results =  Nova2PHP_search(fsearch, true, username);
 

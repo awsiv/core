@@ -3140,35 +3140,6 @@ Item *Nova2PHP_search(char *search, bool regex, char *username)
     return results;
 }
 
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_search_topics(char *search, bool regex)
-{
-    Item *ip,*results = NULL;
-    JsonElement *json_array_out = JsonArrayCreate(100);
-
-    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX,true);
-    if (!results)
-    {
-        return json_array_out;
-    }
-
-    results = SortItemListNames(results);
-
-    for (ip = results; ip != NULL; ip = ip->next)
-    {
-        JsonElement *json_obj = JsonObjectCreate(3);
-        JsonObjectAppendString(json_obj, "context", ip->classes);
-        JsonObjectAppendString(json_obj, "topic", ip->name);
-        JsonObjectAppendInteger(json_obj, "id", ip->counter);
-
-        JsonArrayAppendObject(json_array_out, json_obj);
-    }
-
-    return json_array_out;
-}
-
 /*****************************************************************************/
 
 JsonElement *Nova2PHP_list_knowledge_bundles(void)
