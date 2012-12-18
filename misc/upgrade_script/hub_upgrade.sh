@@ -75,34 +75,34 @@ elif [ -f /etc/SuSE-release ]; then
 fi
 
 # confirmation
-echo "*****  YOU ARE RUNNING A CFENGINE UPGRADE SCRIPT     *****"
-echo "*****    THIS MIGHT CAUSE UNEXPECTED INCIDENTS       *****"
-echo "***** DO YOU WANT TO CONTINUE? PLEASE TYPE [yes/no]  *****"
+echo "*****  YOU ARE RUNNING A SCRIPT TO UPGRADE CFENGINE FROM NOVA 2.1.x OR ENTERPRISE 2.2.x TO ENTERPRISE 3.0.0  *****"
+echo "*****         THIS MIGHT CAUSE UNEXPECTED CHANGES TO POLICY, ALWAYS TEST IN A LAB ENVIRONMENT FIRST          *****"
+echo "*****                               DO YOU WANT TO CONTINUE? PLEASE TYPE [yes/no]                            *****"
 echo -n "ANSWER: "
 read XXX
 case $XXX in
 yes)
  clear
- echo "**** ARE YOU REALLY SURE ABOUT THAT? PLEASE TYPE [Yes, I am.] *****"
- echo "**** USE IT AT YOUR OWN RISK!"
+ echo "**** ARE YOU REALLY SURE? PLEASE RE-CONFIRM. CFENGINE IS NOT RESPONSIBLE FOR CHANGES MADE BY THIS SCRIPT *****"
+ echo "**** PLEASE TYPE [Yes, I am.] IF YOU STILL WISH TO PROCEED."
  echo -n "ANSWER: "
  read YYY
  case $YYY in
  "Yes, I am.")
   echo ""
-  echo "Nice to see you trusting in us. Let's continue. :-D"
-  echo ""
+#  echo "Nice to see you trusting in us. Let's continue. :-D"
+#  echo ""
   ;;
  *)
   echo ""
-  echo "-> Please type exactly like suggestion. Upgrade process terminated."
+  echo "-> Please type the exact content between the brackets. Upgrade process terminated."
   exit 0
  ;;
  esac
  ;;
 no)
  echo ""
- echo "-> Please contact your sale representative, if you would like an engineer"
+ echo "-> Please contact your sales representative if you would like an engineer"
  echo "   on site for the upgrade. Script terminiated."
  exit 0
  ;;
@@ -171,11 +171,11 @@ done
 # (masterfiles/promises.cf need to be adjusted. See more in policy editing section.)
 sleep 1
 echo ""
-echo "-> Copy CFE_ prefix files to $WORKDIR/masterfiles/cfe_internal"
+echo "-> Copy CFE_ prefixed files to $WORKDIR/masterfiles/cfe_internal"
 if [ -d $WORKDIR/masterfiles/cfe_internal ]; then
  cp -vf $WORKDIR/share/NovaBase/cfe_internal/CFE_* $WORKDIR/masterfiles/cfe_internal
  echo ""
- echo "-> Remove old CFE_ prefix files"
+ echo "-> Remove old CFE_ prefixed files"
  rm -f $WORKDIR/masterfiles/CFE_*
 else
  cp -vf $WORKDIR/share/NovaBase/cfe_internal/CFE_* $WORKDIR/masterfiles
@@ -193,17 +193,17 @@ fi
 # (masterfiles/promises.cf need to be adjusted. See more in policy editing section.)
 sleep 1
 echo ""
-echo "-> Apply the latest CFEngine standard library to masterfiles."
+echo "-> Copy the latest CFEngine standard library to masterfiles."
 if [ -d $WORKDIR/masterfiles/libraries ]; then
  cp -vf $WORKDIR/share/NovaBase/libraries/cfengine_stdlib.cf $WORKDIR/masterfiles/libraries
- echo "-> Remove old CFEngine standard library"
+ echo "-> Remove the old CFEngine standard library"
  rm -f $WORKDIR/masterfiles/cfengine_stdlib.cf
 else
  cp -vf $WORKDIR/share/NovaBase/libraries/cfengine_stdlib.cf $WORKDIR/masterfiles
 fi
 
 # Move file_change.cf to masterfiles/services
-# (masterfiles/promises.cf need to be adjusted. See more in policy editing section.)
+# (masterfiles/promises.cf needs to be adjusted. See more in policy editing section.)
 if [ -f $WORKDIR/masterfiles/file_change.cf -a -d $WORKDIR/masterfiles/services ]; then
  sleep 1
  echo ""
@@ -216,7 +216,7 @@ fi
 # It is pretty hard to use "sed" for all.
 sleep 1
 echo ""
-echo "-> Apply the latest Company Knowledge file to masterfiles"
+echo "-> Copy the latest Company Knowledge file to masterfiles"
  cp -vf $WORKDIR/share/NovaBase/company_knowledge.cf $WORKDIR/masterfiles
 
 # Introduce cf-sketch run file (cf-sketch-runfile.cf)
@@ -234,13 +234,13 @@ echo "-> Ensure $WORKDIR/bin/cf-twin is in good shape."
 # Remove MongoDB lock file. Just in case.
 sleep 1
 echo ""
-echo "-> Remove a MongoDB lock file."
+echo "-> Remove MongoDB lock file."
  rm -f $WORKDIR/state/mongod.lock
 
 # Wipe out a previous Mission Portal to avoid conflict
 sleep 1
 echo ""
-echo "-> Reset a default DOCROOT directory. ($DOCROOT)"
+echo "-> Reset default DOCROOT directory. ($DOCROOT)"
  rm -rf $DOCROOT/*
 
 # This is a fun path. If the customers did change anything in failsafe/update,
@@ -248,7 +248,7 @@ echo "-> Reset a default DOCROOT directory. ($DOCROOT)"
 # the best to automate as much as possible.
 sleep 1
 echo ""
-echo -n "-> Have you ever added your custom-built promises to /var/cfengine/masterfiles/failsafe.cf or /var/cfengine/masterfiles/update.cf? Please type [yes/no]: "
+echo -n "-> Have you added custom promises to /var/cfengine/masterfiles/failsafe.cf or /var/cfengine/masterfiles/update.cf? Please type [yes/no]: "
 read ANS
 case $ANS in
 yes)
@@ -260,7 +260,7 @@ yes)
  ;;
 no)
  echo ""
- echo "-> Copy a new FAILSAFE files to masterfiles."
+ echo "-> Copy new FAILSAFE files to masterfiles."
  cp -rv $WORKDIR/share/NovaBase/failsafe $WORKDIR/masterfiles
  rm -f $WORKDIR/masterfiles/failsafe.cf
  mv $WORKDIR/masterfiles/failsafe/*.cf $WORKDIR/masterfiles
@@ -282,19 +282,19 @@ echo ""
 # Move CFE_knowledge.cf to cfe_internal/CFE_knowledge.cf
 grep "cfe_internal/CFE_knowledge.cf" $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
- echo "-> Patch up $WORKDIR/masterfiles/promises.cf for CFE_knowledge.cf"
+ echo "-> Patch $WORKDIR/masterfiles/promises.cf for CFE_knowledge.cf"
  sed -i 's/"CFE_knowledge.cf",/"cfe_internal\/CFE_knowledge.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 # Move CFE_hub_specific.cf to cfe_internal/CFE_hub_specific.cf
 grep "cfe_internal/CFE_hub_specific.cf" $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
- echo "-> Patch up $WORKDIR/masterfiles/promises.cf for CFE_hub_specific.cf"
+ echo "-> Patch $WORKDIR/masterfiles/promises.cf for CFE_hub_specific.cf"
  sed -i 's/"CFE_hub_specific.cf",/"cfe_internal\/CFE_hub_specific.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 # Move CFE_cfengine.cf to cfe_internal/CFE_cfengine.cf
 grep "cfe_internal/CFE_cfengine.cf" $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
- echo "-> Patch up $WORKDIR/masterfiles/promises.cf for CFE_cfengine.cf"
+ echo "-> Patch $WORKDIR/masterfiles/promises.cf for CFE_cfengine.cf"
  sed -i 's/"CFE_cfengine.cf",/"cfe_internal\/CFE_cfengine.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -303,7 +303,7 @@ grep "libraries/cfengine_stdlib.cf" $WORKDIR/masterfiles/promises.cf > /dev/null
 if [ $? = "1" ]; then
  sleep 1
  echo ""
- echo "-> Patch up $WORKDIR/masterfiles/promises.cf for cfengine_stdlib.cf"
+ echo "-> Patch $WORKDIR/masterfiles/promises.cf for cfengine_stdlib.cf"
  sed -i 's/"cfengine_stdlib.cf",/"libraries\/cfengine_stdlib.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -312,7 +312,7 @@ grep "services/file_change.cf" $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
  sleep 1
  echo ""
- echo "-> Patch up $WORKDIR/masterfiles/promises.cf for file_change.cf"
+ echo "-> Patch $WORKDIR/masterfiles/promises.cf for file_change.cf"
  sed -i 's/"file_change.cf",/"services\/file_change.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -338,8 +338,8 @@ grep cfe_internal_hub_vars $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
  sleep 1
  echo ""
- echo "-> Found NO cfe_internal_hub_vars in $WORKDIR/masterfiles/promises.cf"
- echo "   Add it up in bundlesequence."
+ echo "-> Did not find cfe_internal_hub_vars in $WORKDIR/masterfiles/promises.cf"
+ echo "   Add it to the bundlesequence."
  sed -i 's/"def",/"def",\n                    "cfe_internal_hub_vars",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -348,8 +348,8 @@ grep cfsketch_run $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
  sleep 1
  echo ""
- echo "-> Found NO cfsketch_run in $WORKDIR/masterfiles/promises.cf"
- echo "   Add it up in bundlesequence."
+ echo "-> Did not find cfsketch_run in $WORKDIR/masterfiles/promises.cf"
+ echo "   Add it to the bundlesequence."
  sed -i 's/"cfe_internal_hub_vars",/"cfe_internal_hub_vars",\n                    "cfsketch_run",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -358,8 +358,8 @@ grep cf-sketch-runfile.cf $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
 if [ $? = "1" ]; then
  sleep 1
  echo ""
- echo "-> Found NO cf-sketch-runfile.cf in $WORKDIR/masterfiles/promises.cf"
- echo "   Add it up in inputs."
+ echo "-> Did not find cf-sketch-runfile.cf in $WORKDIR/masterfiles/promises.cf"
+ echo "   Add it to the inputs section."
  sed -i 's/"libraries\/cfengine_stdlib.cf",/"libraries\/cfengine_stdlib.cf",\n                    "cf-sketch-runfile.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
@@ -402,14 +402,14 @@ echo "   (file_change.cf and update.cf)"
 sed -i '/depends_on/d' $WORKDIR/masterfiles/services/file_change.cf
 sed -i '/depends_on/d' $WORKDIR/masterfiles/update.cf
 
-# Remove commercial_customer class from promises.cf because We don't need it now.
+# Remove commercial_customer class from promises.cf because we don't need it now.
 sleep 1
 echo ""
 echo "-> Remove commercial_customer class from $WORKDIR/masterfiles/promises.cf"
 sed -i '/commercial_customer::/d' $WORKDIR/masterfiles/promises.cf
 
 # Remove nova_edition and constellation_editon class from promises.cf 
-# because We don't need it now.
+# because we don't need it now.
 sleep 1
 echo ""
 echo "-> Remove nova and constellation classes from $WORKDIR/masterfiles/promises.cf"
@@ -418,7 +418,7 @@ sed -i '/nova_edition.*::/d' $WORKDIR/masterfiles/promises.cf
 # Remove garbage_collection from promises.cf. We have one in CFE_cfengine.cf
 sleep 1
 echo ""
-echo "-> Remove the whole garbage_collection from $WORKDIR/masterfiles/promises.cf"
+echo "-> Remove the garbage_collection from $WORKDIR/masterfiles/promises.cf (now included in CFE_cfengine.cf)"
 sed -i '/maintenance.*goal_3/d' $WORKDIR/masterfiles/promises.cf
 sed -i '/comment.*rotation.*Nova/d' $WORKDIR/masterfiles/promises.cf
 sed -i '/usebundle.*garbage_collection/d' $WORKDIR/masterfiles/promises.cf
@@ -426,7 +426,7 @@ sed -i '/usebundle.*garbage_collection/d' $WORKDIR/masterfiles/promises.cf
 # Alert for more info
 sleep 1
 echo ""
-echo "***** FINISHING UP *****"
+echo "***** FINISHED POLICY EDITING *****"
 
 # Just info to finish up the process
 if [ $UPDATE = "0" ]; then
@@ -438,25 +438,25 @@ if [ $UPDATE = "0" ]; then
  echo " $ $WORKDIR/bin/cf-promises -f $WORKDIR/masterfiles/failsafe.cf"
  echo "   and "
  echo " $ $WORKDIR/bin/cf-promises -f $WORKDIR/masterfiles/promises.cf"
- echo "   for a syntax verification. (No complain is good.)"
+ echo "   for syntax verification. (No complaints means verification passed.)"
  echo ""
- echo "-> If there is no error at all,"
+ echo "-> If there are no errors,"
  echo "-> Please run "
  echo " $ $WORKDIR/bin/cf-agent -f $WORKDIR/masterfiles/failsafe.cf -IK"
- echo "   to finish up the $1 upgrade."
+ echo "   to finish the $1 upgrade."
 fi
 
 if [ $UPDATE = "1" ]; then
  sleep 1
  echo ""
- echo "-> Your HUB is partial upgraded."
- echo "-> Please sync up contents from $WORKDIR/share/NovaBase/failsafe"
+ echo "-> Your HUB is partially upgraded."
+ echo "-> Please synchronize contents from $WORKDIR/share/NovaBase/failsafe"
  echo "   to your failsafe/update files manually."
  echo "-> $WORKDIR/bin/mongod might not be started gracefully."
- echo "-> Feel free to register a ticket if you need any supports."
+ echo "-> Feel free to register a ticket if you need any support."
  echo "   here: https://cfengine.com/otrs/customer.pl"
 fi
 
 sleep 1
 echo ""
-echo "***** DONE FOR NOW. HAVE A LOT OF FUN *****"
+echo "***** DONE FOR NOW. ENJOY CFENGINE ENTERPRISE 3.0.0! *****"
