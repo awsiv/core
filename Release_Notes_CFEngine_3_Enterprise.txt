@@ -1,5 +1,5 @@
 CFENGINE 3 ENTERPRISE 3.0.0
-RELEASE DATE: December 2012 (this document was amended on December 13th 2012)
+RELEASE DATE: December 2012 (this document was last amended on December 18th 2012)
 SCOPE: Official release of CFEngine 3 Enterprise 3.0.0
 
 ----------------------------------------------------------------------------
@@ -78,6 +78,7 @@ CHANGE LOG FROM 2.2.3:
 * Set a system variable by which to identify hosts in the Mission Portal (previously only IP address could be used).
 * Deleting a host from the Mission Portal or with the Enterprise API now also removes the host's public key from the database.
 * System variables are collected by hub in every 5. minutes (previously every 6 hours)
+* Removed the policy editor from the Mission Portal. Use the Policy App instead to get an overview of the current policy.
 * License verification is made more robust by not relying on the last-seen database anymore. This means you do not need to bootstrap a client to verify the license. See the cf-key --install-license option.
 * Removed commercial_customer class, as it was unused in internal policies. Please use enterprise_edition instead if you used this in your policies.
 * Created a variable update_policy.mongodb_dir, for cases where MongoDB should not run out of /var/cfengine/state (could grow to tens of gigabytes).
