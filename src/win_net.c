@@ -17,7 +17,7 @@
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
 
-void GetInterfacesInfo(enum cfagenttype ag)
+void GetInterfacesInfo(AgentType ag)
 /**
  * Creates classes from a host's IP addresses, e.g.  192_168_2_1,
  * ipv4_192_168_2_1, ipv4_192_168_2, ipv4_192_168, ipv4_192 for all
@@ -40,7 +40,7 @@ void GetInterfacesInfo(enum cfagenttype ag)
     char *ifType;
     int tup, j;
 
-    if (!BOOTSTRAP && (THIS_AGENT_TYPE == cf_agent) && !Nova_CheckLicenseWin("GetInterfacesInfo"))
+    if (!BOOTSTRAP && (ag == AGENT_TYPE_AGENT) && !Nova_CheckLicenseWin("GetInterfacesInfo"))
     {
         return;
     }
