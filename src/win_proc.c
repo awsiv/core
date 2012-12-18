@@ -15,6 +15,8 @@
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
 
+static int GracefulTerminate(pid_t pid);
+
 int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 {
     if (!BOOTSTRAP && !Nova_CheckLicenseWin("DoAllSignals"))
@@ -82,7 +84,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
 /* Terminates the process identified by pid.
  * TODO: Try to send quit-message to process before terminating it ? */
-int GracefulTerminate(pid_t pid)
+static int GracefulTerminate(pid_t pid)
 {
     int res;
     HANDLE procHandle;
