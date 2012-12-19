@@ -367,12 +367,12 @@ static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, F
 
     while (!feof(fin1) || !feof(fin2))
     {
-        if ((read1 = CfReadLine(line1, CF_BUFSIZE - 1, fin1)))
+        if ((read1 = CfReadLine(line1, CF_BUFSIZE - 1, fin1)) > 0)
         {
             c1++;
         }
 
-        if ((read2 = CfReadLine(line2, CF_BUFSIZE - 1, fin2)))
+        if ((read2 = CfReadLine(line2, CF_BUFSIZE - 1, fin2)) > 0)
         {
             c2++;
         }

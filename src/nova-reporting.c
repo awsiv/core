@@ -2461,7 +2461,10 @@ static int Nova_ImportHostReports(EnterpriseDB *dbconnp, const char *filePath)
         return false;
     }
 
-    CfReadLine(header, sizeof(header), fin);
+    if (CfReadLine(header, sizeof(header), fin) == -1)
+    {
+        FatalError("Error in CfReadLine");
+    }
 
     Nova_ImportHostReportsFromStream(&dbconn, header, fin);
 
@@ -2490,7 +2493,11 @@ int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *f
         return false;
     }
 
-    CfReadLine(buf, sizeof(buf), fin);
+    if (CfReadLine(buf, sizeof(buf), fin) == -1)
+    {
+        FatalError("Error in CfReadLine");
+    }
+
     if (sscanf(buf, "%4s %ld %ld %ld", validate, &delta1, &genTime, &length) != 4)
     {
         CfOut(cf_error, "", "!! Error parsing second line of report header");
@@ -2509,10 +2516,18 @@ int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *f
 
     Item **reports = NewReportBook();
 
-    while (CfReadLine(buf, sizeof(buf), fin))
     {
-        CfDebug("%s\n", buf);
-        currReport = Nova_StoreIncomingReports(buf, reports, currReport);
+        ssize_t num_read = 0;
+        while ((num_read = CfReadLine(buf, sizeof(buf), fin)) > 0)
+        {
+            CfDebug("%s\n", buf);
+            currReport = Nova_StoreIncomingReports(buf, reports, currReport);
+        }
+
+        if (num_read == -1)
+        {
+            FatalError("Error in CfReadLine");
+        }
     }
 
     CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, ipAddr, hostName);

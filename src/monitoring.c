@@ -1081,7 +1081,10 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
                 return NOVA_DATA[slot].output;
             }
 
-            CfReadLine(line, CF_BUFSIZE - 1, fin);
+            if (CfReadLine(line, CF_BUFSIZE - 1, fin) == -1)
+            {
+                FatalError("Error in CfReadLine");
+            }
             AppendItem(&(NOVA_DATA[slot].output), line, NULL);
             CfOut(cf_inform, "", "Sampling => %s", line);
 
