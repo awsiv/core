@@ -11,11 +11,10 @@
 #include "cfstream.h"
 #include "item_lib.h"
 #include "conversion.h"
+#include "verify_processes.h"
 
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
-
-static int GracefulTerminate(pid_t pid);
 
 int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 {
@@ -84,7 +83,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
 /* Terminates the process identified by pid.
  * TODO: Try to send quit-message to process before terminating it ? */
-static int GracefulTerminate(pid_t pid)
+int GracefulTerminate(pid_t pid)
 {
     int res;
     HANDLE procHandle;
