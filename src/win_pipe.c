@@ -11,6 +11,7 @@
 
 #include "cfstream.h"
 #include "pipes.h"
+#include "transaction.h"
 
 // links pipe descriptors to process handles
 typedef struct
