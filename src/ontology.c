@@ -615,7 +615,7 @@ static char *NovaEscape(const char *s)
 
 const char *PromiseID(const Promise *pp)
 {
-    char static id[CF_MAXVARSIZE];
+    static char id[CF_MAXVARSIZE];
     char vbuff[CF_MAXVARSIZE];
     const char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
 
