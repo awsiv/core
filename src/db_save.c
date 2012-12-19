@@ -2633,7 +2633,7 @@ cfapi_errid CFDB_SaveSettings(EnterpriseDB *conn, const HubSettings *settings)
                 bson_append_string(&set_op, "ldapEncryption", settings->ldap.encryption);
             }
 
-            if (settings->ldap.login_attribute);
+            if (settings->ldap.login_attribute)
             {
                 bson_append_string(&set_op, "ldapLoginAttribute", settings->ldap.login_attribute);
             }
