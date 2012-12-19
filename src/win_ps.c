@@ -12,6 +12,7 @@
 
 #include "cfstream.h"
 #include "item_lib.h"
+#include "logging.h"
 
 /* defines */
 #define MAXCMDSTR 512           // max length of process commmand line (e.g. "c:\program.exe --param")

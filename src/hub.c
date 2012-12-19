@@ -31,6 +31,7 @@
 #include "cfstream.h"
 #include "signals.h"
 #include "transaction.h"
+#include "logging.h"
 
 #include <assert.h>
 

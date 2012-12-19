@@ -12,6 +12,7 @@
 #include "cf.nova.h"
 
 #include "cfstream.h"
+#include "logging.h"
 
 static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 

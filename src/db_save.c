@@ -15,6 +15,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "communication.h"
+#include "logging.h"
 
 #include <assert.h>
 

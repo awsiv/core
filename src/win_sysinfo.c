@@ -9,6 +9,7 @@
 #include "cf.nova.h"
 
 #include "cfstream.h"
+#include "logging.h"
 
 int NovaWin_GetWinDir(char *winDir, int winDirSz)
 // NOTE: winDirSz should be MAX_PATH

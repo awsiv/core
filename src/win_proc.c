@@ -12,6 +12,7 @@
 #include "item_lib.h"
 #include "conversion.h"
 #include "verify_processes.h"
+#include "logging.h"
 
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */

@@ -13,6 +13,7 @@
 #include "atexit.h"
 #include "cfstream.h"
 #include "transaction.h"
+#include "logging.h"
 
 static int CheckRegistryLogKey(void);
 

@@ -14,6 +14,7 @@
 #include "files_names.h"
 #include "files_operators.h"
 #include "cfstream.h"
+#include "logging.h"
 
 /* _mkdir(3) */
 #include <direct.h>

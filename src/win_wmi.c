@@ -12,6 +12,7 @@
 
 #include "cfstream.h"
 #include "atexit.h"
+#include "logging.h"
 
 #include "win_disphelper.h"
 

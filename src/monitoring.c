@@ -27,6 +27,7 @@
 #include "cfstream.h"
 #include "pipes.h"
 #include "transaction.h"
+#include "logging.h"
 
 typedef struct
 {

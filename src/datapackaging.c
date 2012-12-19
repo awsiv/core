@@ -17,6 +17,7 @@
 #include "nova-reporting.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "logging.h"
 
 #define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
 

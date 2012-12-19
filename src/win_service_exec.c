@@ -21,6 +21,7 @@
 #include "cf-execd-runner.h"
 #include "reporting.h"
 #include "string_lib.h"
+#include "logging.h"
 
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE statusHandle;

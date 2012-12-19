@@ -11,6 +11,7 @@
 #include "cfstream.h"
 #include "files_interfaces.h"
 #include "communication.h"
+#include "logging.h"
 
 #include "atexit.h"
 

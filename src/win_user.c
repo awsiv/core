@@ -11,6 +11,7 @@
 #include "cf.nova.h"
 
 #include "cfstream.h"
+#include "logging.h"
 
 /* Finds the security identifier corresponding to a user name
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
