@@ -12,6 +12,7 @@
 #include "promises.h"
 #include "files_names.h"
 #include "cfstream.h"
+#include "logging.h"
 
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
