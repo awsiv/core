@@ -15,6 +15,7 @@
 #include "files_operators.h"
 #include "files_repository.h"
 #include "cfstream.h"
+#include "string_lib.h"
 
 #ifdef HAVE_ZONE_H
 # include <zone.h>

@@ -9,6 +9,7 @@
 #include "cfstream.h"
 #include "probes.h"
 #include "files_names.h"
+#include "string_lib.h"
 
 /************************************************************************/
 
