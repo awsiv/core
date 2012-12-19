@@ -75,7 +75,7 @@ void NovaWin_ServiceMain(int argc, char *argv[])
     serviceStatus.dwCurrentState = SERVICE_RUNNING;
     SetServiceStatus(statusHandle, &serviceStatus);
 
-    GenericAgentConfig config = GenericAgentDefaultConfig(cf_executor);
+    GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_EXECUTOR);
 
     ReportContext *report_context = OpenReports("executor");
     Policy *policy = GenericInitialize("executor", config, report_context);
