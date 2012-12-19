@@ -17,11 +17,11 @@
 @c ***********************************************************************@c 
 @c %** start of header
 @setfilename how-to-enterprise-3-0-call-collect.info
-@settitle How-To for CFEngine 3 Enterprise 3.0 Call-Collect
+@settitle How-To for CFEngine Enterprise 3.0 Call-Collect
 @setchapternewpage odd
 @c %** end of header
 @titlepage
-@title How-To for CFEngine 3 Enterprise 3.0 Call-Collect
+@title How-To for CFEngine Enterprise 3.0 Call-Collect
 @subtitle CFEngine Enterprise Documentation
 @subtitle Updated 2. December 2012 @c also update in ifnottex section below
 @author CFEngine
@@ -29,7 +29,7 @@
 @fonttextsize 10
 @page
 @cartouche
-This document is related to CFEngine 3 Enterprise 3.0.
+This document is related to CFEngine Enterprise 3.0.
 @end cartouche
 @vskip 0pt plus 1filll
 Copyright @copyright{} 2012 CFEngine AS.
@@ -50,7 +50,7 @@ to the extent of applicable law.
 @ifnottex
 Updated 2. December 2012
 @node Top, Call-Collect, (dir), (dir)
-@top How-To for CFEngine 3 Enterprise 3.0 Call-Collect
+@top How-To for CFEngine Enterprise 3.0 Call-Collect
 @end ifnottex
 @ifhtml
 @html

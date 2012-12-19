@@ -17,11 +17,11 @@
 @c ***********************************************************************@c 
 @c %** start of header
 @setfilename Enterprise-3-0-OwnersManual.info
-@settitle CFEngine 3 Enterprise 3.0 Owner's Manual
+@settitle CFEngine Enterprise 3.0 Owner's Manual
 @setchapternewpage odd
 @c %** end of header
 @titlepage
-@title CFEngine 3 Enterprise 3.0 Owner's Manual
+@title CFEngine Enterprise 3.0 Owner's Manual
 @subtitle CFEngine Enterprise Documentation
 @subtitle Updated 5. December 2012 @c also update in ifnottex section below
 @author CFEngine AS
@@ -47,7 +47,7 @@ to the extent of applicable law.
 @ifnottex
 Updated 5. December 2012
 @node Top, Introduction, (dir), (dir)
-@top CFEngine 3 Enterprise 3.0 Owner's Manual
+@top CFEngine Enterprise 3.0 Owner's Manual
 @end ifnottex
 @ifhtml
 @html
@@ -65,18 +65,18 @@ Updated 5. December 2012
 @menu
 * Introduction::                
 * Requirements::                
-* Installing CFEngine 3 Enterprise::  
+* Installing CFEngine Enterprise::  
 * Quickstart - The Mission Portal::  
 @c * Quickstart - CFEngine Policies::  
 * Role Based Access Control (RBAC)::  
 * Virtualization and Cloud::    @c * Mission Portal::              
-* Windows-specific features in CFEngine 3 Enterprise::  
+* Windows-specific features in CFEngine Enterprise::  
 * REST API::                    
 * Call-Collect::
 * Monitoring extensions::       
 * File Access Control Lists::   
 * Server extensions::           @c * Environments and workflows::  
-* Upgrading CFEngine 3 Enterprise::  
+* Upgrading CFEngine Enterprise::  
 * Frequently Asked Questions::  
 * Troubleshooting::             
 * Configuration of external authentication::  
@@ -89,45 +89,45 @@ Updated 5. December 2012
 @node  Introduction, Requirements, Top, Top
 @chapter Introduction
 
-Welcome to CFEngine 3 Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine 3 Enterprise 3.0 up and running and show additional features of CFEngine Enterprise compared to CFEngine Community. The following links will take you to commonly used sections, see above for a complete table of contents:
+Welcome to CFEngine Enterprise 3.0, the next generation of enterprise configuration management software! This document will take you through the necessary steps to get CFEngine Enterprise 3.0 up and running and show additional features of CFEngine Enterprise compared to CFEngine Community. The following links will take you to commonly used sections, see above for a complete table of contents:
 
 @itemize -
 @item @ref{Requirements}
-@item @ref{Installing CFEngine 3 Enterprise}
+@item @ref{Installing CFEngine Enterprise}
 @item @ref{Quickstart - The Mission Portal}
 @c @item @ref{Quickstart - CFEngine Policies}
 @item @ref{Role Based Access Control (RBAC)}
 @item @ref{Virtualization and Cloud}
 @c Compliance
-@item @ref{Windows-specific features in CFEngine 3 Enterprise}
+@item @ref{Windows-specific features in CFEngine Enterprise}
 @item @ref{REST API}
-@item @ref{Upgrading CFEngine 3 Enterprise}
+@item @ref{Upgrading CFEngine Enterprise}
 @end itemize
 
 We have made big changes to the Mission Portal to accommodate the needs of infrastructure engineers and IT managers alike. The front page consists of a list of applications, or apps, that give insight into different aspects of your infrastructure. Focus on a more intuitive UI with enhanced help functions has made the Mission Portal both easier and more powerful to use.
 
-CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. This product is described in full detail at @url{http://cfengine.com/25free}. Please note that CFEngine 3 Enterprise should not be installed as an upgrade to CFEngine Community. In that case uninstall CEngine Community, do a clean install of CFEngine 3 Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
+CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. This product is described in full detail at @url{http://cfengine.com/25free}. Please note that CFEngine Enterprise should not be installed as an upgrade to CFEngine Community. In that case uninstall CEngine Community, do a clean install of CFEngine Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
 
 @menu
-* About CFEngine 3 Enterprise::  
+* About CFEngine Enterprise::  
 @end menu
 
 
 @c --------------------------------------------------
-@node About CFEngine 3 Enterprise,  , Introduction, Introduction
-@section About CFEngine 3 Enterprise
+@node About CFEngine Enterprise,  , Introduction, Introduction
+@section About CFEngine Enterprise
 
-CFEngine 3 Enterprise is a commercially licensed version of the core CFEngine
+CFEngine Enterprise is a commercially licensed version of the core CFEngine
 software@footnote{Major version 3} with enterprise library extensions. All of
-the documentation for CFEngine 3 applies to CFEngine 3 Enterprise. 
+the documentation for CFEngine 3 applies to CFEngine Enterprise. 
 
-The aim of CFEngine 3 Enterprise is to offer a knowledge-enhanced framework for configuration management that goes beyond mere technical configuration to support the needs of businesses. Features include compliance management, reporting and business integration, and tools for handling necessary complexity. CFEngine 3 Enterprise has features to support Cloud Computing for public and private clouds, as well as greater integration facilities with database resources.
+The aim of CFEngine Enterprise is to offer a knowledge-enhanced framework for configuration management that goes beyond mere technical configuration to support the needs of businesses. Features include compliance management, reporting and business integration, and tools for handling necessary complexity. CFEngine Enterprise has features to support Cloud Computing for public and private clouds, as well as greater integration facilities with database resources.
 
 
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node Requirements, Installing CFEngine 3 Enterprise, Introduction, Top
+@node Requirements, Installing CFEngine Enterprise, Introduction, Top
 @chapter Requirements
 
 @menu
@@ -138,15 +138,15 @@ The aim of CFEngine 3 Enterprise is to offer a knowledge-enhanced framework for 
 @node Hardware requirements, Operating system support, Requirements, Requirements
 @section Hardware requirements
 
-The default CFEngine 3 Enterprise architecture uses a single hub, or policy server, to publish changes of policy
+The default CFEngine Enterprise architecture uses a single hub, or policy server, to publish changes of policy
 and to aggregate knowledge about the environment, but you can set up as many as you like to manage
 different parts of your organization independently. The CFEngine technology is not centralized by
 nature. Most users choose to centralize updating of policy and report aggregation for convenience
 however.
 
-The default architecture and configuration skeleton of CFEngine 3 Enterprise is expected to scale to a few thousand hosts with a dedicated policy hub. For the hub (policy server) we recommend that you have at least 2 GB of memory and a modern 64 bit cpu. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub. Please contact your sales representative if you have any questions regarding these numbers.
+The default architecture and configuration skeleton of CFEngine Enterprise is expected to scale to a few thousand hosts with a dedicated policy hub. For the hub (policy server) we recommend that you have at least 2 GB of memory and a modern 64 bit cpu. For a large number of clients we recommend, as a rule of thumb, to have 8 GB of memory available per 500 hosts bootstrapped to the hub. Please contact your sales representative if you have any questions regarding these numbers.
 
-For machines under CFEngine's management (clients), a full installation of CFEngine 3 Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have at least 256 MB available memory on the clients.
+For machines under CFEngine's management (clients), a full installation of CFEngine Enterprise requires about 25 MB of disk storage. Otherwise disk usage depends on your specific policies, especially those that concern reporting. Each software component (agent) typically uses under 10 MB of memory, but spikes in memory usage can occur if several agents run simultaneously. CFEngine recommends to have at least 256 MB available memory on the clients.
 
 
 @c --------------------------------------------------
@@ -159,7 +159,7 @@ which should be up to date with patches. If we don't have packages for
 your particular operating systems we can usually make packages by
 special arrangement, please contact your sales representative.
 
-CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine 3 Enterprise customers have access to all the Operating Systems listed in @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} (found in the software download directory on @url{cfengine.com}).
+CFEngine 3 Free Enterprise is only available for Linux Operating Systems (both hub and client). Commercial CFEngine Enterprise customers have access to all the Operating Systems listed in @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} (found in the software download directory on @url{cfengine.com}).
 
 @cartouche
 @noindent See @file{<VERSION-NUMBER>-Release_Notes_CFEngine_3_Enterprise.txt} (found in the software download directory on @url{cfengine.com}) for details on supported architectures.
@@ -187,26 +187,26 @@ Solaris 8, 9, 10, Ubuntu 8.04, 8.10, 9.04, 9.10, 10.04, 10.10,
 @end example
 @end ignore
 
-CFEngine 3 Enterprise provides a version of CFEngine running natively on Windows, with support for registry management, Windows services and file security, @xref{Windows-specific features in CFEngine 3 Enterprise}. Support for Solaris zones has been added through automated zone detection and process model adaptation.
+CFEngine Enterprise provides a version of CFEngine running natively on Windows, with support for registry management, Windows services and file security, @xref{Windows-specific features in CFEngine Enterprise}. Support for Solaris zones has been added through automated zone detection and process model adaptation.
 
-A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine 3 Enterprise package. 
+A working package manager is required on the hub/policy server to install an Apache Web Server, php module, MongoDB, etc. You should start from a blank system (i.e. with none of these components installed) to avoid potential interference with the installation process. No special software is otherwise required on machines in your network, CFEngine bundles all critical dependencies in the CFEngine Enterprise package. 
 
 
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node Installing CFEngine 3 Enterprise, Quickstart - The Mission Portal, Requirements, Top
-@chapter Installing CFEngine 3 Enterprise
+@node Installing CFEngine Enterprise, Quickstart - The Mission Portal, Requirements, Top
+@chapter Installing CFEngine Enterprise
 
 @menu
 * Installation procedure::      
 * How to assess success of this procedure::  
 @end menu
 
-@node Installation procedure, How to assess success of this procedure, Installing CFEngine 3 Enterprise, Installing CFEngine 3 Enterprise
+@node Installation procedure, How to assess success of this procedure, Installing CFEngine Enterprise, Installing CFEngine Enterprise
 @section Installation procedure
 
-CFEngine 3 Enterprise is designed to be simple to install in its default configuration. The installation
+CFEngine Enterprise is designed to be simple to install in its default configuration. The installation
 process has two phases (or three phases for commercial customers who need to obtain a license):
 
 @itemize -
@@ -215,14 +215,14 @@ process has two phases (or three phases for commercial customers who need to obt
 @item Bootstrap the agents to a hub (the hub serves as a policy server and report collector)
 @end itemize
 
-The following procedure counts for a fresh install, please see @ref{Upgrading CFEngine 3 Enterprise} for how to upgrade from earlier versions of CFEngine. 
+The following procedure counts for a fresh install, please see @ref{Upgrading CFEngine Enterprise} for how to upgrade from earlier versions of CFEngine. 
 
 You should start from a blank system (see also @ref{Hardware requirements}). If you have been using CFEngine Community Edition and you have
 already developed a policy, set aside this policy during the installation process. You will be able
 to integrate it back later.
 
 @cartouche
-CFEngine 3 Enterprise is provided in three packages (two hub packages and one client package), please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
+CFEngine Enterprise 3.0 is provided in three packages (two hub packages and one client package), please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
 @end cartouche
 
 @noindent These are the three packages (inside the respective hub and client directories found under each platform in the software download directory):
@@ -251,7 +251,7 @@ On the hub, verify that package managers @code{yum},
 install a web server, database and php server. If you are not able to set up a package manager and
 repository on the hub, please see @ref{How do I install the prerequisites for the hub manually?}
 
-@item Copy the CFEngine 3 Enterprise packages to the system. On the hub (policy server):
+@item Copy the CFEngine Enterprise packages to the system. On the hub (policy server):
 @example
 cfengine-nova-3.0.@var{xxx.[rpm|deb]} (NOTE: use hub package)
 cfengine-nova-expansion-3.0.@var{xxx.[rpm|deb]}
@@ -333,7 +333,7 @@ in @samp{body common control} to reflect the correct number of licenses that you
 
 
 @c --------------------------------------------------
-@node How to assess success of this procedure,  , Installation procedure, Installing CFEngine 3 Enterprise
+@node How to assess success of this procedure,  , Installation procedure, Installing CFEngine Enterprise
 @section How to assess success of this procedure
 
 @enumerate
@@ -366,8 +366,8 @@ Please see @ref{Frequently Asked Questions} or @ref{Troubleshooting} if you have
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@c @node Quickstart - The Mission Portal, Quickstart - CFEngine Policies, Installing CFEngine 3 Enterprise, Top
-@node Quickstart - The Mission Portal, Role Based Access Control (RBAC), Installing CFEngine 3 Enterprise, Top
+@c @node Quickstart - The Mission Portal, Quickstart - CFEngine Policies, Installing CFEngine Enterprise, Top
+@node Quickstart - The Mission Portal, Role Based Access Control (RBAC), Installing CFEngine Enterprise, Top
 @chapter Quickstart - The Mission Portal
 
 @menu
@@ -384,7 +384,7 @@ Please see @ref{Frequently Asked Questions} or @ref{Troubleshooting} if you have
 @end menu
 
 The Mission Portal is the centerpiece
-of user interaction with CFEngine 3 Enterprise. It can be accessed by connecting to the hub (policy server) with your web browser (from the installation example: http://123.456.789.123, replace with your real IP address). You should see a login page, the default user name and password is @i{admin} and @i{admin}. @footnote{Make sure to change the password to prevent unauthorized access; see also Appendix A on configuration of external authentication.} Once you have logged in you will see the Mission Portal home page:
+of user interaction with CFEngine Enterprise. It can be accessed by connecting to the hub (policy server) with your web browser (from the installation example: http://123.456.789.123, replace with your real IP address). You should see a login page, the default user name and password is @i{admin} and @i{admin}. @footnote{Make sure to change the password to prevent unauthorized access; see also Appendix A on configuration of external authentication.} Once you have logged in you will see the Mission Portal home page:
 
 @image{img-mission-portal-3-0,15cm,,Mission Portal}
 @center Figure: The Mission Portal
@@ -414,7 +414,7 @@ In addition all Mission Portal apps have a top menu containing at least the @i{A
 @item Settings Menu - Log out, access to Mission Portal settings, user management and roles (see separate sections)
 @end itemize
 
-The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine 3 Enterprise and get feedback from our customers. A Mission Portal administrator can configure which apps will be available to other users through @ref{Settings}.
+The apps labeled beta are under development and may not have a complete functionality set. We still choose to include them in the product to show the potential of CFEngine Enterprise and get feedback from our customers. A Mission Portal administrator can configure which apps will be available to other users through @ref{Settings}.
 
 If you go on directly to explore the different apps, please note that some of the displays in the Mission Portal may be blank when you log in just after installation. It may take some time for the system to fully converge, do not get troubled if initially there are some promises repaired or not kept (yellow and red colors).
 
@@ -1201,7 +1201,7 @@ bypass all RBAC checks.
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node  Virtualization and Cloud, Windows-specific features in CFEngine 3 Enterprise, Role Based Access Control (RBAC), Top
+@node  Virtualization and Cloud, Windows-specific features in CFEngine Enterprise, Role Based Access Control (RBAC), Top
 @chapter Virtualization and Cloud
 
 
@@ -1513,11 +1513,11 @@ convergently.
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node Windows-specific features in CFEngine 3 Enterprise, REST API, Virtualization and Cloud, Top
-@chapter Windows-specific features in CFEngine 3 Enterprise
+@node Windows-specific features in CFEngine Enterprise, REST API, Virtualization and Cloud, Top
+@chapter Windows-specific features in CFEngine Enterprise
 
 In this section, we will explore the Windows-specific features of the
-native Windows version of CFEngine 3 Enterprise, and how it integrates with
+native Windows version of CFEngine Enterprise, and how it integrates with
 Windows. We will also consider features that are more interesting or
 popular on Windows than on other platforms.
 
@@ -1529,7 +1529,7 @@ respectively. We will look at some of the other added features next.
 
 @section Windows service management
 
-CFEngine 3 Enterprise can maintain complete control of the state of all
+CFEngine Enterprise can maintain complete control of the state of all
 Windows services, in addition to Unix daemons. Services prone to
 security issues or errors can easily be given a disabled state.
 
@@ -1542,13 +1542,13 @@ available, including support for starting and stopping dependencies,
 and configuring when the services should be started (e.g. only when
 they are being used).
 
-Furthermore, the CFEngine executor in CFEngine 3 Enterprise now runs as a Windows
+Furthermore, the CFEngine executor in CFEngine Enterprise now runs as a Windows
 service itself. This means it runs in the background an starts with
 Windows, before any user logs in. It can be configured, started and
 stopped from the ``Services'' listing in Windows.
 
 Note that the name of a service in Windows may be different from its
-``Display name''. CFEngine 3 Enterprise policies use the name, not the display
+``Display name''. CFEngine Enterprise policies use the name, not the display
 name, due to the need of uniqueness.
 
 @image{winservice-properties_name,7cm,,Windows service name and Display name,png}
@@ -1561,9 +1561,9 @@ giving each group an event id.
 
 @image{winevent-repaired-acl-closeup,7cm,,Promise repaired in Event Viewer,png}
 
-A program that creates logs, such as CFEngine 3 Enterprise, must define the
+A program that creates logs, such as CFEngine Enterprise, must define the
 possible event IDs, and their meaning. In many applications, only one
-event id is defined, a generic log message. However, CFEngine 3 Enterprise
+event id is defined, a generic log message. However, CFEngine Enterprise
 defines the following range of event IDs, which allows for automatic
 handling of log messages.
 
@@ -1582,11 +1582,11 @@ handling of log messages.
 
 @image{winevent-notkept-storage,10cm,,Promise not kept in Event Viewer,png}
 
-The CFEngine 3 Enterprise event logs can be found under the ``System'' logs.  Almost
+The CFEngine Enterprise event logs can be found under the ``System'' logs.  Almost
 all monitoring products for Windows supports reading event logs, and
-they can thus monitor logs from CFEngine 3 Enterprise as well. This makes it
+they can thus monitor logs from CFEngine Enterprise as well. This makes it
 possible to do more advanced querying on the status of a machine
-running CFEngine 3 Enterprise, e.g. to show all promises that have not been
+running CFEngine Enterprise, e.g. to show all promises that have not been
 kept in a certain time interval. However, we recommend using the
 Knowledge Map to do more advanced things, as it is specifically made
 for this purpose and supports all operating systems that CFEngine runs
@@ -1594,7 +1594,7 @@ on.
 
 @section Windows special variables
 Three new special variables have been added to the Windows version of
-CFEngine 3 Enterprise.
+CFEngine Enterprise.
 
 @itemize
 
@@ -1615,7 +1615,7 @@ different on Windows versions in distinct languages.
 
 
 @section Windows hard classes
-The Windows version of CFEngine 3 Enterprise defines hard classes to pinpoint
+The Windows version of CFEngine Enterprise defines hard classes to pinpoint
 the exact version of Windows that it is running on, the service pack
 version and if it's a server or workstation.
 
@@ -1704,7 +1704,7 @@ mode.
 @c **************************************************
 @c CHAPTER
 @c **************************************************
-@node REST API, Call-Collect, Windows-specific features in CFEngine 3 Enterprise, Top
+@node REST API, Call-Collect, Windows-specific features in CFEngine Enterprise, Top
 @chapter REST API
 
 
@@ -3136,9 +3136,9 @@ In addition you should choose a @i{Host Identifier} in the Mission Portal, see @
 @node Monitoring extensions, File Access Control Lists, Call-Collect, Top
 @chapter Monitoring extensions
 
-CFEngine 3 Enterprise incorporates a lightweight monitoring agent, whose aim
+CFEngine Enterprise incorporates a lightweight monitoring agent, whose aim
 is to provide meaningful performance data about systems, in a scalable
-fashion.  CFEngine 3 Enterprise does not aim to replace specialized
+fashion.  CFEngine Enterprise does not aim to replace specialized
 rapid-update monitoring and alarm systems; it provides a context-aware
 summary of current state that is always displayed in relation to
 previous system behavior, for comparison. The aim is to offer useful
@@ -3149,7 +3149,7 @@ performance data about the system by default. These include process
 counts, service traffic, load average and CPU utilization and
 temperature when available.  In the Community Edition, data are
 only collected and stored for personal use, but users have to work to see
-results.  CFEngine 3 Enterprise improves on this in three ways.
+results.  CFEngine Enterprise improves on this in three ways.
 
 @itemize
 
@@ -3212,7 +3212,7 @@ to ensure a sufficient rate of adaptation to new patterns.
 @item The past four hours in high resolution.
 @end itemize
 
-In addition, CFEngine 3 Enterprise adds quarter day averages of recorded time-series which go back three
+In addition, CFEngine Enterprise adds quarter day averages of recorded time-series which go back three
 years in time. Three years is considered to be the lifetime of a computer.
 Summaries of the detailed performance are summarized by flat averages for
 a four-shift day:
@@ -3235,7 +3235,7 @@ a four-shift day:
 * Extraction to list variable::  
 @end menu
 
-CFEngine 3 Enterprise incorporates a promise type in bundles for the monitoring
+CFEngine Enterprise incorporates a promise type in bundles for the monitoring
 agent. These are written just like all other promises within a bundle
 destined for the agent concerned. In this case:
 
@@ -3469,7 +3469,7 @@ As CFEngine works across multiple platforms and needs to support ACLs
 with different APIs, a common ACL syntax has been abstracted to add a
 layer of portability. This is a specific feature of CFEngine, not of
 the host systems. A generic syntax ensures that the ACLs that are
-commonly needed can be coded in a portable fashion. CFEngine 3 Enterprise's
+commonly needed can be coded in a portable fashion. CFEngine Enterprise's
 ACL model is translated into native permissions for implementation;
 CFEngine does not interfere with native access mechanisms in any way.
 The CFEngine ACL syntax is similar to the POSIX ACL syntax, which is
@@ -3480,7 +3480,7 @@ course, these ACLs will only work on the given platform, and must
 therefore be shielded with classes that select the appropriate model
 within the promise body.
 
-Currently, CFEngine 3 Enterprise supports the following ACL APIs and operating
+Currently, CFEngine Enterprise supports the following ACL APIs and operating
 systems.
 
 @multitable @columnfractions .3 .3
@@ -4282,10 +4282,10 @@ specify_inherit_aces => {"user:Administrator:r"};
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node  Server extensions, Upgrading CFEngine 3 Enterprise, File Access Control Lists, Top
+@node  Server extensions, Upgrading CFEngine Enterprise, File Access Control Lists, Top
 @chapter Server extensions
 
-CFEngine 3 Enterprise adds a simple server extension to the Community Edition
+CFEngine Enterprise adds a simple server extension to the Community Edition
 server, namely the ability to encode data directly in policy.
 This feature is useful for distributing password hashes
 to systems.
@@ -4432,15 +4432,15 @@ access:
 @chapter Environments and workflows
 
 @menu
-* Environments in CFEngine 3 Enterprise::  
-* Implementing workflows in CFEngine 3 Enterprise::  
+* Environments in CFEngine Enterprise::  
+* Implementing workflows in CFEngine Enterprise::  
 @end menu
 
-@node  Environments in CFEngine 3 Enterprise, Implementing workflows in CFEngine 3 Enterprise, Environments and workflows, Environments and workflows
-@section Environments in CFEngine 3 Enterprise
+@node  Environments in CFEngine Enterprise, Implementing workflows in CFEngine Enterprise, Environments and workflows, Environments and workflows
+@section Environments in CFEngine Enterprise
 @sp 1
 
-CFEngine 3 Enterprise supports notion of `environments' -- named groups of hosts, like
+CFEngine Enterprise supports notion of `environments' -- named groups of hosts, like
 `development', 'QA' and 'production' hosts.
 
 Each environment gets
@@ -4450,14 +4450,14 @@ Each environment gets
 @item grouping of hosts belonging to environment in GUI
 @end itemize
 
-Default CFEngine 3 Enterprise policies group hosts into environments in bundle `common
+Default CFEngine Enterprise policies group hosts into environments in bundle `common
 environments'. This bundle defines
 @itemize
-@item `environments.active' variable. This variable holds the name of environment for current host, and is used by other promises in CFEngine 3 Enterprise templates. This variable does not affect grouping in GUI.
+@item `environments.active' variable. This variable holds the name of environment for current host, and is used by other promises in CFEngine Enterprise templates. This variable does not affect grouping in GUI.
 @item global `environment_<NAME>' class. This class should be defined if given host belongs to the `<NAME>' environment. GUI groups hosts using this class.
 @end itemize
 Administrator may customize this bundle as needed, adding or removing
-environments defined (CFEngine 3 Enterprise does not have any built-in environment
+environments defined (CFEngine Enterprise does not have any built-in environment
 names), changing rules for hosts selection and making any other
 modifications, the only requirement for environments feature to work
 is keeping aforementioned variables and classes defined. Note that the
@@ -4468,10 +4468,10 @@ to exist and to contain bundle `agent main', this bundle is included
 last from main promises.cf and should implement/include/use any
 environment-specific rules.
 
-@node  Implementing workflows in CFEngine 3 Enterprise,  , Environments in CFEngine 3 Enterprise, Environments and workflows
-@section Implementing workflows in CFEngine 3 Enterprise
+@node  Implementing workflows in CFEngine Enterprise,  , Environments in CFEngine Enterprise, Environments and workflows
+@section Implementing workflows in CFEngine Enterprise
 
-Workflows are implemented easily with CFEngine 3 Enterprise, administrator starts with
+Workflows are implemented easily with CFEngine Enterprise, administrator starts with
 defining necessary set of environments (usually those are
 `development', `testing' and 'production'), then develops new
 configuration in one environment, and promotes rules first to testing
@@ -4487,8 +4487,8 @@ environment's subdirectory to next one.
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node  Upgrading CFEngine 3 Enterprise, Frequently Asked Questions, Server extensions, Top
-@chapter Upgrading CFEngine 3 Enterprise
+@node  Upgrading CFEngine Enterprise, Frequently Asked Questions, Server extensions, Top
+@chapter Upgrading CFEngine Enterprise
 
 @cartouche
 Please see INSTALLATION.TXT for how to upgrade (found on the CFEngine software download page)
@@ -4519,14 +4519,14 @@ in the standard way.
 * Upgrade procedure for the standard library::  
 * How can I do phased deployment?::  
 * What if I have multiple operating system platforms?::  
-* How do CFEngine 3 Enterprise policies update if I already have my own policy?::  
-* How do I upgrade from CFEngine Community 3 to CFEngine 3 Enterprise?::  
+* How do CFEngine Enterprise policies update if I already have my own policy?::  
+* How do I upgrade from CFEngine Community 3 to CFEngine Enterprise?::  
 @end menu
 
-@node Upgrade procedure for the hub (and policy), Upgrade procedure for the clients, Upgrading CFEngine 3 Enterprise, Upgrading CFEngine 3 Enterprise
+@node Upgrade procedure for the hub (and policy), Upgrade procedure for the clients, Upgrading CFEngine Enterprise, Upgrading CFEngine Enterprise
 @section Upgrade procedure for the hub (and policy)
 
-The following is a general procedure to upgrade to CFEngine 3 Enterprise from earlier versions, please follow each step unless otherwise indicated. It is assumed that the packages are placed in the @file{/tmp} directory. To upgrade, start with the hub (policy server):
+The following is a general procedure to upgrade to CFEngine Enterprise from earlier versions, please follow each step unless otherwise indicated. It is assumed that the packages are placed in the @file{/tmp} directory. To upgrade, start with the hub (policy server):
 
 @enumerate
 @item Stop all CFE processes
@@ -4553,7 +4553,7 @@ or
    $ rm -f /var/cfengine/state/mongod.lock
 @end verbatim
 
-@item If you upgrade from CFEngine Enterprise 2.2.0 or 2.2.1, skip this step and go directly to step 7. For all other versions, CFEngine 3 Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated)
+@item If you upgrade from CFEngine Enterprise 2.2.0 or 2.2.1, skip this step and go directly to step 7. For all other versions, CFEngine Enterprise's dependencies have changed so we have to correct cf-twin (libgnutls and libmongo.c were updated)
 @verbatim
    $ cp /var/cfengine/bin/cf-agent /var/cfengine/bin/cf-twin
 @end verbatim
@@ -4573,11 +4573,11 @@ Comments (for your information, no need to verify anything):
 @verbatim
            bundle agent cfengine_management{}
 @end verbatim
-      and agent bundles for all CFEngine 3 Enterprise hosts.
+      and agent bundles for all CFEngine Enterprise hosts.
 @item CFE_knowledge.cf
-    - mostly CFEngine 3 Enterprise Knowledge Map setup
+    - mostly CFEngine Enterprise Knowledge Map setup
 @item CFE_hub_specific.cf
-    - all necessary bundles to build the CFEngine 3 Enterprise HUB (policy server) is in this file
+    - all necessary bundles to build the CFEngine Enterprise HUB (policy server) is in this file
 @item cfengine_stdlib.cf
     - the latest standard CFEngine bodies and bundles
 @item If you are using CFEngine 3 Nova 2.0.1 or older: package_method has been updated, the Nova/Enterprise self-upgrade will not work properly on some systems. We strongly recommended to synchronize contents of the file before rolling out new packages to clients. (Please contact your sales representative or file a ticket in the CFEngine support system to help you out.)
@@ -4613,7 +4613,7 @@ Comments (for your information, no need to verify anything):
 
    classes:
     "commercial_customer" or => { "nova_edition"},
-               comment => "Define a global class for CFEngine 3 Enterprise",
+               comment => "Define a global class for CFEngine Enterprise",
                 handle => "common_def_classes_commercial_customer";
 @end verbatim
 
@@ -4734,7 +4734,7 @@ or
 
 
 @c -----------------------------------------------------
-@node Upgrade procedure for the clients, Upgrade procedure for the standard library, Upgrade procedure for the hub (and policy), Upgrading CFEngine 3 Enterprise
+@node Upgrade procedure for the clients, Upgrade procedure for the standard library, Upgrade procedure for the hub (and policy), Upgrading CFEngine Enterprise
 @section Upgrade procedure for the clients
 
 @noindent For client upgrades there are 2 approaches: manual or automatic upgrade.
@@ -4747,12 +4747,12 @@ or
 @verbatim
    C:\Program Files\Cfengine\bin-twin
 @end verbatim
-@item Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in @file{/var/cfengine/master_software_updates} (i.e. put the files in the respective operating specific subdirectories) and CFEngine 3 Enterprise will take care of the rest.
+@item Automatic: On the hub, copy the cfengine-nova packages to the operating system specific distribution directories in @file{/var/cfengine/master_software_updates} (i.e. put the files in the respective operating specific subdirectories) and CFEngine Enterprise will take care of the rest.
 @end enumerate
 
 
 @c -----------------------------------------------------
-@node Upgrade procedure for the standard library, How can I do phased deployment?, Upgrade procedure for the clients, Upgrading CFEngine 3 Enterprise
+@node Upgrade procedure for the standard library, How can I do phased deployment?, Upgrade procedure for the clients, Upgrading CFEngine Enterprise
 @section Upgrade procedure for the standard library
 
 When all clients have been upgraded to CFEngine 3 Enterprise 2.2.x, i.e. you have completed both hub and client upgrades as described above, copy the most recent standard library to @file{/var/cfengine/masterfiles} on the hub (note that the new library version is incompatible with versions of CFEngine 3 Enterprise older than 2.2.0):
@@ -4762,7 +4762,7 @@ When all clients have been upgraded to CFEngine 3 Enterprise 2.2.x, i.e. you hav
 
 
 @c -----------------------------------------------------
-@node How can I do phased deployment?, What if I have multiple operating system platforms?, Upgrade procedure for the standard library, Upgrading CFEngine 3 Enterprise
+@node How can I do phased deployment?, What if I have multiple operating system platforms?, Upgrade procedure for the standard library, Upgrading CFEngine Enterprise
 @section How can I do phased deployment?
 
 Using CFEngine classes to select a subset of machines, you can deploy of updates on a small
@@ -4770,7 +4770,7 @@ number of test systems first.
 
 
 @c -----------------------------------------------------
-@node  What if I have multiple operating system platforms?, How do CFEngine 3 Enterprise policies update if I already have my own policy?, How can I do phased deployment?, Upgrading CFEngine 3 Enterprise
+@node  What if I have multiple operating system platforms?, How do CFEngine Enterprise policies update if I already have my own policy?, How can I do phased deployment?, Upgrading CFEngine Enterprise
 @section What if I have multiple operating system platforms?
 
 As of version 1.1 of CFEngine Nova, CFEngine will look for updates in an operating specific
@@ -4779,8 +4779,8 @@ its package in the correct subdirectory and the client host will know where to l
 
 
 @c ------------------------------------------------------
-@node How do CFEngine 3 Enterprise policies update if I already have my own policy?, How do I upgrade from CFEngine Community 3 to CFEngine 3 Enterprise?, What if I have multiple operating system platforms?, Upgrading CFEngine 3 Enterprise
-@section How do CFEngine 3 Enterprise policies update if I already have my own policy?
+@node How do CFEngine Enterprise policies update if I already have my own policy?, How do I upgrade from CFEngine Community 3 to CFEngine Enterprise?, What if I have multiple operating system platforms?, Upgrading CFEngine Enterprise
+@section How do CFEngine Enterprise policies update if I already have my own policy?
 
 New CFEngine package updates will not overwrite your existing policy. That means that they
 will also not improve your current updating arrangement without your approval.
@@ -4796,16 +4796,16 @@ If you require assistance upgrading, contact CFEngine Support.
 
 
 @c ----------------------------------------------------
-@node How do I upgrade from CFEngine Community 3 to CFEngine 3 Enterprise?,  , How do CFEngine 3 Enterprise policies update if I already have my own policy?, Upgrading CFEngine 3 Enterprise
-@section How do I upgrade from CFEngine Community 3 to CFEngine 3 Enterprise?
+@node How do I upgrade from CFEngine Community 3 to CFEngine Enterprise?,  , How do CFEngine Enterprise policies update if I already have my own policy?, Upgrading CFEngine Enterprise
+@section How do I upgrade from CFEngine Community 3 to CFEngine Enterprise?
 
-CFEngine 3 Enterprise comes with policies that are specific to Enterprise functionality, we therefore urge you to set aside your
-current community policy. Install CFEngine 3 Enterprise, set up the Enterprise hub by
+CFEngine Enterprise comes with policies that are specific to Enterprise functionality, we therefore urge you to set aside your
+current community policy. Install CFEngine Enterprise, set up the Enterprise hub by
 following this document, and then integrate your existing
 policy to the hub manually, in small testable steps.
 
-CFEngine 3 Enterprise is compatible with the Community Edition of CFEngine 3 for distributing policies, but
-some process files are now managed by CFEngine 3 Enterprise and reporting will not work in the CFEngine 3 Enterprise Mission Portal.
+CFEngine Enterprise is compatible with the Community Edition of CFEngine 3 for distributing policies, but
+some process files are now managed by CFEngine Enterprise and reporting will not work in the CFEngine Enterprise Mission Portal.
 
 Please see @ref{Troubleshooting} if you have any problems.
 @end ignore
@@ -4814,7 +4814,7 @@ Please see @ref{Troubleshooting} if you have any problems.
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
-@node Frequently Asked Questions, Troubleshooting, Upgrading CFEngine 3 Enterprise, Top
+@node Frequently Asked Questions, Troubleshooting, Upgrading CFEngine Enterprise, Top
 @chapter Frequently Asked Questions
 
 @menu
@@ -4989,9 +4989,9 @@ Warnings appear because the default environment is set to "Development" and in t
 @node I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, I get messages of connection failures to a database on my hub, Knowledge map remains unpopulated, Troubleshooting
 @section I get a promise failed with the message @code{Can't stat /var/cfengine/master_software_updates/SOME-OS} on some hosts
 
-There is a built-in promise to automatically upgrade the CFEngine 3 Enterprise
+There is a built-in promise to automatically upgrade the CFEngine Enterprise
 binaries. By default, the clients will check for an update package
-every time CFEngine 3 Enterprise runs. So if the clients find that there is no source
+every time CFEngine Enterprise runs. So if the clients find that there is no source
 directory to download the files from, the message will be displayed.
 
 To fix the problem, simply create an empty directory mentioned in the
@@ -5044,9 +5044,9 @@ nova>  -> Completed execution of /var/cfengine/bin/mongod...
 ...
 @end verbatim
 
-If you don't see the first line above, CFEngine 3 Enterprise does not try to start
+If you don't see the first line above, CFEngine Enterprise does not try to start
 @code{mongod} --- so check if you bootstrapped your hub correctly. If
-you see all lines, it means that CFEngine 3 Enterprise starts @code{mongod}, but the process just
+you see all lines, it means that CFEngine Enterprise starts @code{mongod}, but the process just
 terminates immediately after. If so, continue to the next step.
 
 @item Look at the newest entry in @file{/var/log/mongod.log}. It
