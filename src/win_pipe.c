@@ -390,3 +390,14 @@ bool PipeToPid(pid_t *pid, FILE *pipe)
 
     return *pid != 0;
 }
+
+/*****************************************************************************/
+
+bool IsReadReady(int fd, int timeout_sec)
+{
+    // TODO: Use e.g. WaitForSingleObject() on Windows.
+    //       select() does not work on pipes on Windows
+    CfOut(cf_verbose, "", "No timeout on reads on Windows");
+
+    return true;
+}
