@@ -141,6 +141,7 @@ body server control
   allowallconnects      => { "10.10.10" , "::1" };
   trustkeysfrom         => { "10.10.10" , "::1" };
 
+ !am_policy_hub::
   call_collect_interval => "5";
 }
 
@@ -151,7 +152,7 @@ bundle server access_rules()
 {
 access:
 
-  policy_hub::
+  am_policy_hub::
 
     "collect_calls"
        resource_type => "query",
@@ -177,7 +178,10 @@ access:
 In addition you should choose a system identifier in the Mission Portal, see System Identifier. This is the attribute by which the hosts will be identified in views and reports.
 
 @page
-@c -----------------------------------------------------
+@c -----------------------------------------------------am_policy_hub::
+"collect_calls"
+resource_type => "query",
+admit => { "127.0.0.1", @(def.acl) };
 @node Viewing Call-Collected Reports in the Mission Portal
 @section Viewing Call-Collected Reports in the Mission Portal
 
