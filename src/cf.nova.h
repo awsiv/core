@@ -1107,6 +1107,8 @@ char *Nova_StripString(char *source, char *substring);
 
 void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 
+void LogFileChange(char *file, int change, Attributes a, Promise *pp, const ReportContext *report_context);
+
 /* weekly.c */
 
 #ifdef HAVE_LIBMONGOC

@@ -329,60 +329,6 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
 /*****************************************************************************/
 
-void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp, const ReportContext *report_context)
-{
-    CfDebug("VerifyFileAttributes()\n");
-
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("VerifyFileAttributes"))
-    {
-        return;
-    }
-
-    if (VerifyOwner(file, pp, attr, dstat))
-    {
-        /* nop */
-    }
-
-    if (NovaWin_FileExists(file) && !NovaWin_IsDir(file))
-    {
-        VerifyFileIntegrity(file, attr, pp, report_context);
-    }
-
-    if (attr.havechange)
-    {
-        VerifyFileChanges(file, dstat, attr, pp);
-    }
-
-    if (attr.acl.acl_entries)
-    {
-        VerifyACL(file, attr, pp);
-    }
-
-    if (attr.touch)
-    {
-        if (utime(file, NULL) == -1)
-        {
-            cfPS(cf_inform, CF_DENIED, "utime", pp, attr, " !! Touching file %s failed", file);
-        }
-        else
-        {
-            cfPS(cf_inform, CF_CHG, "", pp, attr, " -> Touching file %s", file);
-        }
-    }
-
-    CfDebug("VerifyFileAttributes(Done)\n");
-}
-
-/*****************************************************************************/
-
-void VerifyCopiedFileAttributes(char *file, struct stat *dstat, struct stat *sstat, Attributes attr, Promise *pp, const ReportContext *report_context)
-{
-    // TODO: Correct assumption?: if attr.owner.sid is invalid, it will not be changed - no need to backup like on Unix
-    VerifyFileAttributes(file, dstat, attr, pp, report_context);
-}
-
-/*****************************************************************************/
-
 /* Returns the amount of free space, in kilobytes (if type type is
  * avail) or percent, on the device where file resides, or CF_INFINITY
  * on error. 

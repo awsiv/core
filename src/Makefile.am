@@ -27,7 +27,6 @@ libcfnova_la_SOURCES = \
         ontology.c \
         datapackaging.c \
         promises.c \
-        processes.c \
         nova-reporting.c nova-reporting.h \
         conversion.c
 
@@ -84,7 +83,9 @@ libcfnova_la_SOURCES += \
 	stubs.c
 endif
 
-libcfagent_la_SOURCES =
+libcfagent_la_SOURCES = \
+        processes.c
+
 if NT
 libcfagent_la_SOURCES += \
 	win_wmi.c \

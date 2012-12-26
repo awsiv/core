@@ -22,6 +22,7 @@
 #include "string_lib.h"
 #include "communication.h"
 #include "logging.h"
+#include "files_operators.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
