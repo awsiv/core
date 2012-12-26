@@ -30,6 +30,7 @@
 #include "log.h"
 #include "matching.h"
 #include "string_lib.h"
+#include "ontology.h"
 
 #include <assert.h>
 

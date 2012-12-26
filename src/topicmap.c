@@ -17,6 +17,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "communication.h"
+#include "ontology.h"
 
 #include <assert.h>
 

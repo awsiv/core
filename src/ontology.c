@@ -19,6 +19,7 @@
 #include "matching.h"
 #include "unix.h"
 #include "cfstream.h"
+#include "ontology.h"
 
 #include <assert.h>
 

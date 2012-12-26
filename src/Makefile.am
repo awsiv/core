@@ -24,7 +24,7 @@ libcfnova_la_SOURCES = \
         license.c license.h \
         log.c log.h \
         monitoring.c \
-        ontology.c \
+        ontology.c ontology.h \
         datapackaging.c \
         promises.c \
         nova-reporting.c nova-reporting.h \

@@ -14,6 +14,7 @@
 #include "cfstream.h"
 #include "fncall.h"
 #include "string_lib.h"
+#include "ontology.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"

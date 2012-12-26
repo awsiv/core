@@ -17,6 +17,7 @@
 #include "unix.h"
 #include "cfstream.h"
 #include "communication.h"
+#include "ontology.h"
 
 #include "bson_lib.h"
 #include "db_query.h"
