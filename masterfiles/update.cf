@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# failsafe.cf - This file is used for automated policy recovery
+# update.cf - This file is used for automated policy recovery
 #
 ###############################################################################
 
@@ -16,12 +16,10 @@ body common control
 
 ### List of filenames to parse for promises.
 
- inputs => { "update_bins.cf", "update_policy.cf" };
- version => "Failsafe.cf 3.0.0";
+ inputs => { "update/update_bins.cf", "update/update_policy.cf" };
+ version => "Update.cf 3.0.1";
 
- nova_edition|constellation_edition::
-
-   host_licenses_paid => "25";
+ host_licenses_paid => "25";
 
 }
 

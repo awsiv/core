@@ -50,16 +50,16 @@ body common control
                   # COPBL and custom body/bundle library
                     "libraries/cfengine_stdlib.cf",
 
-                  # Add failsafe to build Knowledge Map relationship
-                    "failsafe/update_bins.cf",
-                    "failsafe/update_policy.cf",
+                  # Add update files to build Knowledge Map relationship
+                    "update/update_bins.cf",
+                    "update/update_policy.cf",
 
                   # List of services here
                     "services/file_change.cf",
 
                    };
 
-   version => "Promises.cf 3.0.0";
+   version => "Promises.cf 3.0.1";
 
    host_licenses_paid => "25";
 

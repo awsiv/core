@@ -22,16 +22,16 @@ body server control
  maxconnections        => "100";
 
  windows::
-  cfruncommand => "$(sys.cf_twin) -f \"$(sys.workdir)\inputs\failsafe\failsafe.cf\" && $(sys.cf_agent)";
+  cfruncommand => "$(sys.cf_twin) -f \"$(sys.workdir)\inputs\update.cf\" & $(sys.cf_agent)";
 
  hpux::
-  cfruncommand => "/bin/sh -c \"SHLIB_PATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/failsafe/failsafe.cf && $(sys.cf_agent)\"";
+  cfruncommand => "/bin/sh -c \"SHLIB_PATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/update.cf ; $(sys.cf_agent)\"";
 
  aix::
-  cfruncommand => "/bin/sh -c \"LIBPATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/failsafe/failsafe.cf && $(sys.cf_agent)\"";
+  cfruncommand => "/bin/sh -c \"LIBPATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/update.cf ; $(sys.cf_agent)\"";
 
  !(windows|hpux|aix)::
-  cfruncommand => "/bin/sh -c \"LD_LIBRARY_PATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/failsafe/failsafe.cf && $(sys.cf_agent)\"";
+  cfruncommand => "/bin/sh -c \"LD_LIBRARY_PATH=\"/var/cfengine/lib-twin\" $(sys.cf_twin) -f $(sys.workdir)/inputs/update.cf ; $(sys.cf_agent)\"";
 
 }
 

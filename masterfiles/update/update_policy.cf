@@ -38,7 +38,7 @@ bundle agent update_policy
                        comment => "Directory where MongoDB files will be stored on hub - if changed: requires DB shutdown and move of files",
                         handle => "cfe_internal_update_policy_mongodb_dir";
 
-   "mongodb_conf_file"  string => translatepath("$(inputs_dir)/failsafe/mongod.conf"),
+   "mongodb_conf_file"  string => translatepath("$(inputs_dir)/update/mongod.conf"),
                         comment => "Path to MongoDB configuration file",
                         handle => "cfe_internal_update_policy_mongodb_conf_file";
 

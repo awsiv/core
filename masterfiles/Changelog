@@ -1,3 +1,11 @@
+December 2012
+- renamed failsafe/failsafe.cf to update/update.cf
+- moved update/update.cf to root directory
+- bumped up version to 3.0.1
+
+October 2012
+- restructure masterfiles for Enterprise 3.0.0 framework
+
 February 2012
 *update.cf*
 - Use u_rcp instead of u_dcp to copy cf_promises_validated, robust to clock skew
