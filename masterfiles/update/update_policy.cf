@@ -47,6 +47,7 @@ bundle agent update_policy
                       "cf-execd",
                       "cf-key",
                       "cf-know",
+                      "cf-monitord",
                       "cf-promises",
                       "cf-report",
                       "cf-runagent",
