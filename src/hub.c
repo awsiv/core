@@ -30,6 +30,7 @@
 #include "signals.h"
 #include "transaction.h"
 #include "logging.h"
+#include "exec_tools.h"
 
 #include <assert.h>
 

@@ -29,6 +29,7 @@
 #include "transaction.h"
 #include "logging.h"
 #include "string_lib.h"
+#include "exec_tools.h"
 
 typedef struct
 {
