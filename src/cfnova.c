@@ -14,6 +14,7 @@
 #include "cfstream.h"
 #include "client_code.h"
 #include "logging.h"
+#include "net.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"

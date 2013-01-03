@@ -24,6 +24,7 @@
 #include "client_code.h"
 #include "communication.h"
 #include "string_lib.h"
+#include "net.h"
 
 // These are needed for the collect calls, integrating with hub
 
