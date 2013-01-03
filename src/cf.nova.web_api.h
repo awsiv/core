@@ -16,6 +16,8 @@
 #define CFENGINE_CF_NOVA_WEB_API_H
 
 #include <stdbool.h>
+
+#include "json.h"
 #include "scorecards.h"
 
 /* error handling and description*/
