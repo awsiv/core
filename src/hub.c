@@ -16,7 +16,6 @@
 #include "db_query.h"
 #include "db_save.h"
 #include "files_interfaces.h"
-#include "lastseen.h"
 #include "granules.h"
 #include "hub-maintenance.h"
 #include "hub-worker.h"
@@ -25,7 +24,6 @@
 #include "nova-reporting.h"
 #include "hub-scheduled-reports.h"
 #include "scope.h"
-#include "keyring.h"
 #include "instrumentation.h"
 #include "unix.h"
 #include "cfstream.h"
@@ -68,8 +66,6 @@ static void Nova_Scan(Item *masterlist);
 static pid_t Nova_ScanList(Item *list);
 static void Nova_ParallelizeScan(Item *masterlist);
 static void SplayLongUpdates(void);
-static void DBRefreshHostsListCache(Item *list);
-static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
 static void CollectSchedulerChildAndSleep(int wait_seconds);
 static int GetHubSleepSeconds(time_t start);
@@ -584,89 +580,6 @@ static int ScheduleRun(void)
 
 /*****************************************************************************/
 
-static void DBRefreshHostsListCache(Item *list)
-{
-    Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen = NULL;
-    Item *deleted_hosts = NULL;
-    int count = 0;
-
-    deleted_hosts = CFDB_GetDeletedHosts();
-    lastseen = CFDB_GetLastseenCache();
-
-// add from the new list
-    for (ip = list; ip != NULL; ip = ip->next)
-    {
-        if (deleted_hosts && IsItemIn(deleted_hosts, ip->name))
-        {
-            continue;
-        }
-
-        PrependFullItem(&new_lastseen, ip->name, ip->classes, 0, time(NULL));
-        count++;
-    }
-
-// now add items from the prev lastseen db
-    for (ip2 = lastseen; ip2 != NULL; ip2 = ip2->next)
-    {
-        if (IsItemIn(new_lastseen, ip2->name)   //already added from list
-            || ((time(NULL) - ip2->time) > CF_HUB_HORIZON)      // entry passed horizon)
-            || IsItemIn(deleted_hosts, ip2->name))      //deleted
-        {
-            continue;
-        }
-
-        PrependFullItem(&new_lastseen, ip2->name, ip2->classes, 0, ip2->time);
-        count++;
-    }
-
-    CFDB_SaveLastseenCache(new_lastseen);
-
-    DeleteItemList(lastseen);
-    DeleteItemList(new_lastseen);
-
-    if (deleted_hosts)
-    {
-        bool removed = false;
-
-        for (ip = deleted_hosts; ip != NULL; ip = ip->next)
-        {
-            if (!(RemoveHostFromLastSeen(ip->name)))
-            {
-                CfOut(cf_error, "", "Lastseen entry for host %s could not be removed\n", ip->name);
-            }
-            else
-            {
-                CfOut(cf_verbose, "", "Lastseen entry for host %s successfully removed\n", ip->name);
-
-                if (RemovePublicKey(ip->name) != -1)
-                {
-                    removed = true;
-                    CfOut(cf_verbose, "", "Public key for host %s successfully removed\n", ip->name);
-                }
-                else
-                {
-                    CfOut(cf_error, "", "Public key for host %s could not be removed\n", ip->name);
-                }
-            }
-        }
-
-        // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
-        // purge the list of deleted host
-        // otherwise keep it for the next run of cf-hub
-
-        if (removed)
-        {
-            CFDB_PurgeDeletedHosts();
-        }
-
-        DeleteItemList(deleted_hosts);
-    }
-
-    CfOut(cf_inform, "", "%d hosts added to the lastseen cache\n", count);
-}
-
-/*****************************************************************************/
-
 static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
 {
     Item *ip;
@@ -771,7 +684,6 @@ static void StartHub(void)
 
 static void Nova_CollectReports(void)
 {
-    Item *masterhostlist = Nova_ScanClients();
     Item *list = Nova_ScanClients();
 
     Nova_RemoveExcludedHosts(&list, EXCLUDE_HOSTS);
@@ -1020,82 +932,6 @@ static void Nova_CountMonitoredClasses(void)
 
 /*********************************************************************/
 /* Hub control                                                       */
-/*********************************************************************/
-
-static Item *Nova_ScanClients(void)
-{
-    CF_DB *dbp;
-    CF_DBC *dbcp;
-    char *key;
-    void *value;
-    int ksize, vsize;
-    Item *list = NULL;
-    time_t now = time(NULL);
-    int counter = 0;
-
-    if (!OpenDB(&dbp, dbid_lastseen))
-    {
-        return NULL;
-    }
-
-    if (!NewDBCursor(dbp, &dbcp))
-    {
-        CloseDB(dbp);
-        CfOut(cf_inform, "", " !! Unable to scan last-seen database");
-        return NULL;
-    }
-
-    while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
-    {
-        /* Only read the hostkey entries */
-
-        if (key[0] != 'k')
-        {
-            continue;
-        }
-
-        char hostkey[CF_BUFSIZE];
-        strlcpy(hostkey, (char *)key + 1, CF_BUFSIZE);
-        const char *address = value;
-
-        /* Get the last seen timestamp */
-
-        time_t timestamp = 0;
-
-        char quality_key[CF_BUFSIZE];
-        snprintf(quality_key, CF_BUFSIZE, "qi%s", hostkey);
-
-        KeyHostSeen quality;
-
-        if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
-        {
-            timestamp = MAX(timestamp, now - quality.lastseen);
-        }
-
-        snprintf(quality_key, CF_BUFSIZE, "qo%s", hostkey);
-
-        if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
-        {
-            timestamp = MAX(timestamp, now - quality.lastseen);
-        }
-
-        Item *ip = PrependItem(&list, hostkey, address);
-        ip->time = timestamp;
-
-        if (counter++ > LICENSES)
-        {
-            CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
-            break;
-        }
-    }
-
-    DeleteDBCursor(dbp, dbcp);
-    CloseDB(dbp);
-
-
-    return list;
-}
-
 /*********************************************************************/
 
 void Nova_HubLog(const char *fmt, ...)
