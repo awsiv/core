@@ -8,11 +8,11 @@ top_build_prefix = $(abs_top_build_builddir)/
 AM_CFLAGS = $(GCC_CFLAG) @CFLAGS@  
 AM_YFLAGS = -d
 LEXLIB = @LEXLIB@
-LDADD = $(BERKELEY_DB_LDFLAGS) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/src/libpromises.la
+LDADD = $(BERKELEY_DB_LDFLAGS) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/libpromises/libpromises.la
 INCLUDES = $(BERKELEY_DB_CFLAGS) $(OPENSSL_LIB_CPPFLAGS)
 AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
-AM_CPPFLAGS = -I$(srcdir)/../../core/src -I$(srcdir)/../sqlite3
+AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../../core/cf-serverd -I$(srcdir)/../sqlite3
 
 noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la libcfagent.la
 

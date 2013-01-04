@@ -5,7 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-AM_CFLAGS = $(GCC_CFLAG) -I$(top_srcdir)/src -I$(top_srcdir)/nova/src -I$(top_srcdir)/nova/sqlite3 $(CONSTELLATION_CFLAGS) @CFLAGS@
+AM_CFLAGS = $(GCC_CFLAG) -I$(top_srcdir)/libpromises -I$(top_srcdir)/nova/src -I$(top_srcdir)/nova/sqlite3 $(CONSTELLATION_CFLAGS) @CFLAGS@
 AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO
@@ -26,7 +26,7 @@ cfengine_enterprise_api_la_SOURCES = api-php.c api-php.h \
 
 cfengine_enterprise_api_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib
 cfengine_enterprise_api_la_CFLAGS = $(AM_CFLAGS)
-cfengine_enterprise_api_la_LIBADD = $(abs_top_builddir)/src/libpromises.la
+cfengine_enterprise_api_la_LIBADD = $(abs_top_builddir)/libpromises/libpromises.la
 
 install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(phplibdir)
