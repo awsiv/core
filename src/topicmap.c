@@ -18,6 +18,7 @@
 #include "string_lib.h"
 #include "communication.h"
 #include "ontology.h"
+#include "topicmap.h"
 
 #include <assert.h>
 

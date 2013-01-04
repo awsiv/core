@@ -31,6 +31,7 @@
 #include "matching.h"
 #include "string_lib.h"
 #include "ontology.h"
+#include "topicmap.h"
 
 #include <assert.h>
 

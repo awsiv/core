@@ -41,6 +41,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "logging.h"
+#include "topicmap.h"
 
 #include <assert.h>
 
