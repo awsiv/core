@@ -54,7 +54,6 @@ libcfnova_la_SOURCES += \
         bson_lib.c bson_lib.h \
         client_code.c \
         cmd_api.c cf.nova.cmd_api.h \
-        copernicus.c \
         dataunpack.c datapack.h \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \
@@ -70,7 +69,7 @@ libcfnova_la_SOURCES += \
         reporting-engine.c reporting-engine.h \
         scorecards.c scorecards.h \
         stories.c \
-        topicmap.c \
+        topicmap.c topicmap.h \
         web-report-export.c web-report-export.h \
         web_api.c \
         web_rbac.c \

@@ -773,11 +773,6 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 #endif
 int Nova_PlaceCollectCall(AgentConnection *conn);
 
-/* copernicus.c */
-
-JsonElement *Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
-                            int tribe_size, double *tribe_evc, int topic);
-
 #ifdef HAVE_LIBMONGOC
 /* histogram.c */
 
