@@ -503,14 +503,12 @@ typedef struct
     time_t t;
 } HubPromiseCompliance;
 
-#ifdef HAVE_LIBMONGOC
 typedef struct
 {
     Rlist *hosts;
     Rlist *records;
     cfapi_errid errid;
 } HubQuery;
-#endif
 
 typedef struct
 {
