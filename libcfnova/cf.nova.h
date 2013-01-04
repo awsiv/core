@@ -1068,6 +1068,7 @@ int NovaWin_TakeFileOwnership(char *path);
 int NovaWin_SetFileOwnership(char *path, SID *sid);
 off_t NovaWin_GetDiskUsage(char *file, enum cfsizes type);
 int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
+int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz);
 
 /* win_log.c */
 
