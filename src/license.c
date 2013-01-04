@@ -24,6 +24,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "transaction.h"
+#include "policy.h"
 
 #include <assert.h>
 

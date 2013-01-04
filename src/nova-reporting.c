@@ -25,6 +25,7 @@
 #include "communication.h"
 #include "promises.h"
 #include "logging.h"
+#include "policy.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

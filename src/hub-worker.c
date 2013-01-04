@@ -21,6 +21,7 @@
 #include "item_lib.h"
 #include "keyring.h"
 #include "db_maintain.h"
+#include "policy.h"
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostkey, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);

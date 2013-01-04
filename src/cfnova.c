@@ -15,6 +15,7 @@
 #include "client_code.h"
 #include "logging.h"
 #include "net.h"
+#include "policy.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
