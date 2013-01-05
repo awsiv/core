@@ -5,7 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-AM_CFLAGS = $(GCC_CFLAG)  @CFLAGS@
+AM_CFLAGS = @CFLAGS@
 AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO

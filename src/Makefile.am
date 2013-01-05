@@ -5,7 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_build_builddir)/
 
-AM_CFLAGS = $(GCC_CFLAG) @CFLAGS@  
+AM_CFLAGS = @CFLAGS@
 AM_YFLAGS = -d
 LEXLIB = @LEXLIB@
 LDADD = $(BERKELEY_DB_LDFLAGS) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/libpromises/libpromises.la
