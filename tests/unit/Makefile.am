@@ -11,17 +11,18 @@ AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(top_srcdir)/libpromises -
 
 MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
-check_LTLIBRARIES = liblastseen.la
-liblastseen_la_SOURCES = ../../src/hub-worker.c
+check_LTLIBRARIES =
 
 check_PROGRAMS = \
         conversion_test \
         file_cache_test \
         license_test \
-        structure_allocation_test \
-        lastseen_cache_test
+        structure_allocation_test
 
 if MONGO
+check_LTLIBRARIES += liblastseen.la
+liblastseen_la_SOURCES = ../../src/hub-worker.c
+
 check_PROGRAMS += scorecards_test \
         reporting_engine_test \
         bson_lib_test \
@@ -29,7 +30,8 @@ check_PROGRAMS += scorecards_test \
         db_query_test \
         web_rbac_test \
         db_maintain_test \
-        db_data_unpack_test
+        db_data_unpack_test \
+        lastseen_cache_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/libpromises/libpromises.la
@@ -71,5 +73,9 @@ structure_allocation_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 file_cache_test_SOURCES = $(MOCKERY_SOURCES) file_cache_test.c
 file_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
+if MONGO
+
 lastseen_cache_test_SOURCES = $(MOCKERY_SOURCES) lastseen_cache_test.c
 lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastseen.la
+
+endif
