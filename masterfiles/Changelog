@@ -1,3 +1,7 @@
+January 2013
+- fixed to pull CFEngine modules on Windows
+- tried to use $(sys.workdir) instead of a fixed path /var/cfengine to flavour Windows
+
 December 2012
 - renamed failsafe/failsafe.cf to update/update.cf
 - moved update/update.cf to root directory
