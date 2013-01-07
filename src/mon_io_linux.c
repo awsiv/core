@@ -163,7 +163,11 @@ static void MonIoDiskstatsGatherData(double *cf_this)
                   "/proc/diskstats format error: read overlong string (> " TOSTRING(CF_BUFSIZE - 1) " bytes)");
             goto err;
         }
-        StripTrailingNewline(buf);
+
+        if (StripTrailingNewline(buf) == -1)
+        {
+            CfOut(cf_error, "", "StripTrailingNewline was called on an overlong string");
+        }
 
         if (sscanf(buf, "%*u %*u %s %lu %*u %lu %*u %lu %*u %lu",
                    diskname, &reads, &readsectors, &writes, &writtensectors) != 5)

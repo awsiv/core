@@ -1374,7 +1374,10 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
         }
 
         strncpy(sdate, cf_ctime(&now), CF_MAXVARSIZE - 1);
-        Chop(sdate);
+        if (Chop(sdate) == -1)
+        {
+            CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+        }
 
         fprintf(fout, "%s,%ld,%s\n", sdate, (long) now, value);
         CfOut(cf_verbose, "", "Logging: %s,%s to %s\n", sdate, value, filename);

@@ -156,10 +156,16 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 // Promise: use valid menu request
 
     cf_strtimestamp_local(time1, tbuf);
-    Chop(tbuf);
+    if (Chop(tbuf) == -1)
+    {
+        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+    }
     CfOut(cf_verbose, "", " -> Menu request \"%s\" at %s, clock error %jd", menu_name, tbuf, (intmax_t) delta1);
     cf_strtimestamp_local(from, tbuf);
-    Chop(tbuf);
+    if (Chop(tbuf) == -1)
+    {
+        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+    }
     CfOut(cf_verbose, "", " -> Menu request starting from %s", tbuf);
 
     if ((type = String2Menu(menu_name)) == cfd_menu_error)

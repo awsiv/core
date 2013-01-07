@@ -596,7 +596,10 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
             changeNoTab[0] = '\0';
             ReplaceStr(change, changeNoTab, sizeof(changeNoTab), "\t", "(TAB)");
 
-            Chop(line);
+            if (Chop(line) == -1)
+            {
+                CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+            }
             snprintf(reformat, CF_BUFSIZE - 1, "%c,%s,%s%c", pm, no, changeNoTab, CF_N_CODE);
 
             if (strlen(aggregate) + strlen(name) < 800) // truncate output if too large
