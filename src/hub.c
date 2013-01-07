@@ -712,7 +712,16 @@ static void StartHub(void)
 
 static void Nova_CollectReports(void)
 {
-    Item *masterhostlist = Nova_ScanClients();
+    Item *list = Nova_ScanClients();
+
+    Nova_RemoveExcludedHosts(&list, EXCLUDE_HOSTS);
+
+    DBRefreshHostsListCache(list);
+    DeleteItemList(list);
+
+    // Now read the updated cache
+    Item *masterhostlist = CFDB_GetLastseenCache();
+    Nova_RemoveExcludedHosts(&masterhostlist, EXCLUDE_HOSTS);
 
     Nova_Scan(masterhostlist);
     DeleteItemList(masterhostlist);
@@ -1003,15 +1012,6 @@ static Item *Nova_ScanClients(void)
 
     DeleteDBCursor(dbp, dbcp);
     CloseDB(dbp);
-
-    Nova_RemoveExcludedHosts(&list, EXCLUDE_HOSTS);
-
-    Nova_UpdateMongoHostList(&list);
-    DeleteItemList(list);
-
-// If there is a list in Mongo, this takes precedence, else populate one
-    list = CFDB_GetLastseenCache();
-    Nova_RemoveExcludedHosts(&list, EXCLUDE_HOSTS);
 
     return list;
 }
