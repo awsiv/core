@@ -11,8 +11,7 @@ AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(top_srcdir)/src -I$(CMOCK
 
 MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
-check_LTLIBRARIES = liblastseen.la
-liblastseen_la_SOURCES = ../../src/hub-worker.c
+check_LTLIBRARIES =
 
 check_PROGRAMS = \
         logging_test \
@@ -20,6 +19,10 @@ check_PROGRAMS = \
         license_test
 
 if MONGO
+
+check_LTLIBRARIES += liblastseen.la
+liblastseen_la_SOURCES = ../../src/hub-worker.c
+
 check_PROGRAMS += scorecards_test \
                 db_data_unpack_test \
                 db_maintain_test \
