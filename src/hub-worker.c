@@ -184,10 +184,12 @@ Item *Nova_ScanClients(void)
         snprintf(quality_key, CF_BUFSIZE, "qi%s", hostkey);
 
         KeyHostSeen quality;
+        bool quality_key_exists = false;
 
         if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
         {
             timestamp = MAX(timestamp, now - quality.lastseen);
+            quality_key_exists = true;
         }
 
         snprintf(quality_key, CF_BUFSIZE, "qo%s", hostkey);
@@ -195,7 +197,13 @@ Item *Nova_ScanClients(void)
         if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
         {
             timestamp = MAX(timestamp, now - quality.lastseen);
-        }        
+            quality_key_exists = true;
+        }
+
+        if (!quality_key_exists)
+        {
+            continue;
+        }
 
         Item *ip = PrependItem(&list, hostkey, address);
         ip->time = timestamp;
