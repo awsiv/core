@@ -5,7 +5,7 @@
 
 */
 
-#include "nova-reporting.h"
+#include "nova_reporting.h"
 
 #include "cf3.extern.h"
 #include "cf.nova.cmd_api.h"

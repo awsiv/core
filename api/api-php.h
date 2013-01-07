@@ -49,7 +49,7 @@ PHP_RINIT_FUNCTION(cfapi);
 PHP_RSHUTDOWN_FUNCTION(cfapi);
 PHP_MINFO_FUNCTION(cfapi);
 
-#include "file-cache.h"
+#include "file_cache.h"
 
 ZEND_BEGIN_MODULE_GLOBALS(cfapi)
     FileCache *query_cache;

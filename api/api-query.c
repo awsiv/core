@@ -3,9 +3,9 @@
 #include "web_rbac.h"
 #include "utils.h"
 #include "db-serialize.h"
-#include "file-cache.h"
+#include "file_cache.h"
 #include "crypto.h"
-#include "reporting-engine.h"
+#include "reporting_engine.h"
 #include "files_hashes.h"
 #include "string_lib.h"
 

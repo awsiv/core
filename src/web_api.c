@@ -20,7 +20,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "sort.h"
 #include "conversion.h"
 #include "scope.h"
-#include "web-report-export.h"
+#include "web_report_export.h"
 #include "matching.h"
 #include "cfstream.h"
 #include "string_lib.h"

@@ -4,7 +4,7 @@
 
 */
 
-#include "reporting-engine.h"
+#include "reporting_engine.h"
 
 #include "db_common.h"
 #include "db_query.h"
@@ -15,7 +15,7 @@
 #include "conf.h"
 #include "log.h"
 #include "cfstream.h"
-#include "db-export-csv.h"
+#include "db_export_csv.h"
 #include "csv_writer.h"
 #include "files_interfaces.h"
 #include "files_hashes.h"

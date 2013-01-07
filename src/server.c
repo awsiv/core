@@ -28,7 +28,7 @@
 
 // These are needed for the collect calls, integrating with hub
 
-#include "hub.h"
+#include "cf-hub.h"
 #include "transaction.h"
 
 #if defined(HAVE_LIBMONGOC)

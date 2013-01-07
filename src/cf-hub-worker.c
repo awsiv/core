@@ -5,7 +5,7 @@
 */
 
 #include "cf.nova.h"
-#include "hub.h"
+#include "cf-hub.h"
 
 #include "promises.h"
 #include "transaction.h"

@@ -5,7 +5,7 @@
 */
 
 #include "generic_agent.h"
-#include "hub.h"
+#include "cf-hub.h"
 #include "cf.nova.h"
 
 #include "sysinfo.h"
@@ -17,12 +17,12 @@
 #include "db_save.h"
 #include "files_interfaces.h"
 #include "granules.h"
-#include "hub-maintenance.h"
-#include "hub-worker.h"
+#include "cf-hub-maintenance.h"
+#include "cf-hub-worker.h"
 #include "item_lib.h"
 #include "conversion.h"
-#include "nova-reporting.h"
-#include "hub-scheduled-reports.h"
+#include "nova_reporting.h"
+#include "cf-hub-scheduled-reports.h"
 #include "scope.h"
 #include "instrumentation.h"
 #include "unix.h"

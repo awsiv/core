@@ -14,7 +14,7 @@
 #include "item_lib.h"
 #include "sort.h"
 #include "conversion.h"
-#include "nova-reporting.h"
+#include "nova_reporting.h"
 #include "cfstream.h"
 #include "string_lib.h"
 #include "logging.h"

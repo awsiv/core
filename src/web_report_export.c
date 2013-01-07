@@ -1,6 +1,6 @@
-#include "web-report-export.h"
+#include "web_report_export.h"
 
-#include "db-export-csv.h"
+#include "db_export_csv.h"
 #include "db_query.h"
 #include "scope.h"
 #include "string_lib.h"

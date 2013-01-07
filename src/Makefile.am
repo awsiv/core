@@ -27,7 +27,7 @@ libcfnova_la_SOURCES = \
         ontology.c ontology.h \
         datapackaging.c \
         promises.c \
-        nova-reporting.c nova-reporting.h \
+        nova_reporting.c nova_reporting.h \
         conversion.c
 
 if NT
@@ -59,18 +59,18 @@ libcfnova_la_SOURCES += \
         db_maintain.c db_maintain.h \
         db_query.c db_query.h \
         db_save.c db_save.h \
-        file-cache.c file-cache.h \
-        db-export-csv.c db-export-csv.h \
+        file_cache.c file_cache.h \
+        db_export_csv.c db_export_csv.h \
         histogram.c \
         install.c install.h \
         magnify.c \
         promise_db.c \
         runagent.c \
-        reporting-engine.c reporting-engine.h \
+        reporting_engine.c reporting_engine.h \
         scorecards.c scorecards.h \
         stories.c \
         topicmap.c topicmap.h \
-        web-report-export.c web-report-export.h \
+        web_report_export.c web_report_export.h \
         web_api.c \
         web_rbac.c \
         weekly.c \
@@ -123,10 +123,10 @@ if MONGO
 noinst_LTLIBRARIES += libcfhub.la
 
 libcfhub_la_SOURCES = \
-        hub.c \
-        hub-maintenance.c \
-        hub-worker.c \
-        hub-scheduled-reports.c hub-scheduled-reports.h
+        cf-hub.c \
+        cf-hub-maintenance.c \
+        cf-hub-worker.c \
+        cf-hub-scheduled-reports.c cf-hub-scheduled-reports.h
 endif
 
 noinst_LTLIBRARIES += libcfknow.la

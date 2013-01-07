@@ -71,7 +71,7 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
 JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count);
 
-#include "web-report-export.h"
+#include "web_report_export.h"
 
 WebReportFileInfo *PHPArrayWebReportFileInfoGet( zval *php_array );
 bool PHPArrayBoolGet(zval *php_array, char *key, bool *out);

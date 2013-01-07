@@ -5,8 +5,8 @@
 */
 
 #include "cf.nova.h"
-#include "hub.h"
-#include "hub-maintenance.h"
+#include "cf-hub.h"
+#include "cf-hub-maintenance.h"
 
 #include "env_context.h"
 #include "db_maintain.h"

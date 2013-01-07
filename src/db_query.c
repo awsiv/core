@@ -19,7 +19,7 @@
 #include "conversion.h"
 #include "granules.h"
 #include "scope.h"
-#include "db-export-csv.h"
+#include "db_export_csv.h"
 #include "install.h"
 #include "matching.h"
 #include "cfstream.h"
