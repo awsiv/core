@@ -7,6 +7,8 @@
 #ifndef CFENGINE_HUB_WORKER_H
 #define CFENGINE_HUB_WORKER_H
 
+Item *Nova_ScanClients(void);
 void Nova_SequentialScan(Item *masterlist);
+void Nova_UpdateMongoHostList(Item **list);
 
 #endif
