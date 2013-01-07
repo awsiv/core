@@ -2107,6 +2107,31 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
 
 /*****************************************************************************/
 
+char *Titleize(char *str)
+{
+    static char buffer[CF_BUFSIZE];
+    int i;
+
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    strcpy(buffer, str);
+
+    if (strlen(buffer) > 1)
+    {
+        for (i = 1; buffer[i] != '\0'; i++)
+        {
+            buffer[i] = ToLower(str[i]);
+        }
+    }
+
+    *buffer = ToUpper(*buffer);
+
+    return buffer;
+}
+
 void Nova_ZenossSummary(const char *docroot)
 {
     char name[CF_MAXVARSIZE];
