@@ -126,7 +126,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
     CfOut(cf_verbose, "", " -> Nova Analysis of changes on file %s\n", file);
 
     strncpy(datestr, cf_ctime(&now), CF_MAXVARSIZE - 1);
-    if (Chop(datestr) == -1)
+    if (Chop(datestr, CF_EXPANDSIZE) == -1)
     {
         CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
     }

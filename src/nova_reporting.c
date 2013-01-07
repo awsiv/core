@@ -970,7 +970,7 @@ void SummarizeFileChanges(int xml, int html, int csv, int embed, char *styleshee
         sscanf(ip->name, "%ld,%1023[^\n]", &start, name);
         now = (time_t) start;
         snprintf(datestr, CF_MAXVARSIZE - 1, "%s", cf_strtimestamp_local(now, timebuffer));
-        Chop(datestr);
+        Chop(datestr, CF_EXPANDSIZE);
 
         if (xml)
         {

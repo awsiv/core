@@ -1374,7 +1374,7 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
         }
 
         strncpy(sdate, cf_ctime(&now), CF_MAXVARSIZE - 1);
-        if (Chop(sdate) == -1)
+        if (Chop(sdate, CF_EXPANDSIZE) == -1)
         {
             CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
         }

@@ -607,7 +607,7 @@ static void Nova_LogLicenseStatus(void)
     snprintf(datestr, CF_MAXVARSIZE - 1, "%s", cf_ctime(&now));
     snprintf(data, CF_MAXVARSIZE - 1, "%d,%d,%d,%ld", lastseen_count, LICENSES, licenses_policy, (long) now);
 
-    if (Chop(datestr) == -1)
+    if (Chop(datestr, CF_EXPANDSIZE) == -1)
     {
         CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
     }

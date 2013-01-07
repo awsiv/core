@@ -164,7 +164,7 @@ static void MonIoDiskstatsGatherData(double *cf_this)
             goto err;
         }
 
-        if (StripTrailingNewline(buf) == -1)
+        if (StripTrailingNewline(buf, CF_EXPANDSIZE) == -1)
         {
             CfOut(cf_error, "", "StripTrailingNewline was called on an overlong string");
         }

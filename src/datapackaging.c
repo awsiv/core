@@ -596,7 +596,7 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
             changeNoTab[0] = '\0';
             ReplaceStr(change, changeNoTab, sizeof(changeNoTab), "\t", "(TAB)");
 
-            if (Chop(line) == -1)
+            if (Chop(line, CF_EXPANDSIZE) == -1)
             {
                 CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
             }
