@@ -1,6 +1,6 @@
 #include "platform.h"
 #include "test.h"
-#include "reporting-engine.c"
+#include "reporting_engine.c"
 #include "cf.nova.h"
 
 #include "matching.h"

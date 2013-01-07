@@ -1,5 +1,5 @@
 #include "test.h"
-#include "file-cache.h"
+#include "file_cache.h"
 
 #include "matching.h"
 

@@ -1,6 +1,6 @@
 #include "test.h"
 #include "cf.nova.h"
-#include "hub-worker.h"
+#include "cf-hub-worker.h"
 #include "item_lib.h"
 #include "lastseen.h"
 

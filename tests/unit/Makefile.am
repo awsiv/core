@@ -21,7 +21,7 @@ check_PROGRAMS = \
 
 if MONGO
 check_LTLIBRARIES += liblastseen.la
-liblastseen_la_SOURCES = ../../src/hub-worker.c
+liblastseen_la_SOURCES = ../../src/cf-hub-worker.c
 
 check_PROGRAMS += scorecards_test \
         reporting_engine_test \
