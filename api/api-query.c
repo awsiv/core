@@ -118,7 +118,8 @@ PHP_FUNCTION(cfapi_query_post)
         if (cache_entry.value)
         {
             const char *data = cache_entry.value;
-            table = JsonParse(&data);
+            JsonParseError err = JsonParse(&data, &table);
+            assert(err == JSON_PARSE_OK);
             assert(table);
             JsonObjectAppendBool(table, "cached", true);
         }

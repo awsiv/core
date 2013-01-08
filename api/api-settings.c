@@ -60,8 +60,9 @@ PHP_FUNCTION(cfapi_settings_post)
 
     HubSettings *new_settings = NULL;
     {
-        JsonElement *json_settings = JsonParse(&post_data);
-        if (!json_settings)
+        JsonElement *json_settings = NULL;
+        JsonParseError err = JsonParse(&post_data, &json_settings);
+        if (err != JSON_PARSE_OK)
         {
             THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Unable to parse JSON payload");
         }

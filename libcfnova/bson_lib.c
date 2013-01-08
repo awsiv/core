@@ -1293,11 +1293,13 @@ bool BsonInitFromJsonString(bson *bson_ret, const char *json_string)
 
     const char * json_string_new = SearchAndReplace(json_string, "'", "\"");
 
-    JsonElement *json_query = JsonParse(&json_string_new);
-    if (json_query == NULL)
+    JsonElement *json_query = NULL;
+    JsonParseError err = JsonParse(&json_string_new, &json_query);
+    if (err != JSON_PARSE_OK)
     {
         return false;
     }
+    assert(json_query);
 
     bson_init(bson_ret);
     if (!JsonComplexToBson(json_query, bson_ret))
