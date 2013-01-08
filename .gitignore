@@ -12,6 +12,10 @@ src/make_license_file
 *.pyc
 TAGS
 
+# binaries
+cf-know/cf-know
+cf-hub/cf-hub
+
 # docs
 
 docs/*.html
