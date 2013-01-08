@@ -144,9 +144,6 @@ static const struct option OPTIONS[] =
     {"search", required_argument, 0, 's'},
     {"syntax", required_argument, 0, 'S'},
     {"topics", no_argument, 0, 'T'},
-    {"test", required_argument, 0, 't'},
-    {"removetest", no_argument, 0, 'r'},
-    {"updatetest", no_argument, 0, 'u'},
     {NULL, 0, 0, '\0'}
 };
 
@@ -166,9 +163,6 @@ static const char *HINTS[] =
     "Search the hub generically for results",
     "Print a syntax summary of the optional keyword or this cfengine version",
     "Show all topic names in CFEngine",
-    "Generate test data",
-    "Remove test data",
-    "Update test data",
     NULL
 };
 
@@ -365,44 +359,6 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 exit(0);
             }
             break;
-
-        case 't':
-            if (atoi(optarg))
-            {
-                #if defined(HAVE_LIBMONGOC)
-                Nova_GenerateTestData(atoi(optarg));
-                #else
-                CfOut(cf_error, "",
-                      "Option available only on builds with Enterprise db enabled.\n"
-                      "This appears to be a non-hub installation.\n"
-                      "Please contact CFEngine if that is not the case");
-                #endif
-
-                exit(0);
-            }
-            break;
-
-        case 'r':
-            #if defined(HAVE_LIBMONGOC)
-            Nova_RemoveTestData();
-            #else
-            CfOut(cf_error, "",
-                  "Option available only on builds with Enterprise db enabled.\n"
-                  "This appears to be a non-hub installation.\n"
-                  "Please contact CFEngine if that is not the case");
-            #endif
-            exit(0);
-
-        case 'u':
-            #if defined(HAVE_LIBMONGOC)
-            Nova_UpdateTestData();
-            #else
-            CfOut(cf_error, "",
-                  "Option available only on builds with Enterprise db enabled.\n"
-                  "This appears to be a non-hub installation.\n"
-                  "Please contact CFEngine if that is not the case");
-            #endif
-            exit(0);
 
         case 'T':
             WORDS = true;

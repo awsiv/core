@@ -916,13 +916,6 @@ void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
 
-// generating test data
-void Nova_GenerateTestData(int count);
-void Nova_RemoveTestData(void);
-void Nova_UpdateTestData(void);
-char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE + 1]);
-void ThisHashString(char *str, char *buffer, int len, unsigned char digest[EVP_MAX_MD_SIZE + 1]);
-
 /* license.c */
 
 int Nova_CheckLicenseWin(char *pos);
