@@ -5,7 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-AM_CFLAGS = -I$(top_srcdir)/libpromises -I$(top_srcdir)/nova/src @CFLAGS@
+AM_CFLAGS = -I$(top_srcdir)/libpromises -I$(top_srcdir)/nova/libcfnova @CFLAGS@
 AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO

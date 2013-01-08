@@ -14,14 +14,18 @@ if test "x$with_nova" != xno; then
    if test -d "${srcdir}/nova"; then
      AC_DEFINE([HAVE_NOVA],[1],[Define if Nova extensions are to be enabled])
      NOVA_SUBDIR=nova
-     NOVA_CFLAGS='-I$(abs_top_srcdir)/nova/src'
-     NOVA_LDADD='$(abs_top_builddir)/nova/src/libcfnova.la'
+     NOVA_LIB_SUBDIRS='nova/sqlite3 nova/libcfnova nova/libcfagent nova/libcfmonitord nova/libcfserverd nova/libcfreport'
+     NOVA_BIN_SUBDIRS='nova/cf-know nova/cf-hub'
+     NOVA_CFLAGS='-I$(abs_top_srcdir)/nova/libcfnova'
+     NOVA_LDADD='$(abs_top_builddir)/nova/libcfnova/libcfnova.la'
      AC_MSG_RESULT(yes)
    else
      AC_MSG_RESULT(no)
    fi
 fi
 AC_SUBST([NOVA_SUBDIR])
+AC_SUBST([NOVA_LIB_SUBDIRS])
+AC_SUBST([NOVA_BIN_SUBDIRS])
 AC_SUBST([NOVA_CFLAGS])
 AC_SUBST([NOVA_LDADD])
 

@@ -14,7 +14,7 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../../core/cf-serverd -I$(srcdir)/../sqlite3
 
-noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la libcfreport.la libcfserverd.la libcfagent.la
+noinst_LTLIBRARIES = libcfnova.la
 
 libcfnova_la_LDFLAGS = -no-undefined
 
@@ -81,59 +81,6 @@ else # !MONGO
 libcfnova_la_SOURCES += \
 	stubs.c
 endif
-
-libcfagent_la_SOURCES = \
-        processes.c
-
-if NT
-libcfagent_la_SOURCES += \
-	win_wmi.c \
-	win_services.c
-else
-libcfagent_la_SOURCES += \
-	services.c
-endif
-
-libcfmonitord_la_SOURCES = \
-        probes.c \
-        mon_cumulative.c
-
-if LINUX
-libcfmonitord_la_SOURCES += mon_io_linux.c
-libcfmonitord_la_SOURCES += mon_mem_linux.c
-endif
-
-if SOLARIS
-libcfmonitord_la_SOURCES += mon_mem_solaris.c
-libcfmonitord_la_SOURCES += shared_kstat.c
-endif
-
-if !LINUX
-libcfmonitord_la_SOURCES += mon_io_stub.c
-if !SOLARIS
-libcfmonitord_la_SOURCES += mon_mem_stub.c
-endif
-endif
-
-libcfreport_la_SOURCES = syntax.c
-
-libcfserverd_la_SOURCES = server.c
-
-if MONGO
-noinst_LTLIBRARIES += libcfhub.la
-
-libcfhub_la_SOURCES = \
-        cf-hub.c \
-        cf-hub-maintenance.c \
-        cf-hub-worker.c \
-        cf-hub-scheduled-reports.c cf-hub-scheduled-reports.h
-endif
-
-noinst_LTLIBRARIES += libcfknow.la
-
-libcfknow_la_SOURCES = \
-        cf-know.c \
-        knowledge.c
 
 #
 # Pickup header files here so Automake knows about them
