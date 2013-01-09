@@ -475,18 +475,18 @@ HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t
     return hp;
 }
 
-unsigned int HubPromiseLogHash(const void *record)
+unsigned int HubPromiseLogHash(const void *record, unsigned int max)
 {
     const HubPromiseLog *record_a = (const HubPromiseLog *)record;
 
     unsigned int hash = 0;
     if (record_a->handle)
     {
-        hash += OatHash(record_a->handle);
+        hash += OatHash(record_a->handle, max);
     }
     if (record_a->cause)
     {
-        hash += OatHash(record_a->cause);
+        hash += OatHash(record_a->cause, max);
     }
     return hash;
 }
@@ -1150,7 +1150,7 @@ int HubUserHash(const HubUser *user)
 {
     assert(user);
     assert(user->username);
-    return OatHash(user->username);
+    return OatHash(user->username, CF_HASHTABLESIZE);
 }
 
 bool HubUserEqual(const HubUser *a, const HubUser *b)

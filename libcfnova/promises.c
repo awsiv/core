@@ -110,7 +110,7 @@ void NewPromiser(Promise *pp)
         snprintf(unique, CF_BUFSIZE, "%s: %s", pp->agentsubtype, pp->promiser);
     }
 
-    hash = GetHash(unique);
+    hash = GetHash(unique, CF_HASHTABLESIZE);
 
     if (IsRegex(pp->promiser) && (strchr(pp->promiser, '*') || strchr(pp->promiser, '+')))
     {

@@ -793,7 +793,7 @@ void DeleteHubHostComplianceShifts(HubHostComplianceShifts *record);
 HubVariable *NewHubVariable(HubHost *hh, const char *type, const char *ns, const char *bundle, const char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
 HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t);
-unsigned int HubPromiseLogHash(const void *hp_record);
+unsigned int HubPromiseLogHash(const void *hp_record, unsigned int max);
 bool HubPromiseLogEqual(const void *hp_record_a, const void *hp_record_b);
 void DeleteHubPromiseLog(HubPromiseLog *hp);
 HubPromiseSum *NewHubPromiseSum(HubHost *hh, char *handle, char *cause, int occurences, int hostOccurences);

@@ -1077,7 +1077,7 @@ static Topic *InsertTopic(char *bundle, char *name, char *context)
     char *name_lower = xstrdup(name);
     ToLowerStrInplace(name_lower);
 
-    int slot = GetHash(name_lower);
+    int slot = GetHash(name_lower, CF_HASHTABLESIZE);
 
     free(name_lower);
 
@@ -1318,7 +1318,7 @@ static Topic *TopicExists(char *topic_name, char *topic_context)
     char *topic_name_lowercase = xstrdup(topic_name);
     ToLowerStrInplace(topic_name_lowercase);
 
-    int slot = GetHash(topic_name_lowercase);
+    int slot = GetHash(topic_name_lowercase, CF_HASHTABLESIZE);
 
     free(topic_name_lowercase);
 
@@ -1358,7 +1358,7 @@ int GetTopicPid(char *classified_topic)
 
     char *name_lowercase = xstrdup(name);
 
-    int slot = GetHash(name_lowercase);
+    int slot = GetHash(name_lowercase, CF_HASHTABLESIZE);
 
     free(name_lowercase);
 
