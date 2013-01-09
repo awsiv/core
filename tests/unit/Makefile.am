@@ -21,7 +21,7 @@ check_PROGRAMS = \
 
 if MONGO
 check_LTLIBRARIES += liblastseen.la
-liblastseen_la_SOURCES = ../../src/cf-hub-worker.c
+liblastseen_la_SOURCES = $(top_builddir)/nova/cf-hub/cf-hub-worker.c
 
 check_PROGRAMS += scorecards_test \
         reporting_engine_test \
@@ -57,6 +57,9 @@ db_maintain_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 db_data_unpack_test_SOURCES = $(MOCKERY_SOURCES) db_data_unpack_test.c
 db_data_unpack_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
+lastseen_cache_test_SOURCES = $(MOCKERY_SOURCES) lastseen_cache_test.c
+lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastseen.la
+
 endif
 
 TESTS = $(check_PROGRAMS)
@@ -72,10 +75,3 @@ structure_allocation_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
 file_cache_test_SOURCES = $(MOCKERY_SOURCES) file_cache_test.c
 file_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la
-
-if MONGO
-
-lastseen_cache_test_SOURCES = $(MOCKERY_SOURCES) lastseen_cache_test.c
-lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastseen.la
-
-endif
