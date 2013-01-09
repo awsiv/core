@@ -189,9 +189,9 @@ void Sqlite3_DBClose(sqlite3 *db)
 
 /******************************************************************/
 
-bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg)
+bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *BuildOutputCallback, void *arg_to_callback, char *err_msg)
 {
-    int rc = sqlite3_exec(db, sql, fn_ptr, arg_to_callback, &err_msg);
+    int rc = sqlite3_exec(db, sql, BuildOutputCallback, arg_to_callback, &err_msg);
 
     if( rc != SQLITE_OK )
     {        
