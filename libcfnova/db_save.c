@@ -2434,22 +2434,31 @@ void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_
 
 /*****************************************************************************/
 
-void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted)
+void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted, char *license_type_str)
 {
+    assert(license_type_str);
+
     bson set_op;
     bson_init(&set_op);
     {
         bson_append_start_object(&set_op, "$set");
-        bson_append_start_object(&set_op, cfr_license);
         {
+            bson_append_start_object(&set_op, cfr_license);
             bson_append_long(&set_op, cfr_license_expires, expires);
-            bson_append_long(&set_op, cfr_license_install_time, install_time);
+
+            if (install_time > 0)
+            {
+                bson_append_long(&set_op, cfr_license_install_time, install_time);
+            }
+
             bson_append_string(&set_op, cfr_license_owner, owner);
             bson_append_int(&set_op, cfr_license_granted, num_granted);
             bson_append_int(&set_op, cfr_day, time(NULL));
+            bson_append_string(&set_op, cfr_license_type, license_type_str);
+
+            bson_append_finish_object(&set_op);
         }
-        bson_append_finish_object(&set_op);
-        bson_append_finish_object(&set_op);
+        bson_append_finish_object(&set_op); // $set
     }
     BsonFinish(&set_op);
 

@@ -45,7 +45,7 @@ static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_
 int Nova_HashKey(char *filename, char *buffer, const char *hash);
 static void Nova_LogLicenseStatus(void);
 static bool LicensePublicKeyPath(char path_public_key[MAX_FILENAME], char *path_license);
-
+static void GetEnterpriseLicenseTypeStr(EnterpriseLicenseType license_type, char license_type_str[CF_MAXVARSIZE]);
 
 /*****************************************************************************/
 
@@ -113,7 +113,7 @@ int EnterpriseExpiry(void)
     strcpy(u_year, INTERNAL_EXPIRY_YEAR);
 
     char *license_file_path = LicenseFilePath();
-    EnterpriseLicense license;
+    EnterpriseLicense license = {0};
     bool license_found = false;
 
     if(license_file_path)
@@ -174,12 +174,18 @@ int EnterpriseExpiry(void)
             LICENSES = 0;
             return false;       // Want to be able to bootstrap
         }
+
+        snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
+        NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
     }
     else
     {
         CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
         LICENSES = MAX_FREE_LICENSES;
         snprintf(license.company_name, MAX_COMPANY_NAME + 1, "%s", INTERNAL_EXPIRY_COMPANY);
+
+        license.license_type = ENTERPRISE_LICENSE_TYPE_FREE;
+
         if (hub)
         {
             CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, license.company_name);
@@ -214,8 +220,6 @@ int EnterpriseExpiry(void)
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
 
-    snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
-    NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
 
 #ifdef HAVE_LIBMONGOC
     if (am_policy_server && THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
@@ -230,7 +234,10 @@ int EnterpriseExpiry(void)
                 expiry = mktime(&t);
             }
 
-            CFDB_SaveLicense(&conn, expiry, license.install_timestamp, license.company_name, LICENSES);
+            char license_type_str[CF_MAXVARSIZE] = {0};
+            GetEnterpriseLicenseTypeStr(license.license_type, license_type_str);
+
+            CFDB_SaveLicense(&conn, expiry, license.install_timestamp, license.company_name, LICENSES, license_type_str);
             CFDB_Close(&conn);
         }
     }
@@ -318,6 +325,7 @@ bool LicenseFileParse(EnterpriseLicense *license, char *license_file_path)
     }
 
     license->install_timestamp = sb.st_mtime;
+    license->license_type = ENTERPRISE_LICENSE_TYPE_FULL;
 
     return true;
 }
@@ -714,6 +722,7 @@ int Nova_CheckLicenseWin(char *pos)
     return true;
 }
 
+/*****************************************************************************/
 
 bool LicenseInstall(char *path_source)
 {
@@ -763,6 +772,7 @@ bool LicenseInstall(char *path_source)
     return success;
 }
 
+/*****************************************************************************/
 
 static bool LicensePublicKeyPath(char path_public_key[MAX_FILENAME], char *path_license)
 {
@@ -778,3 +788,22 @@ static bool LicensePublicKeyPath(char path_public_key[MAX_FILENAME], char *path_
 
     return true;
 }
+
+/*****************************************************************************/
+
+static void GetEnterpriseLicenseTypeStr(EnterpriseLicenseType license_type, char license_type_str[CF_MAXVARSIZE])
+{
+    switch (license_type)
+    {
+    case ENTERPRISE_LICENSE_TYPE_FULL:
+        strncpy(license_type_str, "Enterprise", CF_MAXVARSIZE);
+        break;
+
+    case ENTERPRISE_LICENSE_TYPE_FREE:
+    default:
+        strncpy(license_type_str, "Enterprise Free", CF_MAXVARSIZE);
+        break;
+    }
+}
+
+/*****************************************************************************/

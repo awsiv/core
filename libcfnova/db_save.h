@@ -42,7 +42,7 @@ void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int k
                                   int notkept, int num_samples, time_t shift_start,
                                   PromiseContextMode promise_context_mode);
 
-void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted);
+void CFDB_SaveLicense(EnterpriseDB *conn, time_t expires, time_t install_time, const char *owner, size_t num_granted, char *license_type_str);
 void CFDB_SaveLicenseNumberPromised(EnterpriseDB *conn, size_t num_promised);
 void CFDB_SaveLicenseUsage(EnterpriseDB *conn, time_t last_measured, size_t num_samples, size_t min_observed_level,
                            size_t max_observed_level, double mean_usage, double mean_utilization_cumulative,

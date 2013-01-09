@@ -1,5 +1,7 @@
 3.0.x   Removed unused options [-t][-r][-u] from cf-know
 
+3.0.1   $(sys.licenses_installtime) variable removed from "Enterprise Free"
+
 3.0.0	New Reporting Engine: A SQL interface to reports collected by hub.
 
 	We allow all standardised SQL SELECT constructs to query the SQL reports database, with the following additions:
