@@ -45,8 +45,6 @@ void test_wrong_hashing(void **state)
 {
     char header[] = "January-1777777.1 Nova 10001 Hackerz Co";
 
-    unsigned char digest[EVP_MAX_MD_SIZE + 1];
-
     assert_int_equal(Nova_HashKey(pubkey_filename, header, EXPECTED_HASH), 0);
 }
 

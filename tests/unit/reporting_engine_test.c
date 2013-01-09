@@ -74,7 +74,7 @@ static void test_get_column_count(void **state)
                             0
                         };
 
-    sqlite3 *db;
+    sqlite3 *db = NULL;
 
     assert(Sqlite3_DBOpen(&db));
 
