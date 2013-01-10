@@ -14,6 +14,7 @@
 #include "lastseen.h"
 #include "crypto.h"
 #include "files_names.h"
+#include "files_copy.h"
 #include "vars.h"
 #include "conversion.h"
 #include "files_lib.h"

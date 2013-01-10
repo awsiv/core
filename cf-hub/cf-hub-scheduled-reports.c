@@ -15,6 +15,7 @@
 #include "db_query.h"
 #include "conversion.h"
 #include "files_interfaces.h"
+#include "files_copy.h"
 #include "instrumentation.h"
 #include "unix.h"
 #include "cfstream.h"

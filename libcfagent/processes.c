@@ -14,6 +14,7 @@
 #include "files_interfaces.h"
 #include "files_operators.h"
 #include "files_repository.h"
+#include "files_copy.h"
 #include "cfstream.h"
 #include "string_lib.h"
 
