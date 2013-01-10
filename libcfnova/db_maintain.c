@@ -16,6 +16,7 @@
 #include "conversion.h"
 #include "instrumentation.h"
 #include "cfstream.h"
+#include "db_diagnostics.h"
 
 #include <assert.h>
 
@@ -37,6 +38,9 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn);
 
 static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
+/* MongoDB Diagnostics Maintenace */
+static void CFDB_PurgeMongoDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now);
+
 /*****************************************************************************/
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
@@ -56,7 +60,10 @@ void CFDB_Maintenance(EnterpriseDB *dbconn)
     CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
-    CFDB_PurgeDeprecatedVitals(dbconn);    
+    CFDB_PurgeDeprecatedVitals(dbconn);
+
+    /* Hub diagnostics */
+    CFDB_PurgeMongoDiagnostics(dbconn, CF_HUB_PURGESECS, time(NULL));
 }
 
 /*****************************************************************************/
@@ -183,6 +190,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     }
 
     bson_destroy(&b);
+
+    // Diagnostics mongo
+
+    BsonSelectReportFields(&b, 1, diagnostic_dbk_time);
+
+    if (mongo_create_index(conn, diagnostic_db_mongo_coll, &b, 0, NULL) != MONGO_OK)
+    {
+        CfOut(cf_error, "", "!! Could not create index on %s", diagnostic_db_mongo_coll);
+    }
+
+    bson_destroy(&b);
 }
 
 /*****************************************************************************/
@@ -196,6 +214,7 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
                                           MONGO_MON_WK_COLLECTION,
                                           MONGO_MON_YR_COLLECTION,
                                           MONGO_ARCHIVE_COLLECTION,
+                                          diagnostic_db_mongo_coll,
                                           NULL
                                         };
 
@@ -1146,3 +1165,34 @@ static bool CollectionNeedsReindexing(EnterpriseDB *conn, const char* coll)
     return true;
 }
 /*****************************************************************************/
+
+void CFDB_PurgeMongoDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now)
+/*
+ * Deletes old Mongo diagnostics entries.
+ */
+{
+    time_t oldStamp;
+    bson cond;
+
+    oldStamp = now - oldThreshold;
+
+    CfOut(cf_verbose, "", " -> Purge mongo diagnostics");
+
+    bson_init(&cond);
+    {
+        bson_append_start_object(&cond, diagnostic_dbk_time);
+        bson_append_int(&cond, "$lte", oldStamp);
+        bson_append_finish_object(&cond);
+    }
+
+    BsonFinish(&cond);
+
+    if(CFDB_CollectionHasData(conn, diagnostic_db_mongo_coll))
+    {
+        MongoRemove(conn, diagnostic_db_mongo_coll, &cond, NULL);
+        MongoCheckForError(conn,"timed delete host from mongo diagnostic collection",NULL,NULL);
+    }
+
+    bson_destroy(&cond);
+}
+

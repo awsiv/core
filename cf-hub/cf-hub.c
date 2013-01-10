@@ -32,6 +32,7 @@
 #include "logging.h"
 #include "exec_tools.h"
 #include "vars.h"
+#include "db_diagnostics.h"
 
 #include <assert.h>
 
@@ -669,6 +670,10 @@ static void StartHub(void)
             }
         }
 
+        /* Collect Diagnostics */
+        CfOut(cf_verbose, "", "Diagnostics - collecting MongoDB snapshot at %d", (int)start);
+        DiagnosticsMakeMongoSnapshot(start);
+
         if (CFDB_QueryDeleteHostPending())
         {
             DBRefreshHostsListCache(NULL);
@@ -1011,5 +1016,3 @@ static int GetHubSleepSeconds(time_t start)
 
     return sleep_time;
 }
-
-/*********************************************************************/
