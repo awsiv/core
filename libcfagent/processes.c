@@ -18,10 +18,6 @@
 #include "cfstream.h"
 #include "string_lib.h"
 
-#ifdef HAVE_ZONE_H
-# include <zone.h>
-#endif
-
 static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb, const char *handle);
 static int Nova_GetFirstChangePosition(char *file, char *destination);
 static int Nova_FileIsBinary(char *name, int size, int maxsize);
