@@ -29,7 +29,7 @@
 
 void Nova_Initialize()
 {
-#ifdef HAVE_FIPS_MODE_SET
+#ifdef OPENSSL_FIPS
     if (FIPS_MODE && !FIPS_mode_set(1))
     {
         FatalError("Unable to initialize validated FIPS mode");
