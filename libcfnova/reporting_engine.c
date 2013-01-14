@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 8
+#define SQL_TABLE_COUNT 9
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -30,6 +30,7 @@
 #define SQL_TABLE_SOFTWARE "Software"
 #define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
+#define SQL_TABLE_PROMISELOGS "PromiseLog"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -80,6 +81,14 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
+#define CREATE_SQL_PROMISELOGS "CREATE TABLE " SQL_TABLE_PROMISELOGS "(" \
+                                       "HostKey VARCHAR(100), " \
+                                       "PromiseHandle VARCHAR(254), " \
+                                       "PromiseLogType VARCHAR(8), " \
+                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "Time BIGINT, " \
+                                       "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -104,6 +113,10 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
                                                             const char *promiser,
                                                             const char *bundle_name,
                                                             const char *promisee);
+
+static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -138,6 +151,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_SOFTWARE,
     SQL_TABLE_PROMISESTATUS,
     SQL_TABLE_PROMISEDEFINITIONS,
+    SQL_TABLE_PROMISELOGS,
     NULL
 };
 
@@ -150,6 +164,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_Software,
     EnterpriseDBToSqlite3_PromiseStatusLast,
     EnterpriseDBToSqlite3_PromiseDefinitions,
+    EnterpriseDBToSqlite3_PromiseLogs,
     NULL
 };
 
@@ -162,6 +177,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_SOFTWARE,
     CREATE_SQL_PROMISESTATUS,
     CREATE_SQL_PROMISEDEFINITIONS,
+    CREATE_SQL_PROMISELOGS,
     NULL
 };
 
@@ -750,6 +766,107 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
     }
 
     return true;
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDBToSqlite3_NotKeptLogs(db, filter);
+    EnterpriseDBToSqlite3_RepairedLogs(db, filter);
+}
+
+/******************************************************************/
+
+#define PROMISELOG_NOTKEPT_IDENTIFIER "N"
+#define PROMISELOG_REPAIRED_IDENTIFIER "R"
+
+static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, NULL, PROMISE_LOG_STATE_NOTKEPT, NULL, false, NULL,
+                                        0, time(NULL), false, filter, NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseLog *hp = (HubPromiseLog *) rp->item;
+
+        char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(hp->cause), '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
+                 SQL_TABLE_PROMISELOGS,
+                 SkipHashType(hp->hh->keyhash),
+                 NULLStringToEmpty(hp->handle),
+                 PROMISELOG_NOTKEPT_IDENTIFIER,
+                 cause_escaped,
+                 hp->t);
+
+        free(cause_escaped);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromiseLog);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, NULL, PROMISE_LOG_STATE_REPAIRED, NULL, false, NULL,
+                                        0, time(NULL), false, filter, NULL, PROMISE_CONTEXT_MODE_ALL, NULL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseLog *hp = (HubPromiseLog *) rp->item;
+
+        char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(hp->cause), '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
+                 SQL_TABLE_PROMISELOGS,
+                 SkipHashType(hp->hh->keyhash),
+                 NULLStringToEmpty(hp->handle),
+                 PROMISELOG_REPAIRED_IDENTIFIER,
+                 cause_escaped,
+                 hp->t);
+
+        free(cause_escaped);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromiseLog);
 }
 
 /******************************************************************/
