@@ -18,6 +18,7 @@
 #include "cfstream.h"
 #include "communication.h"
 #include "ontology.h"
+#include "vars.h"
 #include "generic_agent.h" // ControlBodyConstraints
 
 #include "bson_lib.h"

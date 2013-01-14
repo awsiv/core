@@ -16,6 +16,7 @@
 #include "string_lib.h"
 #include "communication.h"
 #include "logging.h"
+#include "vars.h"
 
 #include <assert.h>
 

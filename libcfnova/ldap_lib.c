@@ -14,6 +14,7 @@
 #include "item_lib.h"
 #include "matching.h"
 #include "cfstream.h"
+#include "vars.h"
 
 #ifdef HAVE_LIBLDAP
 

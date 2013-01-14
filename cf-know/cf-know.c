@@ -42,6 +42,7 @@
 #include "string_lib.h"
 #include "logging.h"
 #include "topicmap.h"
+#include "vars.h"
 
 #include <assert.h>
 

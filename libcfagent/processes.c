@@ -12,9 +12,9 @@
 #include "files_lib.h"
 #include "files_names.h"
 #include "files_interfaces.h"
-#include "files_operators.h"
 #include "files_repository.h"
 #include "files_copy.h"
+#include "verify_files_utils.h"
 #include "cfstream.h"
 #include "string_lib.h"
 

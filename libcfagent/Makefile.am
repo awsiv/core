@@ -10,7 +10,7 @@ LDADD = $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/libpromis
 INCLUDES = $(OPENSSL_LIB_CPPFLAGS)
 AM_LDFLAGS = $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
-AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../libcfnova -I$(srcdir)/../sqlite3
+AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../../core/cf-agent -I$(srcdir)/../libcfnova -I$(srcdir)/../sqlite3
 
 noinst_LTLIBRARIES = libcfagent.la
 

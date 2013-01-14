@@ -30,6 +30,7 @@
 #include "logging.h"
 #include "string_lib.h"
 #include "exec_tools.h"
+#include "unix.h"
 
 typedef struct
 {

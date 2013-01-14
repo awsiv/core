@@ -20,6 +20,7 @@
 #include "unix.h"
 #include "cfstream.h"
 #include "ontology.h"
+#include "vars.h"
 
 #include <assert.h>
 
