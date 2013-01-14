@@ -14,12 +14,6 @@
 #define CF_TIME_SIZE 32
 #define CF_FIPS_SIZE 32
 
-#ifdef HAVE_LIBLDAP
-/* LDAP functionality uses several functions which are only provided if this macro is defined */
-# define LDAP_DEPRECATED 1
-# include <ldap.h>
-#endif
-
 #define CF_INTERNAL_PROMISE_RX_HANDLE "cfe_internal_.*"
 #define CF_INTERNAL_NAMESPACE "cfe_system"
 
