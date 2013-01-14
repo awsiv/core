@@ -1,20 +1,31 @@
+# Working around Automake mishandling of symlinks
 abs_srcdir=@abs_srcdir@
 MKDIR_P=@mkdir_p@
-
 top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_build_builddir)/
 
-AM_CFLAGS = @CFLAGS@ $(LDAP_CFLAGS)
-LDADD = $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/libpromises/libpromises.la
-INCLUDES = $(OPENSSL_LIB_CPPFLAGS)
-AM_LDFLAGS = $(OPENSSL_LIB_LDFLAGS) $(LDAP_LDFLAGS) @LDFLAGS@
-
-AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../../core/cf-serverd -I$(srcdir)/../sqlite3 $(LDAP_CPPFLAGS)
-
 noinst_LTLIBRARIES = libcfnova.la
 
-libcfnova_la_LDFLAGS = -no-undefined
+AM_CPPFLAGS = @CPPFLAGS@ -I$(srcdir)/../../core/libpromises \
+	$(LDAP_CPPFLAGS)
+
+if MONGO
+AM_CPPFLAGS += -I$(srcdir)/../sqlite3
+endif
+
+AM_CFLAGS = @CFLAGS@ \
+	$(LDAP_CFLAGS)
+
+AM_LDFLAGS = @LDFLAGS@ -no-undefined \
+	$(LDAP_LDFLAGS)
+
+libcfnova_la_LIBADD = \
+	$(LDAP_LIBS)
+
+if MONGO
+libcfnova_la_LIBADD += ../sqlite3/libsqlite3.la
+endif
 
 libcfnova_la_SOURCES = \
         cfnova.c \
@@ -46,8 +57,6 @@ libcfnova_la_SOURCES += \
         win_user.c
 endif
 
-libcfnova_la_LIBADD = $(LDAP_LIBS)
-
 if MONGO
 libcfnova_la_SOURCES += \
         bson_hub_conversion.c bson_hub_conversion.h \
@@ -75,45 +84,21 @@ libcfnova_la_SOURCES += \
         web_rbac.c \
         weekly.c \
         yearly.c
+endif
 
-libcfnova_la_LIBADD += ../sqlite3/libsqlite3.la
-else # !MONGO
+if !MONGO
 libcfnova_la_SOURCES += \
 	stubs.c
 endif
 
-#
-# Pickup header files here so Automake knows about them
-#
-
 noinst_HEADERS = \
-        win_disphelper.h cf.nova.h cf.nova.web_api.h
+        win_disphelper.h \
+	cf.nova.h \
+	cf.nova.web_api.h
+
+CLEANFILES = *.gcno *.gcda
 
 #
 # Some basic clean ups
 #
-
 MOSTLYCLEANFILES = *~ *.orig *.rej
-
-#
-# Get everything removed down to where rebuilding requires:
-# "make; make install"
-# 
-
-CLEANFILES = cf3lex.c cf3parse.c cf3parse.h
-
-#
-# Get everything removed down to where rebuilding requires:
-# "configure; make; make install"
-#
-
-DISTCLEANFILES = cflex.c cfparse.c cfparse.h
-
-#
-# Get everything removed down to where rebuilding requires:
-# "aclocal; autoconf; autoheader; automake --add-missing"
-# "configure; make; make install"
-#
-
-MAINTAINERCLEANFILES = Makefile.in stamp-h.in
-

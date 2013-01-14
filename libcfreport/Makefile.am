@@ -1,32 +1,25 @@
+# Working around Automake mishandling of symlinks
 abs_srcdir=@abs_srcdir@
 MKDIR_P=@mkdir_p@
-
 top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_build_builddir)/
 
-AM_CFLAGS = @CFLAGS@
-LDADD = $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/libpromises/libpromises.la
-INCLUDES = $(OPENSSL_LIB_CPPFLAGS)
-AM_LDFLAGS = $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
-
-AM_CPPFLAGS = -I$(srcdir)/../../core/libpromises -I$(srcdir)/../libcfnova -I$(srcdir)/../sqlite3
-
 noinst_LTLIBRARIES = libcfreport.la
 
+AM_CPPFLAGS = @CPPFLAGS@ -I$(srcdir)/../../core/libpromises -I$(srcdir)/../libcfnova
+
+AM_CFLAGS = @CFLAGS@
+
+AM_LDFLAGS = @LDFLAGS@
+
+libcfreport_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
+
 libcfreport_la_SOURCES = syntax.c
+
+CLEANFILES = *.gcno *.gcda
 
 #
 # Some basic clean ups
 #
-
 MOSTLYCLEANFILES = *~ *.orig *.rej
-
-#
-# Get everything removed down to where rebuilding requires:
-# "aclocal; autoconf; autoheader; automake --add-missing"
-# "configure; make; make install"
-#
-
-MAINTAINERCLEANFILES = Makefile.in stamp-h.in
-
