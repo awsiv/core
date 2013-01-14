@@ -5,14 +5,6 @@
 
 */
 
-#include "ldap_lib.h"
-
-#ifdef HAVE_LIBLDAP
-/* LDAP functionality uses several functions which are only provided if this macro is defined */
-# define LDAP_DEPRECATED 1
-# include <ldap.h>
-#endif
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -22,7 +14,11 @@
 #include "cfstream.h"
 #include "vars.h"
 
-#ifdef HAVE_LIBLDAP
+#include "ldap_lib.h"
+
+/* LDAP functionality uses several functions which are only provided if this macro is defined */
+#define LDAP_DEPRECATED 1
+#include <ldap.h>
 
 void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec);
 void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec);
@@ -33,11 +29,6 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
 static int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 static int NovaStr2Scope(const char *scope);
 
-#endif
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
 void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec)
 {
     LDAP *ld;
@@ -212,17 +203,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
     ldap_unbind(ld);
     return return_value;
 }
-#else /* HAVE_LIBLDAP */
-void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec)
-{
-    CfOut(cf_error, "", "LDAP support is disabled");
-    return NULL;
-}
-#endif /* HAVE_LIBLDAP */
 
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
 void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec)
 {
     LDAP *ld;
@@ -387,20 +368,6 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
     ldap_unbind(ld);
     return return_value;
 }
-
-#else /* HAVE_LIBLDAP */
-
-void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec)
-{
-    CfOut(cf_error, "", "LDAP support is disabled");
-    return NULL;
-}
-
-#endif /* HAVE_LIBLDAP */
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
 
 void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scopes, char *sec)
 {
@@ -585,20 +552,6 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
     return return_value;
 }
 
-#else /* HAVE_LIBLDAP */
-
-void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scopes, char *sec)
-{
-    CfOut(cf_error, "", "LDAP support is disabled");
-    return NULL;
-}
-
-#endif /* HAVE_LIBLDAP */
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
-
 void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes, char *regex, char *sec)
 {
     LDAP *ld;
@@ -774,20 +727,6 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
     return return_value;
 }
-
-#else /* HAVE_LIBLDAP */
-
-void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes, char *regex, char *sec)
-{
-    CfOut(cf_error, "", "LDAP support is disabled");
-    return NULL;
-}
-
-#endif /* HAVE_LIBLDAP */
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
 
 bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, const char *authentication_method, bool starttls,
                         time_t timeout_seconds, const char **const errstr)
@@ -1007,25 +946,6 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
     return return_value;
 }
 
-#else /* HAVE_LIBLDAP */
-
-Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password, const char *uri, const char *authdn, const char *basedn, const char *filter,
-                                     const char *attribute_name, const char *scopes, const char *security, bool start_tls,
-                                     size_t page, size_t count, const char **const errstr)
-{
-    CfOut(cf_error, "", "LDAP support is disabled");
-    *errstr = "LDAP support is disabled";
-    return 0;
-}
-
-#endif /* HAVE_LIBLDAP */
-
-/*****************************************************************************/
-/* Level                                                                     */
-/*****************************************************************************/
-
-#ifdef HAVE_LIBLDAP
-
 static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seconds, const char **const errstr)
 {
     LDAP *ld;
@@ -1181,6 +1101,3 @@ static int NovaStr2Scope(const char *scope)
 
     return LDAP_SCOPE_SUBTREE;
 }
-
-
-#endif

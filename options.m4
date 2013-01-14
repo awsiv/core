@@ -70,6 +70,8 @@ if test "x$with_ldap" != xno; then
    ])
 fi
 
+AM_CONDITIONAL(LDAP, test "x$ac_cv_lib_ldap_ldap_get_values_len" = xyes)
+
 AC_ARG_WITH([enterprise-api],
     [AS_HELP_STRING([--with-enterprise-api[[=PATH]]], [enable Enterprise API using path to locate php-config])],
     [], [with_enterprise_api=check])

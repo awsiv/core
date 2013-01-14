@@ -91,6 +91,16 @@ libcfnova_la_SOURCES += \
 	stubs.c
 endif
 
+if LDAP
+libcfnova_la_SOURCES += \
+	ldap_lib.c
+endif
+
+if !LDAP
+libcfnova_la_SOURCES += \
+	ldap_lib_stubs.c
+endif
+
 noinst_HEADERS = \
         win_disphelper.h \
 	cf.nova.h \
