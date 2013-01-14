@@ -45,7 +45,6 @@ libcfnova_la_SOURCES += \
         log_win.c \
         registry.c \
         win_api.c \
-        win_disphelper.c \
         win_file.c \
         win_log.c \
         win_mon.c \
@@ -108,7 +107,6 @@ libcfnova_la_SOURCES += \
 endif
 
 noinst_HEADERS = \
-        win_disphelper.h \
 	cf.nova.h \
 	cf.nova.web_api.h
 

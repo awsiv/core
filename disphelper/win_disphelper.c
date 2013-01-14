@@ -28,9 +28,8 @@
  * Project->Project Options->Files.
  */ 
     
-#include "cf3.defs.h"
-#include "cf3.extern.h"
-#include "cf.nova.h"
+#include "platform.h"
+#include "compiler.h"
     
 #define DISPHELPER_INTERNAL_BUILD
 #include <win_disphelper.h>
