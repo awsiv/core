@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 10
+#define SQL_TABLE_COUNT 11
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -32,6 +32,7 @@
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
 #define SQL_TABLE_PROMISELOGS "PromiseLog"
 #define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
+#define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -98,6 +99,13 @@
                                        "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLogs(PromiseHandle), " \
                                        "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLogs(PromiseLogReport));"
 
+#define CREATE_SQL_BUNDLESTATUS "CREATE TABLE " SQL_TABLE_BUNDLESTATUS "(" \
+                                       "HostKey VARCHAR(100), " \
+                                       "Bundle VARCHAR(254), " \
+                                       "PercentageCompliance REAL, " \
+                                       "CheckTimeStamp BIGINT, " \
+                                       "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -130,6 +138,8 @@ static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *fil
 static void EnterpriseDBToSqlite3_PromiseSummary(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilter *filter);
+
+static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -166,6 +176,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_PROMISEDEFINITIONS,
     SQL_TABLE_PROMISELOGS,
     SQL_TABLE_PROMISE_SUMMARY,
+    SQL_TABLE_BUNDLESTATUS,
     NULL
 };
 
@@ -180,6 +191,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_PromiseDefinitions,
     EnterpriseDBToSqlite3_PromiseLogs,
     EnterpriseDBToSqlite3_PromiseSummary,
+    EnterpriseDBToSqlite3_BundleStatus,
     NULL
 };
 
@@ -194,6 +206,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_PROMISEDEFINITIONS,
     CREATE_SQL_PROMISELOGS,
     CREATE_SQL_PROMISE_SUMMARY,
+    CREATE_SQL_BUNDLESTATUS,
     NULL
 };
 
@@ -981,6 +994,46 @@ static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilte
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseSum);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, NULL, NULL, filter,
+                                   PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubBundleSeen *hb = (HubBundleSeen *) rp->item;
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
+                 SQL_TABLE_BUNDLESTATUS,
+                 NULLStringToEmpty(hb->hh->keyhash),
+                 NULLStringToEmpty(hb->bundle),
+                 (hb->bundlecomp * 100.0),
+                 hb->t);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubBundleSeen);
 }
 
 /******************************************************************/
