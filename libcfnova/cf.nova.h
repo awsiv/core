@@ -1647,8 +1647,4 @@ typedef struct
 #define CFRID_BENCHMARKS "benchmarks"
 #define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
 
-#ifdef HAVE_CONSTELLATION
-# include <cf.constellation.h>
-#endif
-
 #endif
