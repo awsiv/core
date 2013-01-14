@@ -9,7 +9,7 @@
 
 #include <platform.h>
 
-#ifdef MINGW
+#ifdef __MINGW32__
 #define	LOG_EMERG	0	/* system is unusable */
 #define	LOG_ALERT	1	/* action must be taken immediately */
 #define	LOG_CRIT	2	/* critical conditions */

@@ -42,6 +42,7 @@ libcfnova_la_SOURCES = \
 if NT
 libcfnova_la_SOURCES += \
         acl_nt.c \
+        log_win.c \
         registry.c \
         win_api.c \
         win_disphelper.c \
@@ -55,6 +56,11 @@ libcfnova_la_SOURCES += \
         win_service_exec.c \
         win_sysinfo.c \
         win_user.c
+endif
+
+if !NT
+libcfnova_la_SOURCES += \
+        log_syslog.c
 endif
 
 if MONGO
