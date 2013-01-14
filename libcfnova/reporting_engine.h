@@ -4,8 +4,8 @@
 
 */
 
-#ifndef REPORTING_ENGINE_H
-#define REPORTING_ENGINE_H
+#ifndef CFENGINE_REPORTING_ENGINE_H
+#define CFENGINE_REPORTING_ENGINE_H
 
 #include "cf.nova.h"
 #include "install.h"

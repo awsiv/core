@@ -4,8 +4,8 @@
 
 */
 
-#ifndef PHP_CFMOD_H
-#define PHP_CFMOD_H
+#ifndef CFENGINE_PHP_CFMOD_H
+#define CFENGINE_PHP_CFMOD_H
 
 #ifdef HAVE_CONFIG_H
 # include "conf.h"
