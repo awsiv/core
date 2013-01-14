@@ -215,7 +215,7 @@ typedef struct
 
 /*******************************************************************/
 
-#ifdef MINGW
+#ifdef __MINGW32__
 
 # define EVENTSOURCE_NAME "Cfengine Nova"       // appears in e.g. Event Viewer
 # define EVENTSOURCE_HKLM_REGPATH "SYSTEM\\CurrentControlSet\\Services\\Eventlog\\System\\" EVENTSOURCE_NAME
@@ -699,12 +699,12 @@ typedef enum
 
 /* Valid ACL syntax values, from documentation */
 
-#ifdef MINGW
+#ifdef __MINGW32__
 # define CF_GENERIC_READ_NT (FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | READ_CONTROL)
 # define CF_GENERIC_WRITE_NT (FILE_WRITE_DATA | FILE_APPEND_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA)
 # define CF_GENERIC_EXECUTE_NT (FILE_EXECUTE)
 # define CF_MINIMUM_PERMS_NT (SYNCHRONIZE)      // access is always denied if synchronize is not set
-#endif /* MINGW */
+#endif /* __MINGW32__ */
 
 /************************************************************************************/
 /* Prototypes                                                                       */
@@ -714,7 +714,7 @@ typedef enum
 
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp);
 
-#ifdef MINGW
+#ifdef __MINGW32__
 int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_acl_method method, Attributes a,
                      Promise *pp);
 int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method,
@@ -733,7 +733,7 @@ void Nova_FreeSids(EXPLICIT_ACCESS *eas, int num);
 int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz);
 int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms);
 ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
-#endif /* MINGW */
+#endif /* __MINGW32__ */
 
 /* cfnova.c */
 
@@ -1036,7 +1036,7 @@ double Num(double x);
 bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *vitalId);
 #endif
 
-#ifdef MINGW
+#ifdef __MINGW32__
 /* win_api.c */
 
 uid_t getuid(void);
@@ -1104,9 +1104,7 @@ int NovaWin_GetSysDir(char *sysDir, int sysDirSz);
 int NovaWin_GetProgDir(char *progDir, int progDirSz);
 int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz);
 
-# if defined(__MINGW32__)
 const char *GetDefaultWorkDir(void);
-# endif
 
 /* win_user.c */
 
@@ -1118,16 +1116,14 @@ int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
 int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
 UidList *NovaWin_Rlist2SidList(Rlist *uidnames);
 
-# if defined(__MINGW32__)
 FnCallResult FnCallUserExists(FnCall *fp, Rlist *finalargs);
 FnCallResult FnCallGroupExists(FnCall *fp, Rlist *finalargs);
-# endif
 
 /* win_wmi.c */
 
 int NovaWin_PackageListInstalledFromAPI(PackageItem ** pkgList, Attributes a, Promise *pp);
 
-#endif /* MINGW */
+#endif /* __MINGW32__ */
 
 /* yearly.c */
 
