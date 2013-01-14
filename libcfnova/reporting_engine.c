@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 9
+#define SQL_TABLE_COUNT 10
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -31,6 +31,7 @@
 #define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
 #define SQL_TABLE_PROMISELOGS "PromiseLog"
+#define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -89,6 +90,14 @@
                                        "Time BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
+#define CREATE_SQL_PROMISE_SUMMARY "CREATE TABLE " SQL_TABLE_PROMISE_SUMMARY "(" \
+                                       "PromiseHandle VARCHAR(254), " \
+                                       "PromiseLogType VARCHAR(8), " \
+                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "Occurrences INT, " \
+                                       "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLogs(PromiseHandle), " \
+                                       "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLogs(PromiseLogReport));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -117,6 +126,10 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
 static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *filter);
+
+static void EnterpriseDBToSqlite3_PromiseSummary(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -152,6 +165,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_PROMISESTATUS,
     SQL_TABLE_PROMISEDEFINITIONS,
     SQL_TABLE_PROMISELOGS,
+    SQL_TABLE_PROMISE_SUMMARY,
     NULL
 };
 
@@ -165,6 +179,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_PromiseStatusLast,
     EnterpriseDBToSqlite3_PromiseDefinitions,
     EnterpriseDBToSqlite3_PromiseLogs,
+    EnterpriseDBToSqlite3_PromiseSummary,
     NULL
 };
 
@@ -178,6 +193,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_PROMISESTATUS,
     CREATE_SQL_PROMISEDEFINITIONS,
     CREATE_SQL_PROMISELOGS,
+    CREATE_SQL_PROMISE_SUMMARY,
     NULL
 };
 
@@ -867,6 +883,104 @@ static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *fil
     }
 
     DeleteHubQuery(hq, DeleteHubPromiseLog);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_PromiseSummary(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDBToSqlite3_RepairedLogsSummary(db, filter);
+    EnterpriseDBToSqlite3_NotKeptLogsSummary(db, filter);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, NULL, PROMISE_LOG_STATE_REPAIRED, NULL,
+                                               false, NULL, 0, time(NULL), false,
+                                               filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (const Rlist *rp = hq->records; rp; rp = rp->next)
+    {
+        const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
+
+        char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(record->cause), '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s',%d);",
+                 SQL_TABLE_PROMISE_SUMMARY,
+                 NULLStringToEmpty(record->handle),
+                 PROMISELOG_REPAIRED_IDENTIFIER,
+                 cause_escaped,
+                 record->occurences);
+
+        free(cause_escaped);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromiseSum);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, NULL, PROMISE_LOG_STATE_NOTKEPT, NULL,
+                                               false, NULL, 0, time(NULL), false,
+                                               filter, PROMISE_CONTEXT_MODE_ALL, NULL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (const Rlist *rp = hq->records; rp; rp = rp->next)
+    {
+        const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
+
+        char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(record->cause), '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s',%d);",
+                 SQL_TABLE_PROMISE_SUMMARY,
+                 NULLStringToEmpty(record->handle),
+                 PROMISELOG_NOTKEPT_IDENTIFIER,
+                 cause_escaped,
+                 record->occurences);
+
+        free(cause_escaped);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubPromiseSum);
 }
 
 /******************************************************************/
