@@ -479,7 +479,6 @@ int SetServerListenState(size_t queue_size)
 
 void TryCollectCall(void)
 {
-# if defined(HAVE_PTHREAD)
     pthread_t tid;
     pthread_attr_t threadattrs;
 
@@ -496,8 +495,6 @@ void TryCollectCall(void)
 
     pthread_create(&tid, &threadattrs, (void *) Nova_DoTryCollectCall, (void *) NULL);
     pthread_attr_destroy(&threadattrs);
-    
-# endif
 }
 
 int ReceiveCollectCall(ServerConnectionState *conn, char *sendbuffer)
