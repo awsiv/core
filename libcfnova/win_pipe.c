@@ -7,7 +7,6 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
-#include "files_operators.h"
 
 #include "cfstream.h"
 #include "pipes.h"
@@ -29,6 +28,32 @@ static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, cha
 static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *childOutWrite, HANDLE *childOutRead);
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle);
 static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
+
+static FILE *CreateEmptyStream()
+{
+    FILE *fp;
+
+    fp = fopen(NULLFILE, "r");
+
+    if (fp == NULL)
+    {
+        CfOut(cf_error, "", "!! Open of NULLFILE failed");
+        return NULL;
+    }
+
+// get to EOF
+    fgetc(fp);
+
+    if (!feof(fp))
+    {
+        CfOut(cf_error, "", "!! Could not create empty stream");
+        fclose(fp);
+        return NULL;
+    }
+
+    return fp;
+}
+
 
 FILE *cf_popen(const char *command, char *type)
 {
