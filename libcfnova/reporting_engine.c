@@ -134,7 +134,6 @@
                                        "CheckTimeStamp BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
-// PatchReportType = I (installed) or A (available)
 #define CREATE_SQL_PATCH "CREATE TABLE " SQL_TABLE_PATCH "(" \
                             "HostKey VARCHAR(100), " \
                             "PatchReportType VARCHAR(8), " \
@@ -863,9 +862,6 @@ static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filt
 
 /******************************************************************/
 
-#define PROMISELOG_NOTKEPT_IDENTIFIER "N"
-#define PROMISELOG_REPAIRED_IDENTIFIER "R"
-
 static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
@@ -893,7 +889,7 @@ static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filt
                  SQL_TABLE_PROMISELOGS,
                  SkipHashType(hp->hh->keyhash),
                  NULLStringToEmpty(hp->handle),
-                 PROMISELOG_NOTKEPT_IDENTIFIER,
+                 LABEL_STATE_NOTKEPT,
                  cause_escaped,
                  hp->t);
 
@@ -938,7 +934,7 @@ static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *fil
                  SQL_TABLE_PROMISELOGS,
                  SkipHashType(hp->hh->keyhash),
                  NULLStringToEmpty(hp->handle),
-                 PROMISELOG_REPAIRED_IDENTIFIER,
+                 LABEL_STATE_REPAIRED,
                  cause_escaped,
                  hp->t);
 
@@ -991,7 +987,7 @@ static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilt
                  "INSERT INTO %s VALUES('%s','%s','%s',%d);",
                  SQL_TABLE_PROMISE_SUMMARY,
                  NULLStringToEmpty(record->handle),
-                 PROMISELOG_REPAIRED_IDENTIFIER,
+                 LABEL_STATE_REPAIRED,
                  cause_escaped,
                  record->occurences);
 
@@ -1036,7 +1032,7 @@ static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilte
                  "INSERT INTO %s VALUES('%s','%s','%s',%d);",
                  SQL_TABLE_PROMISE_SUMMARY,
                  NULLStringToEmpty(record->handle),
-                 PROMISELOG_NOTKEPT_IDENTIFIER,
+                 LABEL_STATE_NOTKEPT,
                  cause_escaped,
                  record->occurences);
 
@@ -1237,8 +1233,8 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
 
 
 /******************************************************************/
-#define PATCH_INSTALLED_IDENTIFIER "I" // Installed
-#define PATCH_AVAILABLE_IDENTIFIER "A" // Available
+static const char *LABEL_PATCH_INSTALLED = "Installed";
+static const char *LABEL_PATCH_AVAILABLE = "Available";
 
 static void EnterpriseDBToSqlite3_Patch(sqlite3 *db, HostClassFilter *filter)
 {
@@ -1272,7 +1268,7 @@ static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *f
                  "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
                  SQL_TABLE_PATCH,
                  SkipHashType(hs->hh->keyhash),
-                 PATCH_INSTALLED_IDENTIFIER,
+                 LABEL_PATCH_INSTALLED,
                  NULLStringToEmpty(hs->name),
                  NULLStringToEmpty(hs->version),
                  Nova_LongArch(hs->arch));
@@ -1314,7 +1310,7 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
                  "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
                  SQL_TABLE_PATCH,
                  SkipHashType(hs->hh->keyhash),
-                 PATCH_AVAILABLE_IDENTIFIER,
+                 LABEL_PATCH_AVAILABLE,
                  NULLStringToEmpty(hs->name),
                  NULLStringToEmpty(hs->version),
                  Nova_LongArch(hs->arch));
