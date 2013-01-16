@@ -41,7 +41,6 @@ libcfnova_la_SOURCES = \
 
 if NT
 libcfnova_la_SOURCES += \
-        acl_nt.c \
         log_win.c \
         registry.c \
         win_api.c \

@@ -14,7 +14,7 @@ AM_CFLAGS = @CFLAGS@
 
 AM_LDFLAGS = @LDFLAGS@
 
-libcfagent_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
+libcfagent_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
 
 if NT
 libcfagent_la_LIBADD += ../disphelper/libdisphelper.la
@@ -25,6 +25,7 @@ libcfagent_la_SOURCES = \
 
 if NT
 libcfagent_la_SOURCES += \
+        acl_nt.c \
 	win_wmi.c \
 	win_services.c
 else
