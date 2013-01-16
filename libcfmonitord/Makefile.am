@@ -13,7 +13,7 @@ AM_CFLAGS = @CFLAGS@
 
 AM_LDFLAGS = @LDLAGS@
 
-libcfmonitord_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
+libcfmonitord_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 libcfmonitord_la_SOURCES = \
         probes.c \

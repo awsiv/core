@@ -14,7 +14,7 @@ AM_CFLAGS = @CFLAGS@
 
 AM_LDFLAGS = @LDFLAGS@
 
-libcfserverd_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
+libcfserverd_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 libcfserverd_la_SOURCES = server.c
 

@@ -13,7 +13,7 @@ AM_CFLAGS = @CFLAGS@
 
 AM_LDFLAGS = @LDFLAGS@
 
-libcfreport_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
+libcfreport_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 libcfreport_la_SOURCES = syntax.c
 
