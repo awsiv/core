@@ -163,6 +163,7 @@ See separate INSTALL file for instructions.
 
 
 KNOWN ISSUES:
+* Windows packages are not provided for this release, please use Enterprise 2.2.3 packages (fully compatible with Enterpise 2.2.4)
 * ACL posix library not included in package
 * Software and patches available/status reports containing maximum 5-minute old data: will only apply to clients that are upgraded to 2.2.x.
 * Compliance by bundle reports are incompatible with older clients (CFEngine Nova 2.1.4 and down). Data with a timestamp prior to upgrade to 2.2.x will not be shown in the reports.
