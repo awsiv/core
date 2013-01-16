@@ -22,6 +22,7 @@
 #include "reporting.h"
 #include "string_lib.h"
 #include "logging.h"
+#include "generic_agent.h"
 
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE statusHandle;

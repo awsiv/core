@@ -15,6 +15,7 @@
 #include "logging.h"
 
 #include "win_disphelper.h"
+#include "verify_packages.h"
 
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
 
