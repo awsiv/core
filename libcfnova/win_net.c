@@ -14,6 +14,7 @@
 #include "item_lib.h"
 #include "communication.h"
 #include "logging.h"
+#include "vars.h"
 
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
