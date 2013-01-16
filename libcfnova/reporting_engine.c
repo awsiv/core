@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 12
+#define SQL_TABLE_COUNT 13
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -34,6 +34,7 @@
 #define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
+#define SQL_TABLE_LASTSEEN "LastSeen"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -114,6 +115,14 @@
                                        "CheckTimeStamp BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
+#define CREATE_SQL_LASTSEEN "CREATE TABLE " SQL_TABLE_LASTSEEN "(" \
+                                       "HostKey VARCHAR(100), " \
+                                       "LastSeenDirection VARCHAR(254), " \
+                                       "RemoteHostKey REAL, " \
+                                       "LastSeenAt BIGINT, " \
+                                       "LastSeenInterval INT, " \
+                                       "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -149,6 +158,7 @@ static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilt
 
 static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -187,6 +197,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_PROMISE_SUMMARY,
     SQL_TABLE_BUNDLESTATUS,
     SQL_TABLE_BENCHMARKS,
+    SQL_TABLE_LASTSEEN,
     NULL
 };
 
@@ -203,6 +214,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_PromiseSummary,
     EnterpriseDBToSqlite3_BundleStatus,
     EnterpriseDBToSqlite3_Benchmarks,
+    EnterpriseDBToSqlite3_LastSeen,
     NULL
 };
 
@@ -219,6 +231,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_PROMISE_SUMMARY,
     CREATE_SQL_BUNDLESTATUS,
     CREATE_SQL_BENCHMARKS,
+    CREATE_SQL_LASTSEEN,
     NULL
 };
 
@@ -1088,6 +1101,64 @@ static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filte
     }
 
     DeleteHubQuery(hq, DeleteHubPerformance);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, NULL, NULL, NULL, NULL, -1.0, 0, time(NULL),
+                                      filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+
+    for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        const HubLastSeen *hl = (HubLastSeen *) rp->item;
+
+        char inout[CF_SMALLBUF];
+        switch (hl->direction)
+        {
+        case LAST_SEEN_DIRECTION_OUTGOING:
+            snprintf(inout, CF_SMALLBUF, "Out");
+            break;
+
+        case LAST_SEEN_DIRECTION_INCOMING:
+            snprintf(inout, CF_SMALLBUF, "In");
+            break;
+
+        default:
+            snprintf(inout, CF_SMALLBUF, "Unknown");
+            break;
+        }
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,%d);",
+                 SQL_TABLE_LASTSEEN,
+                 NULLStringToEmpty(hl->hh->keyhash),
+                 inout,
+                 NULLStringToEmpty(hl->rhost->keyhash),
+                 hl->t,
+                 (int)(hl->hrsago * SECONDS_PER_HOUR));
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubLastSeen);
 }
 
 /******************************************************************/
