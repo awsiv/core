@@ -3002,7 +3002,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname,
                     {
                         found = true;
 
-                        HubFileDiff *hD = NewHubFileDiff(hh, rname, rdiff, timestamp);
+                        HubFileDiff *hD = NewHubFileDiff(hh, rhandle, rname, rdiff, timestamp);
                         if (wr_info)
                         {
                             ExportWebReportUpdate( writer, (void *) hD, HubFileDiffToCSV, wr_info);

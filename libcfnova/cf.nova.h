@@ -344,7 +344,8 @@ typedef struct
     HubHost *hh;
     char *path;
     char *diff;
-    time_t t;
+    char *promise_handle;
+    time_t t;    
 } HubFileDiff;
 
 typedef struct
@@ -814,7 +815,7 @@ HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg
 void DeleteHubBundleSeen(HubBundleSeen *hp);
 HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle, char change_type, char *change_msg);
 void DeleteHubFileChanges(HubFileChanges *hp);
-HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
+HubFileDiff *NewHubFileDiff(HubHost *hh, char *promise_handle, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle);
 void DeleteHubValue(HubValue *hp);
