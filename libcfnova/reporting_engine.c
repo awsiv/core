@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 15
+#define SQL_TABLE_COUNT 16
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -37,6 +37,7 @@
 #define SQL_TABLE_LASTSEEN "LastSeen"
 #define SQL_TABLE_TOTALCOMPLIANCE "TotalCompliance"
 #define SQL_TABLE_PATCH "Patch"
+#define SQL_TABLE_FILEDIFFS "FileDiffs"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -142,6 +143,19 @@
                             "PatchArchitecture VARCHAR(20), " \
                             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
+#define CREATE_SQL_FILEDIFFS "CREATE TABLE " SQL_TABLE_FILEDIFFS "(" \
+                               "HostKey VARCHAR(100), " \
+                               "PromiseHandle VARCHAR(50), " \
+                               "FileName VARCHAR(400), " \
+                               "ChangeTimeStamp BIGINT, " \
+                               "ChangeType VARCHAR(10), " \
+                               "LineNumber INT, " \
+                               "ChangeDetails VARCHAR(2047), " \
+                               "FOREIGN KEY(PromiseHandle) REFERENCES PromiseDefinitions(PromiseHandle), " \
+                               "FOREIGN KEY(FileName) REFERENCES FileChanges(FileName), " \
+                               "FOREIGN KEY(ChangeTimeStamp) REFERENCES FileChanges(ChangeTimeStamp), " \
+                               "FOREIGN key(HostKey) REFERENCES hosts(HostKey));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -183,6 +197,7 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
 static void EnterpriseDBToSqlite3_Patch(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -224,6 +239,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_LASTSEEN,
     SQL_TABLE_TOTALCOMPLIANCE,
     SQL_TABLE_PATCH,
+    SQL_TABLE_FILEDIFFS,
     NULL
 };
 
@@ -243,6 +259,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_LastSeen,
     EnterpriseDBToSqlite3_TotalCompliance,
     EnterpriseDBToSqlite3_Patch,
+    EnterpriseDBToSqlite3_FileDiffs,
     NULL
 };
 
@@ -262,6 +279,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_LASTSEEN,
     CREATE_SQL_TOTALCOMPLIANCE,
     CREATE_SQL_PATCH,
+    CREATE_SQL_FILEDIFFS,
     NULL
 };
 
@@ -1323,6 +1341,89 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
     }
 
     DeleteHubQuery(hq, DeleteHubSoftware);
+}
+
+/******************************************************************/
+//definitions taken from public_api.c
+
+static const char *LABEL_ADD = "add";
+static const char *LABEL_REMOVE = "remove";
+static const char *LABEL_UNKNOWN = "unknown";
+
+static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, NULL, NULL, NULL, 0, time(NULL),
+                                      filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                      QUERY_FLAG_DISABLE_ALL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+    for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubFileDiff *hd = (HubFileDiff *) rp->item;
+
+        if (!hd->diff)
+        {
+            continue;
+        }
+
+        char tline[CF_BUFSIZE] = { 0 };
+        for (const char *sp = hd->diff; sp && *sp != '\0'; sp += strlen(tline) + 1)
+        {
+            int line = -1;
+            char diff_type = -1;
+
+            char diff[CF_BUFSIZE] = { 0 };
+            sscanf(sp, "%c,%d,%2047[^\n]", &diff_type, &line, diff);
+            sscanf(sp, "%2047[^\n]", tline);
+
+            char diff_type_str[CF_SMALLBUF] = {0};
+            switch (diff_type)
+            {
+            case '+':
+                snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_ADD);
+                break;
+            case '-':
+                snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_REMOVE);
+                break;
+            default:
+                snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_UNKNOWN);
+                break;
+            }
+
+            char *diff_escaped = EscapeCharCopy(diff, '\'', '\'');
+
+            char insert_op[CF_BUFSIZE] = {0};
+            snprintf(insert_op, sizeof(insert_op),
+                     "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
+                     SQL_TABLE_FILEDIFFS,
+                     SkipHashType(hd->hh->keyhash),
+                     NULLStringToEmpty(hd->path),
+                     NULLStringToEmpty(hd->promise_handle),
+                     hd->t,
+                     diff_type_str,
+                     line,
+                     diff_escaped);
+
+            free(diff_escaped);
+
+            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+            {
+                Sqlite3_FreeString(err);
+                return;
+            }
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubFileDiff);
 }
 
 /******************************************************************/
