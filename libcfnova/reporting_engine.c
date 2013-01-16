@@ -21,7 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 
-#define SQL_TABLE_COUNT 13
+#define SQL_TABLE_COUNT 14
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -35,6 +35,7 @@
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
 #define SQL_TABLE_LASTSEEN "LastSeen"
+#define SQL_TABLE_TOTALCOMPLIANCE "TotalCompliance"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -123,6 +124,15 @@
                                        "LastSeenInterval INT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
+#define CREATE_SQL_TOTALCOMPLIANCE "CREATE TABLE " SQL_TABLE_TOTALCOMPLIANCE "(" \
+                                       "HostKey VARCHAR(100), " \
+                                       "PolicyVersion VARCHAR(254), " \
+                                       "TotalKept INT, " \
+                                       "TotalRepaired INT, " \
+                                       "TotalNotKept INT, " \
+                                       "CheckTimeStamp BIGINT, " \
+                                       "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -159,6 +169,8 @@ static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilt
 static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter);
+
+static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *filter);
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
@@ -198,6 +210,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_BUNDLESTATUS,
     SQL_TABLE_BENCHMARKS,
     SQL_TABLE_LASTSEEN,
+    SQL_TABLE_TOTALCOMPLIANCE,
     NULL
 };
 
@@ -215,6 +228,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_BundleStatus,
     EnterpriseDBToSqlite3_Benchmarks,
     EnterpriseDBToSqlite3_LastSeen,
+    EnterpriseDBToSqlite3_TotalCompliance,
     NULL
 };
 
@@ -232,6 +246,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_BUNDLESTATUS,
     CREATE_SQL_BENCHMARKS,
     CREATE_SQL_LASTSEEN,
+    CREATE_SQL_TOTALCOMPLIANCE,
     NULL
 };
 
@@ -1159,6 +1174,49 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
     }
 
     DeleteHubQuery(hq, DeleteHubLastSeen);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *filter)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, NULL, NULL, 0, time(NULL), -1, -1, -1,
+                                             filter, PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
+
+    CFDB_Close(&dbconn);
+
+    char *err = 0;
+
+    for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        const HubTotalCompliance *ht = (HubTotalCompliance *) rp->item;
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s',%d,%d,%d,%ld);",
+                 SQL_TABLE_TOTALCOMPLIANCE,
+                 NULLStringToEmpty(ht->hh->keyhash),
+                 NULLStringToEmpty(ht->version),
+                 ht->kept,
+                 ht->repaired,
+                 ht->notkept,
+                 ht->t);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    DeleteHubQuery(hq, DeleteHubTotalCompliance);
 }
 
 /******************************************************************/
