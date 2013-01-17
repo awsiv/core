@@ -1093,7 +1093,7 @@ static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *fil
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
                  SQL_TABLE_BUNDLESTATUS,
-                 NULLStringToEmpty(hb->hh->keyhash),
+                 SkipHashType(hb->hh->keyhash),
                  NULLStringToEmpty(hb->bundle),
                  (hb->bundlecomp * 100.0),
                  hb->t);
@@ -1135,7 +1135,7 @@ static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filte
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
                  SQL_TABLE_BENCHMARKS,
-                 NULLStringToEmpty(hP->hh->keyhash),
+                 SkipHashType(hP->hh->keyhash),
                  NULLStringToEmpty(hP->event),
                  hP->q,
                  hP->t);
@@ -1192,9 +1192,9 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s','%s',%ld,%d);",
                  SQL_TABLE_LASTSEEN,
-                 NULLStringToEmpty(hl->hh->keyhash),
+                 SkipHashType(hl->hh->keyhash),
                  inout,
-                 NULLStringToEmpty(hl->rhost->keyhash),
+                 SkipHashType(hl->rhost->keyhash),
                  hl->t,
                  (int)(hl->hrsago * SECONDS_PER_HOUR));
 
@@ -1234,7 +1234,7 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s',%d,%d,%d,%ld);",
                  SQL_TABLE_TOTALCOMPLIANCE,
-                 NULLStringToEmpty(ht->hh->keyhash),
+                 SkipHashType(ht->hh->keyhash),
                  NULLStringToEmpty(ht->version),
                  ht->kept,
                  ht->repaired,
