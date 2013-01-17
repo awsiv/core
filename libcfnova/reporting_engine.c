@@ -580,7 +580,7 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err); // add the error message to the return string
-            return;
+            break;
         }
     }
 
@@ -612,6 +612,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
             if (!EnterpriseDBToSqlite3_Variables_Insert(db, hv->hh->keyhash, hv->ns, hv->bundle,
                                                         hv->lval, hv->rval.item, hv->dtype))
             {
+                DeleteHubQuery(hq, DeleteHubVariable);
                 return;
             }
         }
@@ -623,6 +624,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
                                                             hv->bundle, hv->lval, rpv->item,
                                                             hv->dtype))
                 {
+                    DeleteHubQuery(hq, DeleteHubVariable);
                     return;
                 }
             }
@@ -691,7 +693,7 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -728,7 +730,7 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -790,7 +792,7 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -914,9 +916,9 @@ static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filt
         free(cause_escaped);
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-        {
+        {            
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -961,7 +963,7 @@ static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *fil
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1014,7 +1016,7 @@ static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilt
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1059,7 +1061,7 @@ static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilte
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1099,7 +1101,7 @@ static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *fil
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1141,7 +1143,7 @@ static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filte
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1199,7 +1201,7 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1242,7 +1244,7 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1292,9 +1294,9 @@ static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *f
                  Nova_LongArch(hs->arch));
 
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-        {
+        {            
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1336,7 +1338,7 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
         if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
         {
             Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1417,6 +1419,7 @@ static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter
 
             if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
             {
+                DeleteHubQuery(hq, DeleteHubFileDiff);
                 Sqlite3_FreeString(err);
                 return;
             }
