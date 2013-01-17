@@ -17,6 +17,14 @@ static void test_get_table_names(void **state)
                                 "SELECT ContextName FROM FileChanges f, Contexts s",
                                 "SELECT f.FileName, COUNT(*) FROM FileChanges f, Contexts s WHERE f.HostKey=s.HostKey AND f.ChangeTimeStamp>0 AND s.ContextName='linux' GROUP BY f.FileName ORDER BY f.FileName",
                                 "SELECT * FROM Hosts, VARIABLES",
+                                "SELECT * FROM PromiseLog;",
+                                "SELECT * FROM PromiseSummary;",
+                                "SELECT * FROM BundleStatus;",
+                                "SELECT * FROM Benchmarks;",
+                                "SELECT * FROM LastSeen;",
+                                "SELECT * FROM TotalCompliance;",
+                                "SELECT * FROM Patch;",
+                                "SELECT * FROM FileDiffs;",
                                 NULL
                              };
 
@@ -31,6 +39,14 @@ static void test_get_table_names(void **state)
                             "{'FileChanges','Contexts'}",
                             "{'FileChanges','Contexts'}",
                             "{'Variables','Hosts'}",
+                            "{'PromiseLog'}",
+                            "{'PromiseSummary'}",
+                            "{'BundleStatus'}",
+                            "{'Benchmarks'}",
+                            "{'LastSeen'}",
+                            "{'TotalCompliance'}",
+                            "{'Patch'}",
+                            "{'FileDiffs'}",
                             NULL
                          };
 
@@ -60,6 +76,14 @@ static void test_get_column_count(void **state)
                             SQL_TABLE_SOFTWARE,
                             SQL_TABLE_PROMISESTATUS,
                             SQL_TABLE_PROMISEDEFINITIONS,
+                            SQL_TABLE_PROMISELOGS,
+                            SQL_TABLE_PROMISE_SUMMARY,
+                            SQL_TABLE_BUNDLESTATUS,
+                            SQL_TABLE_BENCHMARKS,
+                            SQL_TABLE_LASTSEEN,
+                            SQL_TABLE_TOTALCOMPLIANCE,
+                            SQL_TABLE_PATCH,
+                            SQL_TABLE_FILEDIFFS,
                             NULL
                          };
 
@@ -71,6 +95,14 @@ static void test_get_column_count(void **state)
                             4,  // software
                             4,  // promisestatuslast
                             5,  // promisedefinitions
+                            5,  //promiselog
+                            4,  // promise summary
+                            4,  // bundle status
+                            4,  // benchmarks
+                            5,  // lastseen
+                            6,  // totalcompliance
+                            5,  // patch
+                            7,  // filediffs
                             0
                         };
 
@@ -117,18 +149,34 @@ static void test_validate_column_names(void **state)
                             SQL_TABLE_SOFTWARE,
                             SQL_TABLE_PROMISESTATUS,
                             SQL_TABLE_PROMISEDEFINITIONS,
+                            SQL_TABLE_PROMISELOGS,
+                            SQL_TABLE_PROMISE_SUMMARY,
+                            SQL_TABLE_BUNDLESTATUS,
+                            SQL_TABLE_BENCHMARKS,
+                            SQL_TABLE_LASTSEEN,
+                            SQL_TABLE_TOTALCOMPLIANCE,
+                            SQL_TABLE_PATCH,
+                            SQL_TABLE_FILEDIFFS,
                             NULL
                          };
 
-    const char *column_names[][6] = {
-        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL},        // hosts
-        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL},               // filechanges
-        {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL},                   // contexts
-        {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType"},                        // variables
-        {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL},                   // software
-        {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL},  // promisestatuslast
-        {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL },             // promisedefinitions
-        {NULL, NULL, NULL, NULL, NULL, NULL}
+    const char *column_names[][7] = {
+        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL, NULL},        // hosts
+        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL, NULL},               // filechanges
+        {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL, NULL},                   // contexts
+        {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType", NULL},                        // variables
+        {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL, NULL},                   // software
+        {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL, NULL},  // promisestatuslast
+        {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL},             // promisedefinitions
+        {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL},
+        {"PromiseHandle", "PromiseLogType", "PromiseLogReport", "Occurrences", NULL, NULL, NULL},
+        {"HostKey", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL, NULL},
+        {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL},
+        {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL},
+        {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL},
+        {"HostKey", "PatchReportType", "PatchName", "PatchVersion", "PatchArchitecture", NULL, NULL},
+        {"HostKey", "PromiseHandle", "FileName", "ChangeTimeStamp", "ChangeType", "LineNumber", "ChangeDetails"},
+        {NULL, NULL, NULL, NULL, NULL, NULL, NULL}
     };
 
     sqlite3 *db;

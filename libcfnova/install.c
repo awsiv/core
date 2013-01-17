@@ -726,13 +726,15 @@ void DeleteHubFileChanges(HubFileChanges *hp)
 
 /*****************************************************************************/
 
-HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t)
+HubFileDiff *NewHubFileDiff(HubHost *hh, char *promise_handle, char *file, char *diff, time_t t)
 {
     HubFileDiff *hp;
 
     hp = xmalloc(sizeof(HubFileDiff));
 
     hp->hh = hh;
+
+    hp->promise_handle = SafeStringDuplicate(promise_handle);
     hp->path = SafeStringDuplicate(file);
     hp->diff = SafeStringDuplicate(diff);
     hp->t = t;
@@ -743,6 +745,7 @@ HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t)
 
 void DeleteHubFileDiff(HubFileDiff *hp)
 {
+    free(hp->promise_handle);
     free(hp->path);
     free(hp->diff);
     free(hp);
