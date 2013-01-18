@@ -940,9 +940,17 @@
     "fd" : {
 	"/etc/group@1234567" : {
 	    "t" : 1234567,
-	    "n" : "/etc/group",
+            "h" : "change_management_files_watch_files",
+            "n" : "/etc/group",
 	    "FD" : "+,5,sambashare:x:124:a10021"
-	}
+        },
+
+        "/etc/shadow@1353328163" : {
+            "t" : 1353328163,
+            "h" : "change_management_files_watch_files",
+            "n" : "/etc/shadow",
+            "FD" : "-,30,smmta:*:15659:0:99999:7:::"
+        }
     },
     "vr" : {
     	"sys" : {
