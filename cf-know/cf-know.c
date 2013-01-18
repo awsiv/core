@@ -43,6 +43,7 @@
 #include "logging.h"
 #include "topicmap.h"
 #include "vars.h"
+#include "stories.h"
 
 #include <assert.h>
 

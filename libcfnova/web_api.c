@@ -27,6 +27,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "communication.h"
 #include "pipes.h"
 #include "topicmap.h"
+#include "stories.h"
 
 #include <assert.h>
 
