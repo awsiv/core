@@ -953,13 +953,6 @@ unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned v
 unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value,
                                          time_t timestamp);
 
-/* promise_db.c */
-
-#ifdef HAVE_LIBMONGOC
-void CFDB_SaveExpandedPromise(const Promise *pp);
-void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies);
-#endif
-
 /* promises.c */
 
 const char *Nova_Version(void);

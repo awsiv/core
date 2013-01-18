@@ -27,6 +27,7 @@
 #include "logging.h"
 #include "policy.h"
 #include "generic_agent.h" // OpenCompilationReportFiles
+#include "promise_db.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
