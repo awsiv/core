@@ -30,7 +30,7 @@
 #define SQL_TABLE_SOFTWARE "Software"
 #define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
-#define SQL_TABLE_PROMISELOGS "PromiseLog"
+#define SQL_TABLE_PROMISELOG "PromiseLog"
 #define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
@@ -88,7 +88,7 @@
                                       "Bundle VARCHAR(50), " \
                                       "Promisee VARCHAR(100));"
 
-#define CREATE_SQL_PROMISELOGS "CREATE TABLE " SQL_TABLE_PROMISELOGS "(" \
+#define CREATE_SQL_PROMISELOG "CREATE TABLE " SQL_TABLE_PROMISELOG "(" \
                                        "HostKey VARCHAR(100), " \
                                        "PromiseHandle VARCHAR(254), " \
                                        "PromiseLogType VARCHAR(8), " \
@@ -101,8 +101,8 @@
                                        "PromiseLogType VARCHAR(8), " \
                                        "PromiseLogReport VARCHAR(1024), " \
                                        "Occurrences INT, " \
-                                       "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLogs(PromiseHandle), " \
-                                       "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLogs(PromiseLogReport));"
+                                       "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLog(PromiseHandle), " \
+                                       "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLog(PromiseLogReport));"
 
 #define CREATE_SQL_BUNDLESTATUS "CREATE TABLE " SQL_TABLE_BUNDLESTATUS "(" \
                                        "HostKey VARCHAR(100), " \
@@ -181,9 +181,9 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
                                                             const char *bundle_name,
                                                             const char *promisee);
 
-static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter);
-static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter);
-static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_PromiseLog(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_NotKeptLog(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_RepairedLog(sqlite3 *db, HostClassFilter *filter);
 
 static void EnterpriseDBToSqlite3_PromiseSummary(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilter *filter);
@@ -232,7 +232,7 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_SOFTWARE,
     SQL_TABLE_PROMISESTATUS,
     SQL_TABLE_PROMISEDEFINITIONS,
-    SQL_TABLE_PROMISELOGS,
+    SQL_TABLE_PROMISELOG,
     SQL_TABLE_PROMISE_SUMMARY,
     SQL_TABLE_BUNDLESTATUS,
     SQL_TABLE_BENCHMARKS,
@@ -252,7 +252,7 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_Software,
     EnterpriseDBToSqlite3_PromiseStatusLast,
     EnterpriseDBToSqlite3_PromiseDefinitions,
-    EnterpriseDBToSqlite3_PromiseLogs,
+    EnterpriseDBToSqlite3_PromiseLog,
     EnterpriseDBToSqlite3_PromiseSummary,
     EnterpriseDBToSqlite3_BundleStatus,
     EnterpriseDBToSqlite3_Benchmarks,
@@ -272,7 +272,7 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_SOFTWARE,
     CREATE_SQL_PROMISESTATUS,
     CREATE_SQL_PROMISEDEFINITIONS,
-    CREATE_SQL_PROMISELOGS,
+    CREATE_SQL_PROMISELOG,
     CREATE_SQL_PROMISE_SUMMARY,
     CREATE_SQL_BUNDLESTATUS,
     CREATE_SQL_BENCHMARKS,
@@ -874,15 +874,15 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_PromiseLog(sqlite3 *db, HostClassFilter *filter)
 {
-    EnterpriseDBToSqlite3_NotKeptLogs(db, filter);
-    EnterpriseDBToSqlite3_RepairedLogs(db, filter);
+    EnterpriseDBToSqlite3_NotKeptLog(db, filter);
+    EnterpriseDBToSqlite3_RepairedLog(db, filter);
 }
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_NotKeptLog(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -906,7 +906,7 @@ static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filt
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                 SQL_TABLE_PROMISELOGS,
+                 SQL_TABLE_PROMISELOG,
                  SkipHashType(hp->hh->keyhash),
                  NULLStringToEmpty(hp->handle),
                  LABEL_STATE_NOTKEPT,
@@ -927,7 +927,7 @@ static void EnterpriseDBToSqlite3_NotKeptLogs(sqlite3 *db, HostClassFilter *filt
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_RepairedLog(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -951,7 +951,7 @@ static void EnterpriseDBToSqlite3_RepairedLogs(sqlite3 *db, HostClassFilter *fil
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                 SQL_TABLE_PROMISELOGS,
+                 SQL_TABLE_PROMISELOG,
                  SkipHashType(hp->hh->keyhash),
                  NULLStringToEmpty(hp->handle),
                  LABEL_STATE_REPAIRED,
