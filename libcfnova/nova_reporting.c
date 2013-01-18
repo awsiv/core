@@ -2721,7 +2721,7 @@ void NoteEfficiency(double e)
 
 /*****************************************************************************/
 
-void Nova_TrackExecution()
+void Nova_TrackExecution(const char *input_file)
 {
     CF_DB *dbp = NULL;
     time_t now = time(NULL);
@@ -2730,9 +2730,9 @@ void Nova_TrackExecution()
     double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
 
     /* failsafe + promises double execution exeption */
-    if (strstr(VINPUTFILE, "failsafe.cf") != NULL)
+    if (strstr(input_file, "failsafe.cf") != NULL)
     {
-        CfDebug("TrackExecution: policy file %s SKIPPED\n", VINPUTFILE);
+        CfDebug("TrackExecution: policy file %s SKIPPED\n", input_file);
         return;
     }
 
@@ -2768,5 +2768,5 @@ void Nova_TrackExecution()
 
     CloseDB(dbp);
 
-    CfDebug("TrackExecution: policy file: %s, last_exec: %" PRIdMAX ", avr: %g PASSED\n", VINPUTFILE, (intmax_t)last_exec, gavr);
+    CfDebug("TrackExecution: policy file: %s, last_exec: %" PRIdMAX ", avr: %g PASSED\n", input_file, (intmax_t)last_exec, gavr);
 }

@@ -47,7 +47,7 @@
 #include <assert.h>
 
 static void ThisAgentInit(void);
-static GenericAgentConfig CheckOpts(int argc, char **argv);
+static GenericAgentConfig *CheckOpts(int argc, char **argv);
 
 static void KeepKnowControlPromises(Policy *policy);
 static void KeepKnowledgePromise(Promise *pp);
@@ -171,7 +171,7 @@ static const char *HINTS[] =
 
 int main(int argc, char *argv[])
 {
-    GenericAgentConfig config = CheckOpts(argc, argv);
+    GenericAgentConfig *config = CheckOpts(argc, argv);
     ReportContext *report_context = OpenReports("knowledge");
     Policy *policy = NULL;
 
@@ -272,12 +272,12 @@ int main(int argc, char *argv[])
 /* Level 1                                                                   */
 /*****************************************************************************/
 
-static GenericAgentConfig CheckOpts(int argc, char **argv)
+static GenericAgentConfig *CheckOpts(int argc, char **argv)
 {
     extern char *optarg;
     int optindex = 0;
     int c;
-    GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_KNOW);
+    GenericAgentConfig *config = GenericAgentConfigNewDefault(AGENT_TYPE_KNOW);
 
     LOOKUP = false;
 
@@ -292,7 +292,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 FatalError(" -f used but argument \"%s\" incorrect", optarg);
             }
 
-            SetInputFile(optarg);
+            GenericAgentConfigSetInputFile(config, optarg);
             MINUSF = true;
             break;
 

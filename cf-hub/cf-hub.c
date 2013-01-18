@@ -56,13 +56,13 @@ static char ZENOSS_PATH[CF_BUFSIZE];
 /*******************************************************************/
 
 static void ThisAgentInit(void);
-static GenericAgentConfig CheckOpts(int argc, char **argv);
+static GenericAgentConfig *CheckOpts(int argc, char **argv);
 
 static void StartHub(void);
 static void Nova_CollectReports(void);
 static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
-static void KeepPromises(Policy *policy, GenericAgentConfig config);
+static void KeepPromises(Policy *policy, GenericAgentConfig *config);
 
 static void Nova_Scan(Item *masterlist);
 static pid_t Nova_ScanList(Item *list);
@@ -121,7 +121,7 @@ static const char *HINTS[17] =
 
 int main(int argc, char *argv[])
 {
-    GenericAgentConfig config = CheckOpts(argc, argv);
+    GenericAgentConfig *config = CheckOpts(argc, argv);
 
     ReportContext *report_context = OpenReports("hub");
     Policy *policy = GenericInitialize("hub", config, report_context);
@@ -164,12 +164,12 @@ int main(int argc, char *argv[])
 /* Level 1                                                                   */
 /*****************************************************************************/
 
-static GenericAgentConfig CheckOpts(int argc, char **argv)
+static GenericAgentConfig *CheckOpts(int argc, char **argv)
 {
     extern char *optarg;
     int optindex = 0;
     int c;
-    GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_HUB);
+    GenericAgentConfig *config = GenericAgentConfigNewDefault(AGENT_TYPE_HUB);
 
     while ((c = getopt_long(argc, argv, "acdFf:hiKlMmnsVv", OPTIONS, &optindex)) != EOF)
     {
@@ -199,7 +199,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 FatalError("-f used but argument \"%s\" incorrect", optarg);
             }
 
-            SetInputFile(optarg);
+            GenericAgentConfigSetInputFile(config, optarg);
             MINUSF = true;
             break;
 
@@ -241,7 +241,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             {
                 CheckOpts(argc, argv);
                 ReportContext *report_context = ReportContextNew();
-                InitializeGA(report_context);
+                InitializeGA(config, report_context);
 
                 SplayLongUpdates();
                 ReportContextDestroy(report_context);
@@ -302,7 +302,7 @@ static void ThisAgentInit(void)
 
 /*****************************************************************************/
 
-void KeepPromises(Policy *policy, GenericAgentConfig config)
+void KeepPromises(Policy *policy, GenericAgentConfig *config)
 {
     Constraint *cp;
     Rval retval;

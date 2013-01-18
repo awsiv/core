@@ -969,7 +969,7 @@ void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
 
 /* registry.c */
 
-void Nova_TrackExecution();
+void Nova_TrackExecution(const char *input_file);
 
 /* reporting.c */
 
