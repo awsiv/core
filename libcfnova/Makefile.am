@@ -80,7 +80,7 @@ libcfnova_la_SOURCES += \
         runagent.c \
         reporting_engine.c reporting_engine.h \
         scorecards.c scorecards.h \
-        stories.c \
+        stories.c stories.h \
         topicmap.c topicmap.h \
         web_report_export.c web_report_export.h \
         web_api.c \
