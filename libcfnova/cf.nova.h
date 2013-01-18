@@ -295,14 +295,6 @@ typedef struct
 extern ReportInfo BASIC_REPORTS[];
 
 /*****************************************************************************/
-typedef struct
-{
-    const char *reportId;
-    const char *reportColumnKey;
-    const char *dbKey;
-} ReportColumnInfo;
-
-/*****************************************************************************/
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
