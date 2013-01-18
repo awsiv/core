@@ -964,10 +964,6 @@ void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
 
 void Nova_TrackExecution(const char *input_file);
 
-/* reporting.c */
-
-void Nova_ImportReports(const char *input_file);
-
 /* runagent.c */
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
