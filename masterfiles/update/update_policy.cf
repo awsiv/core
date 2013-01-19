@@ -265,13 +265,13 @@ bundle agent update_policy
 
    "/usr/local/sbin/$(agents)"
                 comment => "Create symlinks of CFE binaries in /usr/local/sbin",
-                 handle => "cfe_internal_update_policy_files_sbin_$(agents)",
+                 handle => canonify("cfe_internal_update_policy_files_sbin_$(agents)"),
       move_obstructions => "true",
               link_from => u_ln_s("$(sys.workdir)/bin/$(agents)");
 
    "/usr/local/sbin/$(agents).cfsaved"
       comment => "Remove all .cfsaved file extension",
-       handle => "cfe_internal_update_policy_files_remove_$(agent)_cfsaved",
+       handle => canonify("cfe_internal_update_policy_files_remove_$(agent)_cfsaved"),
        delete => u_tidy;
 
   am_policy_hub::
