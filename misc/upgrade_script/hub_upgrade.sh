@@ -1,14 +1,15 @@
 #!/bin/sh
 
 # hub_upgrade.sh
-# version 0.0.9
+# version 1.0.0
 #
 #
 # Created by Nakarin Phooripoom on 11/29/12.
 # Copyright 2012 CFEngine AS. All rights reserved.
 #
 # Description:
-#  Script to Upgrade CFEngine 3 Enterprise HUB from version 2.1.x/2.2.x to 3.0.0
+#  Script to Upgrade CFEngine 3 Enterprise HUB 
+#  from version 2.1.x/2.2.x to 3.0.0/3.0.1
 # 
 
 # Simple howto
@@ -21,6 +22,10 @@ if [ $# -eq 0 ] ; then
  echo "-> $ sh $(basename $0) 3.0.0 /tmp  <---- without an ending \"/\" (slash)"
  exit 0
 fi
+
+# Store info to make condition
+VAR1=$1
+VAR2=$2
 
 # Simple check
 if [ -f /etc/debian_version ]; then
@@ -119,6 +124,7 @@ echo ""
 echo "Distrubution: $OS"
 echo "Architecture: $ARCH"
 echo "Version:      $VER"
+echo "Upgrade:   to $VAR1"
 
 # Alert for more info
 sleep 1
@@ -248,22 +254,35 @@ echo "-> Reset default DOCROOT directory. ($DOCROOT)"
 # the best to automate as much as possible.
 sleep 1
 echo ""
-echo -n "-> Have you added custom promises to /var/cfengine/masterfiles/failsafe.cf or /var/cfengine/masterfiles/update.cf? Please type [yes/no]: "
+echo -n "-> Have you ever added custom promises to /var/cfengine/masterfiles/failsafe.cf or /var/cfengine/masterfiles/update.cf? Please type [yes/no]: "
 read ANS
 case $ANS in
 yes)
  echo ""
  echo "-> Prepare a new mongod.conf only."
- mkdir -p $WORKDIR/masterfiles/failsafe
- cp -vf $WORKDIR/share/NovaBase/failsafe/mongod.conf $WORKDIR/masterfiles/failsafe
+ if [ $VAR1 = "3.0.0" ]; then
+  mkdir -p $WORKDIR/masterfiles/failsafe
+  cp -vf $WORKDIR/share/NovaBase/failsafe/mongod.conf $WORKDIR/masterfiles/failsafe
+ fi
+ if [ $VAR1 = "3.0.1" ]; then
+  mkdir -p $WORKDIR/masterfiles/update
+  cp -vf $WORKDIR/share/NovaBase/update/mongod.conf $WORKDIR/masterfiles/update
+ fi
  UPDATE=1
  ;;
 no)
  echo ""
- echo "-> Copy new FAILSAFE files to masterfiles."
- cp -rv $WORKDIR/share/NovaBase/failsafe $WORKDIR/masterfiles
- rm -f $WORKDIR/masterfiles/failsafe.cf
- mv $WORKDIR/masterfiles/failsafe/*.cf $WORKDIR/masterfiles
+ echo "-> Copy new FAILSAFE/UPDATE files to masterfiles."
+ if [ $VAR1 = "3.0.0" ]; then
+  cp -rv $WORKDIR/share/NovaBase/failsafe $WORKDIR/masterfiles
+  rm -f $WORKDIR/masterfiles/failsafe.cf
+  mv $WORKDIR/masterfiles/failsafe/*.cf $WORKDIR/masterfiles
+ fi
+ if [ $VAR1 = "3.0.1" ]; then
+  cp -rv $WORKDIR/share/NovaBase/update $WORKDIR/masterfiles
+  cp -v $WORKDIR/share/NovaBase/update.cf $WORKDIR/masterfiles
+  cp -f $WORKDIR/masterfiles/update.cf $WORKDIR/masterfiles/failsafe.cf
+ fi
  UPDATE=0
  ;;
 *)
@@ -385,12 +404,19 @@ fi
 
 # If we copy share/NovaBase/failsafe then update.cf has to be removed and add
 # update_bins.cf and update_policy.cf instead
-if [ $UPDATE = "0" ]; then
+if [ $UPDATE = "0" -a $VAR1 = "3.0.0" ]; then
  sleep 1
  echo ""
  echo "-> Found update.cf in $WORKDIR/masterfiles/promises.cf"
  echo "   change it to update_policy.cf and update_bins.cf"
  sed -i 's/"update.cf",/"update_bins.cf",\n                    "update_policy.cf",/g' $WORKDIR/masterfiles/promises.cf
+fi
+if [ $UPDATE = "0" -a $VAR1 = "3.0.1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Found update.cf in $WORKDIR/masterfiles/promises.cf"
+ echo "   change it to update_policy.cf and update_bins.cf"
+ sed -i 's/"update.cf",/"update\/update_bins.cf",\n                    "update\/update_policy.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
 
 # Since depends_on is activated in Core 3.4.0, having it there in policy is slightly
@@ -446,7 +472,7 @@ if [ $UPDATE = "0" ]; then
  echo "   to finish the $1 upgrade."
 fi
 
-if [ $UPDATE = "1" ]; then
+if [ $UPDATE = "1" -a $VAR1 = "3.0.0" ]; then
  sleep 1
  echo ""
  echo "-> Your HUB is partially upgraded."
@@ -457,6 +483,17 @@ if [ $UPDATE = "1" ]; then
  echo "   here: https://cfengine.com/otrs/customer.pl"
 fi
 
+if [ $UPDATE = "1" -a $VAR1 = "3.0.1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Your HUB is partially upgraded."
+ echo "-> Please synchronize contents from $WORKDIR/share/NovaBase/update"
+ echo "   to your failsafe/update files manually."
+ echo "-> $WORKDIR/bin/mongod might not be started gracefully."
+ echo "-> Feel free to register a ticket if you need any support."
+ echo "   here: https://cfengine.com/otrs/customer.pl"
+fi
+
 sleep 1
 echo ""
-echo "***** DONE FOR NOW. ENJOY CFENGINE ENTERPRISE 3.0.0! *****"
+echo "***** DONE FOR NOW. ENJOY CFENGINE ENTERPRISE $VAR1! *****"
