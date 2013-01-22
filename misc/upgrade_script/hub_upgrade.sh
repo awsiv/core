@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # hub_upgrade.sh
-# version 1.0.0
+# version 1.0.1
 #
 #
 # Created by Nakarin Phooripoom on 11/29/12.
@@ -462,6 +462,27 @@ if [ $UPDATE = "0" -a $VAR1 = "3.0.1" ]; then
  if [ $? = "1" ]; then
   sed -i 's/\"cfe_internal_update_policy_files_sbin_\$(agents)\",/canonify(\"cfe_internal_update_policy_files_sbin_\$(agents)\"),/g' $WORKDIR/masterfiles/update/update_policy.cf
  fi 
+fi
+
+# Quick and dirty patch to add /var/cfengine/modules
+sleep 1
+grep /modules $WORKDIR/masterfiles/promises.cf > /dev/null 2>&1
+if [ $? = "1" ]; then
+ echo ""
+ echo "-> Quick and dirty patch to add \$(WORKDIR)/modules to server bundle"
+ cat >> $WORKDIR/masterfiles/promises.cf << EOF
+
+bundle server xxxx
+{
+ access:
+  any::
+   "\$(sys.workdir)/modules"
+      comment => "Grant access to modules directory",
+      admit => { ".*\$(def.domain)", @(def.acl) };
+}
+
+#########################################################
+EOF
 fi
 
 # Alert for more info
