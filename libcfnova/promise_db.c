@@ -128,7 +128,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
 
 /*****************************************************************************/
 
-void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
+void CFDB_SaveUnExpandedPromises(const Sequence *bundles, const Body *bodies)
 {
     Rlist *rp;
     Promise *pp;
@@ -149,8 +149,10 @@ void CFDB_SaveUnExpandedPromises(const Bundle *bundles, const Body *bodies)
     bson b;
     MongoRemove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
 
-    for (const Bundle *bp = bundles; bp != NULL; bp = bp->next)
+    for (size_t k = 0; k < SequenceLength(bundles); k++)
     {
+        const Bundle *bp = SequenceAt(bundles, k);
+
         for (const SubType *st = bp->subtypes; st != NULL; st = st->next)
         {
             CfDebug("PROMISE-TYPE: %s\n", st->name);

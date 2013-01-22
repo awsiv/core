@@ -2268,7 +2268,7 @@ ReportContext *Nova_OpenCompilationReportFiles(const char *fname)
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Bundle *bundles, const Body *bodies)
+void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Sequence *bundles, const Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
 
