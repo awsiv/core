@@ -121,10 +121,10 @@ esac
 # Display a bit infomation about the HUB
 echo "***** YOU ARE RUNNING *****"
 echo ""
-echo "Distrubution: $OS"
-echo "Architecture: $ARCH"
-echo "Version:      $VER"
-echo "Upgrade:   to $VAR1"
+echo "Distrubution:  $OS"
+echo "Version:       $VER"
+echo "Architecture:  $ARCH"
+echo "Upgrade to:    $VAR1"
 
 # Alert for more info
 sleep 1
@@ -448,6 +448,21 @@ echo "-> Remove the garbage_collection from $WORKDIR/masterfiles/promises.cf (no
 sed -i '/maintenance.*goal_3/d' $WORKDIR/masterfiles/promises.cf
 sed -i '/comment.*rotation.*Nova/d' $WORKDIR/masterfiles/promises.cf
 sed -i '/usebundle.*garbage_collection/d' $WORKDIR/masterfiles/promises.cf
+
+# Add canonify() to symlink promises. It was reported a problem for 2.2.x clients
+if [ $UPDATE = "0" -a $VAR1 = "3.0.1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Add canonify() function to known problem lines in update/update_policy.cf"
+ grep canonify $WORKDIR/masterfiles/update/update_policy.cf | grep _cfsaved > /dev/null 2>&1
+ if [ $? = "1" ]; then
+  sed -i 's/\"cfe_internal_update_policy_files_remove_\$(agent)_cfsaved\",/canonify(\"cfe_internal_update_policy_files_remove_\$(agent)_cfsaved\"),/g' $WORKDIR/masterfiles/update/update_policy.cf
+ fi
+ grep canonify $WORKDIR/masterfiles/update/update_policy.cf | grep sbin_ > /dev/null 2>&1
+ if [ $? = "1" ]; then
+  sed -i 's/\"cfe_internal_update_policy_files_sbin_\$(agents)\",/canonify(\"cfe_internal_update_policy_files_sbin_\$(agents)\"),/g' $WORKDIR/masterfiles/update/update_policy.cf
+ fi 
+fi
 
 # Alert for more info
 sleep 1
