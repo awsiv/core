@@ -77,7 +77,6 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
     Rlist *class_list = SplitRegexAsRList(pp->classes, "[.!()|&]+", 100, false);
     char *bundlename = NULL, *bodyname = NULL;
-    Constraint *cp;
 
     if (LICENSES == 0)
     {
@@ -167,18 +166,20 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 /* Look for bundles used as promises through methods  -- these are service bundles */
     
     if (strcmp(pp->agentsubtype, "meta") == 0)
-       {
-       for (cp = pp->conlist; cp != NULL; cp = cp->next)
-          {
-          char buffer[CF_BUFSIZE];
+    {
+        for (size_t i = 0; i < SeqLength(pp->conlist); i++)
+        {
+            Constraint *cp = SeqAt(pp->conlist, i);
 
-          PrintRval(buffer, sizeof(buffer), cp->rval);
-          WriterWriteF(writer, "occurrences: \n\n");
-          WriterWriteF(writer, "  \"%s\"  representation => \"literal\",\n", buffer);
-          WriterWriteF(writer, "  about_topics => { \"bundles::%s\"},", pp->bundle);
-          WriterWriteF(writer, "   represents => { \"%s\" }; \n", pp->promiser);
-          }
-       }
+            char buffer[CF_BUFSIZE];
+
+            PrintRval(buffer, sizeof(buffer), cp->rval);
+            WriterWriteF(writer, "occurrences: \n\n");
+            WriterWriteF(writer, "  \"%s\"  representation => \"literal\",\n", buffer);
+            WriterWriteF(writer, "  about_topics => { \"bundles::%s\"},", pp->bundle);
+            WriterWriteF(writer, "   represents => { \"%s\" }; \n", pp->promiser);
+        }
+    }
 
 
     if (strcmp(pp->agentsubtype, "methods") == 0)
@@ -188,9 +189,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         WriterWriteF(writer, "topics: \n\n");
 
         // Look at the unexpanded promise to see the variable refs
-
-        for (cp = pp->conlist; cp != NULL; cp = cp->next)
+        for (size_t i = 0; i < SeqLength(pp->conlist); i++)
         {
+            Constraint *cp = SeqAt(pp->conlist, i);
+
             if (strcmp(cp->lval, "usebundle") == 0)
             {
                 switch (cp->rval.rtype)
@@ -206,8 +208,10 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
             }
         }
 
-        for (cp = pp->org_pp->conlist; cp != NULL; cp = cp->next)
+        for (size_t i = 0; i < SeqLength(pp->org_pp->conlist); i++)
         {
+            Constraint *cp = SeqAt(pp->org_pp->conlist, i);
+
             if (strcmp(cp->lval, "usebundle") == 0)
             {
                 Rlist *allvars = NULL;
@@ -354,13 +358,14 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
     WriterWriteF(writer, "topics: \n\n");
     
-    for (cp = pp->conlist; cp != NULL; cp = cp->next)
+    for (size_t i = 0; i < SeqLength(pp->conlist); i++)
     {
-       
-       WriterWriteF(writer, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
+        Constraint *cp = SeqAt(pp->conlist, i);
+
+        WriterWriteF(writer, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
                KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
-       
-       WriterWriteF(writer, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", NovaEscape(pp->promiser),
+
+        WriterWriteF(writer, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", NovaEscape(pp->promiser),
                KM_AFFECTS_CERT_B,cp->lval, KM_AFFECTS_CERT_F);
     }
     

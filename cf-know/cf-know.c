@@ -393,128 +393,133 @@ static void ThisAgentInit(void)
 
 static void KeepKnowControlPromises(Policy *policy)
 {
-    Constraint *cp;
     Rval retval;
 
-    for (cp = ControlBodyConstraints(policy, AGENT_TYPE_KNOW); cp != NULL; cp = cp->next)
+    Seq *constraints = ControlBodyConstraints(policy, AGENT_TYPE_KNOW);
+    if (constraints)
     {
-    if (IsExcluded(cp->classes, NULL))
+        for (size_t i = 0; i < SeqLength(constraints); i++)
         {
-            continue;
-        }
+            Constraint *cp = SeqAt(constraints, i);
 
-        if (GetVariable("control_knowledge", cp->lval, &retval) == cf_notype)
-        {
-            CfOut(cf_error, "", " !! Unknown lval %s in knowledge control body", cp->lval);
-            continue;
-        }
+            if (IsExcluded(cp->classes, NULL))
+            {
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_tm_prefix].lval) == 0)
-        {
-            CfOut(cf_error, "", "The topic map prefix has been deprecated");
-            continue;
-        }
+            if (GetVariable("control_knowledge", cp->lval, &retval) == cf_notype)
+            {
+                CfOut(cf_error, "", " !! Unknown lval %s in knowledge control body", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_builddir].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_tm_prefix].lval) == 0)
+            {
+                CfOut(cf_error, "", "The topic map prefix has been deprecated");
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_type].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_builddir].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_database].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_type].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_owner].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_database].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_passwd].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_owner].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_server].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_passwd].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_connect_db].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_server].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_engine].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_connect_db].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlbanner].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_engine].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlfooter].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlbanner].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_stylesheet].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlfooter].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_output].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_stylesheet].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_graph_output].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_output].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_views].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_graph_output].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_genman].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_views].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_mandir].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
-            continue;
-        }
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_genman].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                continue;
+            }
 
-        if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_docroot].lval) == 0)
-        {
-            CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
-            continue;
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_mandir].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                continue;
+            }
+
+            if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_docroot].lval) == 0)
+            {
+                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                continue;
+            }
         }
     }
 }

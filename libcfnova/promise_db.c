@@ -22,7 +22,6 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body);
 
 void CFDB_SaveExpandedPromise(const Promise *pp)
 {
-    Constraint *cp;
     char rval_buffer[CF_BUFSIZE];
     static int firstCall = true;
     char jStr[32];
@@ -98,8 +97,10 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     {
         bson_append_start_array(&insert_op, cfp_constraints_exp);
 
-        for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
+        for (size_t i = 0; i < SeqLength(pp->conlist); i++)
         {
+            Constraint *cp = SeqAt(pp->conlist, i);
+
             // comments and handles have their own fields
             if (strcmp(cp->lval, "comment") == 0 || strcmp(cp->lval, "handle") == 0)
             {
@@ -132,9 +133,7 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
 {
     Rlist *rp;
     Promise *pp;
-    Constraint *cp;
     EnterpriseDB dbconn = { 0 };
-    int i, j;
     char iStr[32], jStr[32];
     char rval_buffer[CF_BUFSIZE];
     char con[CF_MAXVARSIZE];
@@ -149,15 +148,16 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
     bson b;
     MongoRemove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
 
-    for (size_t k = 0; k < SeqLength(bundles); k++)
+    for (size_t i = 0; i < SeqLength(bundles); i++)
     {
-        const Bundle *bp = SeqAt(bundles, k);
+        const Bundle *bp = SeqAt(bundles, i);
 
         for (const SubType *st = bp->subtypes; st != NULL; st = st->next)
         {
             CfDebug("PROMISE-TYPE: %s\n", st->name);
 
-            for (pp = st->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
+            size_t j = 0;
+            for (pp = st->promiselist; pp != NULL; pp = pp->next, j++)
             {
                 bson insert_op;
                 bson_init(&insert_op);
@@ -172,17 +172,18 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                 {
                     bson_append_start_array(&insert_op, cfp_bundleargs);
 
-                    for (rp = bp->args, i = 0; rp != NULL; rp = rp->next, i++)
+                    size_t k = 0;
+                    for (rp = bp->args; rp != NULL; rp = rp->next, k++)
                     {
                         CfDebug("   scalar arg %s\n", (char *) rp->item);
-                        snprintf(iStr, sizeof(iStr), "%d", i);
+                        snprintf(iStr, sizeof(iStr), "%ud", (unsigned int)k);
                         bson_append_string(&insert_op, iStr, (char *) rp->item);
                     }
 
                     bson_append_finish_object(&insert_op);
                 }
 
-                snprintf(iStr, sizeof(iStr), "%d", i);
+                snprintf(iStr, sizeof(iStr), "%ud", (unsigned int)j);
                 bson_append_string(&insert_op, cfp_promiser, pp->promiser);
                 bson_append_string(&insert_op, cfp_promisetype, pp->agentsubtype);
                 bson_append_string(&insert_op, cfp_classcontext, pp->classes);
@@ -215,8 +216,10 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                 {
                     bson_append_start_array(&insert_op, cfp_constraints);
 
-                    for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
+                    for (size_t k = 0; k < SeqLength(pp->conlist); k++)
                     {
+                        Constraint *cp = SeqAt(pp->conlist, k);
+
                         // comments and handles have their own fields
                         if (strcmp(cp->lval, "comment") == 0 || strcmp(cp->lval, "handle") == 0)
                         {
@@ -228,9 +231,8 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                         CfDebug("  %s => %s\n", cp->lval, rval_buffer);
 
                         snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
-                        snprintf(jStr, sizeof(jStr), "%d", j);
+                        snprintf(jStr, sizeof(jStr), "%ud", (unsigned int)j);
                         bson_append_string(&insert_op, jStr, con);
-                        j++;
                     }
                     bson_append_finish_object(&insert_op);
                 }
@@ -285,11 +287,9 @@ static void BsonAppendPromisee(bson *b, const Rval *promisee)
 static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
 {
     Rlist *rp;
-    Constraint *cp;
     char classContext[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
     char rval_buffer[CF_BUFSIZE];
     char iStr[32];
-    int i;
 
     bson insert_op;
 
@@ -304,7 +304,8 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
     {
         bson_append_start_array(&insert_op, cfb_bodyargs);
 
-        for (rp = body->args, i = 0; rp != NULL; rp = rp->next, i++)
+        int i = 0;
+        for (rp = body->args; rp != NULL; rp = rp->next, i++)
         {
             CfDebug("%s\n", (char *) rp->item);
             snprintf(iStr, sizeof(iStr), "%d", i);
@@ -331,8 +332,10 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
     {
         bson_append_start_object(&set_op, "$set");
 
-        for (cp = body->conlist; cp != NULL; cp = cp->next)
+        for (size_t i = 0; i < SeqLength(body->conlist); i++)
         {
+            Constraint *cp = SeqAt(body->conlist, i);
+
             if (cp->classes != NULL)
             {
                 // replace illegal key char '.' with  '&'

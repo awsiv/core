@@ -248,31 +248,32 @@ void Nova_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id)
 
 fprintf(fp,"topics:\n");
 
-if (strcmp(pp->agentsubtype,"files") == 0)
-   {
-   Constraint *cp;
-   
-   for (cp = pp->conlist; cp != NULL; cp=cp->next)
-      {
-      if (strcmp("servers",cp->lval) == 0)
-         {
-         for (rp = cp->rval.item; rp != NULL; rp=rp->next)
+    if (strcmp(pp->agentsubtype,"files") == 0)
+    {
+        for (size_t i = 0; i < SeqLength(pp->conlist); i++)
+        {
+            Constraint *cp = SeqAt(pp->conlist, i);
+
+            if (strcmp("servers",cp->lval) == 0)
             {
-            fprintf(fp,"hosts:: \"%s\" comment => \"Host listed as a server in a remote copy promise\";\n", (const char *)rp->item);
-            fprintf(fp,"hosts:: \"%s\" association => a(\"is a remote files server in context\",\"%s\",\"contains files server\");\n", (const char *)rp->item,pp->classes);
+                for (rp = cp->rval.item; rp != NULL; rp=rp->next)
+                {
+                    fprintf(fp,"hosts:: \"%s\" comment => \"Host listed as a server in a remote copy promise\";\n", (const char *)rp->item);
+                    fprintf(fp,"hosts:: \"%s\" association => a(\"is a remote files server in context\",\"%s\",\"contains files server\");\n", (const char *)rp->item,pp->classes);
+                }
             }
-         }
-      }
-   }
+        }
+    }
  
 // Access promises - see if we can figure out which hub we belong to
 
 if (strcmp(pp->agentsubtype,"access") == 0)
    {
-   Constraint *cp;
 
-   for (cp = pp->conlist; cp != NULL; cp=cp->next)
-      {
+    for (size_t i = 0; i < SeqLength(pp->conlist); i++)
+    {
+        Constraint *cp = SeqAt(pp->conlist, i);
+
       if (strcmp("admit",cp->lval) == 0)
          {
          for (rp = cp->rval.item; rp != NULL; rp=rp->next)
@@ -348,10 +349,11 @@ if (strcmp(pp->agentsubtype,"access") == 0)
 
 if (strcmp(pp->agentsubtype,"access") == 0)
    {
-   Constraint *cp;
 
-   for (cp = pp->conlist; cp != NULL; cp=cp->next)
-      {
+   for (size_t i = 0; i < SeqLength(pp->conlist); i++)
+   {
+       Constraint *cp = SeqAt(pp->conlist, i);
+
       if (strcmp("deny",cp->lval) == 0)
          {
          for (rp = cp->rval.item; rp != NULL; rp=rp->next)
@@ -701,30 +703,35 @@ CFDB_Close(&dbconn);
 
 void Nova_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
 
-{ HubClass *hc;
-  HubQuery *hq;
-  Rlist *rp;
-  EnterpriseDB dbconn;
-  Rval retval;
-  Constraint *cp;
+{
+    HubClass *hc;
+    HubQuery *hq;
+    Rlist *rp;
+    EnterpriseDB dbconn;
+    Rval retval;
 
-/* BEGIN query the current classes from this host */
+    /* BEGIN query the current classes from this host */
 
-  // Check for location descriptors - we need this categorization for hierarchy view / spanning tree
+    // Check for location descriptors - we need this categorization for hierarchy view / spanning tree
 
-  for (cp = ControlBodyConstraints(policy, AGENT_TYPE_COMMON); cp != NULL; cp = cp->next)
+    Seq *constraints = ControlBodyConstraints(policy, AGENT_TYPE_COMMON);
+    if (constraints)
     {
-    if (IsExcluded(cp->classes, NULL))
-       {
-       continue;
-       }
+        for (size_t i = 0; i < SeqLength(constraints); i++)
+        {
+            Constraint *cp = SeqAt(constraints, i);
 
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_site_classes].lval, &retval) == cf_notype)
-       {
-       // retval.item is a list of classes that can be considered locations, if defined
-       return;
-       }
-    
+            if (IsExcluded(cp->classes, NULL))
+            {
+                continue;
+            }
+
+            if (GetVariable("control_common", CFG_CONTROLBODY[cfg_site_classes].lval, &retval) == cf_notype)
+            {
+                // retval.item is a list of classes that can be considered locations, if defined
+                return;
+            }
+        }
     }
 
 

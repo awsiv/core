@@ -304,87 +304,91 @@ static void ThisAgentInit(void)
 
 void KeepPromises(Policy *policy, GenericAgentConfig *config)
 {
-    Constraint *cp;
     Rval retval;
 
-    for (cp = ControlBodyConstraints(policy, AGENT_TYPE_HUB); cp != NULL; cp = cp->next)
+    Seq *constraints = ControlBodyConstraints(policy, AGENT_TYPE_HUB);
+    if (constraints)
     {
-        if (IsExcluded(cp->classes, NULL))
+        for (size_t i = 0; i < SeqLength(constraints); i++)
         {
-            continue;
-        }
+            Constraint *cp = SeqAt(constraints, i);
 
-        if (GetVariable("control_hub", cp->lval, &retval) == cf_notype)
-        {
-            CfOut(cf_error, "", "Unknown lval %s in hub control body", cp->lval);
-            continue;
-        }
-
-        if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_schedule].lval) == 0)
-        {
-            Rlist *rp;
-
-            CfDebug("schedule ...\n");
-            DeleteItemList(SCHEDULE);
-            SCHEDULE = NULL;
-
-            for (rp = (Rlist *) retval.item; rp != NULL; rp = rp->next)
+            if (IsExcluded(cp->classes, NULL))
             {
-                if (!IsItemIn(SCHEDULE, rp->item))
+                continue;
+            }
+
+            if (GetVariable("control_hub", cp->lval, &retval) == cf_notype)
+            {
+                CfOut(cf_error, "", "Unknown lval %s in hub control body", cp->lval);
+                continue;
+            }
+
+            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_schedule].lval) == 0)
+            {
+                Rlist *rp;
+
+                CfDebug("schedule ...\n");
+                DeleteItemList(SCHEDULE);
+                SCHEDULE = NULL;
+
+                for (rp = (Rlist *) retval.item; rp != NULL; rp = rp->next)
                 {
-                    AppendItem(&SCHEDULE, rp->item, NULL);
+                    if (!IsItemIn(SCHEDULE, rp->item))
+                    {
+                        AppendItem(&SCHEDULE, rp->item, NULL);
+                    }
                 }
             }
-        }
 
-        if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
-        {
-            Rlist *rp;
-
-            CfDebug("exclude_hosts ...\n");
-            DeleteItemList(EXCLUDE_HOSTS);
-            EXCLUDE_HOSTS = NULL;
-
-            for (rp = (Rlist *) retval.item; rp != NULL; rp = rp->next)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
             {
-                if (!IsItemIn(EXCLUDE_HOSTS, rp->item))
+                Rlist *rp;
+
+                CfDebug("exclude_hosts ...\n");
+                DeleteItemList(EXCLUDE_HOSTS);
+                EXCLUDE_HOSTS = NULL;
+
+                for (rp = (Rlist *) retval.item; rp != NULL; rp = rp->next)
                 {
-                    AppendItem(&EXCLUDE_HOSTS, rp->item, NULL);
+                    if (!IsItemIn(EXCLUDE_HOSTS, rp->item))
+                    {
+                        AppendItem(&EXCLUDE_HOSTS, rp->item, NULL);
+                    }
                 }
             }
-        }
 
-        if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
-        {
-            if (!strcmp((const char *)retval.item, "true") == 0
-                || !strcmp((const char*)retval.item, "false") == 0
-                || !strcmp((const char *)retval.item, "yes") == 0
-                || !strcmp((const char *)retval.item, "no") == 0
-                || !strcmp((const char *)retval.item, "on") == 0
-                || !strcmp((const char *)retval.item, "off") == 0)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
             {
-                CfOut(cf_error, "", "export_zenoss now requires a full path to summary.z file");
-                CFH_ZENOSS = false;
+                if (!strcmp((const char *)retval.item, "true") == 0
+                    || !strcmp((const char*)retval.item, "false") == 0
+                    || !strcmp((const char *)retval.item, "yes") == 0
+                    || !strcmp((const char *)retval.item, "no") == 0
+                    || !strcmp((const char *)retval.item, "on") == 0
+                    || !strcmp((const char *)retval.item, "off") == 0)
+                {
+                    CfOut(cf_error, "", "export_zenoss now requires a full path to summary.z file");
+                    CFH_ZENOSS = false;
+                }
+                else
+                {
+                    CFH_ZENOSS = true;
+                    strlcpy(ZENOSS_PATH, (const char*)retval.item, CF_BUFSIZE);
+                }
+
+                CfOut(cf_verbose, "", "SET export_zenoss = %d\n", CFH_ZENOSS);
+                continue;
             }
-            else
+
+            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_port].lval) == 0)
             {
-                CFH_ZENOSS = true;
-                strlcpy(ZENOSS_PATH, (const char*)retval.item, CF_BUFSIZE);
+                SHORT_CFENGINEPORT = htons((short) Str2Int((const char *) retval.item));
+                strncpy(STR_CFENGINEPORT, (const char *) retval.item, 15);
+                CfOut(cf_verbose, "", "SET default portnumber = %u = %s = %s\n", (int) SHORT_CFENGINEPORT, STR_CFENGINEPORT,
+                      (const char *) retval.item);
+                continue;
             }
-
-            CfOut(cf_verbose, "", "SET export_zenoss = %d\n", CFH_ZENOSS);
-            continue;
         }
-
-        if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_port].lval) == 0)
-        {
-            SHORT_CFENGINEPORT = htons((short) Str2Int((const char *) retval.item));
-            strncpy(STR_CFENGINEPORT, (const char *) retval.item, 15);
-            CfOut(cf_verbose, "", "SET default portnumber = %u = %s = %s\n", (int) SHORT_CFENGINEPORT, STR_CFENGINEPORT,
-                  (const char *) retval.item);
-            continue;
-        }
-
     }
 }
 
