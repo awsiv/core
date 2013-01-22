@@ -66,8 +66,8 @@ bool EnterpriseDBRelease(EnterpriseDB *conn);
 Trinary PHPZvalToTrinary(const zval *bool_or_null);
 bool PHPArrayIsStringArray(const zval *php_array);
 Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty);
-Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty);
-Rlist *StringSequenceToRlist(Sequence *seq);
+Seq *PHPStringArrayToSequence(zval *php_array, bool prune_empty);
+Rlist *StringSequenceToRlist(Seq *seq);
 void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes);
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type);
 

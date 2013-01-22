@@ -1282,7 +1282,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash,
 
 /*****************************************************************************/
 
-Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+Seq *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode)
 {
     bson query;
@@ -1303,7 +1303,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
     bson_destroy(&query);
     bson_destroy(&fields);
 
-    Sequence *records = SequenceCreate(5000, DeleteHubHostComplianceShifts);
+    Seq *records = SeqNew(5000, DeleteHubHostComplianceShifts);
     while (MongoCursorNext(cursor))
     {
         const char *hostkey = NULL;
@@ -1364,7 +1364,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
                 BsonIntGet(&entry, cfr_count, &record->num_samples[shift_slot]);
             }
 
-            SequenceAppend(records, record);
+            SeqAppend(records, record);
         }
     }
 
@@ -4568,7 +4568,7 @@ HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *v
         }
 
         HubVital *vital = NewHubVital(vital_hostkey, vital_id, units, description, MeasurementSlotStart(last_update));
-        vital->q = SequenceCreate(CF_MAX_SLOTS, DeleteHubVitalPoint);
+        vital->q = SeqNew(CF_MAX_SLOTS, DeleteHubVitalPoint);
 
         bson q_arr = { 0 };
         if (BsonArrayGet(record, cfm_q_arr, &q_arr))
@@ -4582,12 +4582,12 @@ HubQuery *CFDB_QueryVital(EnterpriseDB *conn, const char *hostkey, const char *v
                 if (t >= from && t <= to)
                 {
                     double value = bson_iterator_double(q_iter);
-                    SequenceAppend(vital->q, NewHubVitalPoint(t, value));
+                    SeqAppend(vital->q, NewHubVitalPoint(t, value));
                 }
             }
         }
 
-        SequenceSort(vital->q, HubVitalPointCompare, NULL);
+        SeqSort(vital->q, HubVitalPointCompare, NULL);
         PrependRlistAlienUnlocked(&records, vital);
     }
 

@@ -156,16 +156,16 @@ PHP_FUNCTION(cfapi_user_put)
         }
     }
 
-    Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
+    Seq *roles = PHPStringArrayToSequence(roles_arg, true);
 
     cfapi_errid err = ERRID_UNKNOWN;
     if ((err = CFDB_CreateUser(username, username_arg, password, name, email, roles)) != ERRID_SUCCESS)
     {
-        SequenceDestroy(roles);
+        SeqDestroy(roles);
         THROW_GENERIC(err, "Unable to create user");
     }
 
-    SequenceDestroy(roles);
+    SeqDestroy(roles);
     RETURN_BOOL(true);
 }
 
@@ -194,13 +194,13 @@ PHP_FUNCTION(cfapi_user_post)
     ARGUMENT_CHECK_CONTENTS(username_len, "username");
     ARGUMENT_CHECK_CONTENTS(username_arg_len, "username_arg");
 
-    Sequence *roles = PHPStringArrayToSequence(roles_arg, true);
+    Seq *roles = PHPStringArrayToSequence(roles_arg, true);
     cfapi_errid err = CFDB_UpdateUser(username, username_arg,
                                       password_len > 0 ? password : NULL,
                                       name_len > 0 ? name : NULL,
                                       email_len > 0 ? email : NULL,
                                       roles);
-    SequenceDestroy(roles);
+    SeqDestroy(roles);
 
     switch (err)
     {
@@ -370,7 +370,7 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
             THROW_GENERIC(ERRID_ARGUMENT_WRONG, "outputType is not a string array");
         }
 
-        Sequence *output_type_seq = PHPStringArrayToSequence(output_type, true);
+        Seq *output_type_seq = PHPStringArrayToSequence(output_type, true);
         for (size_t i = 0; i < output_type_seq->length; i++)
         {
             const char *value = output_type_seq->data[i];
@@ -384,11 +384,11 @@ PHP_FUNCTION(cfapi_user_subscription_query_put)
             }
             else
             {
-                SequenceDestroy(output_type_seq);
+                SeqDestroy(output_type_seq);
                 THROW_GENERIC(ERRID_ARGUMENT_WRONG, "Invalid output type");
             }
         }
-        SequenceDestroy(output_type_seq);
+        SeqDestroy(output_type_seq);
 
         if (report_output_type == 0)
         {

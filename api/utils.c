@@ -147,7 +147,7 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
     return rp;
 }
 
-Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
+Seq *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
 {
     zval **data;
     HashTable *hash;
@@ -166,7 +166,7 @@ Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
         return NULL;
     }
 
-    Sequence *result = SequenceCreate(100, free);
+    Seq *result = SeqNew(100, free);
     hash = Z_ARRVAL_P(php_array);
 
     for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
@@ -177,7 +177,7 @@ Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
         {
             if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
             {
-                SequenceAppend(result, SafeStringDuplicate(Z_STRVAL_PP(data)));
+                SeqAppend(result, SafeStringDuplicate(Z_STRVAL_PP(data)));
             }
         }
     }
@@ -185,7 +185,7 @@ Sequence *PHPStringArrayToSequence(zval *php_array, bool prune_empty)
     return result;
 }
 
-Rlist *StringSequenceToRlist(Sequence *seq)
+Rlist *StringSequenceToRlist(Seq *seq)
 {
     assert(seq);
     Rlist *list = NULL;

@@ -594,7 +594,7 @@ typedef struct
     char *units;
     char *description;
     time_t last_update;
-    Sequence *q; // HubVitalPoint
+    Seq *q; // HubVitalPoint
 } HubVital;
 
 typedef struct

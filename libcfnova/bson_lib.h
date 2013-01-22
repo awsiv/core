@@ -50,7 +50,7 @@ bool BsonAppendStringAt( bson *b, int pos, const char *value );
 bool BsonAppendRegexNonEmpty(bson *b, const char *key, char *rx_value);
 void BsonAppendStringArray(bson *b, char *array_name, Item *array_values);
 void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rlist);
-void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq);
+void BsonAppendStringArraySequence(bson *b, const char *key, const Seq *string_seq);
 void BsonAppendArrayRegex(bson *b, const char *key, Rlist *rx_values);
 bool BsonAppendHostClassFilter(bson *b, const HostClassFilter *filter);
 bool BsonAppendIncludeList(bson *b, char *key, Rlist *include_values);

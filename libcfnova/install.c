@@ -1052,7 +1052,7 @@ void DeleteHubVital(HubVital *hv)
         free(hv->id);
         free(hv->units);
         free(hv->description);
-        SequenceDestroy(hv->q);
+        SeqDestroy(hv->q);
 
         free(hv);
     }

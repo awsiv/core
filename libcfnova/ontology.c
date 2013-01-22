@@ -1283,9 +1283,9 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     const Policy *policy = PolicyFromPromise(pp);
 
-    for (size_t i = 0; i < SequenceLength(policy->bundles); i++)
+    for (size_t i = 0; i < SeqLength(policy->bundles); i++)
     {
-        Bundle *bp = SequenceAt(policy->bundles, i);
+        Bundle *bp = SeqAt(policy->bundles, i);
 
         for (sp = bp->subtypes; sp != NULL; sp = sp->next)
         {

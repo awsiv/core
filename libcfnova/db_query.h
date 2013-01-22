@@ -51,7 +51,7 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
                                     time_t from, time_t to, int lkept, int lnotkept, int lrepaired,
                                     HostClassFilter *hostClassFilter, PromiseContextMode promise_context_mode,
                                     WebReportFileInfo *wr_info, int db_options);
-Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
+Seq *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                                          PromiseContextMode promise_context_mode);
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const char *ns,
                               const char *bundle, const char *llval, const char *lrval,

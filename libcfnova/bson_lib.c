@@ -540,7 +540,7 @@ void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rl
 
 /*****************************************************************************/
 
-void BsonAppendStringArraySequence(bson *b, const char *key, const Sequence *string_seq)
+void BsonAppendStringArraySequence(bson *b, const char *key, const Seq *string_seq)
 {
     assert( b );
     assert( !b->finished );

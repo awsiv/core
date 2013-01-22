@@ -4302,7 +4302,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
 
     ARGUMENT_CHECK_CONTENTS(username_len);
 
-    Sequence *records = NULL;
+    Seq *records = NULL;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -4358,7 +4358,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
         }
     }
 
-    SequenceDestroy(records);
+    SeqDestroy(records);
 
     time_t to = GetShiftSlotStart(time(NULL));
     time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
