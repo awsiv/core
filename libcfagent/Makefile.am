@@ -14,7 +14,7 @@ AM_CFLAGS = @CFLAGS@
 
 AM_LDFLAGS = @LDFLAGS@
 
-libcfagent_la_LIBADD = $(srcdir)/../../core/libpromises/libpromises.la
+libcfagent_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 if NT
 libcfagent_la_LIBADD += ../disphelper/libdisphelper.la
