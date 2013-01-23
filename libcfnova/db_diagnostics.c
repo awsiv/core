@@ -728,8 +728,11 @@ static void DiagnosticStatusPush(EnterpriseDB *conn, DiagnosticServerStatus *sta
     bson set_op;
     {
         bson_init(&set_op);
-        BsonAppendInt(&set_op, diagnostic_dbk_time, (int)time_id);
-        DiagnosticServerStatusToBson(status, &set_op);
+        BsonAppendStartObject(&set_op, "$set");
+        {
+            DiagnosticServerStatusToBson(status, &set_op);
+        }
+        BsonAppendFinishObject(&set_op);
         BsonFinish(&set_op);
     }
 
@@ -739,7 +742,7 @@ static void DiagnosticStatusPush(EnterpriseDB *conn, DiagnosticServerStatus *sta
     if (err != MONGO_CONN_SUCCESS)
     {
         CfOut(cf_error, "",
-              "Diagnostics: failed to save snapshot (time_id: %d) to database with error code: %d",
+              "Diagnostics: failed to save snapshot (time_id: %ld) to database with error code: %d",
               time_id, err);
     }
 
