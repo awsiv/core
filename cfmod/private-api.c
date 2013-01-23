@@ -1567,47 +1567,6 @@ PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
 
     RETURN_JSON(payload);
 }
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_report_overall_summary)
-{
-    char *userName, *hostkey, *handle, *status, *classreg;
-    char *fhostkey, *fhandle, *fstatus, *fclassreg;
-    int user_len, hk_len, h_len, s_len, cr_len;
-    char buffer[CF_WEBBUFFER];
-    zend_bool regex;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbs",
-                              &userName, &user_len,
-                              &hostkey, &hk_len,
-                              &handle, &h_len, &status, &s_len, &regex, &classreg, &cr_len) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhandle = (h_len == 0) ? NULL : handle;
-    fstatus = (s_len == 0) ? NULL : status;
-    fclassreg = (s_len == 0) ? NULL : classreg;
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    HostClassFilterAddClasses(filter, fclassreg, NULL);
-
-    buffer[0] = '\0';    
-    Nova2PHP_summary_report(fhostkey, fhandle, fstatus, (bool) regex, fclassreg, filter, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-}
 
 /******************************************************************************/
 

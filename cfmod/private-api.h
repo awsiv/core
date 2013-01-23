@@ -64,10 +64,6 @@ PHP_FUNCTION(cfpr_host_meter);
 \endverbatim
  */
 
-// unused
-// portplan: deprecate
-PHP_FUNCTION(cfpr_report_overall_summary);
-
 // made in april 2012, feature for jpmc, replace summary reports
 PHP_FUNCTION(cfpr_hosts_compliance_for_bundles);
 PHP_FUNCTION(cfpr_hosts_compliance_for_promises);

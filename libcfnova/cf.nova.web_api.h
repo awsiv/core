@@ -189,9 +189,6 @@ JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs,
                                        bool regex, time_t from, time_t to,
                                        HostClassFilter *hostClassFilter, PageInfo *page,
                                        PromiseContextMode promise_context);
-int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool regex,
-                            char *classreg, HostClassFilter *hostClassFilter,
-                            char *returnval, int bufsize);
 
 /*
  * Host only reports

@@ -41,7 +41,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_network_speed, NULL)
     PHP_FE(cfpr_summary_meter, NULL)
     PHP_FE(cfpr_host_meter, NULL)
-    PHP_FE(cfpr_report_overall_summary, NULL)
     PHP_FE(cfpr_hosts_compliance_for_bundles, NULL)
     PHP_FE(cfpr_hosts_compliance_for_promises, NULL)
     PHP_FE(cfpr_vitals_list, NULL)
