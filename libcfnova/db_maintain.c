@@ -16,6 +16,7 @@
 #include "conversion.h"
 #include "instrumentation.h"
 #include "cfstream.h"
+#include "db_diagnostics.h"
 
 #include <assert.h>
 
@@ -37,6 +38,9 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn);
 
 static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
+/* MongoDB Diagnostics Maintenace */
+static void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now);
+
 /*****************************************************************************/
 
 void CFDB_Maintenance(EnterpriseDB *dbconn)
@@ -56,7 +60,10 @@ void CFDB_Maintenance(EnterpriseDB *dbconn)
     CFDB_PurgePromiseLogs(dbconn, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeSoftwareInvalidTimestamp(dbconn);
-    CFDB_PurgeDeprecatedVitals(dbconn);    
+    CFDB_PurgeDeprecatedVitals(dbconn);
+
+    /* Hub diagnostics */
+    CFDB_PurgeEnterpriseDiagnostics(dbconn, CF_HUB_PURGESECS, time(NULL));
 }
 
 /*****************************************************************************/
@@ -183,6 +190,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     }
 
     bson_destroy(&b);
+
+    // Diagnostics mongo
+
+    BsonSelectReportFields(&b, 1, diagnostic_dbk_time);
+
+    if (mongo_create_index(conn, diagnostic_db_mongo_coll, &b, 0, NULL) != MONGO_OK)
+    {
+        CfOut(cf_error, "", "!! Could not create index on %s", diagnostic_db_mongo_coll);
+    }
+
+    bson_destroy(&b);
 }
 
 /*****************************************************************************/
@@ -196,6 +214,7 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
                                           MONGO_MON_WK_COLLECTION,
                                           MONGO_MON_YR_COLLECTION,
                                           MONGO_ARCHIVE_COLLECTION,
+                                          diagnostic_db_mongo_coll,
                                           NULL
                                         };
 
@@ -210,13 +229,13 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
 
         bson dropAllCommand;
         bson_init(&dropAllCommand);
-        bson_append_string(&dropAllCommand, "dropIndexes", collection);
-        bson_append_string(&dropAllCommand, "index", "*");
+        BsonAppendString(&dropAllCommand, "dropIndexes", collection);
+        BsonAppendString(&dropAllCommand, "index", "*");
         BsonFinish(&dropAllCommand);
 
         bson result;
 
-        if (mongo_run_command(conn, MONGO_BASE, &dropAllCommand, bson_empty(&result)) != MONGO_OK)
+        if (MongoRunCommand(conn, MONGO_BASE, &dropAllCommand, bson_empty(&result)) != MONGO_OK)
         {
             CfOut(cf_error, "", "mongo_run_command: Could not drop index on collection %s", collection);
         }
@@ -245,21 +264,21 @@ static void DeleteFromBsonArray(bson *bb, char *arrName, Item *elements)
     }
 
     {
-        bson_append_start_object(bb, "$pullAll");
+        BsonAppendStartObject(bb, "$pullAll");
 
         {
-            bson_append_start_array(bb, arrName);
+            BsonAppendStartArray(bb, arrName);
 
             for (ip = elements, i = 0; ip != NULL; ip = ip->next, i++)
             {
                 snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_string(bb, iStr, ip->name);
+                BsonAppendString(bb, iStr, ip->name);
             }
 
-            bson_append_finish_object(bb);
+            BsonAppendFinishArray(bb);
         }
 
-        bson_append_finish_object(bb);
+        BsonAppendFinishObject(bb);
     }
 }
 
@@ -281,7 +300,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     CfOut(cf_verbose, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+    BsonAppendString(&query, cfr_keyhash, hostkey);
     BsonFinish(&query);
 
     // only retrieve the purgable reports
@@ -332,21 +351,21 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
 
         bson hostQuery;
         bson_init(&hostQuery);
-        bson_append_string(&hostQuery, cfr_keyhash, keyHash);
+        BsonAppendString(&hostQuery, cfr_keyhash, keyHash);
         BsonFinish(&hostQuery);
 
         // keys
         bson op;
         bson_init(&op);
         {
-            bson_append_start_object(&op, "$unset");
+            BsonAppendStartObject(&op, "$unset");
 
             for (ip = purgeKeys; ip != NULL; ip = ip->next)
             {
-                bson_append_int(&op, ip->name, 1);
+                BsonAppendInt(&op, ip->name, 1);
             }
 
-            bson_append_finish_object(&op);
+            BsonAppendFinishObject(&op);
         }
 
         // key array elements
@@ -397,7 +416,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
     CfOut(cf_verbose, "", " -> Purge longterm reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+    BsonAppendString(&query, cfr_keyhash, hostkey);
     BsonFinish(&query);
 
     // only retrieve the purgable reports
@@ -430,21 +449,21 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
 
         bson hostQuery;
         bson_init(&hostQuery);
-        bson_append_string(&hostQuery, cfr_keyhash, keyHash);
+        BsonAppendString(&hostQuery, cfr_keyhash, keyHash);
         BsonFinish(&hostQuery);
 
         // keys
         bson op;
         bson_init(&op);
         {
-            bson_append_start_object(&op, "$unset");
+            BsonAppendStartObject(&op, "$unset");
 
             for (ip = purgeKeys; ip != NULL; ip = ip->next)
             {
-                bson_append_int(&op, ip->name, 1);
+                BsonAppendInt(&op, ip->name, 1);
             }
 
-            bson_append_finish_object(&op);
+            BsonAppendFinishObject(&op);
         }
 
         BsonFinish(&op);
@@ -484,9 +503,9 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
     bson_init(&cond);
     {
-        bson_append_start_object(&cond, cfr_time);
-        bson_append_int(&cond, "$lte", oldStamp);
-        bson_append_finish_object(&cond);
+        BsonAppendStartObject(&cond, cfr_time);
+        BsonAppendInt(&cond, "$lte", oldStamp);
+        BsonAppendFinishObject(&cond);
     }
 
     BsonFinish(&cond);
@@ -513,7 +532,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, const char *hostke
     bson query;
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+    BsonAppendString(&query, cfr_keyhash, hostkey);
     BsonFinish(&query);
 
     bson field;
@@ -560,7 +579,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *h
     bson query;
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+    BsonAppendString(&query, cfr_keyhash, hostkey);
     BsonFinish(&query);
 
     bson field;
@@ -609,23 +628,23 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, const char *h
 
             bson hostQuery;
             bson_init(&hostQuery);
-            bson_append_string(&hostQuery, cfr_keyhash, keyhash);
+            BsonAppendString(&hostQuery, cfr_keyhash, keyhash);
             BsonFinish(&hostQuery);
 
             bson op;
             bson_init(&op);
             {
-                bson_append_start_object(&op, "$unset");
+                BsonAppendStartObject(&op, "$unset");
 
                 for (Item *ip = promiseKeysList; ip != NULL; ip = ip->next)
                 {
                     char key[CF_MAXVARSIZE];
                     snprintf(key,sizeof(key),"%s.%s",promiseLogKey,ip->name);
 
-                    bson_append_int(&op, key, 1);
+                    BsonAppendInt(&op, key, 1);
                 }
 
-                bson_append_finish_object(&op);
+                BsonAppendFinishObject(&op);
             }
 
             BsonFinish(&op);
@@ -663,12 +682,12 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char
     oldStamp = now - oldThreshold;
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, hostkey);
+    BsonAppendString(&query, cfr_keyhash, hostkey);
     BsonFinish(&query);
 
     bson_init(&cond);
     {
-        bson_append_start_object(&cond, "$pull");
+        BsonAppendStartObject(&cond, "$pull");
 
         for(Item *ip = promiseLogComplexKeysList; ip != NULL; ip = ip->next)
         {
@@ -676,12 +695,12 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char
             snprintf(timeKey, sizeof(timeKey), "%s.%s.%s",promiseLogReportKey,ip->name,cfr_time);
 
             {
-                bson_append_start_object(&cond, timeKey);
-                bson_append_int(&cond, "$lte", oldStamp);
-                bson_append_finish_object(&cond);
+                BsonAppendStartObject(&cond, timeKey);
+                BsonAppendInt(&cond, "$lte", oldStamp);
+                BsonAppendFinishObject(&cond);
             }
         }
-        bson_append_finish_object(&cond);
+        BsonAppendFinishObject(&cond);
     }
 
     BsonFinish(&cond);
@@ -722,12 +741,12 @@ void CFDB_PurgeDropReports(EnterpriseDB *conn)
     bson op;
     bson_init(&op);
     {
-        bson_append_start_object(&op, "$unset");
+        BsonAppendStartObject(&op, "$unset");
         for (i = 0; DROP_REPORTS[i] != NULL; i++)
         {
-            bson_append_int(&op, DROP_REPORTS[i], 1);
+            BsonAppendInt(&op, DROP_REPORTS[i], 1);
         }
-        bson_append_finish_object(&op);
+        BsonAppendFinishObject(&op);
     }
     BsonFinish(&op);
 
@@ -915,7 +934,7 @@ void CFDB_PurgeHost(EnterpriseDB *conn, const char *keyHash)
         bson cond;
 
         bson_init(&cond);
-        bson_append_string(&cond, cfr_keyhash, ScalarValue(rp));
+        BsonAppendString(&cond, cfr_keyhash, ScalarValue(rp));
         BsonFinish(&cond);
 
         MongoRemove(conn, MONGO_DATABASE, &cond, NULL);
@@ -973,15 +992,15 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
     bson unset_op;
     bson_init(&unset_op);
     {
-        bson_append_start_object(&unset_op, "$unset");
+        BsonAppendStartObject(&unset_op, "$unset");
 
         for (i = 0; i < CF_OBSERVABLES; i++)
         {
             snprintf(var, sizeof(var), "hs%d", i);
-            bson_append_int(&unset_op, var, 1);
+            BsonAppendInt(&unset_op, var, 1);
         }
 
-        bson_append_finish_object(&unset_op);
+        BsonAppendFinishObject(&unset_op);
     }
     BsonFinish(&unset_op);
 
@@ -1007,7 +1026,7 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
     bson query;
 
     bson_init(&query);
-    bson_append_string(&query, cfr_keyhash, keyhash);
+    BsonAppendString(&query, cfr_keyhash, keyhash);
     BsonFinish(&query);
 
     MongoRemove(&conn, db, &query, NULL);
@@ -1033,9 +1052,9 @@ int CFDB_PurgeDeletedHosts(void)
 
     bson_init(&op);
     {
-        bson_append_start_object(&op, "$unset");
-        bson_append_int(&op, cfr_deleted_hosts, 1);
-        bson_append_finish_object(&op);
+        BsonAppendStartObject(&op, "$unset");
+        BsonAppendInt(&op, cfr_deleted_hosts, 1);
+        BsonAppendFinishObject(&op);
     }
     BsonFinish(&op);
 
@@ -1101,17 +1120,17 @@ static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn)
     bson query;
 
     bson_init(&query);
-    bson_append_int(&query, cfr_software_t, 0);
+    BsonAppendInt(&query, cfr_software_t, 0);
     BsonFinish(&query);
 
     bson unset_op;
 
     bson_init(&unset_op);
     {
-        bson_append_start_object(&unset_op, "$unset");
-        bson_append_int(&unset_op, cfr_software, 1);
-        bson_append_int(&unset_op, cfr_software_t, 1);
-        bson_append_finish_object(&unset_op);
+        BsonAppendStartObject(&unset_op, "$unset");
+        BsonAppendInt(&unset_op, cfr_software, 1);
+        BsonAppendInt(&unset_op, cfr_software_t, 1);
+        BsonAppendFinishObject(&unset_op);
     }
     BsonFinish(&unset_op);
 
@@ -1146,3 +1165,34 @@ static bool CollectionNeedsReindexing(EnterpriseDB *conn, const char* coll)
     return true;
 }
 /*****************************************************************************/
+
+void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now)
+/*
+ * Deletes old Mongo diagnostics entries.
+ */
+{
+    time_t oldStamp;
+    bson cond;
+
+    oldStamp = now - oldThreshold;
+
+    CfOut(cf_verbose, "", " -> Purge mongo diagnostics");
+
+    bson_init(&cond);
+    {
+        BsonAppendStartObject(&cond, diagnostic_dbk_time);
+        BsonAppendInt(&cond, "$lte", oldStamp);
+        BsonAppendFinishObject(&cond);
+    }
+
+    BsonFinish(&cond);
+
+    if(CFDB_CollectionHasData(conn, diagnostic_db_mongo_coll))
+    {
+        MongoRemove(conn, diagnostic_db_mongo_coll, &cond, NULL);
+        MongoCheckForError(conn,"timed delete host from mongo diagnostic collection",NULL,NULL);
+    }
+
+    bson_destroy(&cond);
+}
+
