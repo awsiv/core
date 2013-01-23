@@ -4,8 +4,6 @@
 #include "cf3.defs.h"
 #include "reporting.h"
 
-void Nova_SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot,
-                                   char *web);
 void Nova_NoteVarUsage(void);
 void Nova_SummarizeComms(void);
 void Nova_ZenossSummary(const char *docroot);
