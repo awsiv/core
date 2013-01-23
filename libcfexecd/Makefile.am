@@ -21,6 +21,9 @@ libcfexecd_la_SOURCES =
 if NT
 libcfexecd_la_SOURCES += \
         win_service_exec.c
+else
+libcfexecd_la_SOURCES += \
+	dummy.c
 endif
 
 CLEANFILES = *.gcno *.gcda
