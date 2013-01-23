@@ -106,6 +106,7 @@
 
 #define CREATE_SQL_BUNDLESTATUS "CREATE TABLE " SQL_TABLE_BUNDLESTATUS "(" \
                                        "HostKey VARCHAR(100), " \
+                                       "NameSpace VARCHAR(50), " \
                                        "Bundle VARCHAR(254), " \
                                        "PercentageCompliance REAL, " \
                                        "CheckTimeStamp BIGINT, " \
@@ -1079,7 +1080,7 @@ static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *fil
         return;
     }
 
-    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, NULL, NULL, filter,
+    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, NULL, NULL, NULL, filter,
                                    PROMISE_CONTEXT_MODE_ALL, NULL, QUERY_FLAG_DISABLE_ALL);
 
     CFDB_Close(&dbconn);
@@ -1091,9 +1092,10 @@ static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *fil
 
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
+                 "INSERT INTO %s VALUES('%s','%s','%s',%f,%ld);",
                  SQL_TABLE_BUNDLESTATUS,
                  SkipHashType(hb->hh->keyhash),
+                 NULLStringToEmpty(hb->ns),
                  NULLStringToEmpty(hb->bundle),
                  (hb->bundlecomp * 100.0),
                  hb->t);

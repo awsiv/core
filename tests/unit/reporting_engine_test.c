@@ -97,7 +97,7 @@ static void test_get_column_count(void **state)
                             5,  // promisedefinitions
                             5,  //promiselog
                             4,  // promise summary
-                            4,  // bundle status
+                            5,  // bundle status
                             4,  // benchmarks
                             5,  // lastseen
                             6,  // totalcompliance
@@ -170,7 +170,7 @@ static void test_validate_column_names(void **state)
         {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL},             // promisedefinitions
         {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL},
         {"PromiseHandle", "PromiseLogType", "PromiseLogReport", "Occurrences", NULL, NULL, NULL},
-        {"HostKey", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL, NULL},
+        {"HostKey", "NameSpace", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL}, //Bundlestatus
         {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL},
         {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL},
         {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL},
