@@ -20,7 +20,6 @@ void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char
 
 void Nova_ImportReports(const char *input_file);
 
-int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin);
 #endif
 
 #endif

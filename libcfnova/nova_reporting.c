@@ -2369,6 +2369,8 @@ int Nova_ExportReports(char *reportName)
 
 #ifdef HAVE_LIBMONGOC
 
+static int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin);
+
 static int Nova_ImportHostReports(EnterpriseDB *dbconnp, const char *filePath)
 /*
  * Import from text file to Mongo database.
@@ -2412,7 +2414,7 @@ static int Nova_ImportHostReports(EnterpriseDB *dbconnp, const char *filePath)
 
 /*********************************************************************/
 
-int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin)
+static int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin)
 {
     char keyHash[CF_MAXVARSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 }, hostName[CF_MAXVARSIZE] = { 0 };
     char buf[CF_BUFSIZE];
