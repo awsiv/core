@@ -349,7 +349,7 @@ JsonElement *WebExportPromiseComplianceReport(char *hostkey, char *handle, char 
 
 /*****************************************************************************/
 
-JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool regex,
+JsonElement *WebExportBundleComplianceReport(char *hostkey, char *scope, bool regex,
                                              HostClassFilter *host_class_filter,
                                              HostColourFilter *host_colour_filter, bool last_run_only,
                                              PromiseContextMode promise_context, WebReportFileInfo *wr_info)
@@ -359,17 +359,25 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
     EnterpriseDB dbconn;
     DATABASE_OPEN_WR(&dbconn);
 
+    char ns[CF_MAXVARSIZE] = "\0";
+    char bundle[CF_MAXVARSIZE] = "\0";
+
+    if (scope)
+    {
+        SplitScopeName(scope, ns, bundle);
+    }
+
     int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
 
     wr_info->write_data = false;
     if(last_run_only)
     {
-        CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+        CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, ns, bundle, host_class_filter,
                                      host_colour_filter, promise_context, wr_info, db_options);
     }
     else
     {
-        CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+        CFDB_QueryBundleSeen(&dbconn, hostkey, ns, bundle, host_class_filter,
                              promise_context, wr_info, db_options);
     }
 
@@ -394,12 +402,12 @@ JsonElement *WebExportBundleComplianceReport(char *hostkey, char *bundle, bool r
         wr_info->write_data = true;
         if(last_run_only)
         {
-            CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+            CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, ns, bundle, host_class_filter,
                                          host_colour_filter, promise_context, wr_info, db_options);
         }
         else
         {
-            CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, host_class_filter,
+            CFDB_QueryBundleSeen(&dbconn, hostkey, ns, bundle, host_class_filter,
                                  promise_context, wr_info, db_options);
         }
 

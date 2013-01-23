@@ -437,6 +437,7 @@ typedef struct
 typedef struct
 {
     HubHost *hh;
+    char *ns;
     char *bundle;
     double bundlecomp;
     double bundleavg;
@@ -797,7 +798,7 @@ HubSetUid *NewHubSetUid(HubHost *hh, char *file);
 void DeleteHubSetUid(HubSetUid *hp);
 HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState status, double e, double d, time_t t);
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t);
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *ns, char *rname, double ago, double avg, double dev, time_t t);
 void DeleteHubBundleSeen(HubBundleSeen *hp);
 HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle, char change_type, char *change_msg);
 void DeleteHubFileChanges(HubFileChanges *hp);

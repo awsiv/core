@@ -778,13 +778,14 @@ void DeleteHubPromiseCompliance(HubPromiseCompliance *hp)
 
 /*****************************************************************************/
 
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double avg, double dev, time_t t)
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *ns, char *rname, double comp, double avg, double dev, time_t t)
 {
     HubBundleSeen *hp;
 
     hp = xmalloc(sizeof(HubBundleSeen));
 
     hp->hh = hh;
+    hp->ns = xstrdup(ns);
     hp->bundle = xstrdup(rname);
     hp->bundlecomp = comp;
     hp->bundleavg = avg;
@@ -797,8 +798,12 @@ HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double av
 
 void DeleteHubBundleSeen(HubBundleSeen *hp)
 {
-    free(hp->bundle);
-    free(hp);
+    if (hp)
+    {
+        free(hp->ns);
+        free(hp->bundle);
+        free(hp);
+    }
 }
 
 /*****************************************************************************/

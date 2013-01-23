@@ -83,15 +83,13 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname,
                            PromiseContextMode promise_context,
                            WebReportFileInfo *wr_info,
                            int db_options);
-HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
-                               HostClassFilter *hostClassFilter,
-                               PromiseContextMode promise_context,
-                               WebReportFileInfo *wr_info, int db_options);
-HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
-                                       HostClassFilter *hostClassFilter,
+HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *ns,
+                               char *lname, HostClassFilter *hostClassFilter,
+                               PromiseContextMode promise_context, WebReportFileInfo *wr_info, int db_options);
+HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *ns,
+                                       char *lname, HostClassFilter *hostClassFilter,
                                        HostColourFilter *hostColourFilter,
-                                       PromiseContextMode promise_context,
-                                       WebReportFileInfo *wr_info, int db_options);
+                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info, int db_options);
 HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname,
                                 time_t from, time_t to, HostClassFilter *hostClassFilter,
                                 PromiseContextMode promise_context,

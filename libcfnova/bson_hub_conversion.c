@@ -11,6 +11,7 @@
 #include "db_export_csv.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "scope.h"
 
 #include <assert.h>
 
@@ -57,7 +58,7 @@ HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHos
 }
 /*****************************************************************************/
 
-HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rname)
+HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rns, char *rbundle)
 {
     time_t rt = (time_t)0;
     double rcomp = 0,
@@ -87,7 +88,7 @@ HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *r
             CfOut(cf_inform, "", " !! Unknown key \"%s\" in bundle seen", bson_iterator_key(it));
         }
     }
-    return NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt);
+    return NewHubBundleSeen(hh, rns, rbundle, rcomp, ravg, rdev, rt);
 }
 
 /*****************************************************************************/
@@ -196,12 +197,12 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle,
 }
 /*****************************************************************************/
 
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname,
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *ns, char *lname,
                                     time_t blueHorizonTime, HubHost *hh,
                                     Rlist **record_list, PromiseContextMode promise_context,
                                     WebReportFileInfo *wr_info, Writer *writer, int db_options)
 {
-    char rname[CF_MAXVARSIZE] = {0};
+    char rscope[CF_MAXVARSIZE] = {0};
 
     HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
     time_t last_report = 0;
@@ -231,17 +232,22 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname,
 
             while (bson_iterator_next(&iterAllBundles))
             {
-                strncpy(rname, bson_iterator_key(&iterAllBundles), CF_MAXVARSIZE - 1);
+                strncpy(rscope, bson_iterator_key(&iterAllBundles), CF_MAXVARSIZE - 1);
 
-                if (strcmp(rname, "QUERY") == 0)
+                if (strcmp(rscope, "QUERY") == 0)
                 {
                     continue;
                 }
 
+                char rns[CF_MAXVARSIZE] = "\0";
+                char rbundle[CF_MAXVARSIZE] = "\0";
+
+                SplitScopeName(rscope, rns, rbundle);
+
                 bson_iterator iterBundleData;
                 bson_iterator_subiterator(&iterAllBundles, &iterBundleData);
 
-                HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rname);
+                HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rns, rbundle);
 
                 switch (promise_context)
                 {

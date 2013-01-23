@@ -462,7 +462,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *scope, bool regex,
                                                  HostClassFilter *hostClassFilter,
                                                  PromiseContextMode promise_context)
 /*
@@ -475,9 +475,16 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
         return false;
     }
 
+    char ns[CF_MAXVARSIZE] = "\0";
+    char bundle[CF_MAXVARSIZE] = "\0";
+    if (scope)
+    {
+        SplitScopeName(scope, ns, bundle);
+    }
+
     int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
 
-    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle,
+    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, ns, bundle,
                                                 hostClassFilter, NULL,
                                                 promise_context, NULL, db_options);
 
@@ -2001,7 +2008,7 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter,
+JsonElement *Nova2PHP_bundle_report(char *hostkey, char *scope, bool regex, HostClassFilter *hostClassFilter,
                            HostColourFilter *hostColourFilter, bool lastRunOnly,
                            PageInfo *page, PromiseContextMode promise_context)
 {
@@ -2011,18 +2018,25 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
         return NULL;
     }
 
+    char ns[CF_MAXVARSIZE] = "\0";
+    char bundle[CF_MAXVARSIZE] = "\0";
+    if (scope)
+    {
+        SplitScopeName(scope, ns, bundle);
+    }
+
     int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
 
     HubQuery *hq;
     if(lastRunOnly)
     {        
-        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, ns, bundle, hostClassFilter,
                                           hostColourFilter, promise_context, NULL, db_options);
     }
     else
     {
         db_options |= QUERY_FLAG_SORT_RESULT;
-        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, ns, bundle, hostClassFilter,
                                   promise_context, NULL, db_options);
     }
 
@@ -2069,7 +2083,15 @@ JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, Hos
         JsonElement *entry = JsonArrayCreate(6);
 
         JsonArrayAppendString(entry, NULLStringToEmpty(hb->hh->hostname));
-        JsonArrayAppendString(entry, NULLStringToEmpty(hb->bundle));
+
+        char scope[CF_MAXVARSIZE] = "\0";
+
+        if (hb->bundle)
+        {
+            JoinScopeName(hb->ns, hb->bundle, scope);
+        }
+
+        JsonArrayAppendString(entry, scope);
         JsonArrayAppendInteger(entry, hb->t);
         JsonArrayAppendString(entry, bundleComp);
         JsonArrayAppendString(entry, bundleAvg);
@@ -2677,7 +2699,7 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
 
 /*****************************************************************************/
 
-JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
+JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *scope, bool regex,
                                    HostClassFilter *hostClassFilter,
                                    HostColourFilter *hostColourFilter,
                                    bool lastRunOnly, PageInfo *page,
@@ -2691,6 +2713,14 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
         return NULL;
     }
 
+    char ns[CF_MAXVARSIZE] = "\0";
+    char bundle[CF_MAXVARSIZE] = "\0";
+    if (scope)
+    {
+        SplitScopeName(scope, ns, bundle);
+    }
+
+
     int db_options = regex ? QUERY_FLAG_IS_REGEX : QUERY_FLAG_DISABLE_ALL;
     db_options |= QUERY_FLAG_HOSTONLY;
 
@@ -2698,13 +2728,13 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
 
     if(lastRunOnly)
     {
-        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle,
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, ns, bundle,
                                           hostClassFilter, hostColourFilter,
                                           promise_context, NULL, db_options);
     }
     else
     {
-        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, hostClassFilter,
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, ns, bundle, hostClassFilter,
                                   promise_context, NULL, db_options);
     }
 

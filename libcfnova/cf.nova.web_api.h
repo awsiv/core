@@ -177,7 +177,7 @@ JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
 JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
                                     HostClassFilter *hostClassFilter, PageInfo *page,
                                     PromiseContextMode promise_context);
-JsonElement *Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex,
+JsonElement *Nova2PHP_bundle_report(char *hostkey, char *scope, bool regex,
                                     HostClassFilter *hostClassFilter,
                                     HostColourFilter *host_colour_filter, bool lastRunOnly,
                                     PageInfo *page, PromiseContextMode promise_context);
@@ -254,7 +254,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
                                                   char *status, bool regex,
                                                   HostClassFilter *hostClassFilter,
                                                   PromiseContextMode promise_context);
-JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *scope, bool regex,
                                                  HostClassFilter *hostClassFilter,
                                                  PromiseContextMode promise_context);
 

@@ -6,12 +6,12 @@
 
 /* CFE data structures */
 HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHost *hh, char *rhandle);
-HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rname);
+HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rns, char *rbundle);
 
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, time_t blueHorizonTime,
-                                    HubHost *hh, Rlist **record_list,
-                                    PromiseContextMode promise_context, WebReportFileInfo *wr_info,
-                                    Writer *writer, int db_options );
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *ns, char *lname,
+                                    time_t blueHorizonTime, HubHost *hh,
+                                    Rlist **record_list, PromiseContextMode promise_context,
+                                    WebReportFileInfo *wr_info, Writer *writer, int db_options );
 bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, PromiseState lstatus,
                                          time_t from, time_t to, time_t blueHorizonTime,
                                          HubHost *hh, Rlist **record_list,

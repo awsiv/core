@@ -4034,8 +4034,8 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
-                               HostClassFilter *hostClassFilter,
+HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *ns,
+                               char *lname, HostClassFilter *hostClassFilter,
                                PromiseContextMode promise_context,
                                WebReportFileInfo *wr_info, int db_options)
 {
@@ -4112,7 +4112,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
         bson_iterator it1;
         bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, blueHorizonTimestamp,
+        bool found = BsonIterGetBundleReportDetails(&it1, ns, lname, blueHorizonTimestamp,
                                                     hh, &record_list, promise_context,
                                                     wr_info, writer, db_options);
 
@@ -4145,8 +4145,8 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname,
-                                       HostClassFilter *hostClassFilter,
+HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *ns,
+                                       char *lname, HostClassFilter *hostClassFilter,
                                        HostColourFilter *hostColourFilter,
                                        PromiseContextMode promise_context,
                                        WebReportFileInfo *wr_info, int db_options)
@@ -4227,7 +4227,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
 
         HubHost *hh = NewHubHost(NULL, keyhash, addresses, hostnames);
 
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, blueHorizonTime,
+        bool found = BsonIterGetBundleReportDetails(&it1, ns, lname, blueHorizonTime,
                                                     hh, &record_list_single_host,
                                                     promise_context, NULL, NULL,
                                                     (db_options & QUERY_FLAG_IS_REGEX));
@@ -4297,7 +4297,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
                             continue;
                         }
 
-                        HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp,
+                        HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->ns, hbTemp->bundle, hbTemp->bundlecomp,
                                                                 hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t);
                         if (wr_info)
                         {
@@ -4325,7 +4325,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
                     {
                         HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
-                        HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp,
+                        HubBundleSeen *bundle = NewHubBundleSeen(hbTemp->hh, hbTemp->ns, hbTemp->bundle, hbTemp->bundlecomp,
                                                                 hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t);
                         if (wr_info)
                         {
