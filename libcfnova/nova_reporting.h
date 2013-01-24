@@ -14,12 +14,6 @@ void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, cons
 void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent);
 int Nova_ExportReports(char *reportName);
 void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char *classregex);
-
-#ifdef HAVE_LIBMONGOC
-#include "db_common.h"
-
 void Nova_ImportReports(const char *input_file);
-
-#endif
 
 #endif
