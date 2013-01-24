@@ -1280,8 +1280,6 @@ enum knowledgecertainty
 /* Not a real year, but a "monitoring year" */
 #define MONITORING_WEEKS_PER_YEAR 52
 
-#define RBAC_ERROR_MSG "This result is not available to you with your current credentials"
-
 /***************************************************************************/
 
 typedef struct

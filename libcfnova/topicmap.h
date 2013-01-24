@@ -5,6 +5,7 @@
 
 /*****************************************************************************/
 #define CF_TRIBE_SIZE 25
+#define RBAC_ERROR_MSG "This result is not available to you with your current credentials"
 
 typedef struct
 {
