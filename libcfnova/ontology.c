@@ -1182,7 +1182,6 @@ static void NovaShowValues(Writer *writer, BodySyntax bs)
 static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp, char *promise_id)
 {
     Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
-    SubType *sp;
     Promise *pp2;
     char *value;
     int found = false;
@@ -1292,8 +1291,10 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
     {
         Bundle *bp = SeqAt(policy->bundles, i);
 
-        for (sp = bp->subtypes; sp != NULL; sp = sp->next)
+        for (size_t j = 0; j < SeqLength(bp->subtypes); j++)
         {
+            SubType *sp = SeqAt(bp->subtypes, j);
+
             for (pp2 = sp->promiselist; pp2 != NULL; pp2 = pp2->next)
             {
                 if (pp2 == pp)

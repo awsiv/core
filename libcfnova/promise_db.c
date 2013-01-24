@@ -152,8 +152,10 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
     {
         const Bundle *bp = SeqAt(bundles, i);
 
-        for (const SubType *st = bp->subtypes; st != NULL; st = st->next)
+        for (size_t sti = 0; i < SeqLength(bp->subtypes); sti++)
         {
+            const SubType *st = SeqAt(bp->subtypes, sti);
+
             CfDebug("PROMISE-TYPE: %s\n", st->name);
 
             size_t j = 0;
