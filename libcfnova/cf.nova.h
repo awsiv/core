@@ -890,9 +890,7 @@ int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ());
 
 /* knowledge.c */
 
-char *Name2Id(char *s);
 void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *inferences);
-void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *pp, const char *version);
 void Nova_BundleReference(FILE *fp, char *bundle);
 void Nova_TypeNode(FILE *fp, char *type);
 void Nova_PromiseNode(FILE *fp, Promise *pp, int calltype);

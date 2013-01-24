@@ -28,6 +28,7 @@
 #include "policy.h"
 #include "generic_agent.h" // OpenCompilationReportFiles
 #include "promise_db.h"
+#include "ontology.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
