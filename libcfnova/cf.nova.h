@@ -888,18 +888,6 @@ HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot
 
 int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ());
 
-/* knowledge.c */
-
-void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *inferences);
-void Nova_BundleReference(FILE *fp, char *bundle);
-void Nova_TypeNode(FILE *fp, char *type);
-void Nova_PromiseNode(FILE *fp, Promise *pp, int calltype);
-void Nova_TypeNode(FILE *fp, char *type);
-void Nova_BundleNode(FILE *fp, char *bundle);
-void Nova_BodyNode(FILE *fp, char *body, int calltype);
-void Nova_DependencyGraph(Topic *map);
-void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
-
 /* license.c */
 
 int Nova_CheckLicenseWin(char *pos);
@@ -964,9 +952,6 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
 void Nova_DoTryCollectCall(void);
-
-
-void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 
 void LogFileChange(char *file, int change, Attributes a, Promise *pp, const ReportContext *report_context);
 
@@ -1256,6 +1241,8 @@ enum knowledgecertainty
 #define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
 #define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
 /* #define NOVA_SOFTWARE_INSTALLED "software_packages.csv" Moved to cf3.defs.h */
+#define CF_REPAIR_LOG    "cf_repair.log"
+#define CF_NOTKEPT_LOG   "cf_notkept.log"
 
 #define NOVA_TRACK_LAST_EXEC "last_exec"
 #define NOVA_TRACK_DELTA_SCHEDULE "delta_gavr"
@@ -1296,9 +1283,6 @@ typedef struct
 } PersistentScalar;
 
 /***************************************************************************/
-
-#define CF_REPAIR_LOG    "cf_repair.log"
-#define CF_NOTKEPT_LOG   "cf_notkept.log"
 
 /* Keynames */
 

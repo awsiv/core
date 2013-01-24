@@ -44,6 +44,7 @@
 #include "topicmap.h"
 #include "vars.h"
 #include "stories.h"
+#include "knowledge.h"
 
 #include <assert.h>
 

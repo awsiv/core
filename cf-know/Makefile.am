@@ -17,7 +17,7 @@ LDADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 cf_know_SOURCES = \
         cf-know.c \
-        knowledge.c
+        knowledge.c knowledge.h
 
 
 CLEANFILES = *.gcno *.gcda
