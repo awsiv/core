@@ -405,11 +405,9 @@ typedef struct
 typedef struct
 {
     HubHost *hh;
-    //   char *policy;
     char *handle;
     char *cause;
     time_t t;
-    char *oid;
 } HubPromiseLog;
 
 // promise not kept/repaired summary
@@ -1287,12 +1285,6 @@ enum knowledgecertainty
 #define RBAC_ERROR_MSG "This result is not available to you with your current credentials"
 
 /***************************************************************************/
-
-typedef struct
-{
-    char *m;
-    int d;
-} MonthDays;
 
 typedef struct
 {
