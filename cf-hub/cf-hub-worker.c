@@ -258,18 +258,21 @@ Item *Nova_ScanClients(void)
             continue;
         }
 
-        Item *ip = PrependItem(&list, hostkey, address);
-        ip->time = timestamp;
-
-        if (counter++ > LICENSES)
+        if (++counter <= LICENSES)
         {
-            CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
-            break;
+            Item *ip = PrependItem(&list, hostkey, address);
+            ip->time = timestamp;
         }
     }
 
     DeleteDBCursor(dbp, dbcp);
     CloseDB(dbp);
+
+    if (counter > LICENSES)
+    {
+        CfOut(cf_error,""," !! %d hosts are connected to this hub, but it is only licensed to support %d clients."
+              " Please contact CFEngine(www.cfengine.com) for more licenses", counter, LICENSES);
+    }
 
     return list;
 }
