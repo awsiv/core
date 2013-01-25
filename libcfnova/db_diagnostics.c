@@ -469,11 +469,11 @@ static DiagnosticServerStatus *DiagnosticServerStatusGet(EnterpriseDB *conn)
     bson out = {0};
 
     bson_init(&cmd);
-    BsonAppendString(&cmd, "serverStatus", "1");
+    BsonAppendInt(&cmd, "serverStatus", 1);
     BsonAppendInt(&cmd, "scale", 1024);
     BsonFinish(&cmd);
 
-    if (MongoRunCommand(conn, "", &cmd, &out) == MONGO_OK)
+    if (MongoRunCommand(conn, "admin", &cmd, &out) == MONGO_OK)
     {
         status = DiagnosticServerStatusCreate();
 
