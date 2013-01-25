@@ -127,7 +127,7 @@ bundle agent update_policy
 
   update_report.!windows::
 
-   "cf-monitord"       signals => { "term", "kill" },
+   "cf-monitord"       signals => { "term", },
                  restart_class => "restart_monitor",
                         handle => "cfe_internal_update_policy_processes_kill_cf_monitord",
                        classes => u_if_repaired_then_cancel("update_report"),
