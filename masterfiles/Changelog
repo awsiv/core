@@ -1,6 +1,9 @@
 January 2013
 - fixed to pull CFEngine modules on Windows
 - tried to use $(sys.workdir) instead of a fixed path /var/cfengine to flavour Windows
+- removed kill signal from cf-monitord. left only term signal. It was more than enough
+- added canonify() to problematic handles promises
+- no more copy binary to /usr/local/sbin but create symlinks instead
 
 December 2012
 - renamed failsafe/failsafe.cf to update/update.cf
