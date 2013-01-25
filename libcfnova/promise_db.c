@@ -28,7 +28,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     const char *sp;
     char con[CF_MAXVARSIZE];
     EnterpriseDB dbconn = { 0 };
-    int j;
+    int j = 0;
 
 // NOTE: Inefficient to Open/Close DB for each promise,
 // but call is coming from community which may not have DB
