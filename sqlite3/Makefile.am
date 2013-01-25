@@ -13,10 +13,8 @@ if MONGO
 noinst_LTLIBRARIES = libsqlite3.la
 
 libsqlite3_la_SOURCES = \
-	sqlite3.c
-
-EXTRA_DIST = \
-	sqlite3.h
+        sqlite3.c sqlite3.h \
+        sqlite3_functions.c sqlite3_functions.h
 
 #
 # Some basic clean ups

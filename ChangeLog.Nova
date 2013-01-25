@@ -1,3 +1,5 @@
+N/A     Added regular expression support to SQL queries
+
 3.0.x   Removed unused options [-t][-r][-u] from cf-know
 
 3.0.1   $(sys.licenses_installtime) variable removed from "Enterprise Free"
