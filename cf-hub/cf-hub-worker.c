@@ -86,7 +86,7 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
     pp->cache = NULL;
 
     conn = NewServerConnection(aa, pp);
-    DeletePromise(pp);
+    PromiseDestroy(pp);
 
     if (conn == NULL)
     {

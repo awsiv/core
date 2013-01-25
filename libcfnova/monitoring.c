@@ -1580,7 +1580,7 @@ void HistoryUpdate(Averages newvals)
     if (thislock.lock == NULL)
     {
         Nova_UpdateShiftAverage(&SHIFT_VALUE, &newvals);
-        DeletePromise(pp);
+        PromiseDestroy(pp);
         return;
     }
 
@@ -1606,7 +1606,7 @@ void HistoryUpdate(Averages newvals)
     LoadSystemConstants();
 
     YieldCurrentLock(thislock);
-    DeletePromise(pp);
+    PromiseDestroy(pp);
 
     Nova_HistoryUpdate(CFSTARTTIME, &newvals);
 

@@ -531,7 +531,6 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 {
     Bundle *bp;
     SubType *sp;
-    Promise *pp;
     Rlist *rp, *params;
     FnCall *fp;
     char *name;
@@ -614,8 +613,9 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 
             BannerSubType(bp->name, sp->name, 1);
 
-            for (pp = sp->promiselist; pp != NULL; pp = pp->next)
+            for (size_t ppi = 0; ppi < SeqLength(sp->promises); ppi++)
             {
+                Promise *pp = SeqAt(sp->promises, ppi);
                 ExpandPromise(AGENT_TYPE_KNOW, bp->name, pp, KeepKnowledgePromise, report_context);
             }
         }

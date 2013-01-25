@@ -301,7 +301,7 @@ void Nova_DoTryCollectCall(void)
         CfOut(cf_verbose,""," -> Collect call did not succeed in making contact");
     }
 
-    DeletePromise(pp);
+    PromiseDestroy(pp);
 }
 
 
@@ -415,7 +415,7 @@ AgentConnection *ExtractCallBackChannel(ServerConnectionState *conn)
        {
        CfOut(cf_error, "", " !! Id-authentication for %s failed\n", VFQNAME);
        errno = EPERM;
-       DeletePromise(pp);
+       PromiseDestroy(pp);
        return NULL;
        }
 
@@ -423,12 +423,12 @@ AgentConnection *ExtractCallBackChannel(ServerConnectionState *conn)
        {
        CfOut(cf_error, "", " !! Authentication dialogue on callback failed\n");
        errno = EPERM;
-       DeletePromise(pp);
+       PromiseDestroy(pp);
        return NULL;
        }
 
     ap->authenticated = true;
-    DeletePromise(pp);
+    PromiseDestroy(pp);
 
     return ap;
 }

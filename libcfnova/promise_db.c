@@ -132,7 +132,6 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
 void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
 {
     Rlist *rp;
-    Promise *pp;
     EnterpriseDB dbconn = { 0 };
     char iStr[32], jStr[32];
     char rval_buffer[CF_BUFSIZE];
@@ -159,8 +158,10 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
             CfDebug("PROMISE-TYPE: %s\n", st->name);
 
             size_t j = 0;
-            for (pp = st->promiselist; pp != NULL; pp = pp->next, j++)
+            for (size_t ppi = 0; ppi < SeqLength(st->promises); ppi++)
             {
+                Promise *pp = SeqAt(st->promises, ppi);
+
                 bson insert_op;
                 bson_init(&insert_op);
                 bson_append_new_oid(&insert_op, "_id");

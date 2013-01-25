@@ -627,7 +627,7 @@ static void StartHub(void)
 
     if (thislock.lock == NULL)
     {
-        DeletePromise(pp);
+        PromiseDestroy(pp);
         return;
     }
 

@@ -2298,7 +2298,7 @@ void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const
     {
         Promise *exp = DeRefCopyPromise(pp->bundle, pp);
         Nova_MapPromiseToTopic(context, exp, version);
-        DeletePromise(exp);
+        PromiseDestroy(exp);
     }
 #else
     ShowPromiseInReport(context, type, version, pp, indent);

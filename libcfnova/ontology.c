@@ -1182,7 +1182,6 @@ static void NovaShowValues(Writer *writer, BodySyntax bs)
 static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp, char *promise_id)
 {
     Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
-    Promise *pp2;
     char *value;
     int found = false;
 
@@ -1295,8 +1294,10 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
         {
             SubType *sp = SeqAt(bp->subtypes, j);
 
-            for (pp2 = sp->promiselist; pp2 != NULL; pp2 = pp2->next)
+            for (size_t pp2i = 0; i < SeqLength(sp->promises); pp2i++)
             {
+                Promise *pp2 = SeqAt(sp->promises, pp2i);
+
                 if (pp2 == pp)
                 {
                     continue;

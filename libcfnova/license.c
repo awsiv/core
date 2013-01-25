@@ -578,7 +578,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (!IsDefinedClass("am_policy_hub", NULL))
     {
-        DeletePromise(pp);
+        PromiseDestroy(pp);
         return;
     }
 
@@ -586,7 +586,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (thislock.lock == NULL)
     {
-        DeletePromise(pp);
+        PromiseDestroy(pp);
         return;
     }
 
@@ -608,7 +608,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (!OpenDB(&dbp, dbid_license))
     {
-        DeletePromise(pp);
+        PromiseDestroy(pp);
         YieldCurrentLock(thislock);
         return;
     }
@@ -707,7 +707,7 @@ static void Nova_LogLicenseStatus(void)
 #endif
 
     YieldCurrentLock(thislock);
-    DeletePromise(pp);
+    PromiseDestroy(pp);
 }
 
 /*****************************************************************************/
