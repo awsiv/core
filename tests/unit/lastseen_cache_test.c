@@ -57,13 +57,40 @@ static void test_scan_clients_tcdb(void **state)
     DeleteItemList(list);
 }
 
+static void test_check_license_overuse(void **state)
+{
+    setup();
+
+    LICENSES = 25;
+
+    char keyhash[CF_MAXVARSIZE] = {0};
+    char ip[CF_MAXVARSIZE] = {0};
+
+    for (int i = 0; i < LICENSES * 2; i++)
+    {
+        snprintf(keyhash, CF_MAXVARSIZE, "SHA-testhost%d", i + 1);
+        snprintf(ip, CF_MAXVARSIZE, "127.0.0.%d", i + 1);
+
+        UpdateLastSawHost(keyhash, ip, true, 666);
+    }
+
+    Item *list = Nova_ScanClients();
+
+    int count = ListLen(list);
+
+    assert(count == LICENSES);
+
+    DeleteItemList(list);
+}
+
 int main()
 {
     tests_setup();
 
     const UnitTest tests[] =
     {
-        unit_test(test_scan_clients_tcdb)
+        unit_test(test_scan_clients_tcdb),
+        unit_test(test_check_license_overuse)
     };
 
     PRINT_TEST_BANNER();
