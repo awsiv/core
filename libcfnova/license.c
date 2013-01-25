@@ -181,7 +181,7 @@ int EnterpriseExpiry(void)
     }
     else
     {
-        CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
+        CfOut(cf_inform, "", " -> Verified FREE ENTERPRISE license - http://cfengine.com/25free for terms\n");
         LICENSES = MAX_FREE_LICENSES;
         snprintf(license.company_name, MAX_COMPANY_NAME + 1, "%s", INTERNAL_EXPIRY_COMPANY);
 
