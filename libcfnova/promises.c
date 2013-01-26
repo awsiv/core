@@ -617,7 +617,7 @@ void EnterpriseTrackTotalCompliance(const Promise *pp, char status) // status: c
     }
 }
 
-void LogTotalCompliance(const char *version)
+void LogTotalCompliance(const char *version, int background_tasks)
 {
     double total = (double) (PR_KEPT + PR_NOTKEPT + PR_REPAIRED) / 100.0;
     double total_user = (double) (PR_KEPT_USER + PR_NOTKEPT_USER + PR_REPAIRED_USER) / 100.0;
@@ -646,7 +646,7 @@ void LogTotalCompliance(const char *version)
                 "Total promise compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events). "
                 "User promise compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events). "
                 "CFEngine system compliance: %.0f%% kept, %.0f%% repaired, %.0f%% not kept (out of %d events).",
-             version, CFA_BACKGROUND,
+             version, background_tasks,
              (double) PR_KEPT / total,
              (double) PR_REPAIRED / total,
              (double) PR_NOTKEPT / total,
