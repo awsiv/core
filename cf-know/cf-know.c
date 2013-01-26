@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
     if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
     {    
-        policy = GenericInitialize("knowledge", config, report_context);
+        policy = GenericInitialize("knowledge", config, report_context, false);
         ThisAgentInit();
         
         KeepKnowControlPromises(policy);

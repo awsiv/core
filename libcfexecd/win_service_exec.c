@@ -80,7 +80,7 @@ void NovaWin_ServiceMain(int argc, char *argv[])
     GenericAgentConfig config = GenericAgentDefaultConfig(AGENT_TYPE_EXECUTOR);
 
     ReportContext *report_context = OpenReports("executor");
-    Policy *policy = GenericInitialize("executor", config, report_context);
+    Policy *policy = GenericInitialize("executor", config, report_context, false);
 
     ExecConfig exec_config = {
         .scheduled_run = true,
