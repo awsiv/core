@@ -1428,7 +1428,7 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
             ev_old.Q.var = 0;
         }
 
-        ev_new.Q = QAverage(ev_old.Q, value, FORGETRATE);
+        ev_new.Q = QAverage(ev_old.Q, value, 0.7);
     }
     else
     {
