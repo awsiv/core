@@ -85,6 +85,7 @@ static Topic *TOPICHASH[CF_HASHTABLESIZE];
 
 int GLOBAL_ID = 1;              // Used as a primary key for convenience, 0 reserved
 static int BGOALS = false;
+static int CF_EDGES = 0;               // links or promises between them
 
 extern const BodySyntax CFK_CONTROLBODY[];
 
