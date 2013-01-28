@@ -17,6 +17,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "matching.h"
 #include "hashes.h"
 #include "cfstream.h"
+#include "buffer.h"
 
 #include <assert.h>
 
@@ -479,16 +480,22 @@ unsigned int HubPromiseLogHash(const void *record, unsigned int max)
 {
     const HubPromiseLog *record_a = (const HubPromiseLog *)record;
 
-    unsigned int hash = 0;
+    Buffer *buf = NULL;
+    if (BufferNew(&buf))
+    {
+        CfOut(cf_error, "", "!! Memory allocation error in HubPromiseLogHash");
+    }
+
     if (record_a->handle)
     {
-        hash += OatHash(record_a->handle, max);
+        BufferPrintf(buf, "%s", record_a->handle);
     }
     if (record_a->cause)
     {
-        hash += OatHash(record_a->cause, max);
+        BufferPrintf(buf, "%s", record_a->cause);
     }
-    return hash;
+
+    return OatHash(buf->buffer, max);
 }
 
 bool HubPromiseLogEqual(const void *a, const void *b)
