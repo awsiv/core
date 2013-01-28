@@ -495,7 +495,11 @@ unsigned int HubPromiseLogHash(const void *record, unsigned int max)
         BufferPrintf(buf, "%s", record_a->cause);
     }
 
-    return OatHash(buf->buffer, max);
+    unsigned int hash = OatHash(buf->buffer, max);
+
+    BufferDestroy(&buffer);
+
+    return hash;
 }
 
 bool HubPromiseLogEqual(const void *a, const void *b)
