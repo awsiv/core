@@ -83,8 +83,9 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
 static Topic *TOPICHASH[CF_HASHTABLESIZE];
 
-int GLOBAL_ID = 1;              // Used as a primary key for convenience, 0 reserved
+static int GLOBAL_ID = 1;              // Used as a primary key for convenience, 0 reserved
 static int BGOALS = false;
+static int CF_EDGES = 0;               // links or promises between them
 
 extern const BodySyntax CFK_CONTROLBODY[];
 
@@ -179,7 +180,7 @@ int main(int argc, char *argv[])
 
     if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
     {    
-        policy = GenericInitialize("knowledge", config, report_context);
+        policy = GenericInitialize("knowledge", config, report_context, false);
         ThisAgentInit();
         
         KeepKnowControlPromises(policy);
