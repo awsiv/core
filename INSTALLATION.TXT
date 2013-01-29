@@ -1,14 +1,15 @@
-CFENGINE 3 ENTERPRISE 3.0.0
-RELEASE DATE: December 2012 (this document was amended on 13 December 2012)
-SCOPE: Installation and upgrade instructions for CFEngine 3 Enterprise 3.0.0
+CFENGINE 3 ENTERPRISE 3.1alpha1
+RELEASE DATE: January 2013
+SCOPE: Installation instructions for CFEngine 3 Enterprise 3.1alpha
 
-For information about supported platforms, compatible hub/client configurations and an overview of changes, please see the "3.0.0-Release-Notes-CFEngine-3-Enterprise.txt" file (available in the cfengine.com software download directory).
+IMPORTANT NOTE: This is an early alpha release of 3.1, intended for testing and showcase only. This version is not supported or covered by service level agreements (SLAs). Do not upgrade or use in conjuction with other versions at this point.
+
+For information about supported platforms, compatible hub/client configurations and an overview of changes, please see the "3.1alpha1-Release-Notes-CFEngine-3-Enterprise.txt" file (available in the cfengine.com software download directory).
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
  REQUIREMENTS
  INSTALLATION INSTRUCTIONS (CLEAN INSTALL)
- UPGRADE PROCEDURE (see 3.0.0-UPGRADE.TXT)
  SOFTWARE DEPENDENCIES
 ----------------------------------------------------------------------------
 
@@ -36,33 +37,35 @@ For those running databases on ext4 filesystems, a 2.6.23 kernel is required for
 ----------------------------------------------------------------------------
 
 INSTALLATION INSTRUCTIONS (CLEAN INSTALL):
-* Clean install is tested, upgrade from previous versions of CFEngine 3 Enterprise/Nova is tested (see 3.0.0-Release-Notes-CFEngine-3-Enterprise.txt for specifics)
+* Clean install is tested
+* Do not upgrade from previous versions of CFEngine 3 Enterprise/Nova.
 * As always, install HUB first, then client(s).
-* For large systems (> 1000 hosts) we recommend increasing the memory limit in php.conf on the HUB (for instance to 128 MB)
+* For large systems (> 1000 hosts) we recommend increasing the memory limit in php.conf on the HUB (for instance to 128 MB). Not applicable 
 
-CFEngine 3 Enterprise is provided in three packages (two hub and one client package). These are the three packages (inside the respective hub and client directories found under each platform in the software download directory, example for 64 bit rpm packages):
-    hub/cfengine-nova-3.0.xxx.x86_64.rpm
-    hub/cfengine-nova-expansion-3.0.xxx.x86_64.rpm
-    client/cfengine-nova-3.0.xxx.x86_64.rpm 
-The difference between the two cfengine-nova-3.0.xxx packages (for hub and client) is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes. The expansion package is only installed on the policy hub. You should install and set up the hub first.
+CFEngine 3 Enterprise is provided in three packages (two hub and one client package). These are the three packages (inside the respective hub and client sections found under each platform in the software listing, example for 64 bit rpm packages):
+    Hub:
+	cfengine-nova-3.1xxx.x86_64.rpm
+	cfengine-nova-expansion-3.1xxx.x86_64.rpm
+    Client:
+	cfengine-nova-3.1xxx.x86_64.rpm 
 
-RedHat 6 Users: RedHat has split their main repository into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have that repository configured before installing CFEngine Enterprise 3.0
+RedHat 6 Users: RedHat has split their main repository into several repositories. Some of our dependencies used to be in the main repository but have been moved to the Server Optional repository. Please make sure you have that repository configured before installing CFEngine Enterprise 3.1
 
 The general installation steps are as follows:
 1. Copy the CFEngine 3 Enterprise packages to the system.
 2. On the hub/policy server:
    a) Unpack the cfengine-nova and cfengine-nova-expansion packages (in that order):
       [RedHat/CentOS/SUSE]
-        $ rpm -Uvh cfengine-nova-3.0.xxx.x86_64.rpm (NOTE: use hub package)
-        $ rpm -Uvh cfengine-nova-expansion-3.0.xxx.x86_64.rpm
+        $ rpm -Uvh cfengine-nova-3.1xxx.x86_64.rpm (NOTE: use hub package)
+        $ rpm -Uvh cfengine-nova-expansion-3.1xxx.x86_64.rpm
    b)(Skip for CFEngine 3 Free Enterprise): Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license 
    c)(Skip for CFEngine 3 Free Enterprise): Copy the obtained license file to /var/cfengine/masterfiles/license.dat
 3. On the clients: Unpack the cfengine-nova package:
    [RedHat/CentOS/SUSE]
-     $ rpm -Uvh cfengine-nova-3.0.xxx.x86_64.rpm (NOTE: use client package)
+     $ rpm -Uvh cfengine-nova-3.1xxx.x86_64.rpm (NOTE: use client package)
 4. Bootstrap the machines to the hub (starting with bootstrapping the hub to itself): 
      $ /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
-6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
+6. CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 10-15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser. 
 7. Skip this step for installation of CFEngine 3 Free Enterprise: To complete licensing setup, you should make a promise to accept the license terms by editing "/var/cfengine/masterfiles/promises.cf" and "/var/cfengine/masterfiles/failsafe/failsafe.cf" on the hub (policy server), changing the line 
   host_licenses_paid => "<NUMBER>";
 in "body common control" to reflect the correct number of licenses that you have subscribed to.
@@ -74,11 +77,6 @@ If you wish to manually install cfmod to the machine, you'll need to do the foll
      /usr/lib/php5/20100525) to $installdir/lib/php/cfmod.so
 2. Put a configuration file (with .ini extension) to php configuration directory (typically something like /etc/php5/conf.d):
      extension=cfmod.so
-
-----------------------------------------------------------------------------
-
-UPGRADE PROCEDURE:
-Please see separate upgrade document: 3.0.0-UPGRADE.TXT
 
 ----------------------------------------------------------------------------
 
