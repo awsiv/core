@@ -671,12 +671,14 @@ static void StartHub(void)
             if (CFDB_QueryIsMaster())
             {
                 Nova_CollectReports();
+
+                /* Collect Diagnostics */
+                CfOut(cf_verbose, "",
+                      "Diagnostics - collecting MongoDB snapshot at %d",
+                      (int)start);
+                DiagnosticsMakeMongoSnapshot(start);
             }
         }
-
-        /* Collect Diagnostics */
-        CfOut(cf_verbose, "", "Diagnostics - collecting MongoDB snapshot at %d", (int)start);
-        DiagnosticsMakeMongoSnapshot(start);
 
         if (CFDB_QueryDeleteHostPending())
         {
