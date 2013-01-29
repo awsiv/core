@@ -6,13 +6,13 @@
 
 #include "db_diagnostics.h"
 
-#include "db_common.h"
 #include "bson_lib.h"
 #include "alloc.h"
 #include "sequence.h"
 #include "cfstream.h"
 
 #include <bson.h>
+#include <mongo.h>
 #include <assert.h>
 
 /*
@@ -39,7 +39,6 @@
 #define diagnostic_dbk_bgflush_total_ms "total_ms"
 #define diagnostic_dbk_bgflush_avg_ms "average_ms"
 #define diagnostic_dbk_bgflush_last_ms "last_ms"
-#define diagnostic_dbk_bgflush_last_finish "lastFinished"
 
 /* db status */
 #define diagnostic_dbk_db "databases"
@@ -60,61 +59,6 @@
 #define diagnostic_dbk_collection_index_count "indexCount"
 #define diagnostic_dbk_collection_padding_factor "paddingFactor"
 #define diagnostic_dbk_collection_total_index_size "totalIndexSize"
-#define diagnostic_dbk_collection_index_details "indexSizes"
-
-/*
- * Internal data structures
- */
-
-typedef struct
-{
-    char *name;
-    int size;
-} DiagnosticIndexInfo;
-
-typedef struct
-{
-    char *name;
-    int object_count;
-    int data_size;
-    double avg_object_size;
-    int storage_size;
-    int index_count;
-    double padding_factor;
-    int total_index_size;
-    Seq *index_list; /* DiagnosticsIndexInfo list */
-} DiagnosticCollectionStatus;
-
-typedef struct
-{
-    char *db_name;
-    int object_count;
-    double avg_object_size;
-    int data_size;
-    int storage_size;
-    int file_size;
-    Seq *collection_list; /* DiagnosticCollectionStatus list */
-} DiagnosticDatabaseStatus;
-
-typedef struct
-{
-    char *host;
-    char *version;
-    double server_uptime;
-    double global_lock_total_time_us;
-    double global_lock_lock_time_us;
-    int global_lock_queue_total;
-    int global_lock_queue_readers;
-    int global_lock_queue_writers;
-    int mem_resident;
-    int mem_virtual;
-    int mem_mapped;
-    int bg_flush_count;
-    int bg_flush_total_ms;
-    int bg_flush_avg_ms;
-    int bg_flush_last_ms;
-    Seq *db_list; /* DiagnosticDatabaseStatus list */
-} DiagnosticServerStatus;
 
 /*
  * Internal utilities
@@ -126,6 +70,8 @@ static void DiagnosticServerStatusFree(DiagnosticServerStatus *ptr);
 static void DiagnosticServerStatusAppendDatabaseStatus(DiagnosticServerStatus *server,
                                                        DiagnosticDatabaseStatus *database);
 static void DiagnosticServerStatusToBson(DiagnosticServerStatus *in, bson *out);
+static DiagnosticServerStatus *DiagnosticServerStatusFromBson(bson *in);
+
 
 static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusCreate(void);
 static void DiagnosticDatabaseStatusFree(DiagnosticDatabaseStatus *ptr);
@@ -133,17 +79,14 @@ static void DiagnosticDatabaseStatusFree(DiagnosticDatabaseStatus *ptr);
 static void DiagnosticDatabaseStatusAppendCollectionStatus(DiagnosticDatabaseStatus *database,
                                                            DiagnosticCollectionStatus *collection);
 static void DiagnosticDatabaseStatusToBson(DiagnosticDatabaseStatus *in, bson *out);
+static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusFromBson(bson *in);
 
-static DiagnosticIndexInfo *DiagnosticIndexInfoCreate(void);
-static void DiagnosticIndexInfoFree(DiagnosticIndexInfo *ptr);
-static void DiagnosticIndexInfoToBson(DiagnosticIndexInfo *info, bson *out);
 
 static DiagnosticCollectionStatus *DiagnosticCollectionStatusCreate(void);
 static void DiagnosticCollectionStatusFree(DiagnosticCollectionStatus *ptr);
-/* transfer ownership */
-static void DiagnosticCollectionStatusAppendIndexInfo(DiagnosticCollectionStatus *collection,
-                                                      DiagnosticIndexInfo *info);
 static void DiagnosticCollectionStatusToBson(DiagnosticCollectionStatus *stat, bson *out);
+static DiagnosticCollectionStatus *DiagnosticCollectionStatusFromBson(bson *in);
+
 
 static DiagnosticServerStatus *DiagnosticServerStatusGet(EnterpriseDB *conn);
 static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusGet(EnterpriseDB *conn,
@@ -151,6 +94,10 @@ static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusGet(EnterpriseDB *conn,
 static DiagnosticCollectionStatus *DiagnosticCollectionStatusGet(EnterpriseDB *conn ,
                                                                  const char *db_name,
                                                                  const char *collection_name);
+
+
+static DiagnosticMongoSnaphot *DiagnosticMongoSnaphotCreate(void);
+static void DiagnosticMongoSnaphotFree(DiagnosticMongoSnaphot *ptr);
 
 /*
  * This function contain hardcoded MongoDB architecture schema (dbs/collections)
@@ -164,6 +111,29 @@ static void DiagnosticStatusPush(EnterpriseDB *conn, DiagnosticServerStatus *sta
 /*
  * Implementation
  */
+
+static DiagnosticMongoSnaphot *DiagnosticMongoSnaphotCreate(void)
+{
+    DiagnosticMongoSnaphot *snapshot = NULL;
+    snapshot = xmalloc(sizeof(DiagnosticMongoSnaphot));
+
+    snapshot->status = NULL;
+    snapshot->time = 0;
+
+    return snapshot;
+}
+static void DiagnosticMongoSnaphotFree(DiagnosticMongoSnaphot *ptr)
+{
+    if (ptr)
+    {
+        if (ptr->status)
+        {
+            DiagnosticServerStatusFree(ptr->status);
+        }
+    }
+
+    free(ptr);
+}
 
 static DiagnosticServerStatus *DiagnosticServerStatusCreate(void)
 {
@@ -278,6 +248,85 @@ static void DiagnosticServerStatusToBson(DiagnosticServerStatus *in, bson *out)
     BsonAppendFinishObject(out);
 }
 
+static DiagnosticServerStatus *DiagnosticServerStatusFromBson(bson *in)
+{
+    DiagnosticServerStatus *status = DiagnosticServerStatusCreate();
+
+    bson status_b;
+    if (BsonObjectGet(in, diagnostic_dbk_server_status, &status_b))
+    {
+        const char *host = NULL;
+        BsonStringGet(&status_b, diagnostic_dbk_host_name, &host);
+        status->host = xstrdup(host);
+
+        const char *version = NULL;
+        BsonStringGet(&status_b, diagnostic_dbk_version, &version);
+        status->version = xstrdup(version);
+
+        BsonDoubleGet(&status_b, diagnostic_dbk_uptime, &(status->server_uptime));
+
+        bson global_lock;
+        if (BsonObjectGet(&status_b, diagnostic_dbk_lock, &global_lock))
+        {
+            BsonDoubleGet(&global_lock, diagnostic_dbk_lock_total_time,
+                          &(status->global_lock_total_time_us));
+            BsonDoubleGet(&global_lock, diagnostic_dbk_lock_lock_time,
+                          &(status->global_lock_lock_time_us));
+            BsonIntGet(&global_lock, diagnostic_dbk_lock_queue_total,
+                       &(status->global_lock_queue_total));
+            BsonIntGet(&global_lock, diagnostic_dbk_lock_queue_readers,
+                       &(status->global_lock_queue_readers));
+            BsonIntGet(&global_lock, diagnostic_dbk_lock_queue_writers,
+                       &(status->global_lock_queue_writers));
+        }
+
+        bson mem;
+        if (BsonObjectGet(&status_b, diagnostic_dbk_mem, &mem))
+        {
+            BsonIntGet(&mem, diagnostic_dbk_mem_mapped, &(status->mem_mapped));
+            BsonIntGet(&mem, diagnostic_dbk_mem_resident, &(status->mem_resident));
+            BsonIntGet(&mem, diagnostic_dbk_mem_virtual, &(status->mem_virtual));
+        }
+
+        bson flush;
+        if (BsonObjectGet(&status_b, diagnostic_dbk_bgflush, &flush))
+        {
+            BsonIntGet(&flush, diagnostic_dbk_bgflush_count, &(status->bg_flush_count));
+            BsonIntGet(&flush, diagnostic_dbk_bgflush_total_ms, &(status->bg_flush_total_ms));
+            BsonIntGet(&flush, diagnostic_dbk_bgflush_avg_ms, &(status->bg_flush_avg_ms));
+            BsonIntGet(&flush, diagnostic_dbk_bgflush_last_ms, &(status->bg_flush_last_ms));
+        }
+
+        bson dbs;
+        if (BsonObjectGet(&status_b, diagnostic_dbk_db, &dbs))
+        {
+            bson_iterator it;
+            bson_iterator_init(&it, &dbs);
+
+            while (BsonIsTypeValid(bson_iterator_next(&it)) > 0)
+            {
+                if (bson_iterator_type(&it) == BSON_OBJECT)
+                {
+                    bson db_b;
+                    bson_iterator_subobject(&it, &db_b);
+
+                    DiagnosticDatabaseStatus *db_stat =
+                            DiagnosticDatabaseStatusFromBson(&db_b);
+
+                    if (!db_stat)
+                    {
+                        continue;
+                    }
+
+                    DiagnosticServerStatusAppendDatabaseStatus(status, db_stat);
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
 static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusCreate(void)
 {
     DiagnosticDatabaseStatus *status = NULL;
@@ -353,32 +402,47 @@ static void DiagnosticDatabaseStatusToBson(DiagnosticDatabaseStatus *in, bson *o
     BsonAppendFinishObject(out);
 }
 
-static DiagnosticIndexInfo *DiagnosticIndexInfoCreate(void)
+static DiagnosticDatabaseStatus *DiagnosticDatabaseStatusFromBson(bson *in)
 {
-    DiagnosticIndexInfo *index_info = NULL;
-    index_info = xmalloc(sizeof(DiagnosticIndexInfo));
+    DiagnosticDatabaseStatus *database = DiagnosticDatabaseStatusCreate();
 
-    index_info->name = NULL;
+    const char *name = NULL;
+    BsonStringGet(in, diagnostic_dbk_db_name, &name);
+    database->db_name = xstrdup(name);
 
-    return index_info;
-}
+    BsonIntGet(in, diagnostic_dbk_db_obj_cnt, &(database->object_count));
+    BsonDoubleGet(in, diagnostic_dbk_db_avg_obj_size, &(database->avg_object_size));
+    BsonIntGet(in, diagnostic_dbk_db_data_size, &(database->data_size));
+    BsonIntGet(in, diagnostic_dbk_db_storage_size, &(database->storage_size));
+    BsonIntGet(in, diagnostic_dbk_db_file_size, &(database->file_size));
 
-static void DiagnosticIndexInfoFree(DiagnosticIndexInfo *ptr)
-{
-    if (!ptr)
+    bson colls;
+    if (BsonObjectGet(in, diagnostic_dbk_collections, &colls))
     {
-        free(ptr->name);
+        bson_iterator it;
+        bson_iterator_init(&it, &colls);
+
+        while (BsonIsTypeValid(bson_iterator_next(&it)) > 0)
+        {
+            if (bson_iterator_type(&it) == BSON_OBJECT)
+            {
+                bson curr_coll;
+                bson_iterator_subobject(&it, &curr_coll);
+
+                DiagnosticCollectionStatus *coll_stat =
+                        DiagnosticCollectionStatusFromBson(&curr_coll);
+
+                if (!coll_stat)
+                {
+                    continue;
+                }
+
+                DiagnosticDatabaseStatusAppendCollectionStatus(database, coll_stat);
+            }
+        }
     }
 
-    free(ptr);
-}
-
-static void DiagnosticIndexInfoToBson(DiagnosticIndexInfo *info, bson *out)
-{
-    assert(info);
-    assert(out);
-
-    BsonAppendInt(out, info->name, info->size);
+    return database;
 }
 
 static DiagnosticCollectionStatus *DiagnosticCollectionStatusCreate(void)
@@ -394,7 +458,6 @@ static DiagnosticCollectionStatus *DiagnosticCollectionStatusCreate(void)
     status->index_count = 0;
     status->padding_factor = 0.0;
     status->total_index_size = 0;
-    status->index_list = NULL;
 
     return status;
 }
@@ -404,27 +467,9 @@ static void DiagnosticCollectionStatusFree(DiagnosticCollectionStatus *ptr)
     if (ptr)
     {
         free(ptr->name);
-        if (ptr->index_list)
-        {
-            SeqDestroy(ptr->index_list);
-        }
     }
 
     free(ptr);
-}
-
-static void DiagnosticCollectionStatusAppendIndexInfo(DiagnosticCollectionStatus *collection,
-                                                      DiagnosticIndexInfo *info)
-{
-    assert(info);
-    assert(collection);
-
-    if (!collection->index_list)
-    {
-        collection->index_list = SeqNew(5, DiagnosticIndexInfoFree);
-    }
-
-    SeqAppend(collection->index_list, info);
 }
 
 static void DiagnosticCollectionStatusToBson(DiagnosticCollectionStatus *in,
@@ -444,20 +489,30 @@ static void DiagnosticCollectionStatusToBson(DiagnosticCollectionStatus *in,
         BsonAppendDouble(out, diagnostic_dbk_collection_padding_factor, in->padding_factor);
         BsonAppendInt(out, diagnostic_dbk_collection_total_index_size, in->total_index_size);
 
-        if (in->index_list)
-        {
-            BsonAppendStartObject(out, diagnostic_dbk_collection_index_details);
-
-            for (int i = 0; i < SeqLength(in->index_list); i++)
-            {
-                DiagnosticIndexInfoToBson(SeqAt(in->index_list, i), out);
-            }
-            BsonAppendFinishObject(out);
-        }
     }
     BsonAppendFinishObject(out);
 }
 
+static DiagnosticCollectionStatus *DiagnosticCollectionStatusFromBson(bson *in)
+{
+    DiagnosticCollectionStatus *collection = DiagnosticCollectionStatusCreate();
+
+    const char *name = NULL;
+    BsonStringGet(in, diagnostic_dbk_collection_name, &name);
+    collection->name = xstrdup(name);
+
+    BsonIntGet(in, diagnostic_dbk_collection_obj_count, &(collection->object_count));
+    BsonIntGet(in, diagnostic_dbk_collection_data_size, &(collection->data_size));
+    BsonDoubleGet(in, diagnostic_dbk_collection_avg_obj_size, &(collection->avg_object_size));
+    BsonIntGet(in, diagnostic_dbk_collection_storage_size, &(collection->storage_size));
+    BsonIntGet(in, diagnostic_dbk_collection_index_count, &(collection->index_count));
+    BsonDoubleGet(in, diagnostic_dbk_collection_padding_factor,
+                  &(collection->padding_factor));
+    BsonIntGet(in, diagnostic_dbk_collection_total_index_size,
+               &(collection->total_index_size));
+
+    return collection;
+}
 
 static DiagnosticServerStatus *DiagnosticServerStatusGet(EnterpriseDB *conn)
 {
@@ -603,26 +658,6 @@ static DiagnosticCollectionStatus *DiagnosticCollectionStatusGet(EnterpriseDB *c
         BsonDoubleGet(&out, "paddingFactor", &(collection->padding_factor));
         BsonIntGet(&out, "totalIndexSize", &(collection->total_index_size));
 
-        bson index_sizes;
-        if (BsonObjectGet(&out, "indexSizes", &index_sizes))
-        {
-            bson_iterator it;
-            bson_iterator_init(&it, &index_sizes);
-
-            while (bson_iterator_next(&it))
-            {
-                if (bson_iterator_type(&it) == BSON_INT)
-                {
-                    DiagnosticIndexInfo *index_info = DiagnosticIndexInfoCreate();
-
-                    index_info->name = xstrdup(bson_iterator_key(&it));
-                    index_info->size = bson_iterator_int(&it);
-
-                    DiagnosticCollectionStatusAppendIndexInfo(collection, index_info);
-                }
-            }
-        }
-
         bson_destroy(&out);
     }
 
@@ -750,4 +785,47 @@ static void DiagnosticStatusPush(EnterpriseDB *conn, DiagnosticServerStatus *sta
     bson_destroy(&set_op);
 }
 
+Seq *DiagnosticsQueryMongoSnapshot(EnterpriseDB *conn)
+{
+    assert(conn);
 
+    Seq *snapshot_seq = NULL;
+    snapshot_seq = SeqNew(1020, DiagnosticMongoSnaphotFree); // this is around 3.5 days of snapshots with 5min interval to limit memory realication
+
+    bson query;
+    bson_init(&query);
+    BsonFinish(&query);
+
+    bson fields;
+    bson_init(&fields);
+    BsonFinish(&fields);
+
+    mongo_cursor *cursor = MongoFind(conn, diagnostic_db_mongo_coll, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (MongoCursorNext(cursor))
+    {
+        bson *main_obj = (bson*) mongo_cursor_bson(cursor);
+        if (BsonIsEmpty(main_obj))
+        {
+            continue;
+        }
+
+        time_t time_id = 0;
+        BsonIntGet(main_obj, diagnostic_dbk_time, (int*)(&time_id));
+
+        DiagnosticServerStatus *status = DiagnosticServerStatusFromBson(main_obj);
+
+        DiagnosticMongoSnaphot *snapshot = DiagnosticMongoSnaphotCreate();
+        snapshot->status = status;
+        snapshot->time = time_id;
+
+        SeqAppend(snapshot_seq, snapshot);
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return snapshot_seq;
+}

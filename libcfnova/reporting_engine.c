@@ -20,8 +20,9 @@
 #include "files_interfaces.h"
 #include "files_hashes.h"
 #include "string_lib.h"
+#include "db_diagnostics.h"
 
-#define SQL_TABLE_COUNT 16
+#define SQL_TABLE_COUNT 19
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -38,6 +39,9 @@
 #define SQL_TABLE_TOTALCOMPLIANCE "TotalCompliance"
 #define SQL_TABLE_PATCH "Patch"
 #define SQL_TABLE_FILEDIFFS "FileDiffs"
+#define SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "DatabaseServerStatus"
+#define SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "DatabaseStatus"
+#define SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS "DatabaseCollectionStatus"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -157,6 +161,47 @@
                                "FOREIGN KEY(ChangeTimeStamp) REFERENCES FileChanges(ChangeTimeStamp), " \
                                "FOREIGN key(HostKey) REFERENCES hosts(HostKey));"
 
+#define CREATE_SQL_DIAGNOSTIC_SERVER_STATUS "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "(" \
+                                              "SampleTime BIGINT, " \
+                                              "Host VARCHAR(100), " \
+                                              "Version VARCHAR(100), " \
+                                              "Uptime REAL, " \
+                                              "GlobalLockTotalTime REAL, " \
+                                              "GlobalLockTime REAL, " \
+                                              "GlobalLockQuereTotal INT, " \
+                                              "GlobalLockQuereReaders INT, " \
+                                              "GlobalLockQuereWriters INT, " \
+                                              "MemoryResident INT, " \
+                                              "MemoryVirtual INT, " \
+                                              "MemoryMapped INT, " \
+                                              "BackgroundFlushCount INT, " \
+                                              "BackgroundFlushTotalTime INT, " \
+                                              "BackgroundFlushAverageTime INT, " \
+                                              "BackgroundFlushLastTime INT);"
+
+#define CREATE_SQL_DIAGNOSTIC_DATABASE_STATUS "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "(" \
+                                                "SampleTime BIGINT, " \
+                                                "Database VARCHAR(100), " \
+                                                "AverageObjectSize REAL, " \
+                                                "DataSize INT, " \
+                                                "StorageSize INT, " \
+                                                "FileSize INT, " \
+                                                "FOREIGN KEY(SampleTime) REFERENCES ServiceStatus(SampleTime));"
+
+#define CREATE_SQL_DIAGNOSTIC_COLLECTION_STATUS "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS "(" \
+                                                "SampleTime BIGINT, " \
+                                                "Database VARCHAR(100), " \
+                                                "Collection VARCHAR(100), " \
+                                                "ObjectCount INT, " \
+                                                "DataSize INT, " \
+                                                "AverageObjectSize REAL, " \
+                                                "StorageSize INT, " \
+                                                "IndexCount INT, " \
+                                                "TotalIndexSize INT, " \
+                                                "PaddingFactor REAL, " \
+                                                "FOREIGN KEY(Database) REFERENCES DatabaseStatus(Database)," \
+                                                "FOREIGN KEY(SampleTime) REFERENCES ServiceStatus(SampleTime));"
+
 /******************************************************************/
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db);
@@ -200,6 +245,10 @@ static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *f
 static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter);
 
+static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db);
+static void EnterpriseDBToSqlite3_DiagnosticDatabaseStatus(sqlite3 *db);
+static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db);
+
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
 
@@ -241,6 +290,9 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_TOTALCOMPLIANCE,
     SQL_TABLE_PATCH,
     SQL_TABLE_FILEDIFFS,
+    SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+    SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+    SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
     NULL
 };
 
@@ -261,6 +313,9 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_TotalCompliance,
     EnterpriseDBToSqlite3_Patch,
     EnterpriseDBToSqlite3_FileDiffs,
+    EnterpriseDBToSqlite3_DiagnosticServiceStatus,
+    EnterpriseDBToSqlite3_DiagnosticDatabaseStatus,
+    EnterpriseDBToSqlite3_DiagnosticCollectionStatus,
     NULL
 };
 
@@ -281,6 +336,9 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_TOTALCOMPLIANCE,
     CREATE_SQL_PATCH,
     CREATE_SQL_FILEDIFFS,
+    CREATE_SQL_DIAGNOSTIC_SERVER_STATUS,
+    CREATE_SQL_DIAGNOSTIC_DATABASE_STATUS,
+    CREATE_SQL_DIAGNOSTIC_COLLECTION_STATUS,
     NULL
 };
 
@@ -479,6 +537,7 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
 
                 void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
 
+
                 if (!Sqlite3_BeginTransaction(db))
                 {
                     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -490,6 +549,13 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
                 if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
                 {
                     (*fnptr) (db, promise_filter);
+                }
+                else if ((strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_SERVER_STATUS) == 0) ||
+                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS) == 0) ||
+                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS) == 0))
+                {
+                    (*fnptr) (db);
+
                 }
                 else
                 {
@@ -1429,6 +1495,212 @@ static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter
     }
 
     DeleteHubQuery(hq, DeleteHubFileDiff);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    Seq *diag_mongo_snapshot = DiagnosticsQueryMongoSnapshot(&dbconn);
+
+    CFDB_Close(&dbconn);
+
+    if (!diag_mongo_snapshot)
+    {
+        return;
+    }
+
+    char *err = 0;
+    for (int i = 0; i < SeqLength(diag_mongo_snapshot); i++)
+    {
+        DiagnosticMongoSnaphot *stats =
+                (DiagnosticMongoSnaphot*) SeqAt(diag_mongo_snapshot, i);
+
+        if (!stats)
+        {
+            continue;
+        }
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%ld','%s','%s','%lf','%lf','%lf','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d');",
+                 SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+                 stats->time,
+                 NULLStringToEmpty(stats->status->host),
+                 NULLStringToEmpty(stats->status->version),
+                 stats->status->server_uptime,
+                 stats->status->global_lock_total_time_us,
+                 stats->status->global_lock_lock_time_us,
+                 stats->status->global_lock_queue_total,
+                 stats->status->global_lock_queue_readers,
+                 stats->status->global_lock_queue_writers,
+                 stats->status->mem_resident,
+                 stats->status->mem_virtual,
+                 stats->status->mem_mapped,
+                 stats->status->bg_flush_count,
+                 stats->status->bg_flush_total_ms,
+                 stats->status->bg_flush_avg_ms,
+                 stats->status->bg_flush_last_ms);
+
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return;
+        }
+    }
+
+    SeqDestroy(diag_mongo_snapshot);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_DiagnosticDatabaseStatus(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    Seq *diag_mongo_snapshot = DiagnosticsQueryMongoSnapshot(&dbconn);
+
+    CFDB_Close(&dbconn);
+
+    if (!diag_mongo_snapshot)
+    {
+        return;
+    }
+
+    for (int i = 0; i < SeqLength(diag_mongo_snapshot); i++)
+    {
+        DiagnosticMongoSnaphot *stats =
+                (DiagnosticMongoSnaphot*) SeqAt(diag_mongo_snapshot, i);
+
+        if (!stats)
+        {
+            continue;
+        }
+
+        for (int j = 0; j < SeqLength(stats->status->db_list); j++)
+        {
+
+            DiagnosticDatabaseStatus *db_status =
+                    (DiagnosticDatabaseStatus*) SeqAt(stats->status->db_list ,j);
+
+            if (!db_status)
+            {
+                continue;
+            }
+
+            char *err = 0;
+            char insert_op[CF_BUFSIZE] = {0};
+            snprintf(insert_op, sizeof(insert_op),
+                     "INSERT INTO %s VALUES('%ld','%s','%lf','%d',%d,'%d');",
+                     SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+                     stats->time,
+                     NULLStringToEmpty(db_status->db_name),
+                     db_status->avg_object_size,
+                     db_status->data_size,
+                     db_status->storage_size,
+                     db_status->file_size);
+
+            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+            {
+                Sqlite3_FreeString(err);
+                return;
+            }
+        }
+    }
+
+    SeqDestroy(diag_mongo_snapshot);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    Seq *diag_mongo_snapshot = DiagnosticsQueryMongoSnapshot(&dbconn);
+
+    CFDB_Close(&dbconn);
+
+    if (!diag_mongo_snapshot)
+    {
+        return;
+    }
+
+    for (int i = 0; i < SeqLength(diag_mongo_snapshot); i++)
+    {
+        DiagnosticMongoSnaphot *stats =
+                (DiagnosticMongoSnaphot*) SeqAt(diag_mongo_snapshot, i);
+
+        if (!stats)
+        {
+            continue;
+        }
+
+        for (int j = 0; j < SeqLength(stats->status->db_list); j++)
+        {
+
+            DiagnosticDatabaseStatus *db_status =
+                    (DiagnosticDatabaseStatus*) SeqAt(stats->status->db_list, j);
+
+            if (!db_status)
+            {
+                continue;
+            }
+
+            for (int k = 0; k < SeqLength(db_status->collection_list); k++)
+            {
+
+                DiagnosticCollectionStatus *coll_status =
+                        (DiagnosticCollectionStatus*) SeqAt(db_status->collection_list, k);
+
+                if (!coll_status)
+                {
+                    continue;
+                }
+
+                char *err = 0;
+                char insert_op[CF_BUFSIZE] = {0};
+                snprintf(insert_op, sizeof(insert_op),
+                         "INSERT INTO %s VALUES('%ld','%s','%s','%d','%d',%lf,'%d','%d','%d','%lf');",
+                         SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+                         stats->time,
+                         NULLStringToEmpty(db_status->db_name),
+                         NULLStringToEmpty(coll_status->name),
+                         coll_status->object_count,
+                         coll_status->data_size,
+                         coll_status->avg_object_size,
+                         coll_status->storage_size,
+                         coll_status->index_count,
+                         coll_status->total_index_size,
+                         coll_status->padding_factor);
+
+                if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+                {
+                    Sqlite3_FreeString(err);
+                    return;
+                }
+            }
+        }
+    }
+
+    SeqDestroy(diag_mongo_snapshot);
 }
 
 /******************************************************************/
