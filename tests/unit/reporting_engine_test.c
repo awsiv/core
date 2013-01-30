@@ -25,6 +25,9 @@ static void test_get_table_names(void **state)
                                 "SELECT * FROM TotalCompliance;",
                                 "SELECT * FROM Patch;",
                                 "SELECT * FROM FileDiffs;",
+                                "SELECT * FROM DatabaseServerStatus;",
+                                "SELECT * FROM DatabaseStatus;",
+                                "SELECT * FROM DatabaseCollectionStatus;",
                                 NULL
                              };
 
@@ -47,6 +50,9 @@ static void test_get_table_names(void **state)
                             "{'TotalCompliance'}",
                             "{'Patch'}",
                             "{'FileDiffs'}",
+                            "{'DatabaseServerStatus'}",
+                            "{'DatabaseStatus'}",
+                            "{'DatabaseCollectionStatus'}",
                             NULL
                          };
 
@@ -84,6 +90,9 @@ static void test_get_column_count(void **state)
                             SQL_TABLE_TOTALCOMPLIANCE,
                             SQL_TABLE_PATCH,
                             SQL_TABLE_FILEDIFFS,
+                            SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+                            SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+                            SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
                             NULL
                          };
 
@@ -103,6 +112,9 @@ static void test_get_column_count(void **state)
                             6,  // totalcompliance
                             5,  // patch
                             7,  // filediffs
+                            16, // serverstatus
+                            6,  // databasestatus
+                            10, // collectionstatus
                             0
                         };
 
@@ -157,26 +169,32 @@ static void test_validate_column_names(void **state)
                             SQL_TABLE_TOTALCOMPLIANCE,
                             SQL_TABLE_PATCH,
                             SQL_TABLE_FILEDIFFS,
+                            SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+                            SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+                            SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
                             NULL
                          };
 
-    const char *column_names[][7] = {
-        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL, NULL},        // hosts
-        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL, NULL},               // filechanges
-        {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL, NULL},                   // contexts
-        {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType", NULL},                        // variables
-        {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL, NULL},                   // software
-        {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL, NULL},  // promisestatuslast
-        {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL},             // promisedefinitions
-        {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL},
-        {"PromiseHandle", "PromiseLogType", "PromiseLogReport", "Occurrences", NULL, NULL, NULL},
-        {"HostKey", "NameSpace", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL}, //Bundlestatus
-        {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL},
-        {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL},
-        {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL},
-        {"HostKey", "PatchReportType", "PatchName", "PatchVersion", "PatchArchitecture", NULL, NULL},
-        {"HostKey", "PromiseHandle", "FileName", "ChangeTimeStamp", "ChangeType", "LineNumber", "ChangeDetails"},
-        {NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+    const char *column_names[][16] = {
+        {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},        // hosts
+        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},               // filechanges
+        {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                   // contexts
+        {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                        // variables
+        {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                   // software
+        {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},  // promisestatuslast
+        {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},             // promisedefinitions
+        {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"PromiseHandle", "PromiseLogType", "PromiseLogReport", "Occurrences", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "NameSpace", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}, //Bundlestatus
+        {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "PatchReportType", "PatchName", "PatchVersion", "PatchArchitecture", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "PromiseHandle", "FileName", "ChangeTimeStamp", "ChangeType", "LineNumber", "ChangeDetails", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"SampleTime", "Host", "Version", "Uptime", "GlobalLockTotalTime", "GlobalLockTime", "GlobalLockQuereTotal", "GlobalLockQuereReaders", "GlobalLockQuereWriters", "MemoryResident", "MemoryVirtual", "MemoryMapped", "BackgroundFlushCount", "BackgroundFlushTotalTime", "BackgroundFlushAverageTime", "BackgroundFlushLastTime"},
+        {"SampleTime", "Database", "AverageObjectSize", "DataSize", "StorageSize", "FileSize", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"SampleTime", "Database", "Collection", "ObjectCount", "DataSize", "AverageObjectSize", "StorageSize", "IndexCount", "TotalIndexSize", "PaddingFactor", NULL, NULL, NULL, NULL, NULL, NULL},
+        {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
     };
 
     sqlite3 *db;
