@@ -76,6 +76,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 int GetTopicPid(char *classified_topic);
 
 static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *context);
+static Topic *GetTopic(Topic *list, char *topic_name);
 
 /*******************************************************************/
 /* GLOBAL VARIABLES                                                */
@@ -1382,7 +1383,7 @@ int GetTopicPid(char *classified_topic)
 
 /*****************************************************************************/
 
-Topic *GetTopic(Topic *list, char *topic_name)
+static Topic *GetTopic(Topic *list, char *topic_name)
 {
     Topic *tp;
     char context[CF_MAXVARSIZE], name[CF_MAXVARSIZE];
