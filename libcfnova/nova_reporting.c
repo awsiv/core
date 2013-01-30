@@ -2252,15 +2252,6 @@ ReportContext *Nova_OpenCompilationReportFiles(const char *fname)
         }
         ReportContextAddWriter(context, REPORT_OUTPUT_TYPE_TEXT, FileWriter(ftxt));
     }
-
-    {
-        FILE *fhtml = NULL;
-        if ((fhtml = fopen(NULLFILE, "w")) == NULL)
-        {
-            FatalError("Could not write output log to %s", NULLFILE);
-        }
-        ReportContextAddWriter(context, REPORT_OUTPUT_TYPE_HTML, FileWriter(fhtml));
-    }
     return context;
 #else
     return OpenCompilationReportFiles(fname);
