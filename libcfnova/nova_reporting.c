@@ -81,32 +81,6 @@ ReportInfo BASIC_REPORTS[] =
 
 /*****************************************************************************/
 
-void GrandSummary()
-{
-    char name[CF_BUFSIZE];
-    FILE *fout;
-
-    Nova_SummarizeComms();
-
-    snprintf(name, CF_BUFSIZE - 1, "%s/reports/comp_key", CFWORKDIR);
-    MapName(name);
-
-    if ((fout = fopen(name, "w")) == NULL)
-    {
-        CfOut(cf_error, "fopen", "Cannot open the destination file %s", name);
-        return;
-    }
-
-    fprintf(fout, "Week: %.4lf %.4lf\n", METER_KEPT[meter_compliance_week], METER_REPAIRED[meter_compliance_week]);
-    fprintf(fout, "Day: %.4lf %.4lf\n", METER_KEPT[meter_compliance_day], METER_REPAIRED[meter_compliance_day]);
-    fprintf(fout, "Hour: %.4lf %.4lf\n", METER_KEPT[meter_compliance_hour], METER_REPAIRED[meter_compliance_hour]);
-    fprintf(fout, "Perf: %.4lf %.4lf\n", METER_KEPT[meter_perf_day], METER_REPAIRED[meter_perf_day]);
-    fprintf(fout, "Soft: %.4lf %.4lf\n", METER_KEPT[meter_other_day], METER_REPAIRED[meter_other_day]);
-    fprintf(fout, "Comms: %.4lf %.4lf\n", METER_KEPT[meter_comms_hour], METER_REPAIRED[meter_comms_hour]);
-    fprintf(fout, "Anom: %.4lf %.4lf\n", METER_KEPT[meter_anomalies_day], METER_REPAIRED[meter_anomalies_day]);
-
-    fclose(fout);
-}
 
 void Nova_SummarizeComms()
 /* Go through the database of recent connections and check for

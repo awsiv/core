@@ -20,4 +20,6 @@ void SummarizeFileChanges(int xml, int html, int csv, int embed, char *styleshee
 void SummarizeSoftware(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot, char *web);
 void SummarizeUpdates(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot, char *web);
 
+void GrandSummary(void);
+
 #endif
