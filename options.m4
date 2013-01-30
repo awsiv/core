@@ -15,7 +15,7 @@ if test "x$with_nova" != xno; then
      AC_DEFINE([HAVE_NOVA],[1],[Define if Nova extensions are to be enabled])
      NOVA_SUBDIR=nova
      NOVA_LIB_SUBDIRS='nova/sqlite3 nova/disphelper nova/libcfnova'
-     NOVA_BIN_SUBDIRS='nova/libcfagent nova/libcfmonitord nova/libcfserverd nova/libcfreport nova/libcfexecd nova/cf-know nova/cf-hub'
+     NOVA_BIN_SUBDIRS='nova/libcfagent nova/libcfmonitord nova/libcfserverd nova/libcfreport nova/libcfrunagent nova/libcfexecd nova/cf-know nova/cf-hub'
      NOVA_CFLAGS='-I$(abs_top_srcdir)/nova/libcfnova'
      NOVA_LDADD='$(abs_top_builddir)/nova/libcfnova/libcfnova.la'
      AC_MSG_RESULT(yes)

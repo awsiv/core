@@ -944,10 +944,6 @@ void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
 
 void Nova_TrackExecution(const char *input_file);
 
-/* runagent.c */
-
-bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
-
 /* server.c */
 
 pid_t Nova_StartTwin(int argc, char **argv);

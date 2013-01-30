@@ -78,7 +78,6 @@ libcfnova_la_SOURCES += \
         install.c install.h \
         magnify.c \
         promise_db.c promise_db.h \
-        runagent.c \
         reporting_engine.c reporting_engine.h \
         scorecards.c scorecards.h \
         stories.c stories.h \

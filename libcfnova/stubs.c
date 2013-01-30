@@ -14,8 +14,3 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
     CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (no binary support)");
     return false;
 }
-
-bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
-{
-    return true;
-}
