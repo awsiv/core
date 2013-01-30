@@ -2,7 +2,7 @@ CFENGINE 3 ENTERPRISE 3.1alpha1
 RELEASE DATE: 30 January 2013
 SCOPE: Installation instructions for CFEngine 3 Enterprise 3.1alpha
 
-IMPORTANT NOTE: This is an early alpha release of 3.1, intended for testing and showcase only. This version is not supported or covered by service level agreements (SLAs). Do not upgrade or use in conjuction with other versions at this point. We are planning monthly snapshot (alpha) releases going forward, but official release date for 3.1 has not been set (expect several months from now). See also http://cfengine.com/blog/january-2013-release-now-available for more information.
+IMPORTANT NOTE: This is an early alpha release of 3.1, intended for testing and showcase only. This version is not supported, not covered by service level agreements (SLAs) and not intended for production environments. Do not upgrade or use in conjuction with other versions at this point. We are planning monthly snapshot (alpha) releases going forward, but official release date for 3.1 has not been set (expect several months from now). See also http://cfengine.com/blog/january-2013-release-now-available for more information.
 
 For information about supported platforms, compatible hub/client configurations and an overview of changes, please see the "3.1alpha1-Release-Notes-CFEngine-3-Enterprise.txt" file (available on cfengine.com/25free or in the commercial software download directory).
 
