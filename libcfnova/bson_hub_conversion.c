@@ -12,6 +12,7 @@
 #include "cfstream.h"
 #include "string_lib.h"
 #include "scope.h"
+#include "install.h"
 
 #include <assert.h>
 

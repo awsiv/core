@@ -17,6 +17,7 @@
 #include "instrumentation.h"
 #include "cfstream.h"
 #include "db_diagnostics.h"
+#include "install.h"
 
 #include <assert.h>
 

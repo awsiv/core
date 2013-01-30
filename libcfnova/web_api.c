@@ -28,6 +28,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "pipes.h"
 #include "topicmap.h"
 #include "stories.h"
+#include "install.h"
 
 #include <assert.h>
 

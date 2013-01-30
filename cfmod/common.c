@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include "install.h"
+
 static Rlist *PHPStringArrayToRlist(zval * php_array, bool prune_empty)
 {
     zval **data;

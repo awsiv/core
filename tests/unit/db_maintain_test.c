@@ -14,6 +14,7 @@
 #include <assert.h>
 
 #if defined(HAVE_LIBMONGOC)
+#include "install.h"
 
 bool CFDB_ValidateVariablesReport(EnterpriseDB *conn, const char *keyhash)
 {

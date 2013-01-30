@@ -15,6 +15,7 @@
 #include "granules.h"
 #include "instrumentation.h"
 #include "cfstream.h"
+#include "install.h"
 
 static void ScheduleRunMaintenanceJobs(void);
 

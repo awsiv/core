@@ -15,6 +15,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "conversion.h"
 #include "bson_hub_conversion.h"
 #include "cfstream.h"
+#include "install.h"
 
 #include "db_query.h"
 

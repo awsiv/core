@@ -16,6 +16,7 @@
 #include "db_query.h"
 #include "bson_lib.h"
 #include "dataunpack.c"
+#include "install.h"
 
 static void test_software_report_unpack_db(void **state)
 {
