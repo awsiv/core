@@ -5,7 +5,6 @@
 #include "reporting.h"
 
 void Nova_SummarizeComms(void);
-void Nova_ZenossSummary(const char *docroot);
 
 ReportContext *Nova_OpenCompilationReportFiles(const char *fname);
 void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Seq *bundles, const Seq *bodies);

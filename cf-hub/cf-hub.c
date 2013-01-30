@@ -34,6 +34,9 @@
 #include "vars.h"
 #include "db_diagnostics.h"
 #include "install.h"
+#include "string_lib.h"
+#include "sort.h"
+#include "communication.h"
 
 #include <assert.h>
 
@@ -73,6 +76,8 @@ static void SplayLongUpdates(void);
 static void Nova_CountMonitoredClasses(void);
 static void CollectSchedulerChildAndSleep(int wait_seconds);
 static int GetHubSleepSeconds(time_t start);
+
+static void Nova_ZenossSummary(const char *docroot);
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -1022,4 +1027,131 @@ static int GetHubSleepSeconds(time_t start)
     }
 
     return sleep_time;
+}
+
+static char *Titleize(char *str)
+{
+    static char buffer[CF_BUFSIZE];
+    int i;
+
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    strcpy(buffer, str);
+
+    if (strlen(buffer) > 1)
+    {
+        for (i = 1; buffer[i] != '\0'; i++)
+        {
+            buffer[i] = ToLower(str[i]);
+        }
+    }
+
+    *buffer = ToUpper(*buffer);
+
+    return buffer;
+}
+
+static void Nova_ZenossSummary(const char *docroot)
+{
+    char name[CF_MAXVARSIZE];
+    Item *clist = NULL, *ip = NULL;
+    FILE *fout;
+
+    snprintf(name, sizeof(name), "%s/reports/summary.z", docroot);
+    MapName(name);
+
+#ifdef HAVE_LIBMONGOC
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
+    {
+        return;
+    }
+
+    HostColourFilter *gyr_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                              HOST_COLOUR_GREEN_YELLOW_RED,
+                                                              PROMISE_CONTEXT_MODE_ALL);
+
+    Item *gyr_list = CFDB_GetHostByColour(&conn, NULL, gyr_colour_filter);
+    free(gyr_colour_filter);
+
+    gyr_list = SortItemListCounters(gyr_list);
+
+    HostColourFilter *blue_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                               HOST_COLOUR_BLUE,
+                                                               PROMISE_CONTEXT_MODE_ALL);
+
+    Item *blue_list = CFDB_GetHostByColour(&conn, NULL, blue_colour_filter);
+    free(blue_colour_filter);
+
+    for (ip = blue_list; ip != NULL; ip = ip->next)
+    {
+        ip->counter = CF_CODE_BLUE;
+    }
+
+    HostColourFilter *black_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                                HOST_COLOUR_BLACK,
+                                                                PROMISE_CONTEXT_MODE_ALL);
+
+    Item *black_list = CFDB_GetHostByColour(&conn, NULL, black_colour_filter);
+    free(black_colour_filter);
+
+    for (ip = black_list; ip != NULL; ip = ip->next)
+    {
+        ip->counter = CF_CODE_BLACK;
+    }
+
+    if (gyr_list != NULL)
+    {
+    clist = gyr_list;
+    }
+
+    if (clist == NULL)
+    {
+        clist = blue_list;
+    }
+    else
+    {
+        (EndOfList(clist))->next = blue_list;
+    }
+
+    if (clist == NULL)
+    {
+        clist = black_list;
+    }
+    else
+    {
+        (EndOfList(clist))->next = black_list;
+    }
+
+    if (!CFDB_Close(&conn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+#endif
+
+    if ((fout = fopen(name, "w")))
+    {
+        for (ip = clist; ip != NULL; ip = ip->next)
+        {
+            if (strcmp(ip->name, "localhost") == 0 || strcmp(ip->name, "127.0.0.1") == 0)
+            {
+            }
+            else
+            {
+                fprintf(fout, "%s,/Server/%s,%d\n", Hostname2IPString(ip->name), Titleize(ip->classes), ip->counter);
+            }
+        }
+
+        fclose(fout);
+    }
+
+    if (clist != NULL)
+    {
+        DeleteItemList(clist);
+    }
+
+    chmod(name, 0644);
 }
