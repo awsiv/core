@@ -27,7 +27,7 @@ endif
 
 if SOLARIS
 libcfmonitord_la_SOURCES += mon_mem_solaris.c
-libcfmonitord_la_SOURCES += shared_kstat.c
+libcfmonitord_la_SOURCES += shared_kstat.c shared_kstat.h
 endif
 
 if !LINUX
