@@ -607,7 +607,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
                 DeletePrivateClassContext();    // Each time we change bundle      
             }
 
-            if ((sp = GetSubTypeForBundle(TYPESEQUENCE[type], bp)) == NULL)
+            if ((sp = BundleGetSubType(bp, TYPESEQUENCE[type])) == NULL)
             {
                 continue;
             }
