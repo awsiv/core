@@ -2017,7 +2017,7 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
 
 /*****************************************************************************/
 
-char *Titleize(char *str)
+static char *Titleize(char *str)
 {
     static char buffer[CF_BUFSIZE];
     int i;
