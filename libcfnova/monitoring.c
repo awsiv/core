@@ -635,11 +635,6 @@ void LoadSlowlyVaryingObservations()
     void *stored;
     int ksize, vsize;
 
-    if (THIS_AGENT_TYPE == AGENT_TYPE_EXECUTOR || LOOKUP)
-    {
-        return;
-    }
-
     if (!OpenDB(&dbp, dbid_static))
     {
         return;
