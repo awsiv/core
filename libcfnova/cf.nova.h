@@ -942,6 +942,8 @@ void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
 
 /* server.c */
 
+#define LOCK_HAIL_PREFIX "last.internal_bundle.hail."
+
 pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
