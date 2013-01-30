@@ -940,10 +940,6 @@ const char *Nova_NameVersion(void);
 
 void EnterpriseTrackTotalCompliance(const Promise *pp, char status);
 
-/* registry.c */
-
-void Nova_TrackExecution(const char *input_file);
-
 /* server.c */
 
 pid_t Nova_StartTwin(int argc, char **argv);
