@@ -17,6 +17,7 @@ libcfmonitord_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 libcfmonitord_la_SOURCES = \
         probes.c \
+        history.c history.h \
         mon_cumulative.c
 
 if LINUX

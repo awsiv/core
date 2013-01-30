@@ -916,6 +916,9 @@ void Nova_MonOtherInit(void);
 void Nova_MonOtherGatherData(double *cf_this);
 void Nova_LookupAggregateClassName(int n, char *name, char *desc);
 
+void MakeTimekey(time_t time, char *result);
+
+
 /* - date-related functions - */
 
 time_t WeekBegin(time_t time);
