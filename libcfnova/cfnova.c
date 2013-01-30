@@ -67,16 +67,9 @@ void EnterpriseModuleTrick()
 
     if (false)
     {
-        //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
-        //   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
         //   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
-        //   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
-        //   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
         //   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
-        //   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
         //   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
-        //   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
-        //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
         //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
         //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
         //   Nova2PHP_promises(NULL, NULL, NULL, 0);
