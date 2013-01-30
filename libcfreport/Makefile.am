@@ -15,7 +15,17 @@ AM_LDFLAGS = @LDFLAGS@
 
 libcfreport_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
-libcfreport_la_SOURCES = syntax.c
+libcfreport_la_SOURCES = \
+	syntax.c
+
+if MONGO
+libcfreport_la_SOURCES += \
+	cmd_api.c cmd_api.h \
+	nova_reports.c nova_reports.h
+else
+libcfreport_la_SOURCES += \
+	stubs.c
+endif
 
 CLEANFILES = *.gcno *.gcda
 

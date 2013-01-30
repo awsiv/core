@@ -4,8 +4,8 @@
 
 */
 
-#ifndef CFENGINE_CF_NOVA_CMD_API_H
-#define CFENGINE_CF_NOVA_CMD_API_H
+#ifndef CFENGINE_CMD_API_H
+#define CFENGINE_CMD_API_H
 
 #include <stdbool.h>
 

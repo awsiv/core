@@ -65,7 +65,6 @@ libcfnova_la_SOURCES += \
         bson_hub_conversion.c bson_hub_conversion.h \
         bson_lib.c bson_lib.h \
         client_code.c \
-        cmd_api.c cf.nova.cmd_api.h \
         dataunpack.c datapack.h \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \

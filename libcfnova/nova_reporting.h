@@ -12,8 +12,5 @@ void Nova_NoteVarUsageDB(void);
 ReportContext *Nova_OpenCompilationReportFiles(const char *fname);
 void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Seq *bundles, const Seq *bodies);
 void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent);
-int Nova_ExportReports(char *reportName);
-void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char *classregex);
-void Nova_ImportReports(const char *input_file);
 
 #endif
