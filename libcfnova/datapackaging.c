@@ -135,27 +135,6 @@ static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum c
             snprintf(tbuf, CF_BUFSIZE - 1, "%s", cf_ctime(&then));
             tbuf[strlen(tbuf) - 9] = '\0';      /* Chop off second and year */
 
-            if (PURGE == 'y')
-            {
-                if (now - then > SECONDS_PER_WEEK)
-                {
-                    DBCursorDeleteEntry(dbcp);
-                }
-
-                CfOut(cf_inform, "", "Deleting expired entry for %s\n", eventname);
-
-                if (measure < 0 || average < 0 || measure > 4 * SECONDS_PER_WEEK)
-                {
-                    DBCursorDeleteEntry(dbcp);
-                }
-
-                CfOut(cf_inform, "",
-                      " -> Deleting entry for %s because it seems to take longer than 4 weeks to complete\n",
-                      eventname);
-
-                continue;
-            }
-
             // Format: time_t entry.t; char * "name"; double q; double E(q); double sigma
 
             if (strlen(eventname) == 0 || strlen(eventname) > CF_MAXVARSIZE / 2)
