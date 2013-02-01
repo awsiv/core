@@ -21,6 +21,7 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 #include "db_diagnostics.h"
+#include "hashes.h"
 
 #define SQL_TABLE_COUNT 19
 
@@ -501,8 +502,10 @@ int WriteColumnNamesCsv(sqlite3 *db, const char *select_op, Writer *writer)
 
 /******************************************************************/
 
-cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
+cfapi_errid LoadSqlite3Tables(sqlite3 *db, Set *tables, const char *username)
 {
+    assert(tables);
+
     cfapi_errid errid;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
@@ -527,48 +530,45 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
     HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     PromiseFilter *promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
 
-    for(Rlist *rp = tables; rp != NULL; rp = rp->next)
+    for (int i = 0; TABLES[i] != NULL; i++)
     {
-        for (int i = 0; TABLES[i] != NULL; i++)
+        if (SetContains(tables, TABLES[i]))
         {
-            if(strcmp(rp->item, TABLES[i]) == 0)
+            assert(SQL_CONVERSION_HANDLERS[i]);
+
+            void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
+
+
+            if (!Sqlite3_BeginTransaction(db))
             {
-                assert(SQL_CONVERSION_HANDLERS[i]);
+                DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+                return ERRID_DB_OPERATION;
+            }
 
-                void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
+            LogPerformanceTimer timer = LogPerformanceStart();
+            if(strcmp(TABLES[i], SQL_TABLE_PROMISEDEFINITIONS) == 0)
+            {
+                (*fnptr) (db, promise_filter);
+            }
+            else if ((strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_SERVER_STATUS) == 0) ||
+                     (strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS) == 0) ||
+                     (strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS) == 0))
+            {
+                (*fnptr) (db);
 
+            }
+            else
+            {
+                (*fnptr) (db, context_filter);
+            }
+            LogPerformanceStop(&timer, "Loaded table %s", TABLES[i]);
 
-                if (!Sqlite3_BeginTransaction(db))
-                {
-                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-                    return ERRID_DB_OPERATION;
-                }
-
-                LogPerformanceTimer timer = LogPerformanceStart();
-                if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
-                {
-                    (*fnptr) (db, promise_filter);
-                }
-                else if ((strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_SERVER_STATUS) == 0) ||
-                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS) == 0) ||
-                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS) == 0))
-                {
-                    (*fnptr) (db);
-
-                }
-                else
-                {
-                    (*fnptr) (db, context_filter);
-                }
-                LogPerformanceStop(&timer, "Loaded table %s", TABLES[i]);
-
-                if (!Sqlite3_CommitTransaction(db))
-                {
-                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-                    return ERRID_DB_OPERATION;
-                }
+            if (!Sqlite3_CommitTransaction(db))
+            {
+                DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+                return ERRID_DB_OPERATION;
             }
         }
     }
@@ -1735,28 +1735,32 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
 
 /******************************************************************/
 
-Rlist *GetTableNamesInQuery(const char *select_op)
+bool GetTableNamesInQuery(const char *select_op, Set *tables_set)
 {
-    Rlist *tables = NULL;
+    assert(tables_set);
+    assert(select_op);
 
     char *select_low = SafeStringDuplicate(select_op);
     ToLowerStrInplace(select_low);
 
+    bool found = false;
+
     for (int i = 0; TABLES[i] != NULL; i++)
     {
-        char table_name[CF_BUFSIZE] = { 0 };
-        strcpy(table_name, TABLES[i]);
-        ToLowerStrInplace(table_name);
+        char *table_name_low = xstrdup(TABLES[i]);
+        ToLowerStrInplace(table_name_low);
 
-        if (StringMatch(table_name, select_low))
+        if (StringMatch(table_name_low, select_low))
         {
-            IdempPrependRScalar(&tables, TABLES[i], CF_SCALAR);
+            found = true;
+            SetAdd(tables_set, xstrdup(TABLES[i]));
         }
+
+        free(table_name_low);
     }
 
     free(select_low);
-
-    return tables;
+    return found;
 }
 
 /******************************************************************/
@@ -2276,16 +2280,16 @@ bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *selec
         return false;
     }
 
+    Set *tables = SetNew((MapHashFn)OatHash, (MapKeyEqualFn)StringSafeEqual, free);
 
-    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
-    if(!tables)
+    if (!(GetTableNamesInQuery(select_op_expanded, tables)))
     {
         return false;
     }
 
     LoadSqlite3Tables(db, tables, username);
 
-    DeleteRlist(tables);
+    SetDestroy(tables);
 
     return true;
 }

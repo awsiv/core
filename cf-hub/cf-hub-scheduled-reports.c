@@ -21,6 +21,8 @@
 #include "cfstream.h"
 #include "pipes.h"
 #include "vars.h"
+#include "string_lib.h"
+#include "hashes.h"
 
 #include <assert.h>
 
@@ -384,12 +386,13 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
     {
         if( GenerateAllTables( db ) )
         {
-            Rlist *tables = GetTableNamesInQuery( query );
+            Set *tables = SetNew((MapHashFn)OatHash, (MapKeyEqualFn)StringSafeEqual, free);
 
-            if( tables )
+            bool found = GetTableNamesInQuery(query, tables);
+
+            if (found)
             {
                 LoadSqlite3Tables( db, tables, user );
-                DeleteRlist( tables );
 
                 char *err_msg = 0;
 
@@ -404,6 +407,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                           path_origin,
                           errno);
 
+                    SetDestroy(tables);
                     Sqlite3_DBClose(db);
                     return false;
                 }
@@ -418,6 +422,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                     CfOut(cf_error, "DBScheduledCSVReportGeneration", "Error writing CSV header - sql: \"%s\"", query);
 
                     WriterClose(writer);
+                    SetDestroy(tables);
                     Sqlite3_DBClose(db);
                     return false;
                 }
@@ -431,12 +436,15 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
 
                     Sqlite3_FreeString(err_msg);
                     WriterClose(writer);
+                    SetDestroy(tables);
                     Sqlite3_DBClose(db);
                     return false;
                 }
 
                 WriterClose(writer);
             }
+
+            SetDestroy(tables);
         }
 
         Sqlite3_DBClose( db );

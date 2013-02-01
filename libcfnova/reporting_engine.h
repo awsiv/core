@@ -10,6 +10,7 @@
 #include "cf.nova.h"
 #include "install.h"
 #include "sqlite3.h"
+#include "set.h"
 
 typedef enum
 {
@@ -38,7 +39,7 @@ JsonElement *AsyncQueryAbort(const char *token);
 bool Sqlite3_DBOpen(sqlite3 **db);
 void Sqlite3_DBClose(sqlite3 *db);
 bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
-cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username);
+cfapi_errid LoadSqlite3Tables(sqlite3 *db, Set *tables, const char *username);
 
 void Sqlite3_FreeString(char *str);
 
@@ -47,6 +48,6 @@ int BuildJsonOutput(void *out, int argc, char **argv, char **azColName);
 int BuildCSVOutput(void *out, int argc, char **argv, char **azColName);
 
 bool GenerateAllTables(sqlite3 *db);
-Rlist *GetTableNamesInQuery(const char *select_op);
+bool GetTableNamesInQuery(const char *select_op, Set *tables);
 int WriteColumnNamesCsv(sqlite3 *db, const char *select_op, Writer *writer);
 #endif
