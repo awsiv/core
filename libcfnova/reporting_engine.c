@@ -22,6 +22,7 @@
 #include "string_lib.h"
 #include "db_diagnostics.h"
 #include "hashes.h"
+#include "buffer.h"
 
 #define SQL_TABLE_COUNT 19
 
@@ -1750,13 +1751,19 @@ bool GetTableNamesInQuery(const char *select_op, Set *tables_set)
         char *table_name_low = xstrdup(TABLES[i]);
         ToLowerStrInplace(table_name_low);
 
-        if (StringMatch(table_name_low, select_low))
+        Buffer *table_regex = NULL;
+        BufferNew(&table_regex);
+
+        BufferPrintf(table_regex, "\\b%s\\b", table_name_low);
+
+        if (StringMatch(BufferData(table_regex), select_low))
         {
             found = true;
             SetAdd(tables_set, xstrdup(TABLES[i]));
         }
 
         free(table_name_low);
+        BufferDestroy(&table_regex);
     }
 
     free(select_low);
