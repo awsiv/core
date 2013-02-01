@@ -33,13 +33,13 @@
 #define SQL_TABLE_SOFTWARE "Software"
 #define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
-#define SQL_TABLE_PROMISELOG "PromiseLog"
+#define SQL_TABLE_PROMISELOG "PromiseLogs"
 #define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
-#define SQL_TABLE_LASTSEEN "LastSeen"
-#define SQL_TABLE_TOTALCOMPLIANCE "TotalCompliance"
-#define SQL_TABLE_PATCH "Patch"
+#define SQL_TABLE_LASTSEEN "LastSeenHosts"
+#define SQL_TABLE_TOTALCOMPLIANCE "PolicyStatus"
+#define SQL_TABLE_PATCH "SoftwareUpdates"
 #define SQL_TABLE_FILEDIFFS "FileDiffs"
 #define SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "DatabaseServerStatus"
 #define SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "DatabaseStatus"
@@ -97,18 +97,18 @@
 #define CREATE_SQL_PROMISELOG "CREATE TABLE " SQL_TABLE_PROMISELOG "(" \
                                        "HostKey VARCHAR(100), " \
                                        "PromiseHandle VARCHAR(254), " \
-                                       "PromiseLogType VARCHAR(8), " \
-                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "PromiseStatus VARCHAR(10), " \
+                                       "PromiseStatusReport VARCHAR(1024), " \
                                        "Time BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_PROMISE_SUMMARY "CREATE TABLE " SQL_TABLE_PROMISE_SUMMARY "(" \
                                        "PromiseHandle VARCHAR(254), " \
-                                       "PromiseLogType VARCHAR(8), " \
-                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "PromiseStatus VARCHAR(10), " \
+                                       "PromiseStatusReport VARCHAR(1024), " \
                                        "Occurrences INT, " \
                                        "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLog(PromiseHandle), " \
-                                       "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLog(PromiseLogReport));"
+                                       "FOREIGN KEY(PromiseStatusReport) REFERENCES PromiseLog(PromiseStatusReport));"
 
 #define CREATE_SQL_BUNDLESTATUS "CREATE TABLE " SQL_TABLE_BUNDLESTATUS "(" \
                                        "HostKey VARCHAR(100), " \
@@ -127,15 +127,15 @@
 
 #define CREATE_SQL_LASTSEEN "CREATE TABLE " SQL_TABLE_LASTSEEN "(" \
                                        "HostKey VARCHAR(100), " \
-                                       "LastSeenDirection VARCHAR(254), " \
-                                       "RemoteHostKey REAL, " \
+                                       "LastSeenDirection VARCHAR(10), " \
+                                       "RemoteHostKey VARCHAR(100), " \
                                        "LastSeenAt BIGINT, " \
                                        "LastSeenInterval INT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_TOTALCOMPLIANCE "CREATE TABLE " SQL_TABLE_TOTALCOMPLIANCE "(" \
                                        "HostKey VARCHAR(100), " \
-                                       "PolicyVersion VARCHAR(254), " \
+                                       "PolicyName VARCHAR(254), " \
                                        "TotalKept INT, " \
                                        "TotalRepaired INT, " \
                                        "TotalNotKept INT, " \
@@ -1245,15 +1245,15 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
         switch (hl->direction)
         {
         case LAST_SEEN_DIRECTION_OUTGOING:
-            snprintf(inout, CF_SMALLBUF, "Out");
+            snprintf(inout, CF_SMALLBUF, "out");
             break;
 
         case LAST_SEEN_DIRECTION_INCOMING:
-            snprintf(inout, CF_SMALLBUF, "In");
+            snprintf(inout, CF_SMALLBUF, "in");
             break;
 
         default:
-            snprintf(inout, CF_SMALLBUF, "Unknown");
+            snprintf(inout, CF_SMALLBUF, "unknown");
             break;
         }
 
