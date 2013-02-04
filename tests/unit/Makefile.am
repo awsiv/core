@@ -31,7 +31,8 @@ check_PROGRAMS += scorecards_test \
         web_rbac_test \
         db_maintain_test \
         db_data_unpack_test \
-        lastseen_cache_test
+        lastseen_cache_test \
+        db_diagnostics_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/libpromises/libpromises.la
@@ -59,6 +60,9 @@ db_data_unpack_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
 lastseen_cache_test_SOURCES = $(MOCKERY_SOURCES) lastseen_cache_test.c
 lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastseen.la $(top_builddir)/nova/libcfnova/libcfnova.la
+
+db_diagnostics_test_SOURCES = $(MOCKERY_SOURCES) db_diagnostics_test.c 
+db_diagnostics_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
 endif
 
