@@ -53,8 +53,12 @@
 
 #define CREATE_SQL_FILECHANGES "CREATE TABLE " SQL_TABLE_FILECHANGES "(" \
                                "HostKey VARCHAR(100), " \
+                               "PromiseHandle VARCHAR(50), " \
                                "FileName VARCHAR(400), " \
                                "ChangeTimeStamp BIGINT, " \
+                               "ChangeType VARCHAR(10), " \
+                               "LineNumber INT, " \
+                               "ChangeDetails VARCHAR(2047), " \
                                "FOREIGN key(hostkey) REFERENCES hosts(hostkey));"
 
 #define CREATE_SQL_CONTEXTS "CREATE TABLE " SQL_TABLE_CONTEXTS "(" \
@@ -345,6 +349,13 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
 };
 
 /******************************************************************/
+
+static const char *LABEL_ADD = "add";
+static const char *LABEL_REMOVE = "remove";
+static const char *LABEL_UNKNOWN = "unknown";
+
+/******************************************************************/
+
 bool Sqlite3_DBOpen(sqlite3 **db)
 {
     int rc = sqlite3_open(":memory:", db);
@@ -732,6 +743,104 @@ static bool EnterpriseDBToSqlite3_Variables_Insert(sqlite3 *db, char *keyhash,
 
 /******************************************************************/
 
+static bool FileChangesInsertSQL(sqlite3 *db, HubFileChanges *change_record)
+{
+    assert(change_record);
+
+    char insert_op[CF_BUFSIZE] = {0};
+    snprintf(insert_op, sizeof(insert_op),
+             "INSERT INTO %s VALUES('%s','%s','%s',%ld,NULL,NULL,NULL);",
+             SQL_TABLE_FILECHANGES,
+             SkipHashType(change_record->hh->keyhash),
+             NULLStringToEmpty(change_record->handle),
+             NULLStringToEmpty(change_record->path),
+             change_record->t);
+
+    char *err = 0;
+    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+    {
+        Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
+}
+
+static bool FileDiffsInsertSQL(sqlite3 *db, HubFileDiff *diff_record)
+{
+    assert(diff_record);
+
+    char tline[CF_BUFSIZE] = { 0 };
+
+    for (const char *sp = diff_record->diff; sp && *sp != '\0'; sp += strlen(tline) + 1)
+    {
+        int line = -1;
+        char diff_type = -1;
+
+        char diff[CF_BUFSIZE] = { 0 };
+        sscanf(sp, "%c,%d,%2047[^\n]", &diff_type, &line, diff);
+        sscanf(sp, "%2047[^\n]", tline);
+
+        char diff_type_str[CF_SMALLBUF] = {0};
+        switch (diff_type)
+        {
+        case '+':
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_ADD);
+            break;
+        case '-':
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_REMOVE);
+            break;
+        default:
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_UNKNOWN);
+            break;
+        }
+
+        char *diff_escaped = EscapeCharCopy(diff, '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
+                 SQL_TABLE_FILECHANGES,
+                 SkipHashType(diff_record->hh->keyhash),
+                 NULLStringToEmpty(diff_record->promise_handle),
+                 NULLStringToEmpty(diff_record->path),
+                 diff_record->t,
+                 diff_type_str,
+                 line,
+                 diff_escaped);
+
+        free(diff_escaped);
+
+        char *err = 0;
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+static bool FileRecordsInsertSQL(sqlite3 *db, HubFileChanges *change_record)
+{
+    assert(change_record);
+
+    if (change_record->diff_record == NULL)
+    {
+        return FileChangesInsertSQL(db, change_record);
+    }
+    else
+    {
+        return FileDiffsInsertSQL(db, change_record->diff_record);
+    }
+
+    return true;
+}
+
+/******************************************************************/
+
 static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
@@ -741,31 +850,41 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         return;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, 0, time(NULL),
+    HubQuery *hq_fc = CFDB_QueryFileChanges(&dbconn, NULL, NULL, 0, time(NULL),
                                          filter, PROMISE_CONTEXT_MODE_ALL, NULL,
                                          QUERY_FLAG_DISABLE_ALL);
 
+    HubQuery *hq_fd = CFDB_QueryFileDiff(&dbconn, NULL, NULL, NULL, 0, time(NULL),
+                                      filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                      QUERY_FLAG_DISABLE_ALL);
+
     CFDB_Close(&dbconn);
 
-    char *err = 0;
-    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    for (const Rlist *changep = hq_fc->records; changep != NULL; changep = changep->next)
     {
-        HubFileChanges *hC = (HubFileChanges *) rp->item;
+        HubFileChanges *hC = (HubFileChanges *) changep->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
-                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
-
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        for (const Rlist *diffp = hq_fd->records; diffp != NULL; diffp = diffp->next)
         {
-            Sqlite3_FreeString(err);
-            break;
-        }
-    }
+            HubFileDiff *hD = (HubFileDiff *) diffp->item;
 
-    DeleteHubQuery(hq, DeleteHubFileChanges);
+            if (FileRecordsEqual(hC, hD))
+            {
+                hC->diff_record = hD;
+                break;
+            }
+        }
+
+        if (!FileRecordsInsertSQL(db, hC))
+        {
+            DeleteHubQuery(hq_fc, DeleteHubFileChanges);
+            DeleteHubQuery(hq_fd, DeleteHubFileDiff);
+            return;
+        }
+    }    
+
+    DeleteHubQuery(hq_fc, DeleteHubFileChanges);
+    DeleteHubQuery(hq_fd, DeleteHubFileDiff);
 }
 
 /******************************************************************/
@@ -1415,11 +1534,6 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
 }
 
 /******************************************************************/
-//definitions taken from public_api.c
-
-static const char *LABEL_ADD = "add";
-static const char *LABEL_REMOVE = "remove";
-static const char *LABEL_UNKNOWN = "unknown";
 
 static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter)
 {
