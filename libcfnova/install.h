@@ -143,6 +143,7 @@ int SortPromiseBundle(void *p1, void *p2);
 
 HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
 
+bool FileRecordsEqual(const HubFileChanges *change_record, const HubFileDiff *diff_record);
 int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ());
 
 #endif
