@@ -1528,6 +1528,11 @@ static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db)
             continue;
         }
 
+        if (!stats->status)
+        {
+            continue;
+        }
+
         char insert_op[CF_BUFSIZE] = {0};
         snprintf(insert_op, sizeof(insert_op),
                  "INSERT INTO %s VALUES('%ld','%s','%s','%lf','%lf','%lf','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d');",
@@ -1585,6 +1590,16 @@ static void EnterpriseDBToSqlite3_DiagnosticDatabaseStatus(sqlite3 *db)
                 (DiagnosticMongoSnaphot*) SeqAt(diag_mongo_snapshot, i);
 
         if (!stats)
+        {
+            continue;
+        }
+
+        if (!stats->status)
+        {
+            continue;
+        }
+
+        if (!stats->status->db_list)
         {
             continue;
         }
@@ -1653,6 +1668,16 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
             continue;
         }
 
+        if (!stats->status)
+        {
+            continue;
+        }
+
+        if (!stats->status->db_list)
+        {
+            continue;
+        }
+
         for (int j = 0; j < SeqLength(stats->status->db_list); j++)
         {
 
@@ -1660,6 +1685,11 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
                     (DiagnosticDatabaseStatus*) SeqAt(stats->status->db_list, j);
 
             if (!db_status)
+            {
+                continue;
+            }
+
+            if (!db_status->collection_list)
             {
                 continue;
             }
