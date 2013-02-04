@@ -2631,8 +2631,14 @@ void Nova_TrackExecution(const char *input_file)
     double gavr = 0;
     double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
 
-    /* failsafe + promises double execution exeption */
+    /* failsafe/update + promises double execution exeption */
     if (strstr(input_file, "failsafe.cf") != NULL)
+    {
+        CfDebug("TrackExecution: policy file %s SKIPPED\n", input_file);
+        return;
+    }
+
+    if (strstr(input_file, "update.cf") != NULL)
     {
         CfDebug("TrackExecution: policy file %s SKIPPED\n", input_file);
         return;
