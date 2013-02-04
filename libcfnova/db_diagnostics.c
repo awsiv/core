@@ -498,8 +498,10 @@ static DiagnosticCollectionStatus *DiagnosticCollectionStatusFromBson(bson *in)
     DiagnosticCollectionStatus *collection = DiagnosticCollectionStatusCreate();
 
     const char *name = NULL;
-    BsonStringGet(in, diagnostic_dbk_collection_name, &name);
-    collection->name = xstrdup(name);
+    if (BsonStringGet(in, diagnostic_dbk_collection_name, &name))
+    {
+        collection->name = xstrdup(name);
+    }
 
     BsonIntGet(in, diagnostic_dbk_collection_obj_count, &(collection->object_count));
     BsonIntGet(in, diagnostic_dbk_collection_data_size, &(collection->data_size));
