@@ -228,7 +228,7 @@ int Nova_LaterThan(const char *bigger, const char *smaller)
 
 bool BundleQualifiedNameSplit(const char *qualified_bundle_name, char namespace_out[CF_MAXVARSIZE], char bundle_name_out[CF_MAXVARSIZE])
 {
-    Rlist *parts = SplitStringAsRList(qualified_bundle_name, '.');
+    Rlist *parts = SplitStringAsRList(qualified_bundle_name, ':');
     if (parts)
     {
         const char *first = ScalarValue(parts);

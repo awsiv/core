@@ -506,7 +506,7 @@ void LastSawBundle(const Bundle *bundle, double compliance)
     {
        return;
     }
-    
+
     if (ReadDB(dbp, bundle->name, &e, sizeof(e)))
     {
         newe.Q = QAverage(e.Q, compliance, 0.7);
@@ -520,9 +520,16 @@ void LastSawBundle(const Bundle *bundle, double compliance)
     
     if (THIS_AGENT_TYPE == AGENT_TYPE_AGENT)
     {
-        char *fqname = BundleQualifiedName(bundle);
-        WriteDB(dbp, fqname, &newe, sizeof(newe));
-        free(fqname);
+        if (strstr(bundle->name, ":") == NULL)
+        {
+            char *fqname = BundleQualifiedName(bundle);
+            WriteDB(dbp, fqname, &newe, sizeof(newe));
+            free(fqname);
+        }
+        else
+        {
+             WriteDB(dbp, bundle->name, &newe, sizeof(newe));
+        }
     }
 
     CloseDB(dbp);

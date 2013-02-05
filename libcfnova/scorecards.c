@@ -580,6 +580,66 @@ HostColour HostColourFromScoreForConnectedHost(int score)
 {
     return HostColourFromScore(1, 1, 1, score, false);
 }
+
+/*****************************************************************************/
+
+bool IsKeyWithinPromiseContext(const char *ns, const char *key,
+                               PromiseContextMode promise_context)
+{
+    /*
+     * cfe_internal_.* = internal
+     * default:cfe_internal_.* = internal
+     * cfe_system.*:any = internal
+     * any other then above = user
+     */
+
+    if (!ns) /* key don't have namespace -- apply the same rule as for handles */
+    {
+        return IsHandleWithinPromiseContext(key, promise_context);
+    }
+    else
+    {
+        switch (promise_context)
+        {
+            case PROMISE_CONTEXT_MODE_USER:
+                if (CompareStringOrRegex(ns, CF_INTERNAL_NAMESPACE_RX, true))
+                {
+                    return false;
+                }
+                else if (CompareStringOrRegex(ns, "default", true))
+                {
+                    return IsHandleWithinPromiseContext(key, promise_context);
+                }
+                else
+                {
+                    return true;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_INTERNAL:
+
+                if (CompareStringOrRegex(ns, CF_INTERNAL_NAMESPACE_RX, true))
+                {
+                    return true;
+                }
+                else if (CompareStringOrRegex(ns, "default", true))
+                {
+                    return IsHandleWithinPromiseContext(key, promise_context);
+                }
+                else
+                {
+                    return false;
+                }
+                break;
+
+            case PROMISE_CONTEXT_MODE_ALL:
+                break;
+        }
+    }
+
+    return true;
+}
+
 /*****************************************************************************/
 
 bool IsHandleWithinPromiseContext(const char *handle, PromiseContextMode promise_context)
