@@ -21,7 +21,8 @@ libcfagent_la_LIBADD += ../disphelper/libdisphelper.la
 endif
 
 libcfagent_la_SOURCES = \
-        processes.c
+        processes.c \
+        agent_reports.c
 
 if NT
 libcfagent_la_SOURCES += \

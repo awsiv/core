@@ -3,6 +3,7 @@
 #include "db_query.h"
 
 #if defined(HAVE_LIBMONGOC)
+#include "install.h"
 
 static void test_query_promiselog_repaired(void **state)
 {

@@ -12,6 +12,7 @@
 /* Please backup important data before running these tests */
 
 #ifdef HAVE_LIBMONGOC
+#include "install.h"
 #include "cf.nova.h"
 #include "db_query.h"
 #include "db_save.h"

@@ -19,9 +19,9 @@ AM_LDFLAGS = @LDFLAGS@
 LDADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 cf_hub_SOURCES = \
-        cf-hub.c \
-        cf-hub-maintenance.c \
-        cf-hub-worker.c \
+        cf-hub.c cf-hub.h \
+        cf-hub-maintenance.c cf-hub-maintenance.h \
+        cf-hub-worker.c cf-hub-worker.h \
         cf-hub-scheduled-reports.c cf-hub-scheduled-reports.h
 endif
 

@@ -32,6 +32,7 @@
 #include "string_lib.h"
 #include "ontology.h"
 #include "topicmap.h"
+#include "install.h"
 
 #include <assert.h>
 

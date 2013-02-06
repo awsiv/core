@@ -11,7 +11,7 @@
 #include "db_save.h"
 #include "cfstream.h"
 
-static char *CF_CODEBOOK[] =
+static const char *CF_CODEBOOK[] =
 {
     CFR_PERF,
     CFR_CLASS,

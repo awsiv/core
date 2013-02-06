@@ -109,7 +109,6 @@ JsonElement *Nova2PHP_list_services(void);
 JsonElement *Nova2PHP_list_service_ports(void);
 JsonElement *Nova2PHP_summarize_all_goals(char *username);
 JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *promisee);
-JsonElement *Nova2PHP_list_types_in_bundle(char *name);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_service_histogram(void);
 JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
@@ -141,14 +140,6 @@ void Nova2PHP_summary_meter(char *buffer, int bufsize);
 void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize,
                     PromiseContextMode promise_context);
 int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);
-JsonElement *Nova2PHP_software_report(char *hostkey, char *name, char *value,
-                                      char *arch, bool regex, char *type,
-                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                      PromiseContextMode promise_context);
-JsonElement *Nova2PHP_classes_report(char *hostkey, char *name, bool regex,
-                                     HostClassFilter *hostClassFilter, PageInfo *page,
-                                     time_t from, time_t to,
-                                     PromiseContextMode promise_context);
 JsonElement *Nova2PHP_classes_summary(char **classes);
 int Nova2PHP_countclasses(char *hostkey, char *name, bool regex,
                           HostClassFilter *hostClassFilter, char *returnval,
@@ -158,88 +149,17 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope,
                                   const char *type, bool regex,
                                   const HostClassFilter *hostClassFilter,
                                   PageInfo *page, PromiseContextMode promise_context);
-JsonElement *Nova2PHP_compliance_report(char *hostkey, char *version, time_t from,
-                                        time_t to, int k, int nk, int rep,
-                                        HostClassFilter *hostClassFilter, PageInfo *page,
-                                        PromiseContextMode promise_context);
-JsonElement *Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status,
-                                          bool regex, HostClassFilter *hostClassFilter,
-                                          HostColourFilter *hostColourFilter,
-                                          bool lastRunOnly, PageInfo *page,
-                                          PromiseContextMode promise_context);
-JsonElement *Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost,
-                                      char *laddr, double lago, int lregex,
-                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                      PromiseContextMode promise_context);
-JsonElement *Nova2PHP_performance_report(char *hostkey, char *job, bool regex,
-                                         HostClassFilter *hostClassFilter, PageInfo *page,
-                                         PromiseContextMode promise_context);
 JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
                                     HostClassFilter *hostClassFilter, PageInfo *page,
                                     PromiseContextMode promise_context);
-JsonElement *Nova2PHP_bundle_report(char *hostkey, char *scope, bool regex,
-                                    HostClassFilter *hostClassFilter,
-                                    HostColourFilter *host_colour_filter, bool lastRunOnly,
-                                    PageInfo *page, PromiseContextMode promise_context);
-JsonElement *Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex,
-                                         time_t from, time_t to,
-                                         HostClassFilter *hostClassFilter, PageInfo *page,
-                                         PromiseContextMode promise_context);
-JsonElement *Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs,
-                                       bool regex, time_t from, time_t to,
-                                       HostClassFilter *hostClassFilter, PageInfo *page,
-                                       PromiseContextMode promise_context);
 
 /*
  * Host only reports
  */
-JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
-                                     char *arch, bool regex, char *type,
-                                     HostClassFilter *hostClassFilter, PageInfo *page,
-                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
-                                    HostClassFilter *hostClassFilter, PageInfo *page,
-                                    time_t from, time_t to,
-                                    PromiseContextMode promise_context,
-                                    WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval,
-                                 char *rval, char *type, bool regex,
-                                 HostClassFilter *hostClassFilter, PageInfo *page,
-                                 PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from,
-                                       time_t to, int k, int nk, int rep,
-                                       HostClassFilter *hostClassFilter, PageInfo *page,
-                                       PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
-                                    bool regex, HostClassFilter *hostClassFilter,
-                                    HostColourFilter *hostColourFilter,
-                                    bool lastRunOnly, PageInfo *page,
-                                    PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
-                                     char *laddress, double lago, int lregex,
-                                     HostClassFilter *hostClassFilter, PageInfo *page,
-                                     PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
-                                        HostClassFilter *hostClassFilter, PageInfo *page,
-                                        PromiseContextMode promise_context,
-                                        WebReportFileInfo *wr_info);
 JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
                                    HostClassFilter *hostClassFilter, PageInfo *page,
                                    PromiseContextMode promise_context,
                                    WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
-                                   HostClassFilter *hostClassFilter,
-                                   HostColourFilter *hostColourFilter,
-                                   bool lastRunOnly, PageInfo *page,
-                                   PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
-                                        time_t from, time_t to,
-                                        HostClassFilter *hostClassFilter, PageInfo *page,
-                                        PromiseContextMode promise_context, WebReportFileInfo *wr_info);
-JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
-                                      bool regex, time_t from, time_t to,
-                                      HostClassFilter *hostClassFilter, PageInfo *page,
-                                      PromiseContextMode promise_context, WebReportFileInfo *wr_info);
 JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause,
                                        PromiseLogState state, time_t from, time_t to,
                                        HostClassFilter *hostClassFilter, PageInfo *page,

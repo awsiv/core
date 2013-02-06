@@ -23,6 +23,7 @@
 #include "bson_lib.h"
 #include "db_query.h"
 #include "topicmap.h"
+#include "install.h"
 
 static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const char *bundle, const char *lval, char *returnval, int bufsize);
 static int Nova_GetReportedList(const char *hostkey, const char *ns, const char *bundle, const char *lval, Rlist **list);

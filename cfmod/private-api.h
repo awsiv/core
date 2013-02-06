@@ -99,11 +99,6 @@ PHP_FUNCTION(cfpr_vitals_view_year);
  */
 PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value);
 
-/*! \brief A histogram of bundle types
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_agent_bundle_type_histogram);
-
 /*! \brief A list of handles with a named promisee
  */
 // port plan: (further investigate)
@@ -225,51 +220,6 @@ PHP_FUNCTION(cfpr_list_services);
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_list_service_ports);
 
-/*! \brief Query reported software entries in a host
- * \param hostKey
- * \param softwareName
- * \param softwareVersion
- * \param softwareArchitecture
- * \param classExpression
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_software_in);
-
-/*! \brief Query reported patch entries in a host
- * \param hostKey
- * \param patchName
- * \param patchVersion
- * \param patchArchitecture
- * \param classExpression
- * \param sortColumnName
- * \param sortDescending
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_patch_in);
-
-/*! \brief Query reported patch entries available to a host
- * \param hostKey
- * \param patchName
- * \param patchVersion
- * \param patchArchitecture
- * \param classExpression
- * \param sortColumnName
- * \param sortDescending
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_patch_avail);
-
-/*! \brief Query reported classes at a host
- * \returns A JSON document with probability of seeing class, standard deviation
- * \param hostKey
- * \param name (leave this NULL)
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_classes);
-
 /*! \brief A JSON document with hosts and contexts matching the context expressions
  * \param classExpressions comma-delimited list
  * \param sortColumnName
@@ -290,23 +240,6 @@ PHP_FUNCTION(cfpr_class_cloud);
 // port plan: /query
 PHP_FUNCTION(cfpr_report_vars);
 
-/*! \brief Query for a promise compliance report, i.e. proportion of kept promises
- * \param hostKey
- * \param version
- * \param time
- * \param kept
- * \param notKept
- * \param repaired
- * \param comparator
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_compliance_summary);
-
 /*! \brief Get a cached promise compliance report for the barcharts
  * \param policy
  * \param sortColumnName
@@ -316,18 +249,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary);
 // now used in new prototype compliance model page
 // port plan: deprecate
 PHP_FUNCTION(cfpr_compliance_summary_graph);
-
-/*! \brief Query for a promise compliance report, given a promise handle expression
- * \param hostKey
- * \param handle
- * \param status
- * \param useRegularExpressions
- * \param contextExpression
- * \param resultsPerPage
- * \param pageNumber
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_compliance_promises);
 
 /*! \brief Query for lastknown promise compliance report, given a promise handle expression and hostcolour
  * \param hostKey
@@ -344,37 +265,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises);
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_report_lastknown_compliance_promises);
 
-/*! \brief Query for a report of when hosts were last seen
- * \param hostKey
- * \param hubKey
- * \param hostname
- * \param address
- * \param maxLastSeen
- * \param useRegularExpressions
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-
-// port plan: /host/seen (possibly /query)
-PHP_FUNCTION(cfpr_report_lastseen);
-
-/*! \brief Query for a performance report for a job
- * \param hostKey
- * \param job
- * \param useRegularExpressions
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-
-// port plan: /query (or deprecate)
-PHP_FUNCTION(cfpr_report_performance);
-
 /*! \brief Query for programs with setuid
  * \param hostKey
  * \param file
@@ -388,58 +278,6 @@ PHP_FUNCTION(cfpr_report_performance);
 
 // port plan: /query, /host/setuid, (deprecate)
 PHP_FUNCTION(cfpr_report_setuid);
-
-/*! \brief Query for changed files at a host
- * \param hostKey
- * \param file
- * \param useRegularExpressions
- * \param time
- * \param comparator
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-
-// port plan: /query (eventually), /host/file-changes
-PHP_FUNCTION(cfpr_report_filechanges);
-
-/*! \brief Query for file diffs
- * \param hostKey
- * \param file
- * \param diff
- * \param useRegularExpressions
- * \param time
- * \param comparator
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-
-// port plan: /query (eventually), /host/file-changes
-PHP_FUNCTION(cfpr_report_filediffs);
-
-/*! \brief Query for bundles
- * \param hostKey
- * \param bundle
- * \param contextExpression
- */
-// bundle compliance report
-// port plan: /query
-PHP_FUNCTION(cfpr_report_bundlesseen);
-
-/*! \brief Query for bundles for the last run. NULL hostcolour gives results for red, green and yellow hosts
- * \param hostKey
- * \param hostColour
- * \param bundle
- * \param contextExpression
- */
-// same thing as cfpr_report_bundlesseen, but with color query
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_report_lastknown_bundlesseen);
 
 /*! \brief A list of all the library documents
  * \param filePath
@@ -465,120 +303,6 @@ PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx);
 // port plan: /host/context
 PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx);
 
-/*! \brief Query for hosts using some software
- * \param hostKey
- * \param name
- * \param version
- * \param architecture
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_software_in);
-
-/*! \brief Query for hosts with some patch installed
- * \param hostKey
- * \param name
- * \param version
- * \param architecture
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_patch_in);
-
-/*! \brief Query for hosts with some patch available to it
- * \param hostKey
- * \param name
- * \param version
- * \param architecture
- * \param useRegularExpressions
- * \param contextExpression
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_patch_avail);
-
-/*! \brief Query for hosts with the given classes
- * \param hostKey
- * \param name
- * \param useRegularExpressions
- * \param contextExpression
- */
-// port plan: /query or /host?context
-PHP_FUNCTION(cfpr_hosts_with_classes);
-
-/*! \brief Query for hosts with the given classes
- * \param hostKey
- * \param scope
- * \param name
- * \param value
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query or (further investigate)
-PHP_FUNCTION(cfpr_hosts_with_vars);
-
-/*! \brief Query for hosts with a given compliance summary
- * \param hostKey
- * \param version
- * \param time
- * \param kept
- * \param notKept
- * \param repaired
- * \param comparator
- * \param contextExpression
- */
-
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_compliance_summary);
-
-/*! \brief Query for hosts with a given promise compliance
- * \param hostKey
- * \param handle
- * \param status
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_compliance_promises);
-
-/*! \brief Query for hosts with a given promise compliance and lastknown compliance status
- * \param hostKey
- * \param hostcolour
- * \param handle
- * \param status
- * \param useRegularExpressions
- * \param contextExpression
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises);
-
-/*! \brief Query for hosts with a given promise compliance
- * \param hostKey
- * \param hubKey
- * \param hostname
- * \param address
- * \param timeAgo
- * \param useRegularExpressions
- * \param contextExpression
- */
-// port plan: /query or /host?from
-PHP_FUNCTION(cfpr_hosts_with_lastseen);
-
-/*! \brief Query for hosts with some performance metric
- * \param hostKey
- * \param job
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query or deprecate
-PHP_FUNCTION(cfpr_hosts_with_performance);
-
 /*! \brief Query for hosts with setuid programs
  * \param hostKey
  * \param file
@@ -588,29 +312,6 @@ PHP_FUNCTION(cfpr_hosts_with_performance);
 
 // port plan: /query
 PHP_FUNCTION(cfpr_hosts_with_setuid);
-
-/*! \brief Query for hosts with file changes
- * \param hostKey
- * \param file
- * \param useRegularExpressions
- * \param contextExpression
- */
-
-// port plan: /query or /host/file-changes
-PHP_FUNCTION(cfpr_hosts_with_filechanges);
-
-/*! \brief Query for hosts with file diffs
- * \param hostKey
- * \param file
- * \param diff
- * \param useRegularExpressions
- * \param timeAgo
- * \param comparator
- * \param contextExpression
- */
-
-// port plan: /query or /host/file-changes
-PHP_FUNCTION(cfpr_hosts_with_filediffs);
 
 /*! \brief Query for hosts with promises repaired
  * \param hostKey
@@ -631,23 +332,6 @@ PHP_FUNCTION(cfpr_hosts_with_repaired);
  */
 // port plan: /query
 PHP_FUNCTION(cfpr_hosts_with_notkept);
-
-/*! \brief Query for hosts with bundle
- * \param hostKey
- * \param bundle
- * \param contextExpression
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_bundlesseen);
-
-/*! \brief Query for hosts with bundle during the last run, for specific colour (optional). NULL returns hosts with red,green, yellow compliance levels
- * \param hostKey
- * \param hostColour
- * \param bundle
- * \param contextExpression
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen);
 
 /*! \brief Query for hosts with business value
  * \param hostKey
@@ -680,30 +364,6 @@ PHP_FUNCTION(cfpr_report_value);
 // bar chart on compliance models page
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_get_value_graph);
-
-/*! \brief Get a report of promises not kept
- * \param hostKey
- * \param handle
- * \param hoursFrom
- * \param hoursTo
- * \param contextExpression
- * \param resultsPerPage
- * \param pageNumber
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_notkept);
-
-/*! \brief Get a report of promises repaired
- * \param hostKey
- * \param handle
- * \param hoursFrom
- * \param hoursTo
- * \param contextExpression
- * \param resultsPerPage
- * \param pageNumber
- */
-// port plan: /query
-PHP_FUNCTION(cfpr_report_repaired);
 
 /*! \brief Get a summary report of promises not kept
  * \param hostKey

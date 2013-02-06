@@ -58,6 +58,7 @@ db_maintain_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 db_data_unpack_test_SOURCES = $(MOCKERY_SOURCES) db_data_unpack_test.c
 db_data_unpack_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
+lastseen_cache_test_CPPFLAGS = $(AM_CPPFLAGS) -I$(abs_top_srcdir)/nova/cf-hub
 lastseen_cache_test_SOURCES = $(MOCKERY_SOURCES) lastseen_cache_test.c
 lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastseen.la $(top_builddir)/nova/libcfnova/libcfnova.la
 

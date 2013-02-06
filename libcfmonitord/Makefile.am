@@ -17,6 +17,7 @@ libcfmonitord_la_LIBADD = $(abs_top_srcdir)/libpromises/libpromises.la
 
 libcfmonitord_la_SOURCES = \
         probes.c \
+        history.c history.h \
         mon_cumulative.c
 
 if LINUX
@@ -26,7 +27,7 @@ endif
 
 if SOLARIS
 libcfmonitord_la_SOURCES += mon_mem_solaris.c
-libcfmonitord_la_SOURCES += shared_kstat.c
+libcfmonitord_la_SOURCES += shared_kstat.c shared_kstat.h
 endif
 
 if !LINUX

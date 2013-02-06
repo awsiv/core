@@ -17,6 +17,7 @@
 #include "communication.h"
 #include "logging.h"
 #include "vars.h"
+#include "install.h"
 
 #include <assert.h>
 

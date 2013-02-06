@@ -5,6 +5,7 @@
 #include "common.h"
 #include "conversion.h"
 #include "scope.h"
+#include "install.h"
 
 static const char *API_NAME = "CFEngine Nova";
 static const char *API_VERSION = "v1";

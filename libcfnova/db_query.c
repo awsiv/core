@@ -31,7 +31,6 @@
 static bool BsonAppendPromiseFilterUnexpanded(bson *query, const PromiseFilter *filter);
 static bool BsonAppendPromiseFilterExpanded(bson *query, PromiseFilter *filter);
 static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter);
-static void GetOldClientVersions(Rlist **rp);
 static bool DBResultAddRecord(Rlist **list, void *record, int options);
 static Rlist *DBResultSortRecords(Rlist *list, int (*CompareItems) (), int options);
 
@@ -3940,14 +3939,6 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 
     return NewHubQuery(host_list, record_list);
 }
-/*****************************************************************************/
-
-static void GetOldClientVersions(Rlist **rp)
-{    
-    PrependRScalar(rp, (void *) "cfengine_3_2.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "cfengine_3_1.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
-}
 
 /*****************************************************************************/
 /* IMPORTANT: Need to update this list for future releases                   */
@@ -3981,55 +3972,6 @@ static void SkipOldClientVersionsFilter(bson *b)
     }
 
     DeleteRlist(new_client_versions);
-}
-
-/*****************************************************************************/
-
-int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
-                               HostClassFilter *host_class_filter)
-/* NOTE: BundleSeen report is not compatible with agent versions < 3.3.0
- * and they are ignored during report generation. This fucntion count this skipped
- * hosts from the query.
- */
-{
-    int result = -1;
-
-    bson query;
-    bson_init(&query);
-
-    if (!NULL_OR_EMPTY(keyhash))
-    {
-        bson_append_string(&query, cfr_keyhash, keyhash);
-    }
-
-    BsonAppendHostClassFilter(&query, host_class_filter);
-
-    /* Search only for old agents (< 3.3.0) */
-    Rlist *old_client_versions = NULL;
-    GetOldClientVersions(&old_client_versions);
-
-    bson_append_start_object(&query, cfr_class_keys);
-    BsonAppendArrayRegex(&query, "$in", old_client_versions);
-    bson_append_finish_object(&query);
-
-    DeleteRlist(old_client_versions);
-
-    /* New client versions exist with old version (during upgrade) */
-
-    Rlist *new_client_versions = NULL;
-    GetNewClientVersions(&new_client_versions);
-
-    BsonAppendExcludeRegexList(&query, cfr_class_keys, new_client_versions);
-
-    DeleteRlist(new_client_versions);
-
-    BsonFinish(&query);
-
-    result = MongoCount( conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query );
-
-    bson_destroy(&query);
-
-    return result;
 }
 
 /*****************************************************************************/

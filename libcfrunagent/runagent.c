@@ -14,7 +14,7 @@
 
 /***********************************************************************/
 
-bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
+bool ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
     EnterpriseDB dbconn;
 

@@ -2,6 +2,7 @@
 
 #include "log.h"
 #include "string_lib.h"
+#include "install.h"
 
 #include <assert.h>
 

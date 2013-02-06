@@ -17,6 +17,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scope.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "install.h"
 
 /*****************************************************************************/
 
