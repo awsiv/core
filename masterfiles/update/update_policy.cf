@@ -10,7 +10,7 @@
 #
 #########################################################
 
-bundle agent update_policy
+bundle agent cfe_internal_update_policy
 {
  vars:
 
