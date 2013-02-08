@@ -159,7 +159,16 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             break;
 
         case 'm':
-            Nova_Maintain();
+
+            if (CFDB_QueryIsMaster())
+            {
+                Nova_Maintain();
+            }
+            else
+            {
+                CfOut(cf_inform, "", "This looks like a replication setup. Command only available in the replica set master");
+            }
+
             exit(0);
 
         case 'n':
@@ -173,6 +182,14 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             break;
 
         case 'a':
+
+            if (!(CFDB_QueryIsMaster()))
+            {
+                CfOut(cf_inform, "", "This looks like a replication setup. Command only available in the replica set master");
+                exit(0);
+            }
+
+
             if (!CFDB_Open(&dbconn))
             {
                 CfOut(cf_error, "", "Unable to connect to enterprise database");
