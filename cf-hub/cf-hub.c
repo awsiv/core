@@ -135,17 +135,24 @@ int main(int argc, char *argv[])
 
     if (DB_CACHE_COMPLIANCE)
     {
-        EnterpriseDB dbconn;
+        /* Should only run on replica set master
+         * Write operations are not allowed on secondaries
+         */
 
-        if (CFDB_Open(&dbconn))
+        if (CFDB_QueryIsMaster())
         {
-            Nova_CacheTotalCompliance(&dbconn, true);
+            EnterpriseDB dbconn;
 
-            CFDB_Close(&dbconn);
-        }
-        else
-        {
-            CfOut(cf_error, "", "Unable to connect to enterprise database");
+            if (CFDB_Open(&dbconn))
+            {
+                Nova_CacheTotalCompliance(&dbconn, true);
+
+                CFDB_Close(&dbconn);
+            }
+            else
+            {
+                CfOut(cf_error, "", "Unable to connect to enterprise database");
+            }
         }
 
         ReportContextDestroy(report_context);
@@ -154,7 +161,14 @@ int main(int argc, char *argv[])
 
     if (PERFORM_DB_MAINTENANCE)
     {
-        Nova_Maintain();
+        /* Should only run on replica set master
+         * Write operations are not allowed on secondaries
+         */
+        if (CFDB_QueryIsMaster())
+        {
+            Nova_Maintain();
+        }
+
         ReportContextDestroy(report_context);
         return 0;
     }
