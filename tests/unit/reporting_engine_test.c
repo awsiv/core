@@ -4,26 +4,26 @@
 #include "cf.nova.h"
 
 #include "matching.h"
+#include "set.h"
 
-static void test_get_table_names(void **state)
+// TODO: add tests to check multiple table names in a query
+
+static void test_get_table_names_single(void **state)
 {
     const char *select_op_list[] = {
                                 "SELECT * FROM Hosts",
-                                "SELECT * FROM Hosts, Variables",
-                                "SELECT * FROM Hosts, Variables, Software",
-                                "",
-                                "SELECT * FROM Hosts h, Variables v",
-                                "SELECT * FROM PromiseStatusLast s, PromiseDefinitions d, Contexts c",
-                                "SELECT ContextName FROM FileChanges f, Contexts s",
-                                "SELECT f.FileName, COUNT(*) FROM FileChanges f, Contexts s WHERE f.HostKey=s.HostKey AND f.ChangeTimeStamp>0 AND s.ContextName='linux' GROUP BY f.FileName ORDER BY f.FileName",
-                                "SELECT * FROM Hosts, VARIABLES",
-                                "SELECT * FROM PromiseLog;",
-                                "SELECT * FROM PromiseSummary;",
+                                "SELECT * FROM FileChanges",
+                                "SELECT * FROM Contexts",
+                                "SELECT * FROM Variables",
+                                "SELECT * FROM Software",
+                                "SELECT * FROM PromiseStatusLast",
+                                "SELECT * FROM PromiseDefinitions",
+                                "SELECT * FROM PromiseLogs;",
                                 "SELECT * FROM BundleStatus;",
                                 "SELECT * FROM Benchmarks;",
-                                "SELECT * FROM LastSeen;",
-                                "SELECT * FROM TotalCompliance;",
-                                "SELECT * FROM Patch;",
+                                "SELECT * FROM LastSeenHosts;",
+                                "SELECT * FROM PolicyStatus;",
+                                "SELECT * FROM SoftwareUpdates;",
                                 "SELECT * FROM FileDiffs;",
                                 "SELECT * FROM DatabaseServerStatus;",
                                 "SELECT * FROM DatabaseStatus;",
@@ -33,43 +33,47 @@ static void test_get_table_names(void **state)
 
     // Table names require to be in reverse order as in TABLES global list
     const char *table_list[] = {
-                            "{'Hosts'}",
-                            "{'Variables','Hosts'}",
-                            "{'Software','Variables','Hosts'}",
-                            "{}",
-                            "{'Variables','Hosts'}",
-                            "{'PromiseDefinitions','PromiseStatusLast','Contexts'}",
-                            "{'FileChanges','Contexts'}",
-                            "{'FileChanges','Contexts'}",
-                            "{'Variables','Hosts'}",
-                            "{'PromiseLog'}",
-                            "{'PromiseSummary'}",
-                            "{'BundleStatus'}",
-                            "{'Benchmarks'}",
-                            "{'LastSeen'}",
-                            "{'TotalCompliance'}",
-                            "{'Patch'}",
-                            "{'FileDiffs'}",
-                            "{'DatabaseServerStatus'}",
-                            "{'DatabaseStatus'}",
-                            "{'DatabaseCollectionStatus'}",
-                            NULL
-                         };
+        "Hosts",
+        "FileChanges",
+        "Contexts",
+        "Variables",
+        "Software",
+        "PromiseStatusLast",
+        "PromiseDefinitions",
+        "PromiseLogs",
+        "BundleStatus",
+        "Benchmarks",
+        "LastSeenHosts",
+        "PolicyStatus",
+        "SoftwareUpdates",
+        "FileDiffs",
+        "DatabaseServerStatus",
+        "DatabaseStatus",
+        "DatabaseCollectionStatus",
+        NULL
+    };
 
     for (int i = 0; select_op_list[i] != NULL; i++)
     {
-        Rlist *tables = NULL;
-        tables = GetTableNamesInQuery(select_op_list[i]);
+        Set *tables = SetNew((MapHashFn)OatHash, (MapKeyEqualFn)StringSafeEqual, free);
 
-        char buff[CF_MAXVARSIZE] = {0};
-        PrintRlist(buff, CF_MAXVARSIZE, tables);
+        assert_true((GetTableNamesInQuery(select_op_list[i], tables)));
 
-        assert_string_equal(buff, table_list[i]);
+        assert_true(SetContains(tables, table_list[i]));
 
-        DeleteRlist(tables);
-    }
+        // Also make sure that the Set contains only one element
+        int count = 0;
+        SetIterator it = SetIteratorInit(tables);
+        while (SetIteratorNext(&it))
+        {
+            count++;
+        }
 
-    assert_int_equal(1,1);
+        SetDestroy(tables);
+
+        assert_int_equal(count, 1);
+        tables = NULL;
+    }    
 }
 
 static void test_get_column_count(void **state)
@@ -231,7 +235,7 @@ int main()
 {
     const UnitTest tests[] =
     {
-        unit_test(test_get_table_names),
+        unit_test(test_get_table_names_single),
         unit_test(test_get_column_count),
         unit_test(test_validate_column_names)
     };
