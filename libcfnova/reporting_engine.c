@@ -21,6 +21,8 @@
 #include "files_hashes.h"
 #include "string_lib.h"
 #include "db_diagnostics.h"
+#include "hashes.h"
+#include "buffer.h"
 
 #define SQL_TABLE_COUNT 19
 
@@ -31,13 +33,13 @@
 #define SQL_TABLE_SOFTWARE "Software"
 #define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
-#define SQL_TABLE_PROMISELOG "PromiseLog"
+#define SQL_TABLE_PROMISELOG "PromiseLogs"
 #define SQL_TABLE_PROMISE_SUMMARY "PromiseSummary"
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
-#define SQL_TABLE_LASTSEEN "LastSeen"
-#define SQL_TABLE_TOTALCOMPLIANCE "TotalCompliance"
-#define SQL_TABLE_PATCH "Patch"
+#define SQL_TABLE_LASTSEEN "LastSeenHosts"
+#define SQL_TABLE_TOTALCOMPLIANCE "PolicyStatus"
+#define SQL_TABLE_PATCH "SoftwareUpdates"
 #define SQL_TABLE_FILEDIFFS "FileDiffs"
 #define SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "DatabaseServerStatus"
 #define SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "DatabaseStatus"
@@ -51,8 +53,12 @@
 
 #define CREATE_SQL_FILECHANGES "CREATE TABLE " SQL_TABLE_FILECHANGES "(" \
                                "HostKey VARCHAR(100), " \
+                               "PromiseHandle VARCHAR(50), " \
                                "FileName VARCHAR(400), " \
                                "ChangeTimeStamp BIGINT, " \
+                               "ChangeType VARCHAR(10), " \
+                               "LineNumber INT, " \
+                               "ChangeDetails VARCHAR(2047), " \
                                "FOREIGN key(hostkey) REFERENCES hosts(hostkey));"
 
 #define CREATE_SQL_CONTEXTS "CREATE TABLE " SQL_TABLE_CONTEXTS "(" \
@@ -95,18 +101,18 @@
 #define CREATE_SQL_PROMISELOG "CREATE TABLE " SQL_TABLE_PROMISELOG "(" \
                                        "HostKey VARCHAR(100), " \
                                        "PromiseHandle VARCHAR(254), " \
-                                       "PromiseLogType VARCHAR(8), " \
-                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "PromiseStatus VARCHAR(10), " \
+                                       "PromiseStatusReport VARCHAR(1024), " \
                                        "Time BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_PROMISE_SUMMARY "CREATE TABLE " SQL_TABLE_PROMISE_SUMMARY "(" \
                                        "PromiseHandle VARCHAR(254), " \
-                                       "PromiseLogType VARCHAR(8), " \
-                                       "PromiseLogReport VARCHAR(1024), " \
+                                       "PromiseStatus VARCHAR(10), " \
+                                       "PromiseStatusReport VARCHAR(1024), " \
                                        "Occurrences INT, " \
                                        "FOREIGN KEY(PromiseHandle) REFERENCES PromiseLog(PromiseHandle), " \
-                                       "FOREIGN KEY(PromiseLogReport) REFERENCES PromiseLog(PromiseLogReport));"
+                                       "FOREIGN KEY(PromiseStatusReport) REFERENCES PromiseLog(PromiseStatusReport));"
 
 #define CREATE_SQL_BUNDLESTATUS "CREATE TABLE " SQL_TABLE_BUNDLESTATUS "(" \
                                        "HostKey VARCHAR(100), " \
@@ -125,15 +131,15 @@
 
 #define CREATE_SQL_LASTSEEN "CREATE TABLE " SQL_TABLE_LASTSEEN "(" \
                                        "HostKey VARCHAR(100), " \
-                                       "LastSeenDirection VARCHAR(254), " \
-                                       "RemoteHostKey REAL, " \
+                                       "LastSeenDirection VARCHAR(10), " \
+                                       "RemoteHostKey VARCHAR(100), " \
                                        "LastSeenAt BIGINT, " \
                                        "LastSeenInterval INT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_TOTALCOMPLIANCE "CREATE TABLE " SQL_TABLE_TOTALCOMPLIANCE "(" \
                                        "HostKey VARCHAR(100), " \
-                                       "PolicyVersion VARCHAR(254), " \
+                                       "PolicyName VARCHAR(254), " \
                                        "TotalKept INT, " \
                                        "TotalRepaired INT, " \
                                        "TotalNotKept INT, " \
@@ -343,6 +349,13 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
 };
 
 /******************************************************************/
+
+static const char *LABEL_ADD = "add";
+static const char *LABEL_REMOVE = "remove";
+static const char *LABEL_UNKNOWN = "unknown";
+
+/******************************************************************/
+
 bool Sqlite3_DBOpen(sqlite3 **db)
 {
     int rc = sqlite3_open(":memory:", db);
@@ -501,8 +514,10 @@ int WriteColumnNamesCsv(sqlite3 *db, const char *select_op, Writer *writer)
 
 /******************************************************************/
 
-cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
+cfapi_errid LoadSqlite3Tables(sqlite3 *db, Set *tables, const char *username)
 {
+    assert(tables);
+
     cfapi_errid errid;
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC((char*)username);
@@ -527,48 +542,45 @@ cfapi_errid LoadSqlite3Tables(sqlite3 *db, Rlist *tables, const char *username)
     HostClassFilter *context_filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     PromiseFilter *promise_filter =  HubQueryGetFirstRecord(hqPromiseFilter);
 
-    for(Rlist *rp = tables; rp != NULL; rp = rp->next)
+    for (int i = 0; TABLES[i] != NULL; i++)
     {
-        for (int i = 0; TABLES[i] != NULL; i++)
+        if (SetContains(tables, TABLES[i]))
         {
-            if(strcmp(rp->item, TABLES[i]) == 0)
+            assert(SQL_CONVERSION_HANDLERS[i]);
+
+            void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
+
+
+            if (!Sqlite3_BeginTransaction(db))
             {
-                assert(SQL_CONVERSION_HANDLERS[i]);
+                DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+                return ERRID_DB_OPERATION;
+            }
 
-                void (*fnptr) () = SQL_CONVERSION_HANDLERS[i];
+            LogPerformanceTimer timer = LogPerformanceStart();
+            if(strcmp(TABLES[i], SQL_TABLE_PROMISEDEFINITIONS) == 0)
+            {
+                (*fnptr) (db, promise_filter);
+            }
+            else if ((strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_SERVER_STATUS) == 0) ||
+                     (strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS) == 0) ||
+                     (strcmp(TABLES[i], SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS) == 0))
+            {
+                (*fnptr) (db);
 
+            }
+            else
+            {
+                (*fnptr) (db, context_filter);
+            }
+            LogPerformanceStop(&timer, "Loaded table %s", TABLES[i]);
 
-                if (!Sqlite3_BeginTransaction(db))
-                {
-                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-                    return ERRID_DB_OPERATION;
-                }
-
-                LogPerformanceTimer timer = LogPerformanceStart();
-                if(strcmp(rp->item, SQL_TABLE_PROMISEDEFINITIONS) == 0)
-                {
-                    (*fnptr) (db, promise_filter);
-                }
-                else if ((strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_SERVER_STATUS) == 0) ||
-                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS) == 0) ||
-                         (strcmp(rp->item, SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS) == 0))
-                {
-                    (*fnptr) (db);
-
-                }
-                else
-                {
-                    (*fnptr) (db, context_filter);
-                }
-                LogPerformanceStop(&timer, "Loaded table %s", TABLES[i]);
-
-                if (!Sqlite3_CommitTransaction(db))
-                {
-                    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-                    DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-                    return ERRID_DB_OPERATION;
-                }
+            if (!Sqlite3_CommitTransaction(db))
+            {
+                DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+                DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+                return ERRID_DB_OPERATION;
             }
         }
     }
@@ -731,6 +743,104 @@ static bool EnterpriseDBToSqlite3_Variables_Insert(sqlite3 *db, char *keyhash,
 
 /******************************************************************/
 
+static bool FileChangesInsertSQL(sqlite3 *db, HubFileChanges *change_record)
+{
+    assert(change_record);
+
+    char insert_op[CF_BUFSIZE] = {0};
+    snprintf(insert_op, sizeof(insert_op),
+             "INSERT INTO %s VALUES('%s','%s','%s',%ld,NULL,NULL,NULL);",
+             SQL_TABLE_FILECHANGES,
+             SkipHashType(change_record->hh->keyhash),
+             NULLStringToEmpty(change_record->handle),
+             NULLStringToEmpty(change_record->path),
+             change_record->t);
+
+    char *err = 0;
+    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+    {
+        Sqlite3_FreeString(err);
+        return false;
+    }
+
+    return true;
+}
+
+static bool FileDiffsInsertSQL(sqlite3 *db, HubFileDiff *diff_record)
+{
+    assert(diff_record);
+
+    char tline[CF_BUFSIZE] = { 0 };
+
+    for (const char *sp = diff_record->diff; sp && *sp != '\0'; sp += strlen(tline) + 1)
+    {
+        int line = -1;
+        char diff_type = -1;
+
+        char diff[CF_BUFSIZE] = { 0 };
+        sscanf(sp, "%c,%d,%2047[^\n]", &diff_type, &line, diff);
+        sscanf(sp, "%2047[^\n]", tline);
+
+        char diff_type_str[CF_SMALLBUF] = {0};
+        switch (diff_type)
+        {
+        case '+':
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_ADD);
+            break;
+        case '-':
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_REMOVE);
+            break;
+        default:
+            snprintf(diff_type_str, CF_SMALLBUF, "%s", LABEL_UNKNOWN);
+            break;
+        }
+
+        char *diff_escaped = EscapeCharCopy(diff, '\'', '\'');
+
+        char insert_op[CF_BUFSIZE] = {0};
+        snprintf(insert_op, sizeof(insert_op),
+                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
+                 SQL_TABLE_FILECHANGES,
+                 SkipHashType(diff_record->hh->keyhash),
+                 NULLStringToEmpty(diff_record->promise_handle),
+                 NULLStringToEmpty(diff_record->path),
+                 diff_record->t,
+                 diff_type_str,
+                 line,
+                 diff_escaped);
+
+        free(diff_escaped);
+
+        char *err = 0;
+        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        {
+            Sqlite3_FreeString(err);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+static bool FileRecordsInsertSQL(sqlite3 *db, HubFileChanges *change_record)
+{
+    assert(change_record);
+
+    if (change_record->diff_record == NULL)
+    {
+        return FileChangesInsertSQL(db, change_record);
+    }
+    else
+    {
+        return FileDiffsInsertSQL(db, change_record->diff_record);
+    }
+
+    return true;
+}
+
+/******************************************************************/
+
 static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
@@ -740,31 +850,41 @@ static void EnterpriseDBToSqlite3_FileChanges(sqlite3 *db, HostClassFilter *filt
         return;
     }
 
-    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, NULL, NULL, 0, time(NULL),
+    HubQuery *hq_fc = CFDB_QueryFileChanges(&dbconn, NULL, NULL, 0, time(NULL),
                                          filter, PROMISE_CONTEXT_MODE_ALL, NULL,
                                          QUERY_FLAG_DISABLE_ALL);
 
+    HubQuery *hq_fd = CFDB_QueryFileDiff(&dbconn, NULL, NULL, NULL, 0, time(NULL),
+                                      filter, PROMISE_CONTEXT_MODE_ALL, NULL,
+                                      QUERY_FLAG_DISABLE_ALL);
+
     CFDB_Close(&dbconn);
 
-    char *err = 0;
-    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    for (const Rlist *changep = hq_fc->records; changep != NULL; changep = changep->next)
     {
-        HubFileChanges *hC = (HubFileChanges *) rp->item;
+        HubFileChanges *hC = (HubFileChanges *) changep->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s',%ld);", SQL_TABLE_FILECHANGES,
-                 SkipHashType(hC->hh->keyhash), hC->path, hC->t);
-
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        for (const Rlist *diffp = hq_fd->records; diffp != NULL; diffp = diffp->next)
         {
-            Sqlite3_FreeString(err);
-            break;
-        }
-    }
+            HubFileDiff *hD = (HubFileDiff *) diffp->item;
 
-    DeleteHubQuery(hq, DeleteHubFileChanges);
+            if (FileRecordsEqual(hC, hD))
+            {
+                hC->diff_record = hD;
+                break;
+            }
+        }
+
+        if (!FileRecordsInsertSQL(db, hC))
+        {
+            DeleteHubQuery(hq_fc, DeleteHubFileChanges);
+            DeleteHubQuery(hq_fd, DeleteHubFileDiff);
+            return;
+        }
+    }    
+
+    DeleteHubQuery(hq_fc, DeleteHubFileChanges);
+    DeleteHubQuery(hq_fd, DeleteHubFileDiff);
 }
 
 /******************************************************************/
@@ -1244,15 +1364,15 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
         switch (hl->direction)
         {
         case LAST_SEEN_DIRECTION_OUTGOING:
-            snprintf(inout, CF_SMALLBUF, "Out");
+            snprintf(inout, CF_SMALLBUF, "out");
             break;
 
         case LAST_SEEN_DIRECTION_INCOMING:
-            snprintf(inout, CF_SMALLBUF, "In");
+            snprintf(inout, CF_SMALLBUF, "in");
             break;
 
         default:
-            snprintf(inout, CF_SMALLBUF, "Unknown");
+            snprintf(inout, CF_SMALLBUF, "unknown");
             break;
         }
 
@@ -1414,11 +1534,6 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
 }
 
 /******************************************************************/
-//definitions taken from public_api.c
-
-static const char *LABEL_ADD = "add";
-static const char *LABEL_REMOVE = "remove";
-static const char *LABEL_UNKNOWN = "unknown";
 
 static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter)
 {
@@ -1735,28 +1850,38 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
 
 /******************************************************************/
 
-Rlist *GetTableNamesInQuery(const char *select_op)
+bool GetTableNamesInQuery(const char *select_op, Set *tables_set)
 {
-    Rlist *tables = NULL;
+    assert(tables_set);
+    assert(select_op);
 
     char *select_low = SafeStringDuplicate(select_op);
     ToLowerStrInplace(select_low);
 
+    bool found = false;
+
     for (int i = 0; TABLES[i] != NULL; i++)
     {
-        char table_name[CF_BUFSIZE] = { 0 };
-        strcpy(table_name, TABLES[i]);
-        ToLowerStrInplace(table_name);
+        char *table_name_low = xstrdup(TABLES[i]);
+        ToLowerStrInplace(table_name_low);
 
-        if (StringMatch(table_name, select_low))
+        Buffer *table_regex = NULL;
+        BufferNew(&table_regex);
+
+        BufferPrintf(table_regex, "\\b%s\\b", table_name_low);
+
+        if (StringMatch(BufferData(table_regex), select_low))
         {
-            IdempPrependRScalar(&tables, TABLES[i], CF_SCALAR);
+            found = true;
+            SetAdd(tables_set, xstrdup(TABLES[i]));
         }
+
+        free(table_name_low);
+        BufferDestroy(&table_regex);
     }
 
     free(select_low);
-
-    return tables;
+    return found;
 }
 
 /******************************************************************/
@@ -2276,16 +2401,16 @@ bool EnterpriseQueryPrepare(sqlite3 *db, const char *username, const char *selec
         return false;
     }
 
+    Set *tables = SetNew((MapHashFn)OatHash, (MapKeyEqualFn)StringSafeEqual, free);
 
-    Rlist *tables = GetTableNamesInQuery(select_op_expanded);
-    if(!tables)
+    if (!(GetTableNamesInQuery(select_op_expanded, tables)))
     {
         return false;
     }
 
     LoadSqlite3Tables(db, tables, username);
 
-    DeleteRlist(tables);
+    SetDestroy(tables);
 
     return true;
 }

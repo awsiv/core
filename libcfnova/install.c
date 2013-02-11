@@ -2195,3 +2195,19 @@ void DeleteHubScheduledReport(HubScheduledReport *sr)
 }
 
 /*****************************************************************************/
+
+bool FileRecordsEqual(const HubFileChanges *change_record, const HubFileDiff *diff_record)
+{
+    if (!change_record || !diff_record)
+    {
+        return false;
+    }
+
+    if (strcmp(change_record->hh->keyhash, diff_record->hh->keyhash) != 0)
+    {
+        return false;
+    }
+
+    return (strcmp(change_record->path, diff_record->path) == 0) && (change_record->t == diff_record->t);
+}
+/*****************************************************************************/
