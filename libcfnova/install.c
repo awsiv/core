@@ -480,11 +480,7 @@ unsigned int HubPromiseLogHash(const void *record, unsigned int max)
 {
     const HubPromiseLog *record_a = (const HubPromiseLog *)record;
 
-    Buffer *buf = NULL;
-    if (BufferNew(&buf))
-    {
-        CfOut(cf_error, "", "!! Memory allocation error in HubPromiseLogHash");
-    }
+    Buffer *buf = BufferNew();
 
     if (record_a->handle)
     {

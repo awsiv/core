@@ -1865,8 +1865,7 @@ bool GetTableNamesInQuery(const char *select_op, Set *tables_set)
         char *table_name_low = xstrdup(TABLES[i]);
         ToLowerStrInplace(table_name_low);
 
-        Buffer *table_regex = NULL;
-        BufferNew(&table_regex);
+        Buffer *table_regex = BufferNew();
 
         BufferPrintf(table_regex, "\\b%s\\b", table_name_low);
 
