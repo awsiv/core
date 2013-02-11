@@ -14,7 +14,7 @@
 #
 ################################################################################
 
-bundle agent update_bins
+bundle agent cfe_internal_update_bins
 
 {
 

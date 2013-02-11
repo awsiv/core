@@ -1465,7 +1465,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                             SplitScopeName(scope, rns, rbundle);
                         }
 
-                        if (!IsHandleWithinPromiseContext(rbundle, promise_context))
+                        if (!IsKeyWithinPromiseContext(rns, rbundle, promise_context))
                         {
                             continue;
                         }
@@ -4040,7 +4040,7 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *ns,
     }
 
     while (MongoCursorNext(cursor))
-    {        
+    {
         const char *keyhash = NULL;
         BsonStringGet( mongo_cursor_bson(cursor), cfr_keyhash, &keyhash );
 

@@ -1904,6 +1904,7 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, const Item *data)
         for (const Item *ip = data; ip != NULL; ip = ip->next)
         {
             char bundle_name[CF_MAXVARSIZE] = { 0 };
+            char bundle_fqname[CF_MAXVARSIZE] = { 0 };
             char bundle_namespace[CF_MAXVARSIZE] = { 0 };
             char varName[CF_MAXVARSIZE];
             double compliance = 0, average = 0, dev = 0;
@@ -1921,7 +1922,10 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, const Item *data)
                 continue;
             }
 
-            snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle_name);
+            /* use full quelified path as bundle key (ns:bundle) to make unique key */
+            snprintf(bundle_fqname, CF_MAXVARSIZE, "%s:%s", bundle_namespace, bundle_name);
+
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle_fqname);
 
             {
                 bson_append_start_object(&set_op, varName);

@@ -965,7 +965,7 @@ static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 
             sscanf(ip->name, "%127s %ld %lf %lf %lf %127s\n", bundle_name, &fthen, &compliance, &average, &dev, bundle_namespace);
 
-            CfDebug("Bundle: $%s.%s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",
+            CfDebug("Bundle: $%s.%s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s\n",
                     !NULL_OR_EMPTY(bundle_namespace) ? bundle_namespace : "default",
                     bundle_name, compliance, average, dev, cf_ctime(&fthen));
         }
@@ -989,7 +989,7 @@ static void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *dat
                                  (is_blackhost == 't')? true:false);
     }
 
-    CfDebug("Execution status: black %s with agent schedule interval: %ld",
+    CfDebug("Execution status: black %s with agent schedule interval: %ld\n",
             (is_blackhost == 't')? "true" : "false", delta_schedule);
 }
 

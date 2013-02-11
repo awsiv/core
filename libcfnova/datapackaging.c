@@ -2424,6 +2424,13 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
 
         strncpy(bundle_fqname, (char *) key, ksize);
 
+        /* ignore tcdb versioning record */
+        if (!strcmp(bundle_fqname, "version"))
+        {
+            continue;
+        }
+
+
         if (value != NULL)
         {
             if (sizeof(entry) < vsize)
@@ -2456,6 +2463,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
             first = false;
             AppendItem(reply, header, NULL);
         }
+
 
         char bundle_namespace[CF_MAXVARSIZE];
         char bundle_name[CF_MAXVARSIZE];

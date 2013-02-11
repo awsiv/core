@@ -258,7 +258,7 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db);
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
 
-static void SetVirtualNameSpace(const char *handle, const char *namespace,
+static void SetVirtualNameSpace(const char *key, const char *namespace,
                                 char *buffer, size_t buffer_size);
 
 
@@ -1039,7 +1039,7 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
     char *promisee_escaped = EscapeCharCopy(promisee, '\'', '\'');
 
     char v_namespace[CF_MAXVARSIZE] = { 0 };
-    SetVirtualNameSpace(handle, ns, v_namespace, CF_MAXVARSIZE);
+    SetVirtualNameSpace(bundle_name, ns, v_namespace, CF_MAXVARSIZE);
 
     snprintf(insert_op, sizeof(insert_op),
              "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
@@ -1976,10 +1976,10 @@ int BuildCSVOutput(void *out, int argc, char **argv, char **azColName)
 
 /******************************************************************/
 
-static void SetVirtualNameSpace(const char *handle, const char *namespace,
+static void SetVirtualNameSpace(const char *key, const char *namespace,
                                 char *buffer, size_t buffer_size)
 {
-    if (IsHandleWithinPromiseContext(handle, PROMISE_CONTEXT_MODE_INTERNAL))
+    if (IsKeyWithinPromiseContext(namespace, key, PROMISE_CONTEXT_MODE_INTERNAL))
     {
         snprintf(buffer, buffer_size, "%s", CF_INTERNAL_NAMESPACE);
     }

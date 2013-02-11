@@ -250,24 +250,9 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *ns, char *lname,
 
                 HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rns, rbundle);
 
-                switch (promise_context)
+                if (!IsKeyWithinPromiseContext(rns, rbundle, promise_context))
                 {
-                    case PROMISE_CONTEXT_MODE_USER:
-                        if (CompareStringOrRegex(hb->bundle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                        {
-                            continue;
-                        }
-                        break;
-
-                    case PROMISE_CONTEXT_MODE_INTERNAL:
-                        if (!CompareStringOrRegex(hb->bundle, CF_INTERNAL_PROMISE_RX_HANDLE, true))
-                        {
-                            continue;
-                        }
-                        break;
-
-                    case PROMISE_CONTEXT_MODE_ALL:
-                        break;
+                    continue;
                 }
 
                 if(CompareStringOrRegex(hb->bundle, lname, (db_options & QUERY_FLAG_IS_REGEX)))

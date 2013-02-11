@@ -12,7 +12,7 @@ body common control
 {
 ### List of promise bundles to verify in order 
 
- bundlesequence => { "update_bins", "update_policy" };
+ bundlesequence => { "cfe_internal_update_bins", "cfe_internal_update_policy" };
 
 ### List of filenames to parse for promises.
 
