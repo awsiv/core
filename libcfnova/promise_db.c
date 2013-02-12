@@ -69,9 +69,9 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     bson_append_string(&insert_op, cfp_bundlename, pp->bundle);
     bson_append_string(&insert_op, cfp_bundletype, pp->bundletype);
 
-    if (pp->namespace)
+    if (pp->ns)
     {
-        bson_append_string(&insert_op, cfr_bundle_namespace, pp->namespace);
+        bson_append_string(&insert_op, cfr_bundle_namespace, pp->ns);
     }
 
     if (pp->audit)
@@ -211,9 +211,9 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                     bson_append_string(&insert_op, cfp_comment, sp);
                 }
 
-                if (pp->namespace)
+                if (pp->ns)
                 {
-                    bson_append_string(&insert_op, cfr_bundle_namespace, pp->namespace);
+                    bson_append_string(&insert_op, cfr_bundle_namespace, pp->ns);
                 }
 
                 {
