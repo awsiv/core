@@ -379,8 +379,9 @@ void Sqlite3_DBClose(sqlite3 *db)
 
 /******************************************************************/
 
-bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *BuildOutputCallback, void *arg_to_callback, char *err_msg)
+bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *BuildOutputCallback, void *arg_to_callback)
 {
+    char *err_msg = 0;
     int rc = sqlite3_exec(db, sql, BuildOutputCallback, arg_to_callback, &err_msg);
 
     if( rc != SQLITE_OK )
@@ -389,6 +390,7 @@ bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *BuildOutputCallback, vo
                err_msg,
                sql);
 
+        Sqlite3_FreeString(err_msg);
         return false;
     }
 
@@ -437,13 +439,11 @@ int BuildJsonOutput(void *out, int argc, char **argv, char **azColName)
 static JsonElement *EnterpriseQueryPublicDataModel(sqlite3 *db, const char *select_op)
 {
     /* Query sqlite and print table contents */
-    char *err_msg = 0;
 
     JsonElement *rows = JsonArrayCreate(5);
 
-    if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, rows, err_msg))
-    {
-        Sqlite3_FreeString(err_msg);
+    if (!Sqlite3_Execute(db, select_op, (void *) BuildJsonOutput, rows))
+    {        
         JsonElementDestroy(rows);
         return PackageReportingEngineResult(select_op, JsonArrayCreate(0), JsonArrayCreate(0));
     }
@@ -607,20 +607,27 @@ static void EnterpriseDBToSqlite3_Hosts(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->hosts; rp != NULL; rp = rp->next)
     {
         HubHost *hh = (HubHost *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%ld');", SQL_TABLE_HOSTS,
-                 SkipHashType(hh->keyhash), hh->hostname, hh->ipaddr, hh->last_report);
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%ld');",
+                     SQL_TABLE_HOSTS,
+                     SkipHashType(hh->keyhash),
+                     NULLStringToEmpty(hh->hostname),
+                     NULLStringToEmpty(hh->ipaddr),
+                     hh->last_report);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -645,20 +652,26 @@ static void EnterpriseDBToSqlite3_Contexts(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubClass *hc = (HubClass *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s', '%ld');", SQL_TABLE_CONTEXTS,
-                 SkipHashType(hc->hh->keyhash), hc->class, hc->t);
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s', '%ld');",
+                     SQL_TABLE_CONTEXTS,
+                     SkipHashType(hc->hh->keyhash),
+                     NULLStringToEmpty(hc->class),
+                     hc->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err); // add the error message to the return string
             break;
         }
     }
@@ -723,22 +736,25 @@ static bool EnterpriseDBToSqlite3_Variables_Insert(sqlite3 *db, char *keyhash,
     char v_namespace[CF_MAXVARSIZE] = { 0 };
     SetVirtualNameSpace(bundle, ns, v_namespace, CF_MAXVARSIZE);
 
-    char insert_op[CF_BUFSIZE] = { 0 };
-    snprintf(insert_op, sizeof(insert_op),
-             "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');", SQL_TABLE_VARIABLES,
-             SkipHashType(keyhash), v_namespace, bundle, lval, rval_scalar_escaped,
-             DataTypeShortToType(dtype));
+    Buffer *insert_buf = BufferNew();
+    BufferPrintf(insert_buf,
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s','%s');",
+                 SQL_TABLE_VARIABLES,
+                 SkipHashType(keyhash),
+                 v_namespace,
+                 bundle,
+                 lval,
+                 rval_scalar_escaped,
+                 DataTypeShortToType(dtype));
 
     free(rval_scalar_escaped);
 
-    char *err = 0;
-    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-    {
-        Sqlite3_FreeString(err);
-        return false;
-    }
+    bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
 
-    return true;
+    BufferDestroy(&insert_buf);
+    insert_buf = NULL;
+
+    return exec_ok;
 }
 
 /******************************************************************/
@@ -747,23 +763,21 @@ static bool FileChangesInsertSQL(sqlite3 *db, HubFileChanges *change_record)
 {
     assert(change_record);
 
-    char insert_op[CF_BUFSIZE] = {0};
-    snprintf(insert_op, sizeof(insert_op),
-             "INSERT INTO %s VALUES('%s','%s','%s',%ld,NULL,NULL,NULL);",
-             SQL_TABLE_FILECHANGES,
-             SkipHashType(change_record->hh->keyhash),
-             NULLStringToEmpty(change_record->handle),
-             NULLStringToEmpty(change_record->path),
-             change_record->t);
+    Buffer *insert_buf = BufferNew();
+    BufferPrintf(insert_buf,
+                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,NULL,NULL,NULL);",
+                 SQL_TABLE_FILECHANGES,
+                 SkipHashType(change_record->hh->keyhash),
+                 NULLStringToEmpty(change_record->handle),
+                 NULLStringToEmpty(change_record->path),
+                 change_record->t);
 
-    char *err = 0;
-    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-    {
-        Sqlite3_FreeString(err);
-        return false;
-    }
+    bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
 
-    return true;
+    BufferDestroy(&insert_buf);
+    insert_buf = NULL;
+
+    return exec_ok;
 }
 
 static bool FileDiffsInsertSQL(sqlite3 *db, HubFileDiff *diff_record)
@@ -797,24 +811,27 @@ static bool FileDiffsInsertSQL(sqlite3 *db, HubFileDiff *diff_record)
 
         char *diff_escaped = EscapeCharCopy(diff, '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
-                 SQL_TABLE_FILECHANGES,
-                 SkipHashType(diff_record->hh->keyhash),
-                 NULLStringToEmpty(diff_record->promise_handle),
-                 NULLStringToEmpty(diff_record->path),
-                 diff_record->t,
-                 diff_type_str,
-                 line,
-                 diff_escaped);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
+                     SQL_TABLE_FILECHANGES,
+                     SkipHashType(diff_record->hh->keyhash),
+                     NULLStringToEmpty(diff_record->promise_handle),
+                     NULLStringToEmpty(diff_record->path),
+                     diff_record->t,
+                     diff_type_str,
+                     line,
+                     diff_escaped);
 
         free(diff_escaped);
 
-        char *err = 0;
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             return false;
         }
     }
@@ -903,20 +920,26 @@ static void EnterpriseDBToSqlite3_Software(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubSoftware *hs = (HubSoftware *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s');",
+                     SQL_TABLE_SOFTWARE,
+                     SkipHashType(hs->hh->keyhash),
+                     NULLStringToEmpty(hs->name),
+                     NULLStringToEmpty(hs->version),
+                     Nova_LongArch(hs->arch));
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s');", SQL_TABLE_SOFTWARE,
-                 SkipHashType(hs->hh->keyhash), hs->name, hs->version, Nova_LongArch(hs->arch));
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -965,20 +988,26 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromiseCompliance *hc = (HubPromiseCompliance *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%ld);",
+                     SQL_TABLE_PROMISESTATUS,
+                     SkipHashType(hc->hh->keyhash),
+                     NULLStringToEmpty(hc->handle),
+                     PromiseStateToString(hc->status),
+                     hc->t);
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%ld);", SQL_TABLE_PROMISESTATUS,
-                 SkipHashType(hc->hh->keyhash), hc->handle, PromiseStateToString(hc->status), hc->t);
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1033,30 +1062,31 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
 static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const char *ns, const char *handle, const char *promiser,
                                                             const char *bundle_name, const char *promisee)
 {
-    char insert_op[CF_BUFSIZE] = {0};
-
     char *promiser_escaped = EscapeCharCopy(promiser, '\'', '\'');
     char *promisee_escaped = EscapeCharCopy(promisee, '\'', '\'');
 
     char v_namespace[CF_MAXVARSIZE] = { 0 };
     SetVirtualNameSpace(bundle_name, ns, v_namespace, CF_MAXVARSIZE);
 
-    snprintf(insert_op, sizeof(insert_op),
-             "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');", SQL_TABLE_PROMISEDEFINITIONS,
-             v_namespace, handle, promiser_escaped, bundle_name, promisee_escaped);
+    Buffer *insert_buf = BufferNew();
+
+    BufferPrintf(insert_buf,
+                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
+                 SQL_TABLE_PROMISEDEFINITIONS,
+                 v_namespace,
+                 handle,
+                 promiser_escaped,
+                 bundle_name,
+                 promisee_escaped);
 
     free(promisee_escaped);
     free(promiser_escaped);
 
-    char *err = 0;
+    bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
 
-    if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-    {
-        Sqlite3_FreeString(err);
-        return false;
-    }
+    BufferDestroy(&insert_buf);
 
-    return true;
+    return exec_ok;
 }
 
 /******************************************************************/
@@ -1083,28 +1113,31 @@ static void EnterpriseDBToSqlite3_NotKeptLog(sqlite3 *db, HostClassFilter *filte
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromiseLog *hp = (HubPromiseLog *) rp->item;
 
         char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(hp->cause), '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                 SQL_TABLE_PROMISELOG,
-                 SkipHashType(hp->hh->keyhash),
-                 NULLStringToEmpty(hp->handle),
-                 LABEL_STATE_NOTKEPT,
-                 cause_escaped,
-                 hp->t);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
+                     SQL_TABLE_PROMISELOG,
+                     SkipHashType(hp->hh->keyhash),
+                     NULLStringToEmpty(hp->handle),
+                     LABEL_STATE_NOTKEPT,
+                     cause_escaped,
+                     hp->t);
 
         free(cause_escaped);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-        {            
-            Sqlite3_FreeString(err);
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
+        {
             break;
         }
     }
@@ -1128,28 +1161,31 @@ static void EnterpriseDBToSqlite3_RepairedLog(sqlite3 *db, HostClassFilter *filt
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubPromiseLog *hp = (HubPromiseLog *) rp->item;
 
         char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(hp->cause), '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                 SQL_TABLE_PROMISELOG,
-                 SkipHashType(hp->hh->keyhash),
-                 NULLStringToEmpty(hp->handle),
-                 LABEL_STATE_REPAIRED,
-                 cause_escaped,
-                 hp->t);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
+                     SQL_TABLE_PROMISELOG,
+                     SkipHashType(hp->hh->keyhash),
+                     NULLStringToEmpty(hp->handle),
+                     LABEL_STATE_REPAIRED,
+                     cause_escaped,
+                     hp->t);
 
         free(cause_escaped);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1182,27 +1218,30 @@ static void EnterpriseDBToSqlite3_RepairedLogsSummary(sqlite3 *db, HostClassFilt
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (const Rlist *rp = hq->records; rp; rp = rp->next)
     {
         const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
 
         char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(record->cause), '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%d);",
-                 SQL_TABLE_PROMISE_SUMMARY,
-                 NULLStringToEmpty(record->handle),
-                 LABEL_STATE_REPAIRED,
-                 cause_escaped,
-                 record->occurences);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%d);",
+                     SQL_TABLE_PROMISE_SUMMARY,
+                     NULLStringToEmpty(record->handle),
+                     LABEL_STATE_REPAIRED,
+                     cause_escaped,
+                     record->occurences);
 
         free(cause_escaped);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1227,27 +1266,30 @@ static void EnterpriseDBToSqlite3_NotKeptLogsSummary(sqlite3 *db, HostClassFilte
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (const Rlist *rp = hq->records; rp; rp = rp->next)
     {
         const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
 
         char *cause_escaped = EscapeCharCopy(NULLStringToEmpty(record->cause), '\'', '\'');
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%d);",
-                 SQL_TABLE_PROMISE_SUMMARY,
-                 NULLStringToEmpty(record->handle),
-                 LABEL_STATE_NOTKEPT,
-                 cause_escaped,
-                 record->occurences);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%d);",
+                     SQL_TABLE_PROMISE_SUMMARY,
+                     NULLStringToEmpty(record->handle),
+                     LABEL_STATE_NOTKEPT,
+                     cause_escaped,
+                     record->occurences);
 
         free(cause_escaped);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1271,24 +1313,27 @@ static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *fil
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubBundleSeen *hb = (HubBundleSeen *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%f,%ld);",
-                 SQL_TABLE_BUNDLESTATUS,
-                 SkipHashType(hb->hh->keyhash),
-                 NULLStringToEmpty(hb->ns),
-                 NULLStringToEmpty(hb->bundle),
-                 (hb->bundlecomp * 100.0),
-                 hb->t);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%f,%ld);",
+                     SQL_TABLE_BUNDLESTATUS,
+                     SkipHashType(hb->hh->keyhash),
+                     NULLStringToEmpty(hb->ns),
+                     NULLStringToEmpty(hb->bundle),
+                     (hb->bundlecomp * 100.0),
+                     hb->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1313,24 +1358,26 @@ static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filte
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
-
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         const HubPerformance *hP = (HubPerformance *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
-                 SQL_TABLE_BENCHMARKS,
-                 SkipHashType(hP->hh->keyhash),
-                 NULLStringToEmpty(hP->event),
-                 hP->q,
-                 hP->t);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s',%f,%ld);",
+                     SQL_TABLE_BENCHMARKS,
+                     SkipHashType(hP->hh->keyhash),
+                     NULLStringToEmpty(hP->event),
+                     hP->q,
+                     hP->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1354,8 +1401,6 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
-
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         const HubLastSeen *hl = (HubLastSeen *) rp->item;
@@ -1376,19 +1421,23 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
             break;
         }
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s',%ld,%d);",
-                 SQL_TABLE_LASTSEEN,
-                 SkipHashType(hl->hh->keyhash),
-                 inout,
-                 SkipHashType(hl->rhost->keyhash),
-                 hl->t,
-                 (int)(hl->hrsago * SECONDS_PER_HOUR));
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s',%ld,%d);",
+                     SQL_TABLE_LASTSEEN,
+                     SkipHashType(hl->hh->keyhash),
+                     inout,
+                     SkipHashType(hl->rhost->keyhash),
+                     hl->t,
+                     (int)(hl->hrsago * SECONDS_PER_HOUR));
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1412,26 +1461,28 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
-
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         const HubTotalCompliance *ht = (HubTotalCompliance *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s',%d,%d,%d,%ld);",
-                 SQL_TABLE_TOTALCOMPLIANCE,
-                 SkipHashType(ht->hh->keyhash),
-                 NULLStringToEmpty(ht->version),
-                 ht->kept,
-                 ht->repaired,
-                 ht->notkept,
-                 ht->t);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s',%d,%d,%d,%ld);",
+                     SQL_TABLE_TOTALCOMPLIANCE,
+                     SkipHashType(ht->hh->keyhash),
+                     NULLStringToEmpty(ht->version),
+                     ht->kept,
+                     ht->repaired,
+                     ht->notkept,
+                     ht->t);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1465,25 +1516,28 @@ static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *f
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubSoftware *hs = (HubSoftware *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
-                 SQL_TABLE_PATCH,
-                 SkipHashType(hs->hh->keyhash),
-                 LABEL_PATCH_INSTALLED,
-                 NULLStringToEmpty(hs->name),
-                 NULLStringToEmpty(hs->version),
-                 Nova_LongArch(hs->arch));
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
+                     SQL_TABLE_PATCH,
+                     SkipHashType(hs->hh->keyhash),
+                     LABEL_PATCH_INSTALLED,
+                     NULLStringToEmpty(hs->name),
+                     NULLStringToEmpty(hs->version),
+                     Nova_LongArch(hs->arch));
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
-        {            
-            Sqlite3_FreeString(err);
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
+        {
             break;
         }
     }
@@ -1507,25 +1561,28 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubSoftware *hs = (HubSoftware *) rp->item;
 
-        char insert_op[CF_BUFSIZE] = {0};
+        Buffer *insert_buf = BufferNew();
 
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
-                 SQL_TABLE_PATCH,
-                 SkipHashType(hs->hh->keyhash),
-                 LABEL_PATCH_AVAILABLE,
-                 NULLStringToEmpty(hs->name),
-                 NULLStringToEmpty(hs->version),
-                 Nova_LongArch(hs->arch));
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
+                     SQL_TABLE_PATCH,
+                     SkipHashType(hs->hh->keyhash),
+                     LABEL_PATCH_AVAILABLE,
+                     NULLStringToEmpty(hs->name),
+                     NULLStringToEmpty(hs->version),
+                     Nova_LongArch(hs->arch));
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
             break;
         }
     }
@@ -1550,7 +1607,6 @@ static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter
 
     CFDB_Close(&dbconn);
 
-    char *err = 0;
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         HubFileDiff *hd = (HubFileDiff *) rp->item;
@@ -1586,24 +1642,28 @@ static void EnterpriseDBToSqlite3_FileDiffs(sqlite3 *db, HostClassFilter *filter
 
             char *diff_escaped = EscapeCharCopy(diff, '\'', '\'');
 
-            char insert_op[CF_BUFSIZE] = {0};
-            snprintf(insert_op, sizeof(insert_op),
-                     "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
-                     SQL_TABLE_FILEDIFFS,
-                     SkipHashType(hd->hh->keyhash),                     
-                     NULLStringToEmpty(hd->promise_handle),
-                     NULLStringToEmpty(hd->path),
-                     hd->t,
-                     diff_type_str,
-                     line,
-                     diff_escaped);
+            Buffer *insert_buf = BufferNew();
+            BufferPrintf(insert_buf,
+                         "INSERT INTO %s VALUES('%s','%s','%s',%ld,'%s',%d,'%s');",
+                         SQL_TABLE_FILEDIFFS,
+                         SkipHashType(hd->hh->keyhash),
+                         NULLStringToEmpty(hd->promise_handle),
+                         NULLStringToEmpty(hd->path),
+                         hd->t,
+                         diff_type_str,
+                         line,
+                         diff_escaped);
 
             free(diff_escaped);
 
-            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+            bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+            BufferDestroy(&insert_buf);
+            insert_buf = NULL;
+
+            if (!exec_ok)
             {
                 DeleteHubQuery(hq, DeleteHubFileDiff);
-                Sqlite3_FreeString(err);
                 return;
             }
         }
@@ -1632,7 +1692,6 @@ static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db)
         return;
     }
 
-    char *err = 0;
     for (int i = 0; i < SeqLength(diag_mongo_snapshot); i++)
     {
         DiagnosticMongoSnaphot *stats =
@@ -1648,31 +1707,35 @@ static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db)
             continue;
         }
 
-        char insert_op[CF_BUFSIZE] = {0};
-        snprintf(insert_op, sizeof(insert_op),
-                 "INSERT INTO %s VALUES('%ld','%s','%s','%lf','%lf','%lf','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d');",
-                 SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
-                 stats->time,
-                 NULLStringToEmpty(stats->status->host),
-                 NULLStringToEmpty(stats->status->version),
-                 stats->status->server_uptime,
-                 stats->status->global_lock_total_time_us,
-                 stats->status->global_lock_lock_time_us,
-                 stats->status->global_lock_queue_total,
-                 stats->status->global_lock_queue_readers,
-                 stats->status->global_lock_queue_writers,
-                 stats->status->mem_resident,
-                 stats->status->mem_virtual,
-                 stats->status->mem_mapped,
-                 stats->status->bg_flush_count,
-                 stats->status->bg_flush_total_ms,
-                 stats->status->bg_flush_avg_ms,
-                 stats->status->bg_flush_last_ms);
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%ld','%s','%s','%lf','%lf','%lf','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d');",
+                     SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+                     stats->time,
+                     NULLStringToEmpty(stats->status->host),
+                     NULLStringToEmpty(stats->status->version),
+                     stats->status->server_uptime,
+                     stats->status->global_lock_total_time_us,
+                     stats->status->global_lock_lock_time_us,
+                     stats->status->global_lock_queue_total,
+                     stats->status->global_lock_queue_readers,
+                     stats->status->global_lock_queue_writers,
+                     stats->status->mem_resident,
+                     stats->status->mem_virtual,
+                     stats->status->mem_mapped,
+                     stats->status->bg_flush_count,
+                     stats->status->bg_flush_total_ms,
+                     stats->status->bg_flush_avg_ms,
+                     stats->status->bg_flush_last_ms);
 
-        if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
         {
-            Sqlite3_FreeString(err);
-            return;
+            break;
         }
     }
 
@@ -1730,21 +1793,25 @@ static void EnterpriseDBToSqlite3_DiagnosticDatabaseStatus(sqlite3 *db)
                 continue;
             }
 
-            char *err = 0;
-            char insert_op[CF_BUFSIZE] = {0};
-            snprintf(insert_op, sizeof(insert_op),
-                     "INSERT INTO %s VALUES('%ld','%s','%lf','%d',%d,'%d');",
-                     SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
-                     stats->time,
-                     NULLStringToEmpty(db_status->db_name),
-                     db_status->avg_object_size,
-                     db_status->data_size,
-                     db_status->storage_size,
-                     db_status->file_size);
+            Buffer *insert_buf = BufferNew();
+            BufferPrintf(insert_buf,
+                         "INSERT INTO %s VALUES('%ld','%s','%lf','%d',%d,'%d');",
+                         SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+                         stats->time,
+                         NULLStringToEmpty(db_status->db_name),
+                         db_status->avg_object_size,
+                         db_status->data_size,
+                         db_status->storage_size,
+                         db_status->file_size);
 
-            if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+            bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+            BufferDestroy(&insert_buf);
+            insert_buf = NULL;
+
+            if (!exec_ok)
             {
-                Sqlite3_FreeString(err);
+                SeqDestroy(diag_mongo_snapshot);
                 return;
             }
         }
@@ -1820,25 +1887,29 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
                     continue;
                 }
 
-                char *err = 0;
-                char insert_op[CF_BUFSIZE] = {0};
-                snprintf(insert_op, sizeof(insert_op),
-                         "INSERT INTO %s VALUES('%ld','%s','%s','%d','%d',%lf,'%d','%d','%d','%lf');",
-                         SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
-                         stats->time,
-                         NULLStringToEmpty(db_status->db_name),
-                         NULLStringToEmpty(coll_status->name),
-                         coll_status->object_count,
-                         coll_status->data_size,
-                         coll_status->avg_object_size,
-                         coll_status->storage_size,
-                         coll_status->index_count,
-                         coll_status->total_index_size,
-                         coll_status->padding_factor);
+                Buffer *insert_buf = BufferNew();
+                BufferPrintf(insert_buf,
+                             "INSERT INTO %s VALUES('%ld','%s','%s','%d','%d',%lf,'%d','%d','%d','%lf');",
+                             SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+                             stats->time,
+                             NULLStringToEmpty(db_status->db_name),
+                             NULLStringToEmpty(coll_status->name),
+                             coll_status->object_count,
+                             coll_status->data_size,
+                             coll_status->avg_object_size,
+                             coll_status->storage_size,
+                             coll_status->index_count,
+                             coll_status->total_index_size,
+                             coll_status->padding_factor);
 
-                if (!Sqlite3_Execute(db, insert_op, (void *) BuildJsonOutput, 0, err))
+                bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+                BufferDestroy(&insert_buf);
+                insert_buf = NULL;
+
+                if (!exec_ok)
                 {
-                    Sqlite3_FreeString(err);
+                    SeqDestroy(diag_mongo_snapshot);
                     return;
                 }
             }
@@ -1887,14 +1958,7 @@ bool GetTableNamesInQuery(const char *select_op, Set *tables_set)
 
 static bool CreateSQLTable(sqlite3 *db, char *create_sql)
 {
-    char *err = 0;
-    if (!Sqlite3_Execute(db, create_sql, (void *) BuildJsonOutput, 0, err))
-    {
-        //Sqlite3_FreeString(err);
-        return false;
-    }
-
-    return true;
+    return Sqlite3_Execute(db, create_sql, (void *) BuildJsonOutput, 0);
 }
 
 /******************************************************************/
@@ -1929,32 +1993,18 @@ void Sqlite3_FreeString(char *str)
 
 static bool Sqlite3_BeginTransaction(sqlite3 *db)
 {
-    char *err = 0;
-    if (!Sqlite3_Execute(db, "BEGIN TRANSACTION;", (void *) BuildJsonOutput, 0, err))
-    {
-        /* TODO: return error string */
+    assert(db);
 
-        Sqlite3_FreeString(err);
-        return false;
-    }
-
-    return true;
+    return Sqlite3_Execute(db, "BEGIN TRANSACTION;", (void *) BuildJsonOutput, 0);
 }
 
 /******************************************************************/
 
 static bool Sqlite3_CommitTransaction(sqlite3 *db)
 {
-    char *err = 0;
-    if (!Sqlite3_Execute(db, "COMMIT;", (void *) BuildJsonOutput, 0, err))
-    {
-        /* TODO: return error string */
+    assert(db);
 
-        Sqlite3_FreeString(err);
-        return false;
-    }
-
-    return true;
+    return Sqlite3_Execute(db, "COMMIT;", (void *) BuildJsonOutput, 0);
 }
 /******************************************************************/
 
@@ -2323,19 +2373,13 @@ JsonElement *EnterpriseExecuteSQLAsync(const char *username, const char *select_
 void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInfo *wr_info)
 {
     /* Query sqlite and print table contents */
-    char *err_msg = 0;
 
     //count
     wr_info->total_lines = 0;
     wr_info->write_data = false;
 
-    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info))
     {
-        syslog(LOG_ERR, "Error calculating query result count - code: %d, message: %s, sql: \"%s\"",
-               REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
-               err_msg,
-               select_op);
-        Sqlite3_FreeString(err_msg);
         return;
     }
 
@@ -2371,13 +2415,9 @@ void AsyncQueryExportResult(sqlite3 *db, const char *select_op, WebReportFileInf
         return;
     }
 
-    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info, err_msg))
+    /* Sqlite3_Execute writes to syslog on failure, no need to write it twice */
+    if (!Sqlite3_Execute(db, select_op, (void *) ExportCSVOutput, wr_info))
     {
-        syslog(LOG_ERR, "Error executing SQL - code %d, sql \"%s\"",
-               REPORTING_ENGINE_ASYNC_ERROR_SQLITE3_QUERY,
-               select_op);
-
-        Sqlite3_FreeString(err_msg);
         return;
     }
 

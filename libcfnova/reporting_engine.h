@@ -38,7 +38,7 @@ JsonElement *AsyncQueryAbort(const char *token);
 
 bool Sqlite3_DBOpen(sqlite3 **db);
 void Sqlite3_DBClose(sqlite3 *db);
-bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback, char *err_msg);
+bool Sqlite3_Execute(sqlite3 *db, const char *sql, void *fn_ptr, void *arg_to_callback);
 cfapi_errid LoadSqlite3Tables(sqlite3 *db, Set *tables, const char *username);
 
 void Sqlite3_FreeString(char *str);

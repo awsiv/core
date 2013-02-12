@@ -394,8 +394,6 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
             {
                 LoadSqlite3Tables( db, tables, user );
 
-                char *err_msg = 0;
-
                 snprintf( filename, CF_MAXVARSIZE - 1, "%s-%s-%ld.csv", user, query_id, time( NULL ) );
                 snprintf( path_origin, CF_MAXVARSIZE - 1, "%s/reports/%s", CFWORKDIR, filename );
 
@@ -427,14 +425,8 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                     return false;
                 }
 
-                if (!(Sqlite3_Execute(db, query, (void *) BuildCSVOutput, (void *) writer, err_msg)))
+                if (!(Sqlite3_Execute(db, query, (void *) BuildCSVOutput, (void *) writer)))
                 {
-                    CfOut( cf_error, "DBScheduledCSVReportGeneration",
-                           "Error executing sql, message: %s, sql: \"%s\"",
-                           err_msg,
-                           query);
-
-                    Sqlite3_FreeString(err_msg);
                     WriterClose(writer);
                     SetDestroy(tables);
                     Sqlite3_DBClose(db);
