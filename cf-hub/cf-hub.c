@@ -130,8 +130,8 @@ int main(int argc, char *argv[])
 {
     GenericAgentConfig *config = CheckOpts(argc, argv);
 
-    ReportContext *report_context = OpenReports("hub");
-    Policy *policy = GenericInitialize("hub", config, report_context, false);
+    ReportContext *report_context = OpenReports(config->agent_type);
+    Policy *policy = GenericInitialize(config, report_context, false);
 
     if (DB_CACHE_COMPLIANCE)
     {

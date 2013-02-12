@@ -176,12 +176,12 @@ static const char *HINTS[] =
 int main(int argc, char *argv[])
 {
     GenericAgentConfig *config = CheckOpts(argc, argv);
-    ReportContext *report_context = OpenReports("knowledge");
+    ReportContext *report_context = OpenReports(config->agent_type);
     Policy *policy = NULL;
 
     if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
     {    
-        policy = GenericInitialize("knowledge", config, report_context, false);
+        policy = GenericInitialize(config, report_context, false);
         ThisAgentInit();
         
         KeepKnowControlPromises(policy);
