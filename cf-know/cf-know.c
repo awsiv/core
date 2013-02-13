@@ -575,7 +575,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
             break;
         }
 
-        if (!(GetBundle(policy, name, "knowledge") || (GetBundle(policy, name, "common"))))
+        if (!(PolicyGetBundle(policy, NULL, "knowledge", name) || (PolicyGetBundle(policy, NULL, "common", name))))
         {
             CfOut(cf_error, "", " !! Bundle \"%s\" listed in the bundlesequence was not found\n", name);
             ok = false;
@@ -606,7 +606,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
                 break;
             }
 
-            if ((bp = GetBundle(policy, name, "knowledge")) || (bp = GetBundle(policy, name, "common")))
+            if ((bp = PolicyGetBundle(policy, NULL, "knowledge", name)) || (bp = PolicyGetBundle(policy, NULL, "common", name)))
             {
                 BannerBundle(bp, params);
                 AugmentScope(bp->name, bp->ns, bp->args, params);

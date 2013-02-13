@@ -113,7 +113,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
     WriterWriteF(writer,
             "      association => a(\"makes promise of type\",\"promise_types::%s\",\"promises have been made by\");\n",
-            pp->agentsubtype);
+            pp->parent_subtype->name);
     WriterWriteF(writer, "  \"%s\"\n", NovaEscape(pp->promiser));
     WriterWriteF(writer, "      association => a(\"has alias\",\"%s\",\"is a promise handle for\");\n", promise_id);
 
@@ -335,7 +335,11 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                 }
                 
                 const Policy *policy = PolicyFromPromise(pp);
-                bp = GetBundle(policy, bundlename, "agent");
+                bp = PolicyGetBundle(policy, NULL, "agent", bundlename);
+                if (!bp)
+                {
+                    bp = PolicyGetBundle(policy, NULL, "common", bundlename);
+                }
 
                 if (bp == NULL)
                 {
