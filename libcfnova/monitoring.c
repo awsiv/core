@@ -279,16 +279,6 @@ static void Nova_DumpSlots(void)
     chmod(filename, 0600);
 }
 
-/*****************************************************************************/
-
-void LookupObservable(int n, char *name, char *desc)
-{
-    Nova_LoadSlots();
-    GetObservable(n, name, desc);
-}
-
-/*****************************************************************************/
-
 void Nova_LookupAggregateClassName(int n, char *name, char *desc)
 {
     Nova_LoadSlots();
@@ -320,104 +310,6 @@ void GetObservable(int i, char *name, char *desc)
         }
     }
 }
-
-/*****************************************************************************/
-
-static void NovaOpenNewLifeCycle(int age, FILE **fp)
-{
-    int i;
-    char filename[CF_MAXVARSIZE];
-
-    CfDebug("OPEN YEAR %d\n", age);
-
-    for (i = 0; i < CF_OBSERVABLES; i++)
-    {
-        sprintf(filename, "%s_%d.yr", OBS[i][0], age);
-
-        if ((fp[i] = fopen(filename, "w")) == NULL)
-        {
-            CfOut(cf_error, "fopen", "Could not open %s\n", filename);
-            exit(1);
-        }
-    }
-}
-
-/*****************************************************************************/
-
-static void NovaCloseLifeCycle(int age, FILE **fp)
-{
-    int i;
-
-    CfDebug("CLOSE YEAR %d\n", age);
-
-    for (i = 0; i < CF_OBSERVABLES; i++)
-    {
-        fclose(fp[i]);
-    }
-}
-
-/*****************************************************************************/
-
-void LongHaul(time_t current)
-{
-    int y, i, j, k;
-    CF_DB *dbp;
-
-    if (LICENSES == 0)
-    {
-        return;
-    }
-
-    if (!OpenDB(&dbp, dbid_history))
-    {
-        return;
-    }
-
-    time_t now = CFSTARTTIME;
-    time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS - 1);
-
-/* Graphs of the past MONITORING_HISTORY_LENGTH_YEARS */
-
-    for (y = 0; y < MONITORING_HISTORY_LENGTH_YEARS; ++y)
-    {
-        FILE *fp[CF_OBSERVABLES];
-
-        NovaOpenNewLifeCycle(MONITORING_HISTORY_LENGTH_YEARS - 1 - y, fp);
-
-        for (i = 0; i < MONITORING_WEEKS_PER_YEAR; ++i)
-        {
-            for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
-            {
-                Averages av;
-
-                if (GetRecordForTime(dbp, w, &av))
-                {
-                    for (k = 0; k < CF_OBSERVABLES; ++k)
-                    {
-                        double q = BoundedValue(av.Q[k].q, 0);
-                        double var = BoundedValue(av.Q[k].var, q * q);
-                        double expect = BoundedValue(av.Q[k].expect, q);
-
-                        fprintf(fp[k], "%d %.2lf %.2lf %.2lf\n", j + SHIFTS_PER_WEEK * i, expect, sqrt(var), q);
-                    }
-                }
-                else
-                {
-                    for (k = 0; k < CF_OBSERVABLES; ++k)
-                    {
-                        fprintf(fp[k], "%d 0.00 0.00 0.00\n", j + SHIFTS_PER_WEEK * i);
-                    }
-                }
-            }
-        }
-
-        NovaCloseLifeCycle(MONITORING_WEEKS_PER_YEAR - 1 - y, fp);
-    }
-
-    CloseDB(dbp);
-}
-
-/*****************************************************************************/
 
 void SetMeasurementPromises(Item **classlist)
 {

@@ -113,7 +113,6 @@ char *TYPESEQUENCE[] =
 char TOPIC_CMD[CF_MAXVARSIZE];
 
 int WORDS = false;
-int HTML = false;
 int WRITE_KMDB = false;
 char STORY[CF_BUFSIZE];
 char FINDTOPIC[CF_BUFSIZE];
@@ -185,7 +184,6 @@ int main(int argc, char *argv[])
         policy = GenericAgentLoadPolicy(config, report_context, false);
 
         CheckLicenses();
-        XML = false;
 
         ThisAgentInit();
         
@@ -359,7 +357,6 @@ static GenericAgentConfig *CheckOpts(int argc, char **argv)
             exit(0);
 
         case 'H':
-            HTML = 1;
             break;
 
         case 'S':
@@ -392,7 +389,6 @@ static GenericAgentConfig *CheckOpts(int argc, char **argv)
 
 static void ThisAgentInit(void)
 {
-    strcpy(WEBDRIVER, "");
     strcpy(LICENSE_COMPANY, "");
     SHOWREPORTS = false;
 }

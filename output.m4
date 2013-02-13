@@ -5,7 +5,6 @@ AC_CONFIG_FILES([nova/Makefile
         nova/libcfnova/Makefile
         nova/libcfagent/Makefile
         nova/libcfmonitord/Makefile
-        nova/libcfreport/Makefile
         nova/libcfrunagent/Makefile
         nova/libcfserverd/Makefile
         nova/libcfexecd/Makefile
