@@ -640,37 +640,37 @@ static void KeepKnowledgePromise(Promise *pp)
         return;
     }
 
-    if (strcmp("classes", pp->agentsubtype) == 0)
+    if (strcmp("classes", pp->parent_subtype->name) == 0)
     {
         CfOut(cf_verbose, "", " ! Class promises do not have any effect here.\n");
         return;
     }
 
-    if (strcmp("inferences", pp->agentsubtype) == 0)
+    if (strcmp("inferences", pp->parent_subtype->name) == 0)
     {
         VerifyInferencePromise(pp);
         return;
     }
 
-    if (strcmp("things", pp->agentsubtype) == 0)
+    if (strcmp("things", pp->parent_subtype->name) == 0)
     {
         VerifyThingsPromise(pp);
         return;
     }
 
-    if (strcmp("topics", pp->agentsubtype) == 0)
+    if (strcmp("topics", pp->parent_subtype->name) == 0)
     {
         VerifyTopicPromise(pp);
         return;
     }
 
-    if (strcmp("occurrences", pp->agentsubtype) == 0)
+    if (strcmp("occurrences", pp->parent_subtype->name) == 0)
     {
         VerifyOccurrencePromises(pp);
         return;
     }
 
-    if (strcmp("reports", pp->agentsubtype) == 0)
+    if (strcmp("reports", pp->parent_subtype->name) == 0)
     {
         VerifyReportPromise(pp);
         return;

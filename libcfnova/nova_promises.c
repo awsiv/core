@@ -90,24 +90,24 @@ void NewPromiser(Promise *pp)
     int hash;
     char unique[CF_BUFSIZE];
 
-    if (strcmp(pp->agentsubtype, "methods") == 0)
+    if (strcmp(pp->parent_subtype->name, "methods") == 0)
     {
         return;                 // Method promisers are not real objects
     }
 
-    if (strcmp(pp->agentsubtype, "delete_lines") == 0)
+    if (strcmp(pp->parent_subtype->name, "delete_lines") == 0)
     {
         return;                 // Deletion cannot confict
     }
 
-    if (IsNakedVar(pp->promiser, '$') || strcmp(pp->agentsubtype, "vars") == 0
-        || strcmp(pp->agentsubtype, "classes") == 0)
+    if (IsNakedVar(pp->promiser, '$') || strcmp(pp->parent_subtype->name, "vars") == 0
+        || strcmp(pp->parent_subtype->name, "classes") == 0)
     {
-        snprintf(unique, CF_BUFSIZE, "%s: %s (%s)", pp->agentsubtype, pp->promiser, pp->bundle);
+        snprintf(unique, CF_BUFSIZE, "%s: %s (%s)", pp->parent_subtype->name, pp->promiser, pp->bundle);
     }
     else
     {
-        snprintf(unique, CF_BUFSIZE, "%s: %s", pp->agentsubtype, pp->promiser);
+        snprintf(unique, CF_BUFSIZE, "%s: %s", pp->parent_subtype->name, pp->promiser);
     }
 
     hash = GetHash(unique, CF_HASHTABLESIZE);
@@ -294,44 +294,44 @@ void PreSanitizePromise(Promise *pp)
 
     /* Attempt run-time-like analysis here before execution if possible */
 
-    if (strcmp("processes", pp->agentsubtype) == 0)
+    if (strcmp("processes", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("storage", pp->agentsubtype) == 0)
+    if (strcmp("storage", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("packages", pp->agentsubtype) == 0)
+    if (strcmp("packages", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("files", pp->agentsubtype) == 0)
+    if (strcmp("files", pp->parent_subtype->name) == 0)
     {
         a = GetFilesAttributes(pp);
         FileSanityChecks(pp->promiser, a, pp);
         return;
     }
 
-    if (strcmp("commands", pp->agentsubtype) == 0)
+    if (strcmp("commands", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("databases", pp->agentsubtype) == 0)
+    if (strcmp("databases", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("methods", pp->agentsubtype) == 0)
+    if (strcmp("methods", pp->parent_subtype->name) == 0)
     {
         return;
     }
 
-    if (strcmp("reports", pp->agentsubtype) == 0)
+    if (strcmp("reports", pp->parent_subtype->name) == 0)
     {
         return;
     }
@@ -419,7 +419,7 @@ void NotePromiseCompliance(const Promise *pp, double val, PromiseState state, ch
 
 /* Just noise to log variables and classes */
 
-    if (pp->agentsubtype == NULL)
+    if (pp->parent_subtype->name == NULL)
     {
         return;
     }

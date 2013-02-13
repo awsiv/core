@@ -53,10 +53,10 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
     bson_append_new_oid(&insert_op, "_id");
 
     CfDebug("PROMISE: \n");
-    CfDebug("\nPromise type is %s, ", pp->agentsubtype);
+    CfDebug("\nPromise type is %s, ", pp->parent_subtype->name);
     CfDebug("class context %s \n", pp->classes);
 
-    bson_append_string(&insert_op, cfp_promisetype, pp->agentsubtype);
+    bson_append_string(&insert_op, cfp_promisetype, pp->parent_subtype->name);
     bson_append_string(&insert_op, cfp_classcontext, pp->classes);
 
     CfDebug("promiser is %s\n", pp->promiser);
@@ -188,7 +188,7 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
 
                 snprintf(iStr, sizeof(iStr), "%ud", (unsigned int)j);
                 bson_append_string(&insert_op, cfp_promiser, pp->promiser);
-                bson_append_string(&insert_op, cfp_promisetype, pp->agentsubtype);
+                bson_append_string(&insert_op, cfp_promisetype, pp->parent_subtype->name);
                 bson_append_string(&insert_op, cfp_classcontext, pp->classes);
 
                 BsonAppendPromisee(&insert_op, &(pp->promisee));
