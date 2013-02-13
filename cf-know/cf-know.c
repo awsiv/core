@@ -180,8 +180,9 @@ int main(int argc, char *argv[])
     Policy *policy = NULL;
 
     if (strlen(STORY) == 0 && strlen(FINDTOPIC) == 0 && strlen(SEARCH) == 0)
-    {    
-        policy = GenericInitialize(config, report_context, false);
+    {
+        GenericAgentDiscoverContext(config, report_context);
+        policy = GenericAgentLoadPolicy(config, report_context, false);
         ThisAgentInit();
         
         KeepKnowControlPromises(policy);
