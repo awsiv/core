@@ -131,8 +131,12 @@ int main(int argc, char *argv[])
     GenericAgentConfig *config = CheckOpts(argc, argv);
 
     ReportContext *report_context = OpenReports(config->agent_type);
+
     GenericAgentDiscoverContext(config, report_context);
     Policy *policy = GenericAgentLoadPolicy(config, report_context, false);
+
+    CheckLicenses();
+    XML = false;
 
     if (DB_CACHE_COMPLIANCE)
     {
