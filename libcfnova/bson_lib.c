@@ -1230,7 +1230,7 @@ static bool JsonComplexToBson(const JsonElement *user_query, bson *buffer)
         }
         else // COMPLEX QUERY SUPPORT
         {
-            if (JsonIteratorCurrentContrainerType(&it) == JSON_CONTAINER_TYPE_OBJECT)
+            if (JsonIteratorCurrentContainerType(&it) == JSON_CONTAINER_TYPE_OBJECT)
             {
                 BsonAppendStartObject(buffer, JsonIteratorCurrentKey(&it));
 
