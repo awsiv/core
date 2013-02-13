@@ -35,7 +35,7 @@ libcfnova_la_SOURCES = \
         monitoring.c \
         ontology.c ontology.h \
         datapackaging.c \
-        promises.c \
+        nova_promises.c \
         nova_reporting.c nova_reporting.h \
         conversion.c
 
