@@ -22,7 +22,6 @@ void RegExp(sqlite3_context *ctx, int argc, sqlite3_value **argv)
     const unsigned char *text = sqlite3_value_text(argv[1]);
     if (text == NULL)
     {
-        sqlite3_result_error(ctx, "Text unavailable for regular expression comparision in SQL regexp()", -1);
         return;
     }
 
