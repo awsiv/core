@@ -313,6 +313,21 @@ bool BsonAppendInt( bson *b, const char *key, int value )
 
 /*****************************************************************************/
 
+bool BsonAppendNewObjectId( bson *b, const char *key)
+{
+    assert( b );
+    assert( !b->finished );
+    assert( key );
+
+    int retval = bson_append_new_oid( b, key);
+
+    assert( retval == BSON_OK );
+
+    return ( retval == BSON_OK );
+}
+
+/*****************************************************************************/
+
 bool BsonAppendDouble( bson *b, const char *key, double value )
 {
     assert( b );

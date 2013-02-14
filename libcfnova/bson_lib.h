@@ -63,6 +63,7 @@ bool BsonAppendStartObject( bson *b, const char *key );
 bool BsonAppendStartArray( bson *b, const char *key );
 bool BsonAppendFinishObject( bson *b );
 bool BsonAppendFinishArray( bson *b );
+bool BsonAppendNewObjectId( bson *b, const char *key);
 
 void BsonToString(char *retBuf, int retBufSz, bson *data);
 void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter);
