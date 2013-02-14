@@ -699,7 +699,7 @@ static void EnterpriseDBToSqlite3_Variables(sqlite3 *db, HostClassFilter *filter
     {
         HubVariable *hv = (HubVariable *) rp->item;
 
-        if(hv->rval.rtype == CF_SCALAR)
+        if(hv->rval.type == RVAL_TYPE_SCALAR)
         {
             if (!EnterpriseDBToSqlite3_Variables_Insert(db, hv->hh->keyhash, hv->ns, hv->bundle,
                                                         hv->lval, hv->rval.item, hv->dtype))

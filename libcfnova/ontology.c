@@ -126,8 +126,8 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     if (strcmp(pp->parent_subtype->name, "files") == 0)
     {
         Rlist *servers = GetListConstraint("servers", pp);
-        FnCall *edit_bundle = (FnCall *) GetConstraintValue("edit_line", pp, CF_FNCALL);
-        char *source = GetConstraintValue("source", pp, CF_SCALAR);
+        FnCall *edit_bundle = (FnCall *) GetConstraintValue("edit_line", pp, RVAL_TYPE_FNCALL);
+        char *source = GetConstraintValue("source", pp, RVAL_TYPE_SCALAR);
 
         for (rp = servers; rp != NULL; rp = rp->next)
         {
@@ -195,14 +195,17 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
             if (strcmp(cp->lval, "usebundle") == 0)
             {
-                switch (cp->rval.rtype)
+                switch (cp->rval.type)
                 {
-                case CF_SCALAR:
+                case RVAL_TYPE_SCALAR:
                     bundlename = (char *) cp->rval.item;
                     break;
-                case CF_FNCALL:
+                case RVAL_TYPE_FNCALL:
                     fnp = (FnCall *) cp->rval.item;
                     bundlename = fnp->name;
+                    break;
+
+                default:
                     break;
                 }
             }
@@ -216,11 +219,11 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
             {
                 Rlist *allvars = NULL;
 
-                switch (cp->rval.rtype)
+                switch (cp->rval.type)
                 {
-                case CF_SCALAR:
+                case RVAL_TYPE_SCALAR:
 
-                    MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {cp->rval.item, CF_SCALAR}, pp);
+                    MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {cp->rval.item, RVAL_TYPE_SCALAR}, pp);
 
                     for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
                     {
@@ -241,14 +244,14 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                     DeleteRlist(allvars);
                     break;
 
-                case CF_FNCALL:
+                case RVAL_TYPE_FNCALL:
                     fnp = (FnCall *) cp->rval.item;
 
                     // For each argument, variables in actual params affect the bundle
 
                     for (rp = fnp->args; rp != NULL; rp = rp->next)
                     {
-                        MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {rp->item, CF_SCALAR}, pp);
+                        MapIteratorsFromRval(pp->bundle, &allvars, &allvars, (Rval) {rp->item, RVAL_TYPE_SCALAR}, pp);
 
                         for (rp2 = allvars; rp2 != NULL; rp2 = rp2->next)
                         {
@@ -277,18 +280,21 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
             }
             else                // must be something generic action/classes etc
             {
-                switch (cp->rval.rtype)
+                switch (cp->rval.type)
                 {
-                case CF_SCALAR:
+                case RVAL_TYPE_SCALAR:
                     if (cp->references_body)
                     {
                         bodyname = (char *) cp->rval.item;
                     }
                     break;
 
-                case CF_FNCALL:
+                case RVAL_TYPE_FNCALL:
                     fnp = (FnCall *) cp->rval.item;
                     bodyname = fnp->name;
+                    break;
+
+                default:
                     break;
                 }
 
@@ -376,9 +382,9 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     
 /* Promisees as topics too */
 
-    switch (pp->promisee.rtype)
+    switch (pp->promisee.type)
     {
-    case CF_SCALAR:
+    case RVAL_TYPE_SCALAR:
         WriterWriteF(writer, "promisees::\n\n");
         WriterWriteF(writer, "  \"%s\"\n", (const char *) pp->promisee.item);
         WriterWriteF(writer, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_STAKEHOLDER, NovaEscape(pp->promiser), NOVA_STAKEHOLDER_INV);
@@ -426,7 +432,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
         }
         break;
 
-    case CF_LIST:
+    case RVAL_TYPE_LIST:
 
         WriterWriteF(writer, "promisees::\n\n");
         for (rp = (Rlist *) pp->promisee.item; rp != NULL; rp = rp->next)
@@ -628,7 +634,7 @@ const char *PromiseID(const Promise *pp)
 {
     static char id[CF_MAXVARSIZE];
     char vbuff[CF_MAXVARSIZE];
-    const char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
+    const char *handle = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
 
     if (LICENSES == 0)
     {
@@ -717,7 +723,7 @@ void RegisterBundleDependence(char *name, const Promise *pp)
 
     PrependItemList(&NOVA_BUNDLEDEPENDENCE, assertion);
 
-    if ((handle = (char *) GetConstraintValue("handle", pp, CF_SCALAR)))
+    if ((handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)))
     {
         snprintf(assertion, CF_BUFSIZE - 1, "topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", name,
                  NOVA_BUNDLE_DATA_INV_P, handle, NOVA_BUNDLE_DATA);
@@ -1213,54 +1219,54 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("promise_repaired", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("repair_failed", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("repair_denied", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("promise_timeout", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("or", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&dependency, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&dependency, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("and", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&dependency, rp->item, CF_SCALAR);
+        IdempPrependRScalar(&dependency, rp->item, RVAL_TYPE_SCALAR);
     }
 
-    if ((value = GetConstraintValue("expression", pp, CF_SCALAR)))
+    if ((value = GetConstraintValue("expression", pp, RVAL_TYPE_SCALAR)))
     {
-        IdempPrependRScalar(&dependency, value, CF_SCALAR);
+        IdempPrependRScalar(&dependency, value, RVAL_TYPE_SCALAR);
     }
 
 // Now look for impact
@@ -1309,7 +1315,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
                 for (rp = impacted; rp != NULL; rp = rp->next)
                 {
-                    char *varclass = GetConstraintValue("ifvarclass", pp, CF_SCALAR);
+                    char *varclass = GetConstraintValue("ifvarclass", pp, RVAL_TYPE_SCALAR);
 
                     if (strstr(pp2->classes, rp->item) || (varclass && strstr(varclass, rp->item)))
                     {

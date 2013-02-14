@@ -191,7 +191,7 @@ Rlist *StringSequenceToRlist(Seq *seq)
     Rlist *list = NULL;
     for (size_t i = 0; i < seq->length; i++)
     {
-        AppendRlist(&list, seq->data[i], CF_SCALAR);
+        AppendRlist(&list, seq->data[i], RVAL_TYPE_SCALAR);
     }
     return list;
 }

@@ -89,7 +89,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
         bson_append_string(&insert_op, cfp_comment_exp, pp->ref);
     }
 
-    if ((sp = GetConstraintValue("handle", pp, CF_SCALAR)) || (sp = PromiseID(pp)))
+    if ((sp = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
     {
         bson_append_string(&insert_op, cfp_handle_exp, sp);
     }
@@ -201,12 +201,12 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                     bson_append_int(&insert_op, cfp_lineno, pp->offset.line);
                 }
 
-                if ((sp = GetConstraintValue("handle", pp, CF_SCALAR)) || (sp = PromiseID(pp)))
+                if ((sp = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
                 {
                     bson_append_string(&insert_op, cfp_handle, sp);
                 }
 
-                if ((sp = GetConstraintValue("comment", pp, CF_SCALAR)))
+                if ((sp = GetConstraintValue("comment", pp, RVAL_TYPE_SCALAR)))
                 {
                     bson_append_string(&insert_op, cfp_comment, sp);
                 }
@@ -270,16 +270,19 @@ static void BsonAppendPromisee(bson *b, const Rval *promisee)
 
     if (promisee->item)
     {
-        switch(promisee->rtype)
+        switch(promisee->type)
         {
-        case CF_SCALAR:
-            AppendRlist(&promisee_list, (char *)promisee->item, CF_SCALAR);
+        case RVAL_TYPE_SCALAR:
+            AppendRlist(&promisee_list, (char *)promisee->item, RVAL_TYPE_SCALAR);
             BsonAppendStringArrayRlist(b, cfp_promisee, promisee_list);
             DeleteRlist(promisee_list);
             break;
 
-        case CF_LIST:
+        case RVAL_TYPE_LIST:
             BsonAppendStringArrayRlist(b, cfp_promisee, (Rlist *) promisee->item);
+            break;
+
+        default:
             break;
         } 
     }

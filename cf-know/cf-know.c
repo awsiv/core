@@ -555,11 +555,11 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
     {
         switch (rp->type)
         {
-        case CF_SCALAR:
+        case RVAL_TYPE_SCALAR:
             name = (char *) rp->item;
             params = NULL;
             break;
-        case CF_FNCALL:
+        case RVAL_TYPE_FNCALL:
             fp = (FnCall *) rp->item;
             name = (char *) fp->name;
             params = (Rlist *) fp->args;
@@ -595,7 +595,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
         {
             switch (rp->type)
             {
-            case CF_FNCALL:
+            case RVAL_TYPE_FNCALL:
                 fp = (FnCall *) rp->item;
                 name = (char *) fp->name;
                 params = (Rlist *) fp->args;
@@ -773,7 +773,7 @@ static void VerifyThingsPromise(Promise *pp)
     Attributes a = { {0} };
     Topic *tp = NULL, *otp;
     Rlist *rp, *rps, *contexts;
-    char *handle = (char *) GetConstraintValue("handle", pp, CF_SCALAR);
+    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
 
     CfOut(cf_verbose, "", " -> Attempting to install thing-topic %s::%s \n", pp->classes, pp->promiser);
 
@@ -800,7 +800,7 @@ static void VerifyThingsPromise(Promise *pp)
 
             snprintf(synonym, CF_BUFSIZE - 1, "handles::%s", handle);
             otp = IdempInsertTopic(pp->bundle, synonym);
-            PrependRScalar(&(a.synonyms), otp->topic_name, CF_SCALAR);
+            PrependRScalar(&(a.synonyms), otp->topic_name, RVAL_TYPE_SCALAR);
         }
 
         // Handle all synonyms as associations
@@ -834,7 +834,7 @@ static void VerifyThingsPromise(Promise *pp)
         // Add bundle reference
 
         rps = NULL;
-        PrependRScalar(&rps, pp->bundle, CF_SCALAR);
+        PrependRScalar(&rps, pp->bundle, RVAL_TYPE_SCALAR);
         
         AddTopicAssociation(tp, &(tp->associations), KM_MENTIONS_F, KM_MENTIONS_B, rps, true, rp->item, pp->promiser);
 
@@ -847,13 +847,13 @@ static void VerifyThingsPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
             snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", pp->promiser);
-            PrependRScalar(&list, "Comment", CF_SCALAR);
-            PrependRScalar(&topics, id, CF_SCALAR);
+            PrependRScalar(&list, "Comment", RVAL_TYPE_SCALAR);
+            PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
             
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
-                PrependRScalar(&topics, id, CF_SCALAR);
+                PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
             }
 
             AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
@@ -866,13 +866,13 @@ static void VerifyThingsPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-           PrependRScalar(&list, id, CF_SCALAR);
+           PrependRScalar(&list, id, RVAL_TYPE_SCALAR);
            AddTopicAssociation(tp, &(tp->associations), NOVA_HANDLE_INV, NOVA_HANDLE, list, true, rp->item,
                                 pp->promiser);
            DeleteRlist(list);
            list = NULL;
-           PrependRScalar(&list, "promise handle", CF_SCALAR);
-           PrependRScalar(&topics, id, CF_SCALAR);
+           PrependRScalar(&list, "promise handle", RVAL_TYPE_SCALAR);
+           PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal,  topics, pp->classes, pp->bundle);
            DeleteRlist(list);
            DeleteRlist(topics);                       
@@ -891,7 +891,7 @@ static void VerifyTopicPromise(Promise *pp)
     Attributes a = { {0} };
     Topic *tp = NULL, *otp;
     Rlist *rp, *rps, *contexts;
-    char *handle = (char *) GetConstraintValue("handle", pp, CF_SCALAR);
+    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
 
     a = GetTopicsAttributes(pp);
 
@@ -950,13 +950,13 @@ static void VerifyTopicPromise(Promise *pp)
 
             snprintf(synonym, CF_BUFSIZE - 1, "handles::%s", handle);
             otp = IdempInsertTopic(pp->bundle, synonym);
-            PrependRScalar(&(a.synonyms), otp->topic_name, CF_SCALAR);
+            PrependRScalar(&(a.synonyms), otp->topic_name, RVAL_TYPE_SCALAR);
         }
 
         // Add bundle reference
 
         rps = NULL;
-        PrependRScalar(&rps, pp->bundle, CF_SCALAR);
+        PrependRScalar(&rps, pp->bundle, RVAL_TYPE_SCALAR);
 
         AddTopicAssociation(tp, &(tp->associations), KM_MENTIONS_F, KM_MENTIONS_B, rps, true, rp->item, pp->promiser);
 
@@ -969,13 +969,13 @@ static void VerifyTopicPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
             snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", pp->promiser);
-            PrependRScalar(&list, "Comment", CF_SCALAR);
-            PrependRScalar(&topics, id, CF_SCALAR);
+            PrependRScalar(&list, "Comment", RVAL_TYPE_SCALAR);
+            PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
 
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
-                PrependRScalar(&topics, id, CF_SCALAR);
+                PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
             }
             
             AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
@@ -988,13 +988,13 @@ static void VerifyTopicPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-           PrependRScalar(&list, id, CF_SCALAR);
+           PrependRScalar(&list, id, RVAL_TYPE_SCALAR);
            AddTopicAssociation(tp, &(tp->associations), "is a promise with handle", "is a handle for", list, true, rp->item,
                                 pp->promiser);
            DeleteRlist(list);
            list = NULL;
-           PrependRScalar(&list, "promise handle", CF_SCALAR);
-           PrependRScalar(&topics, id, CF_SCALAR);
+           PrependRScalar(&list, "promise handle", RVAL_TYPE_SCALAR);
+           PrependRScalar(&topics, id, RVAL_TYPE_SCALAR);
            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
            DeleteRlist(list);
            DeleteRlist(topics);
@@ -1235,7 +1235,7 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
                 Rlist *rlist = 0;
 
                 snprintf(rev, CF_BUFSIZE - 1, "%s::%s", ncontext, ntopic);
-                PrependRScalar(&rlist, rev, CF_SCALAR);
+                PrependRScalar(&rlist, rev, RVAL_TYPE_SCALAR);
 
                 // Stupid to have to declassify + reclassify, but ..
                 DeClassifyTopic(normalform, ndt, ndc);
@@ -1288,7 +1288,7 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
 
     if (represents == NULL)
     {
-        IdempPrependRScalar(&(op->represents), "Unspecified document", CF_SCALAR);
+        IdempPrependRScalar(&(op->represents), "Unspecified document", RVAL_TYPE_SCALAR);
     }
 
     for (rp = represents; rp != NULL; rp = rp->next)
@@ -1572,7 +1572,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 {
     Attributes attr = { {0} };
     Rlist *rp;
-    char *cert = GetConstraintValue("certainty", pp, CF_SCALAR);
+    char *cert = GetConstraintValue("certainty", pp, RVAL_TYPE_SCALAR);
     enum knowledgecertainty certainty;
 
     attr.synonyms = GetListConstraint("synonyms", pp);

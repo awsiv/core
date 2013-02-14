@@ -572,7 +572,7 @@ static bool IsInternalPromise(const Promise *pp)
 {
     assert(pp);
 
-    const char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
+    const char *handle = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
 
     if (handle == NULL)
     {

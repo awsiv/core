@@ -1458,12 +1458,12 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 
     if (classRxInclude)
     {
-        AppendRlist(&classRxIncludes, classRxInclude, CF_SCALAR);
+        AppendRlist(&classRxIncludes, classRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (classRxExclude)
     {
-        AppendRlist(&classRxExcludes, classRxExclude, CF_SCALAR);
+        AppendRlist(&classRxExcludes, classRxExclude, RVAL_TYPE_SCALAR);
     }
 
     return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
@@ -1483,12 +1483,12 @@ void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclu
 {
     if (classRxInclude)
     {
-        AppendRlist(&(filter->classRxIncludes), classRxInclude, CF_SCALAR);
+        AppendRlist(&(filter->classRxIncludes), classRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (classRxExclude)
     {
-        AppendRlist(&(filter->classRxExcludes), classRxExclude, CF_SCALAR);
+        AppendRlist(&(filter->classRxExcludes), classRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1617,12 +1617,12 @@ void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, c
 {
     if (bundleInclude)
     {
-        AppendRlist(&(filter->bundleIncludes), bundleInclude, CF_SCALAR);
+        AppendRlist(&(filter->bundleIncludes), bundleInclude, RVAL_TYPE_SCALAR);
     }
 
     if (bundleExclude)
     {
-        AppendRlist(&(filter->bundleExcludes), bundleExclude, CF_SCALAR);
+        AppendRlist(&(filter->bundleExcludes), bundleExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1630,12 +1630,12 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
 {
     if (bundleRxInclude)
     {
-        AppendRlist(&(filter->bundleRxIncludes), bundleRxInclude, CF_SCALAR);
+        AppendRlist(&(filter->bundleRxIncludes), bundleRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (bundleRxExclude)
     {
-        AppendRlist(&(filter->bundleRxExcludes), bundleRxExclude, CF_SCALAR);
+        AppendRlist(&(filter->bundleRxExcludes), bundleRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1643,12 +1643,12 @@ void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceIncl
 {
     if (namespaceInclude)
     {
-        AppendRlist(&(filter->namespaceIncludes), namespaceInclude, CF_SCALAR);
+        AppendRlist(&(filter->namespaceIncludes), namespaceInclude, RVAL_TYPE_SCALAR);
     }
 
     if (namespaceExclude)
     {
-        AppendRlist(&(filter->namespaceExcludes), namespaceExclude, CF_SCALAR);
+        AppendRlist(&(filter->namespaceExcludes), namespaceExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1656,12 +1656,12 @@ void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRx
 {
     if (namespaceRxInclude)
     {
-        AppendRlist(&(filter->namespaceRxIncludes), namespaceRxInclude, CF_SCALAR);
+        AppendRlist(&(filter->namespaceRxIncludes), namespaceRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (namespaceRxExclude)
     {
-        AppendRlist(&(filter->namespaceRxExcludes), namespaceRxExclude, CF_SCALAR);
+        AppendRlist(&(filter->namespaceRxExcludes), namespaceRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 

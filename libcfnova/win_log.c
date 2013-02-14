@@ -300,11 +300,11 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
     // make the promisee into a string
     switch (peeType)
     {
-    case CF_SCALAR:
+    case RVAL_TYPE_SCALAR:
         strPromisee = (char *) promisee;
         break;
 
-    case CF_LIST:
+    case RVAL_TYPE_LIST:
 
         memset(peeBuf, 0, sizeof(peeBuf));
 

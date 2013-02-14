@@ -102,7 +102,7 @@ int ReturnLiteralData(char *handle, char *recv)
     }
     else if (GetVariable("remote_access", handle, &retval) != cf_notype)
     {
-        if (retval.rtype == CF_SCALAR)
+        if (retval.type == RVAL_TYPE_SCALAR)
         {
             strncpy(recv, retval.item, CF_BUFSIZE - 1);
             CfOut(cf_verbose,""," Found a literal string with handle %s authorized for remote access: %s",handle,recv);
@@ -382,7 +382,7 @@ static Promise *MakeCollectCallPromise()
 
     pp->bundle = xstrdup("peer_collect_call");
     pp->promiser = xstrdup("peer-collect");
-    pp->promisee = (Rval) {NULL, CF_NOPROMISEE};
+    pp->promisee = (Rval) {NULL, RVAL_TYPE_NOPROMISEE };
     pp->donep = &(pp->done);
     pp->this_server = pp->bundle;
 

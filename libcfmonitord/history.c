@@ -736,7 +736,7 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
 void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 {
-    char *handle = (char *) GetConstraintValue("handle", pp, CF_SCALAR);
+    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
     Item *stream = NULL;
     int slot = 0;
     double new_value;

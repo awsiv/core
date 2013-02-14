@@ -201,7 +201,7 @@ static void test_variables_with_newline(void **state)
     for (const Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
         const HubVariable *hv = (HubVariable *) rp->item;
-        assert_true(hv->dtype[0] == CF_SCALAR);
+        assert_true(hv->dtype[0] == RVAL_TYPE_SCALAR);
         assert_string_equal(rval_with_newline, hv->rval.item);
     }
 

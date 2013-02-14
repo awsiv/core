@@ -178,7 +178,7 @@ static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn )
 
         if( is_class_defined && !already_run )
         {
-            PrependRlist( &pending_queries, (void *) run_class, CF_SCALAR );
+            PrependRlist( &pending_queries, (void *) run_class, RVAL_TYPE_SCALAR );
         }
         else if( !is_class_defined && already_run )
         {

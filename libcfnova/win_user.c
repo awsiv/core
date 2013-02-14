@@ -241,7 +241,7 @@ FnCallResult FnCallUserExists(FnCall *fp, Rlist *finalargs)
         strcpy(buffer, "!any");
     }
 
-    return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), CF_SCALAR } };
+    return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), RVAL_TYPE_SCALAR } };
 }
 
 /*********************************************************************/
@@ -261,5 +261,5 @@ FnCallResult FnCallGroupExists(FnCall *fp, Rlist *finalargs)
         strcpy(buffer, "!any");
     }
 
-    return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), CF_SCALAR } };
+    return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), RVAL_TYPE_SCALAR } };
 }

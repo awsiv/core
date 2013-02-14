@@ -53,7 +53,7 @@ void Nova_NoteVarUsageDB(void)
         {
             snprintf(key, sizeof(key), "%s.%s", ptr->scope, assoc->lval);
             var.dtype = assoc->dtype;
-            var.rtype = assoc->rval.rtype;
+            var.rtype = assoc->rval.type;
             var.rval[0] = '\0';
 
             if (!PrintRval(var.rval, sizeof(var.rval) - 15, assoc->rval))

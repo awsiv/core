@@ -751,7 +751,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if (IsStringIn(retval.item,hc->class))
       {
-      PrependRScalar(locations,hc->class,CF_SCALAR);      
+      PrependRScalar(locations,hc->class,RVAL_TYPE_SCALAR);
       break;
       }
    }
@@ -1700,7 +1700,7 @@ static int Nova_GetReportedList(const char *hostkey, const char *ns, const char 
 
         if (strlen(hv->dtype) > 1)      // list
         {
-            *list = CopyRvalItem((Rval) {hv->rval.item, CF_LIST}).item;
+            *list = CopyRvalItem((Rval) {hv->rval.item, RVAL_TYPE_LIST}).item;
         }
         else
         {

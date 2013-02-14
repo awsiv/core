@@ -44,7 +44,7 @@ Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
     *start = rp;
 
     rp->item = item;
-    rp->type = CF_SCALAR;
+    rp->type = RVAL_TYPE_SCALAR;
     return rp;
 }
 
@@ -1440,7 +1440,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
         {
             rlval[0] = '\0';
             rrval = NULL;
-            rtype = CF_SCALAR;
+            rtype = RVAL_TYPE_SCALAR;
 
             if (strcmp(bson_iterator_key(&it1), cfr_vars) == 0)
             {
@@ -1475,7 +1475,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                     while (bson_iterator_next(&it3))
                     {
                         rlval[0] = '\0';
-                        rtype = CF_SCALAR;
+                        rtype = RVAL_TYPE_SCALAR;
                         rrval = NULL;
                         newlist = NULL;
                         dtype[0] = '\0';
@@ -1495,11 +1495,11 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                                 case BSON_ARRAY:
                                 case BSON_OBJECT:
                                     bson_iterator_subiterator(&it4, &it5);
-                                    rtype = CF_LIST;
+                                    rtype = RVAL_TYPE_LIST;
 
                                     while (bson_iterator_next(&it5))
                                     {
-                                        AppendRScalar(&newlist, (char *) bson_iterator_string(&it5), CF_SCALAR);
+                                        AppendRScalar(&newlist, (char *) bson_iterator_string(&it5), RVAL_TYPE_SCALAR);
                                     }
 
                                     rrval = newlist;
@@ -1507,7 +1507,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                                 default:
                                     rrval = xstrdup(bson_iterator_string(&it4));
-                                    rtype = CF_SCALAR;
+                                    rtype = RVAL_TYPE_SCALAR;
                                     break;
                                 }
                             }
@@ -1545,7 +1545,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                             if (!NULL_OR_EMPTY(lrval))
                             {
-                                if (rtype == CF_LIST)
+                                if (rtype == RVAL_TYPE_LIST)
                                 {
                                     for (Rlist *it = rrval; it != NULL; it = it->next)
                                     {
@@ -1593,7 +1593,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                             if (!NULL_OR_EMPTY(lrval))
                             {
-                                if (rtype == CF_LIST)
+                                if (rtype == RVAL_TYPE_LIST)
                                 {
                                     for (Rlist *it = rrval; it != NULL; it = it->next)
                                     {
@@ -3946,10 +3946,10 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 /*****************************************************************************/
 static void GetNewClientVersions(Rlist **rp)
 {
-    PrependRScalar(rp, (void *) "nova_2_2_.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "nova_2_3_.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "enterprise_2.*", CF_SCALAR);
-    PrependRScalar(rp, (void *) "enterprise_3.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "nova_2_2_.*", RVAL_TYPE_SCALAR);
+    PrependRScalar(rp, (void *) "nova_2_3_.*", RVAL_TYPE_SCALAR);
+    PrependRScalar(rp, (void *) "enterprise_2.*", RVAL_TYPE_SCALAR);
+    PrependRScalar(rp, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
 }
 
 /*****************************************************************************/
@@ -5522,7 +5522,7 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, const PromiseFilter *filter)
             if (strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
             {
                 tmpList = SplitRegexAsRList((char *) bson_iterator_string(&it1), "[.!()|&]+", 100, false);
-                IdempAppendRlist(&classList, tmpList, CF_LIST);
+                IdempAppendRlist(&classList, tmpList, RVAL_TYPE_LIST);
                 DeleteRlist(tmpList);
             }
         }
@@ -6801,7 +6801,7 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
             continue;
         }
 
-        AppendRlist(&hostkeys, hostkey, CF_SCALAR);
+        AppendRlist(&hostkeys, hostkey, RVAL_TYPE_SCALAR);
     }
 
     mongo_cursor_destroy(cursor);
@@ -7085,11 +7085,11 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
         if(return_ip_address)
         {
-            PrependRScalar(&return_list, hh->ipaddr, CF_SCALAR);
+            PrependRScalar(&return_list, hh->ipaddr, RVAL_TYPE_SCALAR);
         }
         else
         {
-            PrependRScalar(&return_list, hh->hostname, CF_SCALAR);
+            PrependRScalar(&return_list, hh->hostname, RVAL_TYPE_SCALAR);
         }
     }
 

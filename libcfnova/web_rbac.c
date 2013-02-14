@@ -942,7 +942,7 @@ static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
 
         for (const Rlist *rp2 = partial_result; rp2; rp2 = rp2->next)
         {
-            PrependRlist(&result, rp2->item, CF_SCALAR);
+            PrependRlist(&result, rp2->item, RVAL_TYPE_SCALAR);
         }
         DeleteRlist(partial_result);
     }
