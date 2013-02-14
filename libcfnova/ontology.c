@@ -118,12 +118,12 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     WriterWriteF(writer, "      association => a(\"has alias\",\"%s\",\"is a promise handle for\");\n", promise_id);
 
     WriterWriteF(writer, "promise_types::\n");
-    WriterWriteF(writer, "  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->parent_subtype->name, "is promised in", pp->bundle,
+    WriterWriteF(writer, "  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype, "is promised in", pp->bundle,
             "has promises of type");
 
 /* Look for copies and edits that lead to influence imports */
 
-    if (strcmp(pp->parent_subtype->name, "files") == 0)
+    if (strcmp(pp->agentsubtype, "files") == 0)
     {
         Rlist *servers = GetListConstraint("servers", pp);
         FnCall *edit_bundle = (FnCall *) GetConstraintValue("edit_line", pp, RVAL_TYPE_FNCALL);
@@ -165,7 +165,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     
 /* Look for bundles used as promises through methods  -- these are service bundles */
     
-    if (strcmp(pp->parent_subtype->name, "meta") == 0)
+    if (strcmp(pp->agentsubtype, "meta") == 0)
     {
         for (size_t i = 0; i < SeqLength(pp->conlist); i++)
         {
@@ -182,7 +182,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     }
 
 
-    if (strcmp(pp->parent_subtype->name, "methods") == 0)
+    if (strcmp(pp->agentsubtype, "methods") == 0)
     {
         FnCall *fnp;
 
@@ -303,7 +303,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                     char bodyref[CF_MAXVARSIZE];
 
                     snprintf(bodyref, CF_MAXVARSIZE, "bodies::%s", bodyname);
-                    WriterWriteF(writer, "promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->parent_subtype->name,
+                    WriterWriteF(writer, "promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", pp->agentsubtype,
                             KM_USES_POSS_F, bodyref, KM_USES_POSS_B);
                     WriterWriteF(writer, "handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", promise_id,
                             KM_USES_CERT_F, bodyref, KM_USES_CERT_B);
@@ -526,13 +526,13 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     }
     else
     {
-        WriterWriteF(writer, "   comment => \"Uncommented \\\"%s\\\" promise\";\n", pp->parent_subtype->name);
+        WriterWriteF(writer, "   comment => \"Uncommented \\\"%s\\\" promise\";\n", pp->agentsubtype);
     }
 
     WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", promise_id, NOVA_ACTIVATED,
             pp->classes, NOVA_ACTIVATES);
     WriterWriteF(writer, "\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", promise_id, NOVA_TYPE,
-                 pp->parent_subtype->name, NOVA_TYPE_INV);
+                 pp->agentsubtype, NOVA_TYPE_INV);
 
     for (rp = depends_on; rp != NULL; rp = rp->next)
     {

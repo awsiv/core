@@ -249,7 +249,7 @@ void Nova_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id)
 
 fprintf(fp,"topics:\n");
 
-    if (strcmp(pp->parent_subtype->name,"files") == 0)
+    if (strcmp(pp->agentsubtype,"files") == 0)
     {
         for (size_t i = 0; i < SeqLength(pp->conlist); i++)
         {
@@ -268,7 +268,7 @@ fprintf(fp,"topics:\n");
  
 // Access promises - see if we can figure out which hub we belong to
 
-if (strcmp(pp->parent_subtype->name, "access") == 0)
+if (strcmp(pp->agentsubtype,"access") == 0)
    {
 
     for (size_t i = 0; i < SeqLength(pp->conlist); i++)
@@ -348,7 +348,7 @@ if (strcmp(pp->parent_subtype->name, "access") == 0)
    }
 
 
-if (strcmp(pp->parent_subtype->name, "access") == 0)
+if (strcmp(pp->agentsubtype,"access") == 0)
    {
 
    for (size_t i = 0; i < SeqLength(pp->conlist); i++)
