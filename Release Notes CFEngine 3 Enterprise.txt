@@ -1,17 +1,20 @@
-CFENGINE 3 ENTERPRISE 2.2.4
+CFENGINE 3 ENTERPRISE 2.2.5
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: January 2013
-SCOPE 2.2.4: Minor bugfix release to Entepprise 2.2.3
+RELEASE DATE: February 2013
+SCOPE 2.2.5: Minor bugfix release to Enterprise 2.2.4
+SCOPE 2.2.4: Minor bugfix release to Enterprise 2.2.3
 SCOPE 2.2.3: Minor bugfix release to Enterprise 2.2.2
 SCOPE 2.2.2: Minor bugfix release to Enterprise 2.2.1 
 SCOPE 2.2.1: Minor bugfix release to Enterprise 2.2.0 
 SCOPE 2.2.0: Official release of CFEngine 3 Enterprise (successor to CFEngine Nova 2.1.3)
-All documentation for 2.2.x will apply to 2.2.4, except issues noted in change log and known issues below.
+All documentation for 2.2.x will apply to 2.2.5, except issues noted in change log and known issues below.
 
 ----------------------------------------------------------------------------
  TABLE OF CONTENTS:
  PLATFORMS SUPPORTED
  COMPATIBILITY MATRIX
+ CHANGE LOG FROM 2.2.4
+ BUGFIXES SINCE 2.2.4
  CHANGE LOG FROM 2.2.3
  BUGFIXES SINCE 2.2.3
  CHANGE LOG FROM 2.2.2
@@ -59,18 +62,24 @@ Solaris 	10 					i86pc	 		No libvirt
 Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
 Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.9
+Community version base: 3.3.10
 
 
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
-2.2.4	2.2.x		Yes		Yes
-2.2.4	2.1.x		Yes		Yes		Bundle compliance report not compatible
+2.2.5	2.2.x		Yes		Yes
+2.2.5	2.1.x		Yes		Yes		Bundle compliance report not compatible
 2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
 2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
 
 As always, test thoroughly in your lab before upgrading production environments!
+
+CHANGE LOG FROM 2.2.4:
+None.
+
+BUGFIXES SINCE 2.2.4:
+* Fixed segmentation fault on Solaris 8
 
 CHANGE LOG FROM 2.2.3:
 * Convert newline to space in the output of variable values from cf-report
@@ -163,8 +172,7 @@ See separate INSTALL file for instructions.
 
 
 KNOWN ISSUES:
-* Windows packages are not provided for this release, please use Enterprise 2.2.3 packages (fully compatible with Enterpise 2.2.4)
-* ACL posix library not included in package
+* Windows packages only work on 64 bit architectures
 * Software and patches available/status reports containing maximum 5-minute old data: will only apply to clients that are upgraded to 2.2.x.
 * Compliance by bundle reports are incompatible with older clients (CFEngine Nova 2.1.4 and down). Data with a timestamp prior to upgrade to 2.2.x will not be shown in the reports.
 * Verbose output in command line interface (CLI) still indicates that you are using CFEngine 3 Nova (i.e. the CLI prefixes the verbose output with "nova> [MESSAGE]". See message for next release below.
@@ -175,5 +183,5 @@ KNOWN ISSUES:
 
 
 IMPORTANT NOTICE FOR NEXT MAJOR RELEASE (CFENGINE 3 ENTERPRISE 3.0):
-CFEngine will change the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" for the next version of CFEngine 3 Enterprise. Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
+CFEngine will change the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise> [MESSAGE]" for the next version of CFEngine 3 Enterprise. Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
 
