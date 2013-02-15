@@ -23,7 +23,7 @@
 @titlepage
 @title CFEngine Enterprise 3.0 Owner's Manual
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 5. December 2012 @c also update in ifnottex section below
+@subtitle Updated 15. February 2015 @c also update in ifnottex section below
 @author CFEngine AS
 @c @smallbook
 @fonttextsize 10
@@ -45,7 +45,7 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 5. December 2012
+Updated 15. February 2013
 @node Top, Introduction, (dir), (dir)
 @top CFEngine Enterprise 3.0 Owner's Manual
 @end ifnottex
@@ -317,6 +317,8 @@ CFEngine will output diagnostic information upon bootstrap (written to command l
 -> Bootstrap to 123.456.789.123 completed successfully
 
 @end verbatim
+
+@noindent See Troubleshooting - @ref{Problems bootstrapping} if you have issues with this step.
 
 @cartouche
 Commercial customers: Did you bootstrap before obtaining a license? See @ref{I did bootstrap the hub before obtaining a license file - what should I do?}
@@ -4870,6 +4872,7 @@ Four steps need to be followed to correct this minor issue.
 @chapter Troubleshooting
 
 @menu
+* Problems bootstrapping::
 * Mission Portal Logs::         
 * Apache HTTP error_log is your friend::  
 * Some report pages return HTTP error 404::  
@@ -4884,7 +4887,31 @@ Four steps need to be followed to correct this minor issue.
 
 
 @c -----------------------------------------------------
-@node Mission Portal Logs, Apache HTTP error_log is your friend, Troubleshooting, Troubleshooting
+@node Problems bootstrapping, Mission Portal Logs, Troubleshooting, Troubleshooting
+@section Problems bootstrapping
+
+The most common problems with bootstrapping are related to:
+
+@table @i
+@item Firewall
+Make sure port 5308 is open for both incoming and outgoing traffic.
+@item Policy access control list (acl)
+By default, the hub is available to clients that reside in the same class B network. If some clients are not part of that network, make sure the IPs are added to the acl in @file{/var/cfengine/masterfiles/def.cf}, @code{bundle common def}:
+@verbatim
+     "acl"     slist => {
+
+                       # Assume /16 LAN clients to start with 
+                         "$(sys.policy_hub)/16",
+		       # Add clients' IP addresses (or IP range) here (for example: an acl of 
+		       # 192.168.0.0/16 would allow all clients that have an IP address that 
+		       # starts with 192.168 to connect to the hub)
+@end verbatim
+@item cf-serverd is not running on the hub
+The CFEngine component @code{cf-serverd} takes care of all CFEngine communication. It can take a few minutes after you bootstrapped the hub to itself before this component is started, just wait a bit and retry.
+@end table
+
+@c -----------------------------------------------------
+@node Mission Portal Logs, Apache HTTP error_log is your friend, Problems bootstrapping, Troubleshooting
 @section Mission Portal Logs
 
 The Mission Portal will log php errors, errors related to the configuration of external authentication (LDAP/Active Directory) and occurrences of the fall-back solution if external authentication fails. The log can be found in DOCROOT/application/logs (i.e. @code{/var/www/application/logs} for Ubuntu and @code{/var/www/html/application/logs} for Red Hat). The logs folder must be writable by apache, i.e. by 'www-data' user. 
