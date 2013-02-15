@@ -21,6 +21,7 @@
 #include "cfstream.h"
 #include "ontology.h"
 #include "vars.h"
+#include "fncall.h"
 
 #include <assert.h>
 

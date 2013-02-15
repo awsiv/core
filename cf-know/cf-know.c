@@ -45,6 +45,7 @@
 #include "vars.h"
 #include "stories.h"
 #include "knowledge.h"
+#include "fncall.h"
 
 #include <assert.h>
 
