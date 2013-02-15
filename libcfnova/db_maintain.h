@@ -1,6 +1,8 @@
 #ifndef CFENGINE_NOVA_DB_MAINTAIN_H
 #define CFENGINE_NOVA_DB_MAINTAIN_H
 
+#include "cf.nova.h"
+
 void CFDB_Maintenance(EnterpriseDB *dbconn);
 void CFDB_ReIndexAll(void);
 void CFDB_ConnectAndEnsureIndices(void);

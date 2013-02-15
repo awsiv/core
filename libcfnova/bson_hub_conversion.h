@@ -1,8 +1,7 @@
 #ifndef CFENGINE_NOVA_BSON_HUB_CONVERSION_H
 #define CFENGINE_NOVA_BSON_HUB_CONVERSION_H
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
+#include "cf.nova.h"
 
 /* CFE data structures */
 HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHost *hh, char *rhandle);

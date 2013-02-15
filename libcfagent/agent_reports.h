@@ -7,7 +7,7 @@
 #ifndef CFENGINE_AGENT_REPORTS_H
 #define CFENGINE_AGENT_REPORTS_H
 
-#include "cf3.defs.h"
+#include "cf.nova.h"
 
 void NoteEfficiency(double e);
 

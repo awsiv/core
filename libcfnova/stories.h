@@ -1,6 +1,8 @@
 #ifndef STORIES_H
 #define STORIES_H
 
+#include "cf.nova.h"
+
 enum storytype
 {
     cfi_cause,
