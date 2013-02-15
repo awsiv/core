@@ -148,10 +148,10 @@ static cfapi_errid _LDAPAuthenticate(const char *url,
     syslog(LOG_DEBUG, "Attempting to authenticate user %s against external OpenLDAP service", username);
 
     cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
-    Rlist *user_directory_values = SplitStringAsRList(user_directories, ';');
+    Rlist *user_directory_values = RlistFromSplitString(user_directories, ';');
     for (const Rlist *rp = user_directory_values; rp; rp = rp->next)
     {
-        const char *user_directory = ScalarValue(rp);
+        const char *user_directory = RlistScalarValue(rp);
 
         char bind_dn[4096] = { 0 };
         strcat(bind_dn, login_attribute);
@@ -172,7 +172,7 @@ static cfapi_errid _LDAPAuthenticate(const char *url,
             break;
         }
     }
-    DeleteRlist(user_directory_values);
+    RlistDestroy(user_directory_values);
 
     if (result == ERRID_SUCCESS)
     {
@@ -267,7 +267,7 @@ static bool _UserIsInRole(const HubUser *user, const char *rolename)
     assert(user);
     for (const Rlist *rp = user->roles; rp; rp = rp->next)
     {
-        if (StringSafeEqual(rolename, ScalarValue(rp)))
+        if (StringSafeEqual(rolename, RlistScalarValue(rp)))
         {
             syslog(LOG_DEBUG, "Found that user %s is in role %s", user->username, rolename);
             return true;
@@ -413,7 +413,7 @@ HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName)
     if (errid != ERRID_SUCCESS)
     {
         DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
-        PrependRlistAlien(&(recordList), NewHostClassFilter(NULL, NULL));
+        RlistPrependAlien(&(recordList), NewHostClassFilter(NULL, NULL));
         return NewHubQueryErrid(NULL, recordList, errid);
     }
 
@@ -421,7 +421,7 @@ HubQuery *CFDB_HostClassFilterFromUserRBAC(const char *userName)
 
     HostClassFilter *hostClassFilter = NewHostClassFilter(rbac->classRxInclude, rbac->classRxExclude);
 
-    PrependRlistAlien(&(recordList), hostClassFilter);
+    RlistPrependAlien(&(recordList), hostClassFilter);
 
     DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
 
@@ -440,7 +440,7 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(const char *userName)
     if (errid != ERRID_SUCCESS)
     {
         DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
-        PrependRlistAlien(&(recordList), NewPromiseFilter());
+        RlistPrependAlien(&(recordList), NewPromiseFilter());
         return NewHubQueryErrid(NULL, recordList, errid);
     }
 
@@ -449,7 +449,7 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(const char *userName)
     PromiseFilter *promiseFilter = NewPromiseFilter();
 
     PromiseFilterAddBundlesRx(promiseFilter, rbac->bundleRxInclude, rbac->bundleRxExclude);
-    PrependRlistAlien(&(recordList), promiseFilter);
+    RlistPrependAlien(&(recordList), promiseFilter);
 
     DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
 
@@ -629,7 +629,7 @@ static HubQuery *CombineAccessOfRoles(const char *userName, HubQuery *hqRoles)
 
     Rlist *recordList = NULL;
 
-    PrependRlistAlien(&(recordList), rbac);
+    RlistPrependAlien(&(recordList), rbac);
 
     return NewHubQuery(NULL, recordList);
 }
@@ -919,14 +919,14 @@ cfapi_errid CFDB_DeleteUser(const char *deleting_username, const char *username)
 
 static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
 {
-    Rlist *user_directories = SplitStringAsRList(ldap_settings->users_directory, ';');
+    Rlist *user_directories = RlistFromSplitString(ldap_settings->users_directory, ';');
     char *uri = _LDAPUri(ldap_settings);
     bool start_tls = StringSafeEqual("tls", ldap_settings->encryption);
 
     Rlist *result = NULL;
     for (const Rlist *rp = user_directories; rp; rp = rp->next)
     {
-        const char *user_dir = ScalarValue(rp);
+        const char *user_dir = RlistScalarValue(rp);
         char *dn = StringConcatenate(3, user_dir, ",", ldap_settings->base_dn);
         char *bind_dn = StringConcatenate(7, ldap_settings->login_attribute, "=", ldap_settings->username, ",", user_dir, ",", ldap_settings->base_dn);
 
@@ -942,9 +942,9 @@ static Rlist *_GetExternalUsernamesLdap(const HubSettingsLDAP *ldap_settings)
 
         for (const Rlist *rp2 = partial_result; rp2; rp2 = rp2->next)
         {
-            PrependRlist(&result, rp2->item, RVAL_TYPE_SCALAR);
+            RlistPrepend(&result, rp2->item, RVAL_TYPE_SCALAR);
         }
-        DeleteRlist(partial_result);
+        RlistDestroy(partial_result);
     }
 
     // TODO: signal error
@@ -1090,9 +1090,9 @@ cfapi_errid _ListUserRecords(EnterpriseDB *conn, bool external, const char *user
 
         Rlist *roles = BsonStringArrayAsRlist(&cursor->current, dbkey_user_roles);
 
-        PrependRlistAlien(users_out, NewHubUser(external, username, name, email, roles));
+        RlistPrependAlien(users_out, NewHubUser(external, username, name, email, roles));
 
-        DeleteRlist(roles);
+        RlistDestroy(roles);
     }
 
     mongo_cursor_destroy(cursor);
@@ -1113,7 +1113,7 @@ static bool _UsernameExistsExternal(const HubSettingsLDAP *ldap_settings, const 
             break;
         }
     }
-    DeleteRlist(external_usernames);
+    RlistDestroy(external_usernames);
 
     return found;
 }
@@ -1156,7 +1156,7 @@ static cfapi_errid _GetUserRecord(EnterpriseDB *conn, bool external, const char 
 
         *user_out = NewHubUser(external, username, name, email, roles);
 
-        DeleteRlist(roles);
+        RlistDestroy(roles);
     }
     bson_destroy(&record);
     return ERRID_SUCCESS;
@@ -1240,7 +1240,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char
             cfapi_errid err = _ListUserRecords(conn, true, username_rx, &external_users);
             if (err != ERRID_SUCCESS)
             {
-                DeleteRlist(internal_users);
+                RlistDestroy(internal_users);
                 return NewHubQueryErrid(NULL, NULL, err);
             }
         }
@@ -1250,7 +1250,7 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char
             Rlist *external_usernames = _ListUsernamesExternal(&settings->ldap, username_rx);
             for (const Rlist *rp = external_usernames; rp; rp = rp->next)
             {
-                const char *external_username = ScalarValue(rp);
+                const char *external_username = RlistScalarValue(rp);
                 bool have_record = false;
                 for (const Rlist *rp2 = external_users; rp2; rp2 = rp2->next)
                 {
@@ -1264,10 +1264,10 @@ HubQuery *_ListUsers(EnterpriseDB *conn, const HubSettings *settings, const char
 
                 if (!have_record)
                 {
-                    PrependRlistAlien(&external_users, NewHubUser(true, external_username, NULL, NULL, NULL));
+                    RlistPrependAlien(&external_users, NewHubUser(true, external_username, NULL, NULL, NULL));
                 }
             }
-            DeleteRlist(external_usernames);
+            RlistDestroy(external_usernames);
         }
     }
 
@@ -1665,7 +1665,7 @@ HubQuery *CFDB_GetRolesByMultipleNames(const Rlist *names)
             {
                 bson_append_start_object(&query, iStr);
 
-                bson_append_string(&query, dbkey_role_name, ScalarValue(rp));
+                bson_append_string(&query, dbkey_role_name, RlistScalarValue(rp));
                 bson_append_finish_object(&query);
             }
         }
@@ -1725,7 +1725,7 @@ HubQuery *CFDB_GetRoles(bson *query)
 	BsonStringWrite(bRxIncl, sizeof(bRxIncl), &(cursor->current), dbkey_role_bundlerx_include);
 	BsonStringWrite(bRxExcl, sizeof(bRxExcl), &(cursor->current), dbkey_role_bundlerx_exclude);
 
-        PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl, bRxExcl));
+        RlistPrependAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl, bRxExcl));
     }
 
     mongo_cursor_destroy(cursor);

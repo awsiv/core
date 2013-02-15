@@ -274,7 +274,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
                         if (strcmp(a, name) == 0)
                         {
                             CfOut(cf_verbose, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
-                            AppendRScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
+                            RlistAppendScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
                         }
                     }
 
@@ -850,7 +850,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
                         if (strcmp(a, attribute_name) == 0)
                         {
                             CfOut(cf_verbose, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
-                            AppendRScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
+                            RlistAppendScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
                         }
                     }
 

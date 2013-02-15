@@ -178,7 +178,7 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle,
                     }
                     else if (!(db_options & QUERY_FLAG_HOSTONLY))
                     {
-                        PrependRlistAlien(record_list, hp);
+                        RlistPrependAlien(record_list, hp);
                     }
                     else
                     {
@@ -270,7 +270,7 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *ns, char *lname,
                     }
                     else
                     {
-                        PrependRlistAlien(record_list, hb);
+                        RlistPrependAlien(record_list, hb);
                     }
                 }
             }

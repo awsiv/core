@@ -229,14 +229,14 @@ int Nova_LaterThan(const char *bigger, const char *smaller)
 
 bool BundleQualifiedNameSplit(const char *qualified_bundle_name, char namespace_out[CF_MAXVARSIZE], char bundle_name_out[CF_MAXVARSIZE])
 {
-    Rlist *parts = SplitStringAsRList(qualified_bundle_name, ':');
+    Rlist *parts = RlistFromSplitString(qualified_bundle_name, ':');
     if (parts)
     {
-        const char *first = ScalarValue(parts);
+        const char *first = RlistScalarValue(parts);
 
         if (parts->next)
         {
-            const char *second = ScalarValue(parts->next);
+            const char *second = RlistScalarValue(parts->next);
             strncpy(namespace_out, first, CF_MAXVARSIZE);
             strncpy(bundle_name_out, second, CF_MAXVARSIZE);
         }
@@ -246,7 +246,7 @@ bool BundleQualifiedNameSplit(const char *qualified_bundle_name, char namespace_
             strncpy(bundle_name_out, first, CF_MAXVARSIZE);
         }
 
-        DeleteRlist(parts);
+        RlistDestroy(parts);
         return true;
     }
 

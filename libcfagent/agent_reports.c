@@ -56,7 +56,7 @@ void Nova_NoteVarUsageDB(void)
             var.rtype = assoc->rval.type;
             var.rval[0] = '\0';
 
-            if (!PrintRval(var.rval, sizeof(var.rval) - 15, assoc->rval))
+            if (!RvalPrint(var.rval, sizeof(var.rval) - 15, assoc->rval))
             {
                 CfOut(cf_verbose, "",
                       "!! Variable %s is too large for transmission to reporting hub (larger than %zu bytes) -- will be truncated in reports",

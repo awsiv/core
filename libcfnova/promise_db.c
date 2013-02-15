@@ -108,7 +108,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
             }
 
             memset(rval_buffer, 0, sizeof(rval_buffer));
-            PrintRval(rval_buffer, CF_BUFSIZE, cp->rval);
+            RvalPrint(rval_buffer, CF_BUFSIZE, cp->rval);
             CfDebug("  %s => %s\n", cp->lval, rval_buffer);
             snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
             snprintf(jStr, sizeof(jStr), "%d", j);
@@ -230,7 +230,7 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                         }
 
                         memset(rval_buffer, 0, sizeof(rval_buffer));
-                        PrintRval(rval_buffer, CF_BUFSIZE, cp->rval);
+                        RvalPrint(rval_buffer, CF_BUFSIZE, cp->rval);
                         CfDebug("  %s => %s\n", cp->lval, rval_buffer);
 
                         snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
@@ -273,9 +273,9 @@ static void BsonAppendPromisee(bson *b, const Rval *promisee)
         switch(promisee->type)
         {
         case RVAL_TYPE_SCALAR:
-            AppendRlist(&promisee_list, (char *)promisee->item, RVAL_TYPE_SCALAR);
+            RlistAppend(&promisee_list, (char *)promisee->item, RVAL_TYPE_SCALAR);
             BsonAppendStringArrayRlist(b, cfp_promisee, promisee_list);
-            DeleteRlist(promisee_list);
+            RlistDestroy(promisee_list);
             break;
 
         case RVAL_TYPE_LIST:
@@ -354,7 +354,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body)
             }
 
             memset(rval_buffer, 0, sizeof(rval_buffer));
-            PrintRval(rval_buffer, sizeof(rval_buffer), cp->rval);
+            RvalPrint(rval_buffer, sizeof(rval_buffer), cp->rval);
             CfDebug("  %s => %s\n", cp->lval, rval_buffer);
 
             snprintf(varName, sizeof(varName), "%s.%s.%s", cfb_classcontext, classContext, cp->lval);

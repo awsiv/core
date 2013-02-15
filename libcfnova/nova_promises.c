@@ -189,10 +189,10 @@ void AnalyzePromiseConflicts(void)
                                   count, p2->filename, p2->line_number, p2->classes);
                         }
 
-                        DeleteRlist(contexts2);
+                        RlistDestroy(contexts2);
                     }
 
-                    DeleteRlist(contexts1);
+                    RlistDestroy(contexts1);
                 }
             }
 

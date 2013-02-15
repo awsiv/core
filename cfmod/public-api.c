@@ -113,10 +113,10 @@ PHP_FUNCTION(cfmod_resource_host)
 
     for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
     {
-        JsonArrayAppendString(output, ScalarValue(rp));
+        JsonArrayAppendString(output, RlistScalarValue(rp));
     }
 
-    DeleteRlist(hostkeys);
+    RlistDestroy(hostkeys);
 
     RETURN_JSON(PackageResult(output, page.pageNum, total));
 }

@@ -94,10 +94,10 @@ void AddTopicAssociation(TopicAssociation **list, char *fwd_name, char *bwd_name
                          int verify);
 Topic *GetTopic(Topic *list, char *topic_name);
 TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, char *bwd, int verify);
-Rlist *IdempPrependRScalar(Rlist **start, void *item, char type);
+Rlist *RlistPrependScalarIdemp(Rlist **start, void *item, char type);
 Rlist *KeyInRlist(Rlist *list, char *key);
-Rlist *PrependRlist(Rlist **start, void *item, char type);
-Rlist *SplitStringAsRList(char *string, char sep);
+Rlist *RlistPrepend(Rlist **start, void *item, char type);
+Rlist *RlistFromSplitString(char *string, char sep);
 int SubStrnCopyChr(char *to, char *from, int len, char sep);
 int AddKeyAssociations(TopicAssociation **a, char *s, char *url,Item **script);
 
@@ -886,7 +886,7 @@ void AddTopicAssociation(TopicAssociation **list, char *fwd_name, char *bwd_name
 
 /* Association now exists, so add new members */
 
-    IdempPrependRScalar(&(ta->associates), associates, 's');
+    RlistPrependScalarIdemp(&(ta->associates), associates, 's');
 }
 
 /*****************************************************************************/
@@ -955,13 +955,13 @@ TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, char *bwd
 
 /*******************************************************************/
 
-Rlist *IdempPrependRScalar(Rlist **start, void *item, char type)
+Rlist *RlistPrependScalarIdemp(Rlist **start, void *item, char type)
 {
     char *scalar = strdup((char *) item);
 
     if (!KeyInRlist(*start, (char *) item))
     {
-        return PrependRlist(start, scalar, type);
+        return RlistPrepend(start, scalar, type);
     }
     else
     {
@@ -988,7 +988,7 @@ Rlist *KeyInRlist(Rlist *list, char *key)
 
 /*******************************************************************/
 
-Rlist *PrependRlist(Rlist **start, void *item, char type)
+Rlist *RlistPrepend(Rlist **start, void *item, char type)
    /* heap memory for item must have already been allocated */
 {
     Rlist *rp, *lp = *start;
@@ -1012,7 +1012,7 @@ Rlist *PrependRlist(Rlist **start, void *item, char type)
 
 /*******************************************************************/
 
-Rlist *SplitStringAsRList(char *string, char sep)
+Rlist *RlistFromSplitString(char *string, char sep)
  /* Splits a string containing a separator like "," 
     into a linked list of separate items, supports
     escaping separators, e.g. \, */
@@ -1038,7 +1038,7 @@ Rlist *SplitStringAsRList(char *string, char sep)
 
         sp += SubStrnCopyChr(node, sp, CF_MAXVARSIZE, sep);
 
-        PrependRlist(&liststart, node, CF_SCALAR);
+        RlistPrepend(&liststart, node, CF_SCALAR);
     }
 
     return liststart;

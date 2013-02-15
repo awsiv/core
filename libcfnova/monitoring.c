@@ -423,9 +423,9 @@ void LoadSlowlyVaryingObservations()
                 break;
 
             case DATA_TYPE_STRING_LIST:
-                list = SplitStringAsRList(rval, ',');
+                list = RlistFromSplitString(rval, ',');
                 NewList("mon", lval, list, DATA_TYPE_STRING_LIST);
-                DeleteRlist(list);
+                RlistDestroy(list);
                 break;
 
             case DATA_TYPE_COUNTER:

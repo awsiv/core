@@ -82,7 +82,7 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 /* Check trust interaction*/
 
     aa.copy.trustkey = true;
-    aa.copy.servers = SplitStringAsRList(peer, '*');
+    aa.copy.servers = RlistFromSplitString(peer, '*');
     pp->cache = NULL;
 
     conn = NewServerConnection(aa, pp);
@@ -140,7 +140,7 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
     Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
 
     DisconnectServer(conn);
-    DeleteRlist(aa.copy.servers);
+    RlistDestroy(aa.copy.servers);
     return true;
 }
 

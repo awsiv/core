@@ -928,48 +928,48 @@ void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportK
 
 void CFDB_PurgeHost(EnterpriseDB *conn, const char *keyHash)
 {
-    Rlist *hostKeyList = SplitStringAsRList(keyHash, ',');
+    Rlist *hostKeyList = RlistFromSplitString(keyHash, ',');
 
     for (Rlist *rp = hostKeyList; rp != NULL; rp = rp->next)
     {
         bson cond;
 
         bson_init(&cond);
-        BsonAppendString(&cond, cfr_keyhash, ScalarValue(rp));
+        BsonAppendString(&cond, cfr_keyhash, RlistScalarValue(rp));
         BsonFinish(&cond);
 
         MongoRemove(conn, MONGO_DATABASE, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from main collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from main collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_ARCHIVE, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from archive collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from archive collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_DATABASE_MON_MG, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from mag monitord collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from mag monitord collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_DATABASE_MON_WK, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from week monitord collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from week monitord collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_DATABASE_MON_YR, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from year monitord collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from year monitord collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from repair logs collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from repair logs collection", RlistScalarValue(rp), NULL);
 
         MongoRemove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
 
-        MongoCheckForError(conn, "delete host from not kept logs collection", ScalarValue(rp), NULL);
+        MongoCheckForError(conn, "delete host from not kept logs collection", RlistScalarValue(rp), NULL);
 
         bson_destroy(&cond);
     }
 
-    DeleteRlist(hostKeyList);
+    RlistDestroy(hostKeyList);
 }
 
 /*****************************************************************************/

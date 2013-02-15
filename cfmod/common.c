@@ -19,7 +19,7 @@ static Rlist *PHPStringArrayToRlist(zval * php_array, bool prune_empty)
         {
             if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
             {
-                AppendRlist(&rp, Z_STRVAL_PP(data), 's');
+                RlistAppend(&rp, Z_STRVAL_PP(data), 's');
             }
         }
     }
@@ -36,8 +36,8 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
 
     HostClassFilterAddClassLists(filter, includeRlist, excludeRlist);
 
-    DeleteRlist(includeRlist);
-    DeleteRlist(excludeRlist);
+    RlistDestroy(includeRlist);
+    RlistDestroy(excludeRlist);
 }
 
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)

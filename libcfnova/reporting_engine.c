@@ -1038,7 +1038,7 @@ static void EnterpriseDBToSqlite3_PromiseDefinitions(sqlite3 *db, PromiseFilter 
         {
             for(Rlist *promisees = hp->promisees; promisees != NULL; promisees = promisees->next)
             {
-                if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->ns, hp->handle, hp->promiser, hp->bundleName, ScalarValue(promisees)))
+                if(!EnterpriseDBToSqlite3_PromiseDefinitions_Insert(db, hp->ns, hp->handle, hp->promiser, hp->bundleName, RlistScalarValue(promisees)))
                 {
                     DeleteHubQuery(hq, DeleteHubPromise);
                     return;

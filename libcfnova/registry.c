@@ -320,14 +320,14 @@ void Nova_DeleteRegistryKey(Attributes a, Promise *pp)
             switch (ret)
             {
             case ERROR_SUCCESS:
-                cfPS(cf_inform, CF_CHG, "", pp, a, " -> Deleted registry value \"%s\" in %s", ScalarValue(rp), pp->promiser);
+                cfPS(cf_inform, CF_CHG, "", pp, a, " -> Deleted registry value \"%s\" in %s", RlistScalarValue(rp), pp->promiser);
                 break;
             case ERROR_FILE_NOT_FOUND:
                 cfPS(cf_inform, CF_NOP, "", pp, a, " -> Registry value \"%s\" in \"%s\" was not present, as promised",
-                     ScalarValue(rp), pp->promiser);
+                     RlistScalarValue(rp), pp->promiser);
                 break;
             default:
-                CfOut(cf_error, "RegDeleteValue", " !! Unable to delete key value with name \"%s\" - code %d", ScalarValue(rp),
+                CfOut(cf_error, "RegDeleteValue", " !! Unable to delete key value with name \"%s\" - code %d", RlistScalarValue(rp),
                       ret);
                 break;
             }
@@ -368,7 +368,7 @@ int Nova_VerifyRegistryValueAssocs(HKEY key_h, Attributes a, Promise *pp)
 
     for (rp = a.database.rows; rp != NULL; rp = rp->next)
     {
-        assign = SplitStringAsRList((char *) (rp->item), ',');
+        assign = RlistFromSplitString((char *) (rp->item), ',');
         char *name = assign->item;
         char *datatypeStr = assign->next->item;
         char *valueStr = assign->next->next->item;
@@ -428,7 +428,7 @@ int Nova_VerifyRegistryValueAssocs(HKEY key_h, Attributes a, Promise *pp)
             ret = ERROR_SUCCESS;
         }
 
-        DeleteRlist(assign);
+        RlistDestroy(assign);
 
         if (ret != ERROR_SUCCESS)
         {
@@ -587,7 +587,7 @@ void Nova_RecursiveRestoreKey(CF_DB *dbp, char *keyname, Attributes a, Promise *
         is_a_key = false;
         is_a_value = false;
 
-        if (IsInListOfRegex(a.database.exclude, key))
+        if (RlistIsInListOfRegex(a.database.exclude, key))
         {
             continue;
         }
@@ -785,13 +785,13 @@ void Nova_RegistryValueIntegrity(CF_DB *dbp, char *key, char *value, char *data,
     char dbkey[CF_BUFSIZE];
     int cmp_ok;
 
-    if (IsInListOfRegex(a.database.exclude, key))
+    if (RlistIsInListOfRegex(a.database.exclude, key))
     {
         CfOut(cf_verbose, "", " -> Registry key \"%s\" excluded as promised", key);
         return;
     }
 
-    if (IsInListOfRegex(a.database.exclude, value))
+    if (RlistIsInListOfRegex(a.database.exclude, value))
     {
         CfOut(cf_verbose, "", " -> Registry value \"%s\" excluded as promised", value);
         return;

@@ -129,7 +129,7 @@ void GetHostNameAndIP( const bson *b, char *hostname, char *address, int bufsize
         hostname_db = (char *)rp_host->item;
     }
     snprintf( hostname, bufsize, "%s", NULLStringToEmpty(hostname_db) );
-    DeleteRlist(rp_host);
+    RlistDestroy(rp_host);
 
     Rlist *rp_address = BsonStringArrayAsRlist( b, cfr_ip_array );
 
@@ -140,7 +140,7 @@ void GetHostNameAndIP( const bson *b, char *hostname, char *address, int bufsize
     }
 
     snprintf( address, bufsize, "%s", NULLStringToEmpty(ip_db) );
-    DeleteRlist(rp_address);
+    RlistDestroy(rp_address);
 }
 
 /*****************************************************************************/
@@ -278,7 +278,7 @@ void HubVariablesToCSV( void *data, Writer *w)
     char rval[CF_MAXVARSIZE];
     if (strlen(hv->dtype) > 1) // list
     {
-        PrintRlist(rval, CF_MAXVARSIZE - 1, hv->rval.item);
+        RlistPrint(rval, CF_MAXVARSIZE - 1, hv->rval.item);
     }
     else
     {

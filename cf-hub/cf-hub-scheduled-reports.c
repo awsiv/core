@@ -114,7 +114,7 @@ static void ScheduleRunScheduledReports(void)
     }
 
     CFDB_QueryGenerateScheduledReports( conn, pending_schedules );
-    DeleteRlist( pending_schedules );
+    RlistDestroy( pending_schedules );
 
     CFDB_Close( conn );
 
@@ -178,7 +178,7 @@ static Rlist *CFDB_QueryPendingSchedulesList( EnterpriseDB *conn )
 
         if( is_class_defined && !already_run )
         {
-            PrependRlist( &pending_queries, (void *) run_class, RVAL_TYPE_SCALAR );
+            RlistPrepend( &pending_queries, (void *) run_class, RVAL_TYPE_SCALAR );
         }
         else if( !is_class_defined && already_run )
         {
@@ -566,7 +566,7 @@ static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
     {
         const char *path_env = getenv( "PATH" );
 
-        Rlist *path_list = SplitStringAsRList( path_env, ':' );
+        Rlist *path_list = RlistFromSplitString( path_env, ':' );
 
         char path_str[CF_MAXVARSIZE] = {0};
 
@@ -583,7 +583,7 @@ static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
             }
         }
 
-        DeleteRlist( path_list );
+        RlistDestroy( path_list );
 
         if( !CFDB_PutValue( conn, cfr_php_bin_dir, path_str, MONGO_SCRATCH) )
         {

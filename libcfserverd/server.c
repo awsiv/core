@@ -323,7 +323,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     CfOut(cf_inform, "", " * Peer collect call back to hub %s : %u \n", peer, a.copy.portnumber);
     CfOut(cf_inform, "", "...........................................................................\n");
 
-    a.copy.servers = SplitStringAsRList(peer, '*');
+    a.copy.servers = RlistFromSplitString(peer, '*');
 
     if (a.copy.servers == NULL || strcmp(a.copy.servers->item, "localhost") == 0)
     {
@@ -336,7 +336,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
 
         if (conn == NULL)
         {
-            DeleteRlist(a.copy.servers);
+            RlistDestroy(a.copy.servers);
             CfOut(cf_verbose, "", " -> No suitable hub server responded to hail\n");
             return false;
         }
@@ -349,7 +349,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     if (!Nova_PlaceCollectCall(conn))
     {
         DisconnectServer(conn);
-        DeleteRlist(a.copy.servers);
+        RlistDestroy(a.copy.servers);
         return false;
     }
 
@@ -365,7 +365,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     sleep(COLLECT_WINDOW);
     
     DisconnectServer(conn);
-    DeleteRlist(a.copy.servers);
+    RlistDestroy(a.copy.servers);
 
     return true;
 }

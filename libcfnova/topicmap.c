@@ -1030,7 +1030,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     if ( CFDB_GetValue( &conn, "goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH ) )
     {
-        goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
+        goal_patterns = RlistFromSplitString(db_goal_patterns, ',');
     }
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
@@ -1172,7 +1172,7 @@ JsonElement *Nova_summarize_all_goals(char *username)
 
     if ( CFDB_GetValue( &conn, "goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH ) )
     {
-        goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
+        goal_patterns = RlistFromSplitString(db_goal_patterns, ',');
     }
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
@@ -1944,7 +1944,7 @@ const char *Nova_GetBundleComment(char *bundle)
 char *Nova_StripString(char *source, char *substring)
 {
     char *replace = xmalloc(strlen(source) + 1);
-    Rlist *rp, *new = SplitStringAsRList(source, '.');
+    Rlist *rp, *new = RlistFromSplitString(source, '.');
 
     replace[0] = '\0';
 
@@ -1963,7 +1963,7 @@ char *Nova_StripString(char *source, char *substring)
         }
     }
 
-    DeleteRlist(new);
+    RlistDestroy(new);
 
     return replace;
 }

@@ -233,19 +233,19 @@ PHP_FUNCTION(cfpr_host_info)
         {
             if (strcmp(var->lval, "ostype") == 0)
             {
-                JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
+                JsonObjectAppendString(infoObject, LABEL_OS_TYPE, RvalScalarValue(var->rval));
             }
             else if (strcmp(var->lval, "flavour") == 0)
             {
-                JsonObjectAppendString(infoObject, LABEL_FLAVOUR, ScalarRvalValue(var->rval));
+                JsonObjectAppendString(infoObject, LABEL_FLAVOUR, RvalScalarValue(var->rval));
             }
             else if (strcmp(var->lval, "release") == 0)
             {
-                JsonObjectAppendString(infoObject, LABEL_RELEASE, ScalarRvalValue(var->rval));
+                JsonObjectAppendString(infoObject, LABEL_RELEASE, RvalScalarValue(var->rval));
             }
             else if (strcmp(var->lval, "last_policy_update") == 0)
             {
-                JsonObjectAppendString(infoObject, LABEL_LAST_POLICY_UPDATE, ScalarRvalValue(var->rval));
+                JsonObjectAppendString(infoObject, LABEL_LAST_POLICY_UPDATE, RvalScalarValue(var->rval));
             }
         }
     }
@@ -412,9 +412,9 @@ PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value)
         Rlist *key_list = CFDB_QueryHostKeys(conn, NULL, NULL, 0, time(NULL), filter);
         for (const Rlist *rp = key_list; rp; rp = rp->next)
         {
-            SetAdd(hostkeys, SafeStringDuplicate(ScalarValue(rp)));
+            SetAdd(hostkeys, SafeStringDuplicate(RlistScalarValue(rp)));
         }
-        DeleteRlist(key_list);
+        RlistDestroy(key_list);
     }
 
     CFDB_Close(conn);
@@ -2927,7 +2927,7 @@ PHP_FUNCTION(cfpr_bundle_arguments)
     {
         for (Rlist *rp = bundle->bundleArgs; rp != NULL; rp = rp->next)
         {
-            JsonArrayAppendString(output, ScalarValue(rp));
+            JsonArrayAppendString(output, RlistScalarValue(rp));
         }
     }
 

@@ -76,7 +76,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
     char promise_id[CF_BUFSIZE];
     Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
-    Rlist *class_list = SplitRegexAsRList(pp->classes, "[.!()|&]+", 100, false);
+    Rlist *class_list = RlistFromSplitRegex(pp->classes, "[.!()|&]+", 100, false);
     char *bundlename = NULL, *bodyname = NULL;
 
     if (LICENSES == 0)
@@ -174,7 +174,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
             char buffer[CF_BUFSIZE];
 
-            PrintRval(buffer, sizeof(buffer), cp->rval);
+            RvalPrint(buffer, sizeof(buffer), cp->rval);
             WriterWriteF(writer, "occurrences: \n\n");
             WriterWriteF(writer, "  \"%s\"  representation => \"literal\",\n", buffer);
             WriterWriteF(writer, "  about_topics => { \"bundles::%s\"},", pp->bundle);
@@ -242,7 +242,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                         }
                     }
 
-                    DeleteRlist(allvars);
+                    RlistDestroy(allvars);
                     break;
 
                 case RVAL_TYPE_FNCALL:
@@ -270,7 +270,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                             }
                         }
 
-                        DeleteRlist(allvars);
+                        RlistDestroy(allvars);
                     }
 
                     break;
@@ -568,7 +568,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
                 (char *)rp->item, KM_AFFECTS_CERT_F);
     }
     
-    DeleteRlist(class_list);
+    RlistDestroy(class_list);
 
 /* Now pointers to the policy compilation */
 
@@ -1220,54 +1220,54 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("promise_repaired", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("repair_failed", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("repair_denied", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("promise_timeout", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("or", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&dependency, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, rp->item, RVAL_TYPE_SCALAR);
     }
 
     potential = GetListConstraint("and", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        IdempPrependRScalar(&dependency, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, rp->item, RVAL_TYPE_SCALAR);
     }
 
     if ((value = GetConstraintValue("expression", pp, RVAL_TYPE_SCALAR)))
     {
-        IdempPrependRScalar(&dependency, value, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, value, RVAL_TYPE_SCALAR);
     }
 
 // Now look for impact
@@ -1283,7 +1283,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
         // Might need to break these up further
     }
 
-    DeleteRlist(dependency);
+    RlistDestroy(dependency);
 
     if (impacted == NULL)
     {
@@ -1357,7 +1357,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
         PromiseRef(cf_inform, pp);
     }
 
-    DeleteRlist(impacted);
+    RlistDestroy(impacted);
 }
 
 /*****************************************************************************/

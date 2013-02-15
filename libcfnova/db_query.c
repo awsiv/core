@@ -1499,7 +1499,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                                     while (bson_iterator_next(&it5))
                                     {
-                                        AppendRScalar(&newlist, (char *) bson_iterator_string(&it5), RVAL_TYPE_SCALAR);
+                                        RlistAppendScalar(&newlist, (char *) bson_iterator_string(&it5), RVAL_TYPE_SCALAR);
                                     }
 
                                     rrval = newlist;
@@ -1670,7 +1670,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                         }
                         else
                         {
-                            DeleteRvalItem(rval);
+                            RvalDestroy(rval);
                         }
                     }
                 }
@@ -3334,7 +3334,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
                 rp->item = NULL;
             }
 
-            DeleteRlist(hq->records);
+            RlistDestroy(hq->records);
             MapDestroy(log_counts);
             return NULL;
         }
@@ -3372,7 +3372,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey,
         DeleteHubPromiseLog(rp->item);
         rp->item = NULL;
     }
-    DeleteRlist(hq->records);
+    RlistDestroy(hq->records);
     MapDestroy(log_counts);
 
     WEB_REPORT_EXPORT_FINISH( wr_info, writer );
@@ -3946,10 +3946,10 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 /*****************************************************************************/
 static void GetNewClientVersions(Rlist **rp)
 {
-    PrependRScalar(rp, (void *) "nova_2_2_.*", RVAL_TYPE_SCALAR);
-    PrependRScalar(rp, (void *) "nova_2_3_.*", RVAL_TYPE_SCALAR);
-    PrependRScalar(rp, (void *) "enterprise_2.*", RVAL_TYPE_SCALAR);
-    PrependRScalar(rp, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
+    RlistPrependScalar(rp, (void *) "nova_2_2_.*", RVAL_TYPE_SCALAR);
+    RlistPrependScalar(rp, (void *) "nova_2_3_.*", RVAL_TYPE_SCALAR);
+    RlistPrependScalar(rp, (void *) "enterprise_2.*", RVAL_TYPE_SCALAR);
+    RlistPrependScalar(rp, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
 }
 
 /*****************************************************************************/
@@ -3971,7 +3971,7 @@ static void SkipOldClientVersionsFilter(bson *b)
         bson_append_finish_object(b);
     }
 
-    DeleteRlist(new_client_versions);
+    RlistDestroy(new_client_versions);
 }
 
 /*****************************************************************************/
@@ -5521,9 +5521,9 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, const PromiseFilter *filter)
         {
             if (strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
             {
-                tmpList = SplitRegexAsRList((char *) bson_iterator_string(&it1), "[.!()|&]+", 100, false);
-                IdempAppendRlist(&classList, tmpList, RVAL_TYPE_LIST);
-                DeleteRlist(tmpList);
+                tmpList = RlistFromSplitRegex((char *) bson_iterator_string(&it1), "[.!()|&]+", 100, false);
+                RlistAppendIdemp(&classList, tmpList, RVAL_TYPE_LIST);
+                RlistDestroy(tmpList);
             }
         }
     }
@@ -6244,7 +6244,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                 }
                 if (hci)
                 {
-                    AppendRlistAlien(&ret, hci);
+                    RlistAppendAlien(&ret, hci);
                 }
                 hci = NULL;
                 tail = NULL;
@@ -6801,7 +6801,7 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
             continue;
         }
 
-        AppendRlist(&hostkeys, hostkey, RVAL_TYPE_SCALAR);
+        RlistAppend(&hostkeys, hostkey, RVAL_TYPE_SCALAR);
     }
 
     mongo_cursor_destroy(cursor);
@@ -7085,11 +7085,11 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
         if(return_ip_address)
         {
-            PrependRScalar(&return_list, hh->ipaddr, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&return_list, hh->ipaddr, RVAL_TYPE_SCALAR);
         }
         else
         {
-            PrependRScalar(&return_list, hh->hostname, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&return_list, hh->hostname, RVAL_TYPE_SCALAR);
         }
     }
 

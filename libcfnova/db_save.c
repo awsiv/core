@@ -806,7 +806,7 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
             {
                 bson_append_start_array(&set_op, varName);
 
-                list = ParseShownRlist(rval);
+                list = RlistParseShown(rval);
 
                 for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
                 {
@@ -814,7 +814,7 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
                     bson_append_string(&set_op, iStr, rp->item);
                 }
 
-                DeleteRlist(list);
+                RlistDestroy(list);
 
                 bson_append_finish_object(&set_op);
             }
@@ -899,7 +899,7 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
             {
                 bson_append_start_array(&set_op, varName);
 
-                list = ParseShownRlist(rval);
+                list = RlistParseShown(rval);
 
                 for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
                 {
@@ -911,7 +911,7 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
                     bson_append_string(&set_op, iStr, rval_with_newline);
                 }
 
-                DeleteRlist(list);
+                RlistDestroy(list);
 
                 bson_append_finish_object(&set_op);
             }
@@ -2330,7 +2330,7 @@ int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
         return false;
     }
 
-    Rlist *hostKeyList = SplitStringAsRList(keyHash, ',');
+    Rlist *hostKeyList = RlistFromSplitString(keyHash, ',');
 
     for (Rlist *rp = hostKeyList; rp != NULL; rp = rp->next)
     {
@@ -2339,7 +2339,7 @@ int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
         bson_init(&set_op);
         {
             bson_append_start_object(&set_op, "$addToSet");
-            bson_append_string(&set_op, cfr_deleted_hosts, ScalarValue(rp));
+            bson_append_string(&set_op, cfr_deleted_hosts, RlistScalarValue(rp));
             bson_append_finish_object(&set_op);
         }
         BsonFinish(&set_op);
@@ -2350,10 +2350,10 @@ int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
 
         bson_destroy(&set_op);
 
-        MongoCheckForError(dbconn, "MarkHostAsDeleted", ScalarValue(rp), NULL);
+        MongoCheckForError(dbconn, "MarkHostAsDeleted", RlistScalarValue(rp), NULL);
     }
 
-    DeleteRlist(hostKeyList);
+    RlistDestroy(hostKeyList);
 
     return true;
 }

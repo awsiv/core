@@ -1393,7 +1393,7 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const 
             char rvalBuf[CF_MAXVARSIZE];
             if (strlen(hv->dtype) > 1) // list
             {
-                PrintRlist(rvalBuf, sizeof(rvalBuf), hv->rval.item);
+                RlistPrint(rvalBuf, sizeof(rvalBuf), hv->rval.item);
             }
             else
             {
@@ -1742,7 +1742,7 @@ JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter)
         {
             PrependItem(&list, rp->item, NULL);
         }
-        DeleteRlist(classList);
+        RlistDestroy(classList);
         IdempPrependItem(&list, "any", NULL);
     }
 
@@ -2641,7 +2641,7 @@ JsonElement *Nova2PHP_promise_details(PromiseFilter *filter)
     }
     else
     {
-        PrintRlist(promiseeText, sizeof(promiseeText), hp->promisees);
+        RlistPrint(promiseeText, sizeof(promiseeText), hp->promisees);
     }
 
     JsonObjectAppendString(payload, "promisee", NULLStringToEmpty(promiseeText));
@@ -2673,7 +2673,7 @@ JsonElement *Nova2PHP_promise_details(PromiseFilter *filter)
             char lval[CF_MAXVARSIZE], rval[CF_MAXVARSIZE], args[CF_MAXVARSIZE];
 
             args[0] = '\0';
-            sscanf(ScalarValue(rp), "%255s => %1023[^(,;]%[^\n]", lval, rval, args);
+            sscanf(RlistScalarValue(rp), "%255s => %1023[^(,;]%[^\n]", lval, rval, args);
             JsonElement *entry = JsonObjectCreate(4);
             if (strcmp(lval, "usebundle") == 0)
             {
@@ -3336,7 +3336,7 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_us
     snprintf(buffer, sizeof(buffer), "],\"meta\":{\"count\":%d}}\n", count);
     EndJoin(returnval, buffer, bufsize);
 
-    DeleteRlist(result);
+    RlistDestroy(result);
 
     if (!CFDB_Close(&dbconn))
     {

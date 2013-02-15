@@ -609,7 +609,7 @@ else
 
 for (rp = tcp4; rp != NULL; rp=rp->next)
    {
-       printf("Open tcp4 port: %s\n", ScalarValue(rp));
+       printf("Open tcp4 port: %s\n", RlistScalarValue(rp));
    }
 
 DeleteItemList(low);
@@ -617,13 +617,13 @@ DeleteItemList(high);
 DeleteItemList(ldt);
 DeleteItemList(focused);
 DeleteItemList(unfocused);
-DeleteRlist(ip_addresses);
-DeleteRlist(mac_addresses);
-DeleteRlist(interfaces);
-DeleteRlist(udp4);
-DeleteRlist(udp6);
-DeleteRlist(tcp4);
-DeleteRlist(tcp6);
+RlistDestroy(ip_addresses);
+RlistDestroy(mac_addresses);
+RlistDestroy(interfaces);
+RlistDestroy(udp4);
+RlistDestroy(udp6);
+RlistDestroy(tcp4);
+RlistDestroy(tcp6);
 
 // Try some stories
 
@@ -749,9 +749,9 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (HubClass *)rp->item;
 
-   if (IsStringIn(retval.item,hc->class))
+   if (RlistIsStringIn(retval.item,hc->class))
       {
-      PrependRScalar(locations,hc->class,RVAL_TYPE_SCALAR);
+      RlistPrependScalar(locations,hc->class,RVAL_TYPE_SCALAR);
       break;
       }
    }
@@ -1652,7 +1652,7 @@ static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const cha
             char b[CF_BUFSIZE];
 
             b[0] = '\0';
-            PrintRlist(b, CF_BUFSIZE, hv->rval.item);
+            RlistPrint(b, CF_BUFSIZE, hv->rval.item);
             snprintf(returnval, bufsize - 1, "%s", b);
         }
         else
@@ -1700,7 +1700,7 @@ static int Nova_GetReportedList(const char *hostkey, const char *ns, const char 
 
         if (strlen(hv->dtype) > 1)      // list
         {
-            *list = CopyRvalItem((Rval) {hv->rval.item, RVAL_TYPE_LIST}).item;
+            *list = RvalCopy((Rval) {hv->rval.item, RVAL_TYPE_LIST}).item;
         }
         else
         {

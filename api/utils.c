@@ -139,7 +139,7 @@ Rlist *PHPStringArrayToRlist(zval *php_array, bool prune_empty)
         {
             if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
             {
-                AppendRlist(&rp, Z_STRVAL_PP(data), 's');
+                RlistAppend(&rp, Z_STRVAL_PP(data), 's');
             }
         }
     }
@@ -191,7 +191,7 @@ Rlist *StringSequenceToRlist(Seq *seq)
     Rlist *list = NULL;
     for (size_t i = 0; i < seq->length; i++)
     {
-        AppendRlist(&list, seq->data[i], RVAL_TYPE_SCALAR);
+        RlistAppend(&list, seq->data[i], RVAL_TYPE_SCALAR);
     }
     return list;
 }
@@ -205,8 +205,8 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
 
     HostClassFilterAddClassLists(filter, includeRlist, excludeRlist);
 
-    DeleteRlist(includeRlist);
-    DeleteRlist(excludeRlist);
+    RlistDestroy(includeRlist);
+    RlistDestroy(excludeRlist);
 }
 
 const char *JsonPrimitiveTypeToString(JsonPrimitiveType type)

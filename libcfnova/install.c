@@ -66,7 +66,7 @@ void DeleteHubQuery(HubQuery *hq, void (*fnptr) ())
         rp->item = NULL;
     }
 
-    DeleteRlist(hq->hosts);
+    RlistDestroy(hq->hosts);
 
     if (fnptr)
     {
@@ -76,7 +76,7 @@ void DeleteHubQuery(HubQuery *hq, void (*fnptr) ())
             rp->item = NULL;
         }
 
-        DeleteRlist(hq->records);
+        RlistDestroy(hq->records);
     }
     free(hq);
 }
@@ -457,7 +457,7 @@ void DeleteHubVariable(HubVariable *hv)
     free(hv->bundle);
     free(hv->lval);
     free(hv->dtype);
-    DeleteRvalItem(hv->rval);
+    RvalDestroy(hv->rval);
     free(hv);
 }
 
@@ -855,9 +855,9 @@ void DeleteHubPromise(HubPromise * hp)
     free(hp->file);
     hp->lineNo = -1;
 
-    DeleteRlist(hp->bundleArgs);
-    DeleteRlist(hp->constraints);
-    DeleteRlist(hp->promisees);
+    RlistDestroy(hp->bundleArgs);
+    RlistDestroy(hp->constraints);
+    RlistDestroy(hp->promisees);
 
     free(hp);
 }
@@ -884,7 +884,7 @@ void DeleteHubPromiseBundle(HubPromiseBundle * hb)
     free(hb->bundleName);
     free(hb->bundleType);
 
-    DeleteRlist(hb->bundleArgs);
+    RlistDestroy(hb->bundleArgs);
 
     free(hb);
 }
@@ -1118,7 +1118,7 @@ HubUser *NewHubUser(bool external, const char *username, const char *name, const
     user->username = SafeStringDuplicate(username);
     user->name = SafeStringDuplicate(name);
     user->email = SafeStringDuplicate(email);
-    user->roles = CopyRlist(roles);
+    user->roles = RlistCopy(roles);
 
     return user;
 }
@@ -1155,7 +1155,7 @@ void DeleteHubUser(void *_hub_user)
         free(user->username);
         free(user->name);
         free(user->email);
-        DeleteRlist(user->roles);
+        RlistDestroy(user->roles);
 
         free(user);
     }
@@ -1458,12 +1458,12 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 
     if (classRxInclude)
     {
-        AppendRlist(&classRxIncludes, classRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&classRxIncludes, classRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (classRxExclude)
     {
-        AppendRlist(&classRxExcludes, classRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&classRxExcludes, classRxExclude, RVAL_TYPE_SCALAR);
     }
 
     return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
@@ -1483,12 +1483,12 @@ void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclu
 {
     if (classRxInclude)
     {
-        AppendRlist(&(filter->classRxIncludes), classRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->classRxIncludes), classRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (classRxExclude)
     {
-        AppendRlist(&(filter->classRxExcludes), classRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->classRxExcludes), classRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1496,12 +1496,12 @@ void HostClassFilterAddClassLists(HostClassFilter *filter, const Rlist *classRxI
 {
     for (const Rlist *rp = classRxIncludes; rp; rp = rp->next)
     {
-        HostClassFilterAddClasses(filter, ScalarValue(rp), NULL);
+        HostClassFilterAddClasses(filter, RlistScalarValue(rp), NULL);
     }
 
     for (const Rlist *rp = classRxExcludes; rp; rp = rp->next)
     {
-        HostClassFilterAddClasses(filter, NULL, ScalarValue(rp));
+        HostClassFilterAddClasses(filter, NULL, RlistScalarValue(rp));
     }
 }
 
@@ -1510,7 +1510,7 @@ static bool HostClassFilterMatchInclude(const HostClassFilter *filter, const cha
     bool include = false;
     for (const Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
     {
-        if (StringMatch(ScalarValue(rp), classRx))
+        if (StringMatch(RlistScalarValue(rp), classRx))
         {
             include = true;
         }
@@ -1527,7 +1527,7 @@ static bool HostClassFilterMatchExclude(const HostClassFilter *filter, const cha
     bool exclude = false;
     for (const Rlist *rp = filter->classRxExcludes; rp; rp = rp->next)
     {
-        if (StringMatch(ScalarValue(rp), classRx))
+        if (StringMatch(RlistScalarValue(rp), classRx))
         {
             exclude = true;
         }
@@ -1552,8 +1552,8 @@ bool HostClassFilterMatch(const HostClassFilter *filter, const char *class_rx)
 
 void DeleteHostClassFilter(HostClassFilter *filter)
 {
-    DeleteRlist(filter->classRxIncludes);
-    DeleteRlist(filter->classRxExcludes);
+    RlistDestroy(filter->classRxIncludes);
+    RlistDestroy(filter->classRxExcludes);
 
     free(filter);
 }
@@ -1617,12 +1617,12 @@ void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, c
 {
     if (bundleInclude)
     {
-        AppendRlist(&(filter->bundleIncludes), bundleInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->bundleIncludes), bundleInclude, RVAL_TYPE_SCALAR);
     }
 
     if (bundleExclude)
     {
-        AppendRlist(&(filter->bundleExcludes), bundleExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->bundleExcludes), bundleExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1630,12 +1630,12 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
 {
     if (bundleRxInclude)
     {
-        AppendRlist(&(filter->bundleRxIncludes), bundleRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->bundleRxIncludes), bundleRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (bundleRxExclude)
     {
-        AppendRlist(&(filter->bundleRxExcludes), bundleRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->bundleRxExcludes), bundleRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1643,12 +1643,12 @@ void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceIncl
 {
     if (namespaceInclude)
     {
-        AppendRlist(&(filter->namespaceIncludes), namespaceInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->namespaceIncludes), namespaceInclude, RVAL_TYPE_SCALAR);
     }
 
     if (namespaceExclude)
     {
-        AppendRlist(&(filter->namespaceExcludes), namespaceExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->namespaceExcludes), namespaceExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1656,12 +1656,12 @@ void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRx
 {
     if (namespaceRxInclude)
     {
-        AppendRlist(&(filter->namespaceRxIncludes), namespaceRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->namespaceRxIncludes), namespaceRxInclude, RVAL_TYPE_SCALAR);
     }
 
     if (namespaceRxExclude)
     {
-        AppendRlist(&(filter->namespaceRxExcludes), namespaceRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppend(&(filter->namespaceRxExcludes), namespaceRxExclude, RVAL_TYPE_SCALAR);
     }
 }
 
@@ -1679,15 +1679,15 @@ void DeletePromiseFilter(PromiseFilter *filter)
     free(filter->bundleTypeInclude);
     free(filter->promiseTypeRxInclude);
 
-    DeleteRlist(filter->bundleIncludes);
-    DeleteRlist(filter->bundleRxIncludes);
-    DeleteRlist(filter->bundleExcludes);
-    DeleteRlist(filter->bundleRxExcludes);
+    RlistDestroy(filter->bundleIncludes);
+    RlistDestroy(filter->bundleRxIncludes);
+    RlistDestroy(filter->bundleExcludes);
+    RlistDestroy(filter->bundleRxExcludes);
 
-    DeleteRlist(filter->namespaceIncludes);
-    DeleteRlist(filter->namespaceRxIncludes);
-    DeleteRlist(filter->namespaceExcludes);
-    DeleteRlist(filter->namespaceRxExcludes);
+    RlistDestroy(filter->namespaceIncludes);
+    RlistDestroy(filter->namespaceRxIncludes);
+    RlistDestroy(filter->namespaceExcludes);
+    RlistDestroy(filter->namespaceRxExcludes);
 
     free(filter);
 }
@@ -2071,7 +2071,7 @@ int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ())
             rp->item = NULL;
         }
 
-        DeleteRlist(*records_p);
+        RlistDestroy(*records_p);
         *records_p = NULL;
         page->totalResultCount = count;
         return false;
@@ -2087,7 +2087,7 @@ int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ())
             rp->item = NULL;
         }
 
-        DeleteRlist(*records_p);
+        RlistDestroy(*records_p);
         *records_p = NULL;      // restored below
     }
 
@@ -2099,7 +2099,7 @@ int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ())
             rp->item = NULL;
         }
 
-        DeleteRlist(endEl->next);
+        RlistDestroy(endEl->next);
         endEl->next = NULL;
     }
 

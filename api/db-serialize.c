@@ -73,7 +73,7 @@ JsonElement *HubUserToJson(const HubUser *user)
         JsonElement *roles = JsonArrayCreate(50);
         for (const Rlist *rp = user->roles; rp; rp = rp->next)
         {
-            JsonArrayAppendString(roles, ScalarValue(rp));
+            JsonArrayAppendString(roles, RlistScalarValue(rp));
         }
         JsonObjectAppendArray(obj, "roles", roles);
     }
@@ -549,7 +549,7 @@ JsonElement *HubPromiseToJson(const HubPromise *promise)
         JsonElement *promisees_arr = JsonArrayCreate(20);
         for (const Rlist *rp = promise->promisees; rp; rp = rp->next)
         {
-            const char *promisee = ScalarValue(rp);
+            const char *promisee = RlistScalarValue(rp);
             JsonArrayAppendString(promisees_arr, promisee);
         }
         JsonObjectAppendObject(obj, "promisees", promisees_arr);

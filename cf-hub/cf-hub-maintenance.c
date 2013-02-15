@@ -120,11 +120,11 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
     Rlist *hostkeys = CFDB_QueryHostKeys(dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL);
     for (const Rlist *rp = hostkeys; rp; rp = rp->next)
     {
-        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_ALL);
-        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_USER);
-        CFDB_RefreshLastHostComplianceShift(dbconn, ScalarValue(rp), PROMISE_CONTEXT_MODE_INTERNAL);
+        CFDB_RefreshLastHostComplianceShift(dbconn, RlistScalarValue(rp), PROMISE_CONTEXT_MODE_ALL);
+        CFDB_RefreshLastHostComplianceShift(dbconn, RlistScalarValue(rp), PROMISE_CONTEXT_MODE_USER);
+        CFDB_RefreshLastHostComplianceShift(dbconn, RlistScalarValue(rp), PROMISE_CONTEXT_MODE_INTERNAL);
     }
-    DeleteRlist(hostkeys);
+    RlistDestroy(hostkeys);
 
     EndMeasure("DBCacheCompliance", compliance_cache_start);
 }

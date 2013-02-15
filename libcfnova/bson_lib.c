@@ -61,7 +61,7 @@ Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
         if (bson_iterator_type(&it) == BSON_STRING)
         {
             // NOTE: preserve ordering (don't prepend)
-            AppendRScalar(&values, (char *) bson_iterator_string(&it), RVAL_TYPE_SCALAR);
+            RlistAppendScalar(&values, (char *) bson_iterator_string(&it), RVAL_TYPE_SCALAR);
         }
         else
         {
@@ -531,7 +531,7 @@ void BsonAppendStringArrayRlist(bson *b, const char *key, const Rlist *string_rl
         for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
         {
             snprintf(index_str, sizeof(index_str), "%d", i);
-            BsonAppendString( b, index_str, ScalarValue(rp) );
+            BsonAppendString( b, index_str, RlistScalarValue(rp) );
         }
 
         BsonAppendFinishArray( b );
@@ -596,7 +596,7 @@ bool BsonAppendIncludeList(bson *b, char *key, Rlist *include_values)
 
     for (Rlist *rp = include_values; rp; rp = rp->next)
     {
-        if( !BsonAppendString( b, key, ScalarValue(rp) ))
+        if( !BsonAppendString( b, key, RlistScalarValue(rp) ))
         {
             return false;
         }
@@ -620,7 +620,7 @@ void BsonAppendArrayRegex(bson *b, const char *key, Rlist *rx_values)
         for (Rlist *rp = rx_values; rp != NULL; rp = rp->next, i++)
         {
             char anchored_rx[CF_BUFSIZE] = { 0 };
-            AnchorRegex(ScalarValue(rp), anchored_rx, sizeof(anchored_rx));
+            AnchorRegex(RlistScalarValue(rp), anchored_rx, sizeof(anchored_rx));
 
             char index_str[32] = { 0 };
             snprintf(index_str, sizeof(index_str), "%d", i);
@@ -698,7 +698,7 @@ bool BsonAppendExcludeList(bson *b, char *exclude_key, Rlist *exclude_values)
 
             for (Rlist *rp = exclude_values; rp != NULL; rp = rp->next)
             {
-                BsonAppendString(b, exclude_key, ScalarValue(rp));
+                BsonAppendString(b, exclude_key, RlistScalarValue(rp));
             }
 
             BsonAppendFinishArray(b);
@@ -884,7 +884,7 @@ void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise
     if (promise_context != PROMISE_CONTEXT_MODE_ALL)
     {
         Rlist *old_ent_versions = NULL;
-        PrependRScalar(&old_ent_versions, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
+        RlistPrependScalar(&old_ent_versions, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
 
         {
             BsonAppendStartObject(b, cfr_class_keys);
@@ -892,7 +892,7 @@ void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise
             BsonAppendFinishObject(b);
         }
 
-        DeleteRlist(old_ent_versions);
+        RlistDestroy(old_ent_versions);
     }
 }
 
@@ -1586,7 +1586,7 @@ void BsonFilterInStringArrayRlist(bson *b, const char *key, const Rlist *string_
         int i = 0;
         for (const Rlist *rp = string_rlist; rp; rp = rp->next, i++)
         {
-            BsonAppendStringAt( b, i, ScalarValue( rp ) );
+            BsonAppendStringAt( b, i, RlistScalarValue( rp ) );
         }
 
         BsonAppendFinishArray( b );
