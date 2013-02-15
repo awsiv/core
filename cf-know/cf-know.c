@@ -411,7 +411,7 @@ static void KeepKnowControlPromises(Policy *policy)
                 continue;
             }
 
-            if (GetVariable("control_knowledge", cp->lval, &retval) == cf_notype)
+            if (GetVariable("control_knowledge", cp->lval, &retval) == DATA_TYPE_NONE)
             {
                 CfOut(cf_error, "", " !! Unknown lval %s in knowledge control body", cp->lval);
                 continue;
@@ -541,7 +541,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
     int ok = true;
     enum know_typesequence type;
 
-    if (GetVariable("control_common", "bundlesequence", &retval) == cf_notype)
+    if (GetVariable("control_common", "bundlesequence", &retval) == DATA_TYPE_NONE)
     {
         CfOut(cf_error, "", " !! No bundlesequence in the common control body");
         exit(1);

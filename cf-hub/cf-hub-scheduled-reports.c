@@ -547,7 +547,7 @@ static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
     if( !CFDB_HandleGetValue( cfr_mp_install_dir, path_db, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
         Rval ret;
-        if( GetVariable( "sys", "doc_root", &ret ) != cf_notype )
+        if( GetVariable( "sys", "doc_root", &ret ) != DATA_TYPE_NONE )
         {
             char docroot[CF_MAXVARSIZE] = {0};
             snprintf( docroot, CF_MAXVARSIZE - 1, "%s", ( char * ) ret.item );

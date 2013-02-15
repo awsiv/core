@@ -177,7 +177,7 @@ int EnterpriseExpiry(void)
         }
 
         snprintf(installed_time_str, CF_MAXVARSIZE, "%ld", license.install_timestamp);
-        NewScalar("sys", "licenses_installtime", installed_time_str, cf_str);
+        NewScalar("sys", "licenses_installtime", installed_time_str, DATA_TYPE_STRING);
     }
     else
     {
@@ -217,9 +217,9 @@ int EnterpriseExpiry(void)
 
     Nova_LogLicenseStatus();
 
-    NewScalar("sys", "license_owner", license.company_name, cf_str);
+    NewScalar("sys", "license_owner", license.company_name, DATA_TYPE_STRING);
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
-    NewScalar("sys", "licenses_granted", snumber, cf_int);
+    NewScalar("sys", "licenses_granted", snumber, DATA_TYPE_INT);
 
 
 #ifdef HAVE_LIBMONGOC
@@ -510,11 +510,11 @@ void CheckLicenses(void)
     int licenses = 0;
     Rval retval;
 
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
+    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
     {
         licenses = Str2Int(retval.item);
         CfOut(cf_verbose, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
-        NewScalar("sys", "licenses_promised", retval.item, cf_int);
+        NewScalar("sys", "licenses_promised", retval.item, DATA_TYPE_INT);
 #ifdef HAVE_LIBMONGOC
         if (THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
         {
@@ -592,7 +592,7 @@ static void Nova_LogLicenseStatus(void)
 
     int licenses_policy = 0;
 
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
+    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
     {
         licenses_policy = Str2Int(retval.item);
     }

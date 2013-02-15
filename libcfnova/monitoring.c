@@ -401,14 +401,14 @@ void LoadSlowlyVaryingObservations()
     while (NextDB(dbp, dbcp, &key, &ksize, &stored, &vsize))
     {
         char buf[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], rval[CF_BUFSIZE];
-        enum cfdatatype type;
+        DataType type;
         Rlist *list = NULL;
 
         strncpy(buf, key, CF_MAXVARSIZE - 1);
 
         int type_i;
         sscanf(buf, "%[^:]:%d", lval, &type_i);
-        type = (enum cfdatatype)type_i;
+        type = (DataType)type_i;
 
         if (stored != NULL)
         {
@@ -416,20 +416,20 @@ void LoadSlowlyVaryingObservations()
 
             switch (type)
             {
-            case cf_str:
-            case cf_int:
-            case cf_real:
+            case DATA_TYPE_STRING:
+            case DATA_TYPE_INT:
+            case DATA_TYPE_REAL:
                 NewScalar("mon", lval, rval, type);
                 break;
 
-            case cf_slist:
+            case DATA_TYPE_STRING_LIST:
                 list = SplitStringAsRList(rval, ',');
-                NewList("mon", lval, list, cf_slist);
+                NewList("mon", lval, list, DATA_TYPE_STRING_LIST);
                 DeleteRlist(list);
                 break;
 
-            case cf_counter:
-                NewScalar("mon", lval, rval, cf_str);
+            case DATA_TYPE_COUNTER:
+                NewScalar("mon", lval, rval, DATA_TYPE_STRING);
                 break;
 
             default:

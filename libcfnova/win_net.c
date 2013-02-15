@@ -149,18 +149,18 @@ void GetInterfacesInfo(AgentType ag)
                 // interface only
                 if (firstIfaceIp4 && firstIfaceIp6)
                 {
-                    NewScalar("sys", "interface", CanonifyName(ifNameBuf), cf_str);
+                    NewScalar("sys", "interface", CanonifyName(ifNameBuf), DATA_TYPE_STRING);
                 }
 
                 if ((strcmp(ifType, "ipv4") == 0) && firstIfaceIp4)
                 {
-                    NewScalar("sys", "ipv4", addrBuf, cf_str);
+                    NewScalar("sys", "ipv4", addrBuf, DATA_TYPE_STRING);
                     firstIfaceIp4 = false;
                 }
 
                 if ((strcmp(ifType, "ipv6") == 0) && firstIfaceIp6)
                 {
-                    NewScalar("sys", "ipv6", addrBuf, cf_str);
+                    NewScalar("sys", "ipv6", addrBuf, DATA_TYPE_STRING);
                     firstIfaceIp6 = false;
                 }
 
@@ -168,7 +168,7 @@ void GetInterfacesInfo(AgentType ag)
 
                 // e.g. sys.ipv4[Local_Area_Connection] = 192.168.2.5
                 snprintf(buf, sizeof(buf), "%s[%s]", ifType, CanonifyName(ifNameBuf));
-                NewScalar("sys", buf, addrBuf, cf_str);
+                NewScalar("sys", buf, addrBuf, DATA_TYPE_STRING);
 
                 // class e.g. ipv4_192_168_2_5
                 snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);
@@ -191,7 +191,7 @@ void GetInterfacesInfo(AgentType ag)
                             HardClass(buf);
 
                             snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
-                            NewScalar("sys", buf, bufVal, cf_str);
+                            NewScalar("sys", buf, bufVal, DATA_TYPE_STRING);
 
                             tup++;
                         }

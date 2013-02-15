@@ -343,7 +343,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                 continue;
             }
 
-            if (GetVariable("control_hub", cp->lval, &retval) == cf_notype)
+            if (GetVariable("control_hub", cp->lval, &retval) == DATA_TYPE_NONE)
             {
                 CfOut(cf_error, "", "Unknown lval %s in hub control body", cp->lval);
                 continue;

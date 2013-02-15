@@ -727,7 +727,7 @@ void Nova_GetLocations(const Policy *policy, char *hostkey, Rlist **locations)
                 continue;
             }
 
-            if (GetVariable("control_common", CFG_CONTROLBODY[cfg_site_classes].lval, &retval) == cf_notype)
+            if (GetVariable("control_common", CFG_CONTROLBODY[cfg_site_classes].lval, &retval) == DATA_TYPE_NONE)
             {
                 // retval.item is a list of classes that can be considered locations, if defined
                 return;

@@ -436,7 +436,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
                         if (strcmp(a, "objectClass") != 0)      // This is non-unique
                         {
                             snprintf(name, CF_MAXVARSIZE - 1, "%s[%s]", array, a);
-                            NewScalar(THIS_BUNDLE, name, (char *) vals[i]->bv_val, cf_str);
+                            NewScalar(THIS_BUNDLE, name, (char *) vals[i]->bv_val, DATA_TYPE_STRING);
                             CfOut(cf_verbose, "", " -> Setting %s => %s, in context %s/%s\n", name,
                                   (char *) vals[i]->bv_val, THIS_BUNDLE, CONTEXTID);
                             return_value = xstrdup("any");

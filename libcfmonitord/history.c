@@ -492,8 +492,8 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
             {
                 switch (a.measure.data_type)
                 {
-                case cf_int:
-                case cf_real:
+                case DATA_TYPE_INT:
+                case DATA_TYPE_REAL:
 
                     strncpy(value, ExtractFirstReference(a.measure.extraction_regex, match->name), CF_MAXVARSIZE - 1);
 
@@ -550,12 +550,12 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
     switch (a.measure.data_type)
     {
-    case cf_counter:
+    case DATA_TYPE_COUNTER:
 
         real_val = (double) match_count;
         break;
 
-    case cf_int:
+    case DATA_TYPE_INT:
 
         if (match_count > 1)
         {
@@ -569,7 +569,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
         }
         break;
 
-    case cf_real:
+    case DATA_TYPE_REAL:
 
         if (match_count > 1)
         {
@@ -679,12 +679,12 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
     switch (a.measure.data_type)
     {
-    case cf_counter:
+    case DATA_TYPE_COUNTER:
         CfOut(cf_verbose, "", " -> Counted %d for %s\n", match_count, handle);
         snprintf(value, CF_MAXVARSIZE, "%d", match_count);
         break;
 
-    case cf_slist:
+    case DATA_TYPE_STRING_LIST:
         v = ItemList2CSV(matches);
         snprintf(value, CF_BUFSIZE, "%s", v);
         free(v);
@@ -753,9 +753,9 @@ void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 
     switch (a.measure.data_type)
     {
-    case cf_counter:
-    case cf_int:
-    case cf_real:
+    case DATA_TYPE_COUNTER:
+    case DATA_TYPE_INT:
+    case DATA_TYPE_REAL:
 
         /* First see if we can accommodate this measurement */
 

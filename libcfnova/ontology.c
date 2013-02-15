@@ -862,29 +862,29 @@ void ShowTopicRepresentation(const ReportContext *report_context)
     }
 
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[1][1], CF_DATATYPES[cf_int]);
+            CF_VALUETYPES[1][1], CF_DATATYPES[DATA_TYPE_INT]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[3][1], CF_DATATYPES[cf_int]);
+            CF_VALUETYPES[3][1], CF_DATATYPES[DATA_TYPE_INT]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[4][1], CF_DATATYPES[cf_int]);
+            CF_VALUETYPES[4][1], CF_DATATYPES[DATA_TYPE_INT]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[5][1], CF_DATATYPES[cf_int]);
+            CF_VALUETYPES[5][1], CF_DATATYPES[DATA_TYPE_INT]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[6][1], CF_DATATYPES[cf_real]);
+            CF_VALUETYPES[6][1], CF_DATATYPES[DATA_TYPE_REAL]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[9][1], CF_DATATYPES[cf_class]);
+            CF_VALUETYPES[9][1], CF_DATATYPES[DATA_TYPE_CONTEXT]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[10][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[10][1], CF_DATATYPES[DATA_TYPE_STRING]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[11][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[11][1], CF_DATATYPES[DATA_TYPE_STRING]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[12][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[12][1], CF_DATATYPES[DATA_TYPE_STRING]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[13][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[13][1], CF_DATATYPES[DATA_TYPE_STRING]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[14][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[14][1], CF_DATATYPES[DATA_TYPE_STRING]);
     WriterWriteF(writer, "\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",
-            CF_VALUETYPES[15][1], CF_DATATYPES[cf_str]);
+            CF_VALUETYPES[15][1], CF_DATATYPES[DATA_TYPE_STRING]);
 
     WriterWriteF(writer, "bundles::\n");
     WriterWriteF(writer, "\"sys\" comment => \"cfengine's internal bundle of system specific values\";\n");
@@ -918,7 +918,7 @@ void ShowTopicRepresentation(const ReportContext *report_context)
                     WriterWriteF(writer, "   association => a(\"%s\",\"promise_types::%s\",\"%s\");\n", KM_PARTOF_POSS_F,
                             ss[j].subtype, KM_PARTOF_POSS_B);
 
-                    if (bs[l].dtype == cf_body)
+                    if (bs[l].dtype == DATA_TYPE_BODY)
                     {
                         bs2 = (BodySyntax *) (bs[l].range);
 
@@ -1141,7 +1141,7 @@ static void NovaShowValues(Writer *writer, BodySyntax bs)
 
     for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
     {
-        if (bs.dtype == cf_bundle || bs.dtype == cf_body)
+        if (bs.dtype == DATA_TYPE_BUNDLE || bs.dtype == DATA_TYPE_BODY)
         {
             continue;
         }
@@ -1166,9 +1166,9 @@ static void NovaShowValues(Writer *writer, BodySyntax bs)
 
     switch (bs.dtype)
     {
-    case cf_slist:
-    case cf_ilist:
-    case cf_rlist:
+    case DATA_TYPE_STRING_LIST:
+    case DATA_TYPE_INT_LIST:
+    case DATA_TYPE_REAL_LIST:
 
         WriterWriteF(writer, "   \"%s\" association => a(\"is a list of type\",\"%s\",\"is used in\");\n", bs.lval, range);
 

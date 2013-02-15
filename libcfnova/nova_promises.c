@@ -228,8 +228,8 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 void EnterpriseContext(void)
 {
     /* FIXME: type conversion */
-    NewScalar("sys", "nova_version", (char *) Nova_Version(), cf_str);  // DEPRECATED
-    NewScalar("sys", "enterprise_version", (char *) Nova_Version(), cf_str);
+    NewScalar("sys", "nova_version", (char *) Nova_Version(), DATA_TYPE_STRING);  // DEPRECATED
+    NewScalar("sys", "enterprise_version", (char *) Nova_Version(), DATA_TYPE_STRING);
 
     char vbuff[CF_BUFSIZE];
     snprintf(vbuff, sizeof(vbuff), "nova_%s", CanonifyName(Nova_Version()));  // DEPRECATED
@@ -282,7 +282,7 @@ static void Nova_DefineHubMaster(void)
         }
     }
 
-    NewScalar("sys", "hub_master", master, cf_str);
+    NewScalar("sys", "hub_master", master, DATA_TYPE_STRING);
 #endif
 }
 

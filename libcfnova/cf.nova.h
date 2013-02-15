@@ -207,7 +207,7 @@ typedef struct
 typedef struct
 {
     Event e;
-    enum cfdatatype dtype;
+    DataType dtype;
     char rtype;
     char rval[CF_MAXVARSIZE];   // as string, \0-terminated
 } Variable;

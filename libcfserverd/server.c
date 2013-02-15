@@ -43,7 +43,7 @@ static Promise *MakeCollectCallPromise(void);
 
 void RegisterLiteralServerData(char *handle, Promise *pp)
 {
-    NewScalar("remote_access", handle, pp->promiser, cf_str);
+    NewScalar("remote_access", handle, pp->promiser, DATA_TYPE_STRING);
 }
 
 /*****************************************************************************/
@@ -100,7 +100,7 @@ int ReturnLiteralData(char *handle, char *recv)
         CfOut(cf_verbose,""," Found a persistent scalar with handle %s authorized for remote access: %s",handle,recv);
         return true;
     }
-    else if (GetVariable("remote_access", handle, &retval) != cf_notype)
+    else if (GetVariable("remote_access", handle, &retval) != DATA_TYPE_NONE)
     {
         if (retval.type == RVAL_TYPE_SCALAR)
         {

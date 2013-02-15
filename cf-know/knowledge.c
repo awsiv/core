@@ -292,10 +292,10 @@ void SyntaxCompletion(char *s)
 
                     switch (bs[k].dtype)
                     {
-                    case cf_bundle:
+                    case DATA_TYPE_BUNDLE:
                         printf("   %s  ~ defines a separate bundle of promises\n\n", bs[k].lval);
                         break;
-                    case cf_body:
+                    case DATA_TYPE_BODY:
                         printf("   %s  ~ defined in a separate body, with elements\n\n", bs[k].lval);
                         bs2 = (BodySyntax *) bs[k].range;
 
@@ -324,7 +324,7 @@ void SyntaxCompletion(char *s)
 
                 /* Could be in a sub-body */
 
-                if (bs[k].dtype == cf_body)
+                if (bs[k].dtype == DATA_TYPE_BODY)
                 {
                     bs2 = (BodySyntax *) bs[k].range;
 
@@ -410,26 +410,26 @@ static void Nova_ListFunction(const FnCallType *f, int full)
 
     switch (f->dtype)
     {
-    case cf_str:
+    case DATA_TYPE_STRING:
         printf("   (string)  ");
         break;
-    case cf_int:
+    case DATA_TYPE_INT:
         printf("   (integer) ");
         break;
-    case cf_class:
+    case DATA_TYPE_CONTEXT:
         printf("   (class)   ");
         break;
-    case cf_slist:
+    case DATA_TYPE_STRING_LIST:
         printf("   (slist)   ");
         break;
-    case cf_ilist:
+    case DATA_TYPE_INT_LIST:
         printf("   (ilist)   ");
         break;
-    case cf_rlist:
+    case DATA_TYPE_REAL_LIST:
         printf("   (rlist)   ");
         break;
-    case cf_rrange:
-    case cf_irange:
+    case DATA_TYPE_REAL_RANGE:
+    case DATA_TYPE_INT_RANGE:
         printf("   (range)   ");
         break;
     default:
