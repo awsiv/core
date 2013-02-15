@@ -93,7 +93,7 @@ bundle agent cfe_internal_limit_robot_agents
 {
  processes:
 
-  linux::
+  !windows::
 
    "cf-execd"
       process_count => check_execd("2"),
