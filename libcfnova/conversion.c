@@ -26,6 +26,7 @@
 
 #include "env_context.h"
 #include "string_lib.h"
+#include "rlist.h"
 
 #include <assert.h>
 
