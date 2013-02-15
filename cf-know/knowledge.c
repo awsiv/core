@@ -353,7 +353,7 @@ void SyntaxCompletion(char *s)
 
 /* Check functions */
 
-    fn = FindFunction(s);
+    fn = FnCallTypeGet(s);
     if (fn)
     {
         Nova_ListFunction(fn, true);
