@@ -40,6 +40,16 @@
 
 #include <assert.h>
 
+
+typedef enum
+{
+    HUB_CONTROL_EXPORT_ZENOSS,
+    HUB_CONTROL_EXCLUDE_HOSTS,
+    HUB_CONTROL_SCHEDULE,
+    HUB_CONTROL_PORT,
+    HUB_CONTROL_NONE
+} HubControl;
+
 /*******************************************************************/
 
 static const int BIG_UPDATES = 6;
@@ -349,7 +359,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                 continue;
             }
 
-            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_schedule].lval) == 0)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[HUB_CONTROL_SCHEDULE].lval) == 0)
             {
                 Rlist *rp;
 
@@ -366,7 +376,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                 }
             }
 
-            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[HUB_CONTROL_EXCLUDE_HOSTS].lval) == 0)
             {
                 Rlist *rp;
 
@@ -383,7 +393,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                 }
             }
 
-            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[HUB_CONTROL_EXPORT_ZENOSS].lval) == 0)
             {
                 if (!strcmp((const char *)retval.item, "true") == 0
                     || !strcmp((const char*)retval.item, "false") == 0
@@ -405,7 +415,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                 continue;
             }
 
-            if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_port].lval) == 0)
+            if (strcmp(cp->lval, CFH_CONTROLBODY[HUB_CONTROL_PORT].lval) == 0)
             {
                 SHORT_CFENGINEPORT = htons((short) Str2Int((const char *) retval.item));
                 strncpy(STR_CFENGINEPORT, (const char *) retval.item, 15);
