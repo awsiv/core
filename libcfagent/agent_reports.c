@@ -10,6 +10,7 @@
 #include "cfstream.h"
 #include "conversion.h"
 #include "files_names.h"
+#include "policy.h"
 
 void Nova_NoteVarUsageDB(void)
 /* WARNING: Not thread safe (access to VSCOPE) */
