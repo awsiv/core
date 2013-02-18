@@ -73,7 +73,7 @@ bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *
 {
     if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
-        CfOut(cf_verbose, "", "Ignoring DB get of (%s) - we are not a policy server", lval);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ignoring DB get of (%s) - we are not a policy server", lval);
         return false;
     }
 
@@ -699,7 +699,7 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in software packages",
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in software packages",
                                   bson_iterator_key(&it3));
                         }
                     }
@@ -900,7 +900,7 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, const char *keyHash,
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in classes", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in classes", bson_iterator_key(&it3));
                         }
                     }
 
@@ -1458,7 +1458,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                             if(BsonIsKeyCorrupt(scope))
                             {
-                                CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", scope);
+                                CfOut(OUTPUT_LEVEL_INFORM, "", " !! Corrupted field name scope = \"%s\" in variables", scope);
                                 continue;
                             }
 
@@ -1521,13 +1521,13 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
                             }
                             else
                             {
-                                CfOut(cf_inform, "", " !! Unknown key \"%s\" in variables", bson_iterator_key(&it4));
+                                CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in variables", bson_iterator_key(&it4));
                             }
                         }
 
                         if(!rrval)
                         {
-                            CfOut(cf_inform, "", " !! Possible data-corruption in variables report: %s.%s.%s "
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Possible data-corruption in variables report: %s.%s.%s "
                                   "(skipping...)", rns, rbundle, rlval);
                             continue;
                         }
@@ -2203,7 +2203,7 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in last seen", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in last seen", bson_iterator_key(&it3));
                         }
                     }
 
@@ -2371,7 +2371,7 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in meter", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in meter", bson_iterator_key(&it3));
                         }
                     }
 
@@ -2506,7 +2506,7 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname,
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in performance", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in performance", bson_iterator_key(&it3));
                         }
                     }
 
@@ -3443,7 +3443,7 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 
     if(!CFDB_CollectionHasData(conn, collName))
     {
-        CfOut(cf_inform, "", " !! Old (deprecated) Collection \"%s\" is empty.", collName);
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Old (deprecated) Collection \"%s\" is empty.", collName);
         return 0;
     }
 
@@ -3707,7 +3707,7 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in value report", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in value report", bson_iterator_key(&it3));
                         }
                     }
 
@@ -3887,7 +3887,7 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
                         }
                         else
                         {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in value report", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in value report", bson_iterator_key(&it3));
                         }
                     }
 
@@ -4677,7 +4677,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
         numSlots = CF_YEAR_SLOTS;       // every week
         break;
     default:
-        CfOut(cf_error, "", "!! Undefined monitord type in query (%d)", rep_type);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Undefined monitord type in query (%d)", rep_type);
         FatalError("Software error");
     }
 
@@ -4744,7 +4744,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
             {
                 if (i >= numSlots)
                 {
-                    CfOut(cf_error, "", "!! Index %d out of bounds when querying monitoring data", i);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Index %d out of bounds when querying monitoring data", i);
                     break;
                 }
 
@@ -4976,7 +4976,7 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
                 {
                     if (i >= CF_GRAINS)
                     {
-                        CfOut(cf_error, "", "!! Index %d out of bounds when querying histograms", i);
+                        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Index %d out of bounds when querying histograms", i);
                         break;
                     }
 
@@ -6196,7 +6196,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                             }
                             break;
                         default:
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in last seen", bson_iterator_key(&it3));
+                            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in last seen", bson_iterator_key(&it3));
                             break;
                         }
                     }
@@ -6347,14 +6347,14 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
 
     if (!bson_find(&it1, &result, "values"))
     {
-        CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " Malformed query result in CFDB_QueryDistinct()");
         bson_destroy(&result);
         return false;
     }
 
     if (bson_iterator_type(&it1) != BSON_ARRAY)
     {
-        CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " Malformed query result in CFDB_QueryDistinct()");
         bson_destroy(&result);
         return false;
     }
@@ -7102,7 +7102,7 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
 {
     if(!IsDefinedClass("am_policy_hub", NULL))
     {
-        CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (not running as a hub)");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Listing hosts with a class is only available locally on Nova hubs (not running as a hub)");
         return false;
     }
 

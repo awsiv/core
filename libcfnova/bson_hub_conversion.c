@@ -50,7 +50,7 @@ HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHos
         }
         else
         {
-            CfOut(cf_inform, "", " !! Unknown key \"%s\" in promise compliance",
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in promise compliance",
                   bson_iterator_key(it));
         }
     }
@@ -86,7 +86,7 @@ HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *r
         }
         else
         {
-            CfOut(cf_inform, "", " !! Unknown key \"%s\" in bundle seen", bson_iterator_key(it));
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unknown key \"%s\" in bundle seen", bson_iterator_key(it));
         }
     }
     return NewHubBundleSeen(hh, rns, rbundle, rcomp, ravg, rdev, rt);

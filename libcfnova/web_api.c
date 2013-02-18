@@ -103,7 +103,7 @@ static void Nova_RegisterDoc(Item **list, char *dir, char *doc)
 
     if ((fp = fopen(path, "r")) == NULL)
     {
-        CfOut(cf_error, "fopen", "Couldn't open %s for reading", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Couldn't open %s for reading", path);
         return;
     }
 
@@ -185,7 +185,7 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
 
     if ((dirh = opendir(namedir)) == NULL)
     {
-        CfOut(cf_verbose, "", " !! Could not open connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Could not open connection to report database");
         return;
     }
 
@@ -359,7 +359,7 @@ void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 }
 
@@ -446,7 +446,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle,
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *jsonRetval = JsonObjectCreate(6);
@@ -533,7 +533,7 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *scope, boo
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *jsonRetval = JsonObjectCreate(6);
@@ -1062,7 +1062,7 @@ JsonElement *Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, Pro
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -1192,7 +1192,7 @@ JsonElement *Nova2PHP_value_report(char *hostkey, char *day, char *month, char *
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -1238,7 +1238,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;
@@ -1425,7 +1425,7 @@ JsonElement *Nova2PHP_vars_report(const char *hostkey, const char *scope, const 
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -1489,7 +1489,7 @@ JsonElement *Nova2PHP_setuid_report(char *hostkey, char *file, bool regex,
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -1651,7 +1651,7 @@ JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *y
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
@@ -1683,7 +1683,7 @@ JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts), page, wr_info );
@@ -1713,7 +1713,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *json_out = GenerateHostOnlyReport( (&hq->hosts ), page, wr_info );
@@ -1769,7 +1769,7 @@ JsonElement *Nova2PHP_bundle_classes_used(const PromiseFilter *promiseFilter)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -1813,7 +1813,7 @@ int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNa
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;
@@ -2453,7 +2453,7 @@ char *Nova2PHP_GetPromiseComment(char *handle)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return "No comment";
@@ -2512,7 +2512,7 @@ JsonElement *Nova2PHP_GetPromiseBody(char *name, char *type)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -2703,7 +2703,7 @@ JsonElement *Nova2PHP_promise_details(PromiseFilter *filter)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return payload;
@@ -2762,7 +2762,7 @@ JsonElement *JSONErrorFromId(cfapi_errid errid)
 {
     if (errid >= ERRID_MAX)
     {
-        CfOut(cf_error, "", "!! JSONErrorFromId: errid out of bounds");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! JSONErrorFromId: errid out of bounds");
         errid = ERRID_MAX;
     }
 
@@ -2835,7 +2835,7 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
             }
             else
             {
-                CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Existing network measurement incorrect - ignoring");
             }
         }
     }
@@ -2848,7 +2848,7 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *jsonNetworkSpeed = JsonObjectCreate(2);
@@ -2931,7 +2931,7 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     if (count == 0)
@@ -3123,7 +3123,7 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
 
         if (!bson_find(&i, &cursor->current, cfr_keyhash))
         {
-            CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Malformed query result in Nova2PHP_environment_contents");
             mongo_cursor_destroy(cursor);
             return false;
         }
@@ -3209,7 +3209,7 @@ int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t dateti
     {
         if (!keyhash || strlen(keyhash) == 0 )
         {
-            CfOut(cf_verbose, "", "!! Hostkey and noteid is not given. Nothing to look for");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Hostkey and noteid is not given. Nothing to look for");
             return false;
         }
         is_new = true;
@@ -3340,7 +3340,7 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_us
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;
@@ -3379,7 +3379,7 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     if (!result)
@@ -3557,7 +3557,7 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid)
 {
     if (errid >= ERRID_MAX)
     {
-        CfOut(cf_error, "", "!! FormatErrorJsonAttribute: errid out of bounds");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! FormatErrorJsonAttribute: errid out of bounds");
         errid = ERRID_MAX;
     }
 

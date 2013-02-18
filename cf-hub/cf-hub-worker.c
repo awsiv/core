@@ -70,9 +70,9 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 
     aa.copy.portnumber = (short) atoi(STR_CFENGINEPORT);
 
-    CfOut(cf_inform, "", "...........................................................................\n");
-    CfOut(cf_inform, "", " * Hailing %s : %u\n", peer, (int) aa.copy.portnumber);
-    CfOut(cf_inform, "", "...........................................................................\n");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "...........................................................................\n");
+    CfOut(OUTPUT_LEVEL_INFORM, "", " * Hailing %s : %u\n", peer, (int) aa.copy.portnumber);
+    CfOut(OUTPUT_LEVEL_INFORM, "", "...........................................................................\n");
 
 // record client host id (from lastseen) immediately so we can track failed connection attempts
 // the timestamp is updated when we get response - see UnpackReportBook
@@ -90,15 +90,15 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 
     if (conn == NULL)
     {
-        CfOut(cf_verbose, "", " !! Peer \"%s\" did not respond to hail", peer);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Peer \"%s\" did not respond to hail", peer);
         
         if(long_time_no_see)
         {
-            CfOut(cf_verbose, "", "Invalidating full query timelock since connection failed this time");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Invalidating full query timelock since connection failed this time");
 
             if(!InvalidateLockTime(lock_id))
             {
-                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not remove full query lock %s", lock_id);
             }
         }
         
@@ -115,16 +115,16 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
         menu = "full";
         time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
 
-        CfOut(cf_verbose, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(dbconn, conn, "full", last_week);
         
         if(report_len <= 0)
         {
-            CfOut(cf_verbose, "", "Invalidating full query timelock since no data was received this time");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Invalidating full query timelock since no data was received this time");
             
             if(!InvalidateLockTime(lock_id))
             {
-                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not remove full query lock %s", lock_id);
             }
         }
     }
@@ -132,7 +132,7 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
     {
         menu = "delta";
 
-        CfOut(cf_verbose, "", " -> Running differential sensor sweep of %s",
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Running differential sensor sweep of %s",
               HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(dbconn, conn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
     }
@@ -205,7 +205,7 @@ Item *Nova_ScanClients(void)
     if (!NewDBCursor(dbp, &dbcp))
     {
         CloseDB(dbp);
-        CfOut(cf_inform, "", " !! Unable to scan last-seen database");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan last-seen database");
         return NULL;
     }
 
@@ -270,7 +270,7 @@ Item *Nova_ScanClients(void)
 
     if (counter > LICENSES)
     {
-        CfOut(cf_error,""," !! %d hosts are connected to this hub, but it is only licensed to support %d clients."
+        CfOut(OUTPUT_LEVEL_ERROR,""," !! %d hosts are connected to this hub, but it is only licensed to support %d clients."
               " Please contact CFEngine(www.cfengine.com) for more licenses", counter, LICENSES);
     }
 
@@ -327,20 +327,20 @@ void DBRefreshHostsListCache(Item *list)
         {
             if (!(RemoveHostFromLastSeen(ip->name)))
             {
-                CfOut(cf_error, "", "Lastseen entry for host %s could not be removed\n", ip->name);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Lastseen entry for host %s could not be removed\n", ip->name);
             }
             else
             {
-                CfOut(cf_verbose, "", "Lastseen entry for host %s successfully removed\n", ip->name);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", "Lastseen entry for host %s successfully removed\n", ip->name);
 
                 if (RemovePublicKey(ip->name) != -1)
                 {
                     removed = true;
-                    CfOut(cf_verbose, "", "Public key for host %s successfully removed\n", ip->name);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Public key for host %s successfully removed\n", ip->name);
                 }
                 else
                 {
-                    CfOut(cf_error, "", "Public key for host %s could not be removed\n", ip->name);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "Public key for host %s could not be removed\n", ip->name);
                 }
             }
         }
@@ -357,7 +357,7 @@ void DBRefreshHostsListCache(Item *list)
         DeleteItemList(deleted_hosts);
     }
 
-    CfOut(cf_inform, "", "%d hosts added to the lastseen cache\n", count);
+    CfOut(OUTPUT_LEVEL_INFORM, "", "%d hosts added to the lastseen cache\n", count);
 }
 
 /*********************************************************************/

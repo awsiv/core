@@ -28,7 +28,7 @@ void GatherCPUData(double *CF_THIS)
 
     if (!GetCpuTicks(&ticksWork, &ticksTotal))
     {
-        CfOut(cf_verbose, "", "Skipping this CPU measure due to lack of data");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Skipping this CPU measure due to lack of data");
         return;
     }
 
@@ -70,7 +70,7 @@ static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
 
     if (!GetSystemTimes(&timeIdle, &timeKernel, &timeUser))
     {
-        CfOut(cf_error, "GetSystemTimes", "!! Could not get CPU ticks");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetSystemTimes", "!! Could not get CPU ticks");
         return false;
     }
 

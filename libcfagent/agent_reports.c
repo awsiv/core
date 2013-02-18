@@ -58,7 +58,7 @@ void Nova_NoteVarUsageDB(void)
 
             if (!RvalPrint(var.rval, sizeof(var.rval) - 15, assoc->rval))
             {
-                CfOut(cf_verbose, "",
+                CfOut(OUTPUT_LEVEL_VERBOSE, "",
                       "!! Variable %s is too large for transmission to reporting hub (larger than %zu bytes) -- will be truncated in reports",
                       key, sizeof(var.rval));
             }
@@ -71,7 +71,7 @@ void Nova_NoteVarUsageDB(void)
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to purge variable db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to purge variable db");
         CloseDB(dbp);
         return;
     }
@@ -82,7 +82,7 @@ void Nova_NoteVarUsageDB(void)
         {
             if (sizeof(Variable) < valSize)
             {
-                CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
                 continue;
             }
 
@@ -126,7 +126,7 @@ void Nova_TrackExecution(const char *input_file)
     /* get last run data */
     if (!OpenDB(&dbp, dbid_agent_execution))
     {
-        CfOut(cf_inform, "", " !! Unable to open nova_agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to open nova_agent_execution db");
         return;
     }
 
@@ -146,11 +146,11 @@ void Nova_TrackExecution(const char *input_file)
     /* save current run data */
     if (!WriteDB(dbp, NOVA_TRACK_LAST_EXEC, &now, sizeof(time_t)))
     {
-        CfOut(cf_inform, "", " !! Unable to write to nova_agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to write to nova_agent_execution db");
     }
     if (!WriteDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double)))
     {
-        CfOut(cf_inform, "", " !! Unable to write to nova_agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to write to nova_agent_execution db");
     }
 
     CloseDB(dbp);
@@ -164,7 +164,7 @@ void NoteEfficiency(double e)
     Promise p = { 0 };
 
     NovaNamedEvent("configuration-model-efficiency", e, a, &p);
-    CfOut(cf_verbose, "", " -> Configuration model efficiency for %s = %.2lf%%", VUQNAME, e);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Configuration model efficiency for %s = %.2lf%%", VUQNAME, e);
 }
 
 void ReportPatches(PackageManager *list)
@@ -180,7 +180,7 @@ void ReportPatches(PackageManager *list)
 
     if ((fout = fopen(name, "w")) == NULL)
     {
-        CfOut(cf_error, "fopen", "Cannot open the destination file %s", name);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Cannot open the destination file %s", name);
         return;
     }
 
@@ -198,7 +198,7 @@ void ReportPatches(PackageManager *list)
 
     if ((fout = fopen(name, "w")) == NULL)
     {
-        CfOut(cf_error, "fopen", "Cannot open the destination file %s", name);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Cannot open the destination file %s", name);
         return;
     }
 

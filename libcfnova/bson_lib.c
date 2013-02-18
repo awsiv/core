@@ -65,7 +65,7 @@ Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
         }
         else
         {
-            CfOut(cf_error, "BsonStringArrayAsRlist: a value in array \"%s\" is not a string, but type=%d",
+            CfOut(OUTPUT_LEVEL_ERROR, "BsonStringArrayAsRlist: a value in array \"%s\" is not a string, but type=%d",
                   key, bson_iterator_type(&it));
         }
     }
@@ -85,7 +85,7 @@ bool BsonIntGet(const bson *b, const char *key, int *out)
         return true;
     }
 
-    CfOut(cf_verbose, "", "BsonIntGet: No match for \"%s\"", key);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonIntGet: No match for \"%s\"", key);
     return false;
 }
 
@@ -178,7 +178,7 @@ long BsonLongGet(const bson *b, const char *key)
         return bson_iterator_long(&it);
     }
 
-    CfOut(cf_verbose, "", "BsonLongGet: No match for \"%s\"", key);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonLongGet: No match for \"%s\"", key);
 
     return 0;
 }
@@ -195,7 +195,7 @@ bool BsonStringGet(const bson *b, const char *key, const char **out)
         return true;
     }
 
-    CfOut(cf_verbose, "", "BsonStringGet: No match for \"%s\"", key);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonStringGet: No match for \"%s\"", key);
 
     return false;
 }
@@ -212,7 +212,7 @@ bool BsonBoolGetCheckExists(const bson *b, const char *key, bool *out)
         return true;
     }
 
-    CfOut(cf_verbose, "", "BsonBoolGet: No match for \"%s\"", key);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonBoolGet: No match for \"%s\"", key);
 
     return false;
 }
@@ -244,7 +244,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
     else
     {
         dest[0] = '\0';
-        CfOut(cf_verbose, "", "BsonStringWrite: No match for \"%s\"", key);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonStringWrite: No match for \"%s\"", key);
     }
 }
 
@@ -260,7 +260,7 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
         return true;
     }
 
-    CfOut(cf_verbose, "", "BsonGetArrayValue: No match for \"%s\"", key);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "BsonGetArrayValue: No match for \"%s\"", key);
 
     return false;
 }

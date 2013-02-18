@@ -1670,7 +1670,7 @@ static int Nova_GetReportedScalar(const char *hostkey, const char *ns, const cha
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;
@@ -1717,7 +1717,7 @@ static int Nova_GetReportedList(const char *hostkey, const char *ns, const char 
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;

@@ -43,7 +43,7 @@ int LoadProcessTable(Item **procdata)
 
     if (PROCESSTABLE)
     {
-        CfOut(cf_verbose, "", " -> Reusing cached process state");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Reusing cached process state");
         return true;
     }
 
@@ -55,7 +55,7 @@ int LoadProcessTable(Item **procdata)
 
     if (!NovaWin_GetProcessSnapshot(procdata))
     {
-        CfOut(cf_error, "", "!! Could not get process snapshot");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get process snapshot");
         return false;
     }
 
@@ -112,7 +112,7 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
     // need debug priviliges to open some special processes, like crss.exe, alg.exe, svchost.exe
     if (!EnableDebugPriv())
     {
-        CfOut(cf_error, "EnableDebugPriv",
+        CfOut(OUTPUT_LEVEL_ERROR, "EnableDebugPriv",
               "!! Current account needs 'Debug programs' privilige to get info on all processes");
     }
 
@@ -120,7 +120,7 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
     memInfo.dwLength = sizeof(MEMORYSTATUSEX);
     if (!GlobalMemoryStatusEx(&memInfo))
     {
-        CfOut(cf_error, "GlobalMemoryStatusEx", "!! Could not obtain memory information");
+        CfOut(OUTPUT_LEVEL_ERROR, "GlobalMemoryStatusEx", "!! Could not obtain memory information");
         memInfo.ullTotalPhys = 1;
     }
 
@@ -129,7 +129,7 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
 
     if (processSnap == INVALID_HANDLE_VALUE)
     {
-        CfOut(cf_error, "CreateToolhelp32Snapshot", "!! Could not get process snapshot");
+        CfOut(OUTPUT_LEVEL_ERROR, "CreateToolhelp32Snapshot", "!! Could not get process snapshot");
         return false;
     }
 
@@ -138,7 +138,7 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
     // retrieve information about the first process
     if (!Process32First(processSnap, &pe32))
     {
-        CfOut(cf_error, "Process32First", "!! Could not get first entry in process snapshot");
+        CfOut(OUTPUT_LEVEL_ERROR, "Process32First", "!! Could not get first entry in process snapshot");
         CloseHandle(processSnap);
         return false;
     }
@@ -156,14 +156,14 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
 
     if (i == CF_BUFSIZE)
     {
-        CfOut(cf_error, "", "!! More than %d processes on this system - a larger buffer is needed", CF_BUFSIZE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! More than %d processes on this system - a larger buffer is needed", CF_BUFSIZE);
     }
 
     Sleep(TIMESTAMP_WAIT);
 
     if (!Process32First(processSnap, &pe32))
     {
-        CfOut(cf_error, "Process32First", "!! Could not get first entry in process snapshot");
+        CfOut(OUTPUT_LEVEL_ERROR, "Process32First", "!! Could not get first entry in process snapshot");
         CloseHandle(processSnap);
         return false;
     }
@@ -210,7 +210,7 @@ int GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int 
 
     if (!NovaWin_GetProcessSnapshot(&procdata))
     {
-        CfOut(cf_error, "", "!! Could not get process snapshot");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get process snapshot");
         return false;
     }
 
@@ -235,7 +235,7 @@ int GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int 
         }
     }
 
-    CfOut(cf_verbose, "", "Distinct process users=%d, num SYSTEM processes=%d, num non-SYSTEM processes=%d",
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Distinct process users=%d, num SYSTEM processes=%d, num non-SYSTEM processes=%d",
           *userListSz, *numRootProcs, *numOtherProcs);
 
     DeleteItemList(procdata);
@@ -266,7 +266,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
     if (procHandle == NULL)
     {
-        CfOut(cf_verbose, "OpenProcess", "Error opening process handle for pid=%lu\n", pid);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "OpenProcess", "Error opening process handle for pid=%lu\n", pid);
         return NULL;
     }
 
@@ -359,7 +359,7 @@ static int EnableDebugPriv(void)
 
 /*   if(!QueryFullProcessImageName(procHandle, 0, cmdLineStr, &cmdLineSzWritten)) */
 /*     { */
-/*       CfOut(cf_error, "QueryFullProcessImageName", "Could not get process image name"); */
+/*       CfOut(OUTPUT_LEVEL_ERROR, "QueryFullProcessImageName", "Could not get process image name"); */
 /*       snprintf(cmdLineStr, cmdLineSz, "???"); */
 /*       return false; */
 /*     } */
@@ -375,7 +375,7 @@ static bool GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGE
 
     if (!GetProcessTimes(procHandle, &timeCreate, &timeExit, &timeKernel, &timeUser))
     {
-        CfOut(cf_error, "GetProcessTimes", "!! Could not obtain process times");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetProcessTimes", "!! Could not obtain process times");
         return false;
     }
 
@@ -459,7 +459,7 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
     if (!GetProcessMemoryInfo(procHandle, (PROCESS_MEMORY_COUNTERS *) & memInfo, sizeof(memInfo)))
     {
         *memSzStr = '\0';
-        CfOut(cf_error, "GetProcessMemoryInfo", "!! Could not obtain process memory information");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetProcessMemoryInfo", "!! Could not obtain process memory information");
         return;
     }
 
@@ -489,14 +489,14 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
 
     if (procHandle == NULL)
     {
-        CfOut(cf_verbose, "OpenProcess", "!! Could not open process handle for pid %lu\n", pid);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "OpenProcess", "!! Could not open process handle for pid %lu\n", pid);
         timeCpuInt->QuadPart = 0;
         return;
     }
 
     if (!GetProcessTimes(procHandle, &timeCreate, &timeExit, &timeKernel, &timeUser))
     {
-        CfOut(cf_error, "GetProcessTimes", "!! Could not get process times");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetProcessTimes", "!! Could not get process times");
         timeCpuInt->QuadPart = 0;
         return;
     }
@@ -530,7 +530,7 @@ void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nam
     if (!OpenProcessToken(procHandle, TOKEN_QUERY, &token))
     {
         // NOTE: we often get "access denied" when we're not running as a service
-        CfOut(cf_verbose, "OpenProcessToken",
+        CfOut(OUTPUT_LEVEL_VERBOSE, "OpenProcessToken",
               "!! Could not get process user information (often happens when we're not a service)");
         return;
     }
@@ -538,7 +538,7 @@ void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nam
     // get token SID
     if (!GetTokenInformation(token, TokenUser, userToken, sizeof(tokenBuf), &minLen))
     {
-        CfOut(cf_error, "GetTokenInformation", "!! Could not get process token information");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetTokenInformation", "!! Could not get process token information");
         CloseHandle(token);
         return;
     }
@@ -546,7 +546,7 @@ void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nam
     // get SID account and domain name
     if (!LookupAccountSid(0, userToken->User.Sid, userName, &unLen, domainName, &dnLen, &accType))
     {
-        CfOut(cf_error, "LookupAccountSid", "!! Could not look up account name");
+        CfOut(OUTPUT_LEVEL_ERROR, "LookupAccountSid", "!! Could not look up account name");
         CloseHandle(token);
         return;
     }

@@ -350,7 +350,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
                 if (bp == NULL)
                 {
-                    CfOut(cf_error, "", " Non-existent bundle \"%s\" referenced in \"%s\"\n", bundlename, (char *)cp->rval.item);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", " Non-existent bundle \"%s\" referenced in \"%s\"\n", bundlename, (char *)cp->rval.item);
                     break;
                 }
 
@@ -1290,7 +1290,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
         return;
     }
 
-    CfOut(cf_verbose, "", " ?? Analysing promise dependencies for \"%s\"\n", promise_id);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " ?? Analysing promise dependencies for \"%s\"\n", promise_id);
 
 /* So now we have the list of classes to scan for and we must undertake this
  expensive search */
@@ -1351,10 +1351,10 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     if (!found && THIS_AGENT_TYPE == AGENT_TYPE_COMMON)
     {
-        CfOut(cf_verbose, "",
+        CfOut(OUTPUT_LEVEL_VERBOSE, "",
               "Classes activated by the outcomes of promise ref \"%s\" did not occur in any promise proposal, so they are nullpotent",
               promise_id);
-        PromiseRef(cf_inform, pp);
+        PromiseRef(OUTPUT_LEVEL_INFORM, pp);
     }
 
     RlistDestroy(impacted);

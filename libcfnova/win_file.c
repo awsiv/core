@@ -30,7 +30,7 @@ void CreateEmptyFile(char *name)
 
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
-        CfOut(cf_error, "CreateFile", "!! Could not create empty file");
+        CfOut(OUTPUT_LEVEL_ERROR, "CreateFile", "!! Could not create empty file");
         return;
     }
 
@@ -54,7 +54,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
     }
     else
     {
-        CfOut(cf_error, "NovaWin_FileHandleToStream", "!! Mode is not 'r' or 'w', but '%s'", mode);
+        CfOut(OUTPUT_LEVEL_ERROR, "NovaWin_FileHandleToStream", "!! Mode is not 'r' or 'w', but '%s'", mode);
         return NULL;
     }
 
@@ -62,7 +62,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
 
     if (crtHandle == -1)
     {
-        CfOut(cf_error, "_open_osfhandle", "!! Could not convert file handle");
+        CfOut(OUTPUT_LEVEL_ERROR, "_open_osfhandle", "!! Could not convert file handle");
         return NULL;
     }
 
@@ -102,7 +102,7 @@ int NovaWin_FileExists(const char *fileName)
 
     if (fileAttr == INVALID_FILE_ATTRIBUTES)
     {
-        CfOut(cf_verbose, "", "The file \"%s\" does not exist\n", fileName);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "The file \"%s\" does not exist\n", fileName);
         return false;
     }
 
@@ -120,7 +120,7 @@ int NovaWin_IsDir(char *fileName)
 
     if (fileAttr == INVALID_FILE_ATTRIBUTES)
     {
-        CfOut(cf_error, "", "!! No file object exsists in path \"%s\"", fileName);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! No file object exsists in path \"%s\"", fileName);
         return false;
     }
 
@@ -159,7 +159,7 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
 
     if (getRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "GetNamedSecurityInfo", "!! Could not retreive existing owner of \"%s\"", file);
+        CfOut(OUTPUT_LEVEL_ERROR, "GetNamedSecurityInfo", "!! Could not retreive existing owner of \"%s\"", file);
         return false;
     }
 
@@ -177,15 +177,15 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
 
     if (sidMatch)
     {
-        cfPS(cf_inform, CF_NOP, "", pp, attr, "-> Owner of \"%s\" needs no modification", file);
+        cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, attr, "-> Owner of \"%s\" needs no modification", file);
     }
     else
     {
-        CfOut(cf_verbose, "", "Changing owner of file \"%s\" to the first listed", file);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Changing owner of file \"%s\" to the first listed", file);
 
         if (!NovaWin_GetCurrentProcessOwner((SID *) procOwnerSid, sizeof(procOwnerSid)))
         {
-            CfOut(cf_error, "", "!! Could not get owner of current process");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get owner of current process");
             return false;
         }
 
@@ -195,7 +195,7 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
             {
             case cfa_warn:
 
-                cfPS(cf_error, CF_WARN, "", pp, attr, " !! Owner on \"%s\" needs to be changed", file);
+                cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, attr, " !! Owner on \"%s\" needs to be changed", file);
                 break;
 
             case cfa_fix:
@@ -204,11 +204,11 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
                 {
                     if (!NovaWin_SetFileOwnership(file, (SID *) procOwnerSid))
                     {
-                        CfOut(cf_error, "", "!! Could not set owner of file \"%s\" to process owner", file);
+                        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set owner of file \"%s\" to process owner", file);
                         return false;
                     }
                 }
-                cfPS(cf_inform, CF_CHG, "", pp, attr, "-> Owner on \"%s\" successfully changed", file);
+                cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, attr, "-> Owner on \"%s\" successfully changed", file);
                 break;
 
             default:
@@ -218,7 +218,7 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
         }
         else                    // windows cannot change file owner to anything else than current process owner
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "Windows is unable to implement a change owner policy, but file \"%s\" violates Cfengine's ownership promise (Windows can only change owner to user running Cfengine)",
                   file);
             return false;
@@ -237,13 +237,13 @@ int NovaWin_TakeFileOwnership(char *path)
 
     if (!NovaWin_GetCurrentProcessOwner((SID *) procOwnerSid, sizeof(procOwnerSid)))
     {
-        CfOut(cf_error, "", "!! Could not get owner of current process");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get owner of current process");
         return false;
     }
 
     if (!NovaWin_SetFileOwnership(path, (SID *) procOwnerSid))
     {
-        CfOut(cf_error, "", "!! Could not set ownership of \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set ownership of \"%s\"", path);
         return false;
     }
 
@@ -260,14 +260,14 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
 
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currProcToken))
     {
-        CfOut(cf_error, "OpenProcessToken", "!! Could not get access token of current process");
+        CfOut(OUTPUT_LEVEL_ERROR, "OpenProcessToken", "!! Could not get access token of current process");
         return false;
     }
 
     // enable the SE_TAKE_OWNERSHIP_NAME privilege, to be able to take ownership of any file object
     if (!NovaWin_SetTokenPrivilege(currProcToken, SE_TAKE_OWNERSHIP_NAME, TRUE))
     {
-        CfOut(cf_error, "", "!! Could not set 'SE_TAKE_OWNERSHIP_NAME' privilege - run Cfengine as an administrator");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set 'SE_TAKE_OWNERSHIP_NAME' privilege - run Cfengine as an administrator");
         CloseHandle(currProcToken);
         return false;
     }
@@ -277,14 +277,14 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
 
     if (setRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "SetNamedSecurityInfo", "Could not set owner of \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "SetNamedSecurityInfo", "Could not set owner of \"%s\"", path);
         CloseHandle(currProcToken);
         return false;
     }
 
     if (!NovaWin_SetTokenPrivilege(currProcToken, SE_TAKE_OWNERSHIP_NAME, TRUE))
     {
-        CfOut(cf_error, "", "!! Could not disable 'SE_TAKE_OWNERSHIP_NAME' privilege");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not disable 'SE_TAKE_OWNERSHIP_NAME' privilege");
     }
 
     CloseHandle(currProcToken);
@@ -309,13 +309,13 @@ int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 
     if (getRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "GetNamedSecurityInfo", "!! Could not retreive existing owner of \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "GetNamedSecurityInfo", "!! Could not retreive existing owner of \"%s\"", path);
         return false;
     }
 
     if (!NovaWin_SidToName(ownerSid, owner, ownerSz))
     {
-        CfOut(cf_error, "", "!! Could not get owner name of \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get owner name of \"%s\"", path);
         LocalFree(secDesc);
         return false;
     }
@@ -346,7 +346,7 @@ off_t GetDiskUsage(char *file, enum cfsizes type)
     if (!GetDiskFreeSpaceEx(file, NULL, &bytesLenCaller, &bytesFree))
     {
         printf("Error getting free disk space");
-        CfOut(cf_error, "GetDiskFreeSpaceEx", "Could not get disk space status for \"%s\"", file);
+        CfOut(OUTPUT_LEVEL_ERROR, "GetDiskFreeSpaceEx", "Could not get disk space status for \"%s\"", file);
         return CF_INFINITY;
     }
 
@@ -382,14 +382,14 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
 
     if (fp == INVALID_HANDLE_VALUE)
     {
-        CfOut(cf_verbose, "CreateFile", "!! Could not open file \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "CreateFile", "!! Could not open file \"%s\"", path);
         CloseHandle(fp);
         return false;
     }
 
     if (!GetFileInformationByHandle(fp, &finfo))
     {
-        CfOut(cf_verbose, "GetFileInformationByHandle", "!! Could not get information on file \"%s\"", path);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "GetFileInformationByHandle", "!! Could not get information on file \"%s\"", path);
         CloseHandle(fp);
         return false;
     }

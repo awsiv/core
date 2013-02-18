@@ -77,9 +77,9 @@ void VerifyWindowsService(Attributes a, Promise *pp)
             if (!NovaWin_CheckServiceStatus
                 ((char *) dep->item, a.service.service_policy, NULL, onlyCheckDeps, true, a, pp, false))
             {
-                cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking status of dependency \"%s\" of service \"%s\"",
+                cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, " !! Failed checking status of dependency \"%s\" of service \"%s\"",
                      (char *) dep->item, srvName);
-                PromiseRef(cf_error, pp);
+                PromiseRef(OUTPUT_LEVEL_ERROR, pp);
                 return;
             }
         }
@@ -88,8 +88,8 @@ void VerifyWindowsService(Attributes a, Promise *pp)
     if (!NovaWin_CheckServiceStatus
         (srvName, a.service.service_policy, a.service.service_args, onlyCheckDeps, false, a, pp, true))
     {
-        cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking status of service \"%s\"", srvName);
-        PromiseRef(cf_error, pp);
+        cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, " !! Failed checking status of service \"%s\"", srvName);
+        PromiseRef(OUTPUT_LEVEL_ERROR, pp);
         return;
     }
 }
@@ -118,7 +118,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
     if (managerHandle == NULL)
     {
-        CfOut(cf_error, "OpenSCManager", "!! Could not open service manager");
+        CfOut(OUTPUT_LEVEL_ERROR, "OpenSCManager", "!! Could not open service manager");
         return false;
     }
 
@@ -126,7 +126,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
     if (srvHandle == NULL)
     {
-        CfOut(cf_error, "OpenService", "!! Could not open service \"%s\"", srvName);
+        CfOut(OUTPUT_LEVEL_ERROR, "OpenService", "!! Could not open service \"%s\"", srvName);
         CloseServiceHandle(managerHandle);
         return false;
     }
@@ -152,7 +152,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
         if (!result)
         {
-            CfOut(cf_error, "", "!! Could not start service \"%s\"", srvName);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not start service \"%s\"", srvName);
         }
 
         break;
@@ -163,7 +163,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
         if (!result)
         {
-            CfOut(cf_error, "", "!! Could not stop service \"%s\"", srvName);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not stop service \"%s\"", srvName);
         }
 
         break;
@@ -174,7 +174,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
         if (!result)
         {
-            CfOut(cf_error, "", "!! Could not disable service \"%s\"", srvName);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not disable service \"%s\"", srvName);
         }
 
         break;
@@ -205,7 +205,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
             if (!NovaWin_SetServiceStartTime(srvHandle, startTime, true, startTime, &startTimeRes))
             {
-                CfOut(cf_error, "", "!! Could not check autostart status of service");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not check autostart status of service");
                 result = false;;
             }
 
@@ -215,14 +215,14 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
                 {
                 case 0:        // already correct
 
-                    cfPS(cf_inform, CF_NOP, "", pp, a, "-> Autostart policy of service is already correct");
+                    cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Autostart policy of service is already correct");
                     break;
 
                 case 1:        // not correct
 
                     if (a.transaction.action == cfa_warn)
                     {
-                        cfPS(cf_error, CF_WARN, "", pp, a, " !! The service autostart policy needs change");
+                        cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! The service autostart policy needs change");
                         break;
                     }
 
@@ -230,14 +230,14 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
                     {
                         if (!NovaWin_SetServiceStartTime(srvHandle, startTime, false, 0, &startTimeRes))
                         {
-                            CfOut(cf_error, "", "!! Could not change autostart of service to \"%s\"",
+                            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not change autostart of service to \"%s\"",
                                   a.service.service_autostart_policy);
                             result = false;
                             break;
                         }
                     }
 
-                    cfPS(cf_inform, CF_CHG, "", pp, a, "-> Successfully updated autostart policy of service");
+                    cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Successfully updated autostart policy of service");
                     break;
 
                 default:
@@ -276,7 +276,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
     // check current run state
     if (!QueryServiceStatusEx(srvHandle, SC_STATUS_PROCESS_INFO, (BYTE *) & srvStatus, sizeof(srvStatus), &bytesNeeded))
     {
-        CfOut(cf_error, "QueryServiceStatusEx", "!! Could not get run state of service");
+        CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceStatusEx", "!! Could not get run state of service");
         return false;
     }
 
@@ -288,7 +288,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
     case SERVICE_RUNNING:      // service already running, we don't start it again
         if (setCfPs)
         {
-            cfPS(cf_inform, CF_NOP, "", pp, a, "-> Service is already running");
+            cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Service is already running");
         }
         return true;
         break;
@@ -298,7 +298,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_RUNNING))
         {
-            CfOut(cf_error, "", "!! Service did not start running while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not start running while waiting (timeout reached)");
             return false;
         }
         else
@@ -307,7 +307,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
                     srvStatus.dwCurrentState);
             if (setCfPs)
             {
-                cfPS(cf_inform, CF_NOP, "", pp, a, "-> Service is already running");
+                cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Service is already running");
             }
             return true;
         }
@@ -322,7 +322,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_PAUSED))
         {
-            CfOut(cf_error, "", "!! Service did not pause while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not pause while waiting (timeout reached)");
             return false;
         }
         break;
@@ -331,7 +331,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_STOPPED))
         {
-            CfOut(cf_error, "", "!! Service did not stop while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not stop while waiting (timeout reached)");
             return false;
         }
         break;
@@ -345,20 +345,20 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
     {
         if (isDependency)
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "!! This dependency is not started, and service_method.service_dependence_chain says not to start it");
             return false;
         }
 
         if (!NovaWin_ServiceDepsRunning(managerHandle, srvHandle, &allDepsRunning))
         {
-            CfOut(cf_error, "", "!! Could not check if service has only running dependencies");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not check if service has only running dependencies");
             return false;
         }
 
         if (!allDepsRunning)
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "!! Not all dependencies are running, and service_method.service_dependence_chain says not to start them");
             return false;
         }
@@ -366,7 +366,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
 
     if (setCfPs && a.transaction.action == cfa_warn)
     {
-        cfPS(cf_error, CF_WARN, "", pp, a, " !! The service needs to be started");
+        cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! The service needs to be started");
         return true;
     }
 
@@ -375,7 +375,7 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
         // enable the service and its dependencies if they're disabled
         if (!NovaWin_SetSrvDepsStartTime(managerHandle, srvHandle, SERVICE_DEMAND_START, true, SERVICE_DISABLED))
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "!! Could not enable service and all its dependencies - needed before starting service");
             return false;
         }
@@ -384,20 +384,20 @@ static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandl
 
         if (!StartService(srvHandle, argc, (LPCSTR *) argv))
         {
-            CfOut(cf_error, "StartService", "!! Could not start service");
+            CfOut(OUTPUT_LEVEL_ERROR, "StartService", "!! Could not start service");
             return false;
         }
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_RUNNING))
         {
-            CfOut(cf_error, "", "!! Service is not in running state after it is started");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service is not in running state after it is started");
             return false;
         }
     }
 
     if (setCfPs)
     {
-        cfPS(cf_inform, CF_CHG, "", pp, a, "-> Successfully started service");
+        cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Successfully started service");
     }
 
     return true;
@@ -419,7 +419,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
     // check current run state
     if (!QueryServiceStatusEx(srvHandle, SC_STATUS_PROCESS_INFO, (BYTE *) & srvStatus, sizeof(srvStatus), &bytesNeeded))
     {
-        CfOut(cf_error, "QueryServiceStatusEx", "!! Could not get service run state");
+        CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceStatusEx", "!! Could not get service run state");
         return false;
     }
 
@@ -432,7 +432,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_STOPPED))
         {
-            CfOut(cf_error, "", "!! Service did not stop while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not stop while waiting (timeout reached)");
             return false;
         }
         else
@@ -451,7 +451,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
 
         if (!NovaWin_SetServiceStartTime(srvHandle, SERVICE_DEMAND_START, true, SERVICE_DISABLED, &disableStatus))
         {
-            CfOut(cf_error, "", "!! Could not check enable-status of service in stop (but it was stopped)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not check enable-status of service in stop (but it was stopped)");
             return false;
         }
 
@@ -459,11 +459,11 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
         {
             if (disableStatus == 0 || disableStatus == 1)
             {
-                cfPS(cf_inform, CF_NOP, "", pp, a, "-> Service is already stopped");
+                cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Service is already stopped");
             }
             else
             {
-                cfPS(cf_inform, CF_CHG, "", pp, a, "-> Enabled service, but kept it stopped");
+                cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Enabled service, but kept it stopped");
             }
         }
         return true;
@@ -475,7 +475,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_RUNNING))
         {
-            CfOut(cf_error, "", "!! Service did not start running while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not start running while waiting (timeout reached)");
             return false;
         }
         else
@@ -494,7 +494,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_PAUSED))
         {
-            CfOut(cf_error, "", "!! Service did not pause while waiting (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service did not pause while waiting (timeout reached)");
             return false;
         }
         break;
@@ -506,7 +506,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
 
     if (isDependency && onlyCheckDeps)
     {
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "!! This dependency is not stopped, and service_method.service_dependence_chain says not to stop it");
         return false;
     }
@@ -515,7 +515,7 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
     {
         if (setCfPs)
         {
-            cfPS(cf_error, CF_WARN, "", pp, a, " !! The service needs to be stopped, but policy is to warn only");
+            cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! The service needs to be stopped, but policy is to warn only");
         }
 
         return false;
@@ -527,27 +527,27 @@ static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle
     {
         if (!NovaWin_StopDependentServices(managerHandle, srvHandle, onlyCheckDeps))
         {
-            CfOut(cf_error, "", "!! Could not stop all dependent services (check only=%d)", onlyCheckDeps);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not stop all dependent services (check only=%d)", onlyCheckDeps);
             return false;
         }
 
         // stop the service
         if (!ControlService(srvHandle, SERVICE_CONTROL_STOP, (SERVICE_STATUS *) & srvStatus))
         {
-            CfOut(cf_error, "ControlService", "!! Could not stop service");
+            CfOut(OUTPUT_LEVEL_ERROR, "ControlService", "!! Could not stop service");
             return false;
         }
 
         if (!NovaWin_ServiceStateWait(srvHandle, SERVICE_STOPPED))
         {
-            CfOut(cf_error, "", "!! Service is not in stopped state after it got stop signal (timeout reached)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Service is not in stopped state after it got stop signal (timeout reached)");
             return false;
         }
     }
 
     if (setCfPs)
     {
-        cfPS(cf_inform, CF_CHG, "", pp, a, "-> Successfully stopped service");
+        cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Successfully stopped service");
     }
 
     return true;
@@ -568,7 +568,7 @@ static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHan
     // first make sure the service is stopped, then disable it
     if (!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, false, a, pp, setCfPs))
     {
-        CfOut(cf_error, "", "!! Could not disable service because of failure when stopping it");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not disable service because of failure when stopping it");
         return false;
     }
 
@@ -580,7 +580,7 @@ static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHan
     // check if the service is already disabled first
     if (!NovaWin_SetServiceStartTime(srvHandle, SERVICE_DISABLED, true, SERVICE_DISABLED, &disableRes))
     {
-        CfOut(cf_error, "", "!! Could not check enable-status of service (but it was stopped)");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not check enable-status of service (but it was stopped)");
         return false;
     }
 
@@ -589,7 +589,7 @@ static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHan
     case 0:                    // already disabled
         if (setCfPs)
         {
-            cfPS(cf_inform, CF_NOP, "", pp, a, "-> Service is already disabled");
+            cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Service is already disabled");
         }
         break;
 
@@ -599,7 +599,7 @@ static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHan
         {
             if (setCfPs)
             {
-                cfPS(cf_error, CF_WARN, "", pp, a, " !! The service needs to be disabled");
+                cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! The service needs to be disabled");
             }
 
             break;
@@ -609,14 +609,14 @@ static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHan
         {
             if (!NovaWin_SetServiceStartTime(srvHandle, SERVICE_DISABLED, false, 0, &disableRes))
             {
-                CfOut(cf_error, "", "!! Could not disable service (but it was successfully stopped)");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not disable service (but it was successfully stopped)");
                 return false;
             }
         }
 
         if (setCfPs)
         {
-            cfPS(cf_inform, CF_CHG, "", pp, a, "-> Successfully disabled service");
+            cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Successfully disabled service");
         }
 
         break;
@@ -648,7 +648,7 @@ static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHand
 
     if (srvConfig == NULL)
     {
-        CfOut(cf_error, "", "!! Could not get service configuration");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get service configuration");
         return false;
     }
 
@@ -663,11 +663,11 @@ static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHand
 
             if (IsStrCaseIn(depName, PROTECTED_SERVICES))
             {
-                CfOut(cf_inform, "", "Service \"%s\" is protected, assuming it is running", depName);
+                CfOut(OUTPUT_LEVEL_INFORM, "", "Service \"%s\" is protected, assuming it is running", depName);
             }
             else
             {
-                CfOut(cf_log, "OpenService",
+                CfOut(OUTPUT_LEVEL_LOG, "OpenService",
                       "Could not open handle to service \"%s\" in order to check if dependency is running - assuming it is protected",
                       depName);
             }
@@ -679,7 +679,7 @@ static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHand
         if (!QueryServiceStatusEx
             (depHandle, SC_STATUS_PROCESS_INFO, (BYTE *) & depStatus, sizeof(depStatus), &bytesNeeded))
         {
-            CfOut(cf_error, "QueryServiceStatusEx", "!! Could not check dependency run state");
+            CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceStatusEx", "!! Could not check dependency run state");
             CloseServiceHandle(depHandle);
             free(srvConfig);
             return false;
@@ -697,7 +697,7 @@ static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHand
 
         case SERVICE_STOP_PENDING:
         case SERVICE_STOPPED:
-            CfOut(cf_inform, "", "Service dependency \"%s\" is not running (state %lu)", depName,
+            CfOut(OUTPUT_LEVEL_INFORM, "", "Service dependency \"%s\" is not running (state %lu)", depName,
                   depStatus.dwCurrentState);
             CloseServiceHandle(depHandle);
             free(srvConfig);
@@ -731,7 +731,7 @@ static QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
 
     if (QueryServiceConfig(srvHandle, NULL, 0, &bytesNeeded))
     {
-        CfOut(cf_error, "QueryServiceConfig", "!! Call was supposed to fail due to insufficient buffer");
+        CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceConfig", "!! Call was supposed to fail due to insufficient buffer");
         return NULL;
     }
     else
@@ -744,14 +744,14 @@ static QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
         }
         else
         {
-            CfOut(cf_error, "QueryServiceConfig", "!! Could not get required buffer size");
+            CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceConfig", "!! Could not get required buffer size");
             return NULL;
         }
     }
 
     if (!QueryServiceConfig(srvHandle, srvConfig, srvConfigSz, &bytesNeeded))
     {
-        CfOut(cf_error, "QueryServiceConfig", "!! Could not qurey service configuration");
+        CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceConfig", "!! Could not qurey service configuration");
         free(srvConfig);
         return NULL;
     }
@@ -785,13 +785,13 @@ static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvH
     {
         if (GetLastError() != ERROR_MORE_DATA)
         {
-            CfOut(cf_error, "EnumDependentServices", "!! Could not enumerate dependent services");
+            CfOut(OUTPUT_LEVEL_ERROR, "EnumDependentServices", "!! Could not enumerate dependent services");
             return false;
         }
 
         if (onlyCheckDeps)
         {
-            CfOut(cf_error, "", "!! Other services depend on this service, but policy says not to stop them");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Other services depend on this service, but policy says not to stop them");
             return false;
         }
 
@@ -799,7 +799,7 @@ static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvH
 
         if (!EnumDependentServices(srvHandle, SERVICE_ACTIVE, deps, bytesNeeded, &bytesNeeded, &depCount))
         {
-            CfOut(cf_error, "", "!! Could not enumerate dependent services (after memory allocation)");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not enumerate dependent services (after memory allocation)");
             free(deps);
             return false;
         }
@@ -816,7 +816,7 @@ static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvH
 
             if (depSrvHandle == NULL)
             {
-                CfOut(cf_error, "OpenService", "!! Could not open handle to stop dependent service \"%s\"",
+                CfOut(OUTPUT_LEVEL_ERROR, "OpenService", "!! Could not open handle to stop dependent service \"%s\"",
                       ess.lpServiceName);
                 free(deps);
                 return false;
@@ -824,7 +824,7 @@ static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvH
 
             if (!ControlService(depSrvHandle, SERVICE_CONTROL_STOP, (SERVICE_STATUS *) & ssp))
             {
-                CfOut(cf_error, "", "!! Could not send stop signal to dependent service \"%s\"", ess.lpServiceName);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not send stop signal to dependent service \"%s\"", ess.lpServiceName);
                 CloseServiceHandle(depSrvHandle);
                 free(deps);
                 return false;
@@ -833,7 +833,7 @@ static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvH
             // wait for the service to stop
             if (!NovaWin_ServiceStateWait(depSrvHandle, SERVICE_STOPPED))
             {
-                CfOut(cf_error, "", "!! Timeout while waiting for dependent service to stop");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Timeout while waiting for dependent service to stop");
                 CloseServiceHandle(depSrvHandle);
                 free(deps);
                 return false;
@@ -863,7 +863,7 @@ static int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int 
 
     if (srvConfig == NULL)
     {
-        CfOut(cf_error, "", "!! Could not get service configuration");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get service configuration");
         return false;
     }
 
@@ -876,7 +876,7 @@ static int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int 
             if (!ChangeServiceConfig(srvHandle, SERVICE_NO_CHANGE, setState, SERVICE_NO_CHANGE,
                                      NULL, NULL, NULL, NULL, NULL, NULL, NULL))
             {
-                CfOut(cf_error, "ChangeServiceConfig", "!! Could not set service enable-status");
+                CfOut(OUTPUT_LEVEL_ERROR, "ChangeServiceConfig", "!! Could not set service enable-status");
                 free(srvConfig);
                 return false;
             }
@@ -930,7 +930,7 @@ static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHan
 
     if (srvConfig == NULL)
     {
-        CfOut(cf_error, "", "!! Could not get service configuration");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get service configuration");
         return false;
     }
 
@@ -944,11 +944,11 @@ static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHan
         {
             if (IsStrCaseIn(depName, PROTECTED_SERVICES))
             {
-                CfOut(cf_inform, "", "Service \"%s\" is protected, assuming start time is correct", depName);
+                CfOut(OUTPUT_LEVEL_INFORM, "", "Service \"%s\" is protected, assuming start time is correct", depName);
             }
             else
             {
-                CfOut(cf_log, "OpenService",
+                CfOut(OUTPUT_LEVEL_LOG, "OpenService",
                       "Could not open handle to service \"%s\" in order to check that dependency is enabled - assuming it is protected",
                       depName);
             }
@@ -960,7 +960,7 @@ static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHan
 
         if (!NovaWin_SetSrvDepsStartTime(managerHandle, depHandle, setState, onlyFrom, fromState))
         {
-            CfOut(cf_error, "", "!! Failed while enabling (possibly dependencies of) dependency service \"%s\"",
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Failed while enabling (possibly dependencies of) dependency service \"%s\"",
                   depName);
             free(srvConfig);
             CloseServiceHandle(depHandle);
@@ -973,7 +973,7 @@ static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHan
     // un-disable this service, if needed
     if (!NovaWin_SetServiceStartTime(srvHandle, SERVICE_DEMAND_START, true, SERVICE_DISABLED, NULL))
     {
-        CfOut(cf_error, "", "!! Could not enable service dependency - needed before starting it");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not enable service dependency - needed before starting it");
         free(srvConfig);
         return false;
     }
@@ -999,7 +999,7 @@ static int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
         if (!QueryServiceStatusEx
             (srvHandle, SC_STATUS_PROCESS_INFO, (BYTE *) & srvStatus, sizeof(srvStatus), &bytesNeeded))
         {
-            CfOut(cf_error, "QueryServiceStatusEx", "!! Could not get service run status");
+            CfOut(OUTPUT_LEVEL_ERROR, "QueryServiceStatusEx", "!! Could not get service run status");
             return false;
         }
 
@@ -1039,7 +1039,7 @@ static int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
         Sleep(sleepTime);
     }
 
-    CfOut(cf_error, "", "!! Error waiting for state %lu: timeout reached (waited %lu msecs)", state,
+    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Error waiting for state %lu: timeout reached (waited %lu msecs)", state,
           sleepTime * STATUSWAIT_MAXSLEEP);
 
     return false;

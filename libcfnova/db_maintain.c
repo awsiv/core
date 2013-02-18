@@ -124,7 +124,7 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
  *  Makes sure certain keys have an index to optimize querying and updating.
  **/
 {
-    CfOut(cf_verbose, "", "Ensuring database indices are in place");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ensuring database indices are in place");
 
     // main host collection
 
@@ -133,12 +133,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -147,12 +147,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -161,12 +161,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
     if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_ARCHIVE);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
 
     bson_destroy(&b);
@@ -177,17 +177,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_MG, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_MG);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE_MON_MG);
     }
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_WK, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_WK);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE_MON_WK);
     }
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_YR, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", MONGO_DATABASE_MON_YR);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", MONGO_DATABASE_MON_YR);
     }
 
     bson_destroy(&b);
@@ -198,7 +198,7 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     if (mongo_create_index(conn, diagnostic_db_mongo_coll, &b, 0, NULL) != MONGO_OK)
     {
-        CfOut(cf_error, "", "!! Could not create index on %s", diagnostic_db_mongo_coll);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", diagnostic_db_mongo_coll);
     }
 
     bson_destroy(&b);
@@ -238,7 +238,7 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
 
         if (MongoRunCommand(conn, MONGO_BASE, &dropAllCommand, bson_empty(&result)) != MONGO_OK)
         {
-            CfOut(cf_error, "", "mongo_run_command: Could not drop index on collection %s", collection);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "mongo_run_command: Could not drop index on collection %s", collection);
         }
         else
         {
@@ -298,7 +298,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn, const char *hostkey)
     char keyHash[CF_MAXVARSIZE];
     time_t now;
 
-    CfOut(cf_verbose, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge timestamped reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
     BsonAppendString(&query, cfr_keyhash, hostkey);
@@ -414,7 +414,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn, const char *hostke
 
     long threshold = 365 * 24 * 3600;
 
-    CfOut(cf_verbose, "", " -> Purge longterm reports (keyhash = %s)", hostkey);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge longterm reports (keyhash = %s)", hostkey);
 
     bson_init(&query);
     BsonAppendString(&query, cfr_keyhash, hostkey);
@@ -500,7 +500,7 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
     oldStamp = now - oldThreshold;
 
-    CfOut(cf_verbose, "", " -> Purge promise logs from old (deprecated) collections");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge promise logs from old (deprecated) collections");
 
     bson_init(&cond);
     {
@@ -676,7 +676,7 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, const char *hostkey, char
     bson cond;
     bson query;
 
-    CfOut(cf_verbose, "", " -> Purge promise logs (%s) from main collection (keyhash = %s)", promiseLogReportKey, hostkey);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge promise logs (%s) from main collection (keyhash = %s)", promiseLogReportKey, hostkey);
 
     Item *promiseLogComplexKeysList = GetUniquePromiseLogEntryKeys(conn, hostkey, promiseLogReportKey);
 
@@ -732,7 +732,7 @@ void CFDB_PurgeDropReports(EnterpriseDB *conn)
     char *DROP_REPORTS[] = { cfr_setuid, cfr_vars, NULL };
     int i;
 
-    CfOut(cf_verbose, "", " -> Purge droppable reports");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge droppable reports");
 
     // query all hosts
     bson empty;
@@ -906,7 +906,7 @@ void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportK
             {
                 if (bson_iterator_type(&it2) != BSON_STRING)
                 {
-                    CfOut(cf_error, "", "!! Date is not string type in purge");
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Date is not string type in purge");
                     continue;
                 }
 
@@ -986,7 +986,7 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
 
     if (mongo_cmd_drop_collection(conn, MONGO_BASE, "monitoring", NULL))
     {
-        CfOut(cf_verbose, "", " -> Removed old monitoring collection");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Removed old monitoring collection");
     }
 
     // remove all hisograms from main collection
@@ -1036,7 +1036,7 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
 
     if (!CFDB_Close(&conn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 }
 
@@ -1065,7 +1065,7 @@ int CFDB_PurgeDeletedHosts(void)
 
     if (!CFDB_Close(&conn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     return true;
@@ -1116,7 +1116,7 @@ void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey
 
 static void CFDB_PurgeSoftwareInvalidTimestamp(EnterpriseDB *conn)
 {
-    CfOut(cf_verbose, "", " -> Purge invalid timestamps in software reports");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge invalid timestamps in software reports");
 
     bson query;
 
@@ -1177,7 +1177,7 @@ void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, ti
 
     oldStamp = now - oldThreshold;
 
-    CfOut(cf_verbose, "", " -> Purge mongo diagnostics");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge mongo diagnostics");
 
     bson_init(&cond);
     {

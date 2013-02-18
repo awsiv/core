@@ -69,7 +69,7 @@ void NovaWin_ServiceMain(int argc, char *argv[])
     if (!statusHandle)
     {
         // Registering Control Handler failed
-        CfOut(cf_error, "RegisterServiceCtrlHandler", "!! Could not register control handler for cf-execd service");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegisterServiceCtrlHandler", "!! Could not register control handler for cf-execd service");
         return;
     }
 
@@ -96,7 +96,7 @@ void NovaWin_ServiceMain(int argc, char *argv[])
 
     KeepPromises(policy, &exec_config);
 
-    CfOut(cf_log, "", "Started service %s", WINSERVICE_NAME);
+    CfOut(OUTPUT_LEVEL_LOG, "", "Started service %s", WINSERVICE_NAME);
 
     // worker function (loop)
     StartServer(policy, &exec_config, report_context);
@@ -112,7 +112,7 @@ void NovaWin_ControlHandler(DWORD request)
     {
     case SERVICE_CONTROL_STOP:
     case SERVICE_CONTROL_SHUTDOWN:
-        CfOut(cf_log, "", "Terminating service %s: received stop request (%lu)", WINSERVICE_NAME, request);
+        CfOut(OUTPUT_LEVEL_LOG, "", "Terminating service %s: received stop request (%lu)", WINSERVICE_NAME, request);
 
         /* Windows service does not call atexit(3)-registered functions on
          * shutdown, so call them explicitely */

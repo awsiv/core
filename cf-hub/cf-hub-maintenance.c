@@ -36,14 +36,14 @@ static void ScheduleRunMaintenanceJobs(void)
 {
     time_t now = time(NULL);
 
-    CfOut(cf_verbose, "", " -> Scanning total compliance cache and doing db maintenance");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Scanning total compliance cache and doing db maintenance");
 
     EnterpriseDB dbconn;
 
 
     if (!CFDB_Open(&dbconn))
     {
-        CfOut(cf_error, "", "Unable to connect to enterprise database");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to connect to enterprise database");
         return;
     }
 
@@ -89,7 +89,7 @@ void Nova_CacheTotalCompliance(EnterpriseDB *dbconn, bool allSlots)
 
     if (!Nova2PHP_environment_list(&env, NULL))
     {
-        CfOut(cf_error, "", "!! Unable to query list of environments");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Unable to query list of environments");
         CFDB_Close(dbconn);
         return;
     }

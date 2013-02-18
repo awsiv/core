@@ -2128,7 +2128,7 @@ static void DateStrToTime(const char *inStr, time_t *t)
 
     if (month == -1)
     {
-        CfOut(cf_error, "", "!! Could not convert month to int in DateStrToTime()");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not convert month to int in DateStrToTime()");
         *t = 0;
         return;
     }
@@ -2142,7 +2142,7 @@ static void DateStrToTime(const char *inStr, time_t *t)
 
     if (tTime == -1)
     {
-        CfOut(cf_error, "mktime", "!! Could not convert \"%s\" from string to time_t", inStr);
+        CfOut(OUTPUT_LEVEL_ERROR, "mktime", "!! Could not convert \"%s\" from string to time_t", inStr);
         *t = 0;
     }
     else

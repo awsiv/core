@@ -267,9 +267,9 @@ int main(int argc, char *argv[])
         complete = (double) CF_TOPICS *(CF_TOPICS - 1);
 
         percent = 100.0 * (double) CF_EDGES / (double) complete;
-        CfOut(cf_inform, "", " -> Association density yields %d/%d = %.4lf%%\n", CF_EDGES, complete, percent);
+        CfOut(OUTPUT_LEVEL_INFORM, "", " -> Association density yields %d/%d = %.4lf%%\n", CF_EDGES, complete, percent);
         percent = 100.0 * (double) CF_OCCUR / (double) CF_TOPICS;
-        CfOut(cf_inform, "", " -> Hit probability (efficiency) yields %d/%d = %.4lf%%\n", CF_OCCUR, CF_TOPICS, percent);
+        CfOut(OUTPUT_LEVEL_INFORM, "", " -> Hit probability (efficiency) yields %d/%d = %.4lf%%\n", CF_OCCUR, CF_TOPICS, percent);
     }
 
     ReportContextDestroy(report_context);
@@ -380,7 +380,7 @@ static GenericAgentConfig *CheckOpts(int argc, char **argv)
 
     if (argv[optind] != NULL)
     {
-        CfOut(cf_error, "", "Unexpected argument with no preceding option: %s\n", argv[optind]);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unexpected argument with no preceding option: %s\n", argv[optind]);
     }
 
     return config;
@@ -414,115 +414,115 @@ static void KeepKnowControlPromises(Policy *policy)
 
             if (GetVariable("control_knowledge", cp->lval, &retval) == DATA_TYPE_NONE)
             {
-                CfOut(cf_error, "", " !! Unknown lval %s in knowledge control body", cp->lval);
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! Unknown lval %s in knowledge control body", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_tm_prefix].lval) == 0)
             {
-                CfOut(cf_error, "", "The topic map prefix has been deprecated");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "The topic map prefix has been deprecated");
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_builddir].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_type].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_database].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_owner].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_passwd].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_server].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_sql_connect_db].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_engine].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlbanner].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_htmlfooter].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_stylesheet].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_query_output].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_graph_output].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_views].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_genman].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_mandir].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated", cp->lval);
                 continue;
             }
 
             if (strcmp(cp->lval, CFK_CONTROLBODY[cfk_docroot].lval) == 0)
             {
-                CfOut(cf_verbose, "", " -> Option %s has been deprecated in this release", cp->lval);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Option %s has been deprecated in this release", cp->lval);
                 continue;
             }
         }
@@ -544,7 +544,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 
     if (GetVariable("control_common", "bundlesequence", &retval) == DATA_TYPE_NONE)
     {
-        CfOut(cf_error, "", " !! No bundlesequence in the common control body");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! No bundlesequence in the common control body");
         exit(1);
     }
 
@@ -565,7 +565,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
         default:
             name = NULL;
             params = NULL;
-            CfOut(cf_error, "", " !! Illegal item found in bundlesequence: ");
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! Illegal item found in bundlesequence: ");
             RvalShow(stdout, (Rval) {rp->item, rp->type});
             printf(" = %c\n", rp->type);
             ok = false;
@@ -574,7 +574,7 @@ static void KeepPromiseBundles(Policy *policy, const ReportContext *report_conte
 
         if (!(PolicyGetBundle(policy, NULL, "knowledge", name) || (PolicyGetBundle(policy, NULL, "common", name))))
         {
-            CfOut(cf_error, "", " !! Bundle \"%s\" listed in the bundlesequence was not found\n", name);
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! Bundle \"%s\" listed in the bundlesequence was not found\n", name);
             ok = false;
         }
     }
@@ -639,7 +639,7 @@ static void KeepKnowledgePromise(Promise *pp)
 
     if (strcmp("classes", pp->agentsubtype) == 0)
     {
-        CfOut(cf_verbose, "", " ! Class promises do not have any effect here.\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " ! Class promises do not have any effect here.\n");
         return;
     }
 
@@ -745,7 +745,7 @@ static void VerifyInferencePromise(Promise *pp)
 
     if (!IsDefinedClass(pp->classes, NULL))
     {
-        CfOut(cf_verbose, "", " -> Skipping inference for \"%s\" as class \"%s\" is not defined", pp->promiser,
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Skipping inference for \"%s\" as class \"%s\" is not defined", pp->promiser,
               pp->classes);
         return;
     }
@@ -756,7 +756,7 @@ static void VerifyInferencePromise(Promise *pp)
     {
         for (rpq = a.qualifiers; rpq != NULL; rpq = rpq->next)
         {
-            CfOut(cf_verbose, "", " -> Add inference: (%s,%s,%s)\n", RlistScalarValue(rpp), RlistScalarValue(rpq), pp->promiser);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Add inference: (%s,%s,%s)\n", RlistScalarValue(rpp), RlistScalarValue(rpq), pp->promiser);
             AddInference(&INFERENCES, pp->promiser, rpp->item, rpq->item);
         }
     }
@@ -772,7 +772,7 @@ static void VerifyThingsPromise(Promise *pp)
     Rlist *rp, *rps, *contexts;
     char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
 
-    CfOut(cf_verbose, "", " -> Attempting to install thing-topic %s::%s \n", pp->classes, pp->promiser);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Attempting to install thing-topic %s::%s \n", pp->classes, pp->promiser);
 
 // Add a standard reserved word
 
@@ -787,7 +787,7 @@ static void VerifyThingsPromise(Promise *pp)
 
         a = SetThingsAttributes(pp,tp,rp->item);
 
-        CfOut(cf_verbose, "", " -> New thing \"%s\" about context \"%s\"", pp->promiser, RlistScalarValue(rp));
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" about context \"%s\"", pp->promiser, RlistScalarValue(rp));
 
         // Handle all synonyms as associations
 
@@ -807,7 +807,7 @@ static void VerifyThingsPromise(Promise *pp)
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 otp = IdempInsertTopic(pp->bundle, rps->item);
-                CfOut(cf_verbose, "", " ---> %s is a synonym for %s", RlistScalarValue(rps), tp->topic_name);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " ---> %s is a synonym for %s", RlistScalarValue(rps), tp->topic_name);
             }
 
             AddTopicAssociation(tp, &(tp->associations), KM_SYNONYM, KM_SYNONYM, a.synonyms, true, rp->item,
@@ -821,7 +821,7 @@ static void VerifyThingsPromise(Promise *pp)
             for (rps = a.general; rps != NULL; rps = rps->next)
             {
                 otp = IdempInsertTopic(pp->bundle, rps->item);
-                CfOut(cf_verbose, "", " ---> %s is a generalization for %s", RlistScalarValue(rps), tp->topic_name);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " ---> %s is a generalization for %s", RlistScalarValue(rps), tp->topic_name);
             }
 
             AddTopicAssociation(tp, &(tp->associations), KM_GENERALIZES_B, KM_GENERALIZES_F, a.general, true, rp->item,
@@ -892,7 +892,7 @@ static void VerifyTopicPromise(Promise *pp)
 
     a = GetTopicsAttributes(pp);
 
-    CfOut(cf_verbose, "", " -> Attempting to install topic %s::%s \n", pp->classes, pp->promiser);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Attempting to install topic %s::%s \n", pp->classes, pp->promiser);
 
 // Add a standard reserved word
 
@@ -905,7 +905,7 @@ static void VerifyTopicPromise(Promise *pp)
             return;
         }
 
-        CfOut(cf_verbose, "", " -> New topic promise for \"%s\" about context \"%s\"", pp->promiser, RlistScalarValue(rp));
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New topic promise for \"%s\" about context \"%s\"", pp->promiser, RlistScalarValue(rp));
 
         if (a.fwd_name && a.bwd_name)
         {
@@ -920,7 +920,7 @@ static void VerifyTopicPromise(Promise *pp)
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 otp = IdempInsertTopic(pp->bundle, rps->item);
-                CfOut(cf_verbose, "", " ---> %s is a synonym for %s", RlistScalarValue(rps), tp->topic_name);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " ---> %s is a synonym for %s", RlistScalarValue(rps), tp->topic_name);
             }
 
             AddTopicAssociation(tp, &(tp->associations), KM_SYNONYM, KM_SYNONYM, a.synonyms, true, rp->item,
@@ -934,7 +934,7 @@ static void VerifyTopicPromise(Promise *pp)
             for (rps = a.general; rps != NULL; rps = rps->next)
             {
                 otp = IdempInsertTopic(pp->bundle, rps->item);
-                CfOut(cf_verbose, "", " ---> %s is a generalization for %s", RlistScalarValue(rps), tp->topic_name);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " ---> %s is a generalization for %s", RlistScalarValue(rps), tp->topic_name);
             }
 
             AddTopicAssociation(tp, &(tp->associations), KM_GENERALIZES_B, KM_GENERALIZES_F, a.general, true, rp->item,
@@ -1025,12 +1025,12 @@ static void VerifyOccurrencePromises(Promise *pp)
     {
         if (rep_type == cfk_literal)
         {
-            CfOut(cf_error, "", " ! Occurrence of text information \"%s\" does not promise any topics to represent",
+            CfOut(OUTPUT_LEVEL_ERROR, "", " ! Occurrence of text information \"%s\" does not promise any topics to represent",
                   pp->promiser);
         }
         else
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   " ! Occurrence or reference to information \"%s\" does not promise any topics to represent",
                   pp->promiser);
         }
@@ -1041,7 +1041,7 @@ static void VerifyOccurrencePromises(Promise *pp)
 
     for (rp = contexts; rp != NULL; rp = rp->next)
     {
-        CfOut(cf_verbose, "", " -> New occurrence promise for \"%s\" about context \"%s\"", pp->promiser,
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New occurrence promise for \"%s\" about context \"%s\"", pp->promiser,
               RlistScalarValue(rp));
 
         switch (rep_type)
@@ -1104,7 +1104,7 @@ static Topic *AddTopic(Topic **list, char *bundle, char *name, char *context)
 
     if (tp)
     {
-        CfOut(cf_verbose, "", " -> Topic %s already defined, ok\n", name);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Topic %s already defined, ok\n", name);
     }
     else
     {
@@ -1158,7 +1158,7 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
 
     if (passociates == NULL || passociates->item == NULL)
     {
-        CfOut(cf_error, "", " !! A topic must have at least one associate in association %s", fwd_name);
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! A topic must have at least one associate in association %s", fwd_name);
         return;
     }
 
@@ -1187,11 +1187,11 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
 
     if (ok_to_add_inverse)
     {
-        CfOut(cf_verbose, "", " -> BEGIN add fwd associates for %s::%s", ncontext, ntopic);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> BEGIN add fwd associates for %s::%s", ncontext, ntopic);
     }
     else
     {
-        CfOut(cf_verbose, "", "  ---> BEGIN reverse associations %s::%s", ncontext, ntopic);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "  ---> BEGIN reverse associations %s::%s", ncontext, ntopic);
     }
 
 // First make sure topics pointed to exist so that they can point to us also
@@ -1206,18 +1206,18 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
 
         if (strcmp(contexttopic, normalform) == 0)
         {
-            CfOut(cf_verbose, "", " ! Excluding self-reference to %s", RlistScalarValue(rp));
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " ! Excluding self-reference to %s", RlistScalarValue(rp));
             continue;
         }
 
         if (ok_to_add_inverse)
         {
-            CfOut(cf_verbose, "", " --> Adding '%s' with id %d as an associate of '%s::%s'", normalform, new_tp->id,
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " --> Adding '%s' with id %d as an associate of '%s::%s'", normalform, new_tp->id,
                   this_tp->topic_context, this_tp->topic_name);
         }
         else
         {
-            CfOut(cf_verbose, "", " ---> Reverse '%s' with id %d as an associate of '%s::%s' (inverse)", normalform,
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " ---> Reverse '%s' with id %d as an associate of '%s::%s' (inverse)", normalform,
                   new_tp->id, this_tp->topic_context, this_tp->topic_name);
         }
 
@@ -1242,7 +1242,7 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
         }
         else
         {
-            CfOut(cf_verbose, "", " -> Already in %s::%s's associate list", ncontext, ntopic);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Already in %s::%s's associate list", ncontext, ntopic);
         }
 
         CF_EDGES++;
@@ -1250,11 +1250,11 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
 
     if (ok_to_add_inverse)
     {
-        CfOut(cf_verbose, "", " -> END add fwd associates for %s::%s", ncontext, ntopic);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> END add fwd associates for %s::%s", ncontext, ntopic);
     }
     else
     {
-        CfOut(cf_verbose, "", "  ---> END reverse associations %s::%s", ncontext, ntopic);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "  ---> END reverse associations %s::%s", ncontext, ntopic);
     }
 }
 
@@ -1278,7 +1278,7 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
         op->next = *list;
         *list = op;
         CF_OCCUR++;
-        CfOut(cf_verbose, "", " -> Noted occurrence for %s::%s", context, reference);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Noted occurrence for %s::%s", context, reference);
     }
 
 /* Occurrence now exists, so add new subtype promises */
@@ -1425,20 +1425,20 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 
     if (fwd == NULL || (fwd && strlen(fwd) == 0))
     {
-        CfOut(cf_error, "", "NULL forward association name\n");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "NULL forward association name\n");
         return NULL;
     }
 
     if (bwd == NULL || (bwd && strlen(bwd) == 0))
     {
-        CfOut(cf_verbose, "", "NULL backward association name\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "NULL backward association name\n");
     }
 
     for (ta = list; ta != NULL; ta = ta->next)
     {
         if (fwd && (strcmp(fwd, ta->fwd_name) == 0))
         {
-            CfOut(cf_verbose, "", "Association '%s' exists already\n", fwd);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Association '%s' exists already\n", fwd);
             yfwd = true;
         }
         else if (fwd && ta->fwd_name)
@@ -1451,7 +1451,7 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 
             if (strcmp(l, r) == 0)
             {
-                CfOut(cf_error, "", " ! Association \"%s\" exists with different capitalization \"%s\"\n", fwd,
+                CfOut(OUTPUT_LEVEL_ERROR, "", " ! Association \"%s\" exists with different capitalization \"%s\"\n", fwd,
                       ta->fwd_name);
                 yfwd = true;
             }
@@ -1470,7 +1470,7 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 
         if (bwd && (strcmp(bwd, ta->bwd_name) == 0))
         {
-            CfOut(cf_verbose, "", " ! Association '%s' exists already\n", bwd);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " ! Association '%s' exists already\n", bwd);
             ybwd = true;
         }
         else if (bwd && ta->bwd_name)
@@ -1483,7 +1483,7 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 
             if (strcmp(l, r) == 0)
             {
-                CfOut(cf_inform, "", " ! Association \"%s\" exists with different capitalization \"%s\"\n", bwd,
+                CfOut(OUTPUT_LEVEL_INFORM, "", " ! Association \"%s\" exists with different capitalization \"%s\"\n", bwd,
                       ta->bwd_name);
             }
 
@@ -1612,7 +1612,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         
         if (attr.fwd_name && attr.bwd_name)
         {
-            CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
             AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1644,7 +1644,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1676,7 +1676,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
            
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1708,7 +1708,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1739,7 +1739,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1770,7 +1770,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1801,7 +1801,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1854,7 +1854,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1886,7 +1886,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1917,7 +1917,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1948,7 +1948,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -1979,7 +1979,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2010,7 +2010,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2041,7 +2041,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2072,7 +2072,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2104,7 +2104,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2136,7 +2136,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,
@@ -2167,7 +2167,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
                 
         if (attr.fwd_name && attr.bwd_name)
         {
-           CfOut(cf_verbose, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
+           CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New thing \"%s\" has a relation \"%s/%s\"", pp->promiser, attr.fwd_name,
                  attr.bwd_name);
 
            AddTopicAssociation(tp, &(tp->associations), attr.fwd_name, attr.bwd_name, attr.associates, true, context,

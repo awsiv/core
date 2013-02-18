@@ -141,12 +141,12 @@ int EnterpriseExpiry(void)
 
         if(!HubKeyPath(hub_key_path, license.public_key_digest, policy_server))
         {
-            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s) as we don't know the hub's public key", license.digest);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Failed to verify license file for this host (%s) as we don't know the hub's public key", license.digest);
             LICENSES = 0;
             return false;
         }
 
-        CfOut(cf_verbose, "", "Using public key %s for license verification", hub_key_path);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Using public key %s for license verification", hub_key_path);
 
         if (Nova_HashKey(CFPUBKEYFILE, name, license.digest))
         {
@@ -154,7 +154,7 @@ int EnterpriseExpiry(void)
             strcpy(u_month, license.expiry_month);
             snprintf(u_year, sizeof(u_year), "%d", license.expiry_year);
             LICENSES = license.count;
-            CfOut(cf_verbose, "", " -> Verified license file %s - this is a policy server (%s)", license.digest, license.company_name);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Verified license file %s - this is a policy server (%s)", license.digest, license.company_name);
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
@@ -166,12 +166,12 @@ int EnterpriseExpiry(void)
             strcpy(u_month, license.expiry_month);
             snprintf(u_year, sizeof(u_year), "%d", license.expiry_year);
             LICENSES = license.count;
-            CfOut(cf_verbose, "", " -> Verified license %s (%s)", license.digest,
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Verified license %s (%s)", license.digest,
                   license.company_name);
         }
         else
         {
-            CfOut(cf_verbose, "", "Failed to verify license file for this host (%s)\n", license.digest);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Failed to verify license file for this host (%s)\n", license.digest);
             LICENSES = 0;
             return false;       // Want to be able to bootstrap
         }
@@ -181,7 +181,7 @@ int EnterpriseExpiry(void)
     }
     else
     {
-        CfOut(cf_inform, "", " -> Verified FREE ENTERPRISE license - http://cfengine.com/25free for terms\n");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " -> Verified FREE ENTERPRISE license - http://cfengine.com/25free for terms\n");
         LICENSES = MAX_FREE_LICENSES;
         snprintf(license.company_name, MAX_COMPANY_NAME + 1, "%s", INTERNAL_EXPIRY_COMPANY);
 
@@ -189,14 +189,14 @@ int EnterpriseExpiry(void)
 
         if (hub)
         {
-            CfOut(cf_verbose, "", " -> This is a policy server %s of %s", POLICY_SERVER, license.company_name);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> This is a policy server %s of %s", POLICY_SERVER, license.company_name);
 #ifdef HAVE_LIBMONGOC
             am_policy_server = true;
 #endif
         }
         else
         {
-            CfOut(cf_verbose, "", " -> This system is a satellite");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> This system is a satellite");
 #ifdef HAVE_LIBMONGOC
             am_policy_server = false;
 #endif
@@ -249,7 +249,7 @@ int EnterpriseExpiry(void)
     {
         if (!IsDefinedClass("bootstrap_mode", NULL))  // avoid cf-promises complaints while bootstrapping
         {
-            CfOut(cf_error, "", " !! %d licenses expired on %s %s %s -- reverting to Community Edition", LICENSES,
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! %d licenses expired on %s %s %s -- reverting to Community Edition", LICENSES,
                   u_day, u_month, u_year);
         }
 
@@ -258,7 +258,7 @@ int EnterpriseExpiry(void)
     }
     else
     {
-        CfOut(cf_verbose, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Found %d CFE Nova licenses, expiring on %s %s %s for %s", LICENSES, u_day,
               u_month, u_year, license.company_name);
         AM_NOVA = true;
         
@@ -369,11 +369,11 @@ static bool HubKeyPath(char path[MAX_FILENAME], char *hub_key_digest, char *hub_
         return true;
     }
 
-    CfOut(cf_verbose, "", "No public key found at %s", path);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "No public key found at %s", path);
 
     if(strlen(hub_ip_address) == 0)
     {
-        CfOut(cf_verbose, "", "Hub ip address is empty");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Hub ip address is empty");
         return false;
     }
 
@@ -425,7 +425,7 @@ int Nova_HashKey(char *filename, char *buffer, const char *hash)
 
     if (md == NULL)
     {
-        CfOut(cf_error, "", " !! Unable to compute a valid hash");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! Unable to compute a valid hash");
         return false;
     }
 
@@ -467,7 +467,7 @@ int Nova_HashKey(char *filename, char *buffer, const char *hash)
 
     if (md == NULL)
     {
-        CfOut(cf_error, "", " !! Unable to compute a valid hash");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! Unable to compute a valid hash");
         return false;
     }
 
@@ -513,7 +513,7 @@ void CheckLicenses(void)
     if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
     {
         licenses = Str2Int(retval.item);
-        CfOut(cf_verbose, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
         NewScalar("sys", "licenses_promised", retval.item, DATA_TYPE_INT);
 #ifdef HAVE_LIBMONGOC
         if (THIS_AGENT_TYPE == AGENT_TYPE_AGENT && CFDB_QueryIsMaster())
@@ -535,20 +535,20 @@ void CheckLicenses(void)
         if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
             && (THIS_AGENT_TYPE != AGENT_TYPE_KEYGEN))
         {
-            CfOut(cf_error, "", " !! Your configuration promises no host_licenses_paid in common control");
-            CfOut(cf_error, "", " !! By doing this, you confirm that the terms of the contract are legally binding");
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! Your configuration promises no host_licenses_paid in common control");
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! By doing this, you confirm that the terms of the contract are legally binding");
         }
     }
     else if (licenses > LICENSES && THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
     {
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               " !! You have promised that %d license(s) have been paid for, but CFEngine has only promised to honour %d in the agreement. ",
               licenses, LICENSES);
-        CfOut(cf_inform, "", " !! You could be in violation of contract.");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! You could be in violation of contract.");
     }
     else if (licenses < LICENSES)
     {
-        CfOut(cf_inform, "",
+        CfOut(OUTPUT_LEVEL_INFORM, "",
               " -> According to you only %d license(s) have been paid for. CFEngine has promised to honour %d in the agreement.",
               licenses, LICENSES);
     }
@@ -604,7 +604,7 @@ static void Nova_LogLicenseStatus(void)
         lastseen_count = 1;
     }
 
-    CfOut(cf_verbose, "", " -> Detected current number of used licenses at approximately %d/%d\n", lastseen_count, LICENSES);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Detected current number of used licenses at approximately %d/%d\n", lastseen_count, LICENSES);
 
     if (!OpenDB(&dbp, dbid_license))
     {
@@ -618,7 +618,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (Chop(datestr, CF_EXPANDSIZE) == -1)
     {
-        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
     }
     WriteDB(dbp, datestr, data, sizeof(data));
 
@@ -716,7 +716,7 @@ int Nova_CheckLicenseWin(char *pos)
 {
     if (LICENSES == 0)
     {
-        CfOut(cf_error, "", " !! Invalid Enterprise license limits functionality (%s requires a license, agent %s)",
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! Invalid Enterprise license limits functionality (%s requires a license, agent %s)",
               pos, CF_AGENTTYPES[THIS_AGENT_TYPE]);
     }
 
@@ -731,7 +731,7 @@ bool LicenseInstall(char *path_source)
 
     if(cfstat(path_source, &sb) == -1)
     {
-        CfOut(cf_error, "cfstat", "!! Can not stat input license file %s", path_source);
+        CfOut(OUTPUT_LEVEL_ERROR, "cfstat", "!! Can not stat input license file %s", path_source);
         return false;
     }
 
@@ -741,7 +741,7 @@ bool LicenseInstall(char *path_source)
 
     if(cfstat(path_destination, &sb) == 0)
     {
-        CfOut(cf_error, "", "!! A license file is already installed in %s -- please move it out of the way and try again", path_destination);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! A license file is already installed in %s -- please move it out of the way and try again", path_destination);
         return false;
     }
 
@@ -749,12 +749,12 @@ bool LicenseInstall(char *path_source)
 
     if(!LicensePublicKeyPath(path_public_key, path_source))
     {
-        CfOut(cf_error, "", "!! Could not find path to public key -- license parse error?");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not find path to public key -- license parse error?");
     }
 
     if(cfstat(path_public_key, &sb) != 0)
     {
-        CfOut(cf_error, "", "!! The licensed public key is not installed -- please copy it to %s and try again", path_public_key);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! The licensed public key is not installed -- please copy it to %s and try again", path_public_key);
         return false;
     }
 
@@ -763,11 +763,11 @@ bool LicenseInstall(char *path_source)
 
     if(success)
     {
-        CfOut(cf_inform, "", "Installed license at %s", path_destination);
+        CfOut(OUTPUT_LEVEL_INFORM, "", "Installed license at %s", path_destination);
     }
     else
     {
-        CfOut(cf_error, "", "!! Failed copying license from %s to %s", path_source, path_destination);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Failed copying license from %s to %s", path_source, path_destination);
     }
 
     return success;

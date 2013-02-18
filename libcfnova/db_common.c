@@ -61,7 +61,7 @@ bool CFDB_Open(EnterpriseDB *conn)
     if (result != MONGO_OK)
     {
         mongo_destroy(conn);
-        CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
         return false;
     }
 
@@ -75,7 +75,7 @@ bool CFDB_Close(EnterpriseDB *conn)
     mongo_destroy(conn);
     /*
     {
-        CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from mongo server");
+        CfOut(OUTPUT_LEVEL_ERROR, "mongo_destroy", "!! Could not disconnect from mongo server");
         return false;
     }
 */
@@ -103,7 +103,7 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
     if (mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
     {
         BsonToString(dbErr, sizeof(dbErr), &b);
-        CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
         bson_destroy(&b);
         return false;
     }
@@ -112,7 +112,7 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
     {
         if ( !BsonBoolGetCheckExists( &b, "updatedExisting", checkUpdate ) )
         {
-            CfOut(cf_error, "", "!! Unable to determine if update happened on %s (%s)", operation, extra);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Unable to determine if update happened on %s (%s)", operation, extra);
             bson_destroy(&b);
             return false;
         }

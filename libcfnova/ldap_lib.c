@@ -43,7 +43,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
 
     if (LICENSES == 0)
     {
-        CfOut(cf_error, "", " !! The commercial license has expired, this function is not available");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! The commercial license has expired, this function is not available");
         return NULL;
     }
 
@@ -60,7 +60,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
     if ((ret =
          ldap_search_ext_s(ld, basedn, scope, filter, NULL, 0, NULL, NULL, NULL, LDAP_NO_LIMIT, &res)) != LDAP_SUCCESS)
     {
-        CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
         ldap_unbind(ld);
         return NULL;
     }
@@ -78,11 +78,11 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
 
             if ((dn = ldap_get_dn(ld, msg)) != NULL)
             {
-                CfOut(cf_verbose, "", " -> LDAP query found dn: %s\n", dn);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP query found dn: %s\n", dn);
             }
             else
             {
-                CfOut(cf_verbose, "", " !! No LDAP query result found\n");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! No LDAP query result found\n");
                 break;
             }
 
@@ -98,7 +98,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
                     {
                         if (strcmp(a, name) == 0)
                         {
-                            CfOut(cf_verbose, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
+                            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
                             return_value = xstrdup((char *) vals[i]->bv_val);
                             break;
                         }
@@ -133,7 +133,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -142,7 +142,7 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
             {
                 for (i = 0; referrals[i] != NULL; i++)
                 {
-                    CfOut(cf_verbose, "", "Search reference: %s\n\n", referrals[i]);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Search reference: %s\n\n", referrals[i]);
                 }
 
                 ldap_value_free(referrals);
@@ -154,13 +154,13 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
 
             /* At the end, a result status is sent */
 
-            CfOut(cf_verbose, "", " -> LDAP Query result received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP Query result received\n");
 
             parse_ret = ldap_parse_result(ld, msg, &ret, &matched_msg, &error_msg, NULL, &serverctrls, 0);
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -169,21 +169,21 @@ void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scope
 
             if (ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
 
                 if (error_msg != NULL && *error_msg != '\0')
                 {
-                    CfOut(cf_error, "", "%s", error_msg);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "%s", error_msg);
                 }
 
                 if (matched_msg != NULL && *matched_msg != '\0')
                 {
-                    CfOut(cf_verbose, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
             }
             else
             {
-                CfOut(cf_verbose, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
             }
             break;
 
@@ -219,7 +219,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 
     if (LICENSES == 0)
     {
-        CfOut(cf_error, "", " !! The commercial license has expired, this function is not available");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! The commercial license has expired, this function is not available");
         return NULL;
     }
 
@@ -236,7 +236,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
     if ((ret =
          ldap_search_ext_s(ld, basedn, scope, filter, NULL, 0, NULL, NULL, NULL, LDAP_NO_LIMIT, &res)) != LDAP_SUCCESS)
     {
-        CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
         ldap_unbind(ld);
         return NULL;
     }
@@ -252,11 +252,11 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 
             if ((dn = ldap_get_dn(ld, msg)) != NULL)
             {
-                CfOut(cf_verbose, "", " -> LDAP query found dn: %s\n", dn);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP query found dn: %s\n", dn);
             }
             else
             {
-                CfOut(cf_verbose, "", " !! No LDAP query found\n");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! No LDAP query found\n");
             }
 
             /* Iterate through each attribute in the entry. */
@@ -273,7 +273,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
                     {
                         if (strcmp(a, name) == 0)
                         {
-                            CfOut(cf_verbose, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
+                            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
                             RlistAppendScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
                         }
                     }
@@ -302,7 +302,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -311,7 +311,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
             {
                 for (i = 0; referrals[i] != NULL; i++)
                 {
-                    CfOut(cf_verbose, "", "Search reference: %s\n\n", referrals[i]);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Search reference: %s\n\n", referrals[i]);
                 }
 
                 ldap_value_free(referrals);
@@ -323,13 +323,13 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 
             /* At the end, a result status is sent */
 
-            CfOut(cf_verbose, "", " -> LDAP Query result received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP Query result received\n");
 
             parse_ret = ldap_parse_result(ld, msg, &ret, &matched_msg, &error_msg, NULL, &serverctrls, 0);
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -338,21 +338,21 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 
             if (ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
 
                 if (error_msg != NULL && *error_msg != '\0')
                 {
-                    CfOut(cf_error, "", "%s", error_msg);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "%s", error_msg);
                 }
 
                 if (matched_msg != NULL && *matched_msg != '\0')
                 {
-                    CfOut(cf_verbose, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
             }
             else
             {
-                CfOut(cf_verbose, "", " -> LDAP search was successful, %d entries, %d references", num_entries,
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP search was successful, %d entries, %d references", num_entries,
                       num_refs);
             }
             break;
@@ -384,7 +384,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
 
     if (LICENSES == 0)
     {
-        CfOut(cf_error, "", " !! The commercial license has expired, this function is not available");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! The commercial license has expired, this function is not available");
         return NULL;
     }
 
@@ -401,7 +401,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
     if ((ret =
          ldap_search_ext_s(ld, basedn, scope, filter, NULL, 0, NULL, NULL, NULL, LDAP_NO_LIMIT, &res)) != LDAP_SUCCESS)
     {
-        CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
         ldap_unbind(ld);
         return NULL;
     }
@@ -419,7 +419,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
 
             if ((dn = ldap_get_dn(ld, msg)) != NULL)
             {
-                CfOut(cf_verbose, "", " -> LDAP query found dn: %s\n", dn);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP query found dn: %s\n", dn);
                 ldap_memfree(dn);
             }
 
@@ -437,7 +437,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
                         {
                             snprintf(name, CF_MAXVARSIZE - 1, "%s[%s]", array, a);
                             NewScalar(THIS_BUNDLE, name, (char *) vals[i]->bv_val, DATA_TYPE_STRING);
-                            CfOut(cf_verbose, "", " -> Setting %s => %s, in context %s/%s\n", name,
+                            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Setting %s => %s, in context %s/%s\n", name,
                                   (char *) vals[i]->bv_val, THIS_BUNDLE, CONTEXTID);
                             return_value = xstrdup("any");
 
@@ -476,7 +476,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -485,7 +485,7 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
             {
                 for (i = 0; referrals[i] != NULL; i++)
                 {
-                    CfOut(cf_verbose, "", "Search reference: %s\n\n", referrals[i]);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Search reference: %s\n\n", referrals[i]);
                 }
 
                 ldap_value_free(referrals);
@@ -497,13 +497,13 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
 
             /* At the end, a result status is sent */
 
-            CfOut(cf_verbose, "", " -> LDAP Query result received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP Query result received\n");
 
             parse_ret = ldap_parse_result(ld, msg, &ret, &matched_msg, &error_msg, NULL, &serverctrls, 0);
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -512,21 +512,21 @@ void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scop
 
             if (ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
 
                 if (error_msg != NULL && *error_msg != '\0')
                 {
-                    CfOut(cf_error, "", "%s", error_msg);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "%s", error_msg);
                 }
 
                 if (matched_msg != NULL && *matched_msg != '\0')
                 {
-                    CfOut(cf_verbose, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
             }
             else
             {
-                CfOut(cf_verbose, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
             }
             break;
 
@@ -566,7 +566,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
     if (LICENSES == 0)
     {
-        CfOut(cf_error, "", " !! The commercial license has expired, this function is not available");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! The commercial license has expired, this function is not available");
         return NULL;
     }
 
@@ -583,7 +583,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
     if ((ret =
          ldap_search_ext_s(ld, basedn, scope, filter, NULL, 0, NULL, NULL, NULL, LDAP_NO_LIMIT, &res)) != LDAP_SUCCESS)
     {
-        CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
         ldap_unbind(ld);
         return NULL;
     }
@@ -599,7 +599,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
             if ((dn = ldap_get_dn(ld, msg)) != NULL)
             {
-                CfOut(cf_verbose, "", " -> LDAP query found dn: %s\n", dn);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP query found dn: %s\n", dn);
                 ldap_memfree(dn);
             }
 
@@ -615,7 +615,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
                     {
                         if (strcmp(a, name) == 0 && FullTextMatch(regex, (char *) vals[i]->bv_val))
                         {
-                            CfOut(cf_verbose, "", " -> Located regex matching LDAP value %s => %s\n", a,
+                            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Located regex matching LDAP value %s => %s\n", a,
                                   (char *) vals[i]->bv_val);
                             return_value = xstrdup("any");
                             break;
@@ -650,7 +650,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -659,7 +659,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
             {
                 for (i = 0; referrals[i] != NULL; i++)
                 {
-                    CfOut(cf_verbose, "", "Search reference: %s\n\n", referrals[i]);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Search reference: %s\n\n", referrals[i]);
                 }
 
                 ldap_value_free(referrals);
@@ -671,13 +671,13 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
             /* At the end, a result status is sent */
 
-            CfOut(cf_verbose, "", " -> LDAP Query result received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP Query result received\n");
 
             parse_ret = ldap_parse_result(ld, msg, &ret, &matched_msg, &error_msg, NULL, &serverctrls, 0);
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 return NULL;
             }
@@ -686,26 +686,26 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
             if (ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
 
                 if (error_msg != NULL && *error_msg != '\0')
                 {
-                    CfOut(cf_error, "", "%s", error_msg);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "%s", error_msg);
                 }
 
                 if (matched_msg != NULL && *matched_msg != '\0')
                 {
-                    CfOut(cf_verbose, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
             }
             else
             {
-                CfOut(cf_verbose, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP search successful, %d entries, %d references", num_entries, num_refs);
             }
             break;
 
         default:
-            CfOut(cf_verbose, "", "Unknown message received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Unknown message received\n");
             break;
 
         }
@@ -799,7 +799,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
     if ((ret =
          ldap_search_ext_s(ld, basedn, scope, filter, NULL, 0, NULL, NULL, NULL, LDAP_NO_LIMIT, &res)) != LDAP_SUCCESS)
     {
-        CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
         ldap_unbind(ld);
         *errstr = ldap_err2string(ret);
         return NULL;
@@ -828,11 +828,11 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
 
             if ((dn = ldap_get_dn(ld, msg)) != NULL)
             {
-                CfOut(cf_verbose, "", " -> LDAP query found dn: %s\n", dn);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP query found dn: %s\n", dn);
             }
             else
             {
-                CfOut(cf_verbose, "", " !! No LDAP query found\n");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! No LDAP query found\n");
             }
 
             /* Iterate through each attribute in the entry. */
@@ -849,7 +849,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
                     {
                         if (strcmp(a, attribute_name) == 0)
                         {
-                            CfOut(cf_verbose, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
+                            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Located LDAP value %s => %s\n", a, vals[i]->bv_val);
                             RlistAppendScalar(&return_value, (char *) vals[i]->bv_val, RVAL_TYPE_SCALAR);
                         }
                     }
@@ -878,7 +878,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse LDAP references: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 *errstr = ldap_err2string(parse_ret);
                 return NULL;
@@ -888,7 +888,7 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
             {
                 for (i = 0; referrals[i] != NULL; i++)
                 {
-                    CfOut(cf_verbose, "", "Search reference: %s\n\n", referrals[i]);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Search reference: %s\n\n", referrals[i]);
                 }
 
                 ldap_value_free(referrals);
@@ -900,13 +900,13 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
 
             /* At the end, a result status is sent */
 
-            CfOut(cf_verbose, "", " -> LDAP Query result received\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP Query result received\n");
 
             parse_ret = ldap_parse_result(ld, msg, &ret, &matched_msg, &error_msg, NULL, &serverctrls, 0);
 
             if (parse_ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP Error parsed: %s\n", ldap_err2string(parse_ret));
                 ldap_unbind(ld);
                 *errstr = ldap_err2string(parse_ret);
                 return NULL;
@@ -916,21 +916,21 @@ Rlist *CfLDAP_GetSingleAttributeList(const char *username, const char *password,
 
             if (ret != LDAP_SUCCESS)
             {
-                CfOut(cf_error, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! LDAP search failed: %s\n", ldap_err2string(ret));
 
                 if (error_msg != NULL && *error_msg != '\0')
                 {
-                    CfOut(cf_error, "", "%s", error_msg);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "%s", error_msg);
                 }
 
                 if (matched_msg != NULL && *matched_msg != '\0')
                 {
-                    CfOut(cf_verbose, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
             }
             else
             {
-                CfOut(cf_verbose, "", " -> LDAP search was successful, %d entries, %d references", num_entries,
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> LDAP search was successful, %d entries, %d references", num_entries,
                       num_refs);
             }
             break;
@@ -962,7 +962,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
             {
                 *errstr = ldap_err2string(ret);
             }
-            CfOut(cf_error, "", "Unable to set global LDAP_OPT_TIMEOUT option: %s", ldap_err2string(ret));
+            CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to set global LDAP_OPT_TIMEOUT option: %s", ldap_err2string(ret));
             return NULL;
         }
     }
@@ -979,7 +979,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
         {
             *errstr = ldap_err2string(ret);
         }
-        CfOut(cf_error, "", "Unable to set global LDAP TLS options: %s", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to set global LDAP TLS options: %s", ldap_err2string(ret));
         return NULL;
     }
 
@@ -992,7 +992,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
         {
             *errstr = ldap_err2string(ret);
         }
-        CfOut(cf_error, "", "Unable to disable LDAP referrals chasing: %s", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to disable LDAP referrals chasing: %s", ldap_err2string(ret));
         return NULL;
     }
 
@@ -1004,7 +1004,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
         {
             *errstr = ldap_err2string(ret);
         }
-        CfOut(cf_error, "", "LDAP connection failed: %s", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", "LDAP connection failed: %s", ldap_err2string(ret));
         return NULL;
     }
 
@@ -1016,7 +1016,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
         {
             *errstr = ldap_err2string(ret);
         }
-        CfOut(cf_error, "", "Trouble setting LDAP option %s", ldap_err2string(ret));
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Trouble setting LDAP option %s", ldap_err2string(ret));
         return NULL;
     }
 
@@ -1041,7 +1041,7 @@ static LDAP *NovaLDAPConnect(const char *uri, bool starttls, time_t timeout_seco
                 }
             }
 
-            CfOut(cf_error, "", "Unable to negotiate TLS encryption with LDAP server: %s", ldap_err2string(ret));
+            CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to negotiate TLS encryption with LDAP server: %s", ldap_err2string(ret));
             return NULL;
         }
     }

@@ -227,7 +227,7 @@ void SyntaxCompletion(char *s)
 
     if (EnterpriseExpiry())
     {
-        CfOut(cf_error, "", "Cfengine - autonomous configuration engine. This enterprise license has expired.\n");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Cfengine - autonomous configuration engine. This enterprise license has expired.\n");
         exit(1);
     }
 

@@ -64,7 +64,7 @@ int chown(const char *path, uid_t owner, gid_t group)
 
         if (!NovaWin_TakeFileOwnership((char *) path))
         {
-            CfOut(cf_error, "", "!! Could not change owner of \"%s\" to owner of current process", path);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not change owner of \"%s\" to owner of current process", path);
             return -1;
         }
 
@@ -74,7 +74,7 @@ int chown(const char *path, uid_t owner, gid_t group)
     }
     else
     {
-        CfOut(cf_error, "", "!! Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
         return -1;
     }
 }
@@ -90,7 +90,7 @@ int NovaWin_chmod(const char *path, mode_t mode)
     }
     else
     {
-        CfOut(cf_error, "NovaWin_chmod", "File \"%s\" not found", path);
+        CfOut(OUTPUT_LEVEL_ERROR, "NovaWin_chmod", "File \"%s\" not found", path);
         return -1;
     }
 }
@@ -121,14 +121,14 @@ int NovaWin_stat(const char *path, struct stat *statBuf)
 
     if (!NovaWin_GetNumHardlinks((char *) path, &numHardLinks))
     {
-        CfOut(cf_verbose, "", "!! Could not get number of hard links for \"%s\", assuming 1", path);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not get number of hard links for \"%s\", assuming 1", path);
         numHardLinks = 1;
     }
 
     // correct times 
     if (!GetFileAttributesEx(path, GetFileExInfoStandard, &attr))
     {
-        CfOut(cf_error, "GetFileAttributesEx", "!! Could not get file attributes");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetFileAttributesEx", "!! Could not get file attributes");
         return -1;
     }
 
@@ -158,13 +158,13 @@ void OpenNetwork(void)
 
     if (nCode == 0)
     {
-        CfOut(cf_verbose, "", "Windows sockets successfully initialized.\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Windows sockets successfully initialized.\n");
 
         pthread_once(&network_close_once, &RegisterNetworkCloseHandler);
     }
     else
     {
-        CfOut(cf_error, "", "!! Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
     }
 }
 
@@ -182,7 +182,7 @@ void CloseNetwork(void)
     }
     else
     {
-        CfOut(cf_error, "WSACleanup", "!! Could not close network (res=%d,sock-errcode=%d)", res, WSAGetLastError());
+        CfOut(OUTPUT_LEVEL_ERROR, "WSACleanup", "!! Could not close network (res=%d,sock-errcode=%d)", res, WSAGetLastError());
     }
 }
 
@@ -249,7 +249,7 @@ int NovaWin_uname(struct utsname *buf)
 
     if (!GetVersionEx((OSVERSIONINFO *) & osInfo))
     {
-        CfOut(cf_error, "GetVersionEx", "!! Could not get os version info");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetVersionEx", "!! Could not get os version info");
         return -1;
     }
 
@@ -442,7 +442,7 @@ int NovaWin_uname(struct utsname *buf)
     // hostname
     if (!GetMyHostInfo(hostName, ip))
     {
-        CfOut(cf_error, "", "!! Could not get this host's hostname");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get this host's hostname");
         snprintf(buf->nodename, _SYS_NMLN, "%s", "UNKNOWN_HOSTNAME");
     }
     else

@@ -35,7 +35,7 @@ void Nova_MonOtherInit(void)
 {
     int i;
 
-    CfOut(cf_verbose, "", "Starting initialization of static Nova monitoring probes.");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Starting initialization of static Nova monitoring probes.");
 
     for (i = 0; i < sizeof(NOVA_PROBES) / sizeof(NOVA_PROBES[0]); ++i)
     {
@@ -45,15 +45,15 @@ void Nova_MonOtherInit(void)
 
         if ((NOVA_PROBES_GATHERERS[i] = (probe->init) (&provider, &error)))
         {
-            CfOut(cf_verbose, "", " * %s: %s.", probe->name, provider);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " * %s: %s.", probe->name, provider);
         }
         else
         {
-            CfOut(cf_verbose, "", " * %s: Disabled: %s.", probe->name, error);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " * %s: Disabled: %s.", probe->name, error);
         }
     }
 
-    CfOut(cf_verbose, "", "Initialization of static Nova monitoring probes is finished.");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Initialization of static Nova monitoring probes is finished.");
 }
 
 /****************************************************************************/
@@ -62,7 +62,7 @@ void Nova_MonOtherGatherData(double *cf_this)
 {
     int i;
 
-    CfOut(cf_verbose, "", "Gathering data from static Nova monitoring probes.");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Gathering data from static Nova monitoring probes.");
 
     for (i = 0; i < sizeof(NOVA_PROBES) / sizeof(NOVA_PROBES[0]); ++i)
     {
@@ -71,9 +71,9 @@ void Nova_MonOtherGatherData(double *cf_this)
 
         if (gatherer)
         {
-            CfOut(cf_verbose, "", " * %s", probename);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " * %s", probename);
             (*gatherer) (cf_this);
         }
     }
-    CfOut(cf_verbose, "", "Gathering data from static Nova monitoring probes is finished.");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Gathering data from static Nova monitoring probes is finished.");
 }

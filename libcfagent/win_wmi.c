@@ -27,11 +27,11 @@ DISPATCH_OBJ(wmiSvc);
 
 int NovaWin_PackageListInstalledFromAPI(PackageItem ** pkgList, Attributes a, Promise *pp)
 {
-    CfOut(cf_verbose, "", " Using Win32 API to list installed packages");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " Using Win32 API to list installed packages");
 
     if (!NovaWin_WmiInitialize())       // deinitialized before agents exit
     {
-        CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not initialize WMI to get installed packages");
         return false;
     }
 
@@ -74,11 +74,11 @@ static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Pr
 
         if (caption == NULL || strlen(caption) == 0)
         {
-            CfOut(cf_error, "", "!! Empty package caption for installed package");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Empty package caption for installed package");
         }
         else if (version == NULL || strlen(version) == 0)
         {
-            CfOut(cf_verbose, "", "!! Empty package version for installed package \"%s\"", caption);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Empty package version for installed package \"%s\"", caption);
         }
         else
         {
@@ -99,7 +99,7 @@ static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Pr
 
             if (!PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
             {
-                CfOut(cf_error, "", "!! Could not prepend package name to list");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not prepend package name to list");
             }
 
         }
@@ -126,7 +126,7 @@ static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Pr
     if (count == 0)
     {
         // can never have empty list since Cfengine is installed
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "!! List of installed packages is empty - make sure \"Windows Installer Provider\" is installed and working");
     }
 
@@ -141,7 +141,7 @@ static void NovaWin_PrintWmiError(char *str)
 
     dhFormatExceptionA(NULL, dhErrMsg, sizeof(dhErrMsg) / sizeof(dhErrMsg[0]), TRUE);
 
-    CfOut(cf_error, "", "!! WMI (disphelper) error: \"%s\" (%s)", dhErrMsg, str);
+    CfOut(OUTPUT_LEVEL_ERROR, "", "!! WMI (disphelper) error: \"%s\" (%s)", dhErrMsg, str);
 }
 
 /*****************************************************************************/
@@ -176,19 +176,19 @@ static int NovaWin_WmiInitialize(void)
 
     if (FAILED(dhInitialize(TRUE)))
     {
-        CfOut(cf_error, "dhInitialize", "!! Could not initialize disphelper");
+        CfOut(OUTPUT_LEVEL_ERROR, "dhInitialize", "!! Could not initialize disphelper");
         return false;
     }
 
     // Debug: call with TRUE to enable dialog box error messages
     if (FAILED(dhToggleExceptions(FALSE)))
     {
-        CfOut(cf_error, "dhToggleExceptions", "!! Could not control disphelper exception messages");
+        CfOut(OUTPUT_LEVEL_ERROR, "dhToggleExceptions", "!! Could not control disphelper exception messages");
     }
 
     if (FAILED(dhGetObject(L"winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\cimv2", NULL, &wmiSvc)))
     {
-        CfOut(cf_error, "dhGetObject", "!! Could not obtain WMI object");
+        CfOut(OUTPUT_LEVEL_ERROR, "dhGetObject", "!! Could not obtain WMI object");
         return false;
     }
 

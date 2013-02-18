@@ -178,14 +178,14 @@ void AnalyzePromiseConflicts(void)
                         {
                             if (count++ == 0)
                             {
-                                CfOut(cf_inform, "",
+                                CfOut(OUTPUT_LEVEL_INFORM, "",
                                       "I: The resource \"%s\" makes a number of possibly conflicting promises: ",
                                       p1->handle);
-                                CfOut(cf_inform, "", "\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",
+                                CfOut(OUTPUT_LEVEL_INFORM, "", "\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",
                                       count, p1->filename, p1->line_number, p1->classes);
                                 count++;
                             }
-                            CfOut(cf_inform, "", "\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",
+                            CfOut(OUTPUT_LEVEL_INFORM, "", "\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",
                                   count, p2->filename, p2->line_number, p2->classes);
                         }
 
@@ -202,7 +202,7 @@ void AnalyzePromiseConflicts(void)
             {
                 if (FullTextMatch(p1->handle, PROMISER_LIST[i]->handle))
                 {
-                    CfOut(cf_inform, "", " ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",
+                    CfOut(OUTPUT_LEVEL_INFORM, "", " ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",
                           p1->handle, PROMISER_LIST[i]->handle, PROMISER_LIST[i]->filename,
                           PROMISER_LIST[i]->line_number);
                 }
@@ -270,13 +270,13 @@ static void Nova_DefineHubMaster(void)
     {
         if ((hp = gethostbyname(master)) == NULL)
         {
-            CfOut(cf_verbose, "", "Hostname lookup failed on node name \"%s\"\n", master);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Hostname lookup failed on node name \"%s\"\n", master);
         }
         else
         {
             memset(&cin, 0, sizeof(cin));
             cin.sin_addr.s_addr = ((struct in_addr *) (hp->h_addr))->s_addr;
-            CfOut(cf_verbose, "", "Address given by nameserver: %s\n", inet_ntoa(cin.sin_addr));
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Address given by nameserver: %s\n", inet_ntoa(cin.sin_addr));
             master[0] = '\0';
             strcpy(master, inet_ntoa(cin.sin_addr));
         }
@@ -444,7 +444,7 @@ void NotePromiseCompliance(const Promise *pp, double val, PromiseState state, ch
 
     if ((fp = fopen(name, "a")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Could not open \"%s\"", name);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Could not open \"%s\"", name);
         return;
     }
 
@@ -489,7 +489,7 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
         new_value.notkept = notkept;
     }
 
-    CfOut(cf_verbose, "", " -> recording value (%.4lf,%.4lf,%.4lf)", kept, repaired, notkept);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> recording value (%.4lf,%.4lf,%.4lf)", kept, repaired, notkept);
     WriteDB(dbp, key, &new_value, sizeof(PromiseValue));
     CloseDB(dbp);
 }
@@ -668,7 +668,7 @@ void LogTotalCompliance(const char *version, int background_tasks)
              PR_KEPT_INTERNAL + PR_REPAIRED_INTERNAL + PR_NOTKEPT_INTERNAL);
 
 
-    CfOut(cf_verbose, "", "%s", str_compliance);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "%s", str_compliance);
 
     PromiseLog(str_compliance);
 }

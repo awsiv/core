@@ -35,25 +35,25 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
     char destination[CF_BUFSIZE];
     struct stat sb, dsb;
 
-    CfOut(cf_verbose, "", " -> Updating the difference engine with \"%s\"", file);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Updating the difference engine with \"%s\"", file);
 
     if (cfstat(file, &sb) == -1)
     {
-        CfOut(cf_verbose, "", "!! Cannot stat file \"%s\" - skipping", file);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Cannot stat file \"%s\" - skipping", file);
         return;
     }
 
     if (Nova_FileIsBinary(file, sb.st_size, NOVA_MAXDIFFSIZE))
     {
-        cfPS(cf_error, CF_FAIL, "", pp, a,
+        cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a,
              "!! File \"%s\" is either too large to diff or contains binary chars -- skipping", file);
         return;
     }
 
     if (a.havedepthsearch)
     {
-        CfOut(cf_error, "", "!! You may not use change detail logging on depth searches");
-        PromiseRef(cf_error, pp);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! You may not use change detail logging on depth searches");
+        PromiseRef(OUTPUT_LEVEL_ERROR, pp);
         return;
     }
 
@@ -91,12 +91,12 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
 
         if (CopyRegularFile(file, destination, sb, dsb, a, pp, report_context))
         {
-            CfOut(cf_verbose, "", " -> Cached change-file %s to repository location %s\n", file, destination);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Cached change-file %s to repository location %s\n", file, destination);
             return;
         }
         else
         {
-            CfOut(cf_verbose, "", " -> Cached change-file %s to repository location %s\n", file, destination);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Cached change-file %s to repository location %s\n", file, destination);
             return;
         }
     }
@@ -120,12 +120,12 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
  can use what they like to compare the files - diff cannot always show something
  helpful */
 
-    CfOut(cf_verbose, "", " -> Nova Analysis of changes on file %s\n", file);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Nova Analysis of changes on file %s\n", file);
 
     strncpy(datestr, cf_ctime(&now), CF_MAXVARSIZE - 1);
     if (Chop(datestr, CF_EXPANDSIZE) == -1)
     {
-        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
     }
 
     snprintf(logname, CF_BUFSIZE - 1, "%s%c%s", CFWORKDIR, FILE_SEPARATOR, NOVA_DIFF_LOG);
@@ -133,7 +133,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
 
     if ((fout = fopen(logname, "a")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Unable to open change log %s\n", logname);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Unable to open change log %s\n", logname);
         return;
     }
 
@@ -153,7 +153,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb,
     {
         // shouldn't happen, we test for this in calling function
         fprintf(fout, "+,0,(binary file)\n");
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "!! Cannot view content differences on a binary or huge files, you may inspect %s and %s manually", file,
               destination);
     }
@@ -179,13 +179,13 @@ static int Nova_GetFirstChangePosition(char *file, char *destination)
 
     if ((fin1 = fopen(file, "r")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Unable to read the changed file %s", file);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Unable to read the changed file %s", file);
         return 0;
     }
 
     if ((fin2 = fopen(destination, "r")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Unable to read the changed save-file %s", destination);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Unable to read the changed save-file %s", destination);
         fclose(fin1);
         return 0;
     }
@@ -291,11 +291,11 @@ static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int m
     FileLine *flp1, *flp2;
     int len1, len2;
 
-    CfOut(cf_verbose, "", " -> Reporting on file changes to \"%s\"\n", file);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Reporting on file changes to \"%s\"\n", file);
 
     if (!Nova_LoadFileHunks(file, destination, &list1, &list2, &len1, &len2, maxsize))
     {
-        CfOut(cf_inform, "", " !! Unable to find reference files for diff of \"%s\"", file);
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to find reference files for diff of \"%s\"", file);
         return;
     }
 
@@ -350,13 +350,13 @@ static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, F
 
     if ((fin1 = fopen(file, "r")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Unable to read the changed file %s", file);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Unable to read the changed file %s", file);
         return 0;
     }
 
     if ((fin2 = fopen(destination, "r")) == NULL)
     {
-        CfOut(cf_error, "fopen", " !! Unable to read the changed save-file %s", destination);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", " !! Unable to read the changed save-file %s", destination);
         fclose(fin1);
         return 0;
     }
@@ -388,7 +388,7 @@ static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, F
 
         if (size / 2 > maxsize)
         {
-            CfOut(cf_inform, "", " !! Files exceeded maxiumum size %d during change reporting on \"%s\"", maxsize,
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Files exceeded maxiumum size %d during change reporting on \"%s\"", maxsize,
                   file);
             break;
         }

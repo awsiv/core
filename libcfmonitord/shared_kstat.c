@@ -12,7 +12,7 @@ kstat_ctl_t *GetKstatHandle(void)
         kstat = kstat_open();
         if (!kstat)
         {
-            CfOut(cf_error, "kstat_open", "Unable to open Solaris kstat subsystem");
+            CfOut(OUTPUT_LEVEL_ERROR, "kstat_open", "Unable to open Solaris kstat subsystem");
         }
     }
     else

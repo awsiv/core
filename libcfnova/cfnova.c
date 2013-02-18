@@ -36,7 +36,7 @@ void Nova_Initialize()
     }
     else
     {
-        CfOut(cf_verbose, "", " ** CFEngine Nova is operating in FIPS 140-2 validated mode");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " ** CFEngine Nova is operating in FIPS 140-2 validated mode");
     }
 #else
     if (FIPS_MODE)
@@ -175,16 +175,16 @@ int CfSessionKeySize(char c)
     {
     case 'c':
         /* This part should only occur on the server side */
-        CfOut(cf_verbose, "", " !! Community level client connection to enterprise server");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Community level client connection to enterprise server");
         return CF_BLOWFISHSIZE;
 
     case 'N':
-        CfOut(cf_verbose, "", " -> Selecting FIPS compliant encryption option");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Selecting FIPS compliant encryption option");
         return CF_FIPS_SIZE;
 
     default:
-        CfOut(cf_error, "", " !! Illegal client protocol connection type");
-        CfOut(cf_log, "", " !! Illegal client connection to enterprise server");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! Illegal client protocol connection type");
+        CfOut(OUTPUT_LEVEL_LOG, "", " !! Illegal client connection to enterprise server");
         return CF_BLOWFISHSIZE;
     }
 }
@@ -218,19 +218,19 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
 
     if (LICENSES == 0)
     {
-        CfOut(cf_verbose, "", " !! The license has expired on this feature");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! The license has expired on this feature");
         snprintf(recvbuffer, CF_BUFSIZE - 1, "BAD:");
         return recvbuffer;
     }
 
-    CfOut(cf_verbose, "", " -> * Hailing %s:%u for remote handle \"%s\"\n", peer, (unsigned int) a.copy.portnumber,
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> * Hailing %s:%u for remote handle \"%s\"\n", peer, (unsigned int) a.copy.portnumber,
           handle);
 
     conn = NewServerConnection(a, pp);
 
     if (conn == NULL)
     {
-        CfOut(cf_inform, "", " !! No suitable server responded to hail\n");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! No suitable server responded to hail\n");
         DisconnectServer(conn);
         RlistDestroy(a.copy.servers);
         PromiseDestroy(pp);
@@ -244,7 +244,7 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
 
         if ((cipherlen = EncryptString('N', in, out, conn->session_key, strlen(in) + 1)) < 0)
         {
-            CfOut(cf_error, "", " !! Encryption failed for \"%s\"", in);
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! Encryption failed for \"%s\"", in);
             return recvbuffer;
         }
 
@@ -260,7 +260,7 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
 
     if (SendTransaction(conn->sd, sendbuffer, tosend, CF_DONE) == -1)
     {
-        cfPS(cf_error, CF_INTERPT, "send", pp, a, "Failed send");
+        cfPS(OUTPUT_LEVEL_ERROR, CF_INTERPT, "send", pp, a, "Failed send");
         DisconnectServer(conn);
         RlistDestroy(a.copy.servers);
         PromiseDestroy(pp);
@@ -270,8 +270,8 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
 
     if ((n = ReceiveTransaction(conn->sd, recvbuffer, NULL)) == -1)
     {
-        cfPS(cf_error, CF_INTERPT, "recv", pp, a, "Failed send");
-        CfOut(cf_verbose, "", "No answer from host\n");
+        cfPS(OUTPUT_LEVEL_ERROR, CF_INTERPT, "recv", pp, a, "Failed send");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "No answer from host\n");
         DisconnectServer(conn);
         RlistDestroy(a.copy.servers);
         PromiseDestroy(pp);
@@ -308,7 +308,7 @@ int RetrieveUnreliableValue(char *caller, char *handle, char *buffer)
 
     snprintf(key, CF_BUFSIZE - 1, "%s_%s", caller, handle);
 
-    CfOut(cf_verbose, "", "Checking cache for last available value");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Checking cache for last available value");
 
     memset(buffer, 0, CF_BUFSIZE);
 
@@ -329,7 +329,7 @@ void CacheUnreliableValue(char *caller, char *handle, char *buffer)
 
     snprintf(key, CF_BUFSIZE - 1, "%s_%s", caller, handle);
 
-    CfOut(cf_verbose, "", " -> Caching value \"%s\" for fault tolerance", buffer);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Caching value \"%s\" for fault tolerance", buffer);
 
     if (!OpenDB(&dbp, dbid_cache))
     {

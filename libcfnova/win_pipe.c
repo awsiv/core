@@ -37,7 +37,7 @@ static FILE *CreateEmptyStream()
 
     if (fp == NULL)
     {
-        CfOut(cf_error, "", "!! Open of NULLFILE failed");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Open of NULLFILE failed");
         return NULL;
     }
 
@@ -46,7 +46,7 @@ static FILE *CreateEmptyStream()
 
     if (!feof(fp))
     {
-        CfOut(cf_error, "", "!! Could not create empty stream");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create empty stream");
         fclose(fp);
         return NULL;
     }
@@ -88,17 +88,17 @@ FILE *cf_popensetuid(const char *command, char *type, uid_t uid, gid_t gid, char
 
     if (uid != CF_UNDEFINED)
     {
-        CfOut(cf_verbose, "", "cf_popensetuid: uid is ignored on Windows");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "cf_popensetuid: uid is ignored on Windows");
     }
 
     if (gid != CF_UNDEFINED)
     {
-        CfOut(cf_verbose, "", "cf_popensetuid: gid is ignored on Windows");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "cf_popensetuid: gid is ignored on Windows");
     }
 
     if (chrootv != NULL)
     {
-        CfOut(cf_verbose, "", "cf_popensetuid: chrootv is ignored on Windows");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "cf_popensetuid: chrootv is ignored on Windows");
     }
 
     return OpenProcessPipe(command, false, chdirv, type, background);
@@ -121,7 +121,7 @@ FILE *cf_popen_shsetuid(const char *command, char *type, uid_t uid, gid_t gid, c
     }
     else
     {
-        CfOut(cf_error, "", "!! Starting process with uid=%d, gid=%d, chrootv=%s is unsupported on NT.", uid, gid,
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Starting process with uid=%d, gid=%d, chrootv=%s is unsupported on NT.", uid, gid,
               chrootv);
         return NULL;
     }
@@ -134,20 +134,20 @@ int cf_pclose(FILE *pp)
 
     if (!PopDescriptorPair(pp, &procHandle))
     {
-        CfOut(cf_error, "", "!! Could not find process corresponding to pipe");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not find process corresponding to pipe");
         return -1;
     }
 
     if (!CloseHandle(procHandle))
     {
-        CfOut(cf_error, "CloseHandle", "!! Could not close process handle");
+        CfOut(OUTPUT_LEVEL_ERROR, "CloseHandle", "!! Could not close process handle");
     }
 
     closeRes = fclose(pp);
 
     if (closeRes != 0)
     {
-        CfOut(cf_error, "fclose", "!! Could not close pipe stream");
+        CfOut(OUTPUT_LEVEL_ERROR, "fclose", "!! Could not close pipe stream");
     }
 
     return closeRes;
@@ -160,25 +160,25 @@ int cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
 
     if (!PopDescriptorPair(pfp, &procHandle))
     {
-        CfOut(cf_error, "", "!! Could not find process corresponding to pipe");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not find process corresponding to pipe");
         return -1;
     }
 
     if (!GetExitCodeProcess(procHandle, &exitCode))
     {
-        CfOut(cf_error, "GetExitCodeProcess", "!! Error getting exit code");
-        cfPS(cf_error, CF_FAIL, "", pp, a, " !! Could not get exit code of process %s", pp->promiser);
+        CfOut(OUTPUT_LEVEL_ERROR, "GetExitCodeProcess", "!! Error getting exit code");
+        cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, " !! Could not get exit code of process %s", pp->promiser);
         return -1;
     }
 
     if (!CloseHandle(procHandle))
     {
-        CfOut(cf_error, "CloseHandle", "!! Could not close process handle");
+        CfOut(OUTPUT_LEVEL_ERROR, "CloseHandle", "!! Could not close process handle");
     }
 
     if (fclose(pfp) != 0)
     {
-        CfOut(cf_error, "fclose", "!! Could not close pipe stream (in def)");
+        CfOut(OUTPUT_LEVEL_ERROR, "fclose", "!! Could not close pipe stream (in def)");
     }
 
     VerifyCommandRetcode(exitCode, true, a, pp);
@@ -204,13 +204,13 @@ static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, cha
 
     if ((*type != 'r' && *type != 'w') || (type[1] != '\0'))
     {
-        CfOut(cf_error, "", "!! Pipe type is not 'r' or 'w' - shouldn't happen");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Pipe type is not 'r' or 'w' - shouldn't happen");
         return NULL;
     }
 
     if (!InitializePipes(&childInWrite, &childInRead, &childOutWrite, &childOutRead))
     {
-        CfOut(cf_error, "", "!! Could not create pipes");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create pipes");
         return NULL;
     }
 
@@ -224,7 +224,7 @@ static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, cha
 
     if (!NovaWin_RunCmd(comm, useshell, true, startDir, &si, &childProcess))
     {
-        CfOut(cf_error, "", "!! Error running command");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Error running command");
         return NULL;
     }
 
@@ -262,14 +262,14 @@ static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, cha
 
         if (streamPipe == NULL)
         {
-            CfOut(cf_error, "", "!! Error converting file handle");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Error converting file handle");
             return NULL;
         }
     }
 
     if (!SaveDescriptorPair(streamPipe, childProcess))
     {
-        CfOut(cf_error, "", "!! Error saving descriptor pair");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Error saving descriptor pair");
         return NULL;
     }
 
@@ -293,27 +293,27 @@ static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *ch
     // pipe for child's stdout and stderr
     if (!CreatePipe(childOutRead, childOutWrite, &saAttr, 0))
     {
-        CfOut(cf_error, "CreatePipe", "!! Could not create pipe");
+        CfOut(OUTPUT_LEVEL_ERROR, "CreatePipe", "!! Could not create pipe");
         return false;
     }
 
     // read handle to child's stdout should not be inherited
     if (!SetHandleInformation(*childOutRead, HANDLE_FLAG_INHERIT, 0))
     {
-        CfOut(cf_error, "SetHandleInformation", "!! Could not set handle information");
+        CfOut(OUTPUT_LEVEL_ERROR, "SetHandleInformation", "!! Could not set handle information");
         return false;
     }
 
     // pipe for child's stdin
     if (!CreatePipe(childInRead, childInWrite, &saAttr, 0))
     {
-        CfOut(cf_error, "CreatePipe", "!! Could not create pipe");
+        CfOut(OUTPUT_LEVEL_ERROR, "CreatePipe", "!! Could not create pipe");
         return false;
     }
 
     if (!SetHandleInformation(*childInWrite, HANDLE_FLAG_INHERIT, 0))
     {
-        CfOut(cf_error, "SetHandleInformation", "!! Could not set handle information");
+        CfOut(OUTPUT_LEVEL_ERROR, "SetHandleInformation", "!! Could not set handle information");
         return false;
     }
 
@@ -339,7 +339,7 @@ static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle)
         if (i == MAX_PIPES)
         {
             ThreadUnlock(cft_count);
-            CfOut(cf_error, "", "!! Too many open pipes");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Too many open pipes");
             return false;
         }
     }
@@ -371,7 +371,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
         if (i == MAX_PIPES)
         {
             ThreadUnlock(cft_count);
-            CfOut(cf_error, "", "!! Pipe descriptor was not found");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Pipe descriptor was not found");
             return false;
         }
     }
@@ -402,7 +402,7 @@ bool PipeToPid(pid_t *pid, FILE *pipe)
         if (i == MAX_PIPES)
         {
             ThreadUnlock(cft_count);
-            CfOut(cf_error, "", "!! Pipe descriptor was not found");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Pipe descriptor was not found");
             return false;
         }
     }
@@ -420,7 +420,7 @@ bool IsReadReady(int fd, int timeout_sec)
 {
     // TODO: Use e.g. WaitForSingleObject() on Windows.
     //       select() does not work on pipes on Windows
-    CfOut(cf_verbose, "", "No timeout on reads on Windows");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "No timeout on reads on Windows");
 
     return true;
 }

@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                CfOut(cf_error, "", "Unable to connect to enterprise database");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to connect to enterprise database");
             }
         }
 
@@ -292,7 +292,7 @@ static GenericAgentConfig *CheckOpts(int argc, char **argv)
 
     if (argv[optind] != NULL)
     {
-        CfOut(cf_error, "", "Unexpected argument with no preceding option: %s\n", argv[optind]);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unexpected argument with no preceding option: %s\n", argv[optind]);
     }
 
     return config;
@@ -345,7 +345,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
 
             if (GetVariable("control_hub", cp->lval, &retval) == DATA_TYPE_NONE)
             {
-                CfOut(cf_error, "", "Unknown lval %s in hub control body", cp->lval);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unknown lval %s in hub control body", cp->lval);
                 continue;
             }
 
@@ -392,7 +392,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                     || !strcmp((const char *)retval.item, "on") == 0
                     || !strcmp((const char *)retval.item, "off") == 0)
                 {
-                    CfOut(cf_error, "", "export_zenoss now requires a full path to summary.z file");
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "export_zenoss now requires a full path to summary.z file");
                     CFH_ZENOSS = false;
                 }
                 else
@@ -401,7 +401,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
                     strlcpy(ZENOSS_PATH, (const char*)retval.item, CF_BUFSIZE);
                 }
 
-                CfOut(cf_verbose, "", "SET export_zenoss = %d\n", CFH_ZENOSS);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", "SET export_zenoss = %d\n", CFH_ZENOSS);
                 continue;
             }
 
@@ -409,7 +409,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
             {
                 SHORT_CFENGINEPORT = htons((short) Str2Int((const char *) retval.item));
                 strncpy(STR_CFENGINEPORT, (const char *) retval.item, 15);
-                CfOut(cf_verbose, "", "SET default portnumber = %u = %s = %s\n", (int) SHORT_CFENGINEPORT, STR_CFENGINEPORT,
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", "SET default portnumber = %u = %s = %s\n", (int) SHORT_CFENGINEPORT, STR_CFENGINEPORT,
                       (const char *) retval.item);
                 continue;
             }
@@ -485,10 +485,10 @@ void SplayLongUpdates(void)
 
     DeleteDBCursor(dbp, dbcp);
 
-    CfOut(cf_verbose, "", " -> Marshalling full updates within a minimal max-entropy pattern");
-    CfOut(cf_verbose, "", " -> A total of %d hosts made known hails.", count);
-    CfOut(cf_verbose, "", " -> Oldest non-expired hail at %s", cf_ctime(&min));
-    CfOut(cf_verbose, "", " -> Most recent hail at %s", cf_ctime(&max));
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Marshalling full updates within a minimal max-entropy pattern");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> A total of %d hosts made known hails.", count);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Oldest non-expired hail at %s", cf_ctime(&min));
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Most recent hail at %s", cf_ctime(&max));
 
 // Assume a full update might take 2s => we can do 150 in each time slot, say 100
 
@@ -498,12 +498,12 @@ void SplayLongUpdates(void)
     total_slots = count / 100 + 1;
     optimum_splay_interval = 300 * total_slots; // In seconds
 
-    CfOut(cf_verbose, "", " -> Optimum splay renormalizes to %d mins for %d hosts, i.e. %d update slot(s)",
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Optimum splay renormalizes to %d mins for %d hosts, i.e. %d update slot(s)",
           optimum_splay_interval / 60, count, total_slots);
 
     if (optimum_splay_interval > BIG_UPDATES * 3600)
     {
-        CfOut(cf_verbose, "", " !! Warning, the host count is exceeds the supported limits");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Warning, the host count is exceeds the supported limits");
     }
 
     slots = xmalloc(total_slots);
@@ -542,7 +542,7 @@ void SplayLongUpdates(void)
         }
         else
         {
-            CfOut(cf_verbose, "", " -> Want to set update of %s to %s\n", key, cf_ctime(&update.time));
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Want to set update of %s to %s\n", key, cf_ctime(&update.time));
         }
     }
 
@@ -565,7 +565,7 @@ static int ScheduleRun(void)
 
     if (EnterpriseExpiry())
     {
-        CfOut(cf_error, "", "Cfengine - autonomous configuration engine. This enterprise license is invalid.\n");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Cfengine - autonomous configuration engine. This enterprise license is invalid.\n");
         exit(1);
     }
 
@@ -601,7 +601,7 @@ static int ScheduleRun(void)
 
         if (IsDefinedClass(ip->name, NULL))
         {
-            CfOut(cf_verbose, "", "Waking up the agent at %s ~ %s \n", cf_ctime(&CFSTARTTIME), ip->name);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Waking up the agent at %s ~ %s \n", cf_ctime(&CFSTARTTIME), ip->name);
             return true;
         }
     }
@@ -657,7 +657,7 @@ static void StartHub(void)
 
     if ((!NO_FORK) && (fork() != 0))
     {
-        CfOut(cf_inform, "", "cf-hub starting %.24s\n", cf_ctime(&now));
+        CfOut(OUTPUT_LEVEL_INFORM, "", "cf-hub starting %.24s\n", cf_ctime(&now));
         _exit(0);
     }
 
@@ -689,7 +689,7 @@ static void StartHub(void)
 
         if (ScheduleRun())
         {
-            CfOut(cf_verbose, "", " -> Wake up");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Wake up");
 
             HardClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
@@ -697,7 +697,7 @@ static void StartHub(void)
                 Nova_CollectReports();
 
                 /* Collect Diagnostics */
-                CfOut(cf_verbose, "",
+                CfOut(OUTPUT_LEVEL_VERBOSE, "",
                       "Diagnostics - collecting MongoDB snapshot at %d",
                       (int)start);
                 DiagnosticsMakeMongoSnapshot(start);
@@ -775,7 +775,7 @@ static bool RemoveFinishedPid(pid_t finished, pid_t *children, int *nchildren)
     {
         if (children[i] == finished)
         {
-            CfOut(cf_verbose, "", "Reaped finished hostscan subprocess, pid %d", finished);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Reaped finished hostscan subprocess, pid %d", finished);
             memmove(children + i, children + i + 1, sizeof(pid_t) * (*nchildren - i - 1));
             (*nchildren)--;
             return true;
@@ -841,14 +841,14 @@ static void Nova_ParallelizeScan(Item *masterlist)
             pid_t child = Nova_ScanList(list[i]);
 
             children[nchildren++] = child;
-            CfOut(cf_verbose, "", "Started new hostscan subprocess, %d/%d, pid %d", nchildren, SCAN_CHILDREN, child);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Started new hostscan subprocess, %d/%d, pid %d", nchildren, SCAN_CHILDREN, child);
             DeleteItemList(list[i]);
         }
     }
 
     while (nchildren)
     {
-        CfOut(cf_verbose, "", "Awaiting %d hostscan processes to finish", nchildren);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Awaiting %d hostscan processes to finish", nchildren);
 
         int status;
         pid_t finished = wait(&status);
@@ -859,14 +859,14 @@ static void Nova_ParallelizeScan(Item *masterlist)
             {
                 continue;
             }
-            CfOut(cf_error, "wait", "Error waiting hostscan processes to finish");
+            CfOut(OUTPUT_LEVEL_ERROR, "wait", "Error waiting hostscan processes to finish");
             return;
         }
 
         RemoveFinishedPid(finished, children, &nchildren);
     }
 
-    CfOut(cf_verbose, "", "All hostscan processes finished execution");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "All hostscan processes finished execution");
 }
 
 /********************************************************************/
@@ -876,15 +876,15 @@ static pid_t Nova_ScanList(Item *list)
     Item *ip;
     pid_t child_id;
 
-    CfOut(cf_verbose, "", "----------------------------------------------------------------\n");
-    CfOut(cf_verbose, "", " Initiating scan on: ");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "----------------------------------------------------------------\n");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " Initiating scan on: ");
 
     for (ip = list; ip != NULL; ip = ip->next)
     {
-        CfOut(cf_verbose, "", " ? %s ", ip->name);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " ? %s ", ip->name);
     }
 
-    CfOut(cf_verbose, "", "----------------------------------------------------------------\n");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "----------------------------------------------------------------\n");
 
     child_id = fork();
 
@@ -918,7 +918,7 @@ static void Nova_SetPersistentScalar(char *lval, char *rval)
         return;
     }
 
-    CfOut(cf_verbose, "", " -> Setting persistent hub knowledge: %s =>\"%s\"", lval, rval);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Setting persistent hub knowledge: %s =>\"%s\"", lval, rval);
     WriteDB(dbp, lval, &new, sizeof(PersistentScalar));
     CloseDB(dbp);
 }
@@ -955,7 +955,7 @@ static void Nova_CountMonitoredClasses(void)
 
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     for (ip = order_results; ip != NULL; ip = ip->next)
@@ -986,7 +986,7 @@ void Nova_HubLog(const char *fmt, ...)
 
     if ((fout = fopen(filename, "a")) == NULL)
     {
-        CfOut(cf_error, "fopen", "Could not open %s", filename);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Could not open %s", filename);
         return;
     }
     
@@ -1016,7 +1016,7 @@ static void CollectSchedulerChildAndSleep(int wait_seconds)
     {
         if (!IsSchedulerProcRunning())
         {
-            CfOut(cf_verbose, "", "Sleeping...");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Sleeping...");
             sleep(wait_seconds);
             return;
         }
@@ -1146,7 +1146,7 @@ static void Nova_ZenossSummary(const char *docroot)
 
     if (!CFDB_Close(&conn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 #endif
 

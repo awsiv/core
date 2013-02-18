@@ -66,7 +66,7 @@ void RunScheduledEnterpriseReports(void)
 
     if (pid == -1)
     {
-        CfOut(cf_error, "fork", "Unable to start Enterprise Report Scheduler process");
+        CfOut(OUTPUT_LEVEL_ERROR, "fork", "Unable to start Enterprise Report Scheduler process");
         return;
     }
 
@@ -81,7 +81,7 @@ void RunScheduledEnterpriseReports(void)
     {
         REPORT_SCHEDULER_CHILD_PID = pid;
 
-        CfOut(cf_verbose, "", " -> Started new Enterprise Report Scheduler process (pid = %jd)", (intmax_t) pid);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Started new Enterprise Report Scheduler process (pid = %jd)", (intmax_t) pid);
         Nova_HubLog("-> Started new Enterprise Report Scheduler process (pid = %jd)\n", (intmax_t) pid);
     }
 }
@@ -327,13 +327,13 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if( !CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
-        CfOut( cf_error, "DBScheduledReportGeneration", "!! Cannot find doc_root" );
+        CfOut( OUTPUT_LEVEL_ERROR, "DBScheduledReportGeneration", "!! Cannot find doc_root" );
         return false;
     }
 
     if( !CFDB_HandleGetValue(cfr_php_bin_dir, php_path, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
     {
-        CfOut(cf_error, "DBScheduledReportGeneration", "!! Cannot find php" );
+        CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledReportGeneration", "!! Cannot find php" );
         return false;
     }
 
@@ -347,7 +347,7 @@ static bool CreateScheduledReport( EnterpriseDB *conn, const char *user, const c
 
     if ((pp = cf_popen(cmd, "r")) == NULL)
     {
-        CfOut( cf_error, "DBScheduledReportGeneration", "!! Could not run command \"%s\"", cmd);
+        CfOut( OUTPUT_LEVEL_ERROR, "DBScheduledReportGeneration", "!! Could not run command \"%s\"", cmd);
         return false;
     }
 
@@ -400,7 +400,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
                 FILE *fp = fopen(path_origin, "w");
                 if (!fp)
                 {
-                    CfOut(cf_error, "DBScheduledCSVReportGeneration",
+                    CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration",
                           "Error opening csv report path for writing, path: %s, errno: %d",
                           path_origin,
                           errno);
@@ -417,7 +417,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
 
                 if (column_count < 0)
                 {
-                    CfOut(cf_error, "DBScheduledCSVReportGeneration", "Error writing CSV header - sql: \"%s\"", query);
+                    CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration", "Error writing CSV header - sql: \"%s\"", query);
 
                     WriterClose(writer);
                     SetDestroy(tables);
@@ -452,7 +452,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
 
         if( !CFDB_HandleGetValue(cfr_mp_install_dir, docroot, CF_MAXVARSIZE - 1, NULL, conn, MONGO_SCRATCH ) )
         {
-            CfOut( cf_error, "DBScheduledCSVReportGeneration", "!! Cannot find doc_root" );
+            CfOut( OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration", "!! Cannot find doc_root" );
             return false;
         }
 
@@ -465,7 +465,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
 
         if (!S_ISDIR(dest_stat.st_mode))
         {
-            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+            CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration",
                   "!! Invalid destination dir: \"%s\" ",
                   dest_dir);
 
@@ -476,7 +476,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         snprintf( path_dest, CF_MAXVARSIZE - 1, "%s/tmp/%s", docroot, filename );
         if( !CopyRegularFileDisk(path_origin, path_dest, false) )
         {
-            CfOut( cf_error, "DBScheduledCSVReportGeneration", "!! Cannot create file: \"%s\" ", path_dest );
+            CfOut( OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration", "!! Cannot create file: \"%s\" ", path_dest );
             return false;
         }
 
@@ -486,7 +486,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         // this file needs to be read by web-user for pdf generation / download
         if (chown(path_dest, dest_stat.st_uid, dest_stat.st_gid) == -1)
         {
-            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+            CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration",
                   "!! Cannot set ownership on file \"%s\", os errno: %d ",
                   path_dest,
                   errno);
@@ -496,7 +496,7 @@ static bool CreateScheduledReportCSV( EnterpriseDB *conn, const char *user, cons
         // remove source file after successful copy
         if (unlink(path_origin) == -1)
         {
-            CfOut(cf_error, "DBScheduledCSVReportGeneration",
+            CfOut(OUTPUT_LEVEL_ERROR, "DBScheduledCSVReportGeneration",
                   "!! Cannot remove source file \"%s\", os errno: %d ",
                   path_origin,
                   errno);
@@ -554,7 +554,7 @@ static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
 
             if( !CFDB_PutValue( conn, cfr_mp_install_dir, docroot, MONGO_SCRATCH) )
             {
-                CfOut( cf_error, "", "!! Couldn't set default path for mp_install_dir");
+                CfOut( OUTPUT_LEVEL_ERROR, "", "!! Couldn't set default path for mp_install_dir");
                 return false;
             }
         }
@@ -587,7 +587,7 @@ static bool SetDefaultPathsForSchedulingReports(EnterpriseDB *conn)
 
         if( !CFDB_PutValue( conn, cfr_php_bin_dir, path_str, MONGO_SCRATCH) )
         {
-            CfOut( cf_error, "", "!! Couldn't set default path for php_bin_dir");
+            CfOut( OUTPUT_LEVEL_ERROR, "", "!! Couldn't set default path for php_bin_dir");
             return false;
         }
     }

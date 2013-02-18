@@ -154,7 +154,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer, int bu
 
     if (start == -1)
     {
-        CfOut(cf_error, "", "!! Could not get start of interval");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get start of interval");
         DeleteHubQuery(hq, DeleteHubCacheTotalCompliance);
         return;
     }

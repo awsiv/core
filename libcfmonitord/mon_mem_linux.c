@@ -68,7 +68,7 @@ static void MonMeminfoGatherData(double *cf_this)
 
     if (!(fh = fopen("/proc/meminfo", "r")))
     {
-        CfOut(cf_error, "fopen", "Unable to open /proc/meminfo");
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Unable to open /proc/meminfo");
         return;
     }
 
@@ -108,7 +108,7 @@ static void MonMeminfoGatherData(double *cf_this)
     }
     else
     {
-        CfOut(cf_error, "", "Unable to parse /proc/meminfo");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to parse /proc/meminfo");
     }
 
     fclose(fh);

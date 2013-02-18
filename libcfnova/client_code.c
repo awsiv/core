@@ -49,11 +49,11 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
 
 /* Send proposition C0 - query */
 
-    CfOut(cf_verbose, "", " -> Sending query at %s", cf_ctime(&now));
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Sending query at %s", cf_ctime(&now));
 
     if (SendTransaction(conn->sd, workbuf, tosend, CF_DONE) == -1)
     {
-        CfOut(cf_error, "send", "Couldn't send data");
+        CfOut(OUTPUT_LEVEL_ERROR, "send", "Couldn't send data");
         return 0;
     }
 
@@ -65,13 +65,13 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
 
         if ((cipherlen = ReceiveTransaction(conn->sd, in, &more)) == -1)
         {
-            CfOut(cf_error, "recv", " !! Failed to collect data");
+            CfOut(OUTPUT_LEVEL_ERROR, "recv", " !! Failed to collect data");
             return 0;
         }
 
         if (strncmp(in, "BAD:", 4) == 0)
         {
-            CfOut(cf_error, "", " !! Abort transmission: got \"%s\" from %s", in + 4, conn->remoteip);
+            CfOut(OUTPUT_LEVEL_ERROR, "", " !! Abort transmission: got \"%s\" from %s", in + 4, conn->remoteip);
             break;
         }
 
@@ -92,7 +92,7 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
 
             if (strcmp(validate, "CFR:") != 0)
             {
-                CfOut(cf_error, "", " !! Invalid report format");
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! Invalid report format");
                 return 0;
             }
 
@@ -100,19 +100,19 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
             now = time(NULL);
             delta2 = now - time2;
 
-            CfOut(cf_verbose, "",
+            CfOut(OUTPUT_LEVEL_VERBOSE, "",
                   " -> Received reply of %ld bytes at %s -> Xfer time %jd seconds (processing time %ld seconds)",
                   length, cf_strtimestamp_local(now, timebuffer), (intmax_t) delta2, now - then);
 
             if (delta2 > 0)
             {
                 datarate = (double) length / (double) delta2;
-                CfOut(cf_verbose, "", " -> Data rate of %lf", datarate);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Data rate of %lf", datarate);
             }
             else
             {
                 delta2 = (now - then) / 2;
-                CfOut(cf_verbose, "", " -> Data rate was unmeasurable (instantaneous) - computing outer boundary");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Data rate was unmeasurable (instantaneous) - computing outer boundary");
                 if (delta2 != 0)
                 {
                     datarate = (double) length / (double) delta2;
@@ -158,7 +158,7 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
     CFDB_SaveLastHostUpdate(dbconn, keyHash);
     CFDB_SaveLastHostUpdateSize(dbconn, keyHash, total_plaintext_len);
     
-    CfOut(cf_verbose, "", "Received %d bytes of report data", total_plaintext_len);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Received %d bytes of report data", total_plaintext_len);
 
     return total_plaintext_len;
 }

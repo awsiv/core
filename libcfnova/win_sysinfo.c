@@ -19,7 +19,7 @@ int NovaWin_GetWinDir(char *winDir, int winDirSz)
 
     if (res == 0 || res > winDirSz)
     {
-        CfOut(cf_error, "GetWindowsDirectory", "Could not get windows directory");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetWindowsDirectory", "Could not get windows directory");
         return false;
     }
 
@@ -35,7 +35,7 @@ int NovaWin_GetSysDir(char *sysDir, int sysDirSz)
 
     if (res == 0 || res > sysDirSz)
     {
-        CfOut(cf_error, "GetSystemDirectory", "!! Could not get system directory");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetSystemDirectory", "!! Could not get system directory");
         return false;
     }
 
@@ -59,7 +59,7 @@ int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz)
 
     if (res == 0 || res > varContentsSz)
     {
-        CfOut(cf_error, "GetEnvironmentVariable", "!! Could not get environment variable \"%s\"", varName);
+        CfOut(OUTPUT_LEVEL_ERROR, "GetEnvironmentVariable", "!! Could not get environment variable \"%s\"", varName);
         return false;
     }
 
@@ -80,7 +80,7 @@ const char *GetDefaultWorkDir(void)
         }
         else
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "!! Could not get CFWORKDIR from Windows environment variable, falling b'ack to compile time dir (%s)",
                   WORKDIR);
             strcpy(workdir, WORKDIR);

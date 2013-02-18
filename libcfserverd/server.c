@@ -57,7 +57,7 @@ static int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t tim
 
     if (!OpenDB(&dbp, dbid_scalars))
     {
-        CfOut(cf_verbose, "", " -> Unable to open db while looking for persistent scalar");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Unable to open db while looking for persistent scalar");
         return false;
     }
 
@@ -66,7 +66,7 @@ static int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t tim
         if (now > var.time + timeout)
         {
             DeleteDB(dbp, lval);
-            CfOut(cf_verbose, "", " -> Persistent scalar timed out (%jd too late), so looking for default",
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Persistent scalar timed out (%jd too late), so looking for default",
                   (intmax_t) now - var.time);
             CloseDB(dbp);
             return false;
@@ -81,7 +81,7 @@ static int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t tim
     else
     {
         CloseDB(dbp);
-        CfOut(cf_verbose, "", " -> Persistent scalar was not found, so looking for default");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Persistent scalar was not found, so looking for default");
         return false;
     }
 }
@@ -97,7 +97,7 @@ int ReturnLiteralData(char *handle, char *recv)
 
     if (Nova_GetPersistentScalar(handle, recv, CF_BUFSIZE - 1, CF_HUB_HORIZON))
     {
-        CfOut(cf_verbose,""," Found a persistent scalar with handle %s authorized for remote access: %s",handle,recv);
+        CfOut(OUTPUT_LEVEL_VERBOSE,""," Found a persistent scalar with handle %s authorized for remote access: %s",handle,recv);
         return true;
     }
     else if (GetVariable("remote_access", handle, &retval) != DATA_TYPE_NONE)
@@ -105,12 +105,12 @@ int ReturnLiteralData(char *handle, char *recv)
         if (retval.type == RVAL_TYPE_SCALAR)
         {
             strncpy(recv, retval.item, CF_BUFSIZE - 1);
-            CfOut(cf_verbose,""," Found a literal string with handle %s authorized for remote access: %s",handle,recv);
+            CfOut(OUTPUT_LEVEL_VERBOSE,""," Found a literal string with handle %s authorized for remote access: %s",handle,recv);
             return true;
         }
         else
         {
-            CfOut(cf_verbose,""," Found nothing with handle %s authorized for remote access",handle);
+            CfOut(OUTPUT_LEVEL_VERBOSE,""," Found nothing with handle %s authorized for remote access",handle);
             return false;
         }
     }
@@ -149,7 +149,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 
     if (delta1 >= 30)
     {
-        CfOut(cf_verbose, "", " !! Poor clock synchronization between peers");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Poor clock synchronization between peers");
     }
 
 // Promise: use valid menu request
@@ -157,19 +157,19 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
     cf_strtimestamp_local(time1, tbuf);
     if (Chop(tbuf, CF_EXPANDSIZE) == -1)
     {
-        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
     }
-    CfOut(cf_verbose, "", " -> Menu request \"%s\" at %s, clock error %jd", menu_name, tbuf, (intmax_t) delta1);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Menu request \"%s\" at %s, clock error %jd", menu_name, tbuf, (intmax_t) delta1);
     cf_strtimestamp_local(from, tbuf);
     if (Chop(tbuf, CF_EXPANDSIZE) == -1)
     {
-        CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
     }
-    CfOut(cf_verbose, "", " -> Menu request starting from %s", tbuf);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Menu request starting from %s", tbuf);
 
     if ((type = String2Menu(menu_name)) == cfd_menu_error)
     {
-        CfOut(cf_verbose, "", " -> Unknown menu type \"%s\"", menu_name);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Unknown menu type \"%s\"", menu_name);
         return false;
     }
 
@@ -186,7 +186,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 
         if (SendTransaction(conn->sd_reply, out, cipherlen, CF_MORE) == -1)
         {
-            CfOut(cf_error, "send", "Failed send");
+            CfOut(OUTPUT_LEVEL_ERROR, "send", "Failed send");
             DeleteItemList(reply);
             return false;
         }
@@ -197,7 +197,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 
     if (SendTransaction(conn->sd_reply, out, cipherlen, CF_DONE) == -1)
     {
-        CfOut(cf_error, "send", "Failed send");
+        CfOut(OUTPUT_LEVEL_ERROR, "send", "Failed send");
         DeleteItemList(reply);
         return false;
     }
@@ -230,7 +230,7 @@ int Nova_AcceptCollectCall(ServerConnectionState *conn)
         long_time_no_see = true;
     }
 
-    CfOut(cf_verbose, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     if ((aconn = ExtractCallBackChannel(conn)) == NULL)
     {
@@ -246,26 +246,26 @@ int Nova_AcceptCollectCall(ServerConnectionState *conn)
     {
         time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
        
-        CfOut(cf_verbose, "", " -> Requesting FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Requesting FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(&dbconn, aconn, "full", last_week);
         
         if (report_len <= 0)
         {
-            CfOut(cf_verbose, "", "Invalidating full query timelock since no data was received this time");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Invalidating full query timelock since no data was received this time");
            
             if (!InvalidateLockTime(lock_id))
             {
-                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not remove full query lock %s", lock_id);
             }
         }
     }
     else
     {
-        CfOut(cf_verbose, "", " -> Hub Requesting differential sensor sweep of satellite %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Hub Requesting differential sensor sweep of satellite %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(&dbconn, aconn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
     }
 
-    CfOut(cf_verbose, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     
     CFDB_Close(&dbconn);
     
@@ -289,15 +289,15 @@ void Nova_DoTryCollectCall(void)
     a.copy.force_ipv4 = false;
     a.copy.portnumber = SHORT_CFENGINEPORT;
 
-    CfOut(cf_verbose,""," -> Going to attempt a collect call to the hub \"%s\" to see if it wants my reports",POLICY_SERVER);
+    CfOut(OUTPUT_LEVEL_VERBOSE,""," -> Going to attempt a collect call to the hub \"%s\" to see if it wants my reports",POLICY_SERVER);
 
     if (HailPeerCollect(POLICY_SERVER, a, pp))
     {
-        CfOut(cf_verbose,""," -> Collect call with hub finished, and I closed the channel");
+        CfOut(OUTPUT_LEVEL_VERBOSE,""," -> Collect call with hub finished, and I closed the channel");
     }
     else
     {
-        CfOut(cf_verbose,""," -> Collect call did not succeed in making contact");
+        CfOut(OUTPUT_LEVEL_VERBOSE,""," -> Collect call did not succeed in making contact");
     }
 
     PromiseDestroy(pp);
@@ -319,15 +319,15 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     Address2Hostkey(ipv4, digest);
     GetCurrentUserName(user, CF_SMALLBUF);
 
-    CfOut(cf_inform, "", "...........................................................................\n");
-    CfOut(cf_inform, "", " * Peer collect call back to hub %s : %u \n", peer, a.copy.portnumber);
-    CfOut(cf_inform, "", "...........................................................................\n");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "...........................................................................\n");
+    CfOut(OUTPUT_LEVEL_INFORM, "", " * Peer collect call back to hub %s : %u \n", peer, a.copy.portnumber);
+    CfOut(OUTPUT_LEVEL_INFORM, "", "...........................................................................\n");
 
     a.copy.servers = RlistFromSplitString(peer, '*');
 
     if (a.copy.servers == NULL || strcmp(a.copy.servers->item, "localhost") == 0)
     {
-        cfPS(cf_inform, CF_NOP, "", pp, a, "No hub is registered to connect to");
+        cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "No hub is registered to connect to");
         return false;
     }
     else
@@ -337,7 +337,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
         if (conn == NULL)
         {
             RlistDestroy(a.copy.servers);
-            CfOut(cf_verbose, "", " -> No suitable hub server responded to hail\n");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> No suitable hub server responded to hail\n");
             return false;
         }
     }
@@ -412,7 +412,7 @@ AgentConnection *ExtractCallBackChannel(ServerConnectionState *conn)
 
     if (!IdentifyAgent(ap->sd, ap->localip, ap->family))
        {
-       CfOut(cf_error, "", " !! Id-authentication for %s failed\n", VFQNAME);
+       CfOut(OUTPUT_LEVEL_ERROR, "", " !! Id-authentication for %s failed\n", VFQNAME);
        errno = EPERM;
        PromiseDestroy(pp);
        return NULL;
@@ -420,7 +420,7 @@ AgentConnection *ExtractCallBackChannel(ServerConnectionState *conn)
 
     if (!AuthenticateAgent(ap, attr, pp))
        {
-       CfOut(cf_error, "", " !! Authentication dialogue on callback failed\n");
+       CfOut(OUTPUT_LEVEL_ERROR, "", " !! Authentication dialogue on callback failed\n");
        errno = EPERM;
        PromiseDestroy(pp);
        return NULL;
@@ -448,13 +448,13 @@ int Nova_PlaceCollectCall(AgentConnection *conn)
 
     /* Remote client formulates the query to send to the receiver */
 
-    CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    CfOut(cf_verbose, "", " -> Collect calling hub at %s", cf_ctime(&now));
-    CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Collect calling hub at %s", cf_ctime(&now));
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
     if (SendTransaction(conn->sd, workbuf, tosend, CF_DONE) == -1)
     {
-        CfOut(cf_error, "send", "Couldn't send data");
+        CfOut(OUTPUT_LEVEL_ERROR, "send", "Couldn't send data");
         return false;
     }
 
@@ -481,7 +481,7 @@ void TryCollectCall(void)
     pthread_t tid;
     pthread_attr_t threadattrs;
 
-    CfOut(cf_verbose, "", " -> Spawning new thread for the collect call...\n");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Spawning new thread for the collect call...\n");
 
     pthread_attr_init(&threadattrs);
     pthread_attr_setdetachstate(&threadattrs, PTHREAD_CREATE_DETACHED);
@@ -499,16 +499,16 @@ void TryCollectCall(void)
 int ReceiveCollectCall(ServerConnectionState *conn, char *sendbuffer)
 {
 #if defined(HAVE_LIBMONGOC)
-    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-    CfOut(cf_verbose, "", "  Hub: Accepting Collect Call from %s ", conn->hostname);
-    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "  Hub: Accepting Collect Call from %s ", conn->hostname);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     return Nova_AcceptCollectCall(conn);
 #else
 
-    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-    CfOut(cf_verbose, "", "  Collect Call is only supported on the hub ");
-    CfOut(cf_verbose, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "  Collect Call is only supported on the hub ");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     return false;
 #endif

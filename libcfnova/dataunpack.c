@@ -49,7 +49,7 @@ static const char *CF_CODEBOOK[] =
 
 static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Performance data ...................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Performance data ...................");
 
     if (dbconn)
     {
@@ -77,7 +77,7 @@ static void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Class data .................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Class data .................");
 
     if (dbconn)
     {
@@ -104,7 +104,7 @@ static void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> setuid data ......................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> setuid data ......................");
 
     if (dbconn)
     {
@@ -124,7 +124,7 @@ static void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Old File change data....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Old File change data....................");
 
     if (dbconn)
     {
@@ -151,7 +151,7 @@ static void Nova_UnPackFileChangesOld(EnterpriseDB *dbconn, char *id, Item *data
 
 static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> File change data....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> File change data....................");
 
     if (dbconn)
     {
@@ -180,7 +180,7 @@ static void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> File diff data...................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> File diff data...................");
 
     if (dbconn)
     {
@@ -230,8 +230,8 @@ static void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
-    CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier -- skipped");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor weekly data.....................");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier -- skipped");
 
 #ifdef NEVERDEFINED             //HAVE_LIBMONGOC
     if (dbconn)
@@ -273,8 +273,8 @@ static void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
-    CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier -- skipped");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor magnified data.....................");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier -- skipped");
 
 #ifdef NEVERDEFINED             //HAVE_LIBMONGOC
     if (dbconn)
@@ -312,8 +312,8 @@ static void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor year data.....................");
-    CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier -- skipped");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor year data.....................");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier -- skipped");
 
 #ifdef NEVERDEFINED             //HAVE_LIBMONGOC
     if (dbconn)
@@ -352,8 +352,8 @@ static void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor histogram data.....................");
-    CfOut(cf_inform, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor histogram data.....................");
+    CfOut(OUTPUT_LEVEL_INFORM, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
 
 #ifdef NEVERDEFINED             // HAVE_LIBMONGOC
     if (dbconn)
@@ -375,7 +375,7 @@ static void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor histogram data.....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor histogram data.....................");
 
     if (dbconn)
     {
@@ -395,7 +395,7 @@ static void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor magnified data.....................");
 
     if (dbconn)
     {
@@ -415,7 +415,7 @@ static void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor weekly data.....................");
 
     if (dbconn)
     {
@@ -435,7 +435,7 @@ static void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Monitor year data.....................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Monitor year data.....................");
 
     if (dbconn)
     {
@@ -455,7 +455,7 @@ static void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Promise Compliance data..............");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise Compliance data..............");
 
     if (dbconn)
     {
@@ -497,7 +497,7 @@ static void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Installed software data...............");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Installed software data...............");
 
     if (dbconn)
     {
@@ -525,7 +525,7 @@ static void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Available patch data...................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Available patch data...................");
 
     if (dbconn)
     {
@@ -553,7 +553,7 @@ static void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {    
-    CfOut(cf_verbose, "", " -> Patches installed data.......................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Patches installed data.......................");
 
     if (dbconn)
     {
@@ -581,7 +581,7 @@ static void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Expanded private promise data.............");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Expanded private promise data.............");
 
     if(DEBUG)
     {
@@ -596,7 +596,7 @@ static void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, It
 
 static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Value data..............................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Value data..............................");
 
     if (dbconn)
     {
@@ -622,8 +622,8 @@ static void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 static void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.4 */
 {
-    CfOut(cf_verbose, "", " -> Variable data...........................");
-    CfOut(cf_inform, "",
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Variable data...........................");
+    CfOut(OUTPUT_LEVEL_INFORM, "",
           "!! Deprecated variable data format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
     if (dbconn)
@@ -659,7 +659,7 @@ static void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Variable data with date stamp...........");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Variable data with date stamp...........");
 
     if (dbconn)
     {
@@ -694,7 +694,7 @@ static void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Last-seen data..........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Last-seen data..........................");
 
     if (dbconn)
     {
@@ -736,7 +736,7 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
     long date;
     time_t then;
 
-    CfOut(cf_verbose, "", " -> Total Compliance data......................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Total Compliance data......................");
 
     if (dbconn)
     {
@@ -799,7 +799,7 @@ static void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *dat
 
 static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Repair log data........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Repair log data........................");
 
     if (dbconn)
     {
@@ -825,7 +825,7 @@ static void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Not kept data...........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Not kept data...........................");
 
     if (dbconn)
     {
@@ -851,7 +851,7 @@ static void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Meter data...........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Meter data...........................");
 
     if (dbconn)
     {
@@ -918,7 +918,7 @@ static void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Software dates data...........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Software dates data...........................");
 
     if (dbconn)
     {
@@ -948,7 +948,7 @@ static void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Bundle data...........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Bundle data...........................");
 
     if (dbconn)
     {
@@ -976,7 +976,7 @@ static void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 
 static void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
-    CfOut(cf_verbose, "", " -> Execution status...........................");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Execution status...........................");
 
     char is_blackhost = 'f';
     long delta_schedule = 0;
@@ -1079,7 +1079,7 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report)
     {
         if (strcmp(reply, CF_CODEBOOK[report]) == 0)
         {
-            CfOut(cf_verbose, "", " -> New chapter ... %s", reply);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> New chapter ... %s", reply);
             current_report = report;
             return report;
         }
@@ -1087,7 +1087,7 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report)
 
     if (current_report < 0)
     {
-        CfOut(cf_error, "", " !! Report format is corrupted. Got \"%s\" before codebook", reply);
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! Report format is corrupted. Got \"%s\" before codebook", reply);
         return -1;
     }
 

@@ -77,7 +77,7 @@ static void Nova_SaveFilePosition(char *name, long fileptr)
         return;
     }
 
-    CfOut(cf_verbose, "", "Saving state for %s at %ld\n", name, fileptr);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Saving state for %s at %ld\n", name, fileptr);
     WriteDB(dbp, name, &fileptr, sizeof(long));
     CloseDB(dbp);
 }
@@ -93,7 +93,7 @@ static long Nova_RestoreFilePosition(char *name)
     }
 
     ReadDB(dbp, name, &fileptr, sizeof(long));
-    CfOut(cf_verbose, "", "Resuming state for %s at %ld\n", name, fileptr);
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", "Resuming state for %s at %ld\n", name, fileptr);
     CloseDB(dbp);
     return fileptr;
 }
@@ -122,7 +122,7 @@ static void Nova_DumpSlowlyVaryingObservations(void)
 
     if ((fout = fopen(name, "w")) == NULL)
     {
-        CfOut(cf_error, "fopen", "Unable to save discovery data in %s\n", name);
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Unable to save discovery data in %s\n", name);
         CloseDB(dbp);
         return;
     }
@@ -131,7 +131,7 @@ static void Nova_DumpSlowlyVaryingObservations(void)
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }
@@ -189,7 +189,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 
     if (LICENSES == 0)
     {
-        CfOut(cf_verbose, "", " !! No valid commercial license");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! No valid commercial license");
         return NULL;
     }
 
@@ -197,12 +197,12 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
     {
         if (!IsExecutable(GetArg0(pp->promiser)))
         {
-            cfPS(cf_error, CF_FAIL, "", pp, a, "%s promises to be executable but isn't\n", pp->promiser);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, "%s promises to be executable but isn't\n", pp->promiser);
             return NULL;
         }
         else
         {
-            CfOut(cf_verbose, "", " -> Promiser string contains a valid executable (%s) - ok\n", GetArg0(pp->promiser));
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promiser string contains a valid executable (%s) - ok\n", GetArg0(pp->promiser));
         }
     }
 
@@ -242,7 +242,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
         DeleteItemList(NOVA_DATA[slot].output);
         NOVA_DATA[slot].output = NULL;
 
-        CfOut(cf_inform, "", " -> Sampling \'%s\' ...(timeout=%d,owner=%ju,group=%ju)\n", pp->promiser, a.contain.timeout,
+        CfOut(OUTPUT_LEVEL_INFORM, "", " -> Sampling \'%s\' ...(timeout=%d,owner=%ju,group=%ju)\n", pp->promiser, a.contain.timeout,
               (uintmax_t)a.contain.owner, (uintmax_t)a.contain.group);
 
         start = BeginMeasure();
@@ -261,11 +261,11 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
             long filepos = 0;
             struct stat sb;
 
-            CfOut(cf_verbose, "", " -> Stream \"%s\" is a plain file\n", pp->promiser);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Stream \"%s\" is a plain file\n", pp->promiser);
 
             if (cfstat(pp->promiser, &sb) == -1)
             {
-                CfOut(cf_inform, "stat", " !! Unable to find stream %s\n", pp->promiser);
+                CfOut(OUTPUT_LEVEL_INFORM, "stat", " !! Unable to find stream %s\n", pp->promiser);
                 YieldCurrentLock(thislock);
                 MONITOR_RESTARTED = false;
 
@@ -286,12 +286,12 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
         }
         else if (a.measure.stream_type && strcmp(a.measure.stream_type, "pipe") == 0)
         {
-            CfOut(cf_verbose, "", " -> (Setting pipe umask to %jo)\n", (uintmax_t)a.contain.umask);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> (Setting pipe umask to %jo)\n", (uintmax_t)a.contain.umask);
             maskval = umask(a.contain.umask);
 
             if (a.contain.umask == 0)
             {
-                CfOut(cf_verbose, "", " !! Programming %s running with umask 0! Use umask= to set\n", pp->promiser);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Programming %s running with umask 0! Use umask= to set\n", pp->promiser);
             }
 
 
@@ -320,7 +320,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 
         if (fin == NULL)
         {
-            cfPS(cf_error, CF_FAIL, "cf_popen", pp, a, "Couldn't open pipe to command %s\n", pp->promiser);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "cf_popen", pp, a, "Couldn't open pipe to command %s\n", pp->promiser);
             YieldCurrentLock(thislock);
             MONITOR_RESTARTED = false;
             return NOVA_DATA[slot].output;
@@ -330,7 +330,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
         {
             if (ferror(fin))    /* abortable */
             {
-                cfPS(cf_error, CF_TIMEX, "ferror", pp, a, "Sample stream %s\n", pp->promiser);
+                cfPS(OUTPUT_LEVEL_ERROR, CF_TIMEX, "ferror", pp, a, "Sample stream %s\n", pp->promiser);
                 YieldCurrentLock(thislock);
                 return NOVA_DATA[slot].output;
             }
@@ -340,11 +340,11 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
                 FatalError("Error in CfReadLine");
             }
             AppendItem(&(NOVA_DATA[slot].output), line, NULL);
-            CfOut(cf_inform, "", "Sampling => %s", line);
+            CfOut(OUTPUT_LEVEL_INFORM, "", "Sampling => %s", line);
 
             if (ferror(fin))    /* abortable */
             {
-                cfPS(cf_error, CF_TIMEX, "ferror", pp, a, "Sample stream %s\n", pp->promiser);
+                cfPS(OUTPUT_LEVEL_ERROR, CF_TIMEX, "ferror", pp, a, "Sample stream %s\n", pp->promiser);
                 YieldCurrentLock(thislock);
                 return NOVA_DATA[slot].output;
             }
@@ -369,7 +369,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
         signal(SIGALRM, SIG_DFL);
     }
 
-    CfOut(cf_inform, "", " -> Collected sample of %s\n", pp->promiser);
+    CfOut(OUTPUT_LEVEL_INFORM, "", " -> Collected sample of %s\n", pp->promiser);
     umask(maskval);
     YieldCurrentLock(thislock);
     MONITOR_RESTARTED = false;
@@ -484,7 +484,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
         if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching, ip->name))
         {
-            CfOut(cf_verbose, "", " ?? Look for %s regex %s\n", handle, a.measure.select_line_matching);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " ?? Look for %s regex %s\n", handle, a.measure.select_line_matching);
             found = true;
             match = ip;
 
@@ -500,13 +500,13 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                     if (strcmp(value, "CF_NOMATCH") == 0)
                     {
                         real_val = CF_NODOUBLE;
-                        CfOut(cf_verbose,""," ! Was not able to match a value with %s on %s",a.measure.extraction_regex, match->name);
+                        CfOut(OUTPUT_LEVEL_VERBOSE,""," ! Was not able to match a value with %s on %s",a.measure.extraction_regex, match->name);
                     }
                     else
                     {
                         if (real_val != CF_NODOUBLE)
                         {
-                            CfOut(cf_verbose,""," -> Found candidate match value of %s",value);
+                            CfOut(OUTPUT_LEVEL_VERBOSE,""," -> Found candidate match value of %s",value);
                             
                             if (a.measure.policy == cfm_sum || a.measure.policy == cfm_average)
                             {
@@ -528,7 +528,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                     break;
 
                 default:
-                    CfOut(cf_error, "", "Unexpected data type in data_type attribute: %d\n", a.measure.data_type);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "Unexpected data type in data_type attribute: %d\n", a.measure.data_type);
                 }
             }
 
@@ -544,7 +544,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
     if (!found)
     {
-        cfPS(cf_inform, CF_FAIL, "", pp, a, "Could not locate the line for promise \"%s\"", handle);
+        cfPS(OUTPUT_LEVEL_INFORM, CF_FAIL, "", pp, a, "Could not locate the line for promise \"%s\"", handle);
         return 0.0;
     }
 
@@ -559,7 +559,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
         if (match_count > 1)
         {
-            CfOut(cf_inform, "", " !! Warning: %d lines matched the line_selection \"%s\"- making best average",
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Warning: %d lines matched the line_selection \"%s\"- making best average",
                   match_count, a.measure.select_line_matching);
         }
 
@@ -573,7 +573,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
         if (match_count > 1)
         {
-            CfOut(cf_inform, "", " !! Warning: %d lines matched the line_selection \"%s\"- making best average",
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Warning: %d lines matched the line_selection \"%s\"- making best average",
                   match_count, a.measure.select_line_matching);
         }
 
@@ -585,17 +585,17 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
         break;
 
     default:
-        CfOut(cf_error, "", "Unexpected data type in data_type attribute: %d", a.measure.data_type);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "Unexpected data type in data_type attribute: %d", a.measure.data_type);
     }
 
     if (real_val == CF_NODOUBLE)
     {
-        cfPS(cf_inform, CF_FAIL, "", pp, a, " !! Unable to extract a value from the matched line \"%s\"", match->name);
-        PromiseRef(cf_inform, pp);
+        cfPS(OUTPUT_LEVEL_INFORM, CF_FAIL, "", pp, a, " !! Unable to extract a value from the matched line \"%s\"", match->name);
+        PromiseRef(OUTPUT_LEVEL_INFORM, pp);
         real_val = 0.0;
     }
 
-    CfOut(cf_inform, "", "Extracted value \"%f\" for promise \"%s\"", real_val, handle);
+    CfOut(OUTPUT_LEVEL_INFORM, "", "Extracted value \"%f\" for promise \"%s\"", real_val, handle);
     return real_val;
 }
 
@@ -609,17 +609,17 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
     if (stream == NULL)
     {
-        CfOut(cf_verbose, "", " -> No stream to measure");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> No stream to measure");
         return;
     }
 
     if (LICENSES == 0)
     {
-        CfOut(cf_verbose, "", " !! No valid commercial license");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! No valid commercial license");
         return;
     }
 
-    CfOut(cf_verbose, "", " -> Locate and log sample ...");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Locate and log sample ...");
 
     for (ip = stream; ip != NULL; ip = ip->next)
     {
@@ -630,16 +630,16 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
         if (count == a.measure.select_line_number)
         {
-            CfOut(cf_verbose, "", "Found line %d by number...\n", count);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Found line %d by number...\n", count);
             found = true;
             match_count = 1;
             match = ip;
 
             if (a.measure.extraction_regex)
             {
-                CfOut(cf_verbose, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
                 strncpy(value, ExtractFirstReference(a.measure.extraction_regex, match->name), CF_MAXVARSIZE - 1);
-                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
+                CfOut(OUTPUT_LEVEL_INFORM, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 AppendItem(&matches, value, NULL);
                 
             }
@@ -648,16 +648,16 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
         if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching, ip->name))
         {
-            CfOut(cf_verbose, "", "Found line %d by pattern...\n", count);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "Found line %d by pattern...\n", count);
             found = true;
             match = ip;
             match_count++;
 
             if (a.measure.extraction_regex)
             {
-                CfOut(cf_verbose, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Now looking for a matching extractor \"%s\"", a.measure.extraction_regex);
                 strncpy(value, ExtractFirstReference(a.measure.extraction_regex, match->name), CF_MAXVARSIZE - 1);
-                CfOut(cf_inform, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
+                CfOut(OUTPUT_LEVEL_INFORM, "", "Extracted value \"%s\" for promise \"%s\"", value, handle);
                 AppendItem(&matches, value, NULL);
             }
         }
@@ -667,20 +667,20 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
     if (!found)
     {
-        cfPS(cf_inform, CF_FAIL, "", pp, a, "Promiser \"%s\" found no matching line", pp->promiser);
+        cfPS(OUTPUT_LEVEL_INFORM, CF_FAIL, "", pp, a, "Promiser \"%s\" found no matching line", pp->promiser);
         return;
     }
 
     if (match_count > 1)
     {
-        CfOut(cf_inform, "", " !! Warning: %d lines matched the line_selection \"%s\"- matching to last", match_count,
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Warning: %d lines matched the line_selection \"%s\"- matching to last", match_count,
               a.measure.select_line_matching);
     }
 
     switch (a.measure.data_type)
     {
     case DATA_TYPE_COUNTER:
-        CfOut(cf_verbose, "", " -> Counted %d for %s\n", match_count, handle);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Counted %d for %s\n", match_count, handle);
         snprintf(value, CF_MAXVARSIZE, "%d", match_count);
         break;
 
@@ -702,19 +702,19 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
         if ((fout = fopen(filename, "a")) == NULL)
         {
-            cfPS(cf_error, CF_FAIL, "", pp, a, "Unable to open the output log \"%s\"", filename);
-            PromiseRef(cf_error, pp);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, "Unable to open the output log \"%s\"", filename);
+            PromiseRef(OUTPUT_LEVEL_ERROR, pp);
             return;
         }
 
         strncpy(sdate, cf_ctime(&now), CF_MAXVARSIZE - 1);
         if (Chop(sdate, CF_EXPANDSIZE) == -1)
         {
-            CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
         }
 
         fprintf(fout, "%s,%ld,%s\n", sdate, (long) now, value);
-        CfOut(cf_verbose, "", "Logging: %s,%s to %s\n", sdate, value, filename);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Logging: %s,%s to %s\n", sdate, value, filename);
 
         fclose(fout);
     }
@@ -743,12 +743,12 @@ void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 
     if (!handle)
     {
-        CfOut(cf_error, "", " !! The promised measurement has no handle to register it by.");
+        CfOut(OUTPUT_LEVEL_ERROR, "", " !! The promised measurement has no handle to register it by.");
         return;
     }
     else
     {
-        CfOut(cf_verbose, "", " -> Considering promise \"%s\"", handle);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Considering promise \"%s\"", handle);
     }
 
     switch (a.measure.data_type)
@@ -759,7 +759,7 @@ void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 
         /* First see if we can accommodate this measurement */
 
-        CfOut(cf_verbose, "", " -> Promise \"%s\" is numerical in nature", handle);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise \"%s\" is numerical in nature", handle);
 
         stream = NovaGetMeasurementStream(a, pp);
 
@@ -772,16 +772,16 @@ void VerifyMeasurement(double *this, Attributes a, Promise *pp)
             }
 
             this[slot] = NovaExtractValueFromStream(handle, stream, a, pp);
-            CfOut(cf_verbose, "", " -> Setting Nova slot %d=%s to %lf\n", slot, handle, this[slot]);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Setting Nova slot %d=%s to %lf\n", slot, handle, this[slot]);
         }
         else if (strcmp(a.measure.history_type, "log") == 0)
         {
-            CfOut(cf_verbose, "", " -> Promise to log a numerical value");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise to log a numerical value");
             NovaLogSymbolicValue(handle, stream, a, pp);
         }
         else                    /* static */
         {
-            CfOut(cf_verbose, "", " -> Promise to store a static numerical value");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise to store a static numerical value");
             new_value = NovaExtractValueFromStream(handle, stream, a, pp);
             NovaNamedEvent(handle, new_value, a, pp);
         }
@@ -789,7 +789,7 @@ void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 
     default:
 
-        CfOut(cf_verbose, "", " -> Promise \"%s\" is symbolic in nature", handle);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise \"%s\" is symbolic in nature", handle);
         stream = NovaGetMeasurementStream(a, pp);
         NovaLogSymbolicValue(handle, stream, a, pp);
         break;

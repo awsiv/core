@@ -30,7 +30,7 @@ int NovaWin_UserNameToSid(char *user_name, SID *sid, DWORD sid_sz, int should_ex
         // nonexisting user is not an error if should_exist is true
         if (should_exist || (GetLastError() != ERROR_NONE_MAPPED))
         {
-            CfOut(cf_error, "LookupAccountName", "!! Could not look up user name \"%s\"", user_name);
+            CfOut(OUTPUT_LEVEL_ERROR, "LookupAccountName", "!! Could not look up user name \"%s\"", user_name);
         }
 
         return false;
@@ -40,7 +40,7 @@ int NovaWin_UserNameToSid(char *user_name, SID *sid, DWORD sid_sz, int should_ex
     {
         if (should_exist)
         {
-            CfOut(cf_error, "", "!! SID type is expected to be user, but is group");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! SID type is expected to be user, but is group");
         }
 
         return false;
@@ -68,7 +68,7 @@ int NovaWin_GroupNameToSid(char *group_name, SID *sid, DWORD sid_sz, int should_
         // nonexisting group is not an error if should_exist is true
         if (should_exist || (GetLastError() != ERROR_NONE_MAPPED))
         {
-            CfOut(cf_error, "LookupAccountName", "!! Could not look up group name \"%s\"", group_name);
+            CfOut(OUTPUT_LEVEL_ERROR, "LookupAccountName", "!! Could not look up group name \"%s\"", group_name);
         }
 
         return false;
@@ -78,7 +78,7 @@ int NovaWin_GroupNameToSid(char *group_name, SID *sid, DWORD sid_sz, int should_
     {
         if (should_exist)
         {
-            CfOut(cf_error, "", "!! SID type is expected to be group, but is user");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! SID type is expected to be group, but is user");
         }
 
         return false;
@@ -98,7 +98,7 @@ int NovaWin_NameToSid(char *name, SID *sid, DWORD sid_sz)
 
     if (!LookupAccountName(NULL, name, sid, &sid_sz_cp, dom_name, &dom_name_sz, &acc_type))
     {
-        CfOut(cf_error, "LookupAccountName", "!! Could not look up name \"%s\"", name);
+        CfOut(OUTPUT_LEVEL_ERROR, "LookupAccountName", "!! Could not look up name \"%s\"", name);
         return false;
     }
 
@@ -118,7 +118,7 @@ int NovaWin_SidToName(SID *sid, char *name, int name_sz)
 
     if (!LookupAccountSid(NULL, sid, name, &req_name_sz, dom_name, &req_dom_sz, &sid_name_use))
     {
-        CfOut(cf_error, "LookupAccountSid", "!! Could not find name corresponding to sid");
+        CfOut(OUTPUT_LEVEL_ERROR, "LookupAccountSid", "!! Could not find name corresponding to sid");
         return false;
     }
 
@@ -135,7 +135,7 @@ int NovaWin_SidToString(SID *sid, char *string_sid, int stringSz)
 
     if (!ConvertSidToStringSid(sid, &string_alloc))
     {
-        CfOut(cf_error, "ConvertSidToStringSid", "Could not convert SID to string");
+        CfOut(OUTPUT_LEVEL_ERROR, "ConvertSidToStringSid", "Could not convert SID to string");
         return false;
     }
 
@@ -143,7 +143,7 @@ int NovaWin_SidToString(SID *sid, char *string_sid, int stringSz)
 
     if (string_alloc_sz >= stringSz)
     {
-        CfOut(cf_error, "", "String buffer is too small");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "String buffer is too small");
         LocalFree(string_alloc);
         return false;
     }
@@ -164,7 +164,7 @@ int NovaWin_StringToSid(char *string_sid, SID *sid, int sid_sz)
 
     if (!ConvertStringSidToSid(string_sid, (PSID *) & sid_alloc))
     {
-        CfOut(cf_error, "ConvertStringSidToSid", "Could not obtain SID \"%s\"", string_sid);
+        CfOut(OUTPUT_LEVEL_ERROR, "ConvertStringSidToSid", "Could not obtain SID \"%s\"", string_sid);
         return false;
     }
 
@@ -172,7 +172,7 @@ int NovaWin_StringToSid(char *string_sid, SID *sid, int sid_sz)
 
     if (sid_len > sid_sz)
     {
-        CfOut(cf_error, "", "SID buffer is too small");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "SID buffer is too small");
         LocalFree(sid_alloc);
         return false;
     }

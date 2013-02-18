@@ -18,8 +18,8 @@ int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
     if (!Nova_CheckNtACEs(file_path, acl.acl_entries, INHERIT_ACCESS_ONLY, acl.acl_method, a, pp))
     {
-        cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking access ACL on \"%s\"", file_path);
-        PromiseRef(cf_error, pp);
+        cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, " !! Failed checking access ACL on \"%s\"", file_path);
+        PromiseRef(OUTPUT_LEVEL_ERROR, pp);
         return false;
     }
 
@@ -28,8 +28,8 @@ int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
         if (!Nova_CheckNtInheritACEs
             (file_path, acl.acl_inherit_entries, acl.acl_method, acl.acl_directory_inherit, a, pp))
         {
-            cfPS(cf_error, CF_FAIL, "", pp, a, " !! Failed checking inheritance ACL on \"%s\"", file_path);
-            PromiseRef(cf_error, pp);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, " !! Failed checking inheritance ACL on \"%s\"", file_path);
+            PromiseRef(OUTPUT_LEVEL_ERROR, pp);
             return false;
         }
     }
@@ -61,7 +61,7 @@ int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method met
         break;
 
     default:                   // unknown inheritance policy
-        CfOut(cf_error, "", "!! Unknown inheritance policy - shouldn't happen");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Unknown inheritance policy - shouldn't happen");
         result = false;
         break;
     }
@@ -95,7 +95,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 
     if (retvAcl != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "GetNamedSecurityInfo", "!! Could not retreive existing ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetNamedSecurityInfo", "!! Could not retreive existing ACL");
         return false;
     }
 
@@ -114,7 +114,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 // convert existing aces to another format (EXPLICIT_ACCESS)
     if (!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
-        CfOut(cf_error, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
         free(eas);
         LocalFree(existingSecDesc);
         return false;
@@ -128,7 +128,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 
     if (!Nova_ParseAcl(file_path, aces, eas, &eaCount, inherit))
     {
-        CfOut(cf_error, "", "!! Could not parse ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not parse ACL");
         Nova_FreeSids(eas, eaCount);
         free(eas);
         LocalFree(existingSecDesc);
@@ -141,7 +141,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 // check if the ACL has been modified (compare existing and new)
     if (!Nova_ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
     {
-        CfOut(cf_error, "", "!! Failed while comparing new and existing ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Failed while comparing new and existing ACL");
         Nova_FreeSids(eas, eaCount);
         free(eas);
         LocalFree(existingSecDesc);
@@ -150,14 +150,14 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
 
     if (aclsEqual)
     {
-        cfPS(cf_inform, CF_NOP, "", pp, a, "-> %s ACL on \"%s\" needs no modification.", aclTypeStr, file_path);
+        cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> %s ACL on \"%s\" needs no modification.", aclTypeStr, file_path);
     }
     else                        // ACL needs to be changed
     {
         switch (a.transaction.action)
         {
         case cfa_warn:
-            cfPS(cf_error, CF_WARN, "", pp, a, " !! %s ACL on \"%s\" needs to be changed", aclTypeStr, file_path);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! %s ACL on \"%s\" needs to be changed", aclTypeStr, file_path);
             break;
 
         case cfa_fix:
@@ -165,14 +165,14 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
             {
                 if (!Nova_SetEas(file_path, eas, eaCount))
                 {
-                    CfOut(cf_error, "", "!! Could not set the ACL");
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set the ACL");
                     Nova_FreeSids(eas, eaCount);
                     free(eas);
                     LocalFree(existingSecDesc);
                     return false;
                 }
             }
-            cfPS(cf_inform, CF_CHG, "", pp, a, "-> %s ACL on \"%s\" successfully changed", aclTypeStr, file_path);
+            cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> %s ACL on \"%s\" successfully changed", aclTypeStr, file_path);
             break;
 
         default:
@@ -203,7 +203,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 
     if (retvAcl != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "", "!! Could not retreive existing ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not retreive existing ACL");
         return false;
     }
 
@@ -223,7 +223,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 // convert existing aces to another format (EXPLICIT_ACCESS)
     if (!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
-        CfOut(cf_error, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
         free(eas);
         LocalFree(existingSecDesc);
         return false;
@@ -235,7 +235,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 // check if the ACL has been modified (compare existing and new)
     if (!Nova_ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
     {
-        CfOut(cf_error, "", "!! Failed while comparing new and existing ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Failed while comparing new and existing ACL");
         Nova_FreeSids(eas, eaCount);
         free(eas);
         LocalFree(existingSecDesc);
@@ -244,7 +244,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 
     if (aclsEqual)
     {
-        cfPS(cf_inform, CF_NOP, "", pp, a, "-> Default ACL on \"%s\" needs no modification (was already empty).",
+        cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a, "-> Default ACL on \"%s\" needs no modification (was already empty).",
              file_path);
     }
     else
@@ -252,7 +252,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
         switch (a.transaction.action)
         {
         case cfa_warn:
-            cfPS(cf_error, CF_WARN, "", pp, a, " !! Default ACL on \"%s\" needs to be cleared.", file_path);
+            cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! Default ACL on \"%s\" needs to be cleared.", file_path);
             break;
 
         case cfa_fix:
@@ -260,7 +260,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
             {
                 if (!Nova_SetEas(file_path, eas, eaCount))
                 {
-                    CfOut(cf_error, "", "!! Could not set the ACL");
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set the ACL");
                     Nova_FreeSids(eas, eaCount);
                     free(eas);
                     LocalFree(existingSecDesc);
@@ -268,7 +268,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
                 }
             }
 
-            cfPS(cf_inform, CF_CHG, "", pp, a, "-> Default ACL on \"%s\" successfully cleared.", file_path);
+            cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Default ACL on \"%s\" successfully cleared.", file_path);
             break;
 
         default:
@@ -302,7 +302,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
 
     if (retvAcl != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "GetNamedSecurityInfo", "!! Could not retreive existing ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetNamedSecurityInfo", "!! Could not retreive existing ACL");
         return false;
     }
 
@@ -322,7 +322,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
 // convert existing aces to another format (EXPLICIT_ACCESS)
     if (!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
-        CfOut(cf_error, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
         free(eas);
         LocalFree(existingSecDesc);
         return false;
@@ -355,7 +355,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
 
     if (!modified)
     {
-        cfPS(cf_inform, CF_NOP, "", pp, a,
+        cfPS(OUTPUT_LEVEL_INFORM, CF_NOP, "", pp, a,
              "-> Default ACL on \"%s\" needs no modification (was already the same as access ACL).", file_path);
     }
     else
@@ -363,7 +363,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
         switch (a.transaction.action)
         {
         case cfa_warn:
-            cfPS(cf_error, CF_WARN, "", pp, a, " !! Default ACL on \"%s\" needs to be copied from access ACL.",
+            cfPS(OUTPUT_LEVEL_ERROR, CF_WARN, "", pp, a, " !! Default ACL on \"%s\" needs to be copied from access ACL.",
                  file_path);
             break;
 
@@ -372,14 +372,14 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *p
             {
                 if (!Nova_SetEas(file_path, eas, eaCount))
                 {
-                    CfOut(cf_error, "", "!! Could not set the ACL");
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not set the ACL");
                     Nova_FreeSids(eas, eaCount);
                     free(eas);
                     LocalFree(existingSecDesc);
                     return false;
                 }
             }
-            cfPS(cf_inform, CF_CHG, "", pp, a, "-> Default ACL on \"%s\" successfully copied from access ACL.",
+            cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, "-> Default ACL on \"%s\" successfully copied from access ACL.",
                  file_path);
             break;
 
@@ -512,7 +512,7 @@ int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *
 
     if (!Nova_AclToExplicitAccess(secondEas, eaCount, acl))
     {
-        CfOut(cf_error, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not convert ACL to EXPLICIT_ACCESS structures");
         return false;
     }
 
@@ -556,7 +556,7 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
     {
         if (!GetAce(acl, i, (void **) &currAce))
         {
-            CfOut(cf_error, "GetAce", "!! Could not get ACE");
+            CfOut(OUTPUT_LEVEL_ERROR, "GetAce", "!! Could not get ACE");
             Nova_FreeSids(eas, i);
             return false;
         }
@@ -574,7 +574,7 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
             break;
 
         default:
-            CfOut(cf_error, "", "!! Unknown ace type: %d", currAce->Header.AceType);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Unknown ace type: %d", currAce->Header.AceType);
             return false;
         }
 
@@ -609,7 +609,7 @@ int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCou
 
     if ((inherit != INHERIT_ACCESS_ONLY) && (inherit != INHERIT_DEFAULT_ONLY))
     {
-        CfOut(cf_error, "", "!! Inheritance policy is not access or default - shouldn't happen");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Inheritance policy is not access or default - shouldn't happen");
         return false;
     }
 
@@ -625,7 +625,7 @@ int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCou
         // parse "entity-type:id" into SID
         if (!Nova_EntityToSid(&currAce, sid, sizeof(sidBuf)))
         {
-            CfOut(cf_error, "", "!! Could not obtain the security identifier corresponding to the entity in \"%s\"",
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not obtain the security identifier corresponding to the entity in \"%s\"",
                   (char *) rp->item);
             Nova_FreeSids(firstUsedEa, numNewEas);
             return false;
@@ -683,7 +683,7 @@ int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCou
         // apply mode-string on permission bits
         if (!Nova_ParseModeNt(&currAce, &(currEa->grfAccessPermissions)))
         {
-            CfOut(cf_error, "", "!! Could not parse mode-string in ace \"%s\"", (char *) rp->item);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not parse mode-string in ace \"%s\"", (char *) rp->item);
             Nova_FreeSids(firstUsedEa, numNewEas);
             return false;
         }
@@ -700,7 +700,7 @@ int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCou
             break;
 
         default:
-            CfOut(cf_error, "", "!! Element following mode-string in ace \"%s\" is not ':' or NULL-terminator",
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Element following mode-string in ace \"%s\" is not ':' or NULL-terminator",
                   (char *) rp->item);
             Nova_FreeSids(firstUsedEa, numNewEas);
             return false;
@@ -752,7 +752,7 @@ int Nova_SetEas(char *file_path, EXPLICIT_ACCESS *eas, int eaCount)
     setRes = SetEntriesInAcl(eaCount, eas, NULL, &newAcl);
     if (setRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "SetEntriesInAcl", "!! Could not merge ACEs into an ACL (errcode=%lu)", setRes);
+        CfOut(OUTPUT_LEVEL_ERROR, "SetEntriesInAcl", "!! Could not merge ACEs into an ACL (errcode=%lu)", setRes);
         return false;
     }
 
@@ -763,7 +763,7 @@ int Nova_SetEas(char *file_path, EXPLICIT_ACCESS *eas, int eaCount)
 
     if (writeRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "SetNamedSecurityInfo", "!! Could not set new ACL");
+        CfOut(OUTPUT_LEVEL_ERROR, "SetNamedSecurityInfo", "!! Could not set new ACL");
         return false;
     }
 
@@ -882,7 +882,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
         // "S-1-1-0" is (always) the "Everyone" group
         if (!NovaWin_StringToSid("S-1-1-0", sid, sidSz))
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "!! Could not find the security identifier of group \"Everyone\" (assumed to be \"S-1-1-0\") - shouldn't happen");
             return false;
         }
@@ -890,7 +890,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
     }
     else
     {
-        CfOut(cf_error, "", "!! Ace does not start with user:/group:/all:/mask:");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Ace does not start with user:/group:/all:/mask:");
         return false;
     }
 
@@ -963,7 +963,7 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms)
                 break;
 
             default:
-                CfOut(cf_error, "", "!! No NT support for generic permission '%c'", *mode);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "!! No NT support for generic permission '%c'", *mode);
                 return false;
             }
 
@@ -1041,7 +1041,7 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms)
                     break;
 
                 default:
-                    CfOut(cf_error, "", "!! No NT support for native permission flag '%c'", *mode);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "!! No NT support for native permission flag '%c'", *mode);
                     return false;
                 }
 

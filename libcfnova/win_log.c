@@ -43,24 +43,24 @@ void MakeLog(Item *mess, enum cfreport level)
 
     switch (level)
     {
-    case cf_inform:
-    case cf_log:
+    case OUTPUT_LEVEL_INFORM:
+    case OUTPUT_LEVEL_LOG:
         eventType = EVENTLOG_INFORMATION_TYPE;
         eventId = EVMSG_DEFAULT_INFO;
         break;
 
-    case cf_reporting:
+    case OUTPUT_LEVEL_REPORTING:
         eventType = EVENTLOG_INFORMATION_TYPE;
         eventId = EVMSG_REPORT;
         break;
 
-    case cf_verbose:
-    case cf_cmdout:
+    case OUTPUT_LEVEL_VERBOSE:
+    case OUTPUT_LEVEL_CMDOUT:
         eventType = EVENTLOG_INFORMATION_TYPE;
         eventId = EVMSG_DEFAULT_VERBOSE;
         break;
 
-    case cf_error:
+    case OUTPUT_LEVEL_ERROR:
         eventType = EVENTLOG_ERROR_TYPE;
         eventId = EVMSG_DEFAULT_ERROR;
         break;
@@ -105,7 +105,7 @@ void OpenLog(int facility)
 
     if (!CheckRegistryLogKey())
     {
-        CfOut(cf_error, "", "!! Could not check for logging key in registry");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not check for logging key in registry");
         return;
     }
 
@@ -113,7 +113,7 @@ void OpenLog(int facility)
 
     if (logHandle == NULL)
     {
-        CfOut(cf_error, "RegisterEventSource", "!! Could not open log");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegisterEventSource", "!! Could not open log");
     }
 
     FACILITY = facility;
@@ -135,18 +135,18 @@ static int CheckRegistryLogKey(void)
 
     if (openRes != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegCreateKeyEx", "!! Could not open registry log key");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegCreateKeyEx", "!! Could not open registry log key");
         return false;
     }
 
     switch (existStatus)
     {
     case REG_CREATED_NEW_KEY:
-        CfOut(cf_verbose, "", "Created new registry key for logging");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Created new registry key for logging");
         break;
 
     case REG_OPENED_EXISTING_KEY:
-        CfOut(cf_verbose, "", "A registry key for logging already existed");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "A registry key for logging already existed");
         break;
 
     default:
@@ -159,7 +159,7 @@ static int CheckRegistryLogKey(void)
 
     if (!NovaWin_FileExists(logDllPath))
     {
-        CfOut(cf_error, "", "!! Event-logging dll could not be found in \"%s\"", logDllPath);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Event-logging dll could not be found in \"%s\"", logDllPath);
     }
 
     categoryCount = 0;
@@ -169,21 +169,21 @@ static int CheckRegistryLogKey(void)
     if (RegSetValueEx(keyHandle, "CategoryCount", 0, REG_DWORD, (BYTE *) & categoryCount, sizeof(DWORD))
         != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegSetValueEx", "!! Could not set registry log value (CategoryCount)");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegSetValueEx", "!! Could not set registry log value (CategoryCount)");
         RegCloseKey(keyHandle);
         return false;
     }
 
     if (RegSetValueEx(keyHandle, "CategoryMessageFile", 0, REG_SZ, logDllPath, strlen(logDllPath) + 1) != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegSetValueEx", "!! Could not set registry log value (CategoryMessageFile)");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegSetValueEx", "!! Could not set registry log value (CategoryMessageFile)");
         RegCloseKey(keyHandle);
         return false;
     }
 
     if (RegSetValueEx(keyHandle, "EventMessageFile", 0, REG_SZ, logDllPath, strlen(logDllPath) + 1) != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegSetValueEx", "!! Could not set registry log value (EventMessageFile)");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegSetValueEx", "!! Could not set registry log value (EventMessageFile)");
         RegCloseKey(keyHandle);
         return false;
     }
@@ -191,14 +191,14 @@ static int CheckRegistryLogKey(void)
     if (RegSetValueEx(keyHandle, "ParameterMessageFile", 0, REG_SZ, logDllPath, strlen(logDllPath) + 1)
         != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegSetValueEx", "!! Could not set registry log value (ParameterMessageFile)");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegSetValueEx", "!! Could not set registry log value (ParameterMessageFile)");
         RegCloseKey(keyHandle);
         return false;
     }
 
     if (RegSetValueEx(keyHandle, "TypesSupported", 0, REG_DWORD, (BYTE *) & eventCount, sizeof(DWORD)) != ERROR_SUCCESS)
     {
-        CfOut(cf_error, "RegSetValueEx", "!! Could not set registry log value (TypesSupported)");
+        CfOut(OUTPUT_LEVEL_ERROR, "RegSetValueEx", "!! Could not set registry log value (TypesSupported)");
         RegCloseKey(keyHandle);
         return false;
     }
@@ -216,7 +216,7 @@ void CloseLog(void)
     {
         if (!DeregisterEventSource(logHandle))
         {
-            CfOut(cf_error, "DeregisterEventSource", "Could not close windows log\n");
+            CfOut(OUTPUT_LEVEL_ERROR, "DeregisterEventSource", "Could not close windows log\n");
         }
         else
         {
@@ -258,7 +258,7 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
         eventType = EVENTLOG_INFORMATION_TYPE;
         eventId = EVMSG_PROMISE_KEPT;
 
-        if (log_level != cf_verbose)
+        if (log_level != OUTPUT_LEVEL_VERBOSE)
         {
             return;
         }
@@ -269,7 +269,7 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
         eventType = EVENTLOG_INFORMATION_TYPE;
         eventId = EVMSG_PROMISE_REPAIRED;
 
-        if (log_level != cf_verbose)
+        if (log_level != OUTPUT_LEVEL_VERBOSE)
         {
             return;
         }

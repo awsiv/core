@@ -64,11 +64,11 @@ static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum c
     Event entry;
     int ksize, vsize, first = true, kept = 0, repaired = 0, not_kept = 0;
 
-    CfOut(cf_verbose, "", " -> Packing performance data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing performance data");
 
     if (!OpenDB(&dbp, dbid_performance))
     {
-        CfOut(cf_inform, "", " !! Unable to open performance database");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to open performance database");
         return;
     }
 
@@ -76,7 +76,7 @@ static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum c
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan performance database");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan performance database");
         CloseDB(dbp);
         return;
     }
@@ -101,7 +101,7 @@ static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum c
         {
             if (sizeof(entry) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in performance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in performance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
                 continue;
             }
 
@@ -139,7 +139,7 @@ static void Nova_PackPerformance(Item **reply, char *header, time_t from, enum c
 
             if (strlen(eventname) == 0 || strlen(eventname) > CF_MAXVARSIZE / 2)
             {
-                CfOut(cf_inform, "", " !! Corrupt entry in database");
+                CfOut(OUTPUT_LEVEL_INFORM, "", " !! Corrupt entry in database");
                 continue;
             }
 
@@ -179,7 +179,7 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
     Event entry;
     int i, ksize, vsize, first = true;
 
-    CfOut(cf_verbose, "", " -> Packing class data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing class data");
 
     if (!OpenDB(&dbp, dbid_classes))
     {
@@ -188,7 +188,7 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }
@@ -219,7 +219,7 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
         {
             if (sizeof(entry) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in classes database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in classes database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
                 continue;
             }
 
@@ -232,7 +232,7 @@ static void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_m
             if (now - then > (time_t) SECONDS_PER_WEEK)
             {
                 DBCursorDeleteEntry(dbcp);
-                CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", eventname);
+                CfOut(OUTPUT_LEVEL_INFORM, "", " -> Deleting expired entry for %s\n", eventname);
                 continue;
             }
 
@@ -289,14 +289,14 @@ static void Nova_PackSetuid(Item **reply, char *header, time_t from, enum cfd_me
     char start[32];
     int first = true;
 
-    CfOut(cf_verbose, "", " -> Packing setuid data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing setuid data");
 
     snprintf(name, CF_BUFSIZE, "%s/cfagent.%s.log", CFWORKDIR, VSYSNAME.nodename);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return;
     }
 
@@ -351,7 +351,7 @@ static void Nova_PackFileChangesOld(Item **reply, char *header, time_t from, enu
     time_t then, now = time(NULL);
     int i = 0, first = true, kept = CF_CHANGE_HORIZON, repaired = 0, not_kept = 0;
 
-    CfOut(cf_verbose, "", " -> Packing old file change data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing old file change data");
     snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, CF_FILECHANGE);
     MapName(name);
 
@@ -423,13 +423,13 @@ static void Nova_PackFileChanges(Item **reply, char *header, time_t from, enum c
     time_t then, now = time(NULL);
     int i = 0, first = true, kept = CF_CHANGE_HORIZON, repaired = 0, not_kept = 0;
 
-    CfOut(cf_verbose, "", " -> Packing file change data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing file change data");
     snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, CF_FILECHANGE_NEW);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return;
     }
 
@@ -501,14 +501,14 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
     long lthen;
     bool is_handle;
 
-    CfOut(cf_verbose, "", " -> Packing diff data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing diff data");
 
     snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, NOVA_DIFF_LOG);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return;
     }
 
@@ -577,7 +577,7 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
 
             if (Chop(line, CF_EXPANDSIZE) == -1)
             {
-                CfOut(cf_error, "", "Chop was called on a string that seemed to have no terminator");
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Chop was called on a string that seemed to have no terminator");
             }
             snprintf(reformat, CF_BUFSIZE - 1, "%c,%s,%s%c", pm, no, changeNoTab, CF_N_CODE);
 
@@ -587,7 +587,7 @@ static void Nova_PackDiffs(Item **reply, char *header, time_t from, enum cfd_men
             }
             else
             {
-                CfOut(cf_inform, "", "!! Diff of file \"%s\" is too large be transmitted - truncating", name);
+                CfOut(OUTPUT_LEVEL_INFORM, "", "!! Diff of file \"%s\" is too large be transmitted - truncating", name);
                 snprintf(reformat, sizeof(reformat), "%c,%s,%s%c", pm, no, "(TRUNCATED)", CF_N_CODE);
                 Join(aggregate, reformat, sizeof(aggregate));
                 break;
@@ -692,11 +692,11 @@ static void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd
     Item *data = { 0 };
     CF_DB *dbp;
 
-    CfOut(cf_verbose, "", " -> Packing monitor magnified data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing monitor magnified data");
 
     if (!OpenDB(&dbp, dbid_observations))
     {
-        CfOut(cf_verbose, "", "Couldn't open average database\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Couldn't open average database\n");
         return;
     }
 
@@ -790,11 +790,11 @@ static void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd
     time_t now;
     CF_DB *dbp;
 
-    CfOut(cf_verbose, "", " -> Packing monitor weekly data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing monitor weekly data");
 
     if (!OpenDB(&dbp, dbid_observations))
     {
-        CfOut(cf_verbose, "", "Couldn't open average database\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Couldn't open average database\n");
         return;
     }
 
@@ -909,11 +909,11 @@ static void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd
     time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS - 1);
     Item *data = { 0 };
 
-    CfOut(cf_verbose, "", " -> Packing and compressing monitor 3 year data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing and compressing monitor 3 year data");
 
     if (!OpenDB(&dbp, dbid_history))
     {
-        CfOut(cf_verbose, "", "Couldn't open long history database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Couldn't open long history database");
         return;
     }
 
@@ -986,13 +986,13 @@ static void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum c
     double smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS] = { {{0}} };
     FILE *fp;
 
-    CfOut(cf_verbose, "", " -> Packing histograms");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing histograms");
 
     snprintf(filename, CF_BUFSIZE, "%s/state/histograms", CFWORKDIR);
 
     if ((fp = fopen(filename, "r")) == NULL)
     {
-        CfOut(cf_verbose, "", "!! Unable to load histogram data");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Unable to load histogram data");
         return;
     }
 
@@ -1006,7 +1006,7 @@ static void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum c
             {
                 if (fscanf(fp, "%lf ", &(histogram[i][day][position])) != 1)
                 {
-                    CfOut(cf_verbose, "", "!! Could not load histogram data for i=%d,day=%d,position=%d\n",
+                    CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not load histogram data for i=%d,day=%d,position=%d\n",
                           i, day, position);
                     histogram[i][day][position] = 0;
                 }
@@ -1088,13 +1088,13 @@ static void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cf
     char *key;
     void *stored;
 
-    CfOut(cf_verbose, "", " -> Packing sum compliance data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing sum compliance data");
 
 /* Open the db */
 
     if (!OpenDB(&dbp, dbid_promise_compliance))
     {
-        CfOut(cf_verbose, "", "!! Could not open promise compliance database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not open promise compliance database");
         return;
     }
 
@@ -1102,7 +1102,7 @@ static void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cf
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }
@@ -1118,7 +1118,7 @@ static void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cf
 
         if (sizeof(entry) < vsize)
         {
-            CfOut(cf_error, "", "Invalid entry in promise compliance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in promise compliance database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
             continue;
         }
 
@@ -1133,7 +1133,7 @@ static void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cf
 
         if (then > 0 && lastseen > lsea)
         {
-            CfOut(cf_verbose, "", " -> Promise usage record \"%s\" expired, removing...\n", eventname);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promise usage record \"%s\" expired, removing...\n", eventname);
             DBCursorDeleteEntry(dbcp);
         }
         else
@@ -1181,7 +1181,7 @@ static void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_
     Item *ip, *file = NULL;
     int first = true;
 
-    CfOut(cf_verbose, "", " -> Packing software data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing software data");
 
     snprintf(name, CF_MAXVARSIZE - 1, "%s/state/%s", CFWORKDIR, SOFTWARE_PACKAGES_CACHE);
     MapName(name);
@@ -1190,21 +1190,21 @@ static void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_
     
     if(stat(name, &sb) == -1)
     {
-        CfOut(cf_inform, "stat", "Cannot access software report file");
+        CfOut(OUTPUT_LEVEL_INFORM, "stat", "Cannot access software report file");
         return;
     }
     
     if(sb.st_mtime < from)
     {
         char timebuf[26];
-        CfOut(cf_inform, "", "Software report is unchanged since %s -- skipping", 
+        CfOut(OUTPUT_LEVEL_INFORM, "", "Software report is unchanged since %s -- skipping", 
               cf_strtimestamp_local(sb.st_mtime, timebuf));
         return;
     }
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen",
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen",
               "Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",
               name);
         return;
@@ -1262,7 +1262,7 @@ static void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum 
     char buffer[CF_MAXTRANSSIZE], line[CF_BUFSIZE];
     Item *ip, *file = NULL;
 
-    CfOut(cf_verbose, "", " -> Packing available patch report...\n");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing available patch report...\n");
 
     snprintf(name, CF_MAXVARSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_PATCHES_AVAIL);
     MapName(name);
@@ -1271,14 +1271,14 @@ static void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum 
     
     if(stat(name, &sb) == -1)
     {
-        CfOut(cf_inform, "stat", "Cannot access patches available file");
+        CfOut(OUTPUT_LEVEL_INFORM, "stat", "Cannot access patches available file");
         return;
     }
     
     if(sb.st_mtime < from)
     {
         char timebuf[26];
-        CfOut(cf_inform, "", "Patches available is unchanged since %s -- skipping", 
+        CfOut(OUTPUT_LEVEL_INFORM, "", "Patches available is unchanged since %s -- skipping", 
               cf_strtimestamp_local(sb.st_mtime, timebuf));
         return;
     }
@@ -1286,7 +1286,7 @@ static void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum 
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen",
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen",
               "Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",
               name);
         return;
@@ -1344,7 +1344,7 @@ static void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum c
     char buffer[CF_MAXTRANSSIZE], line[CF_BUFSIZE];
     Item *ip, *file = NULL;
 
-    CfOut(cf_verbose, "", " -> Packing patch installed data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing patch installed data");
 
     snprintf(name, sizeof(name), "%s/state/%s", CFWORKDIR, NOVA_PATCHES_INSTALLED);
     MapName(name);
@@ -1353,14 +1353,14 @@ static void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum c
     
     if(stat(name, &sb) == -1)
     {
-        CfOut(cf_inform, "stat", "Cannot access patch status file");
+        CfOut(OUTPUT_LEVEL_INFORM, "stat", "Cannot access patch status file");
         return;
     }
     
     if(sb.st_mtime < from)
     {
         char timebuf[26];
-        CfOut(cf_inform, "", "Patch status is unchanged since %s -- skipping", 
+        CfOut(OUTPUT_LEVEL_INFORM, "", "Patch status is unchanged since %s -- skipping", 
               cf_strtimestamp_local(sb.st_mtime, timebuf));
         return;
     }
@@ -1368,7 +1368,7 @@ static void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum c
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen",
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen",
               "Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",
               name);
         return;
@@ -1422,7 +1422,7 @@ static void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum c
 
 static void Nova_Pack_promise_output_common(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
-    CfOut(cf_verbose, "", " -> Packing promise data (deprecated)");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing promise data (deprecated)");
 // Do we still want this?
 }
 
@@ -1440,7 +1440,7 @@ static void Nova_PackValueReport(Item **reply, char *header, time_t from, enum c
 
 // Strip out the date resolution so we keep only each day of the year
 
-    CfOut(cf_verbose, "", " -> Packing value data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing value data");
 
     if (!OpenDB(&dbp, dbid_value))
     {
@@ -1460,7 +1460,7 @@ static void Nova_PackValueReport(Item **reply, char *header, time_t from, enum c
 
             if (sizeof(pt) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in values database. Expected size: %zu, actual size: %d", sizeof(pt), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in values database. Expected size: %zu, actual size: %d", sizeof(pt), vsize);
                 continue;
             }
 
@@ -1503,7 +1503,7 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cf
     char scope[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], prevScope[CF_MAXVARSIZE] = { 0 };
     char *dtypeStr;
 
-    CfOut(cf_verbose, "", " -> Packing variable data with date stamp");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing variable data with date stamp");
 
     if (!OpenDB(&dbp, dbid_variables))
     {
@@ -1512,7 +1512,7 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cf
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan variable db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan variable db");
         CloseDB(dbp);
         return;
     }
@@ -1523,7 +1523,7 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cf
         {
             if (sizeof(Variable) < valSize)
             {
-                CfOut(cf_error, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in variables database. Expected size: %zu, actual size: %d", sizeof(Variable), valSize);
                 continue;
             }
 
@@ -1594,7 +1594,7 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
     KeyHostSeen entry;
     int ksize, vsize, first = true;
 
-    CfOut(cf_verbose, "", " -> Packing last-seen data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing last-seen data");
 
     if (!OpenDB(&dbp, dbid_lastseen))
     {
@@ -1605,7 +1605,7 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan last-seen database");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan last-seen database");
         CloseDB(dbp);
         return;
     }
@@ -1637,7 +1637,7 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
         {
             if (sizeof(entry) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in lastseen database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in lastseen database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
                 continue;
             }
 
@@ -1661,7 +1661,7 @@ static void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_
         if (now - then > (double) LASTSEENEXPIREAFTER)
         {
             DBCursorDeleteEntry(dbcp);
-            CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", hostkey);
+            CfOut(OUTPUT_LEVEL_INFORM, "", " -> Deleting expired entry for %s\n", hostkey);
             continue;
         }
 
@@ -1697,7 +1697,7 @@ static Item* ReadTotalComplianceLog(void)
     FILE *fin;
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return NULL;
     }
 
@@ -1718,7 +1718,7 @@ static Item* ReadTotalComplianceLog(void)
 
         if(start_i > end_i)
         {
-            CfOut(cf_verbose, "",
+            CfOut(OUTPUT_LEVEL_VERBOSE, "",
                   "Start time is greater than end time. Excluding entry from calculation."
                   "(File %s/%s, Line: %d)", CFWORKDIR, CF_PROMISE_LOG, line_num);
 
@@ -1798,7 +1798,7 @@ static ComplianceSet InitWeigthCompliance(ComplianceSet comp_set)
 static void Nova_PackTotalCompliance(Item **reply, char *header, time_t from,
                                      enum cfd_menu type)
 {     
-    CfOut(cf_verbose, "", " -> Packing total compliance data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing total compliance data");
 
     double trust_level = 0.5; // Trust level for geometrical avg for compliance avg
 
@@ -2084,14 +2084,14 @@ static void Nova_PackRepairLog(Item **reply, char *header, time_t from, enum cfd
     int i = 0, first = true;
     long then;
 
-    CfOut(cf_verbose, "", " -> Packing repair data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing repair data");
 
     snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_REPAIR_LOG);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return;
     }
 
@@ -2148,14 +2148,14 @@ static void Nova_PackNotKeptLog(Item **reply, char *header, time_t from, enum cf
     int i = 0, first = true;
     long then;
 
-    CfOut(cf_verbose, "", " -> Packing promise not-kept data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing promise not-kept data");
 
     snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_NOTKEPT_LOG);
     MapName(name);
 
     if ((fin = fopen(name, "r")) == NULL)
     {
-        CfOut(cf_inform, "fopen", "Cannot open the source log %s", name);
+        CfOut(OUTPUT_LEVEL_INFORM, "fopen", "Cannot open the source log %s", name);
         return;
     }
 
@@ -2212,7 +2212,7 @@ static void Nova_PackMeter(Item **reply, char *header, time_t from, enum cfd_men
 {
     char line[CF_MAXTRANSSIZE];
 
-    CfOut(cf_verbose, "", " -> Packing meter");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing meter");
 
     AppendItem(reply, header, NULL);
 
@@ -2348,13 +2348,13 @@ static void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum
     char path[CF_MAXVARSIZE];
     struct stat sb;
 
-    CfOut(cf_verbose, "", " -> Packing software dates");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing software dates");
 
     GetSoftwareCacheFilename(path);
 
     if (cfstat(path, &sb) != 0)
     {
-        CfOut(cf_verbose, "", "Nova_PackSoftwareDates: Could not stat %s", path);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Nova_PackSoftwareDates: Could not stat %s", path);
         return;
     }
 
@@ -2362,14 +2362,14 @@ static void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum
 
     if (lastSeenSw == 0)
     {
-        CfOut(cf_verbose, "", "Software cache has been invalidated - skipping\n");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Software cache has been invalidated - skipping\n");
         return;
     }
 
     if(sb.st_mtime < from)
     {
         char timebuf[26];
-        CfOut(cf_inform, "", "Software report is unchanged since %s -- skipping",
+        CfOut(OUTPUT_LEVEL_INFORM, "", "Software report is unchanged since %s -- skipping",
               cf_strtimestamp_local(sb.st_mtime, timebuf));
         return;
     }
@@ -2397,7 +2397,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
     void *value;
     Event entry;
 
-    CfOut(cf_verbose, "", " -> Packing bundle log");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing bundle log");
 
     if (!OpenDB(&dbp, dbid_bundles))
     {
@@ -2408,7 +2408,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan last-seen database");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan last-seen database");
         return;
     }
 
@@ -2435,7 +2435,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
         {
             if (sizeof(entry) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in bundles database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in bundles database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
                 continue;
             }
 
@@ -2454,7 +2454,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
         if (now - then > (double) LASTSEENEXPIREAFTER)
         {
             DBCursorDeleteEntry(dbcp);
-            CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", bundle_fqname);
+            CfOut(OUTPUT_LEVEL_INFORM, "", " -> Deleting expired entry for %s\n", bundle_fqname);
             continue;
         }
 
@@ -2469,7 +2469,7 @@ static void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_m
         char bundle_name[CF_MAXVARSIZE];
         if (!BundleQualifiedNameSplit(bundle_fqname, bundle_namespace, bundle_name))
         {
-            CfOut(cf_inform, "", " !! Unable to extract bundle name and namespace from %s:", bundle_fqname);
+            CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to extract bundle name and namespace from %s:", bundle_fqname);
             continue;
         }
 
@@ -2494,24 +2494,24 @@ static void Nova_PackExecutionStatus(Item **reply, char *header)
     bool is_black = false;
     time_t last_execution = 0;
 
-    CfOut(cf_verbose, "", " -> Packing execution status data");
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Packing execution status data");
 
     if (!OpenDB(&dbp, dbid_agent_execution))
     {
-        CfOut(cf_inform, "", " !! Unable to open agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to open agent_execution db");
         return;
     }
 
     if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &avr_interval, sizeof(double)))
     {
-        CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to read from agent_execution db");
         CloseDB(dbp);
         return;
     }
 
     if (!ReadDB(dbp, NOVA_TRACK_LAST_EXEC, &last_execution, sizeof(time_t)))
     {
-        CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to read from agent_execution db");
         CloseDB(dbp);
         return;
     }
@@ -2608,7 +2608,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
     }
 
     tReply = time(NULL);
-    CfOut(cf_verbose, "", " -> Assembled reply at %s", cf_ctime(&tReply));
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Assembled reply at %s", cf_ctime(&tReply));
 
     snprintf(buffer, sizeof(buffer), "CFR: %ld %ld %d", delta1, tReply, ItemListSize(*reply));
     PrependItem(reply, buffer, NULL);

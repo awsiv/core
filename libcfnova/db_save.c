@@ -64,7 +64,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
 
     if (!IsDefinedClass("am_policy_hub", NULL))
     {
-        CfOut(cf_verbose, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
         return false;
     }
 
@@ -116,7 +116,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
 
     if (!IsDefinedClass("am_policy_hub", NULL))
     {
-        CfOut(cf_verbose, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
         return;
     }
 
@@ -332,7 +332,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
         numSlots = CF_YEAR_SLOTS;       // every week
         break;
     default:
-        CfOut(cf_error, "", "!! Undefined monitord type in save (%d)", rep_type);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Undefined monitord type in save (%d)", rep_type);
         FatalError("Software error");
     }
 
@@ -364,7 +364,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
         if (monId[0] == '\0')
         {
-            CfOut(cf_verbose, "", "!! Missing monitoring probe id - skipping");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Missing monitoring probe id - skipping");
             ip = ip->next;
             continue;
         }
@@ -403,7 +403,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
                 
                 if (slot < 0 || slot >= numSlots)
                 {
-                    CfOut(cf_error, "", "Slot %d out of range (max=%d) on %s - skipping", slot, numSlots, dbOp);
+                    CfOut(OUTPUT_LEVEL_ERROR, "", "Slot %d out of range (max=%d) on %s - skipping", slot, numSlots, dbOp);
                     ip = ip->next;
                     continue;
                 }
@@ -435,7 +435,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
         if (!MongoCheckForError(conn, dbOp, keyHash, &didUpdate))
         {
-            CfOut(cf_error, "", "!! Will not insert monitoring data");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Will not insert monitoring data");
             bson_destroy(&keys);
             return;
         }
@@ -445,7 +445,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
             // no previously existing object with given key - insert
             // note that this happens only once per object (~0.000001% of the time)
 
-            CfOut(cf_verbose, "", " -> Inserting new monitoring object for %s,%s", keyHash, monId);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Inserting new monitoring object for %s,%s", keyHash, monId);
 
             bson insert_op;
 
@@ -496,7 +496,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
             if (++iterations > 5000)
             {
-                CfOut(cf_error, "",
+                CfOut(OUTPUT_LEVEL_ERROR, "",
                       "!! Anomaly: More than 5000 iterations when saving monitor data (%s) - check DB consistency", dbOp);
                 break;
             }
@@ -519,7 +519,7 @@ void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
 
         if (sscanf(ip->name, "%127[^,]", monId) != 1)
         {
-            CfOut(cf_error, "", "!! Could not find monitoring id when saving histograms");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not find monitoring id when saving histograms");
             continue;
         }
 
@@ -1048,7 +1048,7 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
         collName = "logs_nk";
         break;
     default:
-        CfOut(cf_error, "", "!! Unknown promise log report type (%d)", state);
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Unknown promise log report type (%d)", state);
         return;
     }
 
@@ -2311,7 +2311,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
         }
         if (!found)
         {
-            CfOut(cf_verbose, "", "!! Unable to add note");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Unable to add note");
             retval = false;
         }
         snprintf(nid, CF_MAXVARSIZE, "%s", objectId);
@@ -2326,7 +2326,7 @@ int CFDB_MarkAsDeleted(mongo *dbconn, const char *keyHash)
 {    
  if (!IsDefinedClass("am_policy_hub", NULL) && !AM_PHP_MODULE)
     {
-        CfOut(cf_verbose, "", "Ignoring caching of deleted hosts - not called by php module");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ignoring caching of deleted hosts - not called by php module");
         return false;
     }
 

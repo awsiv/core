@@ -52,11 +52,11 @@ static int DiskSectorSize(const char *sysfsname)
         {
             if (ferror(fh))
             {
-                CfOut(cf_error, "fscanf", "Unable to read sector size for %s. Assuming 512 bytes.", sysfsname);
+                CfOut(OUTPUT_LEVEL_ERROR, "fscanf", "Unable to read sector size for %s. Assuming 512 bytes.", sysfsname);
             }
             else
             {
-                CfOut(cf_error, "", "Unable to read sector size for %s. Assuming 512 bytes.", sysfsname);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unable to read sector size for %s. Assuming 512 bytes.", sysfsname);
             }
         }
         fclose(fh);
@@ -82,7 +82,7 @@ static bool IsPartition(const char *sysfsname)
 
     if (errno != ENOENT)
     {
-        CfOut(cf_error, "access", "Unable to detect whether block device %s is a partition", sysfsname);
+        CfOut(OUTPUT_LEVEL_ERROR, "access", "Unable to detect whether block device %s is a partition", sysfsname);
     }
 
     return false;
@@ -120,7 +120,7 @@ static bool IsStackedDevice(const char *sysfsname)
 
     if (errno)
     {
-        CfOut(cf_error, "readdir", "Unable to read 'slaves' sysfs subdirectory for %s", sysfsname);
+        CfOut(OUTPUT_LEVEL_ERROR, "readdir", "Unable to read 'slaves' sysfs subdirectory for %s", sysfsname);
     }
 
     closedir(dir);
@@ -145,7 +145,7 @@ static void MonIoDiskstatsGatherData(double *cf_this)
 
     if (!(fh = fopen("/proc/diskstats", "r")))
     {
-        CfOut(cf_error, "fopen", "Error trying to open /proc/diskstats");
+        CfOut(OUTPUT_LEVEL_ERROR, "fopen", "Error trying to open /proc/diskstats");
         return;
     }
 
@@ -159,20 +159,20 @@ static void MonIoDiskstatsGatherData(double *cf_this)
         /* Format sanity check */
         if (!strchr(buf, '\n'))
         {
-            CfOut(cf_error, "",
+            CfOut(OUTPUT_LEVEL_ERROR, "",
                   "/proc/diskstats format error: read overlong string (> " TOSTRING(CF_BUFSIZE - 1) " bytes)");
             goto err;
         }
 
         if (StripTrailingNewline(buf, CF_EXPANDSIZE) == -1)
         {
-            CfOut(cf_error, "", "StripTrailingNewline was called on an overlong string");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "StripTrailingNewline was called on an overlong string");
         }
 
         if (sscanf(buf, "%*u %*u %s %lu %*u %lu %*u %lu %*u %lu",
                    diskname, &reads, &readsectors, &writes, &writtensectors) != 5)
         {
-            CfOut(cf_error, "", "Wrong /proc/diskstats line format: %s", buf);
+            CfOut(OUTPUT_LEVEL_ERROR, "", "Wrong /proc/diskstats line format: %s", buf);
             continue;
         }
 
@@ -207,7 +207,7 @@ static void MonIoDiskstatsGatherData(double *cf_this)
 
     if (ferror(fh))
     {
-        CfOut(cf_error, "fgets", "Error reading /proc/diskstats");
+        CfOut(OUTPUT_LEVEL_ERROR, "fgets", "Error reading /proc/diskstats");
         goto err;
     }
 

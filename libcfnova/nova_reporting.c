@@ -104,7 +104,7 @@ void Nova_SummarizeComms()
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }

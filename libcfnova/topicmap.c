@@ -1343,7 +1343,7 @@ JsonElement *Nova_GetServiceHistogram()
     
     if (!CFDB_Close(&dbconn))
     {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "!! Could not close connection to report database");
     }
 
     JsonElement *json_array_out = JsonArrayCreate(100);

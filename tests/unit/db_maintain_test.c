@@ -105,7 +105,7 @@ bool CFDB_ValidateVariablesReport(EnterpriseDB *conn, const char *keyhash)
                             }
                             else
                             {
-                                CfOut(cf_inform, "", " !! Possible data-corruption in variables report: %s.%s.%s "
+                                CfOut(OUTPUT_LEVEL_INFORM, "", " !! Possible data-corruption in variables report: %s.%s.%s "
                                       "(skipping...)", scope, rlval, bson_iterator_key(&it4));
 
                                 mongo_cursor_destroy(cursor);

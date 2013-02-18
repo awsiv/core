@@ -76,11 +76,11 @@ void GetInterfacesInfo(AgentType ag)
 
         if (retVal == ERROR_NO_DATA)
         {
-            CfOut(cf_verbose, "", "No network interface information found");
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", "No network interface information found");
         }
         else
         {
-            CfOut(cf_error, "GetAdaptersAddresses", "!! Could not get network interface information");
+            CfOut(OUTPUT_LEVEL_ERROR, "GetAdaptersAddresses", "!! Could not get network interface information");
         }
 
         if (pAddresses)
@@ -119,7 +119,7 @@ void GetInterfacesInfo(AgentType ag)
                 if (getnameinfo(pUnicast->Address.lpSockaddr, pUnicast->Address.iSockaddrLength,
                                 addrBuf, sizeof(addrBuf), NULL, 0, NI_NUMERICHOST) != 0)
                 {
-                    CfOut(cf_error, "getnameinfo", "!! Could not convert ip address to string");
+                    CfOut(OUTPUT_LEVEL_ERROR, "getnameinfo", "!! Could not convert ip address to string");
                     break;
                 }
 
@@ -233,7 +233,7 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
     nonBlock = true;
     if (ioctlsocket(conn->sd, FIONBIO, &nonBlock) != 0)
     {
-        CfOut(cf_error, "ioctlsocket", "!! Could not disable socket blocking mode");
+        CfOut(OUTPUT_LEVEL_ERROR, "ioctlsocket", "!! Could not disable socket blocking mode");
     }
 
     res = connect(conn->sd, cinp, cinpSz);
@@ -258,31 +258,31 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
             if (res == SOCKET_ERROR)
             {
-                CfOut(cf_error, "select", " !! Error connecting to server (select error))");
+                CfOut(OUTPUT_LEVEL_ERROR, "select", " !! Error connecting to server (select error))");
                 return false;
             }
             else if (res == 0)
             {
-                CfOut(cf_error, "", " !! Error connecting to server (timeout))");
+                CfOut(OUTPUT_LEVEL_ERROR, "", " !! Error connecting to server (timeout))");
                 return false;
             }
 
             if (getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void *) (&valopt), &lon) != 0)
             {
-                CfOut(cf_error, "getsockopt", "!! Could not check connection status");
+                CfOut(OUTPUT_LEVEL_ERROR, "getsockopt", "!! Could not check connection status");
                 return false;
             }
 
             if (valopt != 0)
             {
-                CfOut(cf_error, "connect", " !! Error connecting to server (timeout)");
+                CfOut(OUTPUT_LEVEL_ERROR, "connect", " !! Error connecting to server (timeout)");
                 return false;
             }
 
         }
         else
         {
-            CfOut(cf_error, "connect", " !! Error connecting to server");
+            CfOut(OUTPUT_LEVEL_ERROR, "connect", " !! Error connecting to server");
             return false;
         }
     }
@@ -293,7 +293,7 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
     if (ioctlsocket(conn->sd, FIONBIO, &nonBlock) != 0)
     {
-        CfOut(cf_error, "ioctlsocket", "!! Could not enable socket blocking mode");
+        CfOut(OUTPUT_LEVEL_ERROR, "ioctlsocket", "!! Could not enable socket blocking mode");
     }
 
     /*
@@ -308,7 +308,7 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
      if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
      {
-     CfOut(cf_error,"setsockopt","!! Couldn't set socket timeout");
+     CfOut(OUTPUT_LEVEL_ERROR,"setsockopt","!! Couldn't set socket timeout");
      }
      */
 

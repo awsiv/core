@@ -45,25 +45,25 @@ static void GetKstatInfo(double *cf_this)
 
     if ((k = kstat_lookup(kstat, "unix", 0, "sysinfo")) == NULL)
     {
-        CfOut(cf_error, "kstat_lookup", "Unable to lookup sysinfo in kstat");
+        CfOut(OUTPUT_LEVEL_ERROR, "kstat_lookup", "Unable to lookup sysinfo in kstat");
         return;
     }
 
     if (kstat_read(kstat, k, &sysinfo) == -1)
     {
-        CfOut(cf_error, "kstat_read", "Unable to read sysinfo from kstat");
+        CfOut(OUTPUT_LEVEL_ERROR, "kstat_read", "Unable to read sysinfo from kstat");
         return;
     }
 
     if ((k = kstat_lookup(kstat, "unix", 0, "vminfo")) == NULL)
     {
-        CfOut(cf_error, "kstat_lookup", "Unable to lookup vminfo in kstat");
+        CfOut(OUTPUT_LEVEL_ERROR, "kstat_lookup", "Unable to lookup vminfo in kstat");
         return;
     }
 
     if (kstat_read(kstat, k, &vminfo) == -1)
     {
-        CfOut(cf_error, "kstat_read", "Unable to read vminfo from kstat");
+        CfOut(OUTPUT_LEVEL_ERROR, "kstat_read", "Unable to read vminfo from kstat");
         return;
     }
 

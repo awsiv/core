@@ -37,7 +37,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
     if (a.signals == NULL)
     {
-        CfOut(cf_inform, "", " -> No signals to send for %s\n", pp->promiser);
+        CfOut(OUTPUT_LEVEL_INFORM, "", " -> No signals to send for %s\n", pp->promiser);
         return 0;
     }
 
@@ -51,7 +51,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
             if (signal != SIGKILL)
             {
-                CfOut(cf_verbose, "", "The only supported signal on windows is 'kill'");
+                CfOut(OUTPUT_LEVEL_VERBOSE, "", "The only supported signal on windows is 'kill'");
                 continue;
             }
 
@@ -61,18 +61,18 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
             {
                 if (!GracefulTerminate(pid))
                 {
-                    cfPS(cf_verbose, CF_FAIL, "", pp, a, " !! Couldn't terminate process with pid %jd\n", (intmax_t)pid);
+                    cfPS(OUTPUT_LEVEL_VERBOSE, CF_FAIL, "", pp, a, " !! Couldn't terminate process with pid %jd\n", (intmax_t)pid);
                     continue;
                 }
                 else
                 {
-                    cfPS(cf_inform, CF_CHG, "", pp, a, " -> Terminated process with pid %jd\n", (intmax_t)pid);
+                    cfPS(OUTPUT_LEVEL_INFORM, CF_CHG, "", pp, a, " -> Terminated process with pid %jd\n", (intmax_t)pid);
                     break;
                 }
             }
             else
             {
-                CfOut(cf_error, "", " -> Need to terminate process with pid %jd", (intmax_t)pid);
+                CfOut(OUTPUT_LEVEL_ERROR, "", " -> Need to terminate process with pid %jd", (intmax_t)pid);
             }
         }
     }
@@ -94,7 +94,7 @@ int GracefulTerminate(pid_t pid)
 
     if (procHandle == NULL)
     {
-        CfOut(cf_error, "OpenProcess", "!! Could not get process handle");
+        CfOut(OUTPUT_LEVEL_ERROR, "OpenProcess", "!! Could not get process handle");
         return false;
     }
 
@@ -102,7 +102,7 @@ int GracefulTerminate(pid_t pid)
 
     if (!CloseHandle(procHandle))
     {
-        CfOut(cf_error, "CloseHandle", "!! Could not close process handle");
+        CfOut(OUTPUT_LEVEL_ERROR, "CloseHandle", "!! Could not close process handle");
     }
 
     return (res != 0);
@@ -146,19 +146,19 @@ int ShellCommandReturnsZero(const char *comm, int useshell)
 
     if (!NovaWin_RunCmd(comm, useshell, false, NULL, NULL, &procHandle))
     {
-        CfOut(cf_error, "RunCmd", "!! Command \"%s\" failed", comm);
+        CfOut(OUTPUT_LEVEL_ERROR, "RunCmd", "!! Command \"%s\" failed", comm);
         exit(1);
     }
 
     if (WaitForSingleObject(procHandle, INFINITE) == WAIT_FAILED)
     {
-        CfOut(cf_error, "WaitForSingleObject", "!! Error waiting for process to finish");
+        CfOut(OUTPUT_LEVEL_ERROR, "WaitForSingleObject", "!! Error waiting for process to finish");
         exit(1);
     }
 
     if (!GetExitCodeProcess(procHandle, &exitcode))
     {
-        CfOut(cf_error, "GetExitCodeProcess", "!! Error getting exit code");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetExitCodeProcess", "!! Error getting exit code");
         exit(1);
     }
 
@@ -188,7 +188,7 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
     {
         if (sizeof("/c \"") + strlen(comm) + 1 >= sizeof(buf))
         {
-            CfOut(cf_error, "", "!! Buffer to small to hold command-string");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Buffer to small to hold command-string");
             return false;
         }
 
@@ -198,7 +198,7 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
 
         if (!NovaWin_GetSysDir(cmdPath, sizeof(cmdPath) - sizeof("\\cmd.exe")))
         {
-            CfOut(cf_error, "", "!! Could not get system directory and thus not cmd.exe directory");
+            CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get system directory and thus not cmd.exe directory");
             return false;
         }
 
@@ -226,7 +226,7 @@ int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *sta
     if (!CreateProcess(binary, binaryParams, NULL, NULL, inheritHandles, 0, NULL, startDir, si, &pi))
     {
         free(binaryParams);
-        CfOut(cf_error, "CreateProcess", "!! Failed to start process");
+        CfOut(OUTPUT_LEVEL_ERROR, "CreateProcess", "!! Failed to start process");
         return false;
     }
 
@@ -250,7 +250,7 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
 
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &currProcToken))
     {
-        CfOut(cf_error, "OpenProcessToken", "!! Could not get access token of current process");
+        CfOut(OUTPUT_LEVEL_ERROR, "OpenProcessToken", "!! Could not get access token of current process");
         return false;
     }
 
@@ -259,14 +259,14 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
     {
         if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
         {
-            CfOut(cf_error, "GetTokenInformation", "!! Could not get owner information on current process");
+            CfOut(OUTPUT_LEVEL_ERROR, "GetTokenInformation", "!! Could not get owner information on current process");
             CloseHandle(currProcToken);
             return false;
         }
     }
     else                        // the call should fail according to doc
     {
-        CfOut(cf_error, "", "!! Could not get required buffer size");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not get required buffer size");
         CloseHandle(currProcToken);
         return false;
     }
@@ -276,7 +276,7 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
 
     if (!GetTokenInformation(currProcToken, TokenUser, userToken, reqBufSz, &reqBufSz))
     {
-        CfOut(cf_error, "GetTokenInformation", "!! Could not get owner information on current process");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetTokenInformation", "!! Could not get owner information on current process");
         free(userToken);
         CloseHandle(currProcToken);
         return false;
@@ -286,7 +286,7 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
 
     if (ownerSidSz > sidSz)
     {
-        CfOut(cf_error, "", "!! Sid buffer too small");
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Sid buffer too small");
         free(userToken);
         CloseHandle(currProcToken);
         return false;
@@ -309,7 +309,7 @@ int GetCurrentUserName(char *userName, int userNameLen)
 
     if (!GetUserName(userName, &userNameMax))
     {
-        CfOut(cf_error, "GetUserName", "!! Could not get user name of current process, using \"UNKNOWN\"");
+        CfOut(OUTPUT_LEVEL_ERROR, "GetUserName", "!! Could not get user name of current process, using \"UNKNOWN\"");
 
         strncpy(userName, "UNKNOWN", userNameLen);
         userName[userNameLen - 1] = '\0';
@@ -328,7 +328,7 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 
     if (!LookupPrivilegeValue(NULL, privilegeName, &luid))
     {
-        CfOut(cf_error, "LookupPrivilegeValue", "!! Could not get priviligege");
+        CfOut(OUTPUT_LEVEL_ERROR, "LookupPrivilegeValue", "!! Could not get priviligege");
         return false;
     }
 
@@ -343,13 +343,13 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 
     if (!AdjustTokenPrivileges(token, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), NULL, NULL))
     {
-        CfOut(cf_error, "AdjustTokenPrivileges", "!! Could not set privilege");
+        CfOut(OUTPUT_LEVEL_ERROR, "AdjustTokenPrivileges", "!! Could not set privilege");
         return false;
     }
 
     if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
     {
-        CfOut(cf_error, "AdjustTokenPrivileges", "!! The token does not have the desired privilege");
+        CfOut(OUTPUT_LEVEL_ERROR, "AdjustTokenPrivileges", "!! The token does not have the desired privilege");
         return false;
     }
 

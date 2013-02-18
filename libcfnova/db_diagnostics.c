@@ -678,7 +678,7 @@ static DiagnosticServerStatus *DiagnosticStatusPull(EnterpriseDB *conn)
     service_status = DiagnosticServerStatusGet(conn);
     if (!service_status)
     {
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "Diagnostics: failed to fetch server status from MongoDB");
         return NULL;
     }
@@ -688,7 +688,7 @@ static DiagnosticServerStatus *DiagnosticStatusPull(EnterpriseDB *conn)
     db_cfreport = DiagnosticDatabaseStatusGet(conn, "cfreport");
     if (!db_cfreport)
     {
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "Diagnostics: failed to fetch database (cfreport) status from MongoDB");
     }
     else
@@ -713,7 +713,7 @@ static DiagnosticServerStatus *DiagnosticStatusPull(EnterpriseDB *conn)
                                                          cfreport_coll_list[i]);
             if (!coll_archive)
             {
-                CfOut(cf_error, "",
+                CfOut(OUTPUT_LEVEL_ERROR, "",
                       "Diagnostics: failed to fetch collection (cfreport.%s) status from MongoDB",
                       cfreport_coll_list[i]);
             }
@@ -778,7 +778,7 @@ static void DiagnosticStatusPush(EnterpriseDB *conn, DiagnosticServerStatus *sta
 
     if (err != MONGO_CONN_SUCCESS)
     {
-        CfOut(cf_error, "",
+        CfOut(OUTPUT_LEVEL_ERROR, "",
               "Diagnostics: failed to save snapshot (time_id: %ld) to database with error code: %d",
               time_id, err);
     }

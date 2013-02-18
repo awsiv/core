@@ -362,7 +362,7 @@ bool Sqlite3_DBOpen(sqlite3 **db)
 
     if( rc != SQLITE_OK )
     {
-        CfOut(cf_error, "","Can't open temporary database: %s\n", sqlite3_errmsg(*db));
+        CfOut(OUTPUT_LEVEL_ERROR, "","Can't open temporary database: %s\n", sqlite3_errmsg(*db));
         return false;
     }
 

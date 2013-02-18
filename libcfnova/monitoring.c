@@ -189,7 +189,7 @@ static void Nova_LoadSlots(void)
 
             if (fgets(line, CF_MAXVARSIZE, f) == NULL)
             {
-                CfOut(cf_error, "fgets", "Error trying to read ts_key");
+                CfOut(OUTPUT_LEVEL_ERROR, "fgets", "Error trying to read ts_key");
                 continue;
             }
 
@@ -206,7 +206,7 @@ static void Nova_LoadSlots(void)
             }
             else
             {
-                CfOut(cf_error, "", "Wrong line format in ts_key: %s", line);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Wrong line format in ts_key: %s", line);
             }
 
             if (strcmp(name, "spare") != 0)
@@ -268,11 +268,11 @@ static void Nova_DumpSlots(void)
 
     if(contents_changed)
     {
-        CfOut(cf_verbose, "", "Updating %s with new slot information", filename);
+        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Updating %s with new slot information", filename);
 
         if(!FileWriteOver(filename, file_contents_new))
         {
-            CfOut(cf_error, "FileWriteOver", "Nova_DumpSlots: Could not write file %s", filename);
+            CfOut(OUTPUT_LEVEL_ERROR, "FileWriteOver", "Nova_DumpSlots: Could not write file %s", filename);
         }
     }
 
@@ -328,7 +328,7 @@ void SetMeasurementPromises(Item **classlist)
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }
@@ -341,14 +341,14 @@ void SetMeasurementPromises(Item **classlist)
         {
             if (sizeof(entry) < vsize)
             {
-                CfOut(cf_error, "", "Invalid entry in measurements database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Invalid entry in measurements database. Expected size: %zu, actual size: %d", sizeof(entry), vsize);
                 continue;
             }
 
             strcpy(eventname, (char *) key);
             memcpy(&entry, stored, MIN(vsize, sizeof(entry)));
 
-            CfOut(cf_verbose, "", " -> Setting measurement event %s\n", eventname);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Setting measurement event %s\n", eventname);
 
             // a.measure.data_type is not longer known here, so look for zero decimals
 
@@ -393,7 +393,7 @@ void LoadSlowlyVaryingObservations()
 
     if (!NewDBCursor(dbp, &dbcp))
     {
-        CfOut(cf_inform, "", " !! Unable to scan class db");
+        CfOut(OUTPUT_LEVEL_INFORM, "", " !! Unable to scan class db");
         CloseDB(dbp);
         return;
     }
@@ -433,7 +433,7 @@ void LoadSlowlyVaryingObservations()
                 break;
 
             default:
-                CfOut(cf_error, "", "Unexpected value type reading from database: %d\n", (int) type);
+                CfOut(OUTPUT_LEVEL_ERROR, "", "Unexpected value type reading from database: %d\n", (int) type);
             }
         }
     }
@@ -493,7 +493,7 @@ static int NovaGetSlot(const char *name)
     {
         if (SLOTS[i] && !strcmp(SLOTS[i]->name, name))
         {
-            CfOut(cf_verbose, "", " -> Using slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Using slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
             return i + ob_spare;
         }
     }
@@ -503,12 +503,12 @@ static int NovaGetSlot(const char *name)
     {
         if (!SLOTS[i])
         {
-            CfOut(cf_verbose, "", " -> Using empty slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Using empty slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
             return i + ob_spare;
         }
     }
 
-    CfOut(cf_error, "",
+    CfOut(OUTPUT_LEVEL_ERROR, "",
           "Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
 
     return -1;
@@ -617,7 +617,7 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
         ev_new.Q = QDefinite(value);
     }
 
-    CfOut(cf_verbose, "", " -> Wrote scalar named event \"%s\" = (%.2lf,%.2lf,%.2lf)", eventname, ev_new.Q.q,
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Wrote scalar named event \"%s\" = (%.2lf,%.2lf,%.2lf)", eventname, ev_new.Q.q,
           ev_new.Q.expect, sqrt(ev_new.Q.var));
     WriteDB(dbp, eventname, &ev_new, sizeof(ev_new));
 
