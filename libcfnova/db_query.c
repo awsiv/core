@@ -1499,7 +1499,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, const char *keyHash, const cha
 
                                     while (bson_iterator_next(&it5))
                                     {
-                                        RlistAppendScalar(&newlist, (char *) bson_iterator_string(&it5), RVAL_TYPE_SCALAR);
+                                        RlistAppendScalar(&newlist, (char *) bson_iterator_string(&it5));
                                     }
 
                                     rrval = newlist;
@@ -3946,10 +3946,10 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 /*****************************************************************************/
 static void GetNewClientVersions(Rlist **rp)
 {
-    RlistPrependScalar(rp, (void *) "nova_2_2_.*", RVAL_TYPE_SCALAR);
-    RlistPrependScalar(rp, (void *) "nova_2_3_.*", RVAL_TYPE_SCALAR);
-    RlistPrependScalar(rp, (void *) "enterprise_2.*", RVAL_TYPE_SCALAR);
-    RlistPrependScalar(rp, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
+    RlistPrependScalar(rp, (void *) "nova_2_2_.*");
+    RlistPrependScalar(rp, (void *) "nova_2_3_.*");
+    RlistPrependScalar(rp, (void *) "enterprise_2.*");
+    RlistPrependScalar(rp, (void *) "enterprise_3.*");
 }
 
 /*****************************************************************************/
@@ -7085,11 +7085,11 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 
         if(return_ip_address)
         {
-            RlistPrependScalar(&return_list, hh->ipaddr, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&return_list, hh->ipaddr);
         }
         else
         {
-            RlistPrependScalar(&return_list, hh->hostname, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&return_list, hh->hostname);
         }
     }
 

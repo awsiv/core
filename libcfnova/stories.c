@@ -751,7 +751,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if (RlistIsStringIn(retval.item,hc->class))
       {
-      RlistPrependScalar(locations,hc->class,RVAL_TYPE_SCALAR);
+      RlistPrependScalar(locations,hc->class);
       break;
       }
    }

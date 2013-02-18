@@ -821,7 +821,7 @@ static void VerifyThingsPromise(Promise *pp)
 
             snprintf(synonym, CF_BUFSIZE - 1, "handles::%s", handle);
             otp = IdempInsertTopic(pp->bundle, synonym);
-            RlistPrependScalar(&(a.synonyms), otp->topic_name, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&(a.synonyms), otp->topic_name);
         }
 
         // Handle all synonyms as associations
@@ -855,7 +855,7 @@ static void VerifyThingsPromise(Promise *pp)
         // Add bundle reference
 
         rps = NULL;
-        RlistPrependScalar(&rps, pp->bundle, RVAL_TYPE_SCALAR);
+        RlistPrependScalar(&rps, pp->bundle);
         
         AddTopicAssociation(tp, &(tp->associations), KM_MENTIONS_F, KM_MENTIONS_B, rps, true, rp->item, pp->promiser);
 
@@ -868,13 +868,13 @@ static void VerifyThingsPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
             snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", pp->promiser);
-            RlistPrependScalar(&list, "Comment", RVAL_TYPE_SCALAR);
-            RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&list, "Comment");
+            RlistPrependScalar(&topics, id);
             
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
-                RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+                RlistPrependScalar(&topics, id);
             }
 
             AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
@@ -887,13 +887,13 @@ static void VerifyThingsPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-           RlistPrependScalar(&list, id, RVAL_TYPE_SCALAR);
+           RlistPrependScalar(&list, id);
            AddTopicAssociation(tp, &(tp->associations), NOVA_HANDLE_INV, NOVA_HANDLE, list, true, rp->item,
                                 pp->promiser);
            RlistDestroy(list);
            list = NULL;
-           RlistPrependScalar(&list, "promise handle", RVAL_TYPE_SCALAR);
-           RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+           RlistPrependScalar(&list, "promise handle");
+           RlistPrependScalar(&topics, id);
            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal,  topics, pp->classes, pp->bundle);
            RlistDestroy(list);
            RlistDestroy(topics);
@@ -971,13 +971,13 @@ static void VerifyTopicPromise(Promise *pp)
 
             snprintf(synonym, CF_BUFSIZE - 1, "handles::%s", handle);
             otp = IdempInsertTopic(pp->bundle, synonym);
-            RlistPrependScalar(&(a.synonyms), otp->topic_name, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&(a.synonyms), otp->topic_name);
         }
 
         // Add bundle reference
 
         rps = NULL;
-        RlistPrependScalar(&rps, pp->bundle, RVAL_TYPE_SCALAR);
+        RlistPrependScalar(&rps, pp->bundle);
 
         AddTopicAssociation(tp, &(tp->associations), KM_MENTIONS_F, KM_MENTIONS_B, rps, true, rp->item, pp->promiser);
 
@@ -990,13 +990,13 @@ static void VerifyTopicPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
             snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", pp->promiser);
-            RlistPrependScalar(&list, "Comment", RVAL_TYPE_SCALAR);
-            RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+            RlistPrependScalar(&list, "Comment");
+            RlistPrependScalar(&topics, id);
 
             for (rps = a.synonyms; rps != NULL; rps = rps->next)
             {
                 snprintf(id, CF_MAXVARSIZE-1, "promisers::%s", (char *)rps->item);
-                RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+                RlistPrependScalar(&topics, id);
             }
             
             AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
@@ -1009,13 +1009,13 @@ static void VerifyTopicPromise(Promise *pp)
         Rlist *list = NULL, *topics = NULL;
 
            snprintf(id, CF_MAXVARSIZE, "handles::%s", handle);
-           RlistPrependScalar(&list, id, RVAL_TYPE_SCALAR);
+           RlistPrependScalar(&list, id);
            AddTopicAssociation(tp, &(tp->associations), "is a promise with handle", "is a handle for", list, true, rp->item,
                                 pp->promiser);
            RlistDestroy(list);
            list = NULL;
-           RlistPrependScalar(&list, "promise handle", RVAL_TYPE_SCALAR);
-           RlistPrependScalar(&topics, id, RVAL_TYPE_SCALAR);
+           RlistPrependScalar(&list, "promise handle");
+           RlistPrependScalar(&topics, id);
            AddOccurrence(&OCCURRENCES, pp->ref, list, cfk_literal, topics, pp->classes, pp->bundle);
            RlistDestroy(list);
            RlistDestroy(topics);
@@ -1256,7 +1256,7 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
                 Rlist *rlist = 0;
 
                 snprintf(rev, CF_BUFSIZE - 1, "%s::%s", ncontext, ntopic);
-                RlistPrependScalar(&rlist, rev, RVAL_TYPE_SCALAR);
+                RlistPrependScalar(&rlist, rev);
 
                 // Stupid to have to declassify + reclassify, but ..
                 DeClassifyTopic(normalform, ndt, ndc);
@@ -1309,12 +1309,12 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
 
     if (represents == NULL)
     {
-        RlistPrependScalarIdemp(&(op->represents), "Unspecified document", RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&(op->represents), "Unspecified document");
     }
 
     for (rp = represents; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&(op->represents), rp->item, rp->type);
+        RlistPrependScalarIdemp(&(op->represents), rp->item);
     }
 
     for (rp = about_topics; rp != NULL; rp = rp->next)
@@ -1322,7 +1322,7 @@ static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents,
         char *topic_lowercase = xstrdup(rp->item);
         ToLowerStrInplace(topic_lowercase);
 
-        RlistPrependScalarIdemp(&(op->about_topics), topic_lowercase, rp->type);
+        RlistPrependScalarIdemp(&(op->about_topics), topic_lowercase);
         IdempInsertTopic(bundle, topic_lowercase);
 
         free(topic_lowercase);

@@ -61,7 +61,7 @@ Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
         if (bson_iterator_type(&it) == BSON_STRING)
         {
             // NOTE: preserve ordering (don't prepend)
-            RlistAppendScalar(&values, (char *) bson_iterator_string(&it), RVAL_TYPE_SCALAR);
+            RlistAppendScalar(&values, (char *) bson_iterator_string(&it));
         }
         else
         {
@@ -884,7 +884,7 @@ void BsonAppendClassFilterFromPromiseContext(bson *b, PromiseContextMode promise
     if (promise_context != PROMISE_CONTEXT_MODE_ALL)
     {
         Rlist *old_ent_versions = NULL;
-        RlistPrependScalar(&old_ent_versions, (void *) "enterprise_3.*", RVAL_TYPE_SCALAR);
+        RlistPrependScalar(&old_ent_versions, (void *) "enterprise_3.*");
 
         {
             BsonAppendStartObject(b, cfr_class_keys);

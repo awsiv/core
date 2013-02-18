@@ -1220,54 +1220,54 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
     potential = GetListConstraint("promise_repaired", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
     potential = GetListConstraint("repair_failed", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
     potential = GetListConstraint("repair_denied", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
     potential = GetListConstraint("promise_timeout", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&impacted, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
     potential = GetListConstraint("or", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&dependency, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, rp->item);
     }
 
     potential = GetListConstraint("and", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
-        RlistPrependScalarIdemp(&dependency, rp->item, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, rp->item);
     }
 
     if ((value = GetConstraintValue("expression", pp, RVAL_TYPE_SCALAR)))
     {
-        RlistPrependScalarIdemp(&dependency, value, RVAL_TYPE_SCALAR);
+        RlistPrependScalarIdemp(&dependency, value);
     }
 
 // Now look for impact
