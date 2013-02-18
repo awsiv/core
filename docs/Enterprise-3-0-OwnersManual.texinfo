@@ -106,7 +106,7 @@ Welcome to CFEngine Enterprise 3.0, the next generation of enterprise configurat
 
 We have made big changes to the Mission Portal to accommodate the needs of infrastructure engineers and IT managers alike. The front page consists of a list of applications, or apps, that give insight into different aspects of your infrastructure. Focus on a more intuitive UI with enhanced help functions has made the Mission Portal both easier and more powerful to use.
 
-CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. This product is described in full detail at @url{http://cfengine.com/25free}. Please note that CFEngine Enterprise should not be installed as an upgrade to CFEngine Community. In that case uninstall CEngine Community, do a clean install of CFEngine Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
+CFEngine 3 Free Enterprise is our commercial enterprise product offered for free for up to 25 managed hosts. It differs from our commercial offer in that it has different licensing terms, different support and it is limited to a maximum of 25 hosts. This product is described in full detail at @url{http://cfengine.com/enterprise-download}. Please note that CFEngine Enterprise should not be installed as an upgrade to CFEngine Community. In that case uninstall CEngine Community, do a clean install of CFEngine Enterprise and then move your existing policies to the new Enterprise hub. See the @url{http://cfengine.com/enterprise/faq, Enterprise FAQ} for more information.
 
 @menu
 * About CFEngine Enterprise::  
@@ -326,10 +326,10 @@ Commercial customers: Did you bootstrap before obtaining a license? See @ref{I d
 
 @item CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
 
-@item Skip this step for installation of CFEngine 3 Free Enterprise. To complete licensing setup, you should make a promise to accept the license
+@item To complete licensing setup, you should make a promise to accept the license
 terms by editing @file{/var/cfengine/masterfiles/promises.cf} and @* @file{/var/cfengine/masterfiles/failsafe/failsafe.cf}
 on the hub (policy server), changing the line @samp{host_licenses_paid => "<NUMBER>";}
-in @samp{body common control} to reflect the correct number of licenses that you have subscribed to.
+in @samp{body common control} to reflect the correct number of licenses that you have subscribed to. For Free Enterprise <NUMBER> should be 25 (the maximum number of clients that can be bootstrapped without obtaining a license).
 
 @end enumerate
 
@@ -346,7 +346,7 @@ also eventually see @code{cf-hub}. Note that it may take 5--10 minutes before al
 processes get started.
 
 @item Look for files in @file{/var/cfengine/inputs} (Unix)
-or @file{C:\Program Files\Cfengine\inputs} (Windows). If you are a commercial customer (not 25 free edition) the license file will be copied out from the policy server to the clients as part
+or @file{C:\Program Files\Cfengine\inputs} (Windows). If you are a commercial customer (not using the Free Enterprise edition) the license file will be copied out from the policy server to the clients as part
 of the normal distribution of policy. Each machine should get a
 copy of the @file{license.dat} file in @file{/var/cfengine/inputs}
 (Unix) or @file{C:\Program Files\Cfengine\inputs} (Windows).
@@ -4833,7 +4833,7 @@ See INSTALLATION.TXT for a list of dependencies for the hub (found on the CFEngi
 @item Commercial customers
 @url{https://cfengine.com/software/}
 @item CFEngine Free Enterprise
-@url{https://cfengine.com/25free/downloads}
+@url{https://cfengine.com/enterprise-download/packages}
 @end table
 
 To install the packages you might want to use @code{yum} on Red Hat/CentOS/Fedora, 
