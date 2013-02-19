@@ -31,14 +31,14 @@
 #define SQL_TABLE_CONTEXTS "Contexts"
 #define SQL_TABLE_VARIABLES "Variables"
 #define SQL_TABLE_SOFTWARE "Software"
-#define SQL_TABLE_PROMISESTATUS "PromiseStatusLast"
+#define SQL_TABLE_PROMISESTATUS_LAST "PromiseStatusLast"
 #define SQL_TABLE_PROMISEDEFINITIONS "PromiseDefinitions"
-#define SQL_TABLE_PROMISELOG "PromiseLogs"
+#define SQL_TABLE_PROMISELOGS "PromiseLogs"
 #define SQL_TABLE_BUNDLESTATUS "BundleStatus"
 #define SQL_TABLE_BENCHMARKS "Benchmarks"
-#define SQL_TABLE_LASTSEEN "LastSeenHosts"
-#define SQL_TABLE_TOTALCOMPLIANCE "PolicyStatus"
-#define SQL_TABLE_PATCH "SoftwareUpdates"
+#define SQL_TABLE_LASTSEEN_HOSTS "LastSeenHosts"
+#define SQL_TABLE_POLICYSTATUS "PolicyStatus"
+#define SQL_TABLE_SOFTWARE_UPDATES "SoftwareUpdates"
 #define SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "DatabaseServerStatus"
 #define SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "DatabaseStatus"
 #define SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS "DatabaseCollectionStatus"
@@ -57,7 +57,7 @@
                                "ChangeType VARCHAR(10), " \
                                "LineNumber INT, " \
                                "ChangeDetails VARCHAR(2047), " \
-                               "FOREIGN key(hostkey) REFERENCES hosts(hostkey));"
+                               "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
 #define CREATE_SQL_CONTEXTS "CREATE TABLE " SQL_TABLE_CONTEXTS "(" \
                             "HostKey VARCHAR(100), " \
@@ -81,7 +81,7 @@
                             "SoftwareArchitecture VARCHAR(20), " \
                             "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
-#define CREATE_SQL_PROMISESTATUS "CREATE TABLE " SQL_TABLE_PROMISESTATUS "(" \
+#define CREATE_SQL_PROMISESTATUS_LAST "CREATE TABLE " SQL_TABLE_PROMISESTATUS_LAST "(" \
                                  "HostKey VARCHAR(100), " \
                                  "PromiseHandle VARCHAR(50), " \
                                  "PromiseStatus VARCHAR(10), " \
@@ -97,7 +97,7 @@
                                       "Promisee VARCHAR(100), "\
                                       "PRIMARY KEY (NameSpace, Bundle, PromiseHandle));"
 
-#define CREATE_SQL_PROMISELOG "CREATE TABLE " SQL_TABLE_PROMISELOG "(" \
+#define CREATE_SQL_PROMISELOGS "CREATE TABLE " SQL_TABLE_PROMISELOGS "(" \
                                        "HostKey VARCHAR(100), " \
                                        "PromiseHandle VARCHAR(254), " \
                                        "PromiseStatus VARCHAR(10), " \
@@ -120,7 +120,7 @@
                                        "CheckTimeStamp BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
-#define CREATE_SQL_LASTSEEN "CREATE TABLE " SQL_TABLE_LASTSEEN "(" \
+#define CREATE_SQL_LASTSEEN_HOSTS "CREATE TABLE " SQL_TABLE_LASTSEEN_HOSTS "(" \
                                        "HostKey VARCHAR(100), " \
                                        "LastSeenDirection VARCHAR(10), " \
                                        "RemoteHostKey VARCHAR(100), " \
@@ -128,7 +128,7 @@
                                        "LastSeenInterval INT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
-#define CREATE_SQL_TOTALCOMPLIANCE "CREATE TABLE " SQL_TABLE_TOTALCOMPLIANCE "(" \
+#define CREATE_SQL_POLICYSTATUS "CREATE TABLE " SQL_TABLE_POLICYSTATUS "(" \
                                        "HostKey VARCHAR(100), " \
                                        "PolicyName VARCHAR(254), " \
                                        "TotalKept INT, " \
@@ -137,7 +137,7 @@
                                        "CheckTimeStamp BIGINT, " \
                                        "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey));"
 
-#define CREATE_SQL_PATCH "CREATE TABLE " SQL_TABLE_PATCH "(" \
+#define CREATE_SQL_SOFTWARE_UPDATES "CREATE TABLE " SQL_TABLE_SOFTWARE_UPDATES "(" \
                             "HostKey VARCHAR(100), " \
                             "PatchReportType VARCHAR(8), " \
                             "PatchName VARCHAR(50), " \
@@ -211,16 +211,16 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
                                                             const char *bundle_name,
                                                             const char *promisee);
 
-static void EnterpriseDBToSqlite3_PromiseLog(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_NotKeptLog(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_RepairedLog(sqlite3 *db, HostClassFilter *filter);
 
 static void EnterpriseDBToSqlite3_BundleStatus(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filter);
-static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_LastSeenHosts(sqlite3 *db, HostClassFilter *filter);
 
-static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *filter);
-static void EnterpriseDBToSqlite3_Patch(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_PolicyStatus(sqlite3 *db, HostClassFilter *filter);
+static void EnterpriseDBToSqlite3_SoftwareUpdates(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *filter);
 static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *filter);
 
@@ -259,14 +259,14 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_FILECHANGES,
     SQL_TABLE_VARIABLES,
     SQL_TABLE_SOFTWARE,
-    SQL_TABLE_PROMISESTATUS,
+    SQL_TABLE_PROMISESTATUS_LAST,
     SQL_TABLE_PROMISEDEFINITIONS,
-    SQL_TABLE_PROMISELOG,
+    SQL_TABLE_PROMISELOGS,
     SQL_TABLE_BUNDLESTATUS,
     SQL_TABLE_BENCHMARKS,
-    SQL_TABLE_LASTSEEN,
-    SQL_TABLE_TOTALCOMPLIANCE,
-    SQL_TABLE_PATCH,
+    SQL_TABLE_LASTSEEN_HOSTS,
+    SQL_TABLE_POLICYSTATUS,
+    SQL_TABLE_SOFTWARE_UPDATES,
     SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
     SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
     SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
@@ -282,12 +282,12 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_Software,
     EnterpriseDBToSqlite3_PromiseStatusLast,
     EnterpriseDBToSqlite3_PromiseDefinitions,
-    EnterpriseDBToSqlite3_PromiseLog,
+    EnterpriseDBToSqlite3_PromiseLogs,
     EnterpriseDBToSqlite3_BundleStatus,
     EnterpriseDBToSqlite3_Benchmarks,
-    EnterpriseDBToSqlite3_LastSeen,
-    EnterpriseDBToSqlite3_TotalCompliance,
-    EnterpriseDBToSqlite3_Patch,
+    EnterpriseDBToSqlite3_LastSeenHosts,
+    EnterpriseDBToSqlite3_PolicyStatus,
+    EnterpriseDBToSqlite3_SoftwareUpdates,
     EnterpriseDBToSqlite3_DiagnosticServiceStatus,
     EnterpriseDBToSqlite3_DiagnosticDatabaseStatus,
     EnterpriseDBToSqlite3_DiagnosticCollectionStatus,
@@ -301,14 +301,14 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_FILECHANGES,
     CREATE_SQL_VARIABLES,
     CREATE_SQL_SOFTWARE,
-    CREATE_SQL_PROMISESTATUS,
+    CREATE_SQL_PROMISESTATUS_LAST,
     CREATE_SQL_PROMISEDEFINITIONS,
-    CREATE_SQL_PROMISELOG,
+    CREATE_SQL_PROMISELOGS,
     CREATE_SQL_BUNDLESTATUS,
     CREATE_SQL_BENCHMARKS,
-    CREATE_SQL_LASTSEEN,
-    CREATE_SQL_TOTALCOMPLIANCE,
-    CREATE_SQL_PATCH,
+    CREATE_SQL_LASTSEEN_HOSTS,
+    CREATE_SQL_POLICYSTATUS,
+    CREATE_SQL_SOFTWARE_UPDATES,
     CREATE_SQL_DIAGNOSTIC_SERVER_STATUS,
     CREATE_SQL_DIAGNOSTIC_DATABASE_STATUS,
     CREATE_SQL_DIAGNOSTIC_COLLECTION_STATUS,
@@ -962,7 +962,7 @@ static void EnterpriseDBToSqlite3_PromiseStatusLast(sqlite3 *db, HostClassFilter
         Buffer *insert_buf = BufferNew();
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s',%ld);",
-                     SQL_TABLE_PROMISESTATUS,
+                     SQL_TABLE_PROMISESTATUS_LAST,
                      SkipHashType(hc->hh->keyhash),
                      NULLStringToEmpty(hc->handle),
                      PromiseStateToString(hc->status),
@@ -1058,7 +1058,7 @@ static bool EnterpriseDBToSqlite3_PromiseDefinitions_Insert(sqlite3 *db, const c
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_PromiseLog(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_PromiseLogs(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDBToSqlite3_NotKeptLog(db, filter);
     EnterpriseDBToSqlite3_RepairedLog(db, filter);
@@ -1089,7 +1089,7 @@ static void EnterpriseDBToSqlite3_NotKeptLog(sqlite3 *db, HostClassFilter *filte
         Buffer *insert_buf = BufferNew();
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                     SQL_TABLE_PROMISELOG,
+                     SQL_TABLE_PROMISELOGS,
                      SkipHashType(hp->hh->keyhash),
                      NULLStringToEmpty(hp->handle),
                      LABEL_STATE_NOTKEPT,
@@ -1137,7 +1137,7 @@ static void EnterpriseDBToSqlite3_RepairedLog(sqlite3 *db, HostClassFilter *filt
         Buffer *insert_buf = BufferNew();
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s','%s',%ld);",
-                     SQL_TABLE_PROMISELOG,
+                     SQL_TABLE_PROMISELOGS,
                      SkipHashType(hp->hh->keyhash),
                      NULLStringToEmpty(hp->handle),
                      LABEL_STATE_REPAIRED,
@@ -1250,7 +1250,7 @@ static void EnterpriseDBToSqlite3_Benchmarks(sqlite3 *db, HostClassFilter *filte
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_LastSeenHosts(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -1287,7 +1287,7 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
         Buffer *insert_buf = BufferNew();
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s',%ld,%d);",
-                     SQL_TABLE_LASTSEEN,
+                     SQL_TABLE_LASTSEEN_HOSTS,
                      SkipHashType(hl->hh->keyhash),
                      inout,
                      SkipHashType(hl->rhost->keyhash),
@@ -1310,7 +1310,7 @@ static void EnterpriseDBToSqlite3_LastSeen(sqlite3 *db, HostClassFilter *filter)
 
 /******************************************************************/
 
-static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_PolicyStatus(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDB dbconn;
 
@@ -1331,7 +1331,7 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
         Buffer *insert_buf = BufferNew();
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s',%d,%d,%d,%ld);",
-                     SQL_TABLE_TOTALCOMPLIANCE,
+                     SQL_TABLE_POLICYSTATUS,
                      SkipHashType(ht->hh->keyhash),
                      NULLStringToEmpty(ht->version),
                      ht->kept,
@@ -1358,7 +1358,7 @@ static void EnterpriseDBToSqlite3_TotalCompliance(sqlite3 *db, HostClassFilter *
 static const char *LABEL_PATCH_INSTALLED = "Installed";
 static const char *LABEL_PATCH_AVAILABLE = "Available";
 
-static void EnterpriseDBToSqlite3_Patch(sqlite3 *db, HostClassFilter *filter)
+static void EnterpriseDBToSqlite3_SoftwareUpdates(sqlite3 *db, HostClassFilter *filter)
 {
     EnterpriseDBToSqlite3_PatchInstalled(db, filter);
     EnterpriseDBToSqlite3_PatchAvailable(db, filter);
@@ -1387,7 +1387,7 @@ static void EnterpriseDBToSqlite3_PatchInstalled(sqlite3 *db, HostClassFilter *f
 
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
-                     SQL_TABLE_PATCH,
+                     SQL_TABLE_SOFTWARE_UPDATES,
                      SkipHashType(hs->hh->keyhash),
                      LABEL_PATCH_INSTALLED,
                      NULLStringToEmpty(hs->name),
@@ -1432,7 +1432,7 @@ static void EnterpriseDBToSqlite3_PatchAvailable(sqlite3 *db, HostClassFilter *f
 
         BufferPrintf(insert_buf,
                      "INSERT INTO %s VALUES('%s','%s','%s','%s','%s');",
-                     SQL_TABLE_PATCH,
+                     SQL_TABLE_SOFTWARE_UPDATES,
                      SkipHashType(hs->hh->keyhash),
                      LABEL_PATCH_AVAILABLE,
                      NULLStringToEmpty(hs->name),
