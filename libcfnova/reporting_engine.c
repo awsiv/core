@@ -96,7 +96,8 @@
                                       "PromiseHandle VARCHAR(50), " \
                                       "Promiser VARCHAR(50), " \
                                       "Bundle VARCHAR(50), " \
-                                      "Promisee VARCHAR(100));"
+                                      "Promisee VARCHAR(100), "\
+                                      "PRIMARY KEY (NameSpace, Bundle, PromiseHandle));"
 
 #define CREATE_SQL_PROMISELOG "CREATE TABLE " SQL_TABLE_PROMISELOG "(" \
                                        "HostKey VARCHAR(100), " \
