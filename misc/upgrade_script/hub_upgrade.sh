@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # hub_upgrade.sh
-# version 1.0.1
+# version 1.0.2
 #
 #
 # Created by Nakarin Phooripoom on 11/29/12.
@@ -9,7 +9,7 @@
 #
 # Description:
 #  Script to Upgrade CFEngine 3 Enterprise HUB 
-#  from version 2.1.x/2.2.x to 3.0.0/3.0.1
+#  from version 2.1.x/2.2.x to 3.0.0/3.0.1/3.0.2
 # 
 
 # Simple howto
@@ -268,6 +268,10 @@ yes)
   mkdir -p $WORKDIR/masterfiles/update
   cp -vf $WORKDIR/share/NovaBase/update/mongod.conf $WORKDIR/masterfiles/update
  fi
+  if [ $VAR1 = "3.0.2" ]; then
+  mkdir -p $WORKDIR/masterfiles/update
+  cp -vf $WORKDIR/share/NovaBase/update/mongod.conf $WORKDIR/masterfiles/update
+ fi
  UPDATE=1
  ;;
 no)
@@ -279,6 +283,11 @@ no)
   mv $WORKDIR/masterfiles/failsafe/*.cf $WORKDIR/masterfiles
  fi
  if [ $VAR1 = "3.0.1" ]; then
+  cp -rv $WORKDIR/share/NovaBase/update $WORKDIR/masterfiles
+  cp -v $WORKDIR/share/NovaBase/update.cf $WORKDIR/masterfiles
+  cp -f $WORKDIR/masterfiles/update.cf $WORKDIR/masterfiles/failsafe.cf
+ fi
+  if [ $VAR1 = "3.0.2" ]; then
   cp -rv $WORKDIR/share/NovaBase/update $WORKDIR/masterfiles
   cp -v $WORKDIR/share/NovaBase/update.cf $WORKDIR/masterfiles
   cp -f $WORKDIR/masterfiles/update.cf $WORKDIR/masterfiles/failsafe.cf
@@ -418,6 +427,13 @@ if [ $UPDATE = "0" -a $VAR1 = "3.0.1" ]; then
  echo "   change it to update_policy.cf and update_bins.cf"
  sed -i 's/"update.cf",/"update\/update_bins.cf",\n                    "update\/update_policy.cf",/g' $WORKDIR/masterfiles/promises.cf
 fi
+if [ $UPDATE = "0" -a $VAR1 = "3.0.2" ]; then
+ sleep 1
+ echo ""
+ echo "-> Found update.cf in $WORKDIR/masterfiles/promises.cf"
+ echo "   change it to update_policy.cf and update_bins.cf"
+ sed -i 's/"update.cf",/"update\/update_bins.cf",\n                    "update\/update_policy.cf",/g' $WORKDIR/masterfiles/promises.cf
+fi
 
 # Since depends_on is activated in Core 3.4.0, having it there in policy is slightly
 # to make things getting worse. Remove it.
@@ -451,6 +467,19 @@ sed -i '/usebundle.*garbage_collection/d' $WORKDIR/masterfiles/promises.cf
 
 # Add canonify() to symlink promises. It was reported a problem for 2.2.x clients
 if [ $UPDATE = "0" -a $VAR1 = "3.0.1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Add canonify() function to known problem lines in update/update_policy.cf"
+ grep canonify $WORKDIR/masterfiles/update/update_policy.cf | grep _cfsaved > /dev/null 2>&1
+ if [ $? = "1" ]; then
+  sed -i 's/\"cfe_internal_update_policy_files_remove_\$(agent)_cfsaved\",/canonify(\"cfe_internal_update_policy_files_remove_\$(agent)_cfsaved\"),/g' $WORKDIR/masterfiles/update/update_policy.cf
+ fi
+ grep canonify $WORKDIR/masterfiles/update/update_policy.cf | grep sbin_ > /dev/null 2>&1
+ if [ $? = "1" ]; then
+  sed -i 's/\"cfe_internal_update_policy_files_sbin_\$(agents)\",/canonify(\"cfe_internal_update_policy_files_sbin_\$(agents)\"),/g' $WORKDIR/masterfiles/update/update_policy.cf
+ fi 
+fi
+if [ $UPDATE = "0" -a $VAR1 = "3.0.2" ]; then
  sleep 1
  echo ""
  echo "-> Add canonify() function to known problem lines in update/update_policy.cf"
@@ -520,6 +549,17 @@ if [ $UPDATE = "1" -a $VAR1 = "3.0.0" ]; then
 fi
 
 if [ $UPDATE = "1" -a $VAR1 = "3.0.1" ]; then
+ sleep 1
+ echo ""
+ echo "-> Your HUB is partially upgraded."
+ echo "-> Please synchronize contents from $WORKDIR/share/NovaBase/update"
+ echo "   to your failsafe/update files manually."
+ echo "-> $WORKDIR/bin/mongod might not be started gracefully."
+ echo "-> Feel free to register a ticket if you need any support."
+ echo "   here: https://cfengine.com/otrs/customer.pl"
+fi
+
+if [ $UPDATE = "1" -a $VAR1 = "3.0.2" ]; then
  sleep 1
  echo ""
  echo "-> Your HUB is partially upgraded."
