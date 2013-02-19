@@ -24,7 +24,6 @@ static void test_get_table_names_single(void **state)
                                 "SELECT * FROM LastSeenHosts;",
                                 "SELECT * FROM PolicyStatus;",
                                 "SELECT * FROM SoftwareUpdates;",
-                                "SELECT * FROM FileDiffs;",
                                 "SELECT * FROM DatabaseServerStatus;",
                                 "SELECT * FROM DatabaseStatus;",
                                 "SELECT * FROM DatabaseCollectionStatus;",
@@ -46,7 +45,6 @@ static void test_get_table_names_single(void **state)
         "LastSeenHosts",
         "PolicyStatus",
         "SoftwareUpdates",
-        "FileDiffs",
         "DatabaseServerStatus",
         "DatabaseStatus",
         "DatabaseCollectionStatus",
@@ -78,27 +76,26 @@ static void test_get_table_names_single(void **state)
 
 static void test_get_column_count(void **state)
 {
-    const char *tables[] = {
-                            SQL_TABLE_HOSTS,
-                            SQL_TABLE_FILECHANGES,
-                            SQL_TABLE_CONTEXTS,
-                            SQL_TABLE_VARIABLES,
-                            SQL_TABLE_SOFTWARE,
-                            SQL_TABLE_PROMISESTATUS,
-                            SQL_TABLE_PROMISEDEFINITIONS,
-                            SQL_TABLE_PROMISELOG,
-                            SQL_TABLE_PROMISE_SUMMARY,
-                            SQL_TABLE_BUNDLESTATUS,
-                            SQL_TABLE_BENCHMARKS,
-                            SQL_TABLE_LASTSEEN,
-                            SQL_TABLE_TOTALCOMPLIANCE,
-                            SQL_TABLE_PATCH,
-                            SQL_TABLE_FILEDIFFS,
-                            SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
-                            SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
-                            SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
-                            NULL
-                         };
+    const char *tables[SQL_TABLE_COUNT] =
+    {
+        SQL_TABLE_HOSTS,
+        SQL_TABLE_CONTEXTS,
+        SQL_TABLE_FILECHANGES,
+        SQL_TABLE_VARIABLES,
+        SQL_TABLE_SOFTWARE,
+        SQL_TABLE_PROMISESTATUS_LAST,
+        SQL_TABLE_PROMISEDEFINITIONS,
+        SQL_TABLE_PROMISELOGS,
+        SQL_TABLE_BUNDLESTATUS,
+        SQL_TABLE_BENCHMARKS,
+        SQL_TABLE_LASTSEEN_HOSTS,
+        SQL_TABLE_POLICYSTATUS,
+        SQL_TABLE_SOFTWARE_UPDATES,
+        SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+        SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+        SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+        NULL
+    };
 
     int column_count[] = {
                             4,  // hosts
@@ -109,13 +106,11 @@ static void test_get_column_count(void **state)
                             4,  // promisestatuslast
                             5,  // promisedefinitions
                             5,  //promiselog
-                            4,  // promise summary
                             5,  // bundle status
                             4,  // benchmarks
                             5,  // lastseen
                             6,  // totalcompliance
                             5,  // patch
-                            7,  // filediffs
                             16, // serverstatus
                             6,  // databasestatus
                             10, // collectionstatus
@@ -157,27 +152,26 @@ static void test_validate_column_names(void **state)
 
     CFDB_Close(conn);
 
-    const char *tables[] = {
-                            SQL_TABLE_HOSTS,
-                            SQL_TABLE_FILECHANGES,
-                            SQL_TABLE_CONTEXTS,
-                            SQL_TABLE_VARIABLES,
-                            SQL_TABLE_SOFTWARE,
-                            SQL_TABLE_PROMISESTATUS,
-                            SQL_TABLE_PROMISEDEFINITIONS,
-                            SQL_TABLE_PROMISELOG,
-                            SQL_TABLE_PROMISE_SUMMARY,
-                            SQL_TABLE_BUNDLESTATUS,
-                            SQL_TABLE_BENCHMARKS,
-                            SQL_TABLE_LASTSEEN,
-                            SQL_TABLE_TOTALCOMPLIANCE,
-                            SQL_TABLE_PATCH,
-                            SQL_TABLE_FILEDIFFS,
-                            SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
-                            SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
-                            SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
-                            NULL
-                         };
+    const char *tables[SQL_TABLE_COUNT] =
+    {
+        SQL_TABLE_HOSTS,
+        SQL_TABLE_CONTEXTS,
+        SQL_TABLE_FILECHANGES,
+        SQL_TABLE_VARIABLES,
+        SQL_TABLE_SOFTWARE,
+        SQL_TABLE_PROMISESTATUS_LAST,
+        SQL_TABLE_PROMISEDEFINITIONS,
+        SQL_TABLE_PROMISELOGS,
+        SQL_TABLE_BUNDLESTATUS,
+        SQL_TABLE_BENCHMARKS,
+        SQL_TABLE_LASTSEEN_HOSTS,
+        SQL_TABLE_POLICYSTATUS,
+        SQL_TABLE_SOFTWARE_UPDATES,
+        SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
+        SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
+        SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+        NULL
+    };
 
     const char *column_names[][16] = {
         {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},        // hosts
@@ -188,13 +182,11 @@ static void test_validate_column_names(void **state)
         {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},  // promisestatuslast
         {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},             // promisedefinitions
         {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-        {"PromiseHandle", "PromiseLogType", "PromiseLogReport", "Occurrences", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "NameSpace", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}, //Bundlestatus
         {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "PatchReportType", "PatchName", "PatchVersion", "PatchArchitecture", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-        {"HostKey", "PromiseHandle", "FileName", "ChangeTimeStamp", "ChangeType", "LineNumber", "ChangeDetails", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"SampleTime", "Host", "Version", "Uptime", "GlobalLockTotalTime", "GlobalLockTime", "GlobalLockQuereTotal", "GlobalLockQuereReaders", "GlobalLockQuereWriters", "MemoryResident", "MemoryVirtual", "MemoryMapped", "BackgroundFlushCount", "BackgroundFlushTotalTime", "BackgroundFlushAverageTime", "BackgroundFlushLastTime"},
         {"SampleTime", "Database", "AverageObjectSize", "DataSize", "StorageSize", "FileSize", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"SampleTime", "Database", "Collection", "ObjectCount", "DataSize", "AverageObjectSize", "StorageSize", "IndexCount", "TotalIndexSize", "PaddingFactor", NULL, NULL, NULL, NULL, NULL, NULL},
