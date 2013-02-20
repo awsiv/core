@@ -8,7 +8,6 @@
 #include "stories.h"
 
 #include "env_context.h"
-#include "constraints.h"
 #include "files_names.h"
 #include "item_lib.h"
 #include "sort.h"

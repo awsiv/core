@@ -6,7 +6,6 @@
 
 #include "history.h"
 
-#include "constraints.h"
 #include "promises.h"
 #include "reporting.h"
 #include "transaction.h"
@@ -736,7 +735,7 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
 
 void VerifyMeasurement(double *this, Attributes a, Promise *pp)
 {
-    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
+    char *handle = (char *) ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
     Item *stream = NULL;
     int slot = 0;
     double new_value;

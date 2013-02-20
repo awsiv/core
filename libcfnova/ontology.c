@@ -8,7 +8,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#include "constraints.h"
 #include "promises.h"
 #include "parser.h"
 #include "files_names.h"
@@ -75,7 +74,7 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
     }
 
     char promise_id[CF_BUFSIZE];
-    Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
+    Rlist *rp, *rp2, *depends_on = PromiseGetConstraintAsList("depends_on", pp);
     Rlist *class_list = RlistFromSplitRegex(pp->classes, "[.!()|&]+", 100, false);
     char *bundlename = NULL, *bodyname = NULL;
 
@@ -126,9 +125,9 @@ void Nova_MapPromiseToTopic(const ReportContext *report_context, const Promise *
 
     if (strcmp(pp->agentsubtype, "files") == 0)
     {
-        Rlist *servers = GetListConstraint("servers", pp);
-        FnCall *edit_bundle = (FnCall *) GetConstraintValue("edit_line", pp, RVAL_TYPE_FNCALL);
-        char *source = GetConstraintValue("source", pp, RVAL_TYPE_SCALAR);
+        Rlist *servers = PromiseGetConstraintAsList("servers", pp);
+        FnCall *edit_bundle = (FnCall *) ConstraintGetRvalValue("edit_line", pp, RVAL_TYPE_FNCALL);
+        char *source = ConstraintGetRvalValue("source", pp, RVAL_TYPE_SCALAR);
 
         for (rp = servers; rp != NULL; rp = rp->next)
         {
@@ -635,7 +634,7 @@ const char *PromiseID(const Promise *pp)
 {
     static char id[CF_MAXVARSIZE];
     char vbuff[CF_MAXVARSIZE];
-    const char *handle = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
+    const char *handle = ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
 
     if (LICENSES == 0)
     {
@@ -724,7 +723,7 @@ void RegisterBundleDependence(char *name, const Promise *pp)
 
     PrependItemList(&NOVA_BUNDLEDEPENDENCE, assertion);
 
-    if ((handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)))
+    if ((handle = (char *) ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR)))
     {
         snprintf(assertion, CF_BUFSIZE - 1, "topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n", name,
                  NOVA_BUNDLE_DATA_INV_P, handle, NOVA_BUNDLE_DATA);
@@ -1216,56 +1215,56 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
 /* For activated classes we can assume that no one will */
 
-    potential = GetListConstraint("promise_kept", pp);
+    potential = PromiseGetConstraintAsList("promise_kept", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
-    potential = GetListConstraint("promise_repaired", pp);
+    potential = PromiseGetConstraintAsList("promise_repaired", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
-    potential = GetListConstraint("repair_failed", pp);
+    potential = PromiseGetConstraintAsList("repair_failed", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
-    potential = GetListConstraint("repair_denied", pp);
+    potential = PromiseGetConstraintAsList("repair_denied", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
-    potential = GetListConstraint("promise_timeout", pp);
+    potential = PromiseGetConstraintAsList("promise_timeout", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&impacted, rp->item);
     }
 
-    potential = GetListConstraint("or", pp);
+    potential = PromiseGetConstraintAsList("or", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&dependency, rp->item);
     }
 
-    potential = GetListConstraint("and", pp);
+    potential = PromiseGetConstraintAsList("and", pp);
 
     for (rp = potential; rp != NULL; rp = rp->next)
     {
         RlistPrependScalarIdemp(&dependency, rp->item);
     }
 
-    if ((value = GetConstraintValue("expression", pp, RVAL_TYPE_SCALAR)))
+    if ((value = ConstraintGetRvalValue("expression", pp, RVAL_TYPE_SCALAR)))
     {
         RlistPrependScalarIdemp(&dependency, value);
     }
@@ -1316,7 +1315,7 @@ static void Nova_MapClassParameterAssociations(Writer *writer, const Promise *pp
 
                 for (rp = impacted; rp != NULL; rp = rp->next)
                 {
-                    char *varclass = GetConstraintValue("ifvarclass", pp, RVAL_TYPE_SCALAR);
+                    char *varclass = ConstraintGetRvalValue("ifvarclass", pp, RVAL_TYPE_SCALAR);
 
                     if (strstr(pp2->classes, rp->item) || (varclass && strstr(varclass, rp->item)))
                     {

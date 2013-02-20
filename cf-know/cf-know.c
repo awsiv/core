@@ -26,7 +26,6 @@
 #include "generic_agent.h"
 
 #include "env_context.h"
-#include "constraints.h"
 #include "files_names.h"
 #include "ontology.h"
 #include "item_lib.h"
@@ -794,7 +793,7 @@ static void VerifyThingsPromise(Promise *pp)
     Attributes a = { {0} };
     Topic *tp = NULL, *otp;
     Rlist *rp, *rps, *contexts;
-    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
+    char *handle = (char *) ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
 
     CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Attempting to install thing-topic %s::%s \n", pp->classes, pp->promiser);
 
@@ -912,7 +911,7 @@ static void VerifyTopicPromise(Promise *pp)
     Attributes a = { {0} };
     Topic *tp = NULL, *otp;
     Rlist *rp, *rps, *contexts;
-    char *handle = (char *) GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
+    char *handle = (char *) ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
 
     a = GetTopicsAttributes(pp);
 
@@ -1593,11 +1592,11 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 {
     Attributes attr = { {0} };
     Rlist *rp;
-    char *cert = GetConstraintValue("certainty", pp, RVAL_TYPE_SCALAR);
+    char *cert = ConstraintGetRvalValue("certainty", pp, RVAL_TYPE_SCALAR);
     enum knowledgecertainty certainty;
 
-    attr.synonyms = GetListConstraint("synonyms", pp);
-    attr.general = GetListConstraint("generalizations", pp);
+    attr.synonyms = PromiseGetConstraintAsList("synonyms", pp);
+    attr.general = PromiseGetConstraintAsList("generalizations", pp);
 
     if (cert && strcmp(cert, "possible") == 0)
     {
@@ -1614,7 +1613,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
 // Select predefined physics
 
-    if ((rp = GetListConstraint("is_part_of", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_part_of", pp)))
     {
         switch (certainty)
         {
@@ -1645,7 +1644,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         
     }
 
-    if ((rp = GetListConstraint("determines", pp)))
+    if ((rp = PromiseGetConstraintAsList("determines", pp)))
     {
         switch (certainty)
         {
@@ -1677,7 +1676,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("is_determined_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_determined_by", pp)))
     {
         switch (certainty)
         {
@@ -1709,7 +1708,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         
     }
     
-    if ((rp = GetListConstraint("is_connected_to", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_connected_to", pp)))
     {
         switch (certainty)
         {
@@ -1741,7 +1740,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("uses", pp)))
+    if ((rp = PromiseGetConstraintAsList("uses", pp)))
     {
         switch (certainty)
         {
@@ -1772,7 +1771,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("provides", pp)))
+    if ((rp = PromiseGetConstraintAsList("provides", pp)))
     {
         switch (certainty)
         {
@@ -1803,7 +1802,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("belongs_to", pp)))
+    if ((rp = PromiseGetConstraintAsList("belongs_to", pp)))
     {
         switch (certainty)
         {
@@ -1834,7 +1833,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("affects", pp)))
+    if ((rp = PromiseGetConstraintAsList("affects", pp)))
     {
         switch (certainty)
         {
@@ -1855,7 +1854,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
         attr.associates = rp;
     }
     
-    if ((rp = GetListConstraint("causes", pp)))
+    if ((rp = PromiseGetConstraintAsList("causes", pp)))
     {
         switch (certainty)
         {
@@ -1887,7 +1886,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("is_caused_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_caused_by", pp)))
     {
         switch (certainty)
         {
@@ -1919,7 +1918,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("needs", pp)))
+    if ((rp = PromiseGetConstraintAsList("needs", pp)))
     {
         switch (certainty)
         {
@@ -1950,7 +1949,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("is_located_in", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_located_in", pp)))
     {
         switch (certainty)
         {
@@ -1981,7 +1980,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("is_preceded_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_preceded_by", pp)))
     {
         switch (certainty)
         {
@@ -2012,7 +2011,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
     
-    if ((rp = GetListConstraint("is_followed_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_followed_by", pp)))
     {
         switch (certainty)
         {
@@ -2043,7 +2042,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("involves", pp)))
+    if ((rp = PromiseGetConstraintAsList("involves", pp)))
     {
         switch (certainty)
         {
@@ -2074,7 +2073,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("implements", pp)))
+    if ((rp = PromiseGetConstraintAsList("implements", pp)))
     {
         switch (certainty)
         {
@@ -2106,7 +2105,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
     }
 
 
-    if ((rp = GetListConstraint("is_implemented_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_implemented_by", pp)))
     {
         switch (certainty)
         {
@@ -2138,7 +2137,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
     }
 
 
-    if ((rp = GetListConstraint("is_measured_by", pp)))
+    if ((rp = PromiseGetConstraintAsList("is_measured_by", pp)))
     {
         switch (certainty)
         {
@@ -2169,7 +2168,7 @@ static Attributes SetThingsAttributes(const Promise *pp, Topic *tp, char *contex
 
     }
 
-    if ((rp = GetListConstraint("measures", pp)))
+    if ((rp = PromiseGetConstraintAsList("measures", pp)))
     {
         switch (certainty)
         {

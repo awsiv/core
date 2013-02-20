@@ -11,7 +11,6 @@
 
 #include "sysinfo.h"
 #include "env_context.h"
-#include "constraints.h"
 #include "promises.h"
 #include "probes.h"
 #include "files_lib.h"

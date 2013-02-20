@@ -14,7 +14,6 @@
 #include "sysinfo.h"
 #include "files_names.h"
 #include "assert.h"
-#include "constraints.h"
 #include "matching.h"
 #include "hashes.h"
 #include "attributes.h"
@@ -23,6 +22,7 @@
 #include "communication.h"
 #include "logging.h"
 #include "files_lib.h"
+#include "policy.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -572,7 +572,7 @@ static bool IsInternalPromise(const Promise *pp)
 {
     assert(pp);
 
-    const char *handle = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR);
+    const char *handle = ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
 
     if (handle == NULL)
     {

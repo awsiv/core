@@ -8,11 +8,11 @@
 #include "promise_db.h"
 #include "cf.nova.h"
 
-#include "constraints.h"
 #include "files_names.h"
 #include "db_common.h"
 #include "bson_lib.h"
 #include "string_lib.h"
+#include "policy.h"
 
 static void BsonAppendPromisee(bson *b, const Rval *promisee);
 static void CFDB_SaveBody(EnterpriseDB *dbconn, const Body *body);
@@ -89,7 +89,7 @@ void CFDB_SaveExpandedPromise(const Promise *pp)
         bson_append_string(&insert_op, cfp_comment_exp, pp->ref);
     }
 
-    if ((sp = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
+    if ((sp = ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
     {
         bson_append_string(&insert_op, cfp_handle_exp, sp);
     }
@@ -201,12 +201,12 @@ void CFDB_SaveUnExpandedPromises(const Seq *bundles, const Seq *bodies)
                     bson_append_int(&insert_op, cfp_lineno, pp->offset.line);
                 }
 
-                if ((sp = GetConstraintValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
+                if ((sp = ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR)) || (sp = PromiseID(pp)))
                 {
                     bson_append_string(&insert_op, cfp_handle, sp);
                 }
 
-                if ((sp = GetConstraintValue("comment", pp, RVAL_TYPE_SCALAR)))
+                if ((sp = ConstraintGetRvalValue("comment", pp, RVAL_TYPE_SCALAR)))
                 {
                     bson_append_string(&insert_op, cfp_comment, sp);
                 }

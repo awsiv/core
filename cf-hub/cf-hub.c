@@ -10,7 +10,6 @@
 
 #include "sysinfo.h"
 #include "env_context.h"
-#include "constraints.h"
 #include "promises.h"
 #include "db_maintain.h"
 #include "db_query.h"
