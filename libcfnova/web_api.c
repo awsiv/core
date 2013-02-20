@@ -29,6 +29,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "topicmap.h"
 #include "stories.h"
 #include "install.h"
+#include "nova_deprecated.h"
 
 #include <assert.h>
 

@@ -18,6 +18,7 @@
 #include "logging.h"
 #include "vars.h"
 #include "install.h"
+#include "nova_deprecated.h"
 
 #include <assert.h>
 

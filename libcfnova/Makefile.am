@@ -37,7 +37,8 @@ libcfnova_la_SOURCES = \
         datapackaging.c \
         nova_promises.c \
         nova_reporting.c nova_reporting.h \
-        conversion.c
+        conversion.c \
+        nova_deprecated.c nova_deprecated.h
 
 if NT
 libcfnova_la_SOURCES += \
