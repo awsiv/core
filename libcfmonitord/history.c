@@ -507,7 +507,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                         {
                             CfOut(OUTPUT_LEVEL_VERBOSE,""," -> Found candidate match value of %s",value);
                             
-                            if (a.measure.policy == cfm_sum || a.measure.policy == cfm_average)
+                            if (a.measure.policy == MEASURE_POLICY_SUM || a.measure.policy == MEASURE_POLICY_AVERAGE)
                             {
                                 real_val += Str2Double(value);
                             }
@@ -518,7 +518,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                             
                             match_count++;
 
-                            if (a.measure.policy == cfm_first)
+                            if (a.measure.policy == MEASURE_POLICY_FIRST)
                             {
                                 done = true;
                             }
@@ -562,7 +562,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                   match_count, a.measure.select_line_matching);
         }
 
-        if (match_count > 0 && a.measure.policy == cfm_average) // If not "average" then "sum"
+        if (match_count > 0 && a.measure.policy == MEASURE_POLICY_AVERAGE) // If not "average" then "sum"
         {
             real_val /= match_count;
         }
