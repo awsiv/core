@@ -200,6 +200,16 @@ typedef struct
     int totalResultCount;
 } PageInfo;
 
+typedef enum
+{
+    REPORT_REQUEST_TYPE_DELTA,
+    REPORT_REQUEST_TYPE_FULL,
+    REPORT_REQUEST_TYPE_COLLECT_CALL,
+    REPORT_REQUEST_TYPE_ERROR
+} ReportRequestType;
+
+ReportRequestType ReportRequestTypeFromString(const char *s);
+
 /*****************************************************************************/
 
 /* Used to represent contents of var in DBM file -

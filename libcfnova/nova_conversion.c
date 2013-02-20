@@ -22,8 +22,9 @@
   included file COSL.txt.
 */
 
-#include "conversion.h"
+#include "cf.nova.h"
 
+#include "conversion.h"
 #include "env_context.h"
 #include "string_lib.h"
 #include "rlist.h"
@@ -31,6 +32,13 @@
 #include <assert.h>
 
 #define CF_NO_ARCH_SHORT "-"
+
+ReportRequestType ReportRequestTypeFromString(const char *s)
+{
+    static const char *MENU_TYPES[] = { "delta", "full", "relay", "collect_call", NULL };
+
+    return FindTypeInArray(MENU_TYPES, s, REPORT_REQUEST_TYPE_ERROR, REPORT_REQUEST_TYPE_ERROR);
+}
 
 // no static - used in tests
 char *SqlVariableExpandNumeric(const char *query, const char *key, long value);

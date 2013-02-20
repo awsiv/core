@@ -126,7 +126,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
 {
     char out[CF_BUFSIZE], menu_name[CF_MAXVARSIZE];
     char tbuf[CF_SMALLBUF];
-    enum cfd_menu type;
+    ReportRequestType type;
     Item *ip, *reply = NULL;
     int cipherlen = 0;
     time_t from = 0, time0 = 0, time1 = 0, delta1;
@@ -167,7 +167,7 @@ int Nova_ReturnQueryData(ServerConnectionState *conn, char *menu)
     }
     CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Menu request starting from %s", tbuf);
 
-    if ((type = String2Menu(menu_name)) == cfd_menu_error)
+    if ((type = ReportRequestTypeFromString(menu_name)) == REPORT_REQUEST_TYPE_ERROR)
     {
         CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Unknown menu type \"%s\"", menu_name);
         return false;

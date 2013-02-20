@@ -11,6 +11,7 @@
 #include "db_common.h"
 #include "item_lib.h"
 #include "conversion.h"
+#include "datapack.h"
 
 /***********************************************************************/
 
@@ -23,14 +24,14 @@ bool ExecuteRunagent(AgentConnection *conn, const char *menu_str)
         return false;
     }
 
-    enum cfd_menu menu = String2Menu(menu_str);
+    ReportRequestType menu = ReportRequestTypeFromString(menu_str);
 
     switch (menu)
     {
-    case cfd_menu_delta:
+    case REPORT_REQUEST_TYPE_DELTA:
         Nova_QueryClientForReports(&dbconn, conn, menu_str, time(0) - SECONDS_PER_MINUTE * 10);
         break;
-    case cfd_menu_full:
+    case REPORT_REQUEST_TYPE_FULL:
         Nova_QueryClientForReports(&dbconn, conn, menu_str, time(0) - SECONDS_PER_WEEK);
         break;
     default:

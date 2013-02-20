@@ -49,6 +49,6 @@ void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports);
 void DeleteReportBook(Item **reports);
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 
-void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type);
+void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, ReportRequestType type);
 
 #endif
