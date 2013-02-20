@@ -44,19 +44,19 @@ int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method met
 
     switch (directory_inherit)
     {
-    case cfacl_nochange:       // no change always succeeds
+    case ACL_INHERITANCE_NO_CHANGE:       // no change always succeeds
         result = true;
         break;
 
-    case cfacl_specify:        // default ACL is specified in promise
+    case ACL_INHERITANCE_SPECIFY:        // default ACL is specified in promise
         result = Nova_CheckNtACEs(file_path, aces, INHERIT_DEFAULT_ONLY, method, a, pp);
         break;
 
-    case cfacl_parent:         // default ACL should be the same as access ACL
+    case ACL_INHERITANCE_PARENT:         // default ACL should be the same as access ACL
         result = Nova_CheckNtDefaultEqualsAccessACL(file_path, a, pp);
         break;
 
-    case cfacl_clear:          // default ALC should be empty
+    case ACL_INHERITANCE_CLEAR:          // default ALC should be empty
         result = Nova_CheckNtDefaultClearACL(file_path, a, pp);
         break;
 
@@ -121,7 +121,7 @@ int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_ac
     }
 
 // if we are overwriting, remove all aces of the inheritance type we are overwriting
-    if (method == cfacl_overwrite)
+    if (method == ACL_METHOD_OVERWRITE)
     {
         Nova_RemoveEasByInheritance(eas, &eaCount, inherit);
     }
