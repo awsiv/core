@@ -39,7 +39,7 @@ struct Hit_
 {
     char *occurrence_context;
     char *locator;                 /* Promiser */
-    enum representations rep_type;
+    KnowledgeRepresentation rep_type;
     char *represents;
     Hit *next;
 };
@@ -65,9 +65,9 @@ struct servhist
 
 /*****************************************************************************/
 
-static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
+static void NewHit(Hit **list, char *context, char *locator, KnowledgeRepresentation locator_type, char *represents);
 static void DeleteHitList(Hit *list);
-static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
+static Hit *HitExists(Hit *list, char *locator, KnowledgeRepresentation rep_type, char *context);
 static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
 static int Nova_GetTopicIdForPromiseHandle(int handle_id, char *buffer, int bufsize);
 static void GetPortFrequencies(EnterpriseDB *dbconn, char *variable, struct servhist *services, const int type);
@@ -781,7 +781,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 JsonElement *Nova_ScanOccurrences(int this_id, char *username)
 {
-    enum representations locator_type;
+    KnowledgeRepresentation locator_type;
     char topic_name[CF_BUFSIZE] = { 0 },
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
@@ -1798,7 +1798,7 @@ Item *Nova_GetHandlesForGoal(int topic_id)
 
 /*************************************************************************/
 
-JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, enum representations locator_type, char *represents)
+JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, KnowledgeRepresentation locator_type, char *represents)
 {
     JsonElement *json_obj = JsonObjectCreate(4);
     JsonObjectAppendString(json_obj, "context", context);
@@ -2568,7 +2568,7 @@ static int MergeExistingContexts(Item **list, char *name, char *context, int mer
 /* The Hit Lists                                                             */
 /*****************************************************************************/
 
-static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents)
+static void NewHit(Hit **list,char *context, char *locator, KnowledgeRepresentation locator_type, char *represents)
 {
     Hit *hp = NULL;
 
@@ -2610,7 +2610,7 @@ static void DeleteHitList(Hit *hp)
 
 /*****************************************************************************/
 
-static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context)
+static Hit *HitExists(Hit *list, char *locator, KnowledgeRepresentation rep_type, char *context)
 {
     Hit *hp;
 

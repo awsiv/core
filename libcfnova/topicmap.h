@@ -37,7 +37,7 @@ int Nova_GetTopicComment(char *topic_name, char *topic_context, char *buffer, in
 int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type, char *buffer);
 int Nova_AddTopicSearchBuffer(int pid, char *topic_name, char *topic_type, char *buffer, int bufsize);
 int Nova_AddAssocSearchBuffer(char *from_assoc, char *to_assoc, char *buffer, int bufsize);
-JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, enum representations locator_type, char *represents);
+JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, KnowledgeRepresentation locator_type, char *represents);
 void AtomizeTopicContext(AlphaList *context_list, char *topic_context);
 char *Nova_TopicIdURL(int pid, char *s);
 char *Nova_AssocURL(char *s);

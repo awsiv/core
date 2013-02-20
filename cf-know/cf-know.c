@@ -91,11 +91,11 @@ static Topic *InsertTopic(char *bundle, char *name, char *context);
 static Topic *AddTopic(Topic **list, char *bundle ,char *name, char *type);
 static void AddTopicAssociation(Topic *tp, TopicAssociation **list, char *fwd_name, char *bwd_name, Rlist *li, int ok,
                                 char *from_context, char *from_topic);
-static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents, enum representations rtype,
+static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents, KnowledgeRepresentation rtype,
                           Rlist *add_topics, char *context, char *bundle);
 static Topic *TopicExists(char *topic_name, char *topic_type);
 static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, char *bwd);
-static Occurrence *OccurrenceExists(Occurrence *list, char *locator, enum representations repy_type, char *s);
+static Occurrence *OccurrenceExists(Occurrence *list, char *locator, KnowledgeRepresentation repy_type, char *s);
 static void KeepPromiseBundles(Policy *policy, const ReportContext *report_context);
 int GetTopicPid(char *classified_topic);
 
@@ -1030,14 +1030,14 @@ static void VerifyTopicPromise(Promise *pp)
 static void VerifyOccurrencePromises(Promise *pp)
 {
     Attributes a = { {0} };
-    enum representations rep_type;
+    KnowledgeRepresentation rep_type;
     Rlist *contexts, *rp;
 
     a = GetOccurrenceAttributes(pp);
 
     if (a.rep_type)
     {
-        rep_type = String2Representation(a.rep_type);
+        rep_type = KnowledgeRepresentationFromString(a.rep_type);
     }
     else
     {
@@ -1283,7 +1283,7 @@ static void AddTopicAssociation(Topic *this_tp, TopicAssociation **list, char *f
 
 /*****************************************************************************/
 
-static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents, enum representations rtype,
+static void AddOccurrence(Occurrence **list, char *reference, Rlist *represents, KnowledgeRepresentation rtype,
                           Rlist *about_topics, char *context, char *bundle)
 {
     Occurrence *op = NULL;
@@ -1531,7 +1531,7 @@ static TopicAssociation *AssociationExists(TopicAssociation *list, char *fwd, ch
 
 /*****************************************************************************/
 
-static Occurrence *OccurrenceExists(Occurrence *list, char *locator, enum representations rep_type, char *context)
+static Occurrence *OccurrenceExists(Occurrence *list, char *locator, KnowledgeRepresentation rep_type, char *context)
 {
     Occurrence *op;
 
