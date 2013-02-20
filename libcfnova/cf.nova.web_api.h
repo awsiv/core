@@ -86,7 +86,6 @@ extern int AM_PHP_MODULE;
 #ifdef HAVE_LIBMONGOC
 bool CFDB_GetValue( EnterpriseDB *conn, char *lval, char *rval, int size, char *db_name );
 bool CFDB_PutValue(EnterpriseDB *conn, const char *lval, const char *rval, const char *db_name);
-int Nova_GetTopicIdForTopic(char *typed_topic);
 #endif
 
 JsonElement *Nova2PHP_vitals_list(char *hostkey);
@@ -114,7 +113,6 @@ JsonElement *Nova2PHP_get_service_histogram(void);
 JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
 JsonElement *Nova2PHP_get_open_port_histograms(void);
 JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username);
-JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view, char *username);
 JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
 JsonElement *Nova2PHP_GetPromiseBody(char *name, char *type);

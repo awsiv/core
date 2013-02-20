@@ -22,7 +22,6 @@
 // WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT
 # define MONGO_BASE "cfreport"
-# define MONGO_KMBASE "cfknow"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
 # define MONGO_HOSTS_COLLECTION "hosts"
 # define MONGO_MON_MG_COLLECTION "monitoring_mg"
@@ -34,10 +33,6 @@
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
 # define MONGO_PROMISES_UNEXP_COLLECTION "promises_unexp"
 # define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
-# define MONGO_KM_TOPICS MONGO_KMBASE ".""KT"
-# define MONGO_KM_OCCURRENCES MONGO_KMBASE ".""KO"
-# define MONGO_KM_BUNDLES MONGO_KMBASE ".""KB"
-# define MONGO_KM_INFERENCES MONGO_KMBASE ".""KI"
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # define MONGO_CACHE MONGO_BASE ".cache"

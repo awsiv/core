@@ -16,6 +16,7 @@
 #include "logging.h"
 #include "net.h"
 #include "policy.h"
+#include "files_names.h"
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
@@ -85,8 +86,6 @@ void EnterpriseModuleTrick()
         Nova2PHP_add_note(NULL, NULL, NULL, -1, NULL, NULL, 100);
         Nova2PHP_get_notes(NULL, NULL, NULL, NULL, -1, -1, NULL, NULL, 10000);
         Nova2PHP_get_host_noteid(NULL, NULL, 4096);
-
-        Nova2PHP_get_knowledge_view(0, NULL, NULL);
 
         CfLDAPAuthenticate(NULL, NULL, NULL, NULL, NULL, 0, false);
     }
@@ -338,4 +337,32 @@ void CacheUnreliableValue(char *caller, char *handle, char *buffer)
 
     WriteDB(dbp, key, buffer, strlen(buffer) + 1);
     CloseDB(dbp);
+}
+
+const char *PromiseID(const Promise *pp)
+{
+    static char id[CF_MAXVARSIZE];
+    char vbuff[CF_MAXVARSIZE];
+    const char *handle = ConstraintGetRvalValue("handle", pp, RVAL_TYPE_SCALAR);
+
+    if (LICENSES == 0)
+    {
+        return "license_expired";
+    }
+
+    if (handle)
+    {
+        snprintf(id, CF_MAXVARSIZE, "%s", CanonifyName(handle));
+    }
+    else if (pp && pp->audit)
+    {
+        snprintf(vbuff, CF_MAXVARSIZE, "%s", ReadLastNode(pp->audit->filename));
+        snprintf(id, CF_MAXVARSIZE, "promise_%s_%zu", CanonifyName(vbuff), pp->offset.line);
+    }
+    else
+    {
+        snprintf(id, CF_MAXVARSIZE, "unlabelled_promise");
+    }
+
+    return id;
 }

@@ -27,7 +27,6 @@
 #include "policy.h"
 #include "generic_agent.h" // OpenCompilationReportFiles
 #include "promise_db.h"
-#include "ontology.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -176,7 +175,6 @@ ReportContext *Nova_OpenCompilationReportFiles(const char *fname)
 void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Seq *bundles, const Seq *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
-
     if (SHOWREPORTS)
     {
 	CFDB_SaveUnExpandedPromises(bundles, bodies);
@@ -192,17 +190,9 @@ void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, cons
 void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
-
     if (SHOWREPORTS)
     {
         CFDB_SaveExpandedPromise(pp);
-    }
-
-    if (context->report_writers[REPORT_OUTPUT_TYPE_KNOWLEDGE])
-    {
-        Promise *exp = DeRefCopyPromise(pp->bundle, pp);
-        Nova_MapPromiseToTopic(context, exp, version);
-        PromiseDestroy(exp);
     }
 #else
     ShowPromiseInReport(context, type, version, pp, indent);

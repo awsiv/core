@@ -54,8 +54,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_analyse_histogram, NULL)
     PHP_FE(cfpr_hosts_sorted_by_last_vital_value, NULL)
 
-    PHP_FE(cfpr_list_promises_with_promisee, NULL)
-    
     PHP_FE(cfpr_service_histogram, NULL)
     PHP_FE(cfpr_service_level_histogram, NULL)
     
@@ -69,8 +67,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_promise_list_by_promise_type, NULL)
     PHP_FE(cfpr_promise_details, NULL)
     PHP_FE(cfpr_bundle_list_all, NULL)
-    PHP_FE(cfpr_bundle_for_topic, NULL)
-    PHP_FE(cfpr_goal_progress, NULL)
     PHP_FE(cfpr_bundle_arguments, NULL)
     PHP_FE(cfpr_bundle_by_promise_handle, NULL)
     PHP_FE(cfpr_bundle_classes_used, NULL)
@@ -82,12 +78,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_body_details, NULL)
         /* END POLICY */
     PHP_FE(cfpr_getlastupdate, NULL)
-    PHP_FE(cfpr_list_business_goals, NULL)
-    PHP_FE(cfpr_summarize_goals, NULL)
-    PHP_FE(cfpr_list_services, NULL)
-    PHP_FE(cfpr_list_service_ports, NULL)
-    PHP_FE(cfpr_list_knowledge_bundles, NULL)
-    PHP_FE(cfpr_list_topics_for_bundle, NULL)
 
     PHP_FE(cfpr_class_cloud, NULL)
     PHP_FE(cfpr_report_vars, NULL)
@@ -100,7 +90,6 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_report_value, NULL)
     PHP_FE(cfpr_summarize_notkept, NULL)
     PHP_FE(cfpr_summarize_repaired, NULL)
-    PHP_FE(cfpr_get_knowledge_view, NULL)
     PHP_FE(cfpr_host_compliance_list_all, NULL)
     PHP_FE(cfpr_select_reports, NULL)
     PHP_FE(cfpr_host_compliance_list, NULL)
@@ -116,16 +105,7 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_hosts_with_value, NULL)
     PHP_FE(cfpr_host_by_hostkey, NULL)
     PHP_FE(cfpr_host_info, NULL)
-    PHP_FE(cfpr_show_topic, NULL)
-    PHP_FE(cfpr_search_topics, NULL)
-    PHP_FE(cfpr_show_topic_leads, NULL)
-    PHP_FE(cfpr_show_all_context_leads, NULL)
-    PHP_FE(cfpr_show_topic_hits, NULL)
-    PHP_FE(cfpr_show_topic_category, NULL)
-    PHP_FE(cfpr_get_pid_for_topic, NULL)
     PHP_FE(cfpr_list_documents, NULL)
-    PHP_FE(cfpr_get_story_by_id, NULL)
-    PHP_FE(cfpr_get_story_by_name, NULL)
     PHP_FE(cfpr_get_reverse_ip_lookup_name, NULL)
 
         /*

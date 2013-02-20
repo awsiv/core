@@ -532,14 +532,13 @@ void CheckLicenses(void)
     if (licenses == 0)
     {
         // using bootstrap_mode to avoid cf-promises complaining during bootstrap also (gets defined)
-        if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
-            && (THIS_AGENT_TYPE != AGENT_TYPE_KEYGEN))
+        if (!IsDefinedClass("bootstrap_mode", NULL) && getuid() == 0 && (THIS_AGENT_TYPE != AGENT_TYPE_KEYGEN))
         {
             CfOut(OUTPUT_LEVEL_ERROR, "", " !! Your configuration promises no host_licenses_paid in common control");
             CfOut(OUTPUT_LEVEL_ERROR, "", " !! By doing this, you confirm that the terms of the contract are legally binding");
         }
     }
-    else if (licenses > LICENSES && THIS_AGENT_TYPE != AGENT_TYPE_KNOW)
+    else if (licenses > LICENSES)
     {
         CfOut(OUTPUT_LEVEL_ERROR, "",
               " !! You have promised that %d license(s) have been paid for, but CFEngine has only promised to honour %d in the agreement. ",

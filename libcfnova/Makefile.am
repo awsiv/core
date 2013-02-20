@@ -33,7 +33,6 @@ libcfnova_la_SOURCES = \
         license.c license.h \
         log.c log.h \
         monitoring.c \
-        ontology.c ontology.h \
         datapackaging.c \
         nova_promises.c \
         nova_reporting.c nova_reporting.h \
@@ -80,8 +79,6 @@ libcfnova_la_SOURCES += \
         promise_db.c promise_db.h \
         reporting_engine.c reporting_engine.h \
         scorecards.c scorecards.h \
-        stories.c stories.h \
-        topicmap.c topicmap.h \
         web_report_export.c web_report_export.h \
         web_api.c \
         web_rbac.c \

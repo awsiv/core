@@ -99,11 +99,6 @@ PHP_FUNCTION(cfpr_vitals_view_year);
  */
 PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value);
 
-/*! \brief A list of handles with a named promisee
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_list_promises_with_promisee);
-
 
 /*! \brief A histogram of open ports
  */
@@ -170,12 +165,6 @@ PHP_FUNCTION(cfpr_body_details);
 // port plan: /policy
 PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
-/*! \brief Get the name of a knowledge bundle
- * for a given topic
- */
-// port plan: /policy
-PHP_FUNCTION(cfpr_bundle_for_topic);
-
 /*! \brief A list of classes in a bundle
  * \param bundleName
  * \param bundleType
@@ -189,36 +178,6 @@ PHP_FUNCTION(cfpr_bundle_classes_used);
  */
 // port plan: /policy
 PHP_FUNCTION(cfpr_bundle_arguments);
-
-/*! \brief Get the text about a goal
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_goal_progress);
-
-/*! \brief Get the list of business goals
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_list_business_goals);
-/*! \brief Summary of business goals
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_summarize_goals);
-
-/*! \brief List tree of knowledge
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_list_knowledge_bundles);
-PHP_FUNCTION(cfpr_list_topics_for_bundle);
-
-/*! \brief Get the list of high level services
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_list_services);
-
-/*! \brief Get the list of monitored service ports
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_list_service_ports);
 
 /*! \brief A JSON document with hosts and contexts matching the context expressions
  * \param classExpressions comma-delimited list
@@ -408,62 +367,6 @@ PHP_FUNCTION(cfpr_hub_key);
  */
 // port plan: (further investigate)
 PHP_FUNCTION(cfpr_get_hub_master);
-
-/*! \brief Get the topic-id for a topic
- * \param type
- * \param topic
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_get_pid_for_topic);
-
-/*! \brief Retrieve a topic
- * \param topicId
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_show_topic);
-
-/*! \brief Search for topics
- * \param queryString
- * \param useRegularExpressions
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_search_topics);
-
-/*! \brief Get leads for a topic
- * \param topicId
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_show_topic_leads);
-
-/*! \brief Get associations for a topic
- * \param topicId
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_show_all_context_leads);
-
-/*! \brief Get all associationss for an unqualified topic
- * \param topicName
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_show_topic_hits);
-
-/*! \brief Get the cateogry of a topic
- * \param topicId
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_show_topic_category);
-
-/*! \brief Get the view of a topic
- * \param topicId
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_get_knowledge_view);
-
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_get_story_by_name);
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_get_story_by_id);
-
 
 /*! \brief Get a list of the top N hosts (sorted by compliance score)
  * \param resultsPerPage
