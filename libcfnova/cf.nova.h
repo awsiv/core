@@ -855,7 +855,7 @@ void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
 void Nova_DoTryCollectCall(void);
 
-void LogFileChange(char *file, int change, Attributes a, Promise *pp, const ReportContext *report_context);
+void LogFileChange(char *file, int change, Attributes a, Promise *pp);
 
 /* weekly.c */
 

@@ -30,7 +30,7 @@ static void DeleteAllFileLines(FileLine *list);
 
 /*****************************************************************************/
 
-void LogFileChange(char *file, int change, Attributes a, Promise *pp, const ReportContext *report_context)
+void LogFileChange(char *file, int change, Attributes a, Promise *pp)
 {
     char destination[CF_BUFSIZE];
     struct stat sb, dsb;
@@ -60,7 +60,7 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
     if (GetRepositoryPath(file, a, destination))
     {
         JoinPath(destination, CanonifyName(file));
-        MakeParentDirectory(destination, a.move_obstructions, report_context);
+        MakeParentDirectory(destination, a.move_obstructions);
     }
     else
     {
@@ -89,7 +89,7 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp, const Repo
 
         CheckForFileHoles(&sb, pp);
 
-        if (CopyRegularFile(file, destination, sb, dsb, a, pp, report_context))
+        if (CopyRegularFile(file, destination, sb, dsb, a, pp))
         {
             CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Cached change-file %s to repository location %s\n", file, destination);
             return;
