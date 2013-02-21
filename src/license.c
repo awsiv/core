@@ -203,8 +203,19 @@ int EnterpriseExpiry(void)
     NewScalar("sys", "license_owner", company, cf_str);
     snprintf(snumber, CF_SMALLBUF, "%d", LICENSES);
     NewScalar("sys", "licenses_granted", snumber, cf_int);
+
+    char license_file_path[512];
+    snprintf(license_file_path, sizeof(license_file_path), "%s/inputs/license.dat", CFWORKDIR);
+    MapName(license_file_path);
+    time_t installed_time_t = 0;
+
+    if(stat(license_file_path, &sb) != -1)
+    {
+        installed_time_t = sb.st_mtime;
+    }
+
 #ifndef __CDT_PARSER__
-    snprintf(installed_time, CF_MAXVARSIZE, "%ld", sb.st_mtime);
+    snprintf(installed_time, CF_MAXVARSIZE, "%ld", installed_time_t);
 #endif
     NewScalar("sys", "licenses_installtime", installed_time, cf_str);
 
