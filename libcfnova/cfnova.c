@@ -225,7 +225,8 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
     CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> * Hailing %s:%u for remote handle \"%s\"\n", peer, (unsigned int) a.copy.portnumber,
           handle);
 
-    conn = NewServerConnection(a, pp);
+    int err = 0;
+    conn = NewServerConnection(a, pp, &err);
 
     if (conn == NULL)
     {

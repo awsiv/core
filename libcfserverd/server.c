@@ -332,7 +332,8 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     }
     else
     {
-        conn = NewServerConnection(a, pp);
+        int err = 0;
+        conn = NewServerConnection(a, pp, &err);
 
         if (conn == NULL)
         {
