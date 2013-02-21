@@ -109,41 +109,6 @@ int CFDB_SaveLastseenCache(Item *lastseen)
     return true;
 }
 
-/*****************************************************************************/
-
-void CFDB_SaveGoalsCache(char *goal_patterns)
-{
-    mongo dbconn;
-
-    if (!IsDefinedClass("am_policy_hub", NULL))
-    {
-        CfOut(OUTPUT_LEVEL_VERBOSE, "", "Ignoring caching of lastseen hosts into database - we are not a policy server");
-        return;
-    }
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
-
-    bson set_op;
-    bson_init(&set_op);
-    {
-        bson_append_start_object(&set_op, "$set");
-        bson_append_string(&set_op, "goal_patterns", goal_patterns);
-        bson_append_finish_object(&set_op);
-    }
-    BsonFinish(&set_op);
-
-    bson empty;
-    MongoUpdate(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
-
-    bson_destroy(&set_op);
-    CFDB_Close(&dbconn);
-}
-
-/*****************************************************************************/
-
 void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *keyhash, char *ipaddr,
                      char *hostname)
 /**

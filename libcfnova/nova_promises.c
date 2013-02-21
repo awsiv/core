@@ -557,17 +557,6 @@ static int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2)
     return false;
 }
 
-/*****************************************************************************/
-
-void AddGoalsToDB(char *goal_patterns)
-{
-#ifdef HAVE_LIBMONGOC
-    CFDB_SaveGoalsCache(goal_patterns);
-#endif
-}
-
-/*****************************************************************************/
-
 static bool IsInternalPromise(const Promise *pp)
 {
     assert(pp);
