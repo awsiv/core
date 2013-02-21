@@ -210,6 +210,27 @@ typedef enum
 
 ReportRequestType ReportRequestTypeFromString(const char *s);
 
+enum cf_meter
+{
+    meter_compliance_week,
+    meter_compliance_day,
+    meter_compliance_hour,
+    meter_perf_day,
+    meter_other_day,
+    meter_comms_hour,
+    meter_anomalies_day,
+    meter_compliance_week_user,
+    meter_compliance_week_internal,
+    meter_compliance_day_user,
+    meter_compliance_day_internal,
+    meter_compliance_hour_user,
+    meter_compliance_hour_internal,
+    meter_endmark
+};
+
+extern double METER_KEPT[meter_endmark];
+extern double METER_REPAIRED[meter_endmark];
+
 /*****************************************************************************/
 
 /* Used to represent contents of var in DBM file -

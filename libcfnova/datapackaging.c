@@ -21,6 +21,9 @@
 
 #define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
 
+double METER_KEPT[meter_endmark];
+double METER_REPAIRED[meter_endmark];
+
 /* For sorting */
 typedef struct
 {
