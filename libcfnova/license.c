@@ -510,7 +510,7 @@ void CheckLicenses(void)
     int licenses = 0;
     Rval retval;
 
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
+    if (GetVariable("control_common", CFG_CONTROLBODY[COMMON_CONTROL_LICENSES].lval, &retval) != DATA_TYPE_NONE)
     {
         licenses = IntFromString(retval.item);
         CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
@@ -591,7 +591,7 @@ static void Nova_LogLicenseStatus(void)
 
     int licenses_policy = 0;
 
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
+    if (GetVariable("control_common", CFG_CONTROLBODY[COMMON_CONTROL_LICENSES].lval, &retval) != DATA_TYPE_NONE)
     {
         licenses_policy = IntFromString(retval.item);
     }
