@@ -43,8 +43,17 @@ static int PR_NOTKEPT_USER;
 
 static bool IsInternalPromise(const Promise *pp);
 
-PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 
+typedef struct PromiseIdent_
+{
+    char *handle;
+    char *filename;
+    char *classes;
+    int line_number;
+    struct PromiseIdent_ *next;
+} PromiseIdent;
+
+PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 PromiseIdent *PROMISER_REGEXES = NULL;
 
 static void Nova_DefineHubMaster(void);
