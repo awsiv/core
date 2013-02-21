@@ -791,7 +791,6 @@ int Nova_PlaceCollectCall(AgentConnection *conn);
 
 int Nova_ReadHistogram2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *monId);
 Item *Nova_MapHistogram(DataView *cfv, char *keyhash);
-void Nova_AnalyseHistogram(char *keyhash, enum observables obs, char *buffer, int bufsize);
 #endif
 
 /* license.c */
@@ -958,8 +957,6 @@ int NovaWin_PackageListInstalledFromAPI(PackageItem ** pkgList, Attributes a, Pr
 
 #ifdef HAVE_LIBMONGOC
 int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *monId);
-void Nova_DrawLongHAxes(DataView *cfv, int col);
-void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, int bufsize);
 #endif
 
 #include "ldap_lib.h"
