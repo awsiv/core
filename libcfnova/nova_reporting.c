@@ -172,29 +172,21 @@ ReportContext *Nova_OpenCompilationReportFiles(const char *fname)
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Seq *bundles, const Seq *bodies)
+void Nova_ShowPromises(const ReportContext *context, const Seq *bundles, const Seq *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
-    if (SHOWREPORTS)
-    {
-	CFDB_SaveUnExpandedPromises(bundles, bodies);
-    }
-
-#else
-    ShowPromisesInReport(context, type, bundles, bodies);
+    CFDB_SaveUnExpandedPromises(bundles, bodies);
 #endif
 }
 
 /*****************************************************************************/
 
-void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent)
+void Nova_ShowPromise(const ReportContext *context, const char *version, const Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
     if (SHOWREPORTS)
     {
         CFDB_SaveExpandedPromise(pp);
     }
-#else
-    ShowPromiseInReport(context, type, version, pp, indent);
 #endif
 }

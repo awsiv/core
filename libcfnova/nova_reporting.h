@@ -7,7 +7,7 @@
 void Nova_SummarizeComms(void);
 
 ReportContext *Nova_OpenCompilationReportFiles(const char *fname);
-void Nova_ShowPromises(const ReportContext *context, ReportOutputType type, const Seq *bundles, const Seq *bodies);
-void Nova_ShowPromise(const ReportContext *context, ReportOutputType type, const char *version, const Promise *pp, int indent);
+void Nova_ShowPromises(const ReportContext *context, const Seq *bundles, const Seq *bodies);
+void Nova_ShowPromise(const ReportContext *context, const char *version, const Promise *pp, int indent);
 
 #endif
