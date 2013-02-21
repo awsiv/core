@@ -1562,7 +1562,7 @@ static void Nova_PackVariables2(Item **reply, char *header, time_t from, ReportR
                 strcpy(prevScope, scope);
             }
 
-            dtypeStr = Dtype2Str(var.dtype);
+            dtypeStr = DataTypeToString(var.dtype);
 
             char rval_without_newline[CF_MAXTRANSSIZE] = "\0";
             ReplaceChar(var.rval, rval_without_newline, sizeof(rval_without_newline), '\n', CF_N_CODE);

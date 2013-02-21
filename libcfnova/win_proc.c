@@ -47,7 +47,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
         for (rp = a.signals; rp != NULL; rp = rp->next)
         {
-            signal = Signal2Int(rp->item);
+            signal = SignalFromString(rp->item);
 
             if (signal != SIGKILL)
             {

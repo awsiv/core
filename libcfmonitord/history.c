@@ -194,14 +194,14 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 
     if (a.measure.stream_type && strcmp(a.measure.stream_type, "pipe") == 0)
     {
-        if (!IsExecutable(GetArg0(pp->promiser)))
+        if (!IsExecutable(CommandArg0(pp->promiser)))
         {
             cfPS(OUTPUT_LEVEL_ERROR, CF_FAIL, "", pp, a, "%s promises to be executable but isn't\n", pp->promiser);
             return NULL;
         }
         else
         {
-            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promiser string contains a valid executable (%s) - ok\n", GetArg0(pp->promiser));
+            CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Promiser string contains a valid executable (%s) - ok\n", CommandArg0(pp->promiser));
         }
     }
 
@@ -246,7 +246,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 
         start = BeginMeasure();
 
-        CommPrefix(pp->promiser, comm);
+        CommandPrefix(pp->promiser, comm);
 
         if (a.contain.timeout != 0)
         {
@@ -509,11 +509,11 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                             
                             if (a.measure.policy == MEASURE_POLICY_SUM || a.measure.policy == MEASURE_POLICY_AVERAGE)
                             {
-                                real_val += Str2Double(value);
+                                real_val += DoubleFromString(value);
                             }
                             else
                             {
-                                real_val = Str2Double(value);
+                                real_val = DoubleFromString(value);
                             }
                             
                             match_count++;

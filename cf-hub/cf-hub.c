@@ -416,7 +416,7 @@ void KeepPromises(Policy *policy, GenericAgentConfig *config)
 
             if (strcmp(cp->lval, CFH_CONTROLBODY[HUB_CONTROL_PORT].lval) == 0)
             {
-                SHORT_CFENGINEPORT = htons((short) Str2Int((const char *) retval.item));
+                SHORT_CFENGINEPORT = htons((short) IntFromString((const char *) retval.item));
                 strncpy(STR_CFENGINEPORT, (const char *) retval.item, 15);
                 CfOut(OUTPUT_LEVEL_VERBOSE, "", "SET default portnumber = %u = %s = %s\n", (int) SHORT_CFENGINEPORT, STR_CFENGINEPORT,
                       (const char *) retval.item);

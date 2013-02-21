@@ -189,7 +189,7 @@ void ReportPatches(PackageManager *list)
     {
         for (pi = mp->patch_list; pi != NULL; pi = pi->next)
         {
-            fprintf(fout, "%s,%s,%s,%s\n", pi->name, pi->version, pi->arch, ReadLastNode(GetArg0(mp->manager)));
+            fprintf(fout, "%s,%s,%s,%s\n", pi->name, pi->version, pi->arch, ReadLastNode(CommandArg0(mp->manager)));
         }
     }
 
@@ -208,7 +208,7 @@ void ReportPatches(PackageManager *list)
         for (pi = mp->patch_avail; pi != NULL; pi = pi->next)
         {
             count++;
-            fprintf(fout, "%s,%s,%s,%s\n", pi->name, pi->version, pi->arch, ReadLastNode(GetArg0(mp->manager)));
+            fprintf(fout, "%s,%s,%s,%s\n", pi->name, pi->version, pi->arch, ReadLastNode(CommandArg0(mp->manager)));
         }
     }
 

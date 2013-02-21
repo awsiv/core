@@ -23,6 +23,38 @@ extern int FACILITY;
 
 static pthread_once_t log_shutdown_once = PTHREAD_ONCE_INIT;
 
+static char *Item2String(Item *ip)
+{
+    Item *currItem;
+    int stringSz = 0;
+    char *buf;
+
+    // compute required buffer size
+    for (currItem = ip; currItem != NULL; currItem = currItem->next)
+    {
+        stringSz += strlen(currItem->name);
+        stringSz++;             // newline space
+    }
+
+    // we automatically get \0-termination because we are not appending a \n after the last item
+
+    buf = xcalloc(1, stringSz);
+
+    // do the copy
+    for (currItem = ip; currItem != NULL; currItem = currItem->next)
+    {
+        strcat(buf, currItem->name);
+
+        if (currItem->next != NULL)     // no newline after last item
+        {
+            strcat(buf, "\n");
+        }
+    }
+
+    return buf;
+}
+
+
 /* We use Event Logging on widows. */
 void MakeLog(Item *mess, enum cfreport level)
 {

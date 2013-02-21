@@ -204,10 +204,10 @@ int EnterpriseExpiry(void)
     }
 
     m_now = Month2Int(VMONTH);
-    d_now = Str2Int(VDAY);
+    d_now = IntFromString(VDAY);
 
     m_expire = Month2Int(u_month);
-    d_expire = Str2Int(u_day);
+    d_expire = IntFromString(u_day);
 
     CfDebug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n", VYEAR, INTERNAL_EXPIRY_YEAR, VMONTH, INTERNAL_EXPIRY_MONTH, VDAY, INTERNAL_EXPIRY_DAY);
     CfDebug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n", VYEAR, INTERNAL_EXPIRY_YEAR, m_now, m_expire, d_now, d_expire);
@@ -512,7 +512,7 @@ void CheckLicenses(void)
 
     if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
     {
-        licenses = Str2Int(retval.item);
+        licenses = IntFromString(retval.item);
         CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> %d paid licenses have been purchased (this is a promise by you)", licenses);
         NewScalar("sys", "licenses_promised", retval.item, DATA_TYPE_INT);
 #ifdef HAVE_LIBMONGOC
@@ -594,7 +594,7 @@ static void Nova_LogLicenseStatus(void)
 
     if (GetVariable("control_common", CFG_CONTROLBODY[cfg_licenses].lval, &retval) != DATA_TYPE_NONE)
     {
-        licenses_policy = Str2Int(retval.item);
+        licenses_policy = IntFromString(retval.item);
     }
 
     int lastseen_count = LastSeenHostKeyCount();
