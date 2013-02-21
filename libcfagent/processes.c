@@ -17,6 +17,7 @@
 #include "verify_files_utils.h"
 #include "cfstream.h"
 #include "string_lib.h"
+#include "item_lib.h"
 
 static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb, const char *handle);
 static int Nova_GetFirstChangePosition(char *file, char *destination);
