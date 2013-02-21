@@ -82,11 +82,11 @@ static char *SHAHash(const char *string, int len)
 {
     unsigned char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
-    HashString(string, len, digest, cf_sha256);
+    HashString(string, len, digest, HASH_METHOD_SHA256);
 
     char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(char));
 
-    HashPrintSafe(cf_sha256, digest, buffer);
+    HashPrintSafe(HASH_METHOD_SHA256, digest, buffer);
     return buffer;
 }
 

@@ -452,7 +452,7 @@ int Nova_HashKey(char *filename, char *buffer, const char *hash)
 
 // Compare this to the assertions
 
-        if (strcmp(HashPrint(cf_sha256, digest), hash) == 0)
+        if (strcmp(HashPrint(HASH_METHOD_SHA256, digest), hash) == 0)
         {
             return true;
         }
@@ -493,7 +493,7 @@ int Nova_HashKey(char *filename, char *buffer, const char *hash)
 
 // Compare this to the assertions
 
-    if (strcmp(HashPrint(cf_md5, digest), hash) == 0)
+    if (strcmp(HashPrint(HASH_METHOD_MD5, digest), hash) == 0)
     {
         return true;
     }

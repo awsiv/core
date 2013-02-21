@@ -2034,16 +2034,16 @@ static void AsyncToken(const char *username, const char *query, char token_out[M
 {
     char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
-    HashString(username, strlen(username), digest, cf_md5);
-    HashString(query, strlen(query), digest, cf_md5);
+    HashString(username, strlen(username), digest, HASH_METHOD_MD5);
+    HashString(query, strlen(query), digest, HASH_METHOD_MD5);
 
     char time_str[CF_SMALLBUF] = {0};
     snprintf(time_str, CF_SMALLBUF - 1, "%ld", time(NULL));
 
-    HashString(time_str, CF_SMALLBUF - 1, digest, cf_md5);
+    HashString(time_str, CF_SMALLBUF - 1, digest, HASH_METHOD_MD5);
 
     char prefixed_hash[EVP_MAX_MD_SIZE * 4] = { 0 };
-    HashPrintSafe(cf_md5, digest, prefixed_hash);
+    HashPrintSafe(HASH_METHOD_MD5, digest, prefixed_hash);
 
     strncpy(token_out, prefixed_hash + 4, MD5_HEX_LENGTH);
     token_out[32] = '\0';

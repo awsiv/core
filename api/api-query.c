@@ -17,10 +17,10 @@ static char *CacheKey(const char *username, const char *query)
 {
     char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
-    HashString(username, strlen(username), digest, cf_md5);
-    HashString(query, strlen(query), digest, cf_md5);
+    HashString(username, strlen(username), digest, HASH_METHOD_MD5);
+    HashString(query, strlen(query), digest, HASH_METHOD_MD5);
 
-    return HashPrint(cf_md5, digest);
+    return HashPrint(HASH_METHOD_MD5, digest);
 }
 
 static int RowSort(const JsonElement *row_a, const JsonElement *row_b, void *_column_index)

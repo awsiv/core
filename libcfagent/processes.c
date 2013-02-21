@@ -82,7 +82,7 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp)
     if (change || cfstat(destination, &dsb) == -1)
     {
         a.copy.servers = NULL;
-        a.copy.backup = cfa_backup;
+        a.copy.backup = BACKUP_OPTION_BACKUP;
         a.copy.stealth = false;
         a.copy.verify = false;
         a.copy.preserve = false;
