@@ -42,7 +42,7 @@ void Nova_NoteVarUsageDB(void)
 
     for (ptr = VSCOPE; ptr != NULL; ptr = ptr->next)
     {
-        HashIterator i = HashIteratorInit(ptr->hashtable);
+        AssocHashTableIterator i = HashIteratorInit(ptr->hashtable);
         CfAssoc *assoc;
 
         if (strcmp(ptr->scope, "this") == 0)
