@@ -274,11 +274,8 @@ static GenericAgentConfig *CheckOpts(int argc, char **argv)
         case 's':
             {
                 CheckOpts(argc, argv);
-                ReportContext *report_context = ReportContextNew();
-                InitializeGA(config, report_context);
-
+                InitializeGA(config);
                 SplayLongUpdates();
-                ReportContextDestroy(report_context);
                 exit(0);
                 break;
             }
