@@ -210,6 +210,20 @@ typedef enum
 
 ReportRequestType ReportRequestTypeFromString(const char *s);
 
+enum monitord_rep
+{
+    mon_rep_mag,
+    mon_rep_week,
+    mon_rep_yr
+};
+
+enum software_rep
+{
+    sw_rep_installed,
+    sw_rep_patch_avail,
+    sw_rep_patch_installed
+};
+
 enum cf_meter
 {
     meter_compliance_week,

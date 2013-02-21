@@ -54,12 +54,12 @@ void VerifyWindowsService(Attributes a, Promise *pp)
         onlyCheckDeps = false;
     }
     else if ((strcmp(a.service.service_depend_chain, "stop_child_services") == 0) &&
-             ((a.service.service_policy == cfsrv_stop) || (a.service.service_policy == cfsrv_disable)))
+             ((a.service.service_policy == SERVICE_POLICY_STOP) || (a.service.service_policy == SERVICE_POLICY_DISABLE)))
     {
         onlyCheckDeps = false;
     }
     else if ((strcmp(a.service.service_depend_chain, "start_parent_services") == 0) &&
-             (a.service.service_policy == cfsrv_start))
+             (a.service.service_policy == SERVICE_POLICY_START))
     {
         onlyCheckDeps = false;
     }
@@ -70,7 +70,7 @@ void VerifyWindowsService(Attributes a, Promise *pp)
 
     // dependencies must be running while service is running - i.e. started first, but are never stopped implicitly
 
-    if (a.service.service_policy == cfsrv_start)
+    if (a.service.service_policy == SERVICE_POLICY_START)
     {
         for (dep = a.service.service_depend; dep != NULL; dep = dep->next)
         {
@@ -133,7 +133,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
     switch (policy)
     {
-    case cfsrv_start:
+    case SERVICE_POLICY_START:
 
         if (argStr)
         {
@@ -157,7 +157,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
         break;
 
-    case cfsrv_stop:
+    case SERVICE_POLICY_STOP:
 
         result = NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, true, a, pp, setCfPs);
 
@@ -168,7 +168,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
         break;
 
-    case cfsrv_disable:
+    case SERVICE_POLICY_DISABLE:
 
         result = NovaWin_CheckServiceDisable(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, setCfPs);
 
@@ -186,7 +186,7 @@ static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, 
 
     // check dispatch time
 
-    if (result && (policy == cfsrv_start) && !isDependency)
+    if (result && (policy == SERVICE_POLICY_START) && !isDependency)
     {
         if (a.service.service_autostart_policy)
         {
