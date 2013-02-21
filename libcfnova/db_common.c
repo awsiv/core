@@ -216,5 +216,18 @@ bool MongoCursorNext(mongo_cursor *cursor)
 
     return mongo_cursor_next(cursor) == MONGO_OK;
 }
+
+/********************************************************************/
+
+bool MongoDropCollection( EnterpriseDB *conn, const char *db, const char *coll,
+                         bson *out)
+{
+    assert( conn && db && coll );
+    assert( out );
+    assert( !out->finished );
+
+    return mongo_cmd_drop_collection(conn, db, coll, out);
+}
+
 /********************************************************************/
 
