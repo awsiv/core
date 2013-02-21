@@ -707,6 +707,22 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
+static bool IsCfList(char *type)
+{
+    char *listTypes[] = { "sl", "il", "rl", "ml", NULL };
+    int i;
+
+    for (i = 0; listTypes[i] != NULL; i++)
+    {
+        if (strcmp(type, listTypes[i]) == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 {
