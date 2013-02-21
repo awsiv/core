@@ -2760,43 +2760,6 @@ PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
     RETURN_STRING(buffer, 1);
 }
 
-PHP_FUNCTION(cfpr_service_histogram)
-{
-    JsonElement *out = Nova2PHP_get_service_histogram();
-
-    if (!out)
-    {
-        out = JsonObjectCreate(0);
-    }
-
-    RETURN_JSON(out);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_service_level_histogram)
-{
-    char *srv;
-    int s_len;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s", &srv, &s_len) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
- 
-    JsonElement *out = Nova2PHP_get_service_level_histogram(srv);
-
-    if (!out)
-    {
-        out = JsonObjectCreate(0);
-    }
-
-    RETURN_JSON(out);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_get_class_frequency)
 {
     char *username = NULL; int user_len;

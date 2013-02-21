@@ -98,21 +98,8 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
 bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffer, int bufsize);
 
-void Con2PHP_get_story_by_id(int id,char *buffer,int bufsize);
-void Con2PHP_get_story_by_name(char *typed_topic,char *buffer,int bufsize);
-
 int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year,
                              char *classreg, char *returnval, int bufsize);
-int Nova2PHP_list_all_goals(char *buffer, int bufsize);
-JsonElement *Nova2PHP_list_services(void);
-JsonElement *Nova2PHP_list_service_ports(void);
-JsonElement *Nova2PHP_summarize_all_goals(char *username);
-JsonElement *Nova2PHP_list_promises_with_promisee(char *name, char *promisee);
-JsonElement *Nova2PHP_get_open_port_histograms(void);
-JsonElement *Nova2PHP_get_service_histogram(void);
-JsonElement *Nova2PHP_get_service_level_histogram(char *srv);
-JsonElement *Nova2PHP_get_open_port_histograms(void);
-JsonElement *Nova2PHP_get_goal_progress(char *handle, char *username);
 JsonElement *Nova_FormatDiff(const char *diffStr);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
 JsonElement *Nova2PHP_GetPromiseBody(char *name, char *type);
@@ -176,15 +163,6 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *scope, boo
                                                  HostClassFilter *hostClassFilter,
                                                  PromiseContextMode promise_context);
 
-JsonElement *Nova2PHP_list_topics_for_bundle(char *name);
-JsonElement *Nova2PHP_list_knowledge_bundles(void);
-void Nova2PHP_bundle_for_topic(int topic_id, char *buffer, int bufsize);
-Item *Nova2PHP_search(char *search, bool regex, char *user);
-JsonElement *Nova2PHP_show_topic(int id, char *user);
-JsonElement *Nova2PHP_show_topic_leads(int id, char *user);
-JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic, char *user);
-JsonElement *Nova2PHP_show_topic_hits(int id, char *user);
-JsonElement *Nova2PHP_show_topic_category(int id);
 void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour,
                                    HostClassFilter *host_class_filter, PageInfo *page,
                                    char *buffer, int bufsize,

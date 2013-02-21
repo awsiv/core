@@ -3120,17 +3120,3 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid)
 
     return out;
 }
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_service_histogram()
-{
-    return Nova_GetServiceHistogram();
-}
-
-/*****************************************************************************/
-
-JsonElement *Nova2PHP_get_service_level_histogram(char *srv)
-{
-    return Nova_GetServiceLevels(srv);
-}

@@ -99,17 +99,6 @@ PHP_FUNCTION(cfpr_vitals_view_year);
  */
 PHP_FUNCTION(cfpr_hosts_sorted_by_last_vital_value);
 
-
-/*! \brief A histogram of open ports
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_service_histogram);
-
-/*! \brief A histogram of levels on a given port
- */
-// port plan: (further investigate)
-PHP_FUNCTION(cfpr_service_level_histogram);
-
 /*! \breif A histogram of a vital
  * \param hostKey
  * \param vitalId
