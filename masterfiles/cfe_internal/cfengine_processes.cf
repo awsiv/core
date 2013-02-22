@@ -13,7 +13,6 @@ bundle agent cfe_internal_processes
                                "cf-key", 
                                "cf-monitord", 
                                "cf-promises",
-                               "cf-report", 
                                "cf-runagent", 
                                "cf-serverd", 
                                "cf-hub" 

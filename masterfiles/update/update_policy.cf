@@ -64,7 +64,6 @@ bundle agent cfe_internal_update_policy
                       "cf-key",
                       "cf-monitord",
                       "cf-promises",
-                      "cf-report",
                       "cf-runagent",
                       "cf-serverd",
                      },
