@@ -20,7 +20,7 @@ bundle agent cfe_internal_update_bins
 
  vars:
 
-   "cf_components"       slist => { "cf-key", "cf-know", "cf-monitord", "cf-promises", 
+   "cf_components"       slist => { "cf-key", "cf-monitord", "cf-promises", 
                                     "cf-report", "cf-runagent", "cf-serverd", "cf-hub", },
                        comment => "Define cfengine robot agents",
                         handle => "cfe_internal_update_bins_vars_cf_components";

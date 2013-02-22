@@ -328,10 +328,6 @@ bundle agent cfe_internal_setup_knowledge
       comment => "Generate config knowledge format after update",
        handle => "cfe_internal_setup_knowledge_commands_cf_promise_r";
 
-   "$(sys.cf_know) -f $(cfe_internal_hub_vars.docroot)/docs/enterprise_build.cf -b"
-      comment => "Populate or update database with new knowledge",
-       handle => "cfe_internal_setup_knowledge_commands_cf_know_b";
-
 }
 
 #############################################################################

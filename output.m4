@@ -8,7 +8,6 @@ AC_CONFIG_FILES([nova/Makefile
         nova/libcfrunagent/Makefile
         nova/libcfserverd/Makefile
         nova/libcfexecd/Makefile
-        nova/cf-know/Makefile
         nova/cf-hub/Makefile
         nova/api/Makefile
         nova/cfmod/Makefile
