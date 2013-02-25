@@ -25,6 +25,29 @@ typedef enum
     HUBDIAG_UNKNOWN
 } ReportCollectionStatus;
 
+typedef struct
+{
+    double time;
+    Buffer *kh;
+    int data_len;
+    ReportCollectionStatus status;
+} DiagnosticReportingHost;
+
+typedef struct
+{
+    time_t timestamp;
+    int collected_report_count;
+    double total_duration_time;
+    double avg_duration_time;
+    double largest_duration_time;
+    Buffer *largest_duration_time_host_id;
+    int avg_data_size;
+    int largest_data_size;
+    Buffer *largest_data_size_host_id;
+    Seq *collection_failed_list; /* DiagnosticReportingHost list */
+    double sample_analyze_duration;
+} DiagnosticHubSnapshot;
+
 
 /**
   @short Save report collection stats for host into tmp db collection.
@@ -50,5 +73,19 @@ void DiagnosticMakeHubSnapshot(time_t time_id, double total_time);
   @note Tmp storage is created and populated by DiagnosticReportHostSave.
   */
 void DropReportingHostsTmp(void);
+
+/**
+  @short Query hub diagnostic database
+  @param conn Database connection handle
+  @return Sequence of DiagnosticHubSnapshot's. Return NULL on error.
+  */
+Seq *DiagnosticQueryHubSnapshot(EnterpriseDB *conn);
+
+/**
+  @short Convert ReportCollectionStatus to string.
+  @param status ReportCollectionStatus to convert.
+  @return Converted string.
+  */
+const char *ReportCollectionStatusToString(ReportCollectionStatus status);
 
 #endif

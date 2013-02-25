@@ -37,30 +37,11 @@
 #define diagnostic_db_hub_status "status"
 #define diagnostic_db_hub_analyze "analyze_performance"
 
-
-typedef struct
-{
-    double time;
-    Buffer *kh;
-    int data_len;
-    ReportCollectionStatus status;
-} DiagnosticReportingHost;
-
-typedef struct
-{
-    time_t timestamp;
-    double total_duration_time;
-    double avg_duration_time;
-    double largest_duration_time;
-    Buffer *largest_duration_time_host_id;
-    int avg_data_size;
-    int largest_data_size;
-    Buffer *largest_data_size_host_id;
-    int collected_report_count;
-    Seq *collection_failed_list; /* DiagnosticReportingHost list */
-    double sample_analyze_duration;
-} DiagnosticHubSnapshot;
-
+#define LABEL_HUBDIAG_SERVER_NO_REPLY "ServerNoReply"
+#define LABEL_HUBDIAG_SERVER_AUTH_ERROR "ServerAuthenticationError"
+#define LABEL_HUBDIAG_INVALID_DATA "InvalidData"
+#define LABEL_HUBDIAG_SUCCESS "Success"
+#define LABEL_HUBDIAG_Unknown "Unknown"
 
 static DiagnosticReportingHost *DiagnosticReportingHostNew();
 static void DiagnosticReportingHostFree(DiagnosticReportingHost *ptr);
@@ -74,6 +55,7 @@ static void DiagnosticHubSnapshotStore(EnterpriseDB *conn, time_t time_id,
                                        DiagnosticHubSnapshot *data);
 static void DiagnosticHubSnapshotToBson(DiagnosticHubSnapshot *data, bson *out);
 static DiagnosticHubSnapshot *DiagnosticAnalizeHostRecords(Seq *sample_list);
+static DiagnosticHubSnapshot *DiagnosticHubSnapshotFromBson(bson *in);
 
 
 static DiagnosticReportingHost *DiagnosticReportingHostNew()
@@ -504,4 +486,182 @@ static void DiagnosticHubSnapshotToBson(DiagnosticHubSnapshot *data, bson *out)
         }
         BsonAppendFinishObject(out);
     }
+}
+
+Seq *DiagnosticQueryHubSnapshot(EnterpriseDB *conn)
+{
+    assert(conn);
+
+    if (!conn)
+    {
+        return NULL;
+    }
+
+    Seq *ret_list = NULL;
+    ret_list = SeqNew(2100, DiagnosticHubSnapshotFree); // this is around 7 days + 6h of snapshots with 5min interval to limit memory realication
+
+    bson query;
+    bson_init(&query);
+    BsonFinish(&query);
+
+    bson fields;
+    bson_init(&fields);
+    BsonFinish(&fields);
+
+    mongo_cursor *cursor = MongoFind(conn, diagnostic_db_hub, &query, &fields,
+                                     0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (MongoCursorNext(cursor))
+    {
+        bson *main_obj = (bson*) mongo_cursor_bson(cursor);
+        if (BsonIsEmpty(main_obj))
+        {
+            continue;
+        }
+
+        DiagnosticHubSnapshot * snapshot = DiagnosticHubSnapshotFromBson(main_obj);
+        if (snapshot)
+        {
+            SeqAppend(ret_list, snapshot);
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return ret_list;
+
+}
+
+static DiagnosticHubSnapshot *DiagnosticHubSnapshotFromBson(bson *in)
+{
+    assert(in);
+
+    bool err = false;
+    DiagnosticHubSnapshot *snap = DiagnosticHubSnapshotNew();
+
+    if (!BsonIntGet(in, diagnostic_db_hub_time, (int*)&(snap->timestamp)))
+    {
+        err = true;
+    }
+
+    if (!BsonDoubleGet(in, diagnostic_db_hub_total_duration, &(snap->total_duration_time)))
+    {
+        err = true;
+    }
+
+    if (!BsonDoubleGet(in, diagnostic_db_hub_avg_duration, &(snap->avg_duration_time)))
+    {
+        err = true;
+    }
+
+    if (!BsonDoubleGet(in, diagnostic_db_hub_largest_duration, &(snap->largest_duration_time)))
+    {
+        err = true;
+    }
+
+    const char *lg_duration_kh = NULL;
+    if (!BsonStringGet(in, diagnostic_db_hub_largest_duration_kh, &lg_duration_kh))
+    {
+        err = true;
+    }
+    snap->largest_duration_time_host_id = BufferNewFrom(lg_duration_kh, strlen(lg_duration_kh));
+
+    if (!BsonIntGet(in, diagnostic_db_hub_avg_size, &(snap->avg_data_size)))
+    {
+        err = true;
+    }
+
+    if (!BsonIntGet(in, diagnostic_db_hub_largest_size, &(snap->largest_data_size)))
+    {
+        err = true;
+    }
+
+    const char *lg_size_kh = NULL;
+    if (!BsonStringGet(in, diagnostic_db_hub_largest_size_kh, &lg_size_kh))
+    {
+        err = true;
+    }
+    snap->largest_data_size_host_id = BufferNewFrom(lg_size_kh, strlen(lg_size_kh));
+
+    if (!BsonIntGet(in, diagnostic_db_hub_hosts_reported, &(snap->collected_report_count)))
+    {
+        err = true;
+    }
+
+    if (!BsonDoubleGet(in, diagnostic_db_hub_analyze, &(snap->sample_analyze_duration)))
+    {
+        err = true;
+    }
+
+    bson failed;
+    if (BsonObjectGet(in, diagnostic_db_hub_failed, &failed))
+    {
+        Seq *failed_list = SeqNew(20, DiagnosticReportingHostFree);
+
+        bson_iterator it;
+        bson_iterator_init(&it, &failed);
+
+        while (BsonIsTypeValid(bson_iterator_next(&it)) > 0)
+        {
+            const char *key = bson_iterator_key(&it);
+            if (key)
+            {
+                if (bson_iterator_type(&it) == BSON_OBJECT)
+                {
+                    bson status_b;
+                    bson_iterator_subobject(&it, &status_b);
+
+                    ReportCollectionStatus code = HUBDIAG_UNKNOWN;
+                    if (BsonIntGet(&status_b, diagnostic_db_hub_status, (int*)&(code)))
+                    {
+                        DiagnosticReportingHost *host = DiagnosticReportingHostNew();
+                        host->kh = BufferNewFrom(key, strlen(key));
+                        host->status = code;
+
+                        SeqAppend(failed_list, host);
+                    }
+                }
+            }
+        }
+
+        if (SeqLength(failed_list) > 0)
+        {
+            snap->collection_failed_list = failed_list;
+        }
+        else
+        {
+            SeqDestroy(failed_list);
+        }
+
+    }
+
+    if (err)
+    {
+        DiagnosticHubSnapshotFree(snap);
+        return NULL;
+    }
+
+    return snap;
+}
+
+const char *ReportCollectionStatusToString(ReportCollectionStatus status)
+{
+    switch (status)
+    {
+        case HUBDIAG_SERVER_NO_REPLY:
+            return LABEL_HUBDIAG_SERVER_NO_REPLY;
+        case HUBDIAG_SERVER_AUTH_FAILURE:
+            return LABEL_HUBDIAG_SERVER_AUTH_ERROR;
+        case HUBDIAG_INVALID_DATA:
+            return LABEL_HUBDIAG_INVALID_DATA;
+        case HUBDIAG_SUCCESS:
+            return LABEL_HUBDIAG_SUCCESS;
+        default:
+            break;
+    }
+
+    return LABEL_HUBDIAG_SUCCESS;
 }
