@@ -16,18 +16,24 @@
 @c
 @c ***********************************************************************@c 
 @c %** start of header
-@setfilename Enterprise-3-0-OwnersManual.info
-@settitle CFEngine Enterprise 3.0 Owner's Manual
+@setfilename Enterprise-3-1alpha-OwnersManual.info
+@settitle CFEngine Enterprise 3.1alpha2 Owner's Manual
 @setchapternewpage odd
 @c %** end of header
 @titlepage
-@title CFEngine Enterprise 3.0 Owner's Manual
+@title CFEngine Enterprise 3.1alpha2 Owner's Manual
 @subtitle CFEngine Enterprise Documentation
-@subtitle Updated 15. February 2015 @c also update in ifnottex section below
+@subtitle Updated 25. February 2013 @c also update in ifnottex section below
 @author CFEngine AS
 @c @smallbook
 @fonttextsize 10
 @page
+@c Re alpha relase warning, also modify in the inottex section below
+@cartouche
+This is an early alpha release of 3.1, intended for testing and showcase only. This version is not supported, not covered by service level agreements (SLAs) and not intended for production environments. Do not upgrade or use in conjunction with other versions at this point. We are planning monthly snapshot (alpha) releases going forward, but official release date for 3.1 has not been set (expect several months from now). See 3.1alpha2-Release_Notes_CFEngine_3_Enterprise.txt for changes.
+
+This document is also in alpha state, meaning that deviations between the product and screenshots/procedures may occur.
+@end cartouche
 @vskip 0pt plus 1filll
 Copyright @copyright{} 2012 CFEngine AS.
 The features described herein are in provided for user convenience and imply no warranty whatsoever
@@ -45,9 +51,14 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-Updated 15. February 2013
+Updated 25. February 2013
+@cartouche
+This is an early alpha release of 3.1, intended for testing and showcase only. This version is not supported, not covered by service level agreements (SLAs) and not intended for production environments. Do not upgrade or use in conjunction with other versions at this point. We are planning monthly snapshot (alpha) releases going forward, but official release date for 3.1 has not been set (expect several months from now). See 3.1alpha2-Release_Notes_CFEngine_3_Enterprise.txt for changes.
+
+This document is also in alpha state, meaning that deviations between the product and screenshots/procedures may occur.
+@end cartouche
 @node Top, Introduction, (dir), (dir)
-@top CFEngine Enterprise 3.0 Owner's Manual
+@top CFEngine Enterprise 3.1alpha2 Owner's Manual
 @end ifnottex
 @ifhtml
 @html
@@ -80,7 +91,7 @@ Updated 15. February 2013
 * Frequently Asked Questions::  
 * Troubleshooting::             
 * Configuration of external authentication::  
-* SQLite Database Schema::      
+* SQL Database Schema::      
 @end menu
 
 @c *****************************************************
@@ -225,14 +236,14 @@ to integrate it back later.
 CFEngine Enterprise 3.0 is provided in three packages (two hub packages and one client package), please make sure to install them on the corresponding machines (e.g. one machine intended to serve as hub (policy server) and other machines intended to serve as clients).
 @end cartouche
 
-@noindent These are the three packages (inside the respective hub and client directories found under each platform in the software download directory):
+@noindent These are the three packages (inside the respective hub and client listings found under each platform on the download page):
 @itemize -
-@item @file{hub/cfengine-nova-3.0.xxx.[rpm|deb]}
-@item @file{hub/cfengine-nova-expansion-3.0.xxx.[rpm|deb]}
-@item @file{client/cfengine-nova-3.0.xxx.[rpm|deb]}
+@item @file{hub/cfengine-nova-3.x.y.[rpm|deb]}
+@item @file{hub/cfengine-nova-expansion-3.x.y.[rpm|deb]}
+@item @file{client/cfengine-nova-3.x.y.[rpm|deb]}
 @end itemize
 
-The difference between the hub and client @file{cfengine-nova-3.0.xxx} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
+The difference between the hub and client @file{cfengine-nova-3.x.y} packages is that the agent binaries for the hub are linked to the MongoDB library while the binary for clients are not. Installing a client package on the hub will result in a database connection error, the Mission Portal will not be available and reports will not be collected. Installing the hub package on clients will result in error reports stating that the agent failed to connect to MongoDB (because it is not existent in client packages; danger of filling up error logs), but otherwise functionality will be assured. Please take care to install the correct packages on the corresponding nodes.
 
 References to package managers assume that additional packages might need to be installed on the hub (policy server). Root privilege is required for the installation.
 
@@ -253,12 +264,12 @@ repository on the hub, please see @ref{How do I install the prerequisites for th
 
 @item Copy the CFEngine Enterprise packages to the system. On the hub (policy server):
 @example
-cfengine-nova-3.0.@var{xxx.[rpm|deb]} (NOTE: use hub package)
-cfengine-nova-expansion-3.0.@var{xxx.[rpm|deb]}
+cfengine-nova-3.@var{x.y.[rpm|deb]} (NOTE: use hub package)
+cfengine-nova-expansion-3.@var{x.y.[rpm|deb]}
 @end example
 @noindent On all other machines:
 @example
-cfengine-nova-3.0.@var{xxx.[rpm|deb]} (NOTE: use client package)
+cfengine-nova-3.@var{x.y.[rpm|deb]} (NOTE: use client package)
 @end example
 
 @item Unpack the software:
@@ -351,8 +362,7 @@ of the normal distribution of policy. Each machine should get a
 copy of the @file{license.dat} file in @file{/var/cfengine/inputs}
 (Unix) or @file{C:\Program Files\Cfengine\inputs} (Windows).
 
-@item On the hub, the file @file{/var/cfengine/promise_knowledge.cf} should have been
-created, and should contain data.
+@c @item On the hub, the file @file{/var/cfengine/promise_knowledge.cf} should have been created, and should contain data.
 
 @item  Finally, after 10--15 minutes@footnote{You may have to wait as long as 30 minutes}, try to connect to the hub (policy server) with your web browser (from the installation example: http://123.456.789.123, replace with your real IP address). You should see a login page like the one shown in the figure below:
 
@@ -378,20 +388,25 @@ Please see @ref{Frequently Asked Questions} or @ref{Troubleshooting} if you have
 * Docs App::                    
 @c * Services App::                
 * Policies App::                
-* Knowledge App::               
+@c * Knowledge App::               
 @c * Goals App::                   
 @c * Compliance App::              
 * User Management::             
 * Settings::     
 @end menu
 
+@cartouche
+Please note that the Knowledge App has been removed from this version of CFEngine Enterprise in an effort to refactor and modularize code. This will allow us to develop more efficiently and flexibly in the long run. CFEngine is still committed to knowledge management and more enhanced knowledge features will appear in future versions.
+@end cartouche
+
 The Mission Portal is the centerpiece
 of user interaction with CFEngine Enterprise. It can be accessed by connecting to the hub (policy server) with your web browser (from the installation example: http://123.456.789.123, replace with your real IP address). You should see a login page, the default user name and password is @i{admin} and @i{admin}. @footnote{Make sure to change the password to prevent unauthorized access; see also Appendix A on configuration of external authentication.} Once you have logged in you will see the Mission Portal home page:
 
-@image{img-mission-portal-3-0,15cm,,Mission Portal}
+@image{img-mission-portal-3-1,15cm,,Mission Portal}
 @center Figure: The Mission Portal
 
-@noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} and @i{Knowledge} apps, these can be made visible by enabling them in @ref{Settings}). Each app offers insight into different aspects of operations:
+@c @noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} and @i{Knowledge} apps, these can be made visible by enabling them in @ref{Settings}). Each app offers insight into different aspects of operations:
+@noindent By default there are only three applications, or apps, shown on the home page (the above image also shows the @i{Policy} app, it can be made visible by enabling it in @ref{Settings}). Each app offers insight into different aspects of operations:
 
 @itemize -
 @item Hosts - A place to see the current state of system repair @c (@ref{Hosts App})
@@ -399,7 +414,7 @@ of user interaction with CFEngine Enterprise. It can be accessed by connecting t
 @item Docs - Access to both offline and online CFEngine documentation @c (@ref{Docs App})
 @c @item Services - Browse current host capacity providing services in your environment
 @item Policies - Show the promises that the system is currently trying to keep
-@item Knowledge - A knowledge bank that connects information together
+@c @item Knowledge - A knowledge bank that connects information together
 @c @item Goals - Connect promises to high level organizational goals and key performance indicators
 @c @item Compliance - Overview of the current state and history of compliance across your system, through the lens of different compliance standards
 @end itemize
@@ -713,7 +728,7 @@ There are two main areas of interaction in this app:
 Items in the content area are used to create a query and generate reports according to the following description:
 @itemize -
 @item Fields - Define your table columns (mandatory field)
-@item Filters - Filter the results of you query (use valid SQLite syntax)
+@item Filters - Filter the results of you query (use valid SQL syntax)
 @item Group - Group your results according to selected criteria
 @item Sort - Sort your results according to a selected criteria
 @item Limit - Limit the number of entries in your report
@@ -721,7 +736,7 @@ Items in the content area are used to create a query and generate reports accord
 @end itemize
 
 @cartouche
-Please note that any queries containing the PromiseDefinitions table in combination with any other table in the schema will produce erroneous output without an intermediate join to the PromiseStatusLast table. See @ref{SQLite Database Schema}.
+Please note that any queries containing the PromiseDefinitions table in combination with any other table in the schema will produce erroneous output without an intermediate join to the PromiseStatusLast table. See @ref{SQL Database Schema}.
 @end cartouche
 
 @cartouche
@@ -741,7 +756,7 @@ Once the query is defined you can run it to see the result, optionally save it f
 @node Docs App, Policies App, SQL Reports App, Quickstart - The Mission Portal
 @section Docs App
 
-The @i{Docs} app gives access to both offline and online CFEngine documentation. The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}). Look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilities in CFEngine.
+The @i{Docs} app gives access to both offline and online CFEngine documentation. @c The documents are scanned and parsed to be included in the integrated semantic index (see @ref{Knowledge App}). Look up on the fly or study in depth. Learn about CFEngine concepts, syntax and inherent possibilities in CFEngine.
 
 The left side shows an overview of all bundled documents, divided into categories that expand once clicked. The selected document is displayed in the main content area to the right.
 
@@ -786,7 +801,8 @@ The landing page for the @i{Services} app shows an overview of common services a
 
 @c -----------------------------------------------------
 @c @node Policies App, Knowledge App, Services App, Quickstart - The Mission Portal
-@node Policies App, Knowledge App, Docs App, Quickstart - The Mission Portal
+@c @node Policies App, Knowledge App, Docs App, Quickstart - The Mission Portal
+@node Policies App, User Management, Docs App, Quickstart - The Mission Portal
 @section Policies App
 
 @cartouche
@@ -810,7 +826,7 @@ state of your system, by knowing what, where, when, how and why your infrastruct
 @item Variables: List of variables used in the bundle.
 @end itemize
 
-
+@ignore
 @c -----------------------------------------------------
 @c @node Knowledge App, Goals App, Policies App, Quickstart - The Mission Portal
 @node Knowledge App, User Management, Policies App, Quickstart - The Mission Portal
@@ -829,7 +845,7 @@ The @i{Knowledge} app embodies CFEngine's knowledge index, used to find answers 
 
 On the left you find a search field and a menu with foldable generic categories and list of documents and their content titles/headers. The right side presents the map itself, with references to the selected topic underneath. The map displays visual relations to other topics and is clickable, navigate and learn how topics are connected. The @i{See also} tab presents semantic links to other topics that might be related, as well as references to the selected topic.
 @c See also @url{https://cfengine.com/manuals/st-knowledge}.
-
+@end ignore
 
 @c todo
 @ignore
@@ -875,7 +891,8 @@ The @i{Compliance} app gives a view over the current state and history of compli
 
 @c ----------------------------------------------------
 @c @node User Management, Settings, Compliance App, Quickstart - The Mission Portal
-@node User Management, Settings, Knowledge App, Quickstart - The Mission Portal
+@c @node User Management, Settings, Knowledge App, Quickstart - The Mission Portal
+@node User Management, Settings, Policies App, Quickstart - The Mission Portal
 @section User Management
 
 On a fresh install the default user @i{admin} belongs to the @i{admin} user group and has access everything in the Mission Portal. The @i{admin} user can add users to the internal database, set up external authentication and define roles to limit access.
@@ -961,7 +978,8 @@ Image that will be shown on the top of PDF reports that are exported from the Mi
 @node Manage Apps, Hub Replication Status, Mission Portal Settings, Settings
 @subsection Manage Apps
 
-Determine which apps should be active (on) or inactive (off) in the Mission Portal. The @i{Policy} and @i{Knowledge} apps are turned off by default. These are global settings that affect all users.
+@c Determine which apps should be active (on) or inactive (off) in the Mission Portal. The @i{Policy} and @i{Knowledge} apps are turned off by default. These are global settings that affect all users.
+Determine which apps should be active (on) or inactive (off) in the Mission Portal. The @i{Policy} app is turned off by default. These are global settings that affect all users.
 
 @sp 1
 @image{img-manage-apps-3-0,15cm,,Manage Apps}
@@ -1188,11 +1206,9 @@ based on the hosts it has access to or vice versa.
 @item Notes added in the Mission Portal are not filtered: they can be
 seen by all users (including notes added to any host page).
 
-@item The Knowledge Map is only available for members of the
-@samp{admin} role when RBAC is switched on.
+@c @item The Knowledge Map is only available for members of the @samp{admin} role when RBAC is switched on.
 
-@item Running @code{cf-report} from the command-line on the hub will
-bypass all RBAC checks.
+@c @item Running @code{cf-report} from the command-line on the hub will bypass all RBAC checks.
 
 @end itemize
 
@@ -1586,10 +1602,7 @@ all monitoring products for Windows supports reading event logs, and
 they can thus monitor logs from CFEngine Enterprise as well. This makes it
 possible to do more advanced querying on the status of a machine
 running CFEngine Enterprise, e.g. to show all promises that have not been
-kept in a certain time interval. However, we recommend using the
-Knowledge Map to do more advanced things, as it is specifically made
-for this purpose and supports all operating systems that CFEngine runs
-on.
+kept in a certain time interval. @c However, we recommend using the Knowledge Map to do more advanced things, as it is specifically made for this purpose and supports all operating systems that CFEngine runs on.
 
 @section Windows special variables
 Three new special variables have been added to the Windows version of
@@ -4874,7 +4887,7 @@ Four steps need to be followed to correct this minor issue.
 * First time login to Mission Portal fails::  
 * Cannot send emails from the Mission Portal::  
 * Warning messages on web pages in SLES/OpenSuSE Hub::  
-* Knowledge map remains unpopulated::  
+@c * Knowledge map remains unpopulated::  
 * I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts::  
 * I get messages of connection failures to a database on my hub::  
 @end menu
@@ -4978,14 +4991,15 @@ The default email address used by the system is "admin@@cfengine.com". To change
 
 
 @c -----------------------------------------------------
-@node Warning messages on web pages in SLES/OpenSuSE Hub, Knowledge map remains unpopulated, Cannot send emails from the Mission Portal, Troubleshooting
+@c @node Warning messages on web pages in SLES/OpenSuSE Hub, Knowledge map remains unpopulated, Cannot send emails from the Mission Portal, Troubleshooting
+@node Warning messages on web pages in SLES/OpenSuSE Hub, I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, Cannot send emails from the Mission Portal, Troubleshooting
 @section Warning messages on web pages in SLES/OpenSuSE Hub
 Warnings appear because the default environment is set to "Development" and in this context the Mission Portal will show all php errors to the user. Set the environment to "Production" to silence these warnings, they will still be logged in Apache Error_log. To edit the default environment, visit "index.php" in your default web root directory and change the following line to suit your needs:
 @verbatim
    define('ENVIRONMENT', 'Development');
 @end verbatim
 
-
+@ignore
 @c -----------------------------------------------------
 @node Knowledge map remains unpopulated, I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, Warning messages on web pages in SLES/OpenSuSE Hub, Troubleshooting
 @section Knowledge map remains unpopulated
@@ -5005,10 +5019,11 @@ Warnings appear because the default environment is set to "Development" and in t
    $ /var/cfengine/bin/cf-promises -r && /var/cfengine/bin/cf-know -f 
        /srv/www/htdocs/docs/enterprise_build.cf -b
 @end verbatim
-
+@end ignore
 
 @c ----------------------------------------------------
-@node I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, I get messages of connection failures to a database on my hub, Knowledge map remains unpopulated, Troubleshooting
+@c @node I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, I get messages of connection failures to a database on my hub, Knowledge map remains unpopulated, Troubleshooting
+@node I get a promise failed with the message "Can't stat /var/cfengine/master_software_updates/SOME-OS" on some hosts, I get messages of connection failures to a database on my hub, Warning messages on web pages in SLES/OpenSuSE Hub, Troubleshooting
 @section I get a promise failed with the message @code{Can't stat /var/cfengine/master_software_updates/SOME-OS} on some hosts
 
 There is a built-in promise to automatically upgrade the CFEngine Enterprise
@@ -5091,7 +5106,7 @@ Note that almost all of the @code{cfreport} database is recreated with data coll
 @c *****************************************************
 @c * APPENDIX A
 @c *****************************************************
-@node Configuration of external authentication, SQLite Database Schema, Troubleshooting, Top
+@node Configuration of external authentication, SQL Database Schema, Troubleshooting, Top
 @appendix Configuration of external authentication
 
 External authentication is available for CFEngine 3 Nova 2.1 and later versions, but by default the Mission Portal will use the embedded database to store user information (default user name and password on the Mission Portal login page are "admin" and "admin"). Note that users in the default database will be locked out of the Mission Portal upon configuration of external authentication. They will regain access if external authentication is deactivated by selecting the Database button on the Mission Portal Settings page (see below).
@@ -5161,14 +5176,14 @@ If you wish to use RBAC in combination with external authentication, we recommen
 @c *****************************************************
 @c * APPENDIX B
 @c *****************************************************
-@node SQLite Database Schema,  , Configuration of external authentication, Top
-@appendix SQLite Database Schema
+@node SQL Database Schema,  , Configuration of external authentication, Top
+@appendix SQL Database Schema
 
 The following figure shows the database schema used in the @i{SQL Reports App} (@ref{SQL Reports App}):
 
 @sp 1
-@center @image{img-sql-db-schema-3-0,15cm,,SQLite Database Schema}
-@center Figure: SQLite Database Schema
+@center @image{img-sql-db-schema-3-1,15cm,,SQL Database Schema}
+@center Figure: SQL Database Schema
 @sp 1
 
 @cartouche
