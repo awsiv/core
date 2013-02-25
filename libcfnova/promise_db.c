@@ -273,7 +273,7 @@ static void BsonAppendPromisee(bson *b, const Rval *promisee)
         switch(promisee->type)
         {
         case RVAL_TYPE_SCALAR:
-            RlistAppend(&promisee_list, (char *)promisee->item, RVAL_TYPE_SCALAR);
+            RlistAppendScalar(&promisee_list, (char *)promisee->item);
             BsonAppendStringArrayRlist(b, cfp_promisee, promisee_list);
             RlistDestroy(promisee_list);
             break;

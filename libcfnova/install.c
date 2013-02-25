@@ -1458,12 +1458,12 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 
     if (classRxInclude)
     {
-        RlistAppend(&classRxIncludes, classRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&classRxIncludes, classRxInclude);
     }
 
     if (classRxExclude)
     {
-        RlistAppend(&classRxExcludes, classRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&classRxExcludes, classRxExclude);
     }
 
     return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
@@ -1483,12 +1483,12 @@ void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclu
 {
     if (classRxInclude)
     {
-        RlistAppend(&(filter->classRxIncludes), classRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->classRxIncludes), classRxInclude);
     }
 
     if (classRxExclude)
     {
-        RlistAppend(&(filter->classRxExcludes), classRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->classRxExcludes), classRxExclude);
     }
 }
 
@@ -1617,12 +1617,12 @@ void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, c
 {
     if (bundleInclude)
     {
-        RlistAppend(&(filter->bundleIncludes), bundleInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->bundleIncludes), bundleInclude);
     }
 
     if (bundleExclude)
     {
-        RlistAppend(&(filter->bundleExcludes), bundleExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->bundleExcludes), bundleExclude);
     }
 }
 
@@ -1630,12 +1630,12 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
 {
     if (bundleRxInclude)
     {
-        RlistAppend(&(filter->bundleRxIncludes), bundleRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->bundleRxIncludes), bundleRxInclude);
     }
 
     if (bundleRxExclude)
     {
-        RlistAppend(&(filter->bundleRxExcludes), bundleRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->bundleRxExcludes), bundleRxExclude);
     }
 }
 
@@ -1643,12 +1643,12 @@ void PromiseFilterAddNamespaces(PromiseFilter *filter, const char *namespaceIncl
 {
     if (namespaceInclude)
     {
-        RlistAppend(&(filter->namespaceIncludes), namespaceInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->namespaceIncludes), namespaceInclude);
     }
 
     if (namespaceExclude)
     {
-        RlistAppend(&(filter->namespaceExcludes), namespaceExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->namespaceExcludes), namespaceExclude);
     }
 }
 
@@ -1656,12 +1656,12 @@ void PromiseFilterAddNamespacesRx(PromiseFilter *filter, const char *namespaceRx
 {
     if (namespaceRxInclude)
     {
-        RlistAppend(&(filter->namespaceRxIncludes), namespaceRxInclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->namespaceRxIncludes), namespaceRxInclude);
     }
 
     if (namespaceRxExclude)
     {
-        RlistAppend(&(filter->namespaceRxExcludes), namespaceRxExclude, RVAL_TYPE_SCALAR);
+        RlistAppendScalar(&(filter->namespaceRxExcludes), namespaceRxExclude);
     }
 }
 
