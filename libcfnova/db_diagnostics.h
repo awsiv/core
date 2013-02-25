@@ -11,7 +11,7 @@
 
 #include "db_common.h"
 
-#define diagnostic_db_mongo_coll "local.mongo_stats"
+#define diagnostic_db_mongo_coll "cfdiagnostics.mongo"
 #define diagnostic_dbk_time "t"
 
 /*
