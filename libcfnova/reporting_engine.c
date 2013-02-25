@@ -23,8 +23,9 @@
 #include "db_diagnostics.h"
 #include "hashes.h"
 #include "buffer.h"
+#include "hub_diagnostics.h"
 
-#define SQL_TABLE_COUNT 17
+#define SQL_TABLE_COUNT 19
 
 #define SQL_TABLE_HOSTS "Hosts"
 #define SQL_TABLE_FILECHANGES "FileChanges"
@@ -42,6 +43,8 @@
 #define SQL_TABLE_DIAGNOSTIC_SERVER_STATUS "DatabaseServerStatus"
 #define SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS "DatabaseStatus"
 #define SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS "DatabaseCollectionStatus"
+#define SQL_TABLE_DIAGNOSTIC_HUB_REPORTING "HubReportingPerformance"
+#define SQL_TABLE_DIAGNOSTIC_HUB_CONNECTION_ERRORS "HubConnectionErrors"
 
 #define CREATE_SQL_HOSTS "CREATE TABLE " SQL_TABLE_HOSTS "(" \
                          "HostKey VARCHAR(100) PRIMARY KEY, " \
@@ -170,7 +173,7 @@
                                                 "DataSize INT, " \
                                                 "StorageSize INT, " \
                                                 "FileSize INT, " \
-                                                "FOREIGN KEY(SampleTime) REFERENCES ServiceStatus(SampleTime));"
+                                                "FOREIGN KEY(SampleTime) REFERENCES DatabaseServerStatus(SampleTime));"
 
 #define CREATE_SQL_DIAGNOSTIC_COLLECTION_STATUS "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS "(" \
                                                 "SampleTime BIGINT, " \
@@ -184,7 +187,26 @@
                                                 "TotalIndexSize INT, " \
                                                 "PaddingFactor REAL, " \
                                                 "FOREIGN KEY(Database) REFERENCES DatabaseStatus(Database)," \
-                                                "FOREIGN KEY(SampleTime) REFERENCES ServiceStatus(SampleTime));"
+                                                "FOREIGN KEY(SampleTime) REFERENCES DatabaseServerStatus(SampleTime));"
+
+#define CREATE_SQL_DIAGNOSTIC_HUB_REPORTING "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_HUB_REPORTING "(" \
+                                            "SampleTime BIGINT, " \
+                                            "ReportsCollected INT, " \
+                                            "TotalCollectionPerformance REAL, " \
+                                            "AverageCollectionPerformanceByHost REAL, " \
+                                            "LowestCollectionPerformanceByHost REAL, " \
+                                            "LowestCollectionPerformanceHostKey VARCHAR(100), " \
+                                            "AverageDataSizeByHost INT, " \
+                                            "LargestDataSizeByHost INT, " \
+                                            "LargestDataSizeHostKey VARCHAR(100), " \
+                                            "SampleAnalyzePerformance REAL);"
+
+#define CREATE_SQL_DIAGNOSTIC_HUB_CONNECTION_ERRORS "CREATE TABLE " SQL_TABLE_DIAGNOSTIC_HUB_CONNECTION_ERRORS "(" \
+                                         "SampleTime BIGINT, " \
+                                         "HostKey VARCHAR(100), " \
+                                         "Status VARCHAR(100), " \
+                                         "FOREIGN KEY(HostKey) REFERENCES Hosts(HostKey)," \
+                                         "FOREIGN KEY(SampleTime) REFERENCES HubReportingPerformance(SampleTime));"
 
 /******************************************************************/
 
@@ -228,6 +250,9 @@ static void EnterpriseDBToSqlite3_DiagnosticServiceStatus(sqlite3 *db);
 static void EnterpriseDBToSqlite3_DiagnosticDatabaseStatus(sqlite3 *db);
 static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db);
 
+static void EnterpriseDBToSqlite3_DiagnosticHubReportingPerformance(sqlite3 *db);
+static void EnterpriseDBToSqlite3_DiagnosticHubConnectionErrors(sqlite3 *db);
+
 static bool CreateSQLTable(sqlite3 *db, char *create_sql);
 bool GenerateAllTables(sqlite3 *db);
 
@@ -270,6 +295,8 @@ char *TABLES[SQL_TABLE_COUNT] =
     SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
     SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
     SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+    SQL_TABLE_DIAGNOSTIC_HUB_REPORTING,
+    SQL_TABLE_DIAGNOSTIC_HUB_CONNECTION_ERRORS,
     NULL
 };
 
@@ -291,6 +318,8 @@ void *SQL_CONVERSION_HANDLERS[SQL_TABLE_COUNT] =
     EnterpriseDBToSqlite3_DiagnosticServiceStatus,
     EnterpriseDBToSqlite3_DiagnosticDatabaseStatus,
     EnterpriseDBToSqlite3_DiagnosticCollectionStatus,
+    EnterpriseDBToSqlite3_DiagnosticHubReportingPerformance,
+    EnterpriseDBToSqlite3_DiagnosticHubConnectionErrors,
     NULL
 };
 
@@ -312,6 +341,8 @@ char *SQL_CREATE_TABLE_STATEMENTS[SQL_TABLE_COUNT] =
     CREATE_SQL_DIAGNOSTIC_SERVER_STATUS,
     CREATE_SQL_DIAGNOSTIC_DATABASE_STATUS,
     CREATE_SQL_DIAGNOSTIC_COLLECTION_STATUS,
+    CREATE_SQL_DIAGNOSTIC_HUB_REPORTING,
+    CREATE_SQL_DIAGNOSTIC_HUB_CONNECTION_ERRORS,
     NULL
 };
 
@@ -1698,6 +1729,133 @@ static void EnterpriseDBToSqlite3_DiagnosticCollectionStatus(sqlite3 *db)
     }
 
     SeqDestroy(diag_mongo_snapshot);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_DiagnosticHubReportingPerformance(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    Seq *snapshot_list = DiagnosticQueryHubSnapshot(&dbconn);
+
+    CFDB_Close(&dbconn);
+
+    if (!snapshot_list)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < SeqLength(snapshot_list); i++)
+    {
+        DiagnosticHubSnapshot *stats =
+                (DiagnosticHubSnapshot*) SeqAt(snapshot_list, i);
+
+        if (!stats)
+        {
+            continue;
+        }
+
+        Buffer *insert_buf = BufferNew();
+        BufferPrintf(insert_buf,
+                     "INSERT INTO %s VALUES('%ld','%d','%lf','%lf','%lf','%s','%d','%d','%s','%lf');",
+                     SQL_TABLE_DIAGNOSTIC_HUB_REPORTING,
+                     stats->timestamp,
+                     stats->collected_report_count,
+                     stats->total_duration_time,
+                     stats->avg_duration_time,
+                     stats->largest_duration_time,
+                     NULLStringToEmpty((char*)BufferData(stats->largest_duration_time_host_id)),
+                     stats->avg_data_size,
+                     stats->largest_data_size,
+                     NULLStringToEmpty((char*)BufferData(stats->largest_data_size_host_id)),
+                     stats->sample_analyze_duration);
+
+        bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+        BufferDestroy(&insert_buf);
+        insert_buf = NULL;
+
+        if (!exec_ok)
+        {
+            break;
+        }
+    }
+
+    SeqDestroy(snapshot_list);
+}
+
+/******************************************************************/
+
+static void EnterpriseDBToSqlite3_DiagnosticHubConnectionErrors(sqlite3 *db)
+{
+    EnterpriseDB dbconn;
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return;
+    }
+
+    Seq *snapshot_list = DiagnosticQueryHubSnapshot(&dbconn);
+
+    CFDB_Close(&dbconn);
+
+    if (!snapshot_list)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < SeqLength(snapshot_list); i++)
+    {
+        DiagnosticHubSnapshot *stats =
+                (DiagnosticHubSnapshot*) SeqAt(snapshot_list, i);
+
+        if (!stats)
+        {
+            continue;
+        }
+
+        if (!stats->collection_failed_list)
+        {
+            continue;
+        }
+
+        for (size_t i = 0; i < SeqLength(stats->collection_failed_list); i++)
+        {
+            DiagnosticReportingHost *err_stat =
+                    (DiagnosticReportingHost*) SeqAt(stats->collection_failed_list, i);
+
+            if (!err_stat)
+            {
+                continue;
+            }
+
+            Buffer *insert_buf = BufferNew();
+            BufferPrintf(insert_buf,
+                         "INSERT INTO %s VALUES('%ld','%s','%s');",
+                         SQL_TABLE_DIAGNOSTIC_HUB_CONNECTION_ERRORS,
+                         stats->timestamp,
+                         NULLStringToEmpty((char*)BufferData(err_stat->kh)),
+                         NULLStringToEmpty((char*)ReportCollectionStatusToString(err_stat->status)));
+
+            bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
+
+            BufferDestroy(&insert_buf);
+            insert_buf = NULL;
+
+            if (!exec_ok)
+            {
+                break;
+            }
+        }
+    }
+
+    SeqDestroy(snapshot_list);
 }
 
 /******************************************************************/

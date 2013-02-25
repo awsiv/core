@@ -36,6 +36,7 @@
 #include "string_lib.h"
 #include "sort.h"
 #include "communication.h"
+#include "hub_diagnostics.h"
 
 #include <assert.h>
 
@@ -700,13 +701,19 @@ static void StartHub(void)
             HardClass("am_policy_hub");
             if (CFDB_QueryIsMaster())
             {
+                /* hub diagnostic: drop tmp sample collection from last reporting round */
+                DropReportingHostsTmp();
+
+                struct timespec measure_start = BeginMeasure();
                 Nova_CollectReports();
+                double colect_round_time = EndMeasureValue(measure_start);
 
                 /* Collect Diagnostics */
                 CfOut(OUTPUT_LEVEL_VERBOSE, "",
-                      "Diagnostics - collecting MongoDB snapshot at %d",
+                      "Diagnostics - collecting MongoDB & Hub snapshots at %d",
                       (int)start);
                 DiagnosticsMakeMongoSnapshot(start);
+                DiagnosticMakeHubSnapshot(start, colect_round_time);
             }
         }
 

@@ -71,6 +71,7 @@ libcfnova_la_SOURCES += \
         db_query.c db_query.h \
         db_save.c db_save.h \
         db_diagnostics.c db_diagnostics.h \
+        hub_diagnostics.c hub_diagnostics.h \
         file_cache.c file_cache.h \
         db_export_csv.c db_export_csv.h \
         histogram.c \

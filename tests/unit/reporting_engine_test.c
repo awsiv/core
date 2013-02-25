@@ -94,13 +94,15 @@ static void test_get_column_count(void **state)
         SQL_TABLE_DIAGNOSTIC_SERVER_STATUS,
         SQL_TABLE_DIAGNOSTIC_DATABASE_STATUS,
         SQL_TABLE_DIAGNOSTIC_COLLECTION_STATUS,
+        NULL,
+        NULL,
         NULL
     };
 
     int column_count[] = {
                             4,  // hosts
-                            3,  // filechanges
                             3,  // contexts
+                            7,  // filechanges
                             6,  // variables
                             4,  // software
                             4,  // promisestatuslast
@@ -155,8 +157,8 @@ static void test_validate_column_names(void **state)
     const char *tables[SQL_TABLE_COUNT] =
     {
         SQL_TABLE_HOSTS,
-        SQL_TABLE_CONTEXTS,
         SQL_TABLE_FILECHANGES,
+        SQL_TABLE_CONTEXTS,
         SQL_TABLE_VARIABLES,
         SQL_TABLE_SOFTWARE,
         SQL_TABLE_PROMISESTATUS_LAST,
@@ -175,17 +177,17 @@ static void test_validate_column_names(void **state)
 
     const char *column_names[][16] = {
         {"HostKey", "HostName", "IPAddress", "ReportTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},        // hosts
-        {"HostKey", "FileName", "ChangeTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},               // filechanges
+        {"HostKey", "PromiseHandle", "FileName", "ChangeTimeStamp", "ChangeType", "LineNumber", "ChangeDetails", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},               // filechanges
         {"HostKey", "ContextName", "DefineTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                   // contexts
         {"HostKey", "NameSpace", "Bundle", "VariableName", "VariableValue", "VariableType", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                        // variables
         {"HostKey", "SoftwareName", "SoftwareVersion", "SoftwareArchitecture", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},                   // software
         {"HostKey", "PromiseHandle", "PromiseStatus", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},  // promisestatuslast
         {"NameSpace", "PromiseHandle", "Promiser", "Bundle", "Promisee", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},             // promisedefinitions
-        {"HostKey", "PromiseHandle", "PromiseLogType", "PromiseLogReport", "Time", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "PromiseHandle", "PromiseStatus", "PromiseStatusReport", "Time", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "NameSpace", "Bundle", "PercentageCompliance", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}, //Bundlestatus
         {"HostKey", "EventName", "TimeTaken", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "LastSeenDirection", "RemoteHostKey", "LastSeenAt", "LastSeenInterval", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-        {"HostKey", "PolicyVersion", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"HostKey", "PolicyName", "TotalKept", "TotalRepaired", "TotalNotKept", "CheckTimeStamp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"HostKey", "PatchReportType", "PatchName", "PatchVersion", "PatchArchitecture", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"SampleTime", "Host", "Version", "Uptime", "GlobalLockTotalTime", "GlobalLockTime", "GlobalLockQuereTotal", "GlobalLockQuereReaders", "GlobalLockQuereWriters", "MemoryResident", "MemoryVirtual", "MemoryMapped", "BackgroundFlushCount", "BackgroundFlushTotalTime", "BackgroundFlushAverageTime", "BackgroundFlushLastTime"},
         {"SampleTime", "Database", "AverageObjectSize", "DataSize", "StorageSize", "FileSize", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},

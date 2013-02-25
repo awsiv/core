@@ -31,5 +31,6 @@ int MongoRemove( EnterpriseDB *conn, const char *ns, const bson *cond,
 int MongoCount( EnterpriseDB *conn, const char *db, const char *coll,
                  const bson *query );
 bool MongoCursorNext(mongo_cursor *cursor);
+bool MongoDropCollection(EnterpriseDB *conn, const char *db, const char *coll, bson *out);
 
 #endif

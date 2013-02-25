@@ -22,6 +22,8 @@
 #include "keyring.h"
 #include "db_maintain.h"
 #include "policy.h"
+#include "instrumentation.h"
+#include "hub_diagnostics.h"
 
 static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostkey, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);
@@ -52,9 +54,11 @@ void Nova_SequentialScan(Item *masterlist)
 
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 {
-
     AgentConnection *conn;
     int long_time_no_see = false;
+
+    struct timespec report_time;
+    report_time = BeginMeasure();
 
     char lock_id[CF_MAXVARSIZE];
     snprintf(lock_id, sizeof(lock_id), "%s%s", LOCK_HAIL_PREFIX, CanonifyName(peer));
@@ -85,13 +89,32 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
     aa.copy.servers = RlistFromSplitString(peer, '*');
     pp->cache = NULL;
 
-    conn = NewServerConnection(aa, pp);
+    int err = 0;
+
+    conn = NewServerConnection(aa, pp, &err);
     PromiseDestroy(pp);
 
     if (conn == NULL)
     {
         CfOut(OUTPUT_LEVEL_VERBOSE, "", " !! Peer \"%s\" did not respond to hail", peer);
-        
+
+        /* save hub diagnostic sample to tmp collection */
+        {
+            ReportCollectionStatus status = HUBDIAG_UNKNOWN;
+            switch (err)
+            {
+                case -1:
+                    status = HUBDIAG_SERVER_NO_REPLY;
+                    break;
+                case -2:
+                    status = HUBDIAG_SERVER_AUTH_FAILURE;
+                    break;
+                default:
+                    status = HUBDIAG_UNKNOWN; // conn == NULL -> not successful
+            }
+            DiagnosticReportHostSave(dbconn, BufferNewFrom(hostID, strlen(hostID)), 0, 0, status);
+        }
+
         if(long_time_no_see)
         {
             CfOut(OUTPUT_LEVEL_VERBOSE, "", "Invalidating full query timelock since connection failed this time");
@@ -137,7 +160,20 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
         report_len = Nova_QueryClientForReports(dbconn, conn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
     }
 
-    Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
+    double collect_t = EndMeasureValue(report_time);
+
+    /* save hub diagnostic sample to tmp collection */
+    if (report_len == 0)
+    {
+        DiagnosticReportHostSave(dbconn,  BufferNewFrom(hostID, strlen(hostID)), 0, 0, HUBDIAG_INVALID_DATA);
+    }
+    else
+    {
+        for (int i=0; i< 50; i++)
+        DiagnosticReportHostSave(dbconn,  BufferNewFrom(hostID, strlen(hostID)), collect_t, report_len, HUBDIAG_SUCCESS);
+    }
+
+    Nova_HubLog("Received %d bytes of reports from %s with %s menu (%lf seconds)", report_len, peer, menu, collect_t);
 
     DisconnectServer(conn);
     RlistDestroy(aa.copy.servers);

@@ -696,13 +696,10 @@ static DiagnosticServerStatus *DiagnosticStatusPull(EnterpriseDB *conn)
         const char *cfreport_coll_list[] =
         {
             "archive",
-            "bodies",
             "hosts",
             "monitoring_mg",
             "monitoring_wk",
             "monitoring_yr",
-            "promises_exp",
-            "promises_unexp",
             NULL
         };
 
@@ -792,7 +789,7 @@ Seq *DiagnosticsQueryMongoSnapshot(EnterpriseDB *conn)
     assert(conn);
 
     Seq *snapshot_seq = NULL;
-    snapshot_seq = SeqNew(1020, DiagnosticMongoSnaphotFree); // this is around 3.5 days of snapshots with 5min interval to limit memory realication
+    snapshot_seq = SeqNew(2100, DiagnosticMongoSnaphotFree); // this is around 7 days + 6h of snapshots with 5min interval to limit memory realication
 
     bson query;
     bson_init(&query);

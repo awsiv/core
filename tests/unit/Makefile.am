@@ -32,7 +32,8 @@ check_PROGRAMS += scorecards_test \
         db_maintain_test \
         db_data_unpack_test \
         lastseen_cache_test \
-        db_diagnostics_test
+        db_diagnostics_test \
+        hub_diagnostics_test
 
 scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
 scorecards_test_LDADD = $(top_builddir)/libpromises/libpromises.la
@@ -64,6 +65,9 @@ lastseen_cache_test_LDADD = $(top_builddir)/libpromises/libpromises.la liblastse
 
 db_diagnostics_test_SOURCES = $(MOCKERY_SOURCES) db_diagnostics_test.c 
 db_diagnostics_test_LDADD = $(top_builddir)/libpromises/libpromises.la
+
+hub_diagnostics_test_SOURCES = $(MOCKERY_SOURCES) hub_diagnostics_test.c 
+hub_diagnostics_test_LDADD = $(top_builddir)/libpromises/libpromises.la
 
 endif
 

@@ -17,6 +17,7 @@
 #include "instrumentation.h"
 #include "cfstream.h"
 #include "db_diagnostics.h"
+#include "hub_diagnostics.h"
 #include "install.h"
 
 #include <assert.h>
@@ -41,6 +42,8 @@ static void CFDB_PurgeHostReports(EnterpriseDB *dbconn, const char *hostkey);
 
 /* MongoDB Diagnostics Maintenace */
 static void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now);
+static void CFDB_PurgeEnterpriseDiagnosticsHub(EnterpriseDB *conn, time_t oldStamp);
+static void CFDB_PurgeEnterpriseDiagnosticsMongo(EnterpriseDB *conn, time_t oldStamp);
 
 /*****************************************************************************/
 
@@ -195,12 +198,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     // Diagnostics mongo
 
     BsonSelectReportFields(&b, 1, diagnostic_dbk_time);
-
     if (mongo_create_index(conn, diagnostic_db_mongo_coll, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", diagnostic_db_mongo_coll);
     }
+    bson_destroy(&b);
 
+    BsonSelectReportFields(&b, 1, diagnostic_db_hub_time);
+    if (mongo_create_index(conn, diagnostic_db_hub, &b, 0, NULL) != MONGO_OK)
+    {
+        CfOut(OUTPUT_LEVEL_ERROR, "", "!! Could not create index on %s", diagnostic_db_hub);
+    }
     bson_destroy(&b);
 }
 
@@ -216,6 +224,7 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
                                           MONGO_MON_YR_COLLECTION,
                                           MONGO_ARCHIVE_COLLECTION,
                                           diagnostic_db_mongo_coll,
+                                          diagnostic_db_hub,
                                           NULL
                                         };
 
@@ -1167,18 +1176,22 @@ static bool CollectionNeedsReindexing(EnterpriseDB *conn, const char* coll)
 }
 /*****************************************************************************/
 
-void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now)
-/*
- * Deletes old Mongo diagnostics entries.
- */
+static void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 {
     time_t oldStamp;
-    bson cond;
-
     oldStamp = now - oldThreshold;
 
+    CFDB_PurgeEnterpriseDiagnosticsMongo(conn, oldStamp);
+    CFDB_PurgeEnterpriseDiagnosticsHub(conn, oldStamp);
+}
+
+/*****************************************************************************/
+
+static void CFDB_PurgeEnterpriseDiagnosticsMongo(EnterpriseDB *conn, time_t oldStamp)
+{
     CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge mongo diagnostics");
 
+    bson cond;
     bson_init(&cond);
     {
         BsonAppendStartObject(&cond, diagnostic_dbk_time);
@@ -1192,6 +1205,31 @@ void CFDB_PurgeEnterpriseDiagnostics(EnterpriseDB *conn, time_t oldThreshold, ti
     {
         MongoRemove(conn, diagnostic_db_mongo_coll, &cond, NULL);
         MongoCheckForError(conn,"timed delete host from mongo diagnostic collection",NULL,NULL);
+    }
+
+    bson_destroy(&cond);
+}
+
+/*****************************************************************************/
+
+static void CFDB_PurgeEnterpriseDiagnosticsHub(EnterpriseDB *conn, time_t oldStamp)
+{
+    CfOut(OUTPUT_LEVEL_VERBOSE, "", " -> Purge hub diagnostics");
+
+    bson cond;
+    bson_init(&cond);
+    {
+        BsonAppendStartObject(&cond, diagnostic_db_hub_time);
+        BsonAppendInt(&cond, "$lte", oldStamp);
+        BsonAppendFinishObject(&cond);
+    }
+
+    BsonFinish(&cond);
+
+    if(CFDB_CollectionHasData(conn, diagnostic_db_hub))
+    {
+        MongoRemove(conn, diagnostic_db_hub, &cond, NULL);
+        MongoCheckForError(conn,"timed delete host from hub diagnostic collection",NULL,NULL);
     }
 
     bson_destroy(&cond);
