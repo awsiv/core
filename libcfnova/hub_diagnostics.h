@@ -12,7 +12,7 @@
 #include "sequence.h"
 
 /* db namespace */
-#define diagnostic_db "local"
+#define diagnostic_db "cfdiagnostics"
 #define diagnostic_db_hub diagnostic_db ".hub_stats"
 #define diagnostic_db_hub_time "t"
 
