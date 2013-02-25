@@ -696,9 +696,6 @@ The @i{Host Info tab} is an inventory listing of discovered properties about a h
 @node SQL Reports App, Docs App, Hosts App, Quickstart - The Mission Portal
 @section SQL Reports App
 
-@menu
-@end menu
-
 The @i{SQL Reports} app gives the user full flexibility to create reports based on a simple customizable SQL interface. The workflow consists in choosing what fields you want to see in the report and how to filter them. You also have the option to save queries for later use or schedule queries to email reports to stakeholders. Be ready for instantaneous audits and inspections at low cost by reducing the time and work to gather reports.
 
 @sp 1
@@ -1867,9 +1864,6 @@ Starting in 3.0, most of the API is exercised by the Mission Portal web-UI.
 @c ----------------------------------------------------
 @node Checking Status, Managing Settings, Differences between the CFEngine Nova 2.2 REST API and the CFEngine Enterprise 3.0 API, REST API
 @section Checking Status
-
-@menu
-@end menu
 
 You can get basic info about the API by issuing @i{GET /api}. This status information may also be useful if you contact support, as it gives some basic diagnostics.
 
