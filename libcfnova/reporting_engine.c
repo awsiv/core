@@ -1770,10 +1770,10 @@ static void EnterpriseDBToSqlite3_DiagnosticHubReportingPerformance(sqlite3 *db)
                      stats->total_duration_time,
                      stats->avg_duration_time,
                      stats->largest_duration_time,
-                     NULLStringToEmpty((char*)BufferData(stats->largest_duration_time_host_id)),
+                     SkipHashType((char*)BufferData(stats->largest_duration_time_host_id)),
                      stats->avg_data_size,
                      stats->largest_data_size,
-                     NULLStringToEmpty((char*)BufferData(stats->largest_data_size_host_id)),
+                     SkipHashType((char*)BufferData(stats->largest_data_size_host_id)),
                      stats->sample_analyze_duration);
 
         bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
@@ -1840,7 +1840,7 @@ static void EnterpriseDBToSqlite3_DiagnosticHubConnectionErrors(sqlite3 *db)
                          "INSERT INTO %s VALUES('%ld','%s','%s');",
                          SQL_TABLE_DIAGNOSTIC_HUB_CONNECTION_ERRORS,
                          stats->timestamp,
-                         NULLStringToEmpty((char*)BufferData(err_stat->kh)),
+                         SkipHashType((char*)BufferData(err_stat->kh)),
                          NULLStringToEmpty((char*)ReportCollectionStatusToString(err_stat->status)));
 
             bool exec_ok = Sqlite3_Execute(db, BufferData(insert_buf), (void *) BuildJsonOutput, 0);
