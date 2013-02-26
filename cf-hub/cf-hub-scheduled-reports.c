@@ -3,7 +3,7 @@
  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
-#include "conf.h"
+#include <config.h>
 
 #include "cf.nova.h"
 #include "cf-hub.h"

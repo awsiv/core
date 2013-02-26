@@ -1,4 +1,4 @@
-#include "conf.h"
+#include <config.h>
 #include "cf.nova.h"
 #include "json.h"
 #include "db_common.h"

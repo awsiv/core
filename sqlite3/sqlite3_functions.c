@@ -1,4 +1,4 @@
-#include "conf.h"
+#include <config.h>
 #include "sqlite3_functions.h"
 #include "bool.h"
 #include "string_lib.h"

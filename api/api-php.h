@@ -8,7 +8,7 @@
 #define CFENGINE_API_PHP_H
 
 #ifdef HAVE_CONFIG_H
-# include "conf.h"
+# include <config.h>
 #endif
 
 /* PHP has HAVE_LCHOWN in php_config.h */
