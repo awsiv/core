@@ -12,7 +12,7 @@
 #include "install.h"
 #include "conversion.h"
 #include "assert.h"
-#include "conf.h"
+#include <config.h>
 #include "log.h"
 #include "cfstream.h"
 #include "db_export_csv.h"
