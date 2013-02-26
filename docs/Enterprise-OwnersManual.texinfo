@@ -211,10 +211,11 @@ A working package manager is required on the hub/policy server to install an Apa
 
 @menu
 * Installation procedure::      
-* How to assess success of this procedure::  
+* Bootstrap::
+@c * How to assess success of this procedure::  
 @end menu
 
-@node Installation procedure, How to assess success of this procedure, Installing CFEngine Enterprise, Installing CFEngine Enterprise
+@node Installation procedure, Bootstrap, Installing CFEngine Enterprise, Installing CFEngine Enterprise
 @section Installation procedure
 
 CFEngine Enterprise is designed to be simple to install in its default configuration. The installation
@@ -304,8 +305,25 @@ on the hub before continuing.
 See more details for the software licensing here; 
 @url{https://cfengine.com/software/Licensing.pdf}
 @end ignore
+@end enumerate
 
-@item The remaining steps apply to all hosts, but you should @b{install the hub (policy server) first}. For large systems (> 1000 hosts) we recommend increasing the memory limit in php.ini on the hub (for instance to 128 MB).
+@node Bootstrap, , Installation procedure, Installing CFEngine Enterprise
+@section Bootstrap
+
+@menu
+* Manual Bootstrap::
+* Automatic Bootstrap::
+* How to assess success of this procedure::
+@end menu
+
+Bootstrapping the CFEngine managed nodes will copy the default policy files to @file{/var/cfengine/inputs} on a fresh install (this step will be skipped if you already have a policy in place to avoid overwriting existing files). Then the CFEngine scheduler, @code{cf-execd}, will be started, and subsequently other CFEngine components.
+
+The following steps apply to all hosts, but you should @b{install the hub (policy server) first}. For large systems (> 1000 hosts) we recommend increasing the memory limit in php.ini on the hub (for instance to 128 MB).
+
+
+@c --------------------------------------------------
+@node Manual Bootstrap, Automatic Bootstrap, Bootstrap, Bootstrap
+@subsection Manual Bootstrap
 
 Find the hostname or IP address of the hub (policy server), here we assume @samp{123.456.789.123} is the address.
 @verbatim
@@ -335,19 +353,85 @@ CFEngine will output diagnostic information upon bootstrap (written to command l
 Commercial customers: Did you bootstrap before obtaining a license? See @ref{I did bootstrap the hub before obtaining a license file - what should I do?}
 @end cartouche
 
-@item CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
+CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
 
-@item To complete licensing setup, you should make a promise to accept the license
+To complete licensing setup, you should make a promise to accept the license
 terms by editing @file{/var/cfengine/masterfiles/promises.cf} and @* @file{/var/cfengine/masterfiles/failsafe/failsafe.cf}
 on the hub (policy server), changing the line @samp{host_licenses_paid => "<NUMBER>";}
 in @samp{body common control} to reflect the correct number of licenses that you have subscribed to. For Free Enterprise <NUMBER> should be 25 (the maximum number of clients that can be bootstrapped without obtaining a license).
 
-@end enumerate
+Skip @ref{Automatic Bootstrap} and go directly to @ref{How to assess success of this procedure} when you have completed the above steps.
 
 
 @c --------------------------------------------------
-@node How to assess success of this procedure,  , Installation procedure, Installing CFEngine Enterprise
-@section How to assess success of this procedure
+@node Automatic Bootstrap, How to assess success of this procedure, Manual Bootstrap, Bootstrap
+@subsection Automatic Bootstrap 
+
+Automatic bootstrap uses an Avahi implementation of zeroconf (a set of protocols and techniques user to create an IP network without special configuration servers or manual intervention of operator).
+
+@noindent Requirements:
+@itemize -
+@item libavahi-client
+@item libavahi-common
+@end itemize
+
+@noindent What is automatic bootstrap?@*
+Automatic bootstrap allows the user to connect a CFEngine client to a hub/policy server without specifing the IP address manually. 
+It uses the Avahi service discovery to locate the hub, obtain its IP address and connect to it. To use automatic bootstrap
+installation of Avahi libraries is required.
+
+@noindent How does it work?
+@enumerate
+@item Prepare the hub/policy server:
+After setting up the hub it is required to register it as an Avahi service. To do this run the following command:
+@verbatim
+   $> /var/cfengine/bin/cf-serverd -A
+@end verbatim
+This will generate the configuration file for Avahi in /etc/avahi/services and restarts Avahi daemon in order to register the new service.
+From now on the hub will be discovered as an Avahi service. To verify that server is visible run the following command(requires avahi-utils):
+@verbatim
+   $> avahi-browse -atr | grep cfenginehub
+@end verbatim
+The sample output should look like this:
+@verbatim
+   eth0 IPv4 CFEngine Community 3.5.0a1.fdf65b3 Policy Server on policy_hub_debian7  _cfenginehub._tcp    local
+@end verbatim
+Once the hub is configured as Avahi service users can auto-bootstrap clients to it.
+
+@item Bootstraping clients:
+The clients require Avahi libraries to be installed in order to use this functionality. By default cf-agent looks for libraries in standard install locations. Install location may vary from system to system. If Avahi is installed in non-standard location (i.e. compiled from source) please use AVAHI_PATH environmental variable to specify path.
+Sample command:
+@verbatim
+   $> AVAHI_PATH=/lib/libavahi-client.so.3 /var/cfengine/bin/cf-agent -B
+@end verbatim
+If Avahi is installed in standard location specifing AVAHI_PATH variable is not required. Sample command to run automatic bootstrap:
+@verbatim
+   $> /var/cfengine/bin/cf-agent -B
+@end verbatim
+cf-agent will not bootstrap if no hub/policy server was found in the network. If more than one server was found, or the server had more than one IP address, the list of all available servers will be printed and user will be asked to manually specify the IP address of the correct server by running starndard bootstrap command of cf-agent:
+@verbatim
+   $> /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP address>
+@end verbatim
+If only one Policy Server is found in the network cf-agent will perform the bootstrap without any further manual intervention of the user.
+@end enumerate
+
+@noindent Limitations:@*
+Support ONLY for Linux.
+Automatic bootstrap is limited only to one subnet.
+This feature requires Policy Server machine to have only one IP address. With more IP adrresses i.e IPv4 and IPv6 at the same time server will be discovered as two different machines and user will be asked to specify IP address manually while bootstrap. Similar situation will occure when machine have more than one network interface installed.
+
+CFEngine should now be up and running on your system. The Mission Portal will not be immediately accessible, you should wait approximately 15 minutes for the system to converge before attempting to connect to the hub IP-address through your web browser (the convergence process can take up to 30 minutes). CFEngine will copy its default policy files into @file{/var/cfengine/masterfiles/} on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy them to their @file{/var/cfengine/inputs/} directory.
+
+To complete licensing setup, you should make a promise to accept the license
+terms by editing @file{/var/cfengine/masterfiles/promises.cf} and @* @file{/var/cfengine/masterfiles/failsafe/failsafe.cf}
+on the hub (policy server), changing the line @samp{host_licenses_paid => "<NUMBER>";}
+in @samp{body common control} to reflect the correct number of licenses that you have subscribed to. For Free Enterprise <NUMBER> should be 25 (the maximum number of clients that can be bootstrapped without obtaining a license).
+
+
+@page
+@c --------------------------------------------------
+@node How to assess success of this procedure,  , Automatic Bootstrap, Bootstrap
+@subsection How to assess success of this procedure
 
 @enumerate
 @item Look at the process list on the systems with @samp{ps waux | grep cf-}.
