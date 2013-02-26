@@ -56,7 +56,7 @@ static char *Item2String(Item *ip)
 
 
 /* We use Event Logging on widows. */
-void MakeLog(Item *mess, enum cfreport level)
+void MakeLog(Item *mess, OutputLevel level)
 {
     WORD eventType;
     DWORD eventId;
@@ -263,7 +263,7 @@ void CloseLog(void)
 
 /* Logs promise result. CfOut() should not be called here due to risk of 
  * infinite recursion. */
-void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, Item *mess)
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, OutputLevel log_level, Item *mess)
 {
     char *strMsg, *strPromisee;
     const char *insertStrings[6] = { 0 };

@@ -748,10 +748,10 @@ typedef enum
 int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp);
 
 #ifdef __MINGW32__
-int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_acl_method method, Attributes a,
+int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, AclMethod method, Attributes a,
                      Promise *pp);
-int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method,
-                            enum cf_acl_inherit directory_inherit, Attributes a, Promise *pp);
+int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, AclMethod method,
+                            AclInheritance directory_inherit, Attributes a, Promise *pp);
 int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp);
 int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp);
 void Nova_RemoveEasByInheritance(EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
@@ -896,8 +896,8 @@ int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb);
 /* win_log.c */
 
 void OpenLog(int facility);
-void MakeLog(Item *mess, enum cfreport level);
-void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, Item *mess);
+void MakeLog(Item *mess, OutputLevel level);
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, OutputLevel log_level, Item *mess);
 void CloseLog(void);
 
 /* win_mon.c */

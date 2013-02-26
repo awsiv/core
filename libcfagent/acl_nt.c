@@ -37,8 +37,8 @@ int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
     return true;
 }
 
-int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method,
-                            enum cf_acl_inherit directory_inherit, Attributes a, Promise *pp)
+int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, AclMethod method,
+                            AclInheritance directory_inherit, Attributes a, Promise *pp)
 {
     int result;
 
@@ -69,7 +69,7 @@ int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method met
     return result;
 }
 
-int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_acl_method method, Attributes a,
+int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, AclMethod method, Attributes a,
                      Promise *pp)
 {
     SECURITY_DESCRIPTOR *existingSecDesc;
