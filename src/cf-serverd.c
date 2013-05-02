@@ -425,7 +425,7 @@ static void StartServer(GenericAgentConfig config)
     {
         if (wait_for_lock > 10000)
         { // 10 ms
-            CfOut(cf_verbose, "", "CONN_STATS more than 10ms (%ld us) spent waiting for locks!!", wait_for_lock);
+            CfOut(cf_verbose, "", "[CFNGINE_METRICS] CONN_STATS more than 10ms (%ld us) spent waiting for locks!!", wait_for_lock);
         }
         wait_for_lock = 0;
         struct timespec wait_time = BeginMeasure();
@@ -489,7 +489,7 @@ static void StartServer(GenericAgentConfig config)
             snprintf(ipaddr, CF_MAXVARSIZE - 1, "%s", sockaddr_ntop((struct sockaddr *) &cin));
             ThreadUnlock(cft_getaddr);
 
-            CfOut(cf_verbose, "","Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
+            CfOut(cf_verbose, "","[CFENGINE_METRICS] Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
 //            CfDebug("Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
 
             if (NONATTACKERLIST && !IsMatchItemIn(NONATTACKERLIST, MapAddress(ipaddr)))
@@ -573,7 +573,7 @@ static void StartServer(GenericAgentConfig config)
         if (++loop_count > 500)
         {
             CfOut(cf_verbose, "",
-                  "CONN_STATS ACC: %d, INC: %d, cft_count: %ld, cft_getaddr: %ld, cft_server_children: %ld, total_time: %ld",
+                  "[CFENGINE_METRICS] CONN_STATS ACC: %d, INC: %d, cft_count: %ld, cft_getaddr: %ld, cft_server_children: %ld, total_time: %ld",
                   accepted_connections,
                   incoming_connections,
                   time_lock_count,
@@ -777,14 +777,14 @@ long PurgeOldConnections(Item **list, time_t now)
 
         if (now > then + 7200)
         {
-            CfOut(cf_verbose, "", "Purging IP address %s from connection list\n", ip->name);
+            CfOut(cf_verbose, "", "[CFENGINE_METRICS_PURGE] Purging IP address %s from connection list\n", ip->name);
             DeleteItem(list, ip);
         }
     }
 
     total_time = EndMeasureValueUs(it_time);
 
-    CfOut(cf_verbose, "", "Scanned CONNECTIONLIST: size -> %d, ACTIVE_THREADS -> %d, time_taken -> %ld [us]",
+    CfOut(cf_verbose, "", "[CFENGINE_METRICS_PURGE] Scanned CONNECTIONLIST: size -> %d, ACTIVE_THREADS -> %d, time_taken -> %ld [us]",
           list_size, ACTIVE_THREADS, total_time);
 
     if (!ThreadUnlock(cft_count))
