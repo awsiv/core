@@ -414,7 +414,8 @@ static void StartServer(GenericAgentConfig config)
 
     while (true)
     {
-        if (wait_for_lock > 10000) { // 10 ms
+        if (wait_for_lock > 10000)
+        { // 10 ms
             CfOut(cf_verbose, "", "CONN_STATS more than 10ms (%ld us) spent waiting for locks!!", wait_for_lock);
         }
         wait_for_lock = 0;
@@ -464,7 +465,6 @@ static void StartServer(GenericAgentConfig config)
 
         if ((sd_reply = accept(sd, (struct sockaddr *) &cin, &addrlen)) != -1)
         {
-            incoming_connections++;
             memset(ipaddr, 0, CF_MAXVARSIZE);
             wait_time = BeginMeasure();
             ThreadLock(cft_getaddr);
@@ -542,14 +542,16 @@ static void StartServer(GenericAgentConfig config)
             }
 
             SpawnConnection(sd_reply, ipaddr);
+
             accepted_connections++;
             total_time = EndMeasureValueD(conn_time);
         }
         ++loop_count;
-        if (loop_count > 500) {
+        if (loop_count > 500)
+        {
             CfOut(cf_verbose, "", "CONN_STATS ACC-> %d, INC->%d, time->%lf", accepted_connections, incoming_connections, total_time);
             DumpThreadMetrics();
-        }
+       }
     }
 
     YieldCurrentLock(thislock); /* We never get here - this is done by a signal handler */
