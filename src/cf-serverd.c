@@ -321,6 +321,7 @@ static void ThisAgentInit(void)
 /*******************************************************************/
 
 extern void DumpThreadMetrics(void);
+static bool PrintConnectionList(Item **list, time_t then, time_t current_time);
 
 static void StartServer(GenericAgentConfig config)
 {
@@ -420,6 +421,11 @@ static void StartServer(GenericAgentConfig config)
     long time_lock_count = 0;
     long time_lock_tmp = 0;
 
+    /*
+     * print connection list
+     * since this can generate considerable amount of data, we do this every 10 mins
+    */
+    time_t connection_list_print_time = time(NULL);
 
     while (true)
     {
@@ -583,6 +589,17 @@ static void StartServer(GenericAgentConfig config)
 
             loop_count = 0;
             DumpThreadMetrics();
+
+            /*
+             * To avoid calls to time(), we reuse the "now" value from above
+             */
+            if (PrintConnectionList(&CONNECTIONLIST, connection_list_print_time, now))
+            {
+                /*
+                 * reset the timer
+                */
+                connection_list_print_time = now;
+            }
         }
     }
 
@@ -592,6 +609,30 @@ static void StartServer(GenericAgentConfig config)
 /*********************************************************************/
 /* Level 2                                                           */
 /*********************************************************************/
+
+static bool PrintConnectionList(Item **list, time_t then, time_t current_time)
+{
+    if ((current_time -then) < SECONDS_PER_MINUTE * 10)
+    {
+        return false;
+    }
+
+    int last_seen = 0;
+    Item *ip = NULL;
+
+    for (ip = *list; ip != NULL; ip = ip->next)
+    {
+        sscanf(ip->classes, "%d", &last_seen);
+
+        CfOut(cf_verbose, "",
+              "[CFENGINE_METRICS_LIST] now = %d, ip = %s, time = %jd\n",
+              current_time,
+              ip->name,
+              (intmax_t)last_seen);
+    }
+
+    return true;
+}
 
 static int OpenReceiverChannel()
 {
