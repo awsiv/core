@@ -47,7 +47,7 @@ typedef struct
 static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
 static int OpenReceiverChannel(void);
-void PurgeOldConnections(Item **list, time_t now);
+long PurgeOldConnections(Item **list, time_t now);
 static void SpawnConnection(int sd_reply, char *ipaddr);
 static void CheckFileChanges(GenericAgentConfig config);
 static void *HandleConnection(ServerConnectionState *conn);
@@ -412,18 +412,31 @@ static void StartServer(GenericAgentConfig config)
     long wait_for_lock = 0;
     int loop_count = 0;
 
+    /*
+     * Individual lock metrics
+    */
+    long time_lock_server_children = 0;
+    long time_lock_get_addr = 0;
+    long time_lock_count = 0;
+    long time_lock_tmp = 0;
+
+
     while (true)
     {
         if (wait_for_lock > 10000)
         { // 10 ms
-            CfOut(cf_verbose, "", "CONN_STATS more than 10ms (%ld us) spent waiting for locks!!", wait_for_lock);
+            CfOut(cf_verbose, "", "[CFNGINE_METRICS] CONN_STATS more than 10ms (%ld us) spent waiting for locks!!", wait_for_lock);
         }
         wait_for_lock = 0;
         struct timespec wait_time = BeginMeasure();
 
         if (ThreadLock(cft_server_children))
         {
-            wait_for_lock += EndMeasureValueUs(wait_time);
+            time_lock_tmp = EndMeasureValueUs(wait_time);
+
+            wait_for_lock += time_lock_tmp;
+            time_lock_server_children += time_lock_tmp;
+
             if (ACTIVE_THREADS == 0)
             {
                 CheckFileChanges(config);
@@ -441,7 +454,7 @@ static void StartServer(GenericAgentConfig config)
 
         ret_val = select((sd + 1), &rset, NULL, NULL, &timeout);
 
-        double total_time = 0;
+        long total_time = 0;
         struct timespec conn_time = BeginMeasure();
 
         if (ret_val == -1)      /* Error received from call to select */
@@ -468,11 +481,15 @@ static void StartServer(GenericAgentConfig config)
             memset(ipaddr, 0, CF_MAXVARSIZE);
             wait_time = BeginMeasure();
             ThreadLock(cft_getaddr);
-            wait_for_lock += EndMeasureValueUs(wait_time);
+
+            time_lock_tmp = EndMeasureValueUs(wait_time);
+            wait_for_lock += time_lock_tmp;
+            time_lock_get_addr += time_lock_tmp;
+
             snprintf(ipaddr, CF_MAXVARSIZE - 1, "%s", sockaddr_ntop((struct sockaddr *) &cin));
             ThreadUnlock(cft_getaddr);
 
-            CfOut(cf_verbose, "","Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
+            CfOut(cf_verbose, "","[CFENGINE_METRICS] Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
 //            CfDebug("Obtained IP address of %s on socket %d from accept\n", ipaddr, sd_reply);
 
             if (NONATTACKERLIST && !IsMatchItemIn(NONATTACKERLIST, MapAddress(ipaddr)))
@@ -494,7 +511,9 @@ static void StartServer(GenericAgentConfig config)
                 now = 0;
             }
 
-            PurgeOldConnections(&CONNECTIONLIST, now);
+            time_lock_tmp = PurgeOldConnections(&CONNECTIONLIST, now);
+            wait_for_lock += time_lock_tmp;
+            time_lock_count += time_lock_tmp;
 
             if (!IsMatchItemIn(MULTICONNLIST, MapAddress(ipaddr)))
             {
@@ -503,7 +522,9 @@ static void StartServer(GenericAgentConfig config)
                 {
                     return;
                 }
-                wait_for_lock += EndMeasureValueUs(wait_time);
+                time_lock_tmp = EndMeasureValueUs(wait_time);
+                wait_for_lock += time_lock_tmp;
+                time_lock_count += time_lock_tmp;
 
                 if (IsItemIn(CONNECTIONLIST, MapAddress(ipaddr)))
                 {
@@ -532,7 +553,9 @@ static void StartServer(GenericAgentConfig config)
             {
                 return;
             }
-            wait_for_lock += EndMeasureValueUs(wait_time);
+            time_lock_tmp = EndMeasureValueUs(wait_time);
+            wait_for_lock += time_lock_tmp;
+            time_lock_count += time_lock_tmp;
 
             PrependItem(&CONNECTIONLIST, MapAddress(ipaddr), intime);
 
@@ -546,10 +569,18 @@ static void StartServer(GenericAgentConfig config)
             accepted_connections++;
             total_time = EndMeasureValueUs(conn_time);
         }
-        ++loop_count;
-        if (loop_count > 500)
+
+        if (++loop_count > 500)
         {
-            CfOut(cf_verbose, "", "CONN_STATS ACC-> %d, INC->%d, time->%ld", accepted_connections, incoming_connections, total_time);
+            CfOut(cf_verbose, "",
+                  "[CFENGINE_METRICS] CONN_STATS ACC: %d, INC: %d, cft_count: %ld, cft_getaddr: %ld, cft_server_children: %ld, total_time: %ld",
+                  accepted_connections,
+                  incoming_connections,
+                  time_lock_count,
+                  time_lock_get_addr,
+                  time_lock_server_children,
+                  total_time);
+
             loop_count = 0;
             DumpThreadMetrics();
         }
@@ -706,8 +737,11 @@ static int OpenReceiverChannel()
 /*********************************************************************/
 /* Level 3                                                           */
 /*********************************************************************/
-
-void PurgeOldConnections(Item **list, time_t now)
+/*
+ * Temporary:
+ * returns the microseconds spent in threadlock(cft_count)
+*/
+long PurgeOldConnections(Item **list, time_t now)
    /* Some connections might not terminate properly. These should be cleaned
       every couple of hours. That should be enough to prevent spamming. */
 {
@@ -716,20 +750,22 @@ void PurgeOldConnections(Item **list, time_t now)
 
     CfDebug("Purging Old Connections...\n");
 
+    struct timespec wait_time = BeginMeasure();
     if (!ThreadLock(cft_count))
     {
-        return;
+        return 0;
     }
+    long wait_time_us = EndMeasureValueUs(wait_time);
 
     if (list == NULL)
     {
-        return;
+        return wait_time_us;
     }
 
     Item *next;
     int list_size = 0;
 
-    double total_time = 0;
+    long total_time = 0;
     struct timespec it_time = BeginMeasure();
 
     for (ip = *list; ip != NULL; ip = next)
@@ -741,22 +777,23 @@ void PurgeOldConnections(Item **list, time_t now)
 
         if (now > then + 7200)
         {
-            CfOut(cf_verbose, "", "Purging IP address %s from connection list\n", ip->name);
+            CfOut(cf_verbose, "", "[CFENGINE_METRICS_PURGE] Purging IP address %s from connection list\n", ip->name);
             DeleteItem(list, ip);
         }
     }
 
-    total_time = EndMeasureValueD(it_time);
+    total_time = EndMeasureValueUs(it_time);
 
-    CfOut(cf_verbose, "", "Scanned CONNECTIONLIST (%d entries) while ACTIVE_THREADS was %d -- took time %lf [s]",
+    CfOut(cf_verbose, "", "[CFENGINE_METRICS_PURGE] Scanned CONNECTIONLIST: size -> %d, ACTIVE_THREADS -> %d, time_taken -> %ld [us]",
           list_size, ACTIVE_THREADS, total_time);
 
     if (!ThreadUnlock(cft_count))
     {
-        return;
+        return wait_time_us;
     }
 
     CfDebug("Done purging\n");
+    return wait_time_us;
 }
 
 /*********************************************************************/
