@@ -83,6 +83,7 @@ void PrintHelp(const char *comp, const struct option options[], const char *hint
 void PrintVersion(void);
 int CheckPromises(const GenericAgentConfig *config);
 Policy *ReadPromises(AgentType agent_type, GenericAgentConfig *config);
+void GetPromisesValidatedFile(char *filename, size_t max_size, const GenericAgentConfig *config);
 int NewPromiseProposals(EvalContext *ctx, const GenericAgentConfig *config, const Rlist *input_files);
 
 void BundleHashVariables(EvalContext *ctx, Bundle *bundle);
