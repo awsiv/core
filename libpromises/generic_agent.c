@@ -141,7 +141,8 @@ void GenericAgentDiscoverContext(EvalContext *ctx, GenericAgentConfig *config)
     EvalContextHeapPersistentLoadAll(ctx);
     LoadSystemConstants(ctx);
 
-    if (config->agent_type == AGENT_TYPE_AGENT && config->agent_specific.agent.bootstrap_policy_server)
+    if (((config->agent_type == AGENT_TYPE_AGENT) || (config->agent_type == AGENT_TYPE_EXECUTOR) )
+            && config->agent_specific.agent.bootstrap_policy_server)
     {
         if (!RemoveAllExistingPolicyInInputs(GetWorkDir()))
         {

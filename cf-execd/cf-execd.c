@@ -43,6 +43,8 @@
 #include "rlist.h"
 #include "processes_select.h"
 #include "man.h"
+#include "addr_lib.h"
+#include "communication.h"
 
 #include <assert.h>
 
@@ -102,6 +104,7 @@ static const struct option OPTIONS[] =
     {"no-winsrv", no_argument, 0, 'W'},
     {"ld-library-path", required_argument, 0, 'L'},
     {"legacy-output", no_argument, 0, 'l'},
+    {"bootstrap", required_argument, 0, 'B'},
     {NULL, 0, 0, '\0'}
 };
 
@@ -123,6 +126,7 @@ static const char *HINTS[sizeof(OPTIONS)/sizeof(OPTIONS[0])] =
     "Do not run as a service on windows - use this when running from a command shell (CFEngine Nova only)",
     "Set the internal value of LD_LIBRARY_PATH for child processes",
     "Use legacy output format",
+    "Bootstrap",
     NULL
 };
 
@@ -191,7 +195,7 @@ static GenericAgentConfig *CheckOpts(EvalContext *ctx, int argc, char **argv)
     char ld_library_path[CF_BUFSIZE];
     GenericAgentConfig *config = GenericAgentConfigNewDefault(AGENT_TYPE_EXECUTOR);
 
-    while ((c = getopt_long(argc, argv, "dvnKIf:D:N:VxL:hFOV1gMWl", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "dvnKIf:D:N:VxL:hFOV1gMWlB:", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -285,6 +289,44 @@ static GenericAgentConfig *CheckOpts(EvalContext *ctx, int argc, char **argv)
         case 'x':
             Log(LOG_LEVEL_ERR, "Self-diagnostic functionality is retired.");
             exit(0);
+
+        case 'B':
+            {
+                if (!BootstrapAllowed())
+                {
+                    Log(LOG_LEVEL_ERR, "Not enough privileges to bootstrap CFEngine");
+                    exit(EXIT_FAILURE);
+                }
+
+                if(IsLoopbackAddress(optarg))
+                {
+                    Log(LOG_LEVEL_ERR, "Cannot bootstrap to a loopback address");
+                    exit(EXIT_FAILURE);
+                }
+
+                // temporary assure that network functions are working
+                OpenNetwork();
+
+                char mapped_policy_server[CF_MAX_IP_LEN] = "";
+                if (Hostname2IPString(mapped_policy_server, optarg,
+                                      sizeof(mapped_policy_server)) == -1)
+                {
+                    Log(LOG_LEVEL_ERR,
+                        "Could not resolve hostname '%s', unable to bootstrap",
+                        optarg);
+                    exit(EXIT_FAILURE);
+                }
+
+                CloseNetwork();
+
+                MINUSF = true;
+                IGNORELOCK = true;
+                GenericAgentConfigSetInputFile(config, GetWorkDir(),
+                                               "promises.cf");
+                config->agent_specific.agent.bootstrap_policy_server =
+                    xstrdup(mapped_policy_server);
+            }
+            break;
 
         default:
             PrintHelp("cf-execd", OPTIONS, HINTS, true);
