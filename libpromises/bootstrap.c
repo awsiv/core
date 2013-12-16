@@ -326,7 +326,7 @@ bool WriteBuiltinFailsafePolicyToPath(const char *filename)
 #ifdef __MINGW32__
             "         copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 #else
-            "         copy_from => u_scp(\"%s/masterfiles\"),\n"
+            "         copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 #endif /* !__MINGW32__ */
             "      depth_search => u_recurse(\"inf\"),\n"
             "           classes => repaired(\"got_policy\");\n"
@@ -337,7 +337,7 @@ bool WriteBuiltinFailsafePolicyToPath(const char *filename)
 #ifdef __MINGW32__
             "         copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 #else
-            "         copy_from => u_scp(\"%s/masterfiles\"),\n"
+            "         copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 #endif /* !__MINGW32__ */
             "      depth_search => u_recurse(\"inf\"),\n"
             "           classes => repaired(\"got_policy\");\n\n"
@@ -459,7 +459,7 @@ bool WriteBuiltinFailsafePolicyToPath(const char *filename)
 #ifdef __MINGW32__
             "compare         => \"digest\";\n" "copy_backup     => \"false\";\n" "}\n" "\n");
 #else
-            "compare         => \"digest\";\n" "copy_backup     => \"false\";\n" "}\n" "\n", CFWORKDIR, CFWORKDIR);
+            "compare         => \"digest\";\n" "copy_backup     => \"false\";\n" "}\n" "\n");
 #endif /* !__MINGW32__ */
     fclose(fout);
 
