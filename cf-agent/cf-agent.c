@@ -346,12 +346,6 @@ static GenericAgentConfig *CheckOpts(EvalContext *ctx, int argc, char **argv)
 
         case 'B':
             {
-                if (!BootstrapAllowed())
-                {
-                    Log(LOG_LEVEL_ERR, "Not enough privileges to bootstrap CFEngine");
-                    exit(EXIT_FAILURE);
-                }
-
                 if(strcmp(optarg, ":avahi") == 0)
                 {
                     if(!HasAvahiSupport())
