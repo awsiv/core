@@ -51,7 +51,7 @@ const char *VPSCOMM[PLATFORM_CONTEXT_MAX] =
     "/bin/ps",                  /* hpux */
     "/bin/ps",                  /* aix */
     "/bin/ps",                  /* linux */
-    "/bin/ps",                  /* solaris */
+    "/usr/ucb/ps",                  /* solaris */
     "/bin/ps",                  /* freebsd */
     "/bin/ps",                  /* netbsd */
     "/bin/ps",                  /* cray */
@@ -75,7 +75,7 @@ const char *VPSOPTS[PLATFORM_CONTEXT_MAX] =
     "-ef",                      /* hpux */
     "-N -eo user,pid,ppid,pgid,pcpu,pmem,vsz,ni,stat,st=STIME,time,args",  /* aix */
     "-eo user,pid,ppid,pgid,pcpu,pmem,vsz,ni,rss,nlwp,stime,time,args",        /* linux */
-    "-eo user,pid,ppid,pgid,pcpu,pmem,vsz,pri,rss,nlwp,stime,time,args",        /* solaris */
+    "auxww",        /* solaris */
     "auxw",                     /* freebsd */
     "auxw",                     /* netbsd */
     "-elyf",                    /* cray */
