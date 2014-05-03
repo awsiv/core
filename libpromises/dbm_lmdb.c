@@ -35,6 +35,14 @@
 #ifdef LMDB
 
 #include <lmdb.h>
+#include <mutex.h>
+
+/* Lock the write transaction in DBPriv_ that is modified by several functions.
+ * Since DBPriv_ is globally shared, those functions are otherwise not reentrant.
+ * The initialization of DBPriv_ itself is implicitly locked by the mutex in
+ * dbm_api.c.
+ */
+static pthread_mutex_t db_lmdb_lock = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
 
 struct DBPriv_
 {
@@ -155,6 +163,7 @@ void DBPrivCloseDB(DBPriv *db)
     if (db->env)
     {
         mdb_env_close(db->env);
+        // Not protected by mutex, but if threads are still operating on the db, then we have a bigger problem
         db->wtxn = NULL;
     }
     free(db);
@@ -162,6 +171,10 @@ void DBPrivCloseDB(DBPriv *db)
 
 void DBPrivCommit(DBPriv *db)
 {
+    /* protecting code rather than data, but otherwise we might get prempted half-way
+     * by another thread starting a new transaction
+     */
+    ThreadLock(&db_lmdb_lock);
     if (db->wtxn)
     {
         int rc;
@@ -173,6 +186,7 @@ void DBPrivCommit(DBPriv *db)
         }
         db->wtxn = NULL;
     }
+    ThreadUnlock(&db_lmdb_lock);
 }
 
 bool DBPrivHasKey(DBPriv *db, const void *key, int key_size)
@@ -272,6 +286,7 @@ bool DBPrivWrite(DBPriv *db, const void *key, int key_size, const void *value, i
     int rc;
 
     /* If there's an open cursor, use its txn */
+    ThreadLock(&db_lmdb_lock);
     bool have_cursor = db->mc != NULL;
     if (have_cursor)
     {
@@ -282,6 +297,8 @@ bool DBPrivWrite(DBPriv *db, const void *key, int key_size, const void *value, i
     {
         rc = mdb_txn_begin(db->env, NULL, 0, &txn);
     }
+    ThreadUnlock(&db_lmdb_lock);
+
     if (rc == MDB_SUCCESS)
     {
         mkey.mv_data = (void *)key;
@@ -318,6 +335,9 @@ bool DBPrivWriteNoCommit(DBPriv *db, const void *key, int key_size, const void *
 {
     MDB_val mkey, data;
     int rc;
+    /* Locking code rather than data - bad, but only option to avoid that
+     * competing thread blows db->wtxn away when closing transaction */
+    ThreadLock(&db_lmdb_lock);
     if (db->wtxn == NULL)
     {
         rc = mdb_txn_begin(db->env, NULL, 0, &db->wtxn);
@@ -340,6 +360,7 @@ bool DBPrivWriteNoCommit(DBPriv *db, const void *key, int key_size, const void *
     {
         rc = MDB_SUCCESS;
     }
+
     if (rc == MDB_SUCCESS)
     {
         mkey.mv_data = (void *)key;
@@ -358,6 +379,7 @@ bool DBPrivWriteNoCommit(DBPriv *db, const void *key, int key_size, const void *
     {
         Log(LOG_LEVEL_ERR, "Could not create write txn: %s", mdb_strerror(rc));
     }
+    ThreadUnlock(&db_lmdb_lock);
     return rc == MDB_SUCCESS;
 }
 
@@ -367,6 +389,7 @@ bool DBPrivDelete(DBPriv *db, const void *key, int key_size)
     MDB_txn *txn;
     int rc;
 
+    ThreadLock(&db_lmdb_lock);
     /* If there's an open cursor, use its txn */
     bool have_cursor = db->mc != NULL;
     if (have_cursor)
@@ -378,6 +401,8 @@ bool DBPrivDelete(DBPriv *db, const void *key, int key_size)
     {
         rc = mdb_txn_begin(db->env, NULL, 0, &txn);
     }
+    ThreadUnlock(&db_lmdb_lock);
+
     if (rc == MDB_SUCCESS)
     {
         mkey.mv_data = (void *)key;
@@ -422,6 +447,7 @@ DBCursorPriv *DBPrivOpenCursor(DBPriv *db)
     rc = mdb_txn_begin(db->env, NULL, 0, &txn);
     if (rc == MDB_SUCCESS)
     {
+        ThreadLock(&db_lmdb_lock);
         rc = mdb_cursor_open(txn, db->dbi, &db->mc);
         if (rc == MDB_SUCCESS)
         {
@@ -435,6 +461,7 @@ DBCursorPriv *DBPrivOpenCursor(DBPriv *db)
             mdb_txn_abort(txn);
         }
         /* txn remains with cursor */
+        ThreadUnlock(&db_lmdb_lock);
     }
     else
     {
@@ -519,6 +546,7 @@ bool DBPrivWriteCursorEntry(DBCursorPriv *cursor, const void *value, int value_s
 
 void DBPrivCloseCursor(DBCursorPriv *cursor)
 {
+    ThreadLock(&db_lmdb_lock);
     MDB_txn *txn;
     int rc;
 
@@ -541,6 +569,7 @@ void DBPrivCloseCursor(DBCursorPriv *cursor)
         Log(LOG_LEVEL_ERR, "Could not commit cursor txn: %s", mdb_strerror(rc));
     }
     free(cursor);
+    ThreadUnlock(&db_lmdb_lock);
 }
 
 char *DBPrivDiagnose(const char *dbpath)
