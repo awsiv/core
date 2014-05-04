@@ -459,6 +459,7 @@ DBCursorPriv *DBPrivOpenCursor(DBPriv *db)
         {
             Log(LOG_LEVEL_ERR, "Could not open cursor: %s", mdb_strerror(rc));
             mdb_txn_abort(txn);
+            ThreadUnlock(&db_lmdb_lock);
         }
         /* txn remains with cursor */
     }
