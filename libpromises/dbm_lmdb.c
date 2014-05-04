@@ -444,10 +444,10 @@ DBCursorPriv *DBPrivOpenCursor(DBPriv *db)
     MDB_txn *txn;
     int rc;
 
+    ThreadLock(&db_lmdb_lock);
     rc = mdb_txn_begin(db->env, NULL, 0, &txn);
     if (rc == MDB_SUCCESS)
     {
-        ThreadLock(&db_lmdb_lock);
         rc = mdb_cursor_open(txn, db->dbi, &db->mc);
         if (rc == MDB_SUCCESS)
         {
