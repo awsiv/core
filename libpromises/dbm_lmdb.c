@@ -461,13 +461,14 @@ DBCursorPriv *DBPrivOpenCursor(DBPriv *db)
             mdb_txn_abort(txn);
         }
         /* txn remains with cursor */
-        ThreadUnlock(&db_lmdb_lock);
     }
     else
     {
         Log(LOG_LEVEL_ERR, "Could not create cursor txn: %s", mdb_strerror(rc));
+        ThreadUnlock(&db_lmdb_lock);
     }
 
+    /* leave mutex locked for lifetime of cursor */
     return cursor;
 }
 
@@ -546,7 +547,6 @@ bool DBPrivWriteCursorEntry(DBCursorPriv *cursor, const void *value, int value_s
 
 void DBPrivCloseCursor(DBCursorPriv *cursor)
 {
-    ThreadLock(&db_lmdb_lock);
     MDB_txn *txn;
     int rc;
 
